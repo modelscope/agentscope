@@ -27,10 +27,15 @@ class TemporaryMemory(MemoryBase):
         self,
         config: Optional[dict] = None,
         embedding_model: Union[str, Callable] = None,
+        mem_path: Optional[str] = None,
     ) -> None:
         super().__init__(config)
 
         self._content = []
+
+        self.mem_path = mem_path
+        if self.mem_path is not None:
+            self.load()
 
         # prepare embedding model if needed
         if isinstance(embedding_model, str):
@@ -105,6 +110,7 @@ class TemporaryMemory(MemoryBase):
         if to_mem:
             return self._content
 
+        file_path = file_path or self.mem_path
         if to_mem is False and file_path is not None:
             with open(file_path, "w", encoding="utf-8") as f:
                 json.dump(self._content, f, indent=4)
@@ -117,9 +123,15 @@ class TemporaryMemory(MemoryBase):
 
     def load(
         self,
-        memories: Union[str, dict, list],
+        memories: Union[str, dict, list] = None,
         overwrite: bool = False,
     ) -> None:
+        if memories is None:
+            if self.mem_path is not None:
+                memories = self.mem_path
+            else:
+                return
+
         if isinstance(memories, str):
             if os.path.isfile(memories):
                 with open(memories, "r", encoding="utf-8") as f:
