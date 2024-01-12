@@ -7,10 +7,7 @@ TODO: data structure to organize multiple memory pieces in memory class
 """
 
 from abc import ABC, abstractmethod
-from typing import Iterable
-from typing import Optional
-from typing import Union
-from typing import Callable
+from typing import Iterable, Optional, Union, Callable, Any
 
 
 class MemoryBase(ABC):
@@ -21,6 +18,7 @@ class MemoryBase(ABC):
     def __init__(
         self,
         config: Optional[dict] = None,
+        **kwargs: Any,
     ) -> None:
         """MemoryBase is a base class for memory of agents.
 
@@ -29,6 +27,7 @@ class MemoryBase(ABC):
                 Configuration of this memory.
         """
         self.config = {} if config is None else config
+        self.kwargs = kwargs
 
     def update_config(self, config: dict) -> None:
         """
@@ -48,13 +47,13 @@ class MemoryBase(ABC):
         """
 
     @abstractmethod
-    def add(self, memories: Union[list[dict], dict]) -> None:
+    def add(self, memories: Union[list[dict], dict], **kwargs: Any) -> None:
         """
         Adding new memory fragment, depending on how the memory are stored
         """
 
     @abstractmethod
-    def delete(self, index: Union[Iterable, int]) -> None:
+    def delete(self, index: Union[Iterable, int], **kwargs: Any) -> None:
         """
         Delete memory fragment, depending on how the memory are stored
         and matched
@@ -65,6 +64,7 @@ class MemoryBase(ABC):
         self,
         memories: Union[str, dict, list],
         overwrite: bool = False,
+        **kwargs: Any,
     ) -> None:
         """
         Load memory, depending on how the memory are passed, design to load
@@ -76,14 +76,15 @@ class MemoryBase(ABC):
         self,
         to_mem: bool = False,
         file_path: Optional[str] = None,
+        **kwargs: Any,
     ) -> Optional[list]:
         """Export memory, depending on how the memory are stored"""
 
     @abstractmethod
-    def clear(self) -> None:
+    def clear(self, **kwargs: Any) -> None:
         """Clean memory, depending on how the memory are stored"""
 
     @abstractmethod
-    def size(self) -> int:
+    def size(self, **kwargs: Any) -> int:
         """Returns the number of memory segments in memory."""
         raise NotImplementedError

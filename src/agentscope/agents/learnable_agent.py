@@ -84,7 +84,7 @@ class LearnableAgent(AgentBase, ABC):
         to decide whether to store the message information into the
         knowledge base.
         """
-        if len(self.memory) > 0:
+        if self.memory.size() > 0:
             for msg in self.memory:
                 # Ignore msg from itselves to avoid duplication
                 if msg.get("name") != self.name:
