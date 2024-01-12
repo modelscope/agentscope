@@ -9,7 +9,6 @@ from agentscope.memory import MemoryBase, TemporaryMemory
 from agentscope.agents.agent import AgentBase
 from agentscope.service.retrieval.similarity import cos_sim
 
-MAX_ATTEMPT = 5
 
 VALUE_ASSESSMENT_PROMPT = (
     "Please carefully consider the following record and assess whether it "
