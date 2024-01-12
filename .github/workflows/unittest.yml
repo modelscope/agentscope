@@ -27,7 +27,6 @@ jobs:
     - name: Install Dependencies
       run: |
         pip install -q -e .[full]
-        pip install coverage
     - name: Run tests with coverage
       run: |
         coverage run tests/run.py
