@@ -6,7 +6,10 @@ jobs:
   test:
     if: false == contains(github.event.pull_request.title, 'WIP')
     runs-on: ${{ matrix.os }}
-    permissions: write-all
+    permissions:
+      contents: write
+      pull-requests: write
+      repository-projects: write
     strategy:
       matrix:
         os: [ubuntu-latest]
