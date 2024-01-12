@@ -1,5 +1,4 @@
 name: Python Unittest Coverage
-
 on: [push, pull_request]
 
 jobs:
