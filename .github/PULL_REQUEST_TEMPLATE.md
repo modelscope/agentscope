@@ -2,7 +2,7 @@
 name: Pull Request
 about: Create a pull request
 ---
-## Description 
+## Description
 
 [Please describe the background, purpose, changes made, and how to test this PR]
 
