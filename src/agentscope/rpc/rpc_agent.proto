@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+// Servicer for rpc agent server
+service RpcAgent {
+    rpc call_func (RpcMsg) returns (RpcMsg) {}
+}
+
+// Message class for rpc communication
+message RpcMsg {
+    string value = 1;
+    string target_func = 2;
+}

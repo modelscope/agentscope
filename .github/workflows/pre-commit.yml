@@ -1,0 +1,28 @@
+name: Pre-commit (Required)
+
+on: [push, pull_request]
+
+jobs:
+  run:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: True
+      matrix:
+        os: [ubuntu-latest]
+    env:
+      OS: ${{ matrix.os }}
+      PYTHON: '3.9'
+    steps:
+    - uses: actions/checkout@master
+    - name: Setup Python
+      uses: actions/setup-python@master
+      with:
+        python-version: 3.9
+    - name: Install dependencies
+      run: |
+        pip install pre-commit
+        pre-commit install
+    - name: Pre-commit starts
+      run: |
+        pre-commit run --all-files
+        [ $? -eq 1 ] && exit 1 || echo "Passed"

@@ -1,0 +1,12 @@
+{
+    "type": "openai",
+    "name": "vllm-llama-2",
+    "model_name": "llama-2",
+    "api_key": "EMPTY",
+    "client_args": {
+        "base_url": "http:localhost:8000/v1/"
+    },
+    "generate_args": {
+        "temperature": 0.5
+    }
+}

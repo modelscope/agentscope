@@ -1,0 +1,20 @@
+[
+    {
+        "type": "openai",
+        "name": "gpt-4",
+        "api_key": "xxx",
+        "organization": "xxx",
+        "generate_args": {
+            "temperature": 0.5
+        }
+    },
+    {
+        "type": "post_api",
+        "name": "my_post_api",
+        "api_url": "https://xxx",
+        "headers": {
+        },
+        "json_args": {
+        }
+    }
+]

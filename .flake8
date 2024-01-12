@@ -1,0 +1,11 @@
+[flake8]
+exclude =
+  scripts/*
+  src/agentscope/rpc/*
+max-line-length = 79
+inline-quotes = "
+avoid-escape = no
+ignore =
+    F401
+    F403
+    W503
