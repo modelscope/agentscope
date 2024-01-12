@@ -2,13 +2,11 @@ name: Python Unittest Coverage
 
 on: [push, pull_request]
 
-permissions:
-  pull-requests: write
-
 jobs:
   test:
     if: false == contains(github.event.pull_request.title, 'WIP')
     runs-on: ${{ matrix.os }}
+    permissions: write-all
     strategy:
       matrix:
         os: [ubuntu-latest]
