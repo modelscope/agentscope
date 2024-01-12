@@ -1,4 +1,4 @@
-name: Pre-commit (Required)
+name: Pre-commit
 
 on: [push, pull_request]
 
@@ -18,11 +18,18 @@ jobs:
       uses: actions/setup-python@master
       with:
         python-version: 3.9
-    - name: Install dependencies
+    - name: Install AgentScope
       run: |
-        pip install pre-commit
+        pip install -q -e .[full]
+    - name: Install pre-commit
+      run: |
         pre-commit install
     - name: Pre-commit starts
       run: |
-        pre-commit run --all-files
-        [ $? -eq 1 ] && exit 1 || echo "Passed"
+        pre-commit run --all-files > pre-commit.log 2>&1 || true
+        cat pre-commit.log
+        if grep -q Failed pre-commit.log; then
+          echo -e "\e[41m  [**FAIL**] Please install pre-commit and format your code first. \e[0m"
+          exit 1
+        fi
+        echo -e "\e[46m  ********************************Passed******************************** \e[0m"

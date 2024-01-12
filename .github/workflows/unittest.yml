@@ -1,0 +1,32 @@
+name: Python Unittest Coverage
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    if: false == contains(github.event.pull_request.title, 'WIP')
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ['3.9']
+    env:
+      OS: ${{ matrix.os }}
+      PYTHON: '3.9'
+    timeout-minutes: 20
+    steps:
+    - uses: actions/checkout@master
+    - name: Setup Python ${{ matrix.python-version }}
+      uses: actions/setup-python@master
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install Dependencies
+      run: |
+        pip install -q -e .[full]
+        pip install coverage
+    - name: Run tests with coverage
+      run: |
+        coverage run tests/run.py
+    - name: Generate coverage report
+      run: |
+        coverage report -m
