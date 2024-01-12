@@ -33,7 +33,7 @@ jobs:
       if: github.event_name == 'pull_request'
       uses: actions/github-script@v3
       with:
-        github-token: ${{secrets.CODE_COV_PAT}}
+        token: ${{secrets.CODE_COV_PAT}}
         script: |
           const fs = require('fs');
           const report = fs.readFileSync('coverage.txt', {encoding:'utf8', flag:'r'});
