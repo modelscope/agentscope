@@ -1,32 +1,31 @@
 ---
 name: Bug Report
 about: Create a report to help us improve
-title: '[BUG]'
-labels: bug
+title: '[Bug]:'
+labels: 'bug'
 assignees: ''
 
 ---
 
-## Describe the bug
+**Describe the bug**
 A clear and concise description of what the bug is.
 
-## Steps to Reproduce
+**To Reproduce**
 Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+1. You code
+2. How to execute
+3. See error
 
-## Expected behavior
+**Expected behavior**
 A clear and concise description of what you expected to happen.
 
-## Screenshots
-If applicable, add screenshots to help explain your problem.
+**Error messages**
+Detailed error messages.
 
-## Environment (please complete the following information):
- - OS: [e.g. Windows, macOS, Linux]
- - OS Version: [e.g. Windows 10, Ubuntu 20.04, macOS Big Sur]
- - Application Version: [e.g. 1.0.0]
+**Environment (please complete the following information):**
+ - AgentScope Version: [e.g. 0.0.1 via `print(agentscope.__version__)`]
+ - Python Version: [e.g. 3.9]
+ - OS: [e.g. macos, windows]
 
-## Additional context
-Add any other context about the problem here or any other relevant information that could help in diagnosing the issue.
+**Additional context**
+Add any other context about the problem here.
