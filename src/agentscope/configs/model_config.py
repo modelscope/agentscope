@@ -115,3 +115,33 @@ class PostApiCfg(CfgBase):
     """The key of the prompt messages in `requests.post()`,
     e.g. `request.post(json={${messages_key}: messages, **json_args})`. For
     huggingface and modelscope inference API, the key is `inputs`"""
+
+
+class TongyiCfg(CfgBase):
+    """The config for OpenAI models."""
+
+    type: str = "tongyi"
+    """The typing of this config."""
+
+    name: str
+    """The name of the model."""
+
+    model_name: str = None
+    """The name of the model, (e.g. qwen-72b-chat). Default to `name` if
+    not provided."""
+
+    api_key: str = None
+    """The api key used for OpenAI API. Will be read from env if not
+    provided."""
+
+    organization: str = None
+    """The organization used for OpenAI API. Will be read from env if not
+    provided."""
+
+    client_args: dict = None
+    """The arguments used to initialize openai client, e.g. `timeout`,
+    `max_retries`."""
+
+    generate_args: dict = None
+    """The arguments used in openai api generation, e.g. `temperature`,
+    `seed`."""

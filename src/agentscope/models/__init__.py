@@ -13,7 +13,7 @@ from .openai_model import (
     OpenAIDALLEWrapper,
     OpenAIEmbeddingWrapper,
 )
-
+from .tongyi_model import TongyiChatModel
 
 __all__ = [
     "ModelWrapperBase",
@@ -27,7 +27,7 @@ __all__ = [
     "clear_model_configs",
 ]
 
-from ..configs.model_config import OpenAICfg, PostApiCfg
+from ..configs.model_config import OpenAICfg, PostApiCfg, TongyiCfg
 
 
 _MODEL_CONFIGS = []
@@ -62,6 +62,8 @@ def load_model_by_name(model_name: str) -> ModelWrapperBase:
         return OpenAIEmbeddingWrapper(**config)
     elif model_type == "post_api":
         return PostApiModelWrapper(**config)
+    elif model_type == "tongyi":
+        return TongyiChatModel(**config)
     else:
         raise ValueError(
             f"Cannot find [{config['type']}] in loaded configurations.",
@@ -127,6 +129,11 @@ def read_model_configs(
             post_api_cfg = PostApiCfg()
             post_api_cfg.init(**cfg)
             format_configs += [post_api_cfg]
+
+        elif cfg["type"] == "tongyi":
+            tongyi_cfg = TongyiCfg()
+            tongyi_cfg.init(**cfg)
+            format_configs += [tongyi_cfg]
 
         else:
             raise ValueError(
