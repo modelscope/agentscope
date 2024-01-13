@@ -138,3 +138,4 @@ docs/sphinx_doc/build/
 
 # Used to save loggings and files
 runs/
+examples/game/checkpoints/
