@@ -16,5 +16,5 @@ __all__ = [
     "RpcAgentBase",
     "DialogAgent",
     "DictDialogAgent",
-    "UserAgent"
+    "UserAgent",
 ]
