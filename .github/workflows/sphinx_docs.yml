@@ -1,9 +1,8 @@
 name: Deploy Sphinx documentation to Pages
 
 on:
-  push:
-    branches-ignore:
-      - "gh-pages"
+  release:
+    types: [published]
 
 jobs:
   pages:
