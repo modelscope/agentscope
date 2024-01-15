@@ -39,19 +39,17 @@ class RuledUser(AgentBase):
         while True:
             try:
                 content = input(f"{self.name}: ")
-
-            except Exception as e:
-                logger.warning(f"Input invalid: {e}. Please retry.")
-                content = input(f"{self.name}: ")
-
-            ruler_res = self.is_content_valid(content)
-            if "allowed" in ruler_res:
-                if ruler_res["allowed"] == "true":
+                if not hasattr(self, "model"):
                     break
 
-            logger.warning(
-                f"Invalid raised by input ruler {ruler_res}, please retry.",
-            )
+                ruler_res = self.is_content_valid(content)
+                if ruler_res.get("allowed") == "true":
+                    break
+                else:
+                    logger.warning(
+                        f"Input is not allowed: {ruler_res.get('reason', 'Unknown reason')}. Please retry.")
+            except Exception as e:
+                logger.warning(f"Input invalid: {e}. Please try again.")
 
         kwargs = {}
         if required_keys is not None:
