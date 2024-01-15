@@ -10,10 +10,10 @@ from loguru import logger
 import rich.pretty
 
 from agentscope.models import read_model_configs, load_model_by_name
-from agentscope.agents.user_agent import UserAgent
 from agentscope.message import Msg
 from agentscope.msghub import msghub
 from customer import Customer
+from ruled_user import RuledUser
 
 
 from utils import (
@@ -139,22 +139,21 @@ def invite_customers(customers):
 
 
 def main(args):
-    model = load_model_by_name("tongyi_model")
-
     customer_configs = yaml.safe_load(open("config/customer_config.yaml"))
+    user_configs = yaml.safe_load(open("config/user.yaml"))
 
     customers = [
         Customer(
             name=cfg["name"],
             config=cfg,
             game_config=GAME_CONFIG,
-            model=model,
+            model=cfg["model"],
             use_memory=True,
         )
         for cfg in customer_configs
     ]
 
-    player = UserAgent(name="餐馆老板")
+    player = RuledUser(**user_configs)
 
     invited_customers = []
     stage_per_night = StagePerNight.CASUAL_CHAT_FOR_MEAL
