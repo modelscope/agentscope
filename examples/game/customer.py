@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from typing import Any, Union
 import re
 import enum
@@ -10,6 +11,7 @@ from agentscope.message import Msg
 
 HISTORY_WINDOW = 10
 
+
 class CustomerConv(enum.IntEnum):
     """Enum for customer status."""
 
@@ -17,8 +19,10 @@ class CustomerConv(enum.IntEnum):
     AFTER_MEAL_CHAT = 1
     INVITED_GROUP_PLOT = 2
 
+
 class CustomerPlot(enum.IntEnum):
     """Enum for customer plot active or not."""
+
     ACTIVE = 1
     NOT_ACTIVE = 0
 
@@ -35,8 +39,13 @@ class Customer(DialogAgent):
         self.stage = CustomerConv.WARMING_UP
 
     def visit(self):
-        return np.random.binomial(
-            n=1, p=self.config.get("visit_prob", 0.99)) > 0
+        return (
+            np.random.binomial(
+                n=1,
+                p=self.config.get("visit_prob", 0.99),
+            )
+            > 0
+        )
 
     def activate_plot(self):
         self.plot_stage = CustomerPlot.ACTIVE
@@ -51,26 +60,31 @@ class Customer(DialogAgent):
         # TODO:
         # not sure if it is some implicit requirement of the tongyi chat api,
         # the first/last message must have role 'user'.
-        x['role'] = 'user'
+        x["role"] = "user"
 
-        if self.stage == CustomerConv.WARMING_UP and "推荐" in x['content']:
+        if self.stage == CustomerConv.WARMING_UP and "推荐" in x["content"]:
             self.stage = CustomerConv.AFTER_MEAL_CHAT
             return self._recommendation_to_score(x)
         elif self.stage == CustomerConv.WARMING_UP:
             return self._pre_meal_chat(x)
-        elif self.stage == CustomerConv.AFTER_MEAL_CHAT \
-                or self.stage == CustomerConv.INVITED_GROUP_PLOT:
+        elif (
+            self.stage == CustomerConv.AFTER_MEAL_CHAT
+            or self.stage == CustomerConv.INVITED_GROUP_PLOT
+        ):
             return self._main_plot_chat(x)
 
-    def _recommendation_to_score(self, x:dict) -> dict:
-        food = x['content']
-        food_judge_prompt = self.game_config['food_judge_prompt']
-        food_judge_prompt = food_judge_prompt.format_map({
-            "food_preference": self.config["character_setting"][
-                "food_preference"],
-            "food": food
-        })
-        message = Msg(name='user', content=food_judge_prompt, role='user')
+    def _recommendation_to_score(self, x: dict) -> dict:
+        food = x["content"]
+        food_judge_prompt = self.game_config["food_judge_prompt"]
+        food_judge_prompt = food_judge_prompt.format_map(
+            {
+                "food_preference": self.config["character_setting"][
+                    "food_preference"
+                ],
+                "food": food,
+            },
+        )
+        message = Msg(name="user", content=food_judge_prompt, role="user")
 
         def _parse_score(text: Any) -> (float, Any):
             score = re.search("([0-9]+)分", str(text)).groups()[0]
@@ -96,18 +110,19 @@ class Customer(DialogAgent):
 
     def _pre_meal_chat(self, x: dict) -> dict:
         self.preorder_itr_count += 1
-        system_prompt = self.game_config["order_prompt"].format_map({
-            "name": self.config["name"],
-            "character_description":
-                self.background +
-                self.config["character_setting"]["food_preference"]
-        })
+        system_prompt = self.game_config["order_prompt"].format_map(
+            {
+                "name": self.config["name"],
+                "character_description": self.background
+                + self.config["character_setting"]["food_preference"],
+            },
+        )
         system_msg = Msg(role="user", name="system", content=system_prompt)
         # prepare prompt
         prompt = self.engine.join(
             self._validated_history_messages(recent_n=HISTORY_WINDOW),
             system_msg,
-            x
+            x,
         )
         if x is not None:
             self.memory.add(x)
@@ -128,21 +143,27 @@ class Customer(DialogAgent):
         2. Customer is not a main role in the current plot
         """
 
-        prompt = self.game_config["basic_background_prompt"].format_map({
-            "name": self.config["name"],
-            "character_description": self.background,
-        })
+        prompt = self.game_config["basic_background_prompt"].format_map(
+            {
+                "name": self.config["name"],
+                "character_description": self.background,
+            },
+        )
         if self.plot_stage == CustomerPlot.ACTIVE:
             # -> prompt for the main role in the current plot
-            prompt += self.game_config["hidden_main_plot_prompt"].format_map({
-                "hidden_plot": self.config["character_setting"]["hidden_plot"]
-            })
+            prompt += self.game_config["hidden_main_plot_prompt"].format_map(
+                {
+                    "hidden_plot": self.config["character_setting"][
+                        "hidden_plot"
+                    ],
+                },
+            )
             if self.stage == CustomerConv.AFTER_MEAL_CHAT:
                 prompt += self.game_config["hidden_main_plot_after_meal"]
             else:
                 prompt += self.game_config["hidden_main_plot_discussion"]
         else:
-           # -> prompt for the helper or irrelvant roles in the current plot
+            # -> prompt for the helper or irrelvant roles in the current plot
             if self.stage == CustomerConv.AFTER_MEAL_CHAT:
                 prompt += self.game_config["regular_after_meal_prompt"]
             else:
@@ -172,16 +193,23 @@ class Customer(DialogAgent):
         self.memory.add(reply_msg)
         return reply_msg
 
-
     def refine_background(self) -> None:
-        background_prompt = self.game_config["basic_background_prompt"].format_map({
-            "name": self.config["name"],
-            "character_description": self.background,
-        })
-        background_prompt += self.game_config["hidden_main_plot_prompt"].format_map({
-             "hidden_plot": self.config["character_setting"]["hidden_plot"]
-        })
-        analysis_prompt =background_prompt + self.game_config["analysis_conv"]
+        background_prompt = self.game_config[
+            "basic_background_prompt"
+        ].format_map(
+            {
+                "name": self.config["name"],
+                "character_description": self.background,
+            },
+        )
+        background_prompt += self.game_config[
+            "hidden_main_plot_prompt"
+        ].format_map(
+            {
+                "hidden_plot": self.config["character_setting"]["hidden_plot"],
+            },
+        )
+        analysis_prompt = background_prompt + self.game_config["analysis_conv"]
 
         system_msg = Msg(role="user", name="system", content=analysis_prompt)
 
@@ -193,21 +221,20 @@ class Customer(DialogAgent):
         analysis = self.model(messages=prompt)
         logger.info(f"聊完之后，{self.name}在想:" + analysis)
 
-        update_promot = self.game_config["update_background"].format_map({
-            "analysis": analysis,
-            "background": self.background,
-            "name": self.name,
-        })
-        update_msg = Msg(role="user", name="system", content=update_promot)
+        update_prompt = self.game_config["update_background"].format_map(
+            {
+                "analysis": analysis,
+                "background": self.background,
+                "name": self.name,
+            },
+        )
+        update_msg = Msg(role="user", name="system", content=update_prompt)
         new_background = self.model(messages=[update_msg])
-        logger.info(f"根据对话，{self.name}的背景更新为："+ new_background)
+        logger.info(f"根据对话，{self.name}的背景更新为：" + new_background)
         self.background = new_background
 
-    def _validated_history_messages(self, recent_n: int=10):
+    def _validated_history_messages(self, recent_n: int = 10):
         hist_mem = self.memory.get_memory(recent_n=recent_n)
         if len(hist_mem) > 0:
             hist_mem[0]["role"], hist_mem[-1]["role"] = "user", "user"
         return hist_mem
-
-
-

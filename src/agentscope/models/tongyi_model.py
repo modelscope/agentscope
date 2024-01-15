@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from typing import Any, Union
 from http import HTTPStatus
 
@@ -13,21 +14,21 @@ class TongyiWrapper(ModelWrapperBase):
     """The model wrapper for dashscope API (with Qwen models)."""
 
     def __init__(
-            self,
-            name: str,
-            model_name: str = None,
-            api_key: str = None,
-            organization: str = None,
-            client_args: dict = None,
-            generate_args: dict = None,
-            **kwargs
+        self,
+        name: str,
+        model_name: str = None,
+        api_key: str = None,
+        organization: str = None,
+        client_args: dict = None,
+        generate_args: dict = None,
+        **kwargs,
     ) -> None:
         """Initialize the openai client."""
         super().__init__(name)
 
         if dashscope is None:
             raise ImportError(
-                "Cannot find openai package in current python environment.",
+                "Cannot find dashscope package in current python environment.",
             )
 
         self.model_name = model_name or name
@@ -40,15 +41,15 @@ class TongyiWrapper(ModelWrapperBase):
 
 class TongyiChatModel(TongyiWrapper):
     def __call__(
-            self,
-            messages: list,
-            return_raw: bool = False,
-            **kwargs: Any,
+        self,
+        messages: list,
+        return_raw: bool = False,
+        **kwargs: Any,
     ) -> Union[str, dict]:
         response = dashscope.Generation.call(
             model=self.model_name,
             messages=messages,
-            result_format='message',  # set the result to be "message" format.
+            result_format="message",  # set the result to be "message" format.
         )
 
         if response.status_code == HTTPStatus.OK:

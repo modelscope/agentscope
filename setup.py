@@ -25,6 +25,8 @@ doc_requires = ["sphinx", "sphinx-autobuild", "sphinx_rtd_theme"]
 
 test_requires = ["pytest", "pytest-cov", "pre-commit"]
 
+game_requires = ["inquirer", "colorist", "dashscope"]
+
 # released requires
 minimal_requires = [
     "loguru",
@@ -65,6 +67,7 @@ setuptools.setup(
     packages=setuptools.find_packages("src"),
     install_requires=minimal_requires,
     extras_require={
+        "game": game_requires,
         "distribute": distribute_requires,
         "dev": dev_requires,
         "full": full_requires,

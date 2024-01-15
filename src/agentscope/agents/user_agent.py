@@ -3,6 +3,7 @@
 import time
 from typing import Union
 from typing import Optional
+from loguru import logger
 
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
@@ -62,7 +63,11 @@ class UserAgent(AgentBase):
         # TODO: To avoid order confusion, because `input` print much quicker
         #  than logger.chat
         time.sleep(0.5)
-        content = input(f"{self.name}: ")
+        try:
+            content = input(f"{self.name}: ")
+        except Exception as e:
+            logger.warning(f"Input invalid: {e}. Please retry.")
+            content = input(f"{self.name}: ")
 
         kwargs = {}
         if required_keys is not None:
