@@ -1,6 +1,6 @@
 -
   "name": "王老板"
-  "model": "qwen-max-1201"
+  "model": "tongyi_model"
   "use_memory": true
   "character_setting":
     "food_preference": >
@@ -24,7 +24,7 @@
       - "今天陪一个不吃辣的客户一起来，希望照顾对方感受，避免辣的菜，倾向于点口味清淡的菜，比如清蒸河鲜。"
 -
   "name": "阿炳"
-  "model": "qwen-max-1201"
+  "model": "tongyi_model"
   "use_memory": true
   "character_setting":
     "food_preference": >
