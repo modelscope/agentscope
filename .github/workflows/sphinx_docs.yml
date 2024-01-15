@@ -1,0 +1,28 @@
+name: Deploy Sphinx documentation to Pages
+
+on:
+  push:
+    branches-ignore:
+      - "gh-pages"
+
+jobs:
+  pages:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 20
+    steps:
+    - uses: actions/checkout@master
+    - name: Setup Python ${{ matrix.python-version }}
+      uses: actions/setup-python@master
+      with:
+        python_version: ${{ matrix.python-version }}
+    - id: deployment
+      uses: sphinx-notes/pages@v3
+      with:
+        documentation_path: ./docs/sphinx_doc/source
+        python_version: ${{ matrix.python-version }}
+        publish: false
+        requirements_path: ./docs/sphinx_doc/requirements.txt
+    - uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ${{ steps.deployment.outputs.artifact }}
