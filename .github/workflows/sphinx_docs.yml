@@ -7,8 +7,11 @@ on:
 
 jobs:
   pages:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      OS: ${{ matrix.os }}
+      PYTHON: '3.9'
     steps:
     - uses: actions/checkout@master
     - name: Setup Python ${{ matrix.python-version }}
