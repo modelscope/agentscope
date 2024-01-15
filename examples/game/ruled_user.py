@@ -47,7 +47,10 @@ class RuledUser(AgentBase):
                     break
                 else:
                     logger.warning(
-                        f"Input is not allowed: {ruler_res.get('reason', 'Unknown reason')}. Please retry.")
+                        f"Input is not allowed:"
+                        f" {ruler_res.get('reason', 'Unknown reason')}. "
+                        f"Please retry.",
+                    )
             except Exception as e:
                 logger.warning(f"Input invalid: {e}. Please try again.")
 
