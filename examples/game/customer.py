@@ -11,6 +11,7 @@ from agentscope.message import Msg
 
 HISTORY_WINDOW = 10
 MIN_BAR_RECEIVED_CONST = 4
+MIN_BAR_FRIENDSHIP_CONST = 80
 
 
 class CustomerConv(enum.IntEnum):
@@ -66,7 +67,7 @@ class Customer(StateAgent, DialogAgent):
 
     def activate_plot(self) -> None:
         # Note: once activate, never deactivate
-        if self.friendship >= 80:
+        if self.friendship >= MIN_BAR_FRIENDSHIP_CONST:
             self.plot_stage = CustomerPlot.ACTIVE
 
     def reply(self, x: dict = None) -> Union[dict, tuple]:

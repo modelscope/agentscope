@@ -9,7 +9,7 @@ from loguru import logger
 import agentscope
 from agentscope.message import Msg
 from agentscope.msghub import msghub
-from customer import Customer, CustomerConv
+from customer import Customer, CustomerConv, MIN_BAR_FRIENDSHIP_CONST
 from ruled_user import RuledUser
 
 
@@ -139,7 +139,9 @@ def one_on_one_loop(customers, player):
 
 
 def invite_customers(customers):
-    available_customers = [c.name for c in customers if c.friendship >= 80]
+    available_customers = [
+        c.name for c in customers if c.friendship >= MIN_BAR_FRIENDSHIP_CONST
+    ]
     invited_customers = []
 
     if len(available_customers) == 0:
