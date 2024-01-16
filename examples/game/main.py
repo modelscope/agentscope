@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 import os
 import yaml
-import sys
 import inquirer
 import random
 import argparse
-from loguru import logger
 
-from agentscope.models import read_model_configs, load_model_by_name
+import agentscope
+from agentscope.models import read_model_configs
 from agentscope.message import Msg
 from agentscope.msghub import msghub
 from customer import Customer
@@ -42,6 +41,8 @@ def invited_group_chat(invited_customer, player, cur_plot):
             answer = inquirer.prompt(questions)["ans"]
             if answer == "是":
                 msg = player(annoucement)
+            elif answer == "否":
+                msg = None
             elif answer == "结束邀请对话":
                 break
             for c in invited_customer:
@@ -244,8 +245,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     GAME_CONFIG = yaml.safe_load(open("./config/game_config.yaml"))
 
-    logger.add(sys.stderr, level="INFO")
-
     TONGYI_CONFIG = {
         "type": "tongyi",
         "name": "tongyi_model",
@@ -253,5 +252,6 @@ if __name__ == "__main__":
         "api_key": os.environ.get("TONGYI_API_KEY"),
     }
 
-    read_model_configs(TONGYI_CONFIG)
+    agentscope.init(model_configs=[TONGYI_CONFIG], logger_level="INFO")
+
     main(args)

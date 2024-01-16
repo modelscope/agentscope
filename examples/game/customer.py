@@ -60,7 +60,8 @@ class Customer(DialogAgent):
         # TODO:
         # not sure if it is some implicit requirement of the tongyi chat api,
         # the first/last message must have role 'user'.
-        x["role"] = "user"
+        if x is not None:
+            x["role"] = "user"
 
         if self.stage == CustomerConv.WARMING_UP and "推荐" in x["content"]:
             self.stage = CustomerConv.AFTER_MEAL_CHAT
