@@ -73,13 +73,14 @@ class StateAgent(AgentBase):
         if properties:
             self.state_properties[state] = properties
 
-    def transition(self, new_state: str) -> None:
+    def transition(self, new_state: Union[int, str, float, tuple]) -> None:
         """
         Transitions the agent to a new state and updates any associated
         properties.
 
         Args:
-            new_state (str): The state to which the agent should transition.
+            new_state (Union[int, str, float, tuple]): The state to which
+                the agent should transition.
 
         Returns:
             None
