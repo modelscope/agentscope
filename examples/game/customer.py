@@ -11,7 +11,7 @@ from agentscope.message import Msg
 
 HISTORY_WINDOW = 10
 MIN_BAR_RECEIVED_CONST = 4
-MIN_BAR_FRIENDSHIP_CONST = 60
+MIN_BAR_FRIENDSHIP_CONST = 80
 
 
 class CustomerConv(enum.IntEnum):
