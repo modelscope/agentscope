@@ -131,6 +131,7 @@ def one_on_one_loop(customers, player):
             print("【系统】输入`跳过`或者不输入终止对话。")
             msg = player(msg)
             if len(msg["content"]) == 0 or "跳过" in msg["content"]:
+                print(f"顾客{customer.name} 离开餐馆")
                 break
     return visit_customers
 
@@ -241,7 +242,7 @@ def main() -> None:
             invited_customers = [c for c in customers if c.name in invited]
             checkpoint.invited_customers = invited_customers
 
-        for c in invited_customers:
+        for c in customers:
             # reset all customer cur_state to pre-meal
             c.transition(CustomerConv.WARMING_UP)
 
