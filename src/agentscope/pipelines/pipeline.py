@@ -4,6 +4,7 @@
 from typing import Callable, Sequence
 from typing import Any
 from typing import Mapping
+from typing import Optional
 from abc import abstractmethod
 
 from .functional import (
@@ -25,15 +26,15 @@ class PipelineBase(Operator):
     """
 
     @abstractmethod
-    def __call__(self, x: dict = None) -> dict:
-        r"""Define the actions taken by this pipeline.
+    def __call__(self, x: Optional[dict] = None) -> dict:
+        """Define the actions taken by this pipeline.
 
         Args:
-            x (`dict`):
+            x (Optional[`dict`], optional):
                 Dialog history and some environment information
 
         Returns:
-            The pipeline's response to the input.
+            `dict`: The pipeline's response to the input.
         """
 
 
@@ -71,12 +72,12 @@ class IfElsePipeline(PipelineBase):
         self.if_body_operator = if_body_operator
         self.else_body_operator = else_body_operator
 
-    def __call__(self, x: dict = None) -> dict:
+    def __call__(self, x: Optional[dict] = None) -> dict:
         return ifelsepipeline(
-            x,
             condition_func=self.condition_func,
             if_body_operator=self.if_body_operator,
             else_body_operator=self.else_body_operator,
+            x=x,
         )
 
 
@@ -117,12 +118,12 @@ class SwitchPipeline(PipelineBase):
         self.case_operators = case_operators
         self.default_operator = default_operator
 
-    def __call__(self, x: dict = None) -> dict:
+    def __call__(self, x: Optional[dict] = None) -> dict:
         return switchpipeline(
-            x,
             condition_func=self.condition_func,
             case_operators=self.case_operators,
             default_operator=self.default_operator,
+            x=x,
         )
 
 
@@ -166,12 +167,12 @@ class ForLoopPipeline(PipelineBase):
         self.max_loop = max_loop
         self.break_func = break_func
 
-    def __call__(self, x: dict = None) -> dict:
+    def __call__(self, x: Optional[dict] = None) -> dict:
         return forlooppipeline(
-            x,
             loop_body_operator=self.loop_body_operator,
             max_loop=self.max_loop,
             break_func=self.break_func,
+            x=x,
         )
 
 
@@ -206,11 +207,11 @@ class WhileLoopPipeline(PipelineBase):
         self.condition_func = condition_func
         self.loop_body_operator = loop_body_operator
 
-    def __call__(self, x: dict = None) -> dict:
+    def __call__(self, x: Optional[dict] = None) -> dict:
         return whilelooppipeline(
-            x,
             loop_body_operator=self.loop_body_operator,
             condition_func=self.condition_func,
+            x=x,
         )
 
 
@@ -234,5 +235,5 @@ class SequentialPipeline(PipelineBase):
         """
         self.operators = operators
 
-    def __call__(self, x: dict = None) -> dict:
+    def __call__(self, x: Optional[dict] = None) -> dict:
         return sequentialpipeline(operators=self.operators, x=x)

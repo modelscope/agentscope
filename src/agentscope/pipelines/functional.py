@@ -41,16 +41,14 @@ def sequentialpipeline(
 
 
 def ifelsepipeline(
-    x: dict,
     condition_func: Callable,
     if_body_operator: Operator,
     else_body_operator: Operator = placeholder,
+    x: Optional[dict] = None,
 ) -> dict:
     """Functional version of IfElsePipeline.
 
     Args:
-        x (`dict`):
-            The input dictionary.
         condition_func (`Callable`):
             A function that determines whether to exeucte `if_body_operator`
             or `else_body_operator` based on x.
@@ -59,6 +57,8 @@ def ifelsepipeline(
         else_body_operator (`Operator`, defaults to `placeholder`):
             An operator executed when condition_func returns False,
             does nothing and just return the input by default.
+        x (`Optional[dict]`, defaults to `None`):
+            The input dictionary.
 
     Returns:
         `dict`: the output dictionary.
@@ -70,18 +70,16 @@ def ifelsepipeline(
 
 
 def switchpipeline(
-    x: dict,
-    condition_func: Callable[[dict], Any],
+    condition_func: Callable[[Any], Any],
     case_operators: Mapping[Any, Operator],
     default_operator: Operator = placeholder,
+    x: Optional[dict] = None,
 ) -> dict:
     """Functional version of SwitchPipeline.
 
 
     Args:
-        x (`dict`):
-            The input dictionary.
-        condition_func (`Callable[[dict], Any]`):
+        condition_func (`Callable[[Any], Any]`):
             A function that determines which case_operator to execute based
             on the input x.
         case_operators (`Mapping[Any, Operator]`):
@@ -91,6 +89,8 @@ def switchpipeline(
             An operator that is executed when the actual condition do not
             meet any of the case_operators, does nothing and just return the
             input by default.
+        x (`Optional[dict]`, defaults to `None`):
+            The input dictionary.
 
     Returns:
         dict: the output dictionary.
@@ -103,16 +103,14 @@ def switchpipeline(
 
 
 def forlooppipeline(
-    x: dict,
     loop_body_operator: Operator,
     max_loop: int,
     break_func: Callable[[dict], bool] = lambda _: False,
+    x: Optional[dict] = None,
 ) -> dict:
     """Functional version of ForLoopPipeline.
 
     Args:
-        x (`dict`):
-            The input dictionary.
         loop_body_operator (`Operator`):
             An operator executed as the body of the loop.
         max_loop (`int`):
@@ -121,10 +119,14 @@ def forlooppipeline(
             A function used to determine whether to break out of the loop
             based on the output of the loop_body_operator, defaults to
             `lambda _: False`
+        x (`Optional[dict]`, defaults to `None`):
+            The input dictionary.
 
     Returns:
         `dict`: The output dictionary.
     """
+    if x is None:
+        x = {}
     for _ in range(max_loop):
         # loop body
         x = loop_body_operator(x)
@@ -135,24 +137,27 @@ def forlooppipeline(
 
 
 def whilelooppipeline(
-    x: dict,
     loop_body_operator: Operator,
-    condition_func: Callable[[int, dict], bool] = lambda _, __: False,
+    condition_func: Callable[[int, Any], bool] = lambda _, __: False,
+    x: Optional[dict] = None,
 ) -> dict:
     """Functional version of WhileLoopPipeline.
 
     Args:
-        x (`dict`): The input dictionary.
         loop_body_operator (`Operator`): An operator executed as the body of
             the loop.
-        condition_func (`Callable[[int, dict], bool]`, optional): A function
+        condition_func (`Callable[[int, Any], bool]`, optional): A function
             that determines whether to continue executing the loop body based
             on the current loop number and output of the loop_body_operator,
             defaults to `lambda _,__: False`
+        x (`Optional[dict]`, defaults to `None`):
+            The input dictionary.
 
     Returns:
         `dict`: the output dictionary.
     """
+    if x is None:
+        x = {}
     i = 0
     while condition_func(i, x):
         # loop body
