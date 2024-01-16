@@ -83,7 +83,7 @@ def one_on_one_loop(customers, player):
         print(f"今天出现的客人: {[c.name for c in visit_customers]}")
     for customer in visit_customers:
         print(
-            f"顾客{customer.name} 进入餐馆 (当前友好度为: {customer.friendship})",
+            f"顾客{customer.name} 进入餐馆 (当前好感度为: {customer.friendship})",
         )
         msg = player("游戏开始")
         while True:
