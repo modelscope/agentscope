@@ -103,7 +103,6 @@ def _response_parse_decorator(
         parse_func = kwargs.pop("parse_func", None)
         fault_handler = kwargs.pop("fault_handler", None)
         max_retries = kwargs.pop("max_retries", None) or DEFAULT_MAX_RETRIES
-
         # Step2: Call the model and parse the response
         # Return the response directly if parse_func is not provided
         if parse_func is None:
