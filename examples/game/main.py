@@ -86,7 +86,7 @@ def one_on_one_loop(customers, player):
         msg = player("游戏开始")
         while True:
             msg = customer(msg)
-            if isinstance(msg, tuple):
+            if "score" in msg:
                 print(
                     f"【系统】{customer.name}（顾客）接受了你的推荐。\n"
                     f"【系统】顾客对菜本身的评价：{msg['content']}\n"
@@ -103,11 +103,10 @@ def one_on_one_loop(customers, player):
             if len(msg["content"]) == 0 or "[TERMINATE]" in msg["content"]:
                 break
 
-        if (isinstance(msg, tuple) and msg[1] < 4) or (
-            isinstance(msg, dict) and len(msg["content"]) == 0
-        ):
-            print(f"顾客{customer.name} 离开餐馆")
-            continue
+        if isinstance(msg, dict):
+            if len(msg["content"]) == 0 or msg["score"] < 4:
+                print(f"顾客{customer.name} 离开餐馆")
+                continue
 
         questions = [
             inquirer.List(
@@ -212,7 +211,7 @@ def main() -> None:
     while True:
         # daily loop
         if checkpoint.stage_per_night == StagePerNight.INVITED_CHAT:
-            # ============ invitated multi-agent loop ===============
+            # ============ invited multi-agent loop ===============
             # invitation loop, 1) chat in msghub 2) plot unlock success check
             for c in checkpoint.invited_customers:
                 # set customer to invited discussion cur_state
