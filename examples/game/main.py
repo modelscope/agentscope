@@ -52,6 +52,8 @@ def invited_group_chat(invited_customer, player, cur_plot):
     invited_names.sort()
     correct_names = GAME_CONFIG["plots"][cur_plot]
     correct_names.sort()
+
+    # TODO: decided by multi factor: chat history of msghub, correct_names
     if invited_names == correct_names:
         print("===== successfully unlock a plot =======")
         questions = [
@@ -137,8 +139,12 @@ def one_on_one_loop(customers, player):
 
 
 def invite_customers(customers):
-    available_customers = [c.name for c in customers]
+    available_customers = [c.name for c in customers if c.friendship >= 80]
     invited_customers = []
+
+    if len(available_customers) == 0:
+        print("【系统】：您目前无法邀请任何一个顾客（所有顾客好感度均低于80）。")
+
     while len(available_customers) > 0:
         select_customer = [
             inquirer.List(

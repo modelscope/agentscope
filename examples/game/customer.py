@@ -59,14 +59,14 @@ class Customer(StateAgent, DialogAgent):
         return (
             np.random.binomial(
                 n=1,
-                p=self.friendship / 100,
+                p=min(self.friendship / 100, 1.0),
             )
             > 0
         )
 
     def activate_plot(self) -> None:
         # Note: once activate, never deactivate
-        if self.friendship > 80:
+        if self.friendship >= 80:
             self.plot_stage = CustomerPlot.ACTIVE
 
     def reply(self, x: dict = None) -> Union[dict, tuple]:
