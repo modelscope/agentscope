@@ -24,7 +24,7 @@ from utils import (
 
 def invited_group_chat(invited_customer, player, cur_plot):
     if len(invited_customer) == 0:
-        return
+        return cur_plot
     invited_names = [c.name for c in invited_customer]
     print("===== invited group chat ====")
     print(f"老板今天邀请了{invited_names}，大家一起聊聊")
