@@ -6,7 +6,6 @@ import random
 import argparse
 
 import agentscope
-from agentscope.models import read_model_configs
 from agentscope.message import Msg
 from agentscope.msghub import msghub
 from customer import Customer

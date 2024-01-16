@@ -247,7 +247,6 @@ class Customer(DialogAgent):
             if "name" in mem:
                 conversation += mem["name"] + ": " + mem["content"]
             else:
-                print("debug:", mem)
                 conversation += "背景" + ": " + mem["content"]
         background = self.background
         if self.plot_stage == CustomerPlot.ACTIVE:
@@ -261,5 +260,5 @@ class Customer(DialogAgent):
         msg = Msg(name="system", role="user", content=pov_prompt)
         pov_story = self.model(messages=[msg])
         print("*" * 20)
-        print(pov_story)
+        logger.info(pov_story)
         print("*" * 20)
