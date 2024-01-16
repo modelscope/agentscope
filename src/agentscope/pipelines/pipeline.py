@@ -61,7 +61,7 @@ class IfElsePipeline(PipelineBase):
             condition_func (`Callable[[dict], bool]`):
                 A function that determines whether to execute
                 if_body_operator or else_body_operator based on the input x.
-            if_body_operator (`_Operator`):
+            if_body_operator (`Operator`):
                 An operator executed when condition_func returns True.
             else_body_operator (`_Optional`):
                 An operator executed when condition_func returns False,
@@ -105,10 +105,10 @@ class SwitchPipeline(PipelineBase):
             condition_func (`Callable[[dict], Any]`):
                 A function that determines which case_operator to execute
                 based on the input x.
-            case_operators (`dict[Any, _Operator]`):
+            case_operators (`dict[Any, Operator]`):
                 A dictionary containing multiple operators and their
                 corresponding trigger conditions.
-            default_operator (`_Operator`, defaults to `placeholder`):
+            default_operator (`Operator`, defaults to `placeholder`):
                 An operator that is executed when the actual condition do
                 not meet any of the case_operators, does nothing and just
                 return the input by default.
@@ -153,7 +153,7 @@ class ForLoopPipeline(PipelineBase):
         r"""Initialize a ForLoopPipeline.
 
         Args:
-            loop_body_operator (`_Operator`):
+            loop_body_operator (`Operator`):
                 An operator executed as the body of the loop.
             max_loop (`int`):
                 Maximum number of loop executions.
@@ -195,7 +195,7 @@ class WhileLoopPipeline(PipelineBase):
         """Initialize a WhileLoopPipeline.
 
         Args:
-            loop_body_operator (`_Operator`):
+            loop_body_operator (`Operator`):
                 An operator executed as the body of the loop.
             condition_func (`Callable[[int, dict], bool]`, defaults to
             `lambda _, __: False`):
@@ -229,7 +229,7 @@ class SequentialPipeline(PipelineBase):
         r"""Initialize a Sequential pipeline.
 
         Args:
-            operators (`Sequence[_Operator]`):
+            operators (`Sequence[Operator]`):
                 A Sequence of operators to be executed sequentially.
         """
         self.operators = operators

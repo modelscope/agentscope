@@ -54,9 +54,9 @@ def ifelsepipeline(
         condition_func (`Callable`):
             A function that determines whether to exeucte `if_body_operator`
             or `else_body_operator` based on x.
-        if_body_operator (`_Operator`):
+        if_body_operator (`Operator`):
             An operator executed when `condition_func` returns True.
-        else_body_operator (`_Operator`, defaults to `placeholder`):
+        else_body_operator (`Operator`, defaults to `placeholder`):
             An operator executed when condition_func returns False,
             does nothing and just return the input by default.
 
@@ -84,10 +84,10 @@ def switchpipeline(
         condition_func (`Callable[[dict], Any]`):
             A function that determines which case_operator to execute based
             on the input x.
-        case_operators (`Mapping[Any, _Operator]`):
+        case_operators (`Mapping[Any, Operator]`):
             A dictionary containing multiple operators and their
             corresponding trigger conditions.
-        default_operator (`_Operator`, defaults to `placeholder`):
+        default_operator (`Operator`, defaults to `placeholder`):
             An operator that is executed when the actual condition do not
             meet any of the case_operators, does nothing and just return the
             input by default.
@@ -113,7 +113,7 @@ def forlooppipeline(
     Args:
         x (`dict`):
             The input dictionary.
-        loop_body_operator (`_Operator`):
+        loop_body_operator (`Operator`):
             An operator executed as the body of the loop.
         max_loop (`int`):
             maximum number of loop executions.
@@ -143,7 +143,7 @@ def whilelooppipeline(
 
     Args:
         x (`dict`): The input dictionary.
-        loop_body_operator (`_Operator`): An operator executed as the body of
+        loop_body_operator (`Operator`): An operator executed as the body of
             the loop.
         condition_func (`Callable[[int, dict], bool]`, optional): A function
             that determines whether to continue executing the loop body based
