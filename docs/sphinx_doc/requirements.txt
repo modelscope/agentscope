@@ -1,0 +1,11 @@
+loguru
+tiktoken
+pillow
+requests
+openai
+numpy
+sphinx
+sphinx-autobuild
+sphinx_rtd_theme
+sphinxcontrib-mermaid
+myst-parser

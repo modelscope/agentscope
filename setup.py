@@ -21,7 +21,13 @@ rpc_requires = ["grpcio", "grpcio-tools", "expiringdict"]
 
 service_requires = ["docker", "pymongo", "pymysql"]
 
-doc_requires = ["sphinx", "sphinx-autobuild", "sphinx_rtd_theme"]
+doc_requires = [
+    "sphinx",
+    "sphinx-autobuild",
+    "sphinx_rtd_theme",
+    "myst-parser",
+    "sphinxcontrib-mermaid",
+]
 
 test_requires = ["pytest", "pytest-cov", "pre-commit"]
 
