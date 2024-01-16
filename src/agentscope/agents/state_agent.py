@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """ State agent module. """
-from typing import Any, Callable, Dict
+from typing import Any, Callable, Dict, Union
 from loguru import logger
 
 from .agent import AgentBase
@@ -47,7 +47,7 @@ class StateAgent(AgentBase):
 
     def register_state(
         self,
-        state: str,
+        state: Union[int, str],
         handler: Callable,
         properties: Dict[str, Any] = None,
     ) -> None:
