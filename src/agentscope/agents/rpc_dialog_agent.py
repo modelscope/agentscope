@@ -10,7 +10,7 @@ from loguru import logger
 from agentscope.message import Msg
 from agentscope.agents.rpc_agent import RpcAgentBase
 from agentscope.prompt import PromptEngine
-from agentscope.constants import PromptType
+from agentscope.prompt import PromptType
 
 
 class RpcDialogAgent(RpcAgentBase):

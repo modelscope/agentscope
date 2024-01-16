@@ -382,7 +382,6 @@ def setup_rcp_agent_server(
         f"Stopping rpc server [{servicer_class.__name__}] at port [{port}]",
     )
     server.stop(0)
-    stop_event.set()
     logger.info(
         f"rpc server [{servicer_class.__name__}] at port [{port}] stopped "
         "successfully",
@@ -541,9 +540,13 @@ class RpcAgentServerLauncher:
         if self.server is not None:
             if self.stop_event is not None:
                 self.stop_event.set()
-                self.stop_event.clear()
-                self.stop_event.wait()
                 self.stop_event = None
             self.server.terminate()
-            self.server.join()
+            self.server.join(timeout=5)
+            if self.server.is_alive():
+                self.server.kill()
+                logger.info(
+                    f"Rpc server [{self.agent_class.__name__}] at port"
+                    f" [{self.port}] is killed.",
+                )
             self.server = None

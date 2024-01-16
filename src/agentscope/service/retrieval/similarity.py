@@ -7,7 +7,7 @@ try:
 except ImportError:
     np = None
 
-from agentscope.constants import ServiceExecStatus
+from agentscope.service.service_status import ServiceExecStatus
 from agentscope.service.service_response import ServiceResponse
 from agentscope.constants import Embedding
 

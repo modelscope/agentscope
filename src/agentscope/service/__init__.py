@@ -21,6 +21,7 @@ from .service_response import ServiceResponse
 from .retrieval.similarity import cos_sim
 from .text_processing.summarization import summarization
 from .retrieval.retrieval_from_list import retrieve_from_list
+from .service_status import ServiceExecStatus
 
 
 def get_help() -> None:
@@ -49,4 +50,5 @@ __all__ = [
     "cos_sim",
     "summarization",
     "retrieve_from_list",
+    "ServiceExecStatus",
 ]

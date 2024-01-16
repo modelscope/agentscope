@@ -4,7 +4,7 @@ Service for text processing
 """
 
 from agentscope.models import ModelWrapperBase, OpenAIWrapper
-from agentscope.constants import ServiceExecStatus
+from agentscope.service.service_status import ServiceExecStatus
 from agentscope.service.service_response import ServiceResponse
 from agentscope.message import Msg
 from agentscope.constants import _DEFAULT_SUMMARIZATION_PROMPT

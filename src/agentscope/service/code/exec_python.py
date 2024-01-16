@@ -25,7 +25,7 @@ except ImportError:
     docker = None
 
 from agentscope.utils.common import create_tempdir, timer
-from agentscope.constants import ServiceExecStatus
+from agentscope.service.service_status import ServiceExecStatus
 from agentscope.service.service_response import ServiceResponse
 from agentscope.constants import (
     _DEFAULT_PYPI_MIRROR,

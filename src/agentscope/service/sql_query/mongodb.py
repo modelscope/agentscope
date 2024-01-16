@@ -3,7 +3,7 @@
 from typing import Optional, Any
 
 from ..service_response import ServiceResponse
-from ...constants import ServiceExecStatus
+from ...service.service_status import ServiceExecStatus
 
 try:
     import pymongo.errors

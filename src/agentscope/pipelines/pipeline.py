@@ -8,6 +8,7 @@ from typing import Optional
 from abc import abstractmethod
 
 from .functional import (
+    Operators,
     placeholder,
     sequentialpipeline,
     ifelsepipeline,
@@ -41,42 +42,42 @@ class PipelineBase(Operator):
 class IfElsePipeline(PipelineBase):
     r"""A template pipeline for implementing control flow like if-else.
 
-    IfElsePipeline(condition_operator, condition_func, if_body_operator,
-    else_body_operator) represents the following workflow::
+    IfElsePipeline(condition_func, if_body_operators, else_body_operators)
+    represents the following workflow::
 
         if condition_func(x):
-            if_body_operator(x)
+            if_body_operators(x)
         else:
-            else_body_operator(x)
+            else_body_operators(x)
     """
 
     def __init__(
         self,
         condition_func: Callable[[dict], bool],
-        if_body_operator: Operator,
-        else_body_operator: Operator = placeholder,
+        if_body_operators: Operators,
+        else_body_operators: Operators = placeholder,
     ) -> None:
         r"""Initialize an IfElsePipeline.
 
         Args:
             condition_func (`Callable[[dict], bool]`):
                 A function that determines whether to execute
-                if_body_operator or else_body_operator based on the input x.
-            if_body_operator (`Operator`):
-                An operator executed when condition_func returns True.
-            else_body_operator (`_Optional`):
-                An operator executed when condition_func returns False,
+                if_body_operators or else_body_operators based on the input x.
+            if_body_operators (`Operators`):
+                Operators executed when condition_func returns True.
+            else_body_operators (`Operators`):
+                Operators executed when condition_func returns False,
                 does nothing and just return the input by default.
         """
         self.condition_func = condition_func
-        self.if_body_operator = if_body_operator
-        self.else_body_operator = else_body_operator
+        self.if_body_operator = if_body_operators
+        self.else_body_operator = else_body_operators
 
     def __call__(self, x: Optional[dict] = None) -> dict:
         return ifelsepipeline(
             condition_func=self.condition_func,
-            if_body_operator=self.if_body_operator,
-            else_body_operator=self.else_body_operator,
+            if_body_operators=self.if_body_operator,
+            else_body_operators=self.else_body_operator,
             x=x,
         )
 
@@ -84,21 +85,21 @@ class IfElsePipeline(PipelineBase):
 class SwitchPipeline(PipelineBase):
     r"""A template pipeline for implementing control flow like switch-case.
 
-    SwitchPipeline(condition_operator, condition_func, case_operators,
-    default_operator) represents the following workflow::
+    SwitchPipeline(condition_func, case_operators, default_operators)
+    represents the following workflow::
 
         switch condition_func(x):
             case k1: return case_operators[k1](x)
             case k2: return case_operators[k2](x)
             ...
-            default: return default_operator(x)
+            default: return default_operators(x)
     """
 
     def __init__(
         self,
         condition_func: Callable[[dict], Any],
-        case_operators: Mapping[Any, Operator],
-        default_operator: Operator = placeholder,
+        case_operators: Mapping[Any, Operators],
+        default_operators: Operators = placeholder,
     ) -> None:
         """Initialize a SwitchPipeline.
 
@@ -106,23 +107,23 @@ class SwitchPipeline(PipelineBase):
             condition_func (`Callable[[dict], Any]`):
                 A function that determines which case_operator to execute
                 based on the input x.
-            case_operators (`dict[Any, Operator]`):
+            case_operators (`dict[Any, Operators]`):
                 A dictionary containing multiple operators and their
                 corresponding trigger conditions.
-            default_operator (`Operator`, defaults to `placeholder`):
-                An operator that is executed when the actual condition do
+            default_operators (`Operators`, defaults to `placeholder`):
+                Operators that are executed when the actual condition do
                 not meet any of the case_operators, does nothing and just
                 return the input by default.
         """
         self.condition_func = condition_func
         self.case_operators = case_operators
-        self.default_operator = default_operator
+        self.default_operators = default_operators
 
     def __call__(self, x: Optional[dict] = None) -> dict:
         return switchpipeline(
             condition_func=self.condition_func,
             case_operators=self.case_operators,
-            default_operator=self.default_operator,
+            default_operators=self.default_operators,
             x=x,
         )
 
@@ -130,46 +131,46 @@ class SwitchPipeline(PipelineBase):
 class ForLoopPipeline(PipelineBase):
     r"""A template pipeline for implementing control flow like for-loop
 
-    ForLoopPipeline(loop_body_operator, max_loop) represents the following
+    ForLoopPipeline(loop_body_operators, max_loop) represents the following
     workflow::
 
         for i in range(max_loop):
-            x = loop_body_operator(x)
+            x = loop_body_operators(x)
 
-    ForLoopPipeline(loop_body_operator, max_loop, break_operator, break_func)
+    ForLoopPipeline(loop_body_operators, max_loop, break_func)
     represents the following workflow::
 
         for i in range(max_loop):
-            x = loop_body_operator(x)
+            x = loop_body_operators(x)
             if break_func(x):
                 break
     """
 
     def __init__(
         self,
-        loop_body_operator: Operator,
+        loop_body_operators: Operators,
         max_loop: int,
         break_func: Callable[[dict], bool] = lambda _: False,
     ):
         r"""Initialize a ForLoopPipeline.
 
         Args:
-            loop_body_operator (`Operator`):
-                An operator executed as the body of the loop.
+            loop_body_operators (`Operators`):
+                Operators executed as the body of the loop.
             max_loop (`int`):
                 Maximum number of loop executions.
             break_func (`Callable[[dict], bool]`, defaults to `lambda _:
             False`):
                 A function used to determine whether to break out of the
-                loop based on the output of the loop_body_operator.
+                loop based on the output of the loop_body_operators.
         """
-        self.loop_body_operator = loop_body_operator
+        self.loop_body_operators = loop_body_operators
         self.max_loop = max_loop
         self.break_func = break_func
 
     def __call__(self, x: Optional[dict] = None) -> dict:
         return forlooppipeline(
-            loop_body_operator=self.loop_body_operator,
+            loop_body_operators=self.loop_body_operators,
             max_loop=self.max_loop,
             break_func=self.break_func,
             x=x,
@@ -179,25 +180,25 @@ class ForLoopPipeline(PipelineBase):
 class WhileLoopPipeline(PipelineBase):
     r"""A template pipeline for implementing control flow like while-loop
 
-    WhileLoopPipeline(loop_body_operator, condition_operator, condition_func)
+    WhileLoopPipeline(loop_body_operators, condition_operator, condition_func)
     represents the following workflow::
 
         i = 0
         while (condition_func(i, x))
-            x = loop_body_operator(x)
+            x = loop_body_operators(x)
             i += 1
     """
 
     def __init__(
         self,
-        loop_body_operator: Operator,
+        loop_body_operators: Operators,
         condition_func: Callable[[int, dict], bool] = lambda _, __: False,
     ):
         """Initialize a WhileLoopPipeline.
 
         Args:
-            loop_body_operator (`Operator`):
-                An operator executed as the body of the loop.
+            loop_body_operators (`Operators`):
+                Operators executed as the body of the loop.
             condition_func (`Callable[[int, dict], bool]`, defaults to
             `lambda _, __: False`):
                 A function that determines whether to continue executing the
@@ -205,11 +206,11 @@ class WhileLoopPipeline(PipelineBase):
                 `loop_body_operator`
         """
         self.condition_func = condition_func
-        self.loop_body_operator = loop_body_operator
+        self.loop_body_operators = loop_body_operators
 
     def __call__(self, x: Optional[dict] = None) -> dict:
         return whilelooppipeline(
-            loop_body_operator=self.loop_body_operator,
+            loop_body_operators=self.loop_body_operators,
             condition_func=self.condition_func,
             x=x,
         )

@@ -5,7 +5,7 @@ import unittest
 from typing import Any
 
 from agentscope.service import retrieve_from_list, cos_sim
-from agentscope.constants import ServiceExecStatus
+from agentscope.service.service_status import ServiceExecStatus
 from agentscope.message import MessageBase, Msg, Tht
 from agentscope.memory.temporary_memory import TemporaryMemory
 from agentscope.models import OpenAIEmbeddingWrapper

@@ -5,7 +5,7 @@ import os
 from typing import Any
 
 from agentscope.service.service_response import ServiceResponse
-from agentscope.constants import ServiceExecStatus
+from agentscope.service.service_status import ServiceExecStatus
 
 
 def read_json_file(file_path: str) -> ServiceResponse:

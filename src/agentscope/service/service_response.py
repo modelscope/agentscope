@@ -2,7 +2,7 @@
 """ Service response module """
 from typing import Any
 
-from agentscope.constants import ServiceExecStatus
+from agentscope.service.service_status import ServiceExecStatus
 
 
 class ServiceResponse(dict):
