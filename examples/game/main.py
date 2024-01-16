@@ -77,6 +77,22 @@ def one_on_one_loop(customers, player):
     visit_customers = [c for c in customers if c.visit()]
     random.shuffle(visit_customers)
 
+    ingredients = yaml.safe_load(open("config/ingredients.yaml"))
+    ingredient_today = {}
+    for category, items in ingredients.items():
+        ingredient_today[category] = (
+            random.sample(items, 3)
+            if len(
+                items,
+            )
+            >= 3
+            and category not in ["调味品", "其他辅料"]
+            else items
+        )
+    print(f"今天拥有的食材是：{ingredient_today}")
+
+    player.set_ingredients(ingredient_today)
+
     if not visit_customers:
         print("今天没有出现客人，请增加与客人的好感度以增大出现概率")
     else:
@@ -98,7 +114,7 @@ def one_on_one_loop(customers, player):
                 break
             speak_print(msg)
             print(
-                "【系统】如果想要最终推荐菜品，请说“推荐xxx” 否则请不要包含“推荐”关键词。"
+                "【系统】如果想要根据顾客口味做菜，请说“做菜” 否则请不要包含“做菜”关键词。"
                 " (对话轮次过多会使得顾客综合满意度下降。)",
             )
             msg = player(msg)
