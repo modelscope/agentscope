@@ -27,6 +27,10 @@ except ImportError:
 from agentscope.utils.common import create_tempdir, timer
 from agentscope.constants import ServiceExecStatus
 from agentscope.service.service_response import ServiceResponse
+from agentscope.constants import (
+    _DEFAULT_PYPI_MIRROR,
+    _DEFAULT_TRUSTED_HOST,
+)
 
 
 def execute_python_code(
@@ -192,10 +196,6 @@ def _execute_python_code_docker(
     packages and retry execution until no ImportErrors are found or until
     execution succeeds.
     """
-    # TODO: delete it or make it configurable when release.
-    # sources pip install from
-    pypi_mirror = "http://pypi.douban.com/simple"
-    pypi_trusted_host = "pypi.douban.com"
 
     def docker_execute(
         exec_code: str,
@@ -231,8 +231,8 @@ def _execute_python_code_docker(
                 # Check if there are missing modules to install
                 install_command = (
                     f"pip install -q {' '.join(missing_modules)} -i"
-                    f" {pypi_mirror} "
-                    f"--trusted-host {pypi_trusted_host}"
+                    f" {_DEFAULT_PYPI_MIRROR} "
+                    f"--trusted-host {_DEFAULT_TRUSTED_HOST}"
                     if missing_modules
                     else ""
                 )

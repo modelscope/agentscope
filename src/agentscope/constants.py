@@ -20,6 +20,9 @@ _DEFAULT_IMAGE_NAME = "image_{}_{}.png"
 _DEFAULT_MAX_RETRIES = 3
 _DEFAULT_MESSAGES_KEY = "inputs"
 _DEFAULT_RETRY_INTERVAL = 1
+# for execute python
+_DEFAULT_PYPI_MIRROR = "http://mirrors.aliyun.com/pypi/simple/"
+_DEFAULT_TRUSTED_HOST = "mirrors.aliyun.com"
 # for summarization
 _DEFAULT_SUMMARIZATION_PROMPT = """
 TEXT: {}
