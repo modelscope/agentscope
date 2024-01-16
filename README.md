@@ -202,7 +202,7 @@ To simplify the construction of agents communication, AgentScope provides two he
     ```python
     from agentscope.pipelines.functional import sequentialpipeline
 
-    x3 = sequentialpipeline(operators=[agent1, agent2, agent3], x=input_msg)
+    x3 = sequentialpipeline([agent1, agent2, agent3], x=input_msg)
     ```
 
 - **MsgHub**: To achieve a group conversation, AgentScope provides message hub.
@@ -213,7 +213,7 @@ To simplify the construction of agents communication, AgentScope provides two he
     agent2.observe(x1)  # The message x1 should be broadcast to other agents
     agent3.observe(x1)
 
-    x2 = agent2(x1）
+    x2 = agent2(x1)
     agent1.observe(x2)
     agent3.observe(x2)
     ```
