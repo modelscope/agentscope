@@ -47,7 +47,7 @@ class StateAgent(AgentBase):
 
     def register_state(
         self,
-        state: Union[int, str],
+        state: Union[int, str, float, tuple],
         handler: Callable,
         properties: Dict[str, Any] = None,
     ) -> None:
@@ -56,7 +56,8 @@ class StateAgent(AgentBase):
         properties associated with the state.
 
         Args:
-            state (str): The name of the state to register.
+            state (Union[int, str, float, tuple]): The name of the state to
+                register.
             handler (Callable): The function that handles the state.
             properties (dict, optional): A dictionary of properties related
                 to the state.
