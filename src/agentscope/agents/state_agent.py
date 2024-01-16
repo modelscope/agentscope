@@ -96,6 +96,6 @@ class StateAgent(AgentBase):
             for prop, value in self.state_properties[new_state].items():
                 setattr(self, prop, value)
         else:
-            logger.info(
+            logger.debug(
                 f"No additional properties to switch for state '{new_state}'.",
             )

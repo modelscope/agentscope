@@ -259,7 +259,7 @@ class TemporaryMemory(MemoryBase):
             memories = self._content
         else:
             if recent_n > self.size():
-                logger.warning(
+                logger.debug(
                     "The retrieved number of memories {} is "
                     "greater than the total number of memories {"
                     "}",

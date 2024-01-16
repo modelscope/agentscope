@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
-from typing import Any, Union
+from typing import Any, Union, Tuple
 import re
 import enum
 import numpy as np
 from loguru import logger
 
-from agentscope.agents import DialogAgent
+from agentscope.agents import StateAgent, DialogAgent
 from agentscope.message import Msg
 
 
 HISTORY_WINDOW = 10
+MIN_BAR_RECEIVED_CONST = 4
+MIN_BAR_FRIENDSHIP_CONST = 80
 
 
 class CustomerConv(enum.IntEnum):
@@ -27,34 +29,46 @@ class CustomerPlot(enum.IntEnum):
     NOT_ACTIVE = 0
 
 
-class Customer(DialogAgent):
+class Customer(StateAgent, DialogAgent):
     def __init__(self, game_config: dict, **kwargs: Any):
         super().__init__(**kwargs)
         self.game_config = game_config
         self.max_itr_preorder = 5
         self.preorder_itr_count = 0
         self.background = self.config["character_setting"]["background"]
+        self.friendship = int(self.config.get("friendship", 60))
 
+        self.cur_state = CustomerConv.WARMING_UP
+
+        self.register_state(
+            state=CustomerConv.WARMING_UP,
+            handler=self._pre_meal_chat,
+        )
+        self.register_state(
+            state=CustomerConv.AFTER_MEAL_CHAT,
+            handler=self._main_plot_chat,
+        )
+        self.register_state(
+            state=CustomerConv.INVITED_GROUP_PLOT,
+            handler=self._main_plot_chat,
+        )
+
+        # TODO: refactor to a sub-state
         self.plot_stage = CustomerPlot.NOT_ACTIVE
-        self.stage = CustomerConv.WARMING_UP
 
     def visit(self):
         return (
             np.random.binomial(
                 n=1,
-                p=self.config.get("visit_prob", 0.99),
+                p=min(self.friendship / 100, 1.0),
             )
             > 0
         )
 
-    def activate_plot(self):
-        self.plot_stage = CustomerPlot.ACTIVE
-
-    def reset_stage(self):
-        self.stage = CustomerConv.WARMING_UP
-
-    def set_invited_stage(self):
-        self.stage = CustomerConv.INVITED_GROUP_PLOT
+    def activate_plot(self) -> None:
+        # Note: once activate, never deactivate
+        if self.friendship >= MIN_BAR_FRIENDSHIP_CONST:
+            self.plot_stage = CustomerPlot.ACTIVE
 
     def reply(self, x: dict = None) -> Union[dict, tuple]:
         # TODO:
@@ -62,17 +76,7 @@ class Customer(DialogAgent):
         # the first/last message must have role 'user'.
         if x is not None:
             x["role"] = "user"
-
-        if self.stage == CustomerConv.WARMING_UP and "推荐" in x["content"]:
-            self.stage = CustomerConv.AFTER_MEAL_CHAT
-            return self._recommendation_to_score(x)
-        elif self.stage == CustomerConv.WARMING_UP:
-            return self._pre_meal_chat(x)
-        elif (
-            self.stage == CustomerConv.AFTER_MEAL_CHAT
-            or self.stage == CustomerConv.INVITED_GROUP_PLOT
-        ):
-            return self._main_plot_chat(x)
+        return StateAgent.reply(self, x=x)
 
     def _recommendation_to_score(self, x: dict) -> dict:
         food = x["content"]
@@ -87,7 +91,7 @@ class Customer(DialogAgent):
         )
         message = Msg(name="user", content=food_judge_prompt, role="user")
 
-        def _parse_score(text: Any) -> (float, Any):
+        def _parse_score(text: Any) -> Tuple[float, Any]:
             score = re.search("([0-9]+)分", str(text)).groups()[0]
             return float(score), text
 
@@ -104,12 +108,26 @@ class Customer(DialogAgent):
         score_discount = 1 - self.preorder_itr_count / self.max_itr_preorder
         score_discount = score_discount if score_discount > 0 else 0
         score = score * score_discount
-        if score > 4:
-            self.stage = CustomerConv.AFTER_MEAL_CHAT
+
+        if score > MIN_BAR_RECEIVED_CONST and self.friendship > 60:
+            self.cur_state = CustomerConv.AFTER_MEAL_CHAT
         self.preorder_itr_count = 0
-        return text, score
+
+        change_in_friendship = score - MIN_BAR_RECEIVED_CONST
+        self.friendship += change_in_friendship
+        change_symbol = "+" if change_in_friendship >= 0 else ""
+        logger.info(
+            f"{self.name}: 好感度变化 {change_symbol}{change_in_friendship} "
+            f"当前好感度为 {self.friendship}",
+        )
+
+        return Msg(role="assistant", name=self.name, content=text, score=score)
 
     def _pre_meal_chat(self, x: dict) -> dict:
+        if "推荐" in x["content"]:
+            self.transition(CustomerConv.AFTER_MEAL_CHAT)
+            return self._recommendation_to_score(x)
+
         self.preorder_itr_count += 1
         system_prompt = self.game_config["order_prompt"].format_map(
             {
@@ -159,13 +177,13 @@ class Customer(DialogAgent):
                     ],
                 },
             )
-            if self.stage == CustomerConv.AFTER_MEAL_CHAT:
+            if self.cur_state == CustomerConv.AFTER_MEAL_CHAT:
                 prompt += self.game_config["hidden_main_plot_after_meal"]
             else:
                 prompt += self.game_config["hidden_main_plot_discussion"]
         else:
             # -> prompt for the helper or irrelvant roles in the current plot
-            if self.stage == CustomerConv.AFTER_MEAL_CHAT:
+            if self.cur_state == CustomerConv.AFTER_MEAL_CHAT:
                 prompt += self.game_config["regular_after_meal_prompt"]
             else:
                 prompt += self.game_config["invited_chat_prompt"]
@@ -250,13 +268,15 @@ class Customer(DialogAgent):
                 conversation += "背景" + ": " + mem["content"]
         background = self.background
         if self.plot_stage == CustomerPlot.ACTIVE:
-             background += self.config["character_setting"]["hidden_plot"]
+            background += self.config["character_setting"]["hidden_plot"]
 
-        pov_prompt = self.game_config["pov_story"].format_map({
-            "name": self.name,
-            "background": background,
-            "conversation": conversation,
-        })
+        pov_prompt = self.game_config["pov_story"].format_map(
+            {
+                "name": self.name,
+                "background": background,
+                "conversation": conversation,
+            },
+        )
         msg = Msg(name="system", role="user", content=pov_prompt)
         pov_story = self.model(messages=[msg])
         print("*" * 20)

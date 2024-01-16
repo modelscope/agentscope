@@ -4,11 +4,12 @@ import yaml
 import inquirer
 import random
 import argparse
+from loguru import logger
 
 import agentscope
 from agentscope.message import Msg
 from agentscope.msghub import msghub
-from customer import Customer
+from customer import Customer, CustomerConv, MIN_BAR_FRIENDSHIP_CONST
 from ruled_user import RuledUser
 
 
@@ -23,13 +24,13 @@ from utils import (
 
 def invited_group_chat(invited_customer, player, cur_plot):
     if len(invited_customer) == 0:
-        return
+        return cur_plot
     invited_names = [c.name for c in invited_customer]
     print("===== invited group chat ====")
     print(f"老板今天邀请了{invited_names}，大家一起聊聊")
     annoucement = {"role": "user", "content": "今天老板邀请大家一起来聚聚。"}
     with msghub(invited_customer + [player], announcement=annoucement):
-        for i in range(10):
+        for _ in range(10):
             questions = [
                 inquirer.List(
                     "ans",
@@ -51,13 +52,15 @@ def invited_group_chat(invited_customer, player, cur_plot):
     invited_names.sort()
     correct_names = GAME_CONFIG["plots"][cur_plot]
     correct_names.sort()
+
+    # TODO: decided by multi factor: chat history of msghub, correct_names
     if invited_names == correct_names:
         print("===== successfully unlock a plot =======")
         questions = [
             inquirer.List(
                 "ans",
                 message="【系统】：需要以哪位角色的视角生成一段完整故事吗？",
-                choices=invited_names + ["跳过"]
+                choices=invited_names + ["跳过"],
             ),
         ]
         answer = inquirer.prompt(questions)["ans"]
@@ -74,32 +77,38 @@ def one_on_one_loop(customers, player):
     visit_customers = [c for c in customers if c.visit()]
     random.shuffle(visit_customers)
 
-    print("今天出现的客人：", [c.name for c in visit_customers])
+    if not visit_customers:
+        print("今天没有出现客人，请增加与客人的好感度以增大出现概率")
+    else:
+        print(f"今天出现的客人: {[c.name for c in visit_customers]}")
     for customer in visit_customers:
-        print(f"顾客{customer.name} 进入餐馆")
+        print(
+            f"顾客{customer.name} 进入餐馆 (当前好感度为: {customer.friendship})",
+        )
         msg = player("游戏开始")
         while True:
             msg = customer(msg)
-            if isinstance(msg, tuple):
+            if "score" in msg:
                 print(
                     f"【系统】{customer.name}（顾客）接受了你的推荐。\n"
-                    f"【系统】顾客对菜本身的评价：{msg[0]}\n"
-                    f"【系统】{customer.name}（顾客）享用完之后，综合满意度为{msg[1]}",
+                    f"【系统】顾客对菜本身的评价：{msg['content']}\n"
+                    f"【系统】{customer.name}（顾客）享用完之后，"
+                    f"综合满意度为{msg['score']}\n",
                 )
                 break
             speak_print(msg)
             print(
-                "【系统】如果想要最终推荐菜品，请说“推荐xxx”；否则请不要包含“推荐”关键词",
+                "【系统】如果想要最终推荐菜品，请说“推荐xxx” 否则请不要包含“推荐”关键词。"
+                " (对话轮次过多会使得顾客综合满意度下降。)",
             )
             msg = player(msg)
             if len(msg["content"]) == 0 or "[TERMINATE]" in msg["content"]:
                 break
 
-        if (isinstance(msg, tuple) and msg[1] < 4) or (
-            isinstance(msg, dict) and len(msg["content"]) == 0
-        ):
-            print(f"顾客{customer.name} 离开餐馆")
-            continue
+        if isinstance(msg, dict):
+            if len(msg["content"]) == 0 or msg["score"] < 4:
+                print(f"顾客{customer.name} 离开餐馆")
+                continue
 
         questions = [
             inquirer.List(
@@ -124,12 +133,20 @@ def one_on_one_loop(customers, player):
             print("【系统】输入`跳过`或者不输入终止对话。")
             msg = player(msg)
             if len(msg["content"]) == 0 or "跳过" in msg["content"]:
+                print(f"顾客{customer.name} 离开餐馆")
                 break
+    return visit_customers
 
 
 def invite_customers(customers):
-    available_customers = [c.name for c in customers]
+    available_customers = [
+        c.name for c in customers if c.friendship >= MIN_BAR_FRIENDSHIP_CONST
+    ]
     invited_customers = []
+
+    if len(available_customers) == 0:
+        print("【系统】：您目前无法邀请任何一个顾客（所有顾客好感度均低于80）。")
+
     while len(available_customers) > 0:
         select_customer = [
             inquirer.List(
@@ -141,15 +158,22 @@ def invite_customers(customers):
         answer = inquirer.prompt(select_customer)["invited"]
         if answer == "END":
             break
-        else:
-            invited_customers.append(answer)
-            available_customers.remove(answer)
+
+        invited_customers.append(answer)
+        available_customers.remove(answer)
     return invited_customers
 
 
-def main(args):
-    customer_configs = yaml.safe_load(open("config/customer_config.yaml"))
-    user_configs = yaml.safe_load(open("config/user.yaml"))
+def main() -> None:
+    with open(
+        "config/customer_config.yaml",
+        "r",
+        encoding="utf-8",
+    ) as customer_file:
+        customer_configs = yaml.safe_load(customer_file)
+
+    with open("config/user.yaml", "r", encoding="utf-8") as user_file:
+        user_configs = yaml.safe_load(user_file)
 
     customers = [
         Customer(
@@ -187,7 +211,7 @@ def main(args):
             invited_customers=invited_customers,
         )
 
-    # initialize main role of current plot stage
+    # initialize main role of current plot cur_state
     main_role = GAME_CONFIG["plots"][checkpoint.cur_plot][0]
     for c in customers:
         if c.name == main_role:
@@ -196,12 +220,12 @@ def main(args):
     while True:
         # daily loop
         if checkpoint.stage_per_night == StagePerNight.INVITED_CHAT:
-            # ============ invitated multi-agent loop ===============
+            # ============ invited multi-agent loop ===============
             # invitation loop, 1) chat in msghub 2) plot unlock success check
             for c in checkpoint.invited_customers:
-                # set customer to invited discussion stage
-                c.set_invited_stage()
-            # initial stage of the
+                # set customer to invited discussion cur_state
+                c.transition(CustomerConv.INVITED_GROUP_PLOT)
+            # initial cur_state of the
             checkpoint.cur_plot = invited_group_chat(
                 checkpoint.invited_customers,
                 player,
@@ -216,19 +240,19 @@ def main(args):
                 for c in customers
                 if c.name not in checkpoint.invited_customers
             ]
-            one_on_one_loop(rest_customers, player)
+            visit_customers = one_on_one_loop(rest_customers, player)
             checkpoint.stage_per_night = StagePerNight.MAKING_INVITATION
         elif checkpoint.stage_per_night == StagePerNight.MAKING_INVITATION:
             # ============ making invitation decision =============
             # player make invitation
-            invited = invite_customers(customers)
+            invited = invite_customers(visit_customers)
             checkpoint.stage_per_night = StagePerNight.INVITED_CHAT
             invited_customers = [c for c in customers if c.name in invited]
             checkpoint.invited_customers = invited_customers
 
-        for c in invited_customers:
-            # reset all customer stage to pre-meal
-            c.reset_stage()
+        for c in customers:
+            # reset all customer cur_state to pre-meal
+            c.transition(CustomerConv.WARMING_UP)
 
         save_game_checkpoint(checkpoint, args.save_checkpoint)
 
@@ -242,7 +266,8 @@ if __name__ == "__main__":
         default="./checkpoints/cp-",
     )
     args = parser.parse_args()
-    GAME_CONFIG = yaml.safe_load(open("./config/game_config.yaml"))
+    with open("./config/game_config.yaml", "r", encoding="utf-8") as file:
+        GAME_CONFIG = yaml.safe_load(file)
 
     TONGYI_CONFIG = {
         "type": "tongyi",
@@ -252,5 +277,12 @@ if __name__ == "__main__":
     }
 
     agentscope.init(model_configs=[TONGYI_CONFIG], logger_level="INFO")
-
-    main(args)
+    game_description = """
+    这是一款模拟餐馆经营的文字冒险游戏，玩家扮演餐馆老板，通过与顾客互动来经营餐馆并解锁剧情。
+    游戏分为三个阶段：随意聊天，一对一互动以及邀请对话。
+    玩家需要根据顾客的喜好和需求来推荐菜品，通过顾客对用餐的满意度来获取好感度并解锁剧情。
+    在游戏中，玩家需要经营餐厅、与顾客互动并决定邀请哪些顾客参与对话，以推动故事剧情的发展。
+    通过与顾客的互动，玩家可以解锁剧情并发展餐馆的故事，体验不同的情节和结局。
+    """
+    logger.info(game_description)
+    main()
