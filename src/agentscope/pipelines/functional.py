@@ -4,7 +4,7 @@
 from typing import Callable, Sequence, Optional
 from typing import Any
 from typing import Mapping
-from ..agents import _Operator
+from ..agents.operator import Operator
 
 
 def placeholder(x: dict = None) -> dict:
@@ -17,7 +17,7 @@ def placeholder(x: dict = None) -> dict:
 
 
 def sequentialpipeline(
-    operators: Sequence[_Operator],
+    operators: Sequence[Operator],
     x: Optional[dict] = None,
 ) -> dict:
     """Functional version of SequentialPipeline.
@@ -43,8 +43,8 @@ def sequentialpipeline(
 def ifelsepipeline(
     x: dict,
     condition_func: Callable,
-    if_body_operator: _Operator,
-    else_body_operator: _Operator = placeholder,
+    if_body_operator: Operator,
+    else_body_operator: Operator = placeholder,
 ) -> dict:
     """Functional version of IfElsePipeline.
 
@@ -72,8 +72,8 @@ def ifelsepipeline(
 def switchpipeline(
     x: dict,
     condition_func: Callable[[dict], Any],
-    case_operators: Mapping[Any, _Operator],
-    default_operator: _Operator = placeholder,
+    case_operators: Mapping[Any, Operator],
+    default_operator: Operator = placeholder,
 ) -> dict:
     """Functional version of SwitchPipeline.
 
@@ -104,7 +104,7 @@ def switchpipeline(
 
 def forlooppipeline(
     x: dict,
-    loop_body_operator: _Operator,
+    loop_body_operator: Operator,
     max_loop: int,
     break_func: Callable[[dict], bool] = lambda _: False,
 ) -> dict:
@@ -136,7 +136,7 @@ def forlooppipeline(
 
 def whilelooppipeline(
     x: dict,
-    loop_body_operator: _Operator,
+    loop_body_operator: Operator,
     condition_func: Callable[[int, dict], bool] = lambda _, __: False,
 ) -> dict:
     """Functional version of WhileLoopPipeline.

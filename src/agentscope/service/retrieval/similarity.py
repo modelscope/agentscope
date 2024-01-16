@@ -7,12 +7,9 @@ try:
 except ImportError:
     np = None
 
-from numbers import Number
-from agentscope.utils.enums import ServiceExecStatus
+from agentscope.constants import ServiceExecStatus
 from agentscope.service.service_response import ServiceResponse
-
-# TODO: moving type definition into a single file
-Embedding = list[Number]
+from agentscope.constants import Embedding
 
 
 def cos_sim(

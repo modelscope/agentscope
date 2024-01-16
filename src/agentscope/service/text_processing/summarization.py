@@ -4,23 +4,12 @@ Service for text processing
 """
 
 from agentscope.models import ModelWrapperBase, OpenAIWrapper
-from agentscope.utils.enums import ServiceExecStatus
+from agentscope.constants import ServiceExecStatus
 from agentscope.service.service_response import ServiceResponse
 from agentscope.message import Msg
-
-
-_DEFAULT_SUMMARIZATION_PROMPT = """
-TEXT: {}
-"""
-
-_DEFAULT_SYSTEM_PROMPT = """
-You are a helpful agent to summarize the text.
-You need to keep all the key information of the text in the summary.
-"""
-
-_DEFAULT_TOKEN_LIMIT_PROMPT = """
-Summarize the text after TEXT in less than {} tokens:
-"""
+from agentscope.constants import _DEFAULT_SUMMARIZATION_PROMPT
+from agentscope.constants import _DEFAULT_SYSTEM_PROMPT
+from agentscope.constants import _DEFAULT_TOKEN_LIMIT_PROMPT
 
 
 def summarization(

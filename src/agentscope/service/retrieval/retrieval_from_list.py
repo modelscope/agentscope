@@ -4,7 +4,7 @@ from typing import Callable, Optional, Any, Sequence
 from loguru import logger
 
 from agentscope.service.service_response import ServiceResponse
-from agentscope.utils.enums import ServiceExecStatus
+from agentscope.constants import ServiceExecStatus
 from agentscope.models import ModelWrapperBase
 
 

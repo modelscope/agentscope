@@ -5,7 +5,7 @@ import shutil
 
 from agentscope.utils.common import write_file
 from agentscope.service.service_response import ServiceResponse
-from agentscope.utils.enums import ServiceExecStatus
+from agentscope.constants import ServiceExecStatus
 
 
 def create_file(file_path: str, content: str = "") -> ServiceResponse:

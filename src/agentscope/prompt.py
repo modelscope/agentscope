@@ -3,8 +3,7 @@
 from typing import Any, Optional, Union
 
 from agentscope.models import OpenAIWrapper, ModelWrapperBase
-
-from agentscope.utils.enums import ShrinkPolicy, PromptType
+from agentscope.constants import ShrinkPolicy, PromptType
 from agentscope.utils.tools import to_openai_dict, to_dialog_str
 
 

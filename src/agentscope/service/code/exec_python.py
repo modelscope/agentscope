@@ -25,7 +25,7 @@ except ImportError:
     docker = None
 
 from agentscope.utils.common import create_tempdir, timer
-from agentscope.utils.enums import ServiceExecStatus
+from agentscope.constants import ServiceExecStatus
 from agentscope.service.service_response import ServiceResponse
 
 

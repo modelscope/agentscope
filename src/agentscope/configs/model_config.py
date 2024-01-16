@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 """The model config."""
 from typing import Any
-
-
-DEFAULT_MAX_RETRIES = 3
-DEFAULT_MESSAGES_KEY = "inputs"
+from ..constants import _DEFAULT_MAX_RETRIES
+from ..constants import _DEFAULT_MESSAGES_KEY
 
 
 class CfgBase(dict):
@@ -108,10 +106,10 @@ class PostApiCfg(CfgBase):
     **generate_args)`, which depends on the specific requirements of the
     model API."""
 
-    max_retries: int = DEFAULT_MAX_RETRIES
+    max_retries: int = _DEFAULT_MAX_RETRIES
     """The max retries of the request."""
 
-    messages_key: str = DEFAULT_MESSAGES_KEY
+    messages_key: str = _DEFAULT_MESSAGES_KEY
     """The key of the prompt messages in `requests.post()`,
     e.g. `request.post(json={${messages_key}: messages, **json_args})`. For
     huggingface and modelscope inference API, the key is `inputs`"""

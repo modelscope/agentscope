@@ -1,6 +1,14 @@
 Module contents
 ===============
 
+constants module
+--------------------------------
+
+.. automodule:: agentscope.constants
+   :noindex:
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 file\_manager module
 --------------------------------

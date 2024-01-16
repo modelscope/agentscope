@@ -4,7 +4,7 @@ import os
 
 from agentscope.utils.common import write_file
 from agentscope.service.service_response import ServiceResponse
-from agentscope.utils.enums import ServiceExecStatus
+from agentscope.constants import ServiceExecStatus
 
 
 def read_text_file(file_path: str) -> ServiceResponse:

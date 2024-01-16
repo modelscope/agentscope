@@ -16,7 +16,7 @@ from agentscope.service import (
     read_json_file,
     write_json_file,
 )
-from agentscope.utils.enums import ServiceExecStatus
+from agentscope.constants import ServiceExecStatus
 
 
 class OperateFileTest(unittest.TestCase):

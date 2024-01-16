@@ -14,10 +14,10 @@ from .functional import (
     forlooppipeline,
     whilelooppipeline,
 )
-from ..agents.operator import _Operator
+from ..agents.operator import Operator
 
 
-class PipelineBase(_Operator):
+class PipelineBase(Operator):
     r"""Base interface of all pipelines.
 
     The pipeline is a special kind of operator that includes
@@ -52,8 +52,8 @@ class IfElsePipeline(PipelineBase):
     def __init__(
         self,
         condition_func: Callable[[dict], bool],
-        if_body_operator: _Operator,
-        else_body_operator: _Operator = placeholder,
+        if_body_operator: Operator,
+        else_body_operator: Operator = placeholder,
     ) -> None:
         r"""Initialize an IfElsePipeline.
 
@@ -96,8 +96,8 @@ class SwitchPipeline(PipelineBase):
     def __init__(
         self,
         condition_func: Callable[[dict], Any],
-        case_operators: Mapping[Any, _Operator],
-        default_operator: _Operator = placeholder,
+        case_operators: Mapping[Any, Operator],
+        default_operator: Operator = placeholder,
     ) -> None:
         """Initialize a SwitchPipeline.
 
@@ -146,7 +146,7 @@ class ForLoopPipeline(PipelineBase):
 
     def __init__(
         self,
-        loop_body_operator: _Operator,
+        loop_body_operator: Operator,
         max_loop: int,
         break_func: Callable[[dict], bool] = lambda _: False,
     ):
@@ -189,7 +189,7 @@ class WhileLoopPipeline(PipelineBase):
 
     def __init__(
         self,
-        loop_body_operator: _Operator,
+        loop_body_operator: Operator,
         condition_func: Callable[[int, dict], bool] = lambda _, __: False,
     ):
         """Initialize a WhileLoopPipeline.
@@ -225,7 +225,7 @@ class SequentialPipeline(PipelineBase):
         x = operators[n](x)
     """
 
-    def __init__(self, operators: Sequence[_Operator]) -> None:
+    def __init__(self, operators: Sequence[Operator]) -> None:
         r"""Initialize a Sequential pipeline.
 
         Args:
