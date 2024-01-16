@@ -39,7 +39,8 @@ class RuledUser(AgentBase):
         while True:
             try:
                 content = input(f"{self.name}: ")
-                if not hasattr(self, "model"):
+
+                if not hasattr(self, "model") or len(content) == 0:
                     break
 
                 ruler_res = self.is_content_valid(content)

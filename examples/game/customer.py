@@ -239,3 +239,26 @@ class Customer(DialogAgent):
         if len(hist_mem) > 0:
             hist_mem[0]["role"], hist_mem[-1]["role"] = "user", "user"
         return hist_mem
+
+    def generate_pov_story(self, recent_n: int = 20):
+        related_mem = self._validated_history_messages(recent_n)
+        conversation = ""
+        for mem in related_mem:
+            if "name" in mem:
+                conversation += mem["name"] + ": " + mem["content"]
+            else:
+                conversation += "背景" + ": " + mem["content"]
+        background = self.background
+        if self.plot_stage == CustomerPlot.ACTIVE:
+             background += self.config["character_setting"]["hidden_plot"]
+
+        pov_prompt = self.game_config["pov_story"].format_map({
+            "name": self.name,
+            "background": background,
+            "conversation": conversation,
+        })
+        msg = Msg(name="system", role="user", content=pov_prompt)
+        pov_story = self.model(messages=[msg])
+        print("*" * 20)
+        logger.info(pov_story)
+        print("*" * 20)

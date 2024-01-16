@@ -6,7 +6,6 @@ import random
 import argparse
 
 import agentscope
-from agentscope.models import read_model_configs
 from agentscope.message import Msg
 from agentscope.msghub import msghub
 from customer import Customer
@@ -54,6 +53,17 @@ def invited_group_chat(invited_customer, player, cur_plot):
     correct_names.sort()
     if invited_names == correct_names:
         print("===== successfully unlock a plot =======")
+        questions = [
+            inquirer.List(
+                "ans",
+                message="【系统】：需要以哪位角色的视角生成一段完整故事吗？",
+                choices=invited_names + ["跳过"]
+            ),
+        ]
+        answer = inquirer.prompt(questions)["ans"]
+        for c in invited_customer:
+            if c.name == answer:
+                c.generate_pov_story()
         cur_plot += 1  # move to next plot
         for c in invited_customer:
             c.refine_background()
