@@ -63,9 +63,8 @@ from loguru import logger
 
 from ..file_manager import file_manager
 from ..utils.tools import _get_timestamp
-
-# TODO: move default values into a single file
-DEFAULT_MAX_RETRIES = 1
+from ..constants import _DEFAULT_MAX_RETRIES
+from ..constants import _DEFAULT_RETRY_INTERVAL
 
 
 def _response_parse_decorator(
@@ -102,7 +101,7 @@ def _response_parse_decorator(
         # Step1: Extract parse_func and fault_handler
         parse_func = kwargs.pop("parse_func", None)
         fault_handler = kwargs.pop("fault_handler", None)
-        max_retries = kwargs.pop("max_retries", None) or DEFAULT_MAX_RETRIES
+        max_retries = kwargs.pop("max_retries", None) or _DEFAULT_MAX_RETRIES
 
         # Step2: Call the model and parse the response
         # Return the response directly if parse_func is not provided
@@ -124,7 +123,7 @@ def _response_parse_decorator(
                     f"{response}.\n Exception: {e}, "
                     f"\t Attempt {itr} / {max_retries}",
                 )
-                time.sleep(0.5 * itr)
+                time.sleep(_DEFAULT_RETRY_INTERVAL * itr)
 
         if fault_handler is not None and callable(fault_handler):
             return fault_handler(response)

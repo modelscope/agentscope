@@ -8,7 +8,7 @@ from loguru import logger
 from ..message import Msg
 from .agent import AgentBase
 from ..prompt import PromptEngine
-from ..utils.enums import PromptType
+from ..prompt import PromptType
 
 
 class DictDialogAgent(AgentBase):

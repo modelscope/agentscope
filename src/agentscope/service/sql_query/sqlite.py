@@ -5,7 +5,7 @@ from typing import Any
 
 from ...service.service_response import ServiceResponse
 from ...utils.common import if_change_database
-from ...utils.enums import ServiceExecStatus
+from ...service.service_status import ServiceExecStatus
 
 try:
     import sqlite3

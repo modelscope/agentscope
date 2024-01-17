@@ -10,14 +10,6 @@ common module
    :undoc-members:
    :show-inheritance:
 
-enums module
-------------------------------
-
-.. automodule:: agentscope.utils.enums
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 logging\_utils module
 ---------------------------------------
 

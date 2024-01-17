@@ -10,12 +10,12 @@ from typing import Callable
 
 from loguru import logger
 
-from .operator import _Operator
+from .operator import Operator
 from ..models import load_model_by_name
 from ..memory import TemporaryMemory
 
 
-class AgentBase(_Operator):
+class AgentBase(Operator):
     """Base class for all agents.
 
     All agents should inherit from this class and implement the `reply`

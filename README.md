@@ -16,24 +16,28 @@ Welcome to join our community on [Discord](https://discord.gg/Fwg5hZ2S) or DingD
 Table of Contents
 =================
 
-* [Installation](#installation)
-  * [From source](#from-source)
-  * [Using pip](#using-pip)
-* [Quick Start](#quick-start)
-  * [Basic Usage](#basic-usage)
-    * [Step 1: Prepare Model Configs](#step-1-prepare-model-configs)
-    * [Step2: Create Agents](#step-2-create-agents)
-    * [Step3: Construct Conversation](#step-3-construct-conversation)
-  * [Advanced Usage](#advanced-usage)
-    * [Pipeline and MsgHub](#pipeline-and-msghub)
-    * [Customize Your Own Agent](#customize-your-own-agent)
-    * [Built-in Resources](#built-in-resources)
-      * [Agent Pool](#agent-pool)
-      * [Services](#services)
-      * [Examples Applications](#example-applications)
-* [License](#license)
-* [Contributing](#contributing)
-* [References](#references)
+- [AgentScope](#agentscope)
+- [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+    - [From source](#from-source)
+    - [Using pip](#using-pip)
+  - [Quick Start](#quick-start)
+    - [Basic Usage](#basic-usage)
+      - [Step 1: Prepare Model Configs](#step-1-prepare-model-configs)
+        - [OpenAI API Config](#openai-api-config)
+        - [Post Request API Config](#post-request-api-config)
+      - [Step 2: Create Agents](#step-2-create-agents)
+      - [Step 3: Construct Conversation](#step-3-construct-conversation)
+    - [Advanced Usage](#advanced-usage)
+      - [**Pipeline** and **MsgHub**](#pipeline-and-msghub)
+      - [Customize Your Own Agent](#customize-your-own-agent)
+      - [Built-in Resources](#built-in-resources)
+        - [Agent Pool](#agent-pool)
+        - [Services](#services)
+        - [Example Applications](#example-applications)
+  - [License](#license)
+  - [Contributing](#contributing)
+  - [References](#references)
 
 ## Installation
 
@@ -209,7 +213,7 @@ To simplify the construction of agents communication, AgentScope provides two he
     agent2.observe(x1)  # The message x1 should be broadcast to other agents
     agent3.observe(x1)
 
-    x2 = agent2(x1）
+    x2 = agent2(x1)
     agent1.observe(x2)
     agent3.observe(x2)
     ```

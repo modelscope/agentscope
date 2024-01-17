@@ -2,7 +2,7 @@
 """ Service response module """
 from typing import Any
 
-from agentscope.utils.enums import ServiceExecStatus
+from agentscope.service.service_status import ServiceExecStatus
 
 
 class ServiceResponse(dict):

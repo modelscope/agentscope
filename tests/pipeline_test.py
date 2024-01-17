@@ -144,8 +144,8 @@ class BasicPipelineTest(unittest.TestCase):
 
         p = IfElsePipeline(
             condition_func=lambda x: "[PASS]" in x["text"],
-            if_body_operator=if_agent,
-            else_body_operator=else_agent,
+            if_body_operators=if_agent,
+            else_body_operators=else_agent,
         )
         x = p(if_x)
         self.assertEqual(x["operation"], "A")
@@ -167,7 +167,7 @@ class BasicPipelineTest(unittest.TestCase):
         p = SwitchPipeline(
             condition_func=lambda x: x["text"].strip(),
             case_operators=case_agents,
-            default_operator=default_agent,
+            default_operators=default_agent,
         )
         for tool in tool_types:
             x = {"text": f"\n\n{tool}\n\n"}
@@ -183,13 +183,13 @@ class BasicPipelineTest(unittest.TestCase):
 
         # test max loop
         x = {"value": 0}
-        p = ForLoopPipeline(loop_body_operator=loop_agent, max_loop=10)
+        p = ForLoopPipeline(loop_body_operators=loop_agent, max_loop=10)
         x = p(x)
         self.assertEqual(x["value"], 10)
 
         x = {"value": 0}
         p = ForLoopPipeline(
-            loop_body_operator=loop_agent,
+            loop_body_operators=loop_agent,
             max_loop=10,
             break_func=lambda x: x["value"] > 5,
         )
@@ -202,7 +202,7 @@ class BasicPipelineTest(unittest.TestCase):
         loop_agent = Loop_while_agent("loop_agent")
 
         p = WhileLoopPipeline(
-            loop_body_operator=loop_agent,
+            loop_body_operators=loop_agent,
             condition_func=lambda i, x: i < 10 and not x["token_num"] > 500,
         )
         for _ in range(50):
@@ -242,14 +242,14 @@ class FunctionalPipelineTest(unittest.TestCase):
         if_x = ifelsepipeline(
             x=if_x,
             condition_func=lambda x: "[PASS]" in x["text"],
-            if_body_operator=if_agent,
-            else_body_operator=else_agent,
+            if_body_operators=if_agent,
+            else_body_operators=else_agent,
         )
         else_x = ifelsepipeline(
             x=else_x,
             condition_func=lambda x: "[PASS]" in x["text"],
-            if_body_operator=if_agent,
-            else_body_operator=else_agent,
+            if_body_operators=if_agent,
+            else_body_operators=else_agent,
         )
         self.assertEqual(if_x["operation"], "A")
         self.assertEqual(else_x["operation"], "B")

@@ -11,7 +11,7 @@ from loguru import logger
 import requests
 
 from agentscope.service.service_response import ServiceResponse
-from agentscope.utils.enums import ServiceExecStatus
+from agentscope.service.service_status import ServiceExecStatus
 
 
 @contextlib.contextmanager

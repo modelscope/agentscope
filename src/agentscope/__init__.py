@@ -7,7 +7,6 @@ from . import memory
 from . import models
 from . import pipelines
 from . import service
-from . import utils  # TODO: not exposed to the user
 from . import message
 from . import prompt
 
