@@ -159,12 +159,12 @@ class RuledUser(AgentBase):
             parse_func=json.loads,
             max_retries=self.retry_time,
         )
-
-        random_quality = random.choice(list(FoodQuality)).value
-        food = random_quality + food
+        # random_quality = random.choice(list(FoodQuality)).value
+        # food = random_quality + food
 
         print(
-            f"【系统】魔法锅周围光芒四射，你听到了轻微的咔哒声。" f"当一切平静下来，一道《{food}》出现在你眼前。",
+            f"【系统】魔法锅周围光芒四射，你听到了轻微的咔哒声。"
+            f"当一切平静下来，一道《{food}》出现在你眼前。",
         )
 
         return food
