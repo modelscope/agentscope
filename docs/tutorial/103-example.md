@@ -58,7 +58,7 @@ dialogAgent = DialogAgent(name="assistant", model="gpt-4")
 userAgent = UserAgent()
 ```
 
-**NOTE**: Please refer to [[Customizing Your Custom Agent with Agent Pool]](https://github.com/alibaba/AgentScope/tree/main/docs/tutorial/202-agent.md) for all available agents.
+**NOTE**: Please refer to [[Customizing Your Custom Agent with Agent Pool]](https://github.com/alibaba/AgentScope/tree/main/docs/tutorial/201-agent.md) for all available agents.
 
 ## Step3: Agent Conversation
 
