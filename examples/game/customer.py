@@ -59,7 +59,7 @@ class Customer(StateAgent, DialogAgent):
 
     def visit(self):
         # TODO: for debug, set the visit prob to be 0.9
-        return np.random.binomial(n=1, p=0.9,) > 0
+        return np.random.binomial(n=1, p=0.9) > 0
         # return (
         #     np.random.binomial(
         #         n=1,
@@ -124,7 +124,10 @@ class Customer(StateAgent, DialogAgent):
             f"当前好感度为 {self.friendship}",
         )
 
-        if score > MIN_BAR_RECEIVED_CONST and self.friendship > MIN_BAR_FRIENDSHIP_CONST:
+        if (
+            score > MIN_BAR_RECEIVED_CONST
+            and self.friendship > MIN_BAR_FRIENDSHIP_CONST
+        ):
             self.transition(CustomerConv.AFTER_MEAL_CHAT)
             print("---", self.cur_state)
         self.preorder_itr_count = 0
@@ -132,7 +135,7 @@ class Customer(StateAgent, DialogAgent):
         return Msg(role="assistant", name=self.name, content=text, score=score)
 
     def _pre_meal_chat(self, x: dict) -> dict:
-        if "推荐" in x["content"]:
+        if "food" in x:
             return self._recommendation_to_score(x)
 
         self.preorder_itr_count += 1
@@ -276,8 +279,10 @@ class Customer(StateAgent, DialogAgent):
                 "character_description": self.background,
             },
         )
-        if self.plot_stage == CustomerPlot.ACTIVE \
-                and self.friendship > MIN_BAR_FRIENDSHIP_CONST:
+        if (
+            self.plot_stage == CustomerPlot.ACTIVE
+            and self.friendship > MIN_BAR_FRIENDSHIP_CONST
+        ):
             # -> prompt for the main role in the current plot
             prompt += self.game_config["hidden_main_plot_prompt"].format_map(
                 {
