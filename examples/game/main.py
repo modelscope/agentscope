@@ -39,8 +39,8 @@ def invited_group_chat(
     invited_names = [c.name for c in invited_customer]
     send_chat_msg("===== invited group chat ====")
     send_chat_msg(f"老板今天邀请了{invited_names}，大家一起聊聊")
-    annoucement = {"role": "user", "content": "今天老板邀请大家一起来聚聚。"}
-    with msghub(invited_customer + [player], announcement=annoucement):
+    announcement = {"role": "user", "content": "今天老板邀请大家一起来聚聚。"}
+    with msghub(invited_customer + [player], announcement=announcement):
         for _ in range(10):
             questions = [
                 inquirer.List(
@@ -51,7 +51,7 @@ def invited_group_chat(
             ]
             answer = query_answer(questions, "ans")
             if answer == "是":
-                msg = player(annoucement)
+                msg = player(announcement)
             elif answer == "否":
                 msg = None
             elif answer == "结束邀请对话":
