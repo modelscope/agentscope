@@ -9,7 +9,12 @@ import inquirer
 
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
-from utils import send_chat_msg, query_answer, get_player_input
+from utils import (
+    send_chat_msg,
+    query_answer,
+    get_player_input,
+    end_query_answer,
+)
 
 
 class FoodQuality(Enum):
@@ -152,16 +157,13 @@ class RuledUser(AgentBase):
                 send_chat_msg("【系统】不可用食材，请重新选择。")
             else:
                 cook_list.append(sel_ingr)
+        end_query_answer()
 
         prompt = self.cook_prompt.format_map(
             {"ingredient": "+".join(cook_list)},
         )
         message = Msg(name="user", content=prompt, role="user")
-        food = self.model(
-            messages=[message],
-            parse_func=json.loads,
-            max_retries=self.retry_time,
-        )
+        food = self.model(messages=[message])
         # random_quality = random.choice(list(FoodQuality)).value
         # food = random_quality + food
 

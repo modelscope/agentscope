@@ -132,7 +132,7 @@ def get_chat_msg():
     return None
 
 
-def send_player_input(msg, role="👵餐厅老板"):
+def send_player_input(msg, role="餐厅老板"):
     if get_use_web_ui():
         glb_queue_chat_input.put([role, msg])
 
@@ -152,8 +152,16 @@ def get_player_input(name=None):
     return content
 
 
-def send_suggests(samples):
-    glb_queue_chat_suggests.put(samples)
+def send_suggests(suggests):
+    msg, _ = suggests
+    if msg == "end":
+        while not glb_queue_chat_suggests.empty():
+            try:
+                glb_queue_chat_suggests.get_nowait()
+            except glb_queue_chat_suggests.Empty:
+                break
+    else:
+        glb_queue_chat_suggests.put(suggests)
 
 
 def get_suggests():
@@ -161,14 +169,38 @@ def get_suggests():
     samples = None
     if not glb_queue_chat_suggests.empty():
         msg, samples = glb_queue_chat_suggests.get(block=False)
+        glb_queue_chat_suggests.put((msg, samples))
     return msg, samples
+
+
+def format_choices(choices):
+    formatted_choices = ""
+    line_length = 0
+
+    for index, choice in enumerate(choices):
+        choice_str = f"[{index + 1}]. {choice}  "
+        choice_length = len(choice_str)
+
+        if line_length + choice_length > 30:
+            formatted_choices += "\n"
+            line_length = 0
+
+        formatted_choices += choice_str
+        line_length += choice_length
+
+    # 去除多余的空格
+    formatted_choices = formatted_choices.rstrip()
+
+    return formatted_choices
 
 
 def query_answer(questions: List, key="ans"):
     if get_use_web_ui():
         suggests = questions[0]
         assert isinstance(suggests, inquirer.questions.List)
-        suggests_msg = suggests.message + "\n" + str(suggests.choices)
+        suggests_msg = (
+            suggests.message + "\n" + format_choices(suggests.choices)
+        )
         print("suggests=", suggests)
         samples = [[choice] for choice in suggests.choices]
         msg = suggests.message
@@ -178,6 +210,11 @@ def query_answer(questions: List, key="ans"):
     else:
         answer = inquirer.prompt(questions)[key]
     return answer
+
+
+def end_query_answer():
+    if get_use_web_ui():
+        send_suggests(("end", None))
 
 
 @dataclass

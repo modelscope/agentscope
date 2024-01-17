@@ -23,6 +23,7 @@ from utils import (
     send_pretty_msg,
     query_answer,
     CheckpointArgs,
+    end_query_answer,
 )
 
 
@@ -58,6 +59,7 @@ def invited_group_chat(
             for c in invited_customer:
                 msg = c(msg)
                 send_pretty_msg(msg)
+        end_query_answer()
 
     invited_names.sort()
     send_chat_msg(cur_plots_indices)
@@ -79,6 +81,7 @@ def invited_group_chat(
                 ),
             ]
             answer = query_answer(questions, "ans")
+            end_query_answer()
             for c in invited_customer:
                 if c.name == answer:
                     c.generate_pov_story()
@@ -161,6 +164,7 @@ def one_on_one_loop(customers, player):
         ]
 
         answer = query_answer(questions, "ans")
+        end_query_answer()
         if answer == "感谢您的光顾。(结束与该顾客的当天对话)":
             continue
         msg = Msg(role="user", name="餐馆老板", content=answer)
@@ -200,6 +204,7 @@ def invite_customers(customers):
 
         invited_customers.append(answer)
         available_customers.remove(answer)
+    end_query_answer()
     return invited_customers
 
 

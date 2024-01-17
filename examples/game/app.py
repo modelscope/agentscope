@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import copy
 import sys
 from typing import List
 import os
@@ -95,14 +96,14 @@ if __name__ == "__main__":
         def update_suggest():
             msg, samples = get_suggests()
             if msg is not None:
-                return user_chat_bot_suggest.update(
+                return gr.Dataset(
                     label=msg,
                     samples=samples,
                     visible=True,
                     components=[user_chat_input],
                 )
             else:
-                return user_chat_bot_suggest.update(
+                return gr.Dataset(
                     label="选择一个",
                     components=[user_chat_input],
                     samples=[],
@@ -112,8 +113,8 @@ if __name__ == "__main__":
         outputs = [chatbot, user_chat_bot_suggest]
         send_button.click(send_message, user_chat_input, user_chat_input)
         user_chat_input.submit(send_message, user_chat_input, user_chat_input)
-        demo.load(get_chat, inputs=None, outputs=chatbot, every=0.1)
-        demo.load(update_suggest, outputs=user_chat_bot_suggest, every=0.1)
+        demo.load(get_chat, inputs=None, outputs=chatbot, every=0.5)
+        demo.load(update_suggest, outputs=user_chat_bot_suggest, every=0.5)
         demo.load(start_game)
 
     demo.launch()
