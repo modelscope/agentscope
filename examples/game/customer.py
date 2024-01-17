@@ -10,8 +10,9 @@ from agentscope.message import Msg
 
 
 HISTORY_WINDOW = 10
+# TODO: for debug, set the score bars to be lower
 MIN_BAR_RECEIVED_CONST = 4
-MIN_BAR_FRIENDSHIP_CONST = 80
+MIN_BAR_FRIENDSHIP_CONST = 30
 
 
 class CustomerConv(enum.IntEnum):
@@ -57,18 +58,24 @@ class Customer(StateAgent, DialogAgent):
         self.plot_stage = CustomerPlot.NOT_ACTIVE
 
     def visit(self):
-        return (
-            np.random.binomial(
-                n=1,
-                p=min(self.friendship / 100, 1.0),
-            )
-            > 0
-        )
+        # TODO: for debug, set the visit prob to be 0.9
+        return np.random.binomial(n=1, p=0.9,) > 0
+        # return (
+        #     np.random.binomial(
+        #         n=1,
+        #         p=min(self.friendship / 100, 1.0),
+        #     )
+        #     > 0
+        # )
 
     def activate_plot(self) -> None:
-        # Note: once activate, never deactivate
-        if self.friendship >= MIN_BAR_FRIENDSHIP_CONST:
-            self.plot_stage = CustomerPlot.ACTIVE
+        # when the customer is the main role in a plot, it will be activated
+        self.plot_stage = CustomerPlot.ACTIVE
+
+    def deactivate_plot(self) -> None:
+        # when the plot in which the customer is a main role is over, the
+        # customer will be deactivated
+        self.plot_stage = CustomerPlot.NOT_ACTIVE
 
     def reply(self, x: dict = None) -> Union[dict, tuple]:
         # TODO:
@@ -109,10 +116,6 @@ class Customer(StateAgent, DialogAgent):
         score_discount = score_discount if score_discount > 0 else 0
         score = score * score_discount
 
-        if score > MIN_BAR_RECEIVED_CONST and self.friendship > 60:
-            self.cur_state = CustomerConv.AFTER_MEAL_CHAT
-        self.preorder_itr_count = 0
-
         change_in_friendship = score - MIN_BAR_RECEIVED_CONST
         self.friendship += change_in_friendship
         change_symbol = "+" if change_in_friendship >= 0 else ""
@@ -121,11 +124,15 @@ class Customer(StateAgent, DialogAgent):
             f"当前好感度为 {self.friendship}",
         )
 
+        if score > MIN_BAR_RECEIVED_CONST and self.friendship > MIN_BAR_FRIENDSHIP_CONST:
+            self.transition(CustomerConv.AFTER_MEAL_CHAT)
+            print("---", self.cur_state)
+        self.preorder_itr_count = 0
+
         return Msg(role="assistant", name=self.name, content=text, score=score)
 
     def _pre_meal_chat(self, x: dict) -> dict:
         if "推荐" in x["content"]:
-            self.transition(CustomerConv.AFTER_MEAL_CHAT)
             return self._recommendation_to_score(x)
 
         self.preorder_itr_count += 1
@@ -143,6 +150,7 @@ class Customer(StateAgent, DialogAgent):
             system_msg,
             x,
         )
+        logger.debug(system_prompt)
         if x is not None:
             self.memory.add(x)
         reply = self.model(messages=prompt)
@@ -161,32 +169,7 @@ class Customer(StateAgent, DialogAgent):
             1.2 the customer has no hidden plot (help with background)
         2. Customer is not a main role in the current plot
         """
-
-        prompt = self.game_config["basic_background_prompt"].format_map(
-            {
-                "name": self.config["name"],
-                "character_description": self.background,
-            },
-        )
-        if self.plot_stage == CustomerPlot.ACTIVE:
-            # -> prompt for the main role in the current plot
-            prompt += self.game_config["hidden_main_plot_prompt"].format_map(
-                {
-                    "hidden_plot": self.config["character_setting"][
-                        "hidden_plot"
-                    ],
-                },
-            )
-            if self.cur_state == CustomerConv.AFTER_MEAL_CHAT:
-                prompt += self.game_config["hidden_main_plot_after_meal"]
-            else:
-                prompt += self.game_config["hidden_main_plot_discussion"]
-        else:
-            # -> prompt for the helper or irrelvant roles in the current plot
-            if self.cur_state == CustomerConv.AFTER_MEAL_CHAT:
-                prompt += self.game_config["regular_after_meal_prompt"]
-            else:
-                prompt += self.game_config["invited_chat_prompt"]
+        prompt = self._gen_plot_related_prompt()
 
         logger.debug(f"{self.name} system prompt: {prompt}")
 
@@ -282,3 +265,36 @@ class Customer(StateAgent, DialogAgent):
         print("*" * 20)
         logger.info(pov_story)
         print("*" * 20)
+
+    def _gen_plot_related_prompt(self) -> str:
+        """
+        generate prompot depending on the state and friendship of the customer
+        """
+        prompt = self.game_config["basic_background_prompt"].format_map(
+            {
+                "name": self.config["name"],
+                "character_description": self.background,
+            },
+        )
+        if self.plot_stage == CustomerPlot.ACTIVE \
+                and self.friendship > MIN_BAR_FRIENDSHIP_CONST:
+            # -> prompt for the main role in the current plot
+            prompt += self.game_config["hidden_main_plot_prompt"].format_map(
+                {
+                    "hidden_plot": self.config["character_setting"][
+                        "hidden_plot"
+                    ],
+                },
+            )
+            if self.cur_state == CustomerConv.AFTER_MEAL_CHAT:
+                prompt += self.game_config["hidden_main_plot_after_meal"]
+            else:
+                prompt += self.game_config["hidden_main_plot_discussion"]
+        else:
+            # -> prompt for the helper or irrelvant roles in the current plot
+            if self.cur_state == CustomerConv.AFTER_MEAL_CHAT:
+                prompt += self.game_config["regular_after_meal_prompt"]
+            else:
+                prompt += self.game_config["invited_chat_prompt"]
+
+        return prompt

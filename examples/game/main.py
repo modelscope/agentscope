@@ -19,12 +19,14 @@ from utils import (
     load_game_checkpoint,
     save_game_checkpoint,
     speak_print,
+    check_active_plot,
 )
 
 
-def invited_group_chat(invited_customer, player, cur_plot):
+def invited_group_chat(invited_customer, player, cur_plots_indices):
+    logger.debug("\n---active_plots:" + str(cur_plots_indices))
     if len(invited_customer) == 0:
-        return cur_plot
+        return cur_plots_indices
     invited_names = [c.name for c in invited_customer]
     print("===== invited group chat ====")
     print(f"老板今天邀请了{invited_names}，大家一起聊聊")
@@ -50,27 +52,31 @@ def invited_group_chat(invited_customer, player, cur_plot):
                 speak_print(msg)
 
     invited_names.sort()
-    correct_names = GAME_CONFIG["plots"][cur_plot]
-    correct_names.sort()
+    print(cur_plots_indices)
+    for idx in cur_plots_indices:
+        correct_names = [GAME_CONFIG["plots"][idx]["main_role"]] + \
+                        GAME_CONFIG["plots"][idx]["supporting_roles"]
+        correct_names.sort()
+        print("current names", correct_names)
 
-    # TODO: decided by multi factor: chat history of msghub, correct_names
-    if invited_names == correct_names:
-        print("===== successfully unlock a plot =======")
-        questions = [
-            inquirer.List(
-                "ans",
-                message="【系统】：需要以哪位角色的视角生成一段完整故事吗？",
-                choices=invited_names + ["跳过"],
-            ),
-        ]
-        answer = inquirer.prompt(questions)["ans"]
-        for c in invited_customer:
-            if c.name == answer:
-                c.generate_pov_story()
-        cur_plot += 1  # move to next plot
-        for c in invited_customer:
-            c.refine_background()
-    return cur_plot
+        # TODO: decided by multi factor: chat history of msghub, correct_names
+        if invited_names == correct_names:
+            print("===== successfully unlock a plot =======")
+            questions = [
+                inquirer.List(
+                    "ans",
+                    message="【系统】：需要以哪位角色的视角生成一段完整故事吗？",
+                    choices=invited_names + ["跳过"],
+                ),
+            ]
+            answer = inquirer.prompt(questions)["ans"]
+            for c in invited_customer:
+                if c.name == answer:
+                    c.generate_pov_story()
+            for c in invited_customer:
+                c.refine_background()
+            return idx
+    return None
 
 
 def one_on_one_loop(customers, player):
@@ -131,7 +137,7 @@ def one_on_one_loop(customers, player):
                 "ans",
                 message="【系统】：接下来你会说些什么吗？",
                 choices=[
-                    "这里是赠送的果盘，请您享用。还有什么是我能为您做的呢？",
+                    "感谢您的今天来我们这里消费。这里是赠送的果盘，请您享用。还有什么是我能为您做的呢？",
                     "感谢您的光顾。(结束与该顾客的当天对话)",
                 ],
             ),
@@ -204,33 +210,35 @@ def main() -> None:
 
     player = RuledUser(**user_configs)
 
-    invited_customers = []
-    stage_per_night = StagePerNight.CASUAL_CHAT_FOR_MEAL
-    cur_plot = 0
-
     if args.load_checkpoint is not None:
         checkpoint = load_game_checkpoint(args.load_checkpoint)
-        customers = checkpoint.customers
-        stage_per_night = checkpoint.stage_per_night
-        cur_plot = (checkpoint.cur_plot,)
-        invited_customers = checkpoint.invited_customers
-        print(
-            "load checkpoint",
-            checkpoint.stage_per_night,
-            checkpoint.cur_plot,
+        logger.debug(
+            "load checkpoint\n" + str(checkpoint.stage_per_night)
+            + str(checkpoint.cur_plots),
         )
     else:
+        invited_customers = []
+        stage_per_night = StagePerNight.CASUAL_CHAT_FOR_MEAL
+        cur_plots, done_plots = [], []
         checkpoint = GameCheckpoint(
             stage_per_night=stage_per_night,
-            cur_plot=cur_plot,
+            cur_plots=cur_plots,
+            done_plots=done_plots,
             customers=customers,
             invited_customers=invited_customers,
         )
 
+    # set current plot and done plots
     # initialize main role of current plot cur_state
-    main_role = GAME_CONFIG["plots"][checkpoint.cur_plot][0]
+    plots = GAME_CONFIG["plots"]
+    for i in checkpoint.done_plots:
+        plots[i]["state"] = "done"
+    to_activate_customers, active_plots = check_active_plot(plots, None)
+    checkpoint.cur_plots = active_plots
+    logger.debug(str(to_activate_customers) + str(active_plots))
+    to_activate_customers = set(to_activate_customers)
     for c in customers:
-        if c.name == main_role:
+        if c.name in to_activate_customers:
             c.activate_plot()
 
     while True:
@@ -242,11 +250,20 @@ def main() -> None:
                 # set customer to invited discussion cur_state
                 c.transition(CustomerConv.INVITED_GROUP_PLOT)
             # initial cur_state of the
-            checkpoint.cur_plot = invited_group_chat(
+            done_plot_idx = invited_group_chat(
                 checkpoint.invited_customers,
                 player,
-                checkpoint.cur_plot,
+                checkpoint.cur_plots,
             )
+            if done_plot_idx is not None:
+                next_active_roles, active_plots = check_active_plot(plots, done_plot_idx)
+                logger.debug("---active_plots:", active_plots)
+                checkpoint.cur_plots = active_plots
+                checkpoint.done_plots += [done_plot_idx]
+                next_active_roles = set(next_active_roles)
+                for c in checkpoint.customers:
+                    if c.name in next_active_roles:
+                        c.activate_plot()
             checkpoint.stage_per_night = StagePerNight.CASUAL_CHAT_FOR_MEAL
         elif checkpoint.stage_per_night == StagePerNight.CASUAL_CHAT_FOR_MEAL:
             # ==========  one-on-one loop =================
@@ -292,7 +309,7 @@ if __name__ == "__main__":
         "api_key": os.environ.get("TONGYI_API_KEY"),
     }
 
-    agentscope.init(model_configs=[TONGYI_CONFIG], logger_level="INFO")
+    agentscope.init(model_configs=[TONGYI_CONFIG], logger_level="DEBUG")
     game_description = """
     这是一款模拟餐馆经营的文字冒险游戏，玩家扮演餐馆老板，通过与顾客互动来经营餐馆并解锁剧情。
     游戏分为三个阶段：随意聊天，一对一互动以及邀请对话。

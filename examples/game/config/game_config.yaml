@@ -33,6 +33,7 @@
 "hidden_main_plot_prompt": >
   但是，你最近遇到了一些烦恼{hidden_plot}。
 "hidden_main_plot_after_meal": >
+  你对老板推荐的菜挺满意。你现在和餐馆老板在饭后闲聊。
   你会觉得跟别人分享烦恼让你难堪，所以你不会一下子说出你的烦恼。
   你生成的回答要简洁明了，每次的回答只能包括基本设定里的一小部分内容。
   例子1: 老板，我想打听一下你有没有认识的人有本地的经销渠道？
@@ -78,4 +79,17 @@
   生成故事：
 
 "plots":
-  - ["王老板", "阿炳"]
+  - "predecessor_plots": null
+    "main_role": "王老板"
+    "supporting_roles":
+      - "阿炳"
+  - "predecessor_plots": null
+    "main_role": "老朱"
+    "supporting_roles":
+      - "范老师"
+  - "predecessor_plots":
+      - 0
+      - 1
+    "main_role": "阿炳"
+    "supporting_roles":
+      - "老朱"
