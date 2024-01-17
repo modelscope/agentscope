@@ -45,7 +45,7 @@ class Prompts:
         "{{\n"
         '    "thought": "thought", \n'
         '    "speak": "thoughts summary to say",\n'
-        '    "eliminate": ture/false\n'  
+        '    "eliminate": ture/false\n'
         "}}"
     )
 
