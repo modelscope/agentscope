@@ -4,10 +4,11 @@ Unit tests for Monitor classes
 """
 
 import unittest
-
+import uuid
+import os
 from agentscope.utils import MonitorBase, QuotaExceededError, MonitorFactory
 
-from agentscope.utils.monitor import DictMonitor
+from agentscope.utils.monitor import DictMonitor, SqliteMonitor
 
 
 class MonitorFactoryTest(unittest.TestCase):
@@ -91,7 +92,7 @@ class MonitorTestBase(unittest.TestCase):
         self.assertTrue(self.monitor.set_quota("token_num", 200))
         # add success and check new value
         self.assertTrue(self.monitor.add("token_num", 10))
-        self.assertEqual(self.monitor.get_value("token_num"), 111)
+        self.assertEqual(self.monitor.get_value("token_num"), 20)
         # clear an existing metric
         self.assertTrue(self.monitor.clear("token_num"))
         # clear an not existing metric
@@ -166,3 +167,14 @@ class DictMonitorTest(MonitorTestBase):
 
     def get_monitor_instance(self) -> MonitorBase:
         return DictMonitor()
+
+
+class SqliteMonitorTest(MonitorTestBase):
+    """Test class for SqliteMonitor"""
+
+    def get_monitor_instance(self) -> MonitorBase:
+        self.db_path = f"./test-{uuid.uuid4()}.db"
+        return SqliteMonitor(self.db_path)
+
+    def tearDown(self) -> None:
+        os.remove(self.db_path)

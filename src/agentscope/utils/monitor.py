@@ -3,10 +3,14 @@
 
 import re
 import copy
+import sqlite3
 from abc import ABC
 from abc import abstractmethod
-from typing import Optional, Any
+from contextlib import contextmanager
+from typing import Optional, Any, Generator
 from loguru import logger
+
+from agentscope.constants import _DEFAULT_MONITOR_TABLE_NAME
 
 
 class MonitorBase(ABC):
@@ -263,10 +267,9 @@ class DictMonitor(MonitorBase):
 
     @return_false_if_not_exists
     def add(self, metric_name: str, value: float) -> bool:
-        self.metrics[metric_name]["value"] += value
         if (
             self.metrics[metric_name]["quota"] is not None
-            and self.metrics[metric_name]["value"]
+            and self.metrics[metric_name]["value"] + value
             > self.metrics[metric_name]["quota"]
         ):
             logger.warning(f"Metric [{metric_name}] quota exceeded.")
@@ -274,6 +277,7 @@ class DictMonitor(MonitorBase):
                 metric_name=metric_name,
                 quota=self.metrics[metric_name]["quota"],
             )
+        self.metrics[metric_name]["value"] += value
         return True
 
     def exists(self, metric_name: str) -> bool:
@@ -325,6 +329,251 @@ class DictMonitor(MonitorBase):
                 for key, value in self.metrics.items()
                 if pattern.search(key)
             }
+
+
+@contextmanager
+def sqlite_transaction(db_path: str) -> Generator:
+    """Get a sqlite transaction cursor.
+
+    Args:
+        db_path (`str`): path to the sqlite db file
+
+    Yields:
+        `Generator`: a cursor with transaction
+    """
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    try:
+        conn.execute("BEGIN")
+        yield cursor
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        raise e
+    finally:
+        cursor.close()
+        conn.close()
+
+
+@contextmanager
+def sqlite_cursor(db_path: str) -> Generator:
+    """Get a sqlite cursor.
+
+    Args:
+        db_path (`str`): path to the sqlite db file
+
+    Yields:
+        `Generator`: a cursor
+    """
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    try:
+        yield cursor
+    finally:
+        cursor.close()
+        conn.close()
+
+
+class SqliteMonitor(MonitorBase):
+    """A monitor based on sqlite"""
+
+    def __init__(
+        self,
+        db_path: str,
+        table_name: str = _DEFAULT_MONITOR_TABLE_NAME,
+        drop_exists: bool = False,
+    ) -> None:
+        super().__init__()
+        self.db_path = db_path
+        self.table_name = table_name
+        self._create_monitor_table(drop_exists)
+
+    def _create_monitor_table(self, drop_exists: bool = False) -> None:
+        with sqlite_transaction(self.db_path) as cursor:
+            if drop_exists:
+                cursor.execute(f"DROP TABLE IF EXISTS {self.table_name};")
+            cursor.execute(
+                f"""
+                CREATE TABLE IF NOT EXISTS {self.table_name} (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT UNIQUE NOT NULL,
+                    value REAL NOT NULL,
+                    quota REAL,
+                    unit TEXT
+                );""",
+            )
+
+    def register(
+        self,
+        metric_name: str,
+        metric_unit: Optional[str] = None,
+        quota: Optional[float] = None,
+    ) -> bool:
+        with sqlite_transaction(self.db_path) as cursor:
+            if self._exists(cursor, metric_name):
+                return False
+            cursor.execute(
+                f"""
+                INSERT INTO {self.table_name} (name, value, quota, unit)
+                VALUES (?, ?, ?, ?)
+            """,
+                (metric_name, 0.0, quota, metric_unit),
+            )
+            logger.info(
+                f"Register metric [{metric_name}] to SqliteMonitor with unit "
+                f"[{metric_unit}] and quota [{quota}]",
+            )
+            return True
+
+    def add(self, metric_name: str, value: float) -> bool:
+        with sqlite_transaction(self.db_path) as cursor:
+            if not self._exists(cursor, metric_name):
+                return False
+            cursor.execute(
+                f"""
+                UPDATE {self.table_name}
+                SET value = value + ?
+                WHERE name = ?
+            """,
+                (value, metric_name),
+            )
+            cursor.execute(
+                f"""
+                SELECT value, quota FROM {self.table_name}
+                WHERE name = ?""",
+                (metric_name,),
+            )
+            row = cursor.fetchone()
+            if row:
+                new_value, quota = row
+                if quota is not None and new_value > quota:
+                    logger.warning(f"Metric [{metric_name}] quota exceeded.")
+                    raise QuotaExceededError(
+                        metric_name=metric_name,
+                        quota=quota,
+                    )
+            return True
+
+    def clear(self, metric_name: str) -> bool:
+        with sqlite_transaction(self.db_path) as cursor:
+            if not self._exists(cursor, metric_name):
+                return False
+            cursor.execute(
+                f"""
+                UPDATE {self.table_name}
+                SET value = value + ?
+                WHERE name = ?
+            """,
+                (0.0, metric_name),
+            )
+            return True
+
+    def remove(self, metric_name: str) -> bool:
+        with sqlite_transaction(self.db_path) as cursor:
+            if not self._exists(cursor, metric_name):
+                return False
+            cursor.execute(
+                f"""
+                DELETE FROM {self.table_name}
+                WHERE name = ?""",
+                (metric_name,),
+            )
+        return True
+
+    def _get_metric(self, cursor: sqlite3.Cursor, metric_name: str) -> dict:
+        cursor.execute(
+            f"""
+            SELECT value, quota, unit FROM {self.table_name}
+            WHERE name = ?""",
+            (metric_name,),
+        )
+        row = cursor.fetchone()
+        if row:
+            value, quota, unit = row
+            return {
+                "value": value,
+                "quota": quota,
+                "unit": unit,
+            }
+        else:
+            raise RuntimeError(f"Fail to get metric {metric_name}")
+
+    def get_value(self, metric_name: str) -> Optional[float]:
+        with sqlite_cursor(self.db_path) as cursor:
+            if not self._exists(cursor, metric_name):
+                return None
+            metric = self._get_metric(cursor, metric_name)
+            return metric["value"]
+
+    def get_quota(self, metric_name: str) -> Optional[float]:
+        with sqlite_cursor(self.db_path) as cursor:
+            if not self._exists(cursor, metric_name):
+                return None
+            metric = self._get_metric(cursor, metric_name)
+            return metric["quota"]
+
+    def set_quota(self, metric_name: str, quota: float) -> bool:
+        with sqlite_transaction(self.db_path) as cursor:
+            if not self._exists(cursor, metric_name):
+                return False
+            cursor.execute(
+                f"""
+                UPDATE {self.table_name}
+                SET quota = ?
+                WHERE name = ?
+            """,
+                (quota, metric_name),
+            )
+            return True
+
+    def get_unit(self, metric_name: str) -> Optional[str]:
+        with sqlite_cursor(self.db_path) as cursor:
+            if not self._exists(cursor, metric_name):
+                return None
+            metric = self._get_metric(cursor, metric_name)
+            return metric["unit"]
+
+    def get_metric(self, metric_name: str) -> Optional[dict]:
+        with sqlite_cursor(self.db_path) as cursor:
+            if not self._exists(cursor, metric_name):
+                return None
+            return self._get_metric(cursor, metric_name)
+
+    def get_metrics(self, filter_regex: Optional[str] = None) -> dict:
+        with sqlite_cursor(self.db_path) as cursor:
+            cursor.execute(f"SELECT * FROM {self.table_name}")
+            rows = cursor.fetchall()
+            metrics = {
+                row[1]: {
+                    "value": row[2],
+                    "quota": row[3],
+                    "unit": row[4],
+                }
+                for row in rows
+            }
+        if filter_regex is None:
+            return metrics
+        else:
+            pattern = re.compile(filter_regex)
+            return {
+                key: value
+                for key, value in metrics.items()
+                if pattern.search(key)
+            }
+
+    def _exists(self, cursor: sqlite3.Cursor, name: str) -> bool:
+        cursor.execute(
+            f"""
+            SELECT 1 FROM {self.table_name}
+            WHERE name = ? LIMIT 1
+        """,
+            (name,),
+        )
+        return cursor.fetchone() is not None
+
+    def exists(self, metric_name: str) -> bool:
+        with sqlite_cursor(self.db_path) as cursor:
+            return self._exists(cursor, metric_name)
 
 
 class MonitorFactory:

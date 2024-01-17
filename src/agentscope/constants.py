@@ -23,6 +23,8 @@ _DEFAULT_RETRY_INTERVAL = 1
 # for execute python
 _DEFAULT_PYPI_MIRROR = "http://mirrors.aliyun.com/pypi/simple/"
 _DEFAULT_TRUSTED_HOST = "mirrors.aliyun.com"
+# for monitor
+_DEFAULT_MONITOR_TABLE_NAME = "monitor_metrics"
 # for summarization
 _DEFAULT_SUMMARIZATION_PROMPT = """
 TEXT: {}
