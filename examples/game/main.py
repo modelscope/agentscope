@@ -57,7 +57,7 @@ def invited_group_chat(invited_customer, player, cur_plots_indices):
         correct_names = [GAME_CONFIG["plots"][idx]["main_role"]] + \
                         GAME_CONFIG["plots"][idx]["supporting_roles"]
         correct_names.sort()
-        print("corrent names", correct_names)
+        print("current names", correct_names)
 
         # TODO: decided by multi factor: chat history of msghub, correct_names
         if invited_names == correct_names:
