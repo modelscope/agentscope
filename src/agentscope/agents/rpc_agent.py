@@ -292,6 +292,9 @@ class RpcAgentBase(AgentBase, RpcAgentServicer):
             x (`Union[dict, Sequence[dict]]`):
                 The input to be observed.
         """
+        if self.client is None:
+            self.server_launcher.launch()
+            self.client = RpcAgentClient(host=self.host, port=self.port)
         self.client.call_func(
             func_name="_observe",
             value=serialize(x),  # type: ignore [arg-type]
