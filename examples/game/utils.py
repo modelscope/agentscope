@@ -61,7 +61,11 @@ def check_active_plot(
     active_plots = []
 
     if curr_done is not None:
-        plots[curr_done]["state"] = "done"
+        if isinstance(curr_done, int):
+            plots[curr_done]["state"] = "done"
+        if isinstance(curr_done, list):
+            for i in curr_done:
+                plots[i]["state"] = "done"
 
     # activate those with dependencies and the dependencies are done
     for idx, p in enumerate(plots):

@@ -45,14 +45,14 @@ class Customer(StateAgent, DialogAgent):
 
     def visit(self):
         # TODO: for debug, set the visit prob to be 0.9
-        return np.random.binomial(n=1, p=0.9) > 0
-        # return (
-        #     np.random.binomial(
-        #         n=1,
-        #         p=min(self.friendship / 100, 1.0),
-        #     )
-        #     > 0
-        # )
+        # return np.random.binomial(n=1, p=0.9) > 0
+        return (
+            np.random.binomial(
+                n=1,
+                p=min(10 / 100, 1.0),
+            )
+            > 0
+        )
 
     def activate_plot(self) -> None:
         # when the customer is the main role in a plot, it will be activated

@@ -62,13 +62,12 @@ def invited_group_chat(
         end_query_answer()
 
     invited_names.sort()
-    # print(cur_plots_indices)
+
     for idx in cur_plots_indices:
         correct_names = [game_config["plots"][idx]["main_role"]] + game_config[
             "plots"
         ][idx]["supporting_roles"]
         correct_names.sort()
-        send_chat_msg("current names", correct_names)
 
         # TODO: decided by multi factor: chat history of msghub, correct_names
         if invited_names == correct_names:
@@ -324,7 +323,6 @@ def main(args) -> None:
         for c in customers:
             # reset all customer cur_state to pre-meal
             c.transition(CustomerConv.WARMING_UP)
-
         save_game_checkpoint(checkpoint, args.save_checkpoint)
 
 
