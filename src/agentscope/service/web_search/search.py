@@ -4,7 +4,7 @@ from typing import Optional
 
 from agentscope.service.service_response import ServiceResponse
 from agentscope.utils.common import requests_get
-from agentscope.utils.enums import ServiceExecStatus
+from agentscope.service.service_status import ServiceExecStatus
 
 
 def web_search(

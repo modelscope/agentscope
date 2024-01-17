@@ -8,11 +8,9 @@ import requests
 from loguru import logger
 
 from .model import ModelWrapperBase
-
-# TODO: move default values into a single file
-DEFAULT_MAX_RETRIES = 3
-DEFAULT_MESSAGES_KEY = "inputs"
-RETRY_TIME_INTERVAL = 1
+from ..constants import _DEFAULT_MAX_RETRIES
+from ..constants import _DEFAULT_MESSAGES_KEY
+from ..constants import _DEFAULT_RETRY_INTERVAL
 
 
 class PostApiModelWrapper(ModelWrapperBase):
@@ -27,8 +25,9 @@ class PostApiModelWrapper(ModelWrapperBase):
         timeout: int = 30,
         json_args: dict = None,
         post_args: dict = None,
-        max_retries: int = DEFAULT_MAX_RETRIES,
-        messages_key: str = DEFAULT_MESSAGES_KEY,
+        max_retries: int = _DEFAULT_MAX_RETRIES,
+        messages_key: str = _DEFAULT_MESSAGES_KEY,
+        retry_interval: int = _DEFAULT_RETRY_INTERVAL,
     ) -> None:
         """Initialize the model wrapper.
 
@@ -52,6 +51,8 @@ class PostApiModelWrapper(ModelWrapperBase):
                 exception.
             messages_key (`str`, defaults to `inputs`):
                 The key of the input messages in the json argument.
+            retry_interval (`int`, defaults to `1`):
+                The interval between retries when a request fails.
 
         Note:
             When an object of `PostApiModelWrapper` is called, the arguments
@@ -79,6 +80,7 @@ class PostApiModelWrapper(ModelWrapperBase):
         self.post_args = post_args or {}
         self.max_retries = max_retries
         self.messages_key = messages_key
+        self.retry_interval = retry_interval
 
     def __call__(self, input_: str, **kwargs: Any) -> dict:
         """Calling the model with requests.post.
@@ -122,14 +124,14 @@ class PostApiModelWrapper(ModelWrapperBase):
             if response.status_code == requests.codes.ok:
                 break
 
-            if i < DEFAULT_MAX_RETRIES:
+            if i < self.max_retries:
                 # av
                 logger.warning(
                     f"Failed to call the model with "
                     f"requests.codes == {response.status_code}, retry "
                     f"{i + 1}/{self.max_retries} times",
                 )
-                time.sleep(i * RETRY_TIME_INTERVAL)
+                time.sleep(i * self.retry_interval)
 
         # step3: record model invocation
         # record the model api invocation, which will be skipped if

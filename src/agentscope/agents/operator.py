@@ -5,7 +5,7 @@ from abc import abstractmethod
 from typing import Any
 
 
-class _Operator(ABC):
+class Operator(ABC):
     """
     Abstract base class `Operator` defines a protocol for classes that
     implement callable behavior.

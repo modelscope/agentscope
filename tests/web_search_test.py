@@ -5,7 +5,7 @@ from unittest.mock import Mock, patch, MagicMock
 
 from agentscope.service import ServiceResponse
 from agentscope.service import web_search
-from agentscope.utils.enums import ServiceExecStatus
+from agentscope.service.service_status import ServiceExecStatus
 
 
 class TestWebSearches(unittest.TestCase):

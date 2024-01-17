@@ -9,14 +9,13 @@ import numpy as np
 from agentscope._runtime import Runtime
 from agentscope.utils.tools import _download_file, _get_timestamp
 from agentscope.utils.tools import _generate_random_code
-
-# TODO: move default values into one file
-_DEFAULT_DIR = "./runs"
-_DEFAULT_SUBDIR_CODE = "code"
-_DEFAULT_SUBDIR_FILE = "file"
-_DEFAULT_SUBDIR_INVOKE = "invoke"
-
-_DEFAULT_IMAGE_NAME = "image_{}_{}.png"
+from agentscope.constants import (
+    _DEFAULT_DIR,
+    _DEFAULT_SUBDIR_CODE,
+    _DEFAULT_SUBDIR_FILE,
+    _DEFAULT_SUBDIR_INVOKE,
+    _DEFAULT_IMAGE_NAME,
+)
 
 
 class _FileManager:
