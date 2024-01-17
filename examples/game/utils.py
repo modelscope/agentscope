@@ -1,36 +1,26 @@
 # -*- coding: utf-8 -*-
-import enum
 import os
 import pickle
 from typing import Optional, List
 from datetime import datetime
-from customer import Customer
 from colorist import BgBrightColor
 import inquirer
 from multiprocessing import Queue
 from dataclasses import dataclass
 from agentscope.message import Msg
-
+from enums import StagePerNight
 
 USE_WEB_UI = False
-
-
-class StagePerNight(enum.IntEnum):
-    """Enum for customer status."""
-
-    INVITED_CHAT = 0
-    CASUAL_CHAT_FOR_MEAL = 1
-    MAKING_INVITATION = 2
 
 
 class GameCheckpoint:
     def __init__(
         self,
         stage_per_night: StagePerNight,
-        customers: list[Customer],
+        customers: list,
         cur_plots: list,
         done_plots: list,
-        invited_customers: list[Customer],
+        invited_customers: list,
     ):
         self.stage_per_night = stage_per_night
         self.customers = customers
@@ -154,12 +144,15 @@ def get_player_input(name=None):
 
 def send_suggests(suggests):
     msg, _ = suggests
+
+    while not glb_queue_chat_suggests.empty():
+        try:
+            glb_queue_chat_suggests.get_nowait()
+        except glb_queue_chat_suggests.Empty:
+            break
+
     if msg == "end":
-        while not glb_queue_chat_suggests.empty():
-            try:
-                glb_queue_chat_suggests.get_nowait()
-            except glb_queue_chat_suggests.Empty:
-                break
+        return
     else:
         glb_queue_chat_suggests.put(suggests)
 

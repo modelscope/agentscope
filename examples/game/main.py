@@ -9,12 +9,12 @@ from loguru import logger
 import agentscope
 from agentscope.message import Msg
 from agentscope.msghub import msghub
-from customer import Customer, CustomerConv, MIN_BAR_FRIENDSHIP_CONST
+from customer import Customer, MIN_BAR_FRIENDSHIP_CONST
+from enums import CustomerConv, StagePerNight
 from ruled_user import RuledUser
 
 
 from utils import (
-    StagePerNight,
     GameCheckpoint,
     load_game_checkpoint,
     save_game_checkpoint,
@@ -62,7 +62,7 @@ def invited_group_chat(
         end_query_answer()
 
     invited_names.sort()
-    send_chat_msg(cur_plots_indices)
+    # print(cur_plots_indices)
     for idx in cur_plots_indices:
         correct_names = [game_config["plots"][idx]["main_role"]] + game_config[
             "plots"
@@ -116,19 +116,19 @@ def one_on_one_loop(customers, player):
     ingr = "\n".join(
         f"{key}: {value}" for key, value in ingredient_today.items()
     )
-    send_chat_msg(f"今天拥有的食材是：\n {ingr}")
+    send_chat_msg(f"【系统】今天拥有的食材是：\n {ingr}")
 
     player.set_ingredients(ingredient_today)
 
     if not visit_customers:
-        send_chat_msg("今天没有出现客人，请增加与客人的好感度以增大出现概率")
+        send_chat_msg("【系统】今天没有出现客人，请增加与客人的好感度以增大出现概率")
     else:
-        send_chat_msg(f"今天出现的客人: {[c.name for c in visit_customers]}")
+        send_chat_msg(f"【系统】今天出现的客人: {[c.name for c in visit_customers]}")
     for customer in visit_customers:
         send_chat_msg(
-            f"顾客{customer.name} 进入餐馆 (当前好感度为: {customer.friendship})",
+            f"【系统】顾客{customer.name} 进入餐馆 (当前好感度为: {customer.friendship})",
         )
-        msg = player("游戏开始")
+        msg = player({"content": "游戏开始"})
         while True:
             msg = customer(msg)
             if "score" in msg:
@@ -149,7 +149,7 @@ def one_on_one_loop(customers, player):
 
         if isinstance(msg, dict):
             if len(msg["content"]) == 0 or msg["score"] < 4:
-                send_chat_msg(f"顾客{customer.name} 离开餐馆")
+                send_chat_msg(f"【系统】顾客{customer.name} 离开餐馆")
                 continue
 
         questions = [
@@ -173,10 +173,10 @@ def one_on_one_loop(customers, player):
             msg = customer(msg)
             # print(f"{customer_reply.name}（顾客）:" + customer_reply.content)
             send_pretty_msg(msg)
-            send_chat_msg("【系统】输入`跳过`或者不输入终止对话。")
+            send_chat_msg("【系统】直接回车以终止对话。")
             msg = player(msg)
-            if len(msg["content"]) == 0 or "跳过" in msg["content"]:
-                send_chat_msg(f"顾客{customer.name} 离开餐馆")
+            if len(msg["content"]) == 0:
+                send_chat_msg(f"【系统】顾客{customer.name} 离开餐馆")
                 break
     return visit_customers
 
@@ -194,7 +194,7 @@ def invite_customers(customers):
         select_customer = [
             inquirer.List(
                 "invited",
-                message="系统：今天就没有更多顾客了，您明天有什么邀请计划吗？",
+                message="【系统】系统：今天就没有更多顾客了，您明天有什么邀请计划吗？",
                 choices=available_customers + ["END"],
             ),
         ]
@@ -210,6 +210,7 @@ def invite_customers(customers):
 
 def main(args) -> None:
     game_description = """
+    【系统】
     这是一款模拟餐馆经营的文字冒险游戏。
     玩家扮演餐馆老板，通过与顾客互动来经营餐馆并解锁剧情。
     游戏分为四个阶段：选择食材做菜，随意聊天，一对一互动以及邀请对话。

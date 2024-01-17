@@ -72,6 +72,9 @@ class RuledUser(AgentBase):
         while True:
             try:
                 content = get_player_input(self.name)
+                if x == {"content": "游戏开始"} and content == "":
+                    send_chat_msg("【系统】有顾客光临，请接待。")
+                    continue
 
                 if not hasattr(self, "model") or len(content) == 0:
                     break
