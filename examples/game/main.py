@@ -18,18 +18,26 @@ from utils import (
     GameCheckpoint,
     load_game_checkpoint,
     save_game_checkpoint,
-    speak_print,
     check_active_plot,
+    send_chat_msg,
+    send_pretty_msg,
+    query_answer,
+    CheckpointArgs,
 )
 
 
-def invited_group_chat(invited_customer, player, cur_plots_indices):
+def invited_group_chat(
+    game_config,
+    invited_customer,
+    player,
+    cur_plots_indices,
+):
     logger.debug("\n---active_plots:" + str(cur_plots_indices))
     if len(invited_customer) == 0:
         return cur_plots_indices
     invited_names = [c.name for c in invited_customer]
-    print("===== invited group chat ====")
-    print(f"老板今天邀请了{invited_names}，大家一起聊聊")
+    send_chat_msg("===== invited group chat ====")
+    send_chat_msg(f"老板今天邀请了{invited_names}，大家一起聊聊")
     annoucement = {"role": "user", "content": "今天老板邀请大家一起来聚聚。"}
     with msghub(invited_customer + [player], announcement=annoucement):
         for _ in range(10):
@@ -40,7 +48,7 @@ def invited_group_chat(invited_customer, player, cur_plots_indices):
                     choices=["是", "否", "结束邀请对话"],
                 ),
             ]
-            answer = inquirer.prompt(questions)["ans"]
+            answer = query_answer(questions, "ans")
             if answer == "是":
                 msg = player(annoucement)
             elif answer == "否":
@@ -49,20 +57,20 @@ def invited_group_chat(invited_customer, player, cur_plots_indices):
                 break
             for c in invited_customer:
                 msg = c(msg)
-                speak_print(msg)
+                send_pretty_msg(msg)
 
     invited_names.sort()
-    print(cur_plots_indices)
+    send_chat_msg(cur_plots_indices)
     for idx in cur_plots_indices:
-        correct_names = [GAME_CONFIG["plots"][idx]["main_role"]] + GAME_CONFIG[
+        correct_names = [game_config["plots"][idx]["main_role"]] + game_config[
             "plots"
         ][idx]["supporting_roles"]
         correct_names.sort()
-        print("current names", correct_names)
+        send_chat_msg("current names", correct_names)
 
         # TODO: decided by multi factor: chat history of msghub, correct_names
         if invited_names == correct_names:
-            print("===== successfully unlock a plot =======")
+            send_chat_msg("===== successfully unlock a plot =======")
             questions = [
                 inquirer.List(
                     "ans",
@@ -70,7 +78,7 @@ def invited_group_chat(invited_customer, player, cur_plots_indices):
                     choices=invited_names + ["跳过"],
                 ),
             ]
-            answer = inquirer.prompt(questions)["ans"]
+            answer = query_answer(questions, "ans")
             for c in invited_customer:
                 if c.name == answer:
                     c.generate_pov_story()
@@ -102,32 +110,35 @@ def one_on_one_loop(customers, player):
             and category not in ["调味品", "其他辅料"]
             else items
         )
-    print(f"今天拥有的食材是：{ingredient_today}")
+    ingr = "\n".join(
+        f"{key}: {value}" for key, value in ingredient_today.items()
+    )
+    send_chat_msg(f"今天拥有的食材是：\n {ingr}")
 
     player.set_ingredients(ingredient_today)
 
     if not visit_customers:
-        print("今天没有出现客人，请增加与客人的好感度以增大出现概率")
+        send_chat_msg("今天没有出现客人，请增加与客人的好感度以增大出现概率")
     else:
-        print(f"今天出现的客人: {[c.name for c in visit_customers]}")
+        send_chat_msg(f"今天出现的客人: {[c.name for c in visit_customers]}")
     for customer in visit_customers:
-        print(
+        send_chat_msg(
             f"顾客{customer.name} 进入餐馆 (当前好感度为: {customer.friendship})",
         )
         msg = player("游戏开始")
         while True:
             msg = customer(msg)
             if "score" in msg:
-                print(
+                send_chat_msg(
                     f"【系统】{customer.name}（顾客）接受了你的菜。\n"
                     f"【系统】顾客对菜本身的评价：{msg['content']}\n"
                     f"【系统】{customer.name}（顾客）享用完之后，"
                     f"综合满意度为{msg['score']}\n",
                 )
                 break
-            speak_print(msg)
-            print(
-                "【提示】请输入“做菜”启动魔法锅，它会按所选定食材产生菜品。" " (对话轮次过多会使得顾客综合满意度下降。)",
+            send_pretty_msg(msg)
+            send_chat_msg(
+                "【系统】请输入“做菜”启动魔法锅，它会按所选定食材产生菜品。" " (对话轮次过多会使得顾客综合满意度下降。)",
             )
             msg = player(msg)
             if len(msg["content"]) == 0 or "[TERMINATE]" in msg["content"]:
@@ -135,7 +146,7 @@ def one_on_one_loop(customers, player):
 
         if isinstance(msg, dict):
             if len(msg["content"]) == 0 or msg["score"] < 4:
-                print(f"顾客{customer.name} 离开餐馆")
+                send_chat_msg(f"顾客{customer.name} 离开餐馆")
                 continue
 
         questions = [
@@ -149,7 +160,7 @@ def one_on_one_loop(customers, player):
             ),
         ]
 
-        answer = inquirer.prompt(questions)["ans"]
+        answer = query_answer(questions, "ans")
         if answer == "感谢您的光顾。(结束与该顾客的当天对话)":
             continue
         msg = Msg(role="user", name="餐馆老板", content=answer)
@@ -157,11 +168,11 @@ def one_on_one_loop(customers, player):
         while True:
             msg = customer(msg)
             # print(f"{customer_reply.name}（顾客）:" + customer_reply.content)
-            speak_print(msg)
-            print("【系统】输入`跳过`或者不输入终止对话。")
+            send_pretty_msg(msg)
+            send_chat_msg("【系统】输入`跳过`或者不输入终止对话。")
             msg = player(msg)
             if len(msg["content"]) == 0 or "跳过" in msg["content"]:
-                print(f"顾客{customer.name} 离开餐馆")
+                send_chat_msg(f"顾客{customer.name} 离开餐馆")
                 break
     return visit_customers
 
@@ -173,7 +184,7 @@ def invite_customers(customers):
     invited_customers = []
 
     if len(available_customers) == 0:
-        print("【系统】：您目前无法邀请任何一个顾客（所有顾客好感度均低于80）。")
+        send_chat_msg("【系统】：您目前无法邀请任何一个顾客（所有顾客好感度均低于80）。")
 
     while len(available_customers) > 0:
         select_customer = [
@@ -183,7 +194,7 @@ def invite_customers(customers):
                 choices=available_customers + ["END"],
             ),
         ]
-        answer = inquirer.prompt(select_customer)["invited"]
+        answer = query_answer(select_customer, "invited")
         if answer == "END":
             break
 
@@ -192,7 +203,17 @@ def invite_customers(customers):
     return invited_customers
 
 
-def main() -> None:
+def main(args) -> None:
+    game_description = """
+    这是一款模拟餐馆经营的文字冒险游戏。
+    玩家扮演餐馆老板，通过与顾客互动来经营餐馆并解锁剧情。
+    游戏分为四个阶段：选择食材做菜，随意聊天，一对一互动以及邀请对话。
+    玩家需要根据顾客的喜好和需求来挑选食材做菜，通过顾客对用餐的满意度来获取好感度并解锁剧情。
+    在游戏中，玩家需要经营餐厅、与顾客互动并决定邀请哪些顾客参与对话，以推动故事剧情的发展。
+    通过与顾客的互动，玩家可以解锁剧情并发展餐馆的故事，体验不同的情节和结局。
+    """
+    send_chat_msg(game_description)
+
     with open(
         "config/customer_config.yaml",
         "r",
@@ -207,7 +228,7 @@ def main() -> None:
         Customer(
             name=cfg["name"],
             config=cfg,
-            game_config=GAME_CONFIG,
+            game_config=args.game_config,
             model=cfg["model"],
             use_memory=True,
         )
@@ -237,7 +258,7 @@ def main() -> None:
 
     # set current plot and done plots
     # initialize main role of current plot cur_state
-    plots = GAME_CONFIG["plots"]
+    plots = args.game_config["plots"]
     for i in checkpoint.done_plots:
         plots[i]["state"] = "done"
     to_activate_customers, active_plots = check_active_plot(plots, None)
@@ -258,6 +279,7 @@ def main() -> None:
                 c.transition(CustomerConv.INVITED_GROUP_PLOT)
             # initial cur_state of the
             done_plot_idx = invited_group_chat(
+                args.game_config,
                 checkpoint.invited_customers,
                 player,
                 checkpoint.cur_plots,
@@ -320,12 +342,6 @@ if __name__ == "__main__":
     }
 
     agentscope.init(model_configs=[TONGYI_CONFIG], logger_level="DEBUG")
-    game_description = """
-    这是一款模拟餐馆经营的文字冒险游戏，玩家扮演餐馆老板，通过与顾客互动来经营餐馆并解锁剧情。
-    游戏分为四个阶段：选择食材做菜，随意聊天，一对一互动以及邀请对话。
-    玩家需要根据顾客的喜好和需求来挑选食材做菜，通过顾客对用餐的满意度来获取好感度并解锁剧情。
-    在游戏中，玩家需要经营餐厅、与顾客互动并决定邀请哪些顾客参与对话，以推动故事剧情的发展。
-    通过与顾客的互动，玩家可以解锁剧情并发展餐馆的故事，体验不同的情节和结局。
-    """
-    logger.info(game_description)
-    main()
+    args = CheckpointArgs()
+    args.game_config = GAME_CONFIG
+    main(args)

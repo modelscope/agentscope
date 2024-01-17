@@ -6,10 +6,10 @@ from enum import Enum
 from typing import Optional, Union, Any, Callable
 
 import inquirer
-from loguru import logger
 
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
+from utils import send_chat_msg, query_answer, get_player_input
 
 
 class FoodQuality(Enum):
@@ -66,7 +66,7 @@ class RuledUser(AgentBase):
         time.sleep(0.5)
         while True:
             try:
-                content = input(f"{self.name}: ")
+                content = get_player_input(self.name)
 
                 if not hasattr(self, "model") or len(content) == 0:
                     break
@@ -75,13 +75,14 @@ class RuledUser(AgentBase):
                 if ruler_res.get("allowed") == "true":
                     break
 
-                logger.warning(
-                    f"Input is not allowed:"
-                    f" {ruler_res.get('reason', 'Unknown reason')} "
-                    f"【Please retry】",
+                send_chat_msg(
+                    f"【输入被规则禁止】"
+                    f" {ruler_res.get('reason', 'Unknown reason')}\n"
+                    f"【请重试】",
+                    "⚠️",
                 )
             except Exception as e:
-                logger.warning(f"Input invalid: {e}. Please try again.")
+                send_chat_msg(f"【无效输入】 {e}\n 【请重试】", "⚠️")
 
         kwargs = {}
         if required_keys is not None:
@@ -89,7 +90,7 @@ class RuledUser(AgentBase):
                 required_keys = [required_keys]
 
             for key in required_keys:
-                kwargs[key] = input(f"{key}: ")
+                kwargs[key] = get_player_input(key)
 
         if content == "做菜":
             content = self.cook()
@@ -128,7 +129,7 @@ class RuledUser(AgentBase):
             for item in sublist
         ]
 
-        ingredients_list = ["*清空*", "*结束*"] + ingredients_list
+        ingredients_list = ["**清空**", "**结束**"] + ingredients_list
         cook_list = []
         questions = [
             inquirer.List(
@@ -138,15 +139,17 @@ class RuledUser(AgentBase):
             ),
         ]
         while True:
-            print(f"【系统】当前已选择的食材是{cook_list}。")
-            sel_ingr = inquirer.prompt(questions)["ingredient"]
+            send_chat_msg(f"【系统】当前已选择的食材是{cook_list}。")
+            sel_ingr = query_answer(questions, "ingredient")
 
-            if sel_ingr == "*结束*":
+            if sel_ingr in ["结束", "**结束**"]:  # For gradio
                 if len(cook_list) > 0:
                     break
-                print("【系统】你的魔法锅空空如也。")
-            elif sel_ingr == "*清空*":
+                send_chat_msg("【系统】你的魔法锅空空如也。")
+            elif sel_ingr in ["清空", "**清空**"]:  # For gradio
                 cook_list.clear()
+            elif sel_ingr not in ingredients_list:
+                send_chat_msg("【系统】不可用食材，请重新选择。")
             else:
                 cook_list.append(sel_ingr)
 
@@ -162,9 +165,8 @@ class RuledUser(AgentBase):
         # random_quality = random.choice(list(FoodQuality)).value
         # food = random_quality + food
 
-        print(
-            f"【系统】魔法锅周围光芒四射，你听到了轻微的咔哒声。"
-            f"当一切平静下来，一道《{food}》出现在你眼前。",
+        send_chat_msg(
+            f"【系统】魔法锅周围光芒四射，你听到了轻微的咔哒声。当一切平静下来，一道《{food}》出现在你眼前。",
         )
 
         return food

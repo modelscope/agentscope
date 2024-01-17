@@ -25,7 +25,7 @@ doc_requires = ["sphinx", "sphinx-autobuild", "sphinx_rtd_theme"]
 
 test_requires = ["pytest", "pytest-cov", "pre-commit"]
 
-game_requires = ["inquirer", "colorist", "dashscope"]
+game_requires = ["inquirer", "colorist", "dashscope", "gradio"]
 
 # released requires
 minimal_requires = [
@@ -47,6 +47,7 @@ full_requires = (
     + service_requires
     + doc_requires
     + test_requires
+    + game_requires
 )
 
 with open("README.md", "r", encoding="UTF-8") as fh:
