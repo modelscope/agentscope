@@ -186,6 +186,16 @@ class MonitorBase(ABC):
                 }
         """
 
+    @abstractmethod
+    def set_budget(self, model_name: str, value: float) -> None:
+        """Set budget to the monitor, the monitor will raise
+        QuotaExceededError, when budget is exceeded
+
+        Args:
+            model_name (`str`): model that requires budget
+            value (`float`): the budget value
+        """
+
 
 class QuotaExceededError(Exception):
     """An Exception used to indicate that a certain metric exceeds quota"""
@@ -330,6 +340,9 @@ class DictMonitor(MonitorBase):
                 if pattern.search(key)
             }
 
+    def set_budget(self, model_name: str, value: float) -> None:
+        logger.warning("DictMonitor doesn't support set_budget")
+
 
 @contextmanager
 def sqlite_transaction(db_path: str) -> Generator:
@@ -425,33 +438,41 @@ class SqliteMonitor(MonitorBase):
             )
             return True
 
-    def add(self, metric_name: str, value: float) -> bool:
-        with sqlite_transaction(self.db_path) as cursor:
-            if not self._exists(cursor, metric_name):
-                return False
-            cursor.execute(
-                f"""
+    def _add(
+        self,
+        cursor: sqlite3.Cursor,
+        metric_name: str,
+        value: float,
+    ) -> None:
+        cursor.execute(
+            f"""
                 UPDATE {self.table_name}
                 SET value = value + ?
                 WHERE name = ?
             """,
-                (value, metric_name),
-            )
-            cursor.execute(
-                f"""
+            (value, metric_name),
+        )
+        cursor.execute(
+            f"""
                 SELECT value, quota FROM {self.table_name}
                 WHERE name = ?""",
-                (metric_name,),
-            )
-            row = cursor.fetchone()
-            if row:
-                new_value, quota = row
-                if quota is not None and new_value > quota:
-                    logger.warning(f"Metric [{metric_name}] quota exceeded.")
-                    raise QuotaExceededError(
-                        metric_name=metric_name,
-                        quota=quota,
-                    )
+            (metric_name,),
+        )
+        row = cursor.fetchone()
+        if row:
+            new_value, quota = row
+            if quota is not None and new_value > quota:
+                logger.warning(f"Metric [{metric_name}] quota exceeded.")
+                raise QuotaExceededError(
+                    metric_name=metric_name,
+                    quota=quota,
+                )
+
+    def add(self, metric_name: str, value: float) -> bool:
+        with sqlite_transaction(self.db_path) as cursor:
+            if not self._exists(cursor, metric_name):
+                return False
+            self._add(cursor, metric_name, value)
             return True
 
     def clear(self, metric_name: str) -> bool:
@@ -574,6 +595,40 @@ class SqliteMonitor(MonitorBase):
     def exists(self, metric_name: str) -> bool:
         with sqlite_cursor(self.db_path) as cursor:
             return self._exists(cursor, metric_name)
+
+    def update(self, **kwargs: Any) -> None:
+        with sqlite_transaction(self.db_path) as cursor:
+            for metric_name, value in kwargs.items():
+                self._add(cursor, metric_name, value)
+
+    def set_budget(self, model_name: str, value: float) -> None:
+        logger.info(f"set budget {value} to {model_name}")
+
+
+def get_pricing() -> dict:
+    """Get pricing as a dict
+
+    Returns:
+        `dict`: the dict with pricing information.
+    """
+    return {
+        'gpt-4-turbo': {
+            'input': 0.01,
+            'output': 0.03
+        },
+        'gpt-4': {
+            'input': 0.03,
+            'output': 0.06
+        },
+        'gpt-4-32k': {
+            'input': 0.06,
+            'output': 0.12
+        },
+        'gpt-3.5-turbo': {
+            'input': 0.001,
+            'output': 0.002
+        }
+    }
 
 
 class MonitorFactory:
