@@ -243,7 +243,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 model.eval()
-# Do remember to re-implement the `reply` method to tokenize `message`!
+# Do remember to re-implement the `reply` method to tokenize *message*!
 agent = YourAgent(name='agent', model=model, tokenizer=tokenizer)
 ```
 

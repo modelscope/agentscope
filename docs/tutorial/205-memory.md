@@ -44,7 +44,7 @@ Here are the key attributes managed by the `MessageBase` class:
 
 ### `Msg`
 
-The `Msg` ("Message") subclass extends `MessageBase` and represents a standard `message`.  `Msg` provides concrete definitions for the `to_str` and `serialize` methods to enable string representation and serialization suitable for the agent's operational context.
+The `Msg` ("Message") subclass extends `MessageBase` and represents a standard *message*.  `Msg` provides concrete definitions for the `to_str` and `serialize` methods to enable string representation and serialization suitable for the agent's operational context.
 
 ```python
 class Msg(MessageBase):
@@ -81,7 +81,7 @@ class Tht(MessageBase):
 
 ### `MemoryBase`
 
-`MemoryBase` is an abstract class that handles an agent's memory in a structured way. It defines operations for storing, retrieving, deleting, and manipulating `message`'s content.
+`MemoryBase` is an abstract class that handles an agent's memory in a structured way. It defines operations for storing, retrieving, deleting, and manipulating *message*'s content.
 
 ```python
 class MemoryBase(ABC):
@@ -125,11 +125,11 @@ class MemoryBase(ABC):
 Here are the key methods of `MemoryBase`:
 
 - **`get_memory`**: This method is responsible for retrieving stored messages from the agent's memory. It can return these messages in different formats as specified by the `return_type`. The method can also retrieve a specific number of recent messages if `recent_n` is provided, and it can apply a filtering function (`filter_func`) to select messages based on custom criteria.
-- **`add`**: This method is used to add a new `message` to the agent's memory. It can accept a single message or a list of messages. Each message is typically an instance of `MessageBase` or its subclasses.
+- **`add`**: This method is used to add a new *message* to the agent's memory. It can accept a single message or a list of messages. Each message is typically an instance of `MessageBase` or its subclasses.
 - **`delete`**: This method enables the removal of messages from memory by their index (or indices if an iterable is provided).
 - **`load`**: This method allows for the bulk loading of messages into the agent's memory from an external source. The `overwrite` parameter determines whether to clear the existing memory before loading the new set of messages.
-- **`export`**: This method facilitates exporting the stored `message` from the agent's memory either to an external file (specified by `file_path`) or directly into the working memory of the program (if `to_mem` is set to `True`).
-- **`clear`**: This method purges all `message` from the agent's memory, essentially resetting it.
+- **`export`**: This method facilitates exporting the stored *message* from the agent's memory either to an external file (specified by `file_path`) or directly into the working memory of the program (if `to_mem` is set to `True`).
+- **`clear`**: This method purges all *message* from the agent's memory, essentially resetting it.
 - **`size`**: This method returns the number of messages currently stored in the agent's memory.
 
 ### `TemporaryMemory`
@@ -139,7 +139,7 @@ The `TemporaryMemory` class is a concrete implementation of `MemoryBase`, provid
 - **`retrieve_by_embedding`**: Retrieves `messages` that are most similar to a query, based on their embeddings. It uses a provided metric to determine the relevance and can return the top `k` most relevant messages.
 - **`get_embeddings`**: Return the embeddings for all messages in memory. If a message does not have an embedding and an embedding model is provided, it will generate and store the embedding for the message.
 
-For more details about the usage of `Memory` and `Message`, please refer to the API references.
+For more details about the usage of `Memory` and `Msg`, please refer to the API references.
 
 
 

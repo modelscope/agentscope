@@ -4,7 +4,7 @@ AgentScope is a versatile platform for building and running multi-agent applicat
 
 ## Step1: Prepare Model Configs
 
-Agent is the basic composition and communication unit in AgentScope. To initialize an model-based agent, you need to prepare your configs for avaliable models. AgentScope supports a variety of APIs for pre-trained models. Here is a table outlining the supported APIs and the type of arguments required for each:
+Agent is the basic composition and communication unit in AgentScope. To initialize a model-based agent, you need to prepare your configs for avaliable models. AgentScope supports a variety of APIs for pre-trained models. Here is a table outlining the supported APIs and the type of arguments required for each:
 
 |   Model Usage               | Type Argument in AgentScope     | Supported APIs                                                              |
 | -------------------- | ------------------ |-----------------------------------------------------------------------------|
@@ -32,13 +32,10 @@ You can register your configuration by calling AgentScope's initilization method
 ```python
 import agentscope
 
-agentscope.init(model_configs="./openai_model_configs.json")
-agentscope.init(model_configs="./modelscope_model_configs.json") # init again to use openai and modelscope at the same time
-
-# or you can init once by passing a list of config dict
-# openai_cfg_dict = {...dict_filling...}
-# modelscope_cfg_dict = {...dict_filling...}
-# agentscope.init(model_configs=[openai_cfg_dict, modelscope_cfg_dict])
+# init once by passing a list of config dict
+openai_cfg_dict = {...dict_filling...}
+modelscope_cfg_dict = {...dict_filling...}
+agentscope.init(model_configs=[openai_cfg_dict, modelscope_cfg_dict])
 ```
 
 
@@ -62,7 +59,7 @@ userAgent = UserAgent()
 
 ## Step3: Agent Conversation
 
-`Message` is the primary means of communication between agents in AgentScope. They are Python dictionaries comprising essential fields like the actual `content` of this message and the sender's `name`. Optionally, a message can include a `url` to either a local file (image, video or audio) or website.
+"Message" is the primary means of communication between agents in AgentScope. They are Python dictionaries comprising essential fields like the actual `content` of this message and the sender's `name`. Optionally, a message can include a `url` to either a local file (image, video or audio) or website.
 
 ```python
 from agentscope.message import Msg

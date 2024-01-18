@@ -40,7 +40,7 @@ Logging chat messages helps keep a record of the conversation between agents. He
 # Log a simple string message.
 logger.chat("Hello World!")
 
-# Log a `message` representing dialogue with a speaker and content.
+# Log a `msg` representing dialogue with a speaker and content.
 logger.chat({"name": "User", "content": "Hello, how are you?"})
 logger.chat({"name": "Agent", "content": "I'm fine, thank you!"})
 ```

@@ -1,6 +1,6 @@
 # Agent Interactions: Dive deeper into Pipelines and Message Hub
 
-**Pipeline & MsgHub** (message hub) are one or a sequence of steps describing how the structured `Message` passes between multi-agents, which streamlines the process of collaboration across agents.
+**Pipeline & MsgHub** (message hub) are one or a sequence of steps describing how the structured `Msg` passes between multi-agents, which streamlines the process of collaboration across agents.
 
 `Pipeline` allows users to program communication among agents easily, and `MsgHub` enables message sharing among agents like a group chat.
 

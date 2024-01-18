@@ -16,8 +16,8 @@ Each AgentBase derivative is composed of several key characteristics:
 
 In addition to these attributes, `AgentBase` endows agents with pivotal methods such as `observe` and `reply`:
 
-* `observe()`: Through this method, an agent can take note of `message` without immediately replying, allowing it to update its memory based on the observed `message`.
-* `reply()`: This is the primary method that developers must implement. It defines the agent's behavior in response to an incoming `message`, encapsulating the logic that results in the agent's output.
+* `observe()`: Through this method, an agent can take note of *message* without immediately replying, allowing it to update its memory based on the observed *message*.
+* `reply()`: This is the primary method that developers must implement. It defines the agent's behavior in response to an incoming *message*, encapsulating the logic that results in the agent's output.
 
 Besides, for unified interfaces and type hints, we introduce another base class `Operator`, which indicates performing some operation on input data by the `__call__` function. And we make `AgentBase` a subclass of `Operator`.
 
@@ -40,13 +40,13 @@ class AgentBase(Operator):
 	def observe(self, x: Union[dict, Sequence[dict]]) -> None:
         # An optional method for updating the agent's internal state based on
         # messages it has observed. This method can be used to enrich the
-        # agent's understanding and memory without producing an immediate
+        # agent's understanding and memory without producing an immediate 
         # response.
         self.memory.add(x)
-
+		
     def reply(self, x: dict = None) -> dict:
         # The core method to be implemented by custom agents. It defines the
-        # logic for processing an input message and generating a suitable
+        # logic for processing an input message and generating a suitable 
         # response.
         raise NotImplementedError(
             f"Agent [{type(self).__name__}] is missing the required "
@@ -72,13 +72,13 @@ Below is a table summarizing the functionality of some of the key agents availab
 
 ## Customizing Agents from the AgentPool
 
-Customizing an agent from AgentPool enables you to tailor its functionality to meet the unique demands of your multi-agent application. You have the flexibility to modify existing agents with minimal effort by **adjusting configurations** and prompts or, for more extensive customization, you can engage in secondary development.
+Customizing an agent from AgentPool enables you to tailor its functionality to meet the unique demands of your multi-agent application. You have the flexibility to modify existing agents with minimal effort by **adjusting configurations** and prompts or, for more extensive customization, you can engage in secondary development. 
 
 Below, we provide usages of how to configure various agents from the AgentPool:
 
 ### `DialogAgent`
 
-- **Reply Method**: The `reply` method is where the main logic for processing input `message` and generating responses.
+- **Reply Method**: The `reply` method is where the main logic for processing input *message* and generating responses.
 
 ```python
 def reply(self, x: dict = None) -> dict:
@@ -121,7 +121,7 @@ service_bot = DialogAgent(**dialog_agent_config)
 
 ### `UserAgent`
 
-- **Reply Method**: This method processes user input by prompting for content and if needed, additional keys and a URL. The gathered data is stored in a `message` object in the agent's memory for logging or later use and returns the message as a response.
+- **Reply Method**: This method processes user input by prompting for content and if needed, additional keys and a URL. The gathered data is stored in a *message* object in the agent's memory for logging or later use and returns the message as a response.
 
 ```python
 def reply(

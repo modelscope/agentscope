@@ -38,7 +38,7 @@ def _get_timestamp(format_: str = "%Y-%m-%d %H:%M:%S") -> str:
 
 
 def to_openai_dict(item: dict) -> dict:
-    """Convert `Message` to `dict` for OpenAI API."""
+    """Convert `Msg` to `dict` for OpenAI API."""
     clean_dict = {}
 
     if "name" in item:

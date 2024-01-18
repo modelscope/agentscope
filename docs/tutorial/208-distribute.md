@@ -19,7 +19,7 @@ D-->F
 ```
 
 Among them, `B` and `C` can start execution simultaneously after receiving the message from `A`, and `E` can run immediately without waiting for `A`, `B`, `C,` and `D`.
-By implementing each agent as an actor, an agent will automatically wait for its input `Message` before starting to execute the reply method, and multiple agents can also automatically execute `reply` at the same time if their input messages are ready, which avoids complex parallel control and makes things simple.
+By implementing each agent as an actor, an agent will automatically wait for its input `Msg` before starting to execute the reply method, and multiple agents can also automatically execute `reply` at the same time if their input messages are ready, which avoids complex parallel control and makes things simple.
 
 ### Write centrally, run distributedly
 
