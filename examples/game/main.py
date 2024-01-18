@@ -5,6 +5,7 @@ import inquirer
 import random
 import argparse
 from loguru import logger
+from typing import Optional
 
 import agentscope
 from agentscope.message import Msg
@@ -32,7 +33,7 @@ def invited_group_chat(
     invited_customer,
     player,
     cur_plots_indices,
-):
+) -> Optional[int]:
     logger.debug("\n---active_plots:" + str(cur_plots_indices))
     if len(invited_customer) == 0:
         return cur_plots_indices
@@ -140,7 +141,7 @@ def one_on_one_loop(customers, player):
                 break
             send_pretty_msg(msg)
             send_chat_msg(
-                "【系统】请输入“做菜”启动魔法锅，它会按所选定食材产生菜品。" " (对话轮次过多会使得顾客综合满意度下降。)",
+                "【系统】请输入“做菜”启动做菜程序，它会按所选定食材产生菜品。" " (对话轮次过多会使得顾客综合满意度下降。)",
             )
             msg = player(msg)
             if len(msg["content"]) == 0 or "[TERMINATE]" in msg["content"]:
@@ -259,6 +260,7 @@ def main(args) -> None:
             done_plots=done_plots,
             customers=customers,
             invited_customers=invited_customers,
+            visit_customers=[],
         )
 
     # set current plot and done plots
@@ -296,7 +298,7 @@ def main(args) -> None:
                 )
                 logger.debug("---active_plots:", active_plots)
                 checkpoint.cur_plots = active_plots
-                checkpoint.done_plots += [done_plot_idx]
+                checkpoint.done_plots.append(done_plot_idx)
                 next_active_roles = set(next_active_roles)
                 for c in checkpoint.customers:
                     if c.name in next_active_roles:
@@ -310,12 +312,12 @@ def main(args) -> None:
                 for c in customers
                 if c.name not in checkpoint.invited_customers
             ]
-            visit_customers = one_on_one_loop(rest_customers, player)
+            checkpoint.visit_customers = one_on_one_loop(rest_customers, player)
             checkpoint.stage_per_night = StagePerNight.MAKING_INVITATION
         elif checkpoint.stage_per_night == StagePerNight.MAKING_INVITATION:
             # ============ making invitation decision =============
             # player make invitation
-            invited = invite_customers(visit_customers)
+            invited = invite_customers(checkpoint.visit_customers)
             checkpoint.stage_per_night = StagePerNight.INVITED_CHAT
             invited_customers = [c for c in customers if c.name in invited]
             checkpoint.invited_customers = invited_customers

@@ -21,12 +21,14 @@ class GameCheckpoint:
         cur_plots: list,
         done_plots: list,
         invited_customers: list,
+        visit_customers: list,
     ):
         self.stage_per_night = stage_per_night
         self.customers = customers
         self.cur_plots = cur_plots
         self.done_plots = done_plots
         self.invited_customers = invited_customers
+        self.visit_customers = visit_customers
 
 
 def save_game_checkpoint(
