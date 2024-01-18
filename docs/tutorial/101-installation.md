@@ -33,6 +33,18 @@ source agentscope/bin/activate  # On Windows use `agentscope\Scripts\activate`
 
 ### Installing AgentScope
 
+#### Install with Pip
+
+If you prefer to install AgentScope from Pypi, you can do so easily using `pip`:
+
+```bash
+# For centralized multi-agent applications
+pip install agentscope
+# For distributed multi-agent applications
+pip install agentscope[distribute]  # On Mac use `pip install agentscope\[distribute\]`
+```
+
+
 #### Install from Source
 
 For users who prefer to install AgentScope directly from the source code, follow these steps to clone the repository and install the platform in editable mode:
@@ -49,18 +61,6 @@ pip install -e .
 # For distributed multi-agent applications
 pip install -e .[distribute]  # On Mac use `pip install -e .\[distribute\]`
 ```
-
-#### Install with Pip
-
-If you prefer to install AgentScope from Pypi, you can do so easily using `pip`:
-
-```bash
-# For centralized multi-agent applications
-pip install agentscope
-# For distributed multi-agent applications
-pip install agentscope[distribute]  # On Mac use `pip install agentscope\[distribute\]`
-```
-
 
 
 **Note**: The `[distribute]` option installs additional dependencies required for distributed applications. Remember to activate your virtual environment before running these commands.

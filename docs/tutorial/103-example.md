@@ -6,12 +6,12 @@ AgentScope is a versatile platform for building and running multi-agent applicat
 
 Agent is the basic composition and communication unit in AgentScope. To initialize an model-based agent, you need to prepare your configs for avaliable models. AgentScope supports a variety of APIs for pre-trained models. Here is a table outlining the supported APIs and the type of arguments required for each:
 
-|   Model Usage               | Type Argument in AgentScope     | Supported APIs                                                         |
-| -------------------- | ------------------ | ------------------------------------------------------------ |
-| Text generation     | `openai`           | Standard OpenAI chat API, FastChat and vllm                     |
-| Image generation   | `openai_dall_e`    | DALL-E API for generating images                             |
-| Embedding | `openai_embedding` | API for text embeddings                                      |
-| General usages in POST       | `post_api`         | Huggingface/ModelScope Inference API, and customized post API |
+|   Model Usage               | Type Argument in AgentScope     | Supported APIs                                                              |
+| -------------------- | ------------------ |-----------------------------------------------------------------------------|
+| Text generation     | `openai`           | Standard *OpenAI* chat API, FastChat and vllm                               |
+| Image generation   | `openai_dall_e`    | *DALL-E* API for generating images                                          |
+| Embedding | `openai_embedding` | API for text embeddings                                                     |
+| General usages in POST       | `post_api`         | *Huggingface* and *ModelScope* Inference API, and other customized post API |
 
 
 Each API has its specific configuration requirements. For example, to configure an OpenAI API, you would need to fill out the following fields in the model config in a dict, a yaml file or a json file:
@@ -33,7 +33,7 @@ You can register your configuration by calling AgentScope's initilization method
 import agentscope
 
 agentscope.init(model_configs="./openai_model_configs.json")
-agentscope.init(model_configs="./modelscope_model_configs.json") # use openai and modelscope at the same time
+agentscope.init(model_configs="./modelscope_model_configs.json") # init again to use openai and modelscope at the same time
 
 # or you can init once by passing a list of config dict
 # openai_cfg_dict = {...dict_filling...}
