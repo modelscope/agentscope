@@ -639,11 +639,11 @@ class SqliteMonitor(MonitorBase):
                 "{self.table_name}_{token_metric}_{cost_metric}_price"
                 AFTER UPDATE OF value ON "{self.table_name}"
                 FOR EACH ROW
-                WHEN NEW.name = '{token_metric}'
+                WHEN NEW.name = "{token_metric}"
                 BEGIN
                     UPDATE {self.table_name}
                     SET value = value + (NEW.value - OLD.value) * {unit_price}
-                    WHERE name = '{cost_metric}';
+                    WHERE name = "{cost_metric}";
                 END;
                 """
             )
@@ -658,9 +658,12 @@ class SqliteMonitor(MonitorBase):
         pricing = get_pricing()
         if model_name in pricing:
             budget_metric_name = f'{prefix}.{model_name}.cost'
-            self.register(
+            ok = self.register(
                 metric_name=budget_metric_name,
-                metric_unit='dollor')
+                metric_unit='dollor',
+                quota=value)
+            if not ok:
+                return False
             for metric_name, unit_price in pricing[model_name].items():
                 token_metric_name = f'{prefix}.{model_name}.{metric_name}'
                 self.register(
@@ -683,20 +686,20 @@ def get_pricing() -> dict:
     """
     return {
         'gpt-4-turbo': {
-            'prompt_tokens': 0.01,
-            'completion_tokens': 0.03
+            'prompt_tokens': 0.00001,
+            'completion_tokens': 0.00003
         },
         'gpt-4': {
-            'prompt_tokens': 0.03,
-            'completion_tokens': 0.06
+            'prompt_tokens': 0.00003,
+            'completion_tokens': 0.00006
         },
         'gpt-4-32k': {
-            'prompt_tokens': 0.06,
-            'completion_tokens': 0.12
+            'prompt_tokens': 0.00006,
+            'completion_tokens': 0.00012
         },
         'gpt-3.5-turbo': {
-            'prompt_tokens': 0.001,
-            'completion_tokens': 0.002
+            'prompt_tokens': 0.000001,
+            'completion_tokens': 0.000002
         }
     }
 

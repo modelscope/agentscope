@@ -173,8 +173,39 @@ class SqliteMonitorTest(MonitorTestBase):
     """Test class for SqliteMonitor"""
 
     def get_monitor_instance(self) -> MonitorBase:
-        self.db_path = f"./test-{uuid.uuid4()}.db"
+        self.db_path = f"test-{uuid.uuid4()}.db"
         return SqliteMonitor(self.db_path)
 
     def tearDown(self) -> None:
         os.remove(self.db_path)
+
+    def test_register_budget(self) -> None:
+        """Test register_budget method of monitor"""
+        self.assertTrue(
+            self.monitor.register_budget(
+                model_name='gpt-4', value=5, prefix="agent_A")
+        )
+        # register an existing model with different prefix is ok
+        self.assertTrue(
+            self.monitor.register_budget(
+                model_name='gpt-4', value=15, prefix="agent_B")
+        )
+        gpt_4_3d = {
+            "agent_A.gpt-4.prompt_tokens": 50000,
+            "agent_A.gpt-4.completion_tokens": 25000,
+            "agent_A.gpt-4.total_tokens": 750000
+        }
+        # agentA uses 3 dollors
+        self.monitor.update(**gpt_4_3d)
+        # agentA uses another 3 dollors and exceeds quota
+        self.assertRaises(
+            QuotaExceededError,
+            self.monitor.update,
+            **gpt_4_3d
+        )
+        self.assertLess(self.monitor.get_value('agent_A.gpt-4.cost'), 5)
+        # register an existing model with existing prefix is wrong
+        self.assertFalse(
+            self.monitor.register_budget(
+                model_name='gpt-4', value=5, prefix="agent_A")
+        )
