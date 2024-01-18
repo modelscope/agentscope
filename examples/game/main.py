@@ -178,7 +178,7 @@ def one_on_one_loop(customers, player):
             msg = customer(msg)
             # print(f"{customer_reply.name}（顾客）:" + customer_reply.content)
             send_pretty_msg(msg)
-            send_chat_msg("【系统】直接回车以终止对话。")
+            send_chat_msg("【系统】若不输入任何内容直接按回车键，顾客将离开餐馆。")
             msg = player(msg)
             if len(msg["content"]) == 0:
                 send_chat_msg(f"【系统】顾客{customer.name} 离开餐馆")
