@@ -16,8 +16,8 @@ class MonitorFactoryTest(unittest.TestCase):
 
     def test_get_monitor(self) -> None:
         """Test get monitor method of MonitorFactory."""
-        monitor1 = MonitorFactory.get_monitor()
-        monitor2 = MonitorFactory.get_monitor()
+        monitor1 = MonitorFactory.get_monitor("dict")
+        monitor2 = MonitorFactory.get_monitor("dict")
         self.assertEqual(monitor1, monitor2)
         self.assertTrue(
             monitor1.register("token_num", metric_unit="token", quota=200),
@@ -185,7 +185,7 @@ class SqliteMonitorTest(MonitorTestBase):
             self.monitor.register_budget(
                 model_name="gpt-4",
                 value=5,
-                prefix="agent_A",
+                prefix="agent_A.gpt-4",
             ),
         )
         # register an existing model with different prefix is ok
@@ -193,21 +193,22 @@ class SqliteMonitorTest(MonitorTestBase):
             self.monitor.register_budget(
                 model_name="gpt-4",
                 value=15,
-                prefix="agent_B",
+                prefix="agent_B.gpt-4",
             ),
         )
         gpt_4_3d = {
-            "agent_A.gpt-4.prompt_tokens": 50000,
-            "agent_A.gpt-4.completion_tokens": 25000,
-            "agent_A.gpt-4.total_tokens": 750000,
+            "prompt_tokens": 50000,
+            "completion_tokens": 25000,
+            "total_tokens": 750000,
         }
         # agentA uses 3 dollors
-        self.monitor.update(**gpt_4_3d)
+        self.monitor.update(gpt_4_3d, prefix="agent_A.gpt-4")
         # agentA uses another 3 dollors and exceeds quota
         self.assertRaises(
             QuotaExceededError,
             self.monitor.update,
-            **gpt_4_3d,
+            gpt_4_3d,
+            "agent_A.gpt-4",
         )
         self.assertLess(
             self.monitor.get_value(  # type: ignore [arg-type]
@@ -220,6 +221,12 @@ class SqliteMonitorTest(MonitorTestBase):
             self.monitor.register_budget(
                 model_name="gpt-4",
                 value=5,
-                prefix="agent_A",
+                prefix="agent_A.gpt-4",
             ),
+        )
+        self.assertEqual(
+            self.monitor.get_value(  # type: ignore [arg-type]
+                "agent_A.gpt-4.cost",
+            ),
+            3,
         )

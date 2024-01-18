@@ -64,10 +64,10 @@ class MonitorBase(ABC):
             `bool`: whether the operation success.
         """
 
-    def update(self, **kwargs: Any) -> None:
+    def update(self, values: dict, prefix: Optional[str] = None) -> None:
         """Update multiple metrics at once."""
-        for k, v in kwargs.items():
-            self.add(k, v)
+        for k, v in values:
+            self.add(full_name(prefix=prefix, name=k), v)
 
     @abstractmethod
     def clear(self, metric_name: str) -> bool:
@@ -200,13 +200,28 @@ class MonitorBase(ABC):
             model_name (`str`): model that requires budget.
             value (`float`): the budget value.
             prefix (`Optional[str]`, default `None`): used to distinguish
-            multiple budget registrations for the same model. For multiple
-            registrations with the same `model_name` and `prefix`, only the
-            first time will take effect.
+            multiple budget registrations. For multiple registrations with
+            the same `prefix`, only the first time will take effect.
 
         Returns:
             `bool`: whether the operation success.
         """
+
+
+def full_name(name: str, prefix: Optional[str] = None) -> str:
+    """get the full name of a metric.
+
+    Args:
+        metric_name (`str`): name of a metric.
+        prefix (` Optional[str]`, default `None`): metric prefix.
+
+    Returns:
+        `str`: the full name of the metric
+    """
+    if prefix is None:
+        return name
+    else:
+        return f"{prefix}.{name}"
 
 
 class QuotaExceededError(Exception):
@@ -625,10 +640,17 @@ class SqliteMonitor(MonitorBase):
         with sqlite_cursor(self.db_path) as cursor:
             return self._exists(cursor, metric_name)
 
-    def update(self, **kwargs: Any) -> None:
+    def update(self, values: dict, prefix: Optional[str] = None) -> None:
         with sqlite_transaction(self.db_path) as cursor:
-            for metric_name, value in kwargs.items():
-                self._add(cursor, metric_name, value)
+            for metric_name, value in values.items():
+                self._add(
+                    cursor,
+                    full_name(
+                        name=metric_name,
+                        prefix=prefix,
+                    ),
+                    value,
+                )
 
     def _create_update_cost_trigger(
         self,
@@ -661,7 +683,10 @@ class SqliteMonitor(MonitorBase):
         logger.info(f"set budget {value} to {model_name}")
         pricing = get_pricing()
         if model_name in pricing:
-            budget_metric_name = f"{prefix}.{model_name}.cost"
+            budget_metric_name = full_name(
+                name="cost",
+                prefix=prefix,
+            )
             ok = self.register(
                 metric_name=budget_metric_name,
                 metric_unit="dollor",
@@ -670,7 +695,10 @@ class SqliteMonitor(MonitorBase):
             if not ok:
                 return False
             for metric_name, unit_price in pricing[model_name].items():
-                token_metric_name = f"{prefix}.{model_name}.{metric_name}"
+                token_metric_name = full_name(
+                    name=metric_name,
+                    prefix=prefix,
+                )
                 self.register(
                     metric_name=token_metric_name,
                     metric_unit="token",
@@ -721,24 +749,28 @@ class MonitorFactory:
 
         from agentscope.utils import MonitorFactory
         monitor = MonitorFactory.get_monitor()
-
     """
 
     _instance = None
 
     @classmethod
-    def get_monitor(cls, impl_type: Optional[str] = None) -> MonitorBase:
+    def get_monitor(
+        cls,
+        impl_type: Optional[str] = None,
+        **kwargs: Any,
+    ) -> MonitorBase:
         """Get the monitor instance.
 
         Returns:
             `MonitorBase`: the monitor instance.
         """
         if cls._instance is None:
-            # todo: init a specific monitor implementation by input args
-            if impl_type is None or impl_type.lower() == "dict":
+            if impl_type is None or impl_type.lower() == "sqlite":
+                cls._instance = SqliteMonitor(**kwargs)
+            elif impl_type.lower() == "dict":
                 cls._instance = DictMonitor()
             else:
                 raise NotImplementedError(
                     "Monitor with type [{type}] is not implemented.",
                 )
-        return cls._instance
+        return cls._instance  # type: ignore [return-value]

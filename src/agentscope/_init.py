@@ -10,10 +10,12 @@ from .agents import AgentBase
 from ._runtime import Runtime
 from .file_manager import file_manager
 from .utils.logging_utils import LOG_LEVEL, setup_logger
+from .utils.monitor import MonitorFactory
 from .models import read_model_configs
+from .constants import _DEFAULT_DIR
+from .constants import _DEFAULT_LOG_LEVEL
 
-_DEFAULT_DIR = "./runs"
-_DEFAULT_LOG_LEVEL = "INFO"
+
 _INIT_SETTINGS = {}
 
 
@@ -84,6 +86,9 @@ def init(
     # Set logger and level
     dir_log = str(file_manager.dir_log) if save_log else None
     setup_logger(dir_log, logger_level)
+
+    # Set monitor
+    _ = MonitorFactory.get_monitor(db_path=file_manager.file_db)
 
     # Load config and init agent by configs
     if agent_configs is not None:

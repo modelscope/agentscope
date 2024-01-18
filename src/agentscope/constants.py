@@ -16,10 +16,12 @@ _DEFAULT_SUBDIR_CODE = "code"
 _DEFAULT_SUBDIR_FILE = "file"
 _DEFAULT_SUBDIR_INVOKE = "invoke"
 _DEFAULT_IMAGE_NAME = "image_{}_{}.png"
+_DEFAULT_SQLITE_DB_FILE = "agentscope.db"
 # for model wrapper
 _DEFAULT_MAX_RETRIES = 3
 _DEFAULT_MESSAGES_KEY = "inputs"
 _DEFAULT_RETRY_INTERVAL = 1
+_DEFAULT_API_BUDGET = None
 # for execute python
 _DEFAULT_PYPI_MIRROR = "http://mirrors.aliyun.com/pypi/simple/"
 _DEFAULT_TRUSTED_HOST = "mirrors.aliyun.com"
