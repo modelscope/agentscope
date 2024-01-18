@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from typing import Any, Union, Tuple
 import re
-import enum
 import numpy as np
 from loguru import logger
 
+from enums import CustomerConv, CustomerPlot
+from utils import send_chat_msg
 from agentscope.agents import StateAgent, DialogAgent
 from agentscope.message import Msg
 
@@ -13,21 +14,6 @@ HISTORY_WINDOW = 10
 # TODO: for debug, set the score bars to be lower
 MIN_BAR_RECEIVED_CONST = 4
 MIN_BAR_FRIENDSHIP_CONST = 30
-
-
-class CustomerConv(enum.IntEnum):
-    """Enum for customer status."""
-
-    WARMING_UP = 0
-    AFTER_MEAL_CHAT = 1
-    INVITED_GROUP_PLOT = 2
-
-
-class CustomerPlot(enum.IntEnum):
-    """Enum for customer plot active or not."""
-
-    ACTIVE = 1
-    NOT_ACTIVE = 0
 
 
 class Customer(StateAgent, DialogAgent):
@@ -63,7 +49,7 @@ class Customer(StateAgent, DialogAgent):
         # return (
         #     np.random.binomial(
         #         n=1,
-        #         p=min(self.friendship / 100, 1.0),
+        #         p=min(10 / 100, 1.0),
         #     )
         #     > 0
         # )
@@ -119,8 +105,9 @@ class Customer(StateAgent, DialogAgent):
         change_in_friendship = score - MIN_BAR_RECEIVED_CONST
         self.friendship += change_in_friendship
         change_symbol = "+" if change_in_friendship >= 0 else ""
-        logger.info(
-            f"{self.name}: 好感度变化 {change_symbol}{change_in_friendship} "
+        send_chat_msg(
+            f"【系统】{self.name}: 好感度变化 "
+            f"{change_symbol}{change_in_friendship} "
             f"当前好感度为 {self.friendship}",
         )
 
@@ -224,7 +211,7 @@ class Customer(StateAgent, DialogAgent):
         )
 
         analysis = self.model(messages=prompt)
-        logger.info(f"聊完之后，{self.name}在想:" + analysis)
+        send_chat_msg(f"聊完之后，{self.name}在想:" + analysis)
 
         update_prompt = self.game_config["update_background"].format_map(
             {
@@ -235,7 +222,7 @@ class Customer(StateAgent, DialogAgent):
         )
         update_msg = Msg(role="user", name="system", content=update_prompt)
         new_background = self.model(messages=[update_msg])
-        logger.info(f"根据对话，{self.name}的背景更新为：" + new_background)
+        send_chat_msg(f"根据对话，{self.name}的背景更新为：" + new_background)
         self.background = new_background
 
     def _validated_history_messages(self, recent_n: int = 10):
@@ -266,7 +253,7 @@ class Customer(StateAgent, DialogAgent):
         msg = Msg(name="system", role="user", content=pov_prompt)
         pov_story = self.model(messages=[msg])
         print("*" * 20)
-        logger.info(pov_story)
+        send_chat_msg(pov_story)
         print("*" * 20)
 
     def _gen_plot_related_prompt(self) -> str:
