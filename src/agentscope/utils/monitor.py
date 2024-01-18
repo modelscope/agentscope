@@ -200,8 +200,8 @@ class MonitorBase(ABC):
             model_name (`str`): model that requires budget.
             value (`float`): the budget value.
             prefix (`Optional[str]`, default `None`): used to distinguish
-            multiple budget registrations. For multiple registrations with
-            the same `prefix`, only the first time will take effect.
+                multiple budget registrations. For multiple registrations with
+                the same `prefix`, only the first time will take effect.
 
         Returns:
             `bool`: whether the operation success.
@@ -436,6 +436,15 @@ class SqliteMonitor(MonitorBase):
         table_name: str = _DEFAULT_MONITOR_TABLE_NAME,
         drop_exists: bool = False,
     ) -> None:
+        """Initialize a SqliteMonitor.
+
+        Args:
+            db_path (`str`): path to the sqlite db file.
+            table_name (`str`, optional): the table name used by the monitor.
+                Defaults to _DEFAULT_MONITOR_TABLE_NAME.
+            drop_exists (bool, optional): whether to delete the original table
+            when the table already exists. Defaults to False.
+        """
         super().__init__()
         self.db_path = db_path
         self.table_name = table_name
@@ -722,6 +731,7 @@ def get_pricing() -> dict:
     Returns:
         `dict`: the dict with pricing information.
     """
+    # TODO: get pricing from files
     return {
         "gpt-4-turbo": {
             "prompt_tokens": 0.00001,
@@ -760,6 +770,11 @@ class MonitorFactory:
         **kwargs: Any,
     ) -> MonitorBase:
         """Get the monitor instance.
+
+        Args:
+            impl_type (`Optional[str]`, optional): the type of monitor,
+                currently supports `sqlite` and `dict`, the default is
+                `sqlite`.
 
         Returns:
             `MonitorBase`: the monitor instance.
