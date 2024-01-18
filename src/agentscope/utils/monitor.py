@@ -191,7 +191,7 @@ class MonitorBase(ABC):
         self,
         model_name: str,
         value: float,
-        prefix: Optional[str] = 'local'
+        prefix: Optional[str] = "local",
     ) -> bool:
         """Register model call budget to the monitor, the monitor will raise
         QuotaExceededError, when budget is exceeded.
@@ -212,9 +212,11 @@ class MonitorBase(ABC):
 class QuotaExceededError(Exception):
     """An Exception used to indicate that a certain metric exceeds quota"""
 
-    def __init__(self,
-                 metric_name: Optional[str] = None,
-                 quota: Optional[float] = None) -> None:
+    def __init__(
+        self,
+        metric_name: Optional[str] = None,
+        quota: Optional[float] = None,
+    ) -> None:
         if metric_name is not None and quota is not None:
             self.message = f"Metric [{metric_name}] exceeds quota [{quota}]"
             super().__init__(self.message)
@@ -357,10 +359,12 @@ class DictMonitor(MonitorBase):
                 if pattern.search(key)
             }
 
-    def register_budget(self,
-                        model_name: str,
-                        value: float,
-                        prefix: Optional[str] = 'local') -> bool:
+    def register_budget(
+        self,
+        model_name: str,
+        value: float,
+        prefix: Optional[str] = "local",
+    ) -> bool:
         logger.warning("DictMonitor doesn't support register_budget")
         return False
 
@@ -446,12 +450,12 @@ class SqliteMonitor(MonitorBase):
                 BEGIN
                     SELECT RAISE(FAIL, 'QuotaExceeded');
                 END;
-                """
+                """,
             )
 
     def _get_trigger_name(self, metric_name: str) -> str:
         """Get the name of the trigger on a certain metric"""
-        return f'{self.table_name}.{metric_name}.trigger'
+        return f"{self.table_name}.{metric_name}.trigger"
 
     def register(
         self,
@@ -630,8 +634,8 @@ class SqliteMonitor(MonitorBase):
         self,
         token_metric: str,
         cost_metric: str,
-        unit_price: float
-    ) -> bool:
+        unit_price: float,
+    ) -> None:
         with sqlite_transaction(self.db_path) as cursor:
             cursor.execute(
                 f"""
@@ -645,36 +649,42 @@ class SqliteMonitor(MonitorBase):
                     SET value = value + (NEW.value - OLD.value) * {unit_price}
                     WHERE name = "{cost_metric}";
                 END;
-                """
+                """,
             )
 
     def register_budget(
         self,
         model_name: str,
         value: float,
-        prefix: Optional[str] = None
+        prefix: Optional[str] = None,
     ) -> bool:
         logger.info(f"set budget {value} to {model_name}")
         pricing = get_pricing()
         if model_name in pricing:
-            budget_metric_name = f'{prefix}.{model_name}.cost'
+            budget_metric_name = f"{prefix}.{model_name}.cost"
             ok = self.register(
                 metric_name=budget_metric_name,
-                metric_unit='dollor',
-                quota=value)
+                metric_unit="dollor",
+                quota=value,
+            )
             if not ok:
                 return False
             for metric_name, unit_price in pricing[model_name].items():
-                token_metric_name = f'{prefix}.{model_name}.{metric_name}'
+                token_metric_name = f"{prefix}.{model_name}.{metric_name}"
                 self.register(
                     metric_name=token_metric_name,
-                    metric_unit='token')
+                    metric_unit="token",
+                )
                 self._create_update_cost_trigger(
-                    token_metric_name, budget_metric_name, unit_price)
+                    token_metric_name,
+                    budget_metric_name,
+                    unit_price,
+                )
             return True
         else:
             logger.warning(
-                f'Calculate budgets for model [{model_name}] is not supported')
+                f"Calculate budgets for model [{model_name}] is not supported",
+            )
             return False
 
 
@@ -685,22 +695,22 @@ def get_pricing() -> dict:
         `dict`: the dict with pricing information.
     """
     return {
-        'gpt-4-turbo': {
-            'prompt_tokens': 0.00001,
-            'completion_tokens': 0.00003
+        "gpt-4-turbo": {
+            "prompt_tokens": 0.00001,
+            "completion_tokens": 0.00003,
         },
-        'gpt-4': {
-            'prompt_tokens': 0.00003,
-            'completion_tokens': 0.00006
+        "gpt-4": {
+            "prompt_tokens": 0.00003,
+            "completion_tokens": 0.00006,
         },
-        'gpt-4-32k': {
-            'prompt_tokens': 0.00006,
-            'completion_tokens': 0.00012
+        "gpt-4-32k": {
+            "prompt_tokens": 0.00006,
+            "completion_tokens": 0.00012,
         },
-        'gpt-3.5-turbo': {
-            'prompt_tokens': 0.000001,
-            'completion_tokens': 0.000002
-        }
+        "gpt-3.5-turbo": {
+            "prompt_tokens": 0.000001,
+            "completion_tokens": 0.000002,
+        },
     }
 
 
