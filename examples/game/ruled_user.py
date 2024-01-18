@@ -153,7 +153,7 @@ class RuledUser(AgentBase):
             if sel_ingr in ["结束", "**结束**"]:  # For gradio
                 if len(cook_list) > 0:
                     break
-                send_chat_msg("【系统】你的魔法锅空空如也。")
+                send_chat_msg("【系统】你没有选中任何食材。")
             elif sel_ingr in ["清空", "**清空**"]:  # For gradio
                 cook_list.clear()
             elif sel_ingr not in ingredients_list:
@@ -171,7 +171,8 @@ class RuledUser(AgentBase):
         # food = random_quality + food
 
         send_chat_msg(
-            f"【系统】魔法锅周围光芒四射，你听到了轻微的咔哒声。当一切平静下来，一道《{food}》出现在你眼前。",
+            # f"【系统】魔法锅周围光芒四射，你听到了轻微的咔哒声。当一切平静下来，一道《{food}》出现在你眼前。",
+            f"【系统】你开始撸起袖子、开启炉灶。。。。当一切平静下来，一道《{food}》出现在客人眼前。",
         )
 
         return food
