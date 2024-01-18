@@ -9,7 +9,7 @@ AgentScope Documentation
 ======================================
 
 
-.. include:: tutorial/main.md
+.. include:: ../../tutorial/main.md
    :parser: myst_parser.sphinx_
 
 .. toctree::
@@ -18,9 +18,9 @@ AgentScope Documentation
    :hidden:
    :caption: AgentScope Tutorial
 
-   tutorial/quick_start.rst
-   tutorial/advance.rst
-   tutorial/contribute.rst
+   ../../tutorial/quick_start.rst
+   ../../tutorial/advance.rst
+   ../../tutorial/contribute.rst
 
 
 .. toctree::
