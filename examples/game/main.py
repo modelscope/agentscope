@@ -57,6 +57,9 @@ def invited_group_chat(
                 msg = None
             elif answer == "结束邀请对话":
                 break
+            else:
+                send_chat_msg("【系统】请重新选择。")
+                continue
             for c in invited_customer:
                 msg = c(msg)
                 send_pretty_msg(msg)
@@ -141,7 +144,9 @@ def one_on_one_loop(customers, player):
                 break
             send_pretty_msg(msg)
             send_chat_msg(
-                "【系统】请输入“做菜”启动做菜程序，它会按所选定食材产生菜品。" " (对话轮次过多会使得顾客综合满意度下降。)",
+                "【系统】请输入“做菜”启动做菜程序，它会按所选定食材产生菜品。 \n"
+                "【系统】对话轮次过多会使得顾客综合满意度下降。 \n"
+                "【系统】若不输入任何内容直接按回车键，顾客将离开餐馆。",
             )
             msg = player(msg)
             if len(msg["content"]) == 0 or "[TERMINATE]" in msg["content"]:
@@ -201,6 +206,9 @@ def invite_customers(customers):
         answer = query_answer(select_customer, "invited")
         if answer == "END":
             break
+        if answer not in select_customer:
+            send_chat_msg("【系统】请重新选择。")
+            continue
 
         invited_customers.append(answer)
         available_customers.remove(answer)
@@ -312,7 +320,10 @@ def main(args) -> None:
                 for c in customers
                 if c.name not in checkpoint.invited_customers
             ]
-            checkpoint.visit_customers = one_on_one_loop(rest_customers, player)
+            checkpoint.visit_customers = one_on_one_loop(
+                rest_customers,
+                player,
+            )
             checkpoint.stage_per_night = StagePerNight.MAKING_INVITATION
         elif checkpoint.stage_per_night == StagePerNight.MAKING_INVITATION:
             # ============ making invitation decision =============
