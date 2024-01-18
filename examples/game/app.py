@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-import copy
-import sys
 from typing import List
 import os
 import yaml
+import datetime
 
 import agentscope
 
@@ -22,6 +21,18 @@ from gradio_groupchat import GroupChat
 enable_web_ui()
 
 glb_history_chat = []
+MAX_NUM_DISPLAY_MSG = 20
+
+
+def export_chat_history():
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    export_filename = f"chat_history_{timestamp}.txt"
+
+    with open(export_filename, "w", encoding="utf-8") as file:
+        for role, message in glb_history_chat:
+            file.write(f"{role}: {message}\n")
+
+    return gr.update(value=export_filename, visible=True)
 
 
 def get_chat() -> List[List]:
@@ -36,7 +47,7 @@ def get_chat() -> List[List]:
     if line is not None:
         glb_history_chat += [line]
 
-    return glb_history_chat
+    return glb_history_chat[-MAX_NUM_DISPLAY_MSG:]
 
 
 if __name__ == "__main__":
@@ -63,6 +74,7 @@ if __name__ == "__main__":
 
         with gr.Row():
             chatbot = GroupChat(label="Dialog", show_label=False, height=600)
+
         with gr.Row():
             with gr.Column():
                 user_chat_input = gr.Textbox(
@@ -71,10 +83,7 @@ if __name__ == "__main__":
                     show_label=False,
                     interactive=True,
                 )
-            with gr.Column():
-                send_button = gr.Button(
-                    value="发送",
-                )
+
             user_chat_bot_suggest = gr.Dataset(
                 label="选择一个",
                 components=[user_chat_input],
@@ -87,6 +96,16 @@ if __name__ == "__main__":
                 inputs=[user_chat_bot_suggest],
                 outputs=[user_chat_input],
             )
+
+        with gr.Column():
+            send_button = gr.Button(
+                value="发送",
+            )
+
+        with gr.Accordion("导出选项", open=False):
+            with gr.Column():
+                export_button = gr.Button("导出完整游戏记录")
+                export_output = gr.File(label="下载完整游戏记录", visible=False)
 
         def send_message(msg):
             send_player_input(msg)
@@ -112,9 +131,11 @@ if __name__ == "__main__":
 
         outputs = [chatbot, user_chat_bot_suggest]
         send_button.click(send_message, user_chat_input, user_chat_input)
+        export_button.click(export_chat_history, [], export_output)
         user_chat_input.submit(send_message, user_chat_input, user_chat_input)
         demo.load(get_chat, inputs=None, outputs=chatbot, every=0.5)
         demo.load(update_suggest, outputs=user_chat_bot_suggest, every=0.5)
         demo.load(start_game)
 
+    demo.queue()
     demo.launch()

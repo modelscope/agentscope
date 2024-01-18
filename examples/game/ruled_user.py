@@ -158,6 +158,7 @@ class RuledUser(AgentBase):
                 cook_list.clear()
             elif sel_ingr not in ingredients_list:
                 send_chat_msg("【系统】不可用食材，请重新选择。")
+                continue
             else:
                 cook_list.append(sel_ingr)
         end_query_answer()
