@@ -206,7 +206,7 @@ def invite_customers(customers):
         answer = query_answer(select_customer, "invited")
         if answer == "END":
             break
-        if answer not in select_customer:
+        if answer not in available_customers:
             send_chat_msg("【系统】请重新选择。")
             continue
 
