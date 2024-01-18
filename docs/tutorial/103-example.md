@@ -1,6 +1,6 @@
 # Getting Started with a Simple Example
 
-AgentScope is a versatile platform for building and running multi-agent applications. We provide various pre-built examples that will help you quickly understand how to create and use multi-agent for various applications. In this tutorial, you will learn to set up a **simple agent-based interaction**.
+AgentScope is a versatile platform for building and running multi-agent applications. We provide various pre-built examples that will help you quickly understand how to create and use multi-agent for various applications. In this tutorial, you will learn how to set up a **simple agent-based interaction**.
 
 ## Step1: Prepare Model Configs
 

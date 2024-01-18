@@ -209,6 +209,21 @@ This section illustrates how pipelines can simplify the implementation of logic 
     x = whilelooppipeline(x, agent, condition)
     ```
 
+### Pipeline Combination
+It's worth noting that AgentScope supports the combination of pipelines to create complex interactions. For example, we can create a pipeline that executes a sequence of agents in order, and then executes another pipeline that executes a sequence of agents in condition.
+```python
+from agentscope.pipelines import SequentialPipeline, ParallelPipeline
+# Create a pipeline that executes agents in order
+pipe1 = SequentialPipeline([agent1, agent2, agent3])
+# Create a pipeline that executes agents in parallel
+pipe2 = IfElsePipeline(condition, agent4, agent5)
+# Create a pipeline that executes pipe1 and pipe2 in order
+pipe3 = SequentialPipeline([pipe1, pipe2])
+# Invoke the pipeline
+x = pipe3(x)
+```
+
+
 ## MsgHub
 
 `MsgHub` is designed to manage dialogue among a group of agents, allowing for the sharing of messages. Through `MsgHub`, agents can broadcast messages to all other agents in the group with `broadcast`.
@@ -282,4 +297,4 @@ hub.delete(existing_agent)
 
 
 
-[[Return to the top]](#agent-interactions:-Dive-deeper-into-pipelines-and-message-hub)
+[[Return to the top]](#agent-interactions-dive-deeper-into-pipelines-and-message-hub)

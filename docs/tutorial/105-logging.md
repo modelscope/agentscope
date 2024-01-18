@@ -19,9 +19,9 @@ We recommend setting up the logger via `agentscope.init`, and you can set the lo
 import agentscope
 
 LOG_LEVEL = Literal[
+    "CHAT",
     "TRACE",
     "DEBUG",
-	"CHAT",
     "INFO",
     "SUCCESS",
     "WARNING",
@@ -70,7 +70,7 @@ For convince, we provide the pre-built app in a wheel file, you can run the WebU
 pip install gradio_groupchat-0.0.1-py3-none-any.whl
 python app.py
 ```
-After the init and entering the UI port printed by `app.py`, e.g., `http://127.0.0.1:7860/`, you can choose `demo_run.log` in the top-middle `FileSelector` window (it's a demo log file provided by us). Then, the dialog and system log should be shown correctly in the bottom windows.
+After the init and entering the UI port printed by `app.py`, e.g., `http://127.0.0.1:7860/`, you can choose `run.log.demo` in the top-middle `FileSelector` window (it's a demo log file provided by us). Then, the dialog and system log should be shown correctly in the bottom windows.
 
 ![webui](https://img.alicdn.com/imgextra/i2/O1CN01hSaFue1EdL2yCEznc_!!6000000000374-2-tps-3066-1808.png)
 

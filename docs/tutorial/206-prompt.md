@@ -25,32 +25,34 @@ engine = PromptEngine(model)
 
 The `join` method of `PromptEngine` provides a unified interface to handle an arbitrary number of components for constructing the final prompt.
 
-#### String Type Prompt
+#### Output String Type Prompt
 
 If the model expects a string-type prompt, components are joined with a newline character:
 
 ```python
 system_prompt = "You're a helpful assistant."
-memory = ...
+memory = ... # can be dict, list, or string
 hint_prompt = "Please respond in JSON format."
 
 prompt = engine.join(system_prompt, memory, hint_prompt)
+# the result will be [ "You're a helpful assistant.", {"name": "user", "content": "What's the weather like today?"}]
 ```
 
-#### List Type Prompt
+#### Output List Type Prompt
 
-For models that work with list-type prompts, components are converted to Message objects:
+For models that work with list-type prompts,e.g., OpenAI and Huggingface chat models, the components can be converted to Message objects, whose type is list of dict:
 
 ```python
 system_prompt = "You're a helpful assistant."
 user_messages = [{"name": "user", "content": "What's the weather like today?"}]
 
 prompt = engine.join(system_prompt, user_messages)
+# the result should be: [{"role": "assistant", "content": "You're a helpful assistant."}, {"name": "user", "content": "What's the weather like today?"}]
 ```
 
-### Formatting Prompts
+#### Formatting Prompts in Dynamic Way
 
-The `PromptEngine` supports dynamic prompts using the `format_map` parameter, allowing you to inject variables into the prompt components:
+The `PromptEngine` supports dynamic prompts using the `format_map` parameter, allowing you to flexibly inject various variables into the prompt components for different scenarios:
 
 ```python
 variables = {"location": "London"}

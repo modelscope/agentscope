@@ -4,13 +4,13 @@
 
 Before diving into the advanced topics of AgentScope, in this tutorial, we will give you a glance at building a Werewolf application with out-of-the-box components of AgentScope.
 
-**Werewolf** is a well-known social-deduction game, that involves an imaginary village where a few villagers are secretly werewolves, and the objective is to find out who they are before they eliminate all other players. It's a good use case to demonstrate the interaction between multiple autonomous agents, each with its own objectives and the need for communication.
+**Werewolf** is a well-known social-deduction game, that involves an imaginary village where a few villagers are secretly werewolves, and the objective is to identify who they are before they eliminate all other players. It's a good use case to demonstrate the interaction between multiple autonomous agents, each with its own objectives and the need for communication.
 
 Let the adventure begin to unlock the potential of multi-agent applications with AgentScope!
 
 ## Getting Started
 
-Firstly, ensure that you have installed and configured AgentScope properly. Besides, we will involve the basic concepts of `Model API`,  `Agent`, `Msg`, and `pipeline,` as described in [Tutorial-Concept](https://github.com/alibaba/AgentScope/tree/main/docs/tutorial/102-concepts.md). The overview of this tutorial is shown below:
+Firstly, ensure that you have installed and configured AgentScope properly. Besides, we will involve the basic concepts of `Model API`,  `Agent`, `Msg`, and `Pipeline,` as described in [Tutorial-Concept](https://github.com/alibaba/AgentScope/tree/main/docs/tutorial/102-concepts.md). The overview of this tutorial is shown below:
 
 * [Step 1: Prepare **Model API** and Set Model Configs](#step-1-prepare-model-api-and-set-model-configs)
 * [Step 2: Define the Roles of Each **Agent**](#step-2-define-the-roles-of-each-agent)
@@ -59,7 +59,7 @@ class MyAgent(AgentBase):
         return x
 ```
 
-AgentScope provides several out-of-box Agents implements and organizes them as an *Agent Pool*. In this application, we use a built-in agent, `DictDialogAgent`. Here we give an example configuration of `DictDialogAgent` for a player assigned as the role of a werewolf:
+AgentScope provides several out-of-the-box Agents implements and organizes them as an *Agent Pool*. In this application, we use a built-in agent, `DictDialogAgent`. Here we give an example configuration of `DictDialogAgent` for a player assigned as the role of a werewolf:
 
 ```json
 {

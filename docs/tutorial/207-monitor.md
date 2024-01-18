@@ -66,7 +66,7 @@ except QuotaExceededError as e:
 Get the current number of tokens used:
 
 ```python
-api_usage = monitor.get_value("token_num")
+token_num_used = monitor.get_value("token_num")
 ```
 
 ### Resetting and Removing Metrics
