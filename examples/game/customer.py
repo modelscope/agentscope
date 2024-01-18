@@ -49,7 +49,7 @@ class Customer(StateAgent, DialogAgent):
         # return (
         #     np.random.binomial(
         #         n=1,
-        #         p=min(10 / 100, 1.0),
+        #         p=min(self.friendship / 100, 1.0),
         #     )
         #     > 0
         # )

@@ -22,6 +22,7 @@ from gradio_groupchat import GroupChat
 enable_web_ui()
 
 glb_history_chat = []
+MAX_NUM_DISPLAY_MSG = 20
 
 
 def get_chat() -> List[List]:
@@ -36,7 +37,7 @@ def get_chat() -> List[List]:
     if line is not None:
         glb_history_chat += [line]
 
-    return glb_history_chat
+    return glb_history_chat[-MAX_NUM_DISPLAY_MSG:]
 
 
 if __name__ == "__main__":
