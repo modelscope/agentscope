@@ -13,6 +13,7 @@ from utils import (
     send_player_input,
     get_chat_msg,
     get_suggests,
+    ResetException,
 )
 
 import gradio as gr
@@ -67,7 +68,11 @@ if __name__ == "__main__":
         args.game_config = GAME_CONFIG
         from main import main
 
-        main(args)
+        while True:
+            try:
+                main(args)
+            except ResetException:
+                print("重置成功")
 
     with gr.Blocks() as demo:
         # Users can select the interested exp
@@ -106,10 +111,19 @@ if __name__ == "__main__":
             with gr.Column():
                 export_button = gr.Button("导出完整游戏记录")
                 export_output = gr.File(label="下载完整游戏记录", visible=False)
+        reset_button = gr.Button(
+            value="重置",
+        )
 
         def send_message(msg):
             send_player_input(msg)
             send_chat_msg(msg, "你")
+            return ""
+
+        def send_reset_message():
+            global glb_history_chat
+            glb_history_chat = []
+            send_player_input("**Reset**")
             return ""
 
         def update_suggest():
@@ -131,6 +145,7 @@ if __name__ == "__main__":
 
         outputs = [chatbot, user_chat_bot_suggest]
         send_button.click(send_message, user_chat_input, user_chat_input)
+        reset_button.click(send_reset_message)
         export_button.click(export_chat_history, [], export_output)
         user_chat_input.submit(send_message, user_chat_input, user_chat_input)
         demo.load(get_chat, inputs=None, outputs=chatbot, every=0.5)

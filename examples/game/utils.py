@@ -140,9 +140,15 @@ def send_pretty_msg(msg):
 
 
 def get_player_input(name=None):
+    global glb_queue_chat_msg, glb_queue_chat_input, glb_queue_chat_suggests
     if get_use_web_ui():
         print("wait queue input")
         content = glb_queue_chat_input.get(block=True)[1]
+        if content == "**Reset**":
+            glb_queue_chat_msg = Queue()
+            glb_queue_chat_input = Queue()
+            glb_queue_chat_suggests = Queue()
+            raise ResetException
     else:
         content = input(f"{name}: ")
     return content
@@ -220,3 +226,7 @@ def end_query_answer():
 class CheckpointArgs:
     load_checkpoint: str = None
     save_checkpoint: str = "./checkpoints/cp-"
+
+
+class ResetException(Exception):
+    pass
