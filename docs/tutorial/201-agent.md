@@ -40,13 +40,13 @@ class AgentBase(Operator):
 	def observe(self, x: Union[dict, Sequence[dict]]) -> None:
         # An optional method for updating the agent's internal state based on
         # messages it has observed. This method can be used to enrich the
-        # agent's understanding and memory without producing an immediate 
+        # agent's understanding and memory without producing an immediate
         # response.
         self.memory.add(x)
-		
+
     def reply(self, x: dict = None) -> dict:
         # The core method to be implemented by custom agents. It defines the
-        # logic for processing an input message and generating a suitable 
+        # logic for processing an input message and generating a suitable
         # response.
         raise NotImplementedError(
             f"Agent [{type(self).__name__}] is missing the required "
@@ -72,7 +72,7 @@ Below is a table summarizing the functionality of some of the key agents availab
 
 ## Customizing Agents from the AgentPool
 
-Customizing an agent from AgentPool enables you to tailor its functionality to meet the unique demands of your multi-agent application. You have the flexibility to modify existing agents with minimal effort by **adjusting configurations** and prompts or, for more extensive customization, you can engage in secondary development. 
+Customizing an agent from AgentPool enables you to tailor its functionality to meet the unique demands of your multi-agent application. You have the flexibility to modify existing agents with minimal effort by **adjusting configurations** and prompts or, for more extensive customization, you can engage in secondary development.
 
 Below, we provide usages of how to configure various agents from the AgentPool:
 
