@@ -187,22 +187,39 @@ class MonitorBase(ABC):
         """
 
     @abstractmethod
-    def set_budget(self, model_name: str, value: float) -> None:
-        """Set budget to the monitor, the monitor will raise
-        QuotaExceededError, when budget is exceeded
+    def register_budget(
+        self,
+        model_name: str,
+        value: float,
+        prefix: Optional[str] = 'local'
+    ) -> bool:
+        """Register model call budget to the monitor, the monitor will raise
+        QuotaExceededError, when budget is exceeded.
 
         Args:
-            model_name (`str`): model that requires budget
-            value (`float`): the budget value
+            model_name (`str`): model that requires budget.
+            value (`float`): the budget value.
+            prefix (`Optional[str]`, default `None`): used to distinguish
+            multiple budget registrations for the same model. For multiple
+            registrations with the same `model_name` and `prefix`, only the
+            first time will take effect.
+
+        Returns:
+            `bool`: whether the operation success.
         """
 
 
 class QuotaExceededError(Exception):
     """An Exception used to indicate that a certain metric exceeds quota"""
 
-    def __init__(self, metric_name: str, quota: float) -> None:
-        self.message = f"Metric [{metric_name}] exceed quota [{quota}]"
-        super().__init__(self.message)
+    def __init__(self,
+                 metric_name: Optional[str] = None,
+                 quota: Optional[float] = None) -> None:
+        if metric_name is not None and quota is not None:
+            self.message = f"Metric [{metric_name}] exceeds quota [{quota}]"
+            super().__init__(self.message)
+        else:
+            super().__init__()
 
 
 def return_false_if_not_exists(  # type: ignore [no-untyped-def]
@@ -340,8 +357,12 @@ class DictMonitor(MonitorBase):
                 if pattern.search(key)
             }
 
-    def set_budget(self, model_name: str, value: float) -> None:
-        logger.warning("DictMonitor doesn't support set_budget")
+    def register_budget(self,
+                        model_name: str,
+                        value: float,
+                        prefix: Optional[str] = 'local') -> bool:
+        logger.warning("DictMonitor doesn't support register_budget")
+        return False
 
 
 @contextmanager
@@ -402,6 +423,7 @@ class SqliteMonitor(MonitorBase):
         self._create_monitor_table(drop_exists)
 
     def _create_monitor_table(self, drop_exists: bool = False) -> None:
+        """Internal method to create a table in sqlite3."""
         with sqlite_transaction(self.db_path) as cursor:
             if drop_exists:
                 cursor.execute(f"DROP TABLE IF EXISTS {self.table_name};")
@@ -415,6 +437,21 @@ class SqliteMonitor(MonitorBase):
                     unit TEXT
                 );""",
             )
+            cursor.execute(
+                f"""
+                CREATE TRIGGER IF NOT EXISTS {self.table_name}_quota_exceeded
+                BEFORE UPDATE ON {self.table_name}
+                FOR EACH ROW
+                WHEN OLD.quota is not NULL AND NEW.value > OLD.quota
+                BEGIN
+                    SELECT RAISE(FAIL, 'QuotaExceeded');
+                END;
+                """
+            )
+
+    def _get_trigger_name(self, metric_name: str) -> str:
+        """Get the name of the trigger on a certain metric"""
+        return f'{self.table_name}.{metric_name}.trigger'
 
     def register(
         self,
@@ -429,7 +466,7 @@ class SqliteMonitor(MonitorBase):
                 f"""
                 INSERT INTO {self.table_name} (name, value, quota, unit)
                 VALUES (?, ?, ?, ?)
-            """,
+                """,
                 (metric_name, 0.0, quota, metric_unit),
             )
             logger.info(
@@ -444,29 +481,17 @@ class SqliteMonitor(MonitorBase):
         metric_name: str,
         value: float,
     ) -> None:
-        cursor.execute(
-            f"""
-                UPDATE {self.table_name}
-                SET value = value + ?
-                WHERE name = ?
-            """,
-            (value, metric_name),
-        )
-        cursor.execute(
-            f"""
-                SELECT value, quota FROM {self.table_name}
-                WHERE name = ?""",
-            (metric_name,),
-        )
-        row = cursor.fetchone()
-        if row:
-            new_value, quota = row
-            if quota is not None and new_value > quota:
-                logger.warning(f"Metric [{metric_name}] quota exceeded.")
-                raise QuotaExceededError(
-                    metric_name=metric_name,
-                    quota=quota,
-                )
+        try:
+            cursor.execute(
+                f"""
+                    UPDATE {self.table_name}
+                    SET value = value + ?
+                    WHERE name = ?
+                """,
+                (value, metric_name),
+            )
+        except sqlite3.IntegrityError as e:
+            raise QuotaExceededError() from e
 
     def add(self, metric_name: str, value: float) -> bool:
         with sqlite_transaction(self.db_path) as cursor:
@@ -601,8 +626,53 @@ class SqliteMonitor(MonitorBase):
             for metric_name, value in kwargs.items():
                 self._add(cursor, metric_name, value)
 
-    def set_budget(self, model_name: str, value: float) -> None:
+    def _create_update_cost_trigger(
+        self,
+        token_metric: str,
+        cost_metric: str,
+        unit_price: float
+    ) -> bool:
+        with sqlite_transaction(self.db_path) as cursor:
+            cursor.execute(
+                f"""
+                CREATE TRIGGER IF NOT EXISTS
+                "{self.table_name}_{token_metric}_{cost_metric}_price"
+                AFTER UPDATE OF value ON "{self.table_name}"
+                FOR EACH ROW
+                WHEN NEW.name = '{token_metric}'
+                BEGIN
+                    UPDATE {self.table_name}
+                    SET value = value + (NEW.value - OLD.value) * {unit_price}
+                    WHERE name = '{cost_metric}';
+                END;
+                """
+            )
+
+    def register_budget(
+        self,
+        model_name: str,
+        value: float,
+        prefix: Optional[str] = None
+    ) -> bool:
         logger.info(f"set budget {value} to {model_name}")
+        pricing = get_pricing()
+        if model_name in pricing:
+            budget_metric_name = f'{prefix}.{model_name}.cost'
+            self.register(
+                metric_name=budget_metric_name,
+                metric_unit='dollor')
+            for metric_name, unit_price in pricing[model_name].items():
+                token_metric_name = f'{prefix}.{model_name}.{metric_name}'
+                self.register(
+                    metric_name=token_metric_name,
+                    metric_unit='token')
+                self._create_update_cost_trigger(
+                    token_metric_name, budget_metric_name, unit_price)
+            return True
+        else:
+            logger.warning(
+                f'Calculate budgets for model [{model_name}] is not supported')
+            return False
 
 
 def get_pricing() -> dict:
@@ -613,20 +683,20 @@ def get_pricing() -> dict:
     """
     return {
         'gpt-4-turbo': {
-            'input': 0.01,
-            'output': 0.03
+            'prompt_tokens': 0.01,
+            'completion_tokens': 0.03
         },
         'gpt-4': {
-            'input': 0.03,
-            'output': 0.06
+            'prompt_tokens': 0.03,
+            'completion_tokens': 0.06
         },
         'gpt-4-32k': {
-            'input': 0.06,
-            'output': 0.12
+            'prompt_tokens': 0.06,
+            'completion_tokens': 0.12
         },
         'gpt-3.5-turbo': {
-            'input': 0.001,
-            'output': 0.002
+            'prompt_tokens': 0.001,
+            'completion_tokens': 0.002
         }
     }
 
