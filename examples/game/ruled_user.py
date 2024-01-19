@@ -89,7 +89,7 @@ class RuledUser(AgentBase):
                     f"【请重试】",
                     "⚠️",
                 )
-            except Exception as e:
+            except UnicodeDecodeError as e:
                 send_chat_msg(f"【无效输入】 {e}\n 【请重试】", "⚠️")
 
         kwargs = {}
