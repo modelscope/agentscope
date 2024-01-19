@@ -63,7 +63,7 @@ def invited_group_chat(
                 continue
             for c in invited_customer:
                 msg = c(msg)
-                send_pretty_msg(msg, uid=uid)
+                send_pretty_msg(msg, uid=uid,avatar=c.avatar)
         end_query_answer(uid=uid)
 
     invited_names.sort()
@@ -146,7 +146,8 @@ def one_on_one_loop(customers, player, uid):
                     uid=uid,
                 )
                 break
-            send_pretty_msg(msg, uid=uid)
+
+            send_pretty_msg(msg, uid=uid, avatar= customer.avatar)
             send_chat_msg(
                 "【系统】请输入“做菜”启动做菜程序，它会按所选定食材产生菜品。 \n"
                 "【系统】对话轮次过多会使得顾客综合满意度下降。 \n"
@@ -182,7 +183,8 @@ def one_on_one_loop(customers, player, uid):
         while True:
             msg = customer(msg)
             # print(f"{customer_reply.name}（顾客）:" + customer_reply.content)
-            send_pretty_msg(msg, uid=uid)
+
+            send_pretty_msg(msg, uid=uid,avatar=customer.avatar)
             send_chat_msg("【系统】若不输入任何内容直接按回车键，顾客将离开餐馆。", uid=uid)
             msg = player(msg)
             if len(msg["content"]) == 0:

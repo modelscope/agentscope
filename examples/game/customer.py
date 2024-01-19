@@ -5,10 +5,9 @@ import numpy as np
 from loguru import logger
 
 from enums import CustomerConv, CustomerPlot
-from utils import send_chat_msg
+from utils import send_chat_msg, get_a_random_avatar
 from agentscope.agents import StateAgent, DialogAgent
 from agentscope.message import Msg
-
 
 HISTORY_WINDOW = 10
 # TODO: for debug, set the score bars to be lower
@@ -23,6 +22,7 @@ class Customer(StateAgent, DialogAgent):
         self.game_config = game_config
         self.max_itr_preorder = 5
         self.preorder_itr_count = 0
+        self.avatar = self.config.get('avatar', get_a_random_avatar())
         self.background = self.config["character_setting"]["background"]
         self.friendship = int(self.config.get("friendship", 60))
 

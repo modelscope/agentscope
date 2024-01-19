@@ -5,11 +5,13 @@ from typing import Optional, List
 from datetime import datetime
 from colorist import BgBrightColor
 import inquirer
+import random
 from multiprocessing import Queue
 from collections import defaultdict
 from dataclasses import dataclass
 from agentscope.message import Msg
 from enums import StagePerNight
+from pathlib import Path
 from queue import Empty
 
 USE_WEB_UI = False
@@ -52,6 +54,12 @@ def load_game_checkpoint(checkpoint_path: str) -> GameCheckpoint:
 def speak_print(m: Msg):
     print(f"{BgBrightColor.BLUE}{m.name}{BgBrightColor.OFF}: {m.content}")
 
+def get_avatar_files(assets_path='assets'):
+    files = Path(assets_path).glob('*avatar*')
+    return [str(file) for file in files]
+
+def get_a_random_avatar():
+    return random.choices(get_avatar_files())
 
 def check_active_plot(
     plots: list[dict],
@@ -143,17 +151,29 @@ def init_uid_queues():
         "glb_queue_chat_suggests": Queue(),
     }
 
-
 glb_uid_dict = defaultdict(init_uid_queues)
 
-
-def send_chat_msg(msg, role="系统", uid=None):
+def send_chat_msg(msg, role="系统", uid=None, flushing=False, avatar='./assets/bot.jpg'):
     print(msg)
     if get_use_web_ui():
         global glb_uid_dict
         glb_queue_chat_msg = glb_uid_dict[uid]["glb_queue_chat_msg"]
-        glb_queue_chat_msg.put([role, msg])
+        glb_queue_chat_msg.put([None, 
+                {"text": msg,
+                "flushing": flushing,
+                "avatar": avatar
+                }])
 
+def send_player_msg(msg, role="你", uid= None, flushing=False, avatar='./assets/user.jpg'):
+    print(msg)
+    if get_use_web_ui():
+        global glb_uid_dict
+        glb_queue_chat_msg = glb_uid_dict[uid]["glb_queue_chat_msg"]
+        glb_queue_chat_msg.put([ 
+                {"text": msg,
+                "flushing": flushing,
+                "avatar": avatar
+                },None])
 
 def get_chat_msg(uid=None):
     global glb_uid_dict
@@ -164,21 +184,17 @@ def get_chat_msg(uid=None):
             return line
     return None
 
-
 def send_player_input(msg, role="餐厅老板", uid=None):
     if get_use_web_ui():
         global glb_uid_dict
         glb_queue_chat_input = glb_uid_dict[uid]["glb_queue_chat_input"]
         glb_queue_chat_input.put([role, msg])
 
-
-def send_pretty_msg(msg, uid=None):
+def send_pretty_msg(msg, uid=None,flushing=True, avatar='./assets/bot.jpg'):
     speak_print(msg)
     if get_use_web_ui():
         global glb_uid_dict
-        glb_queue_chat_msg = glb_uid_dict[uid]["glb_queue_chat_msg"]
-        glb_queue_chat_msg.put([msg.name, msg.content])
-
+        send_chat_msg(msg.content, uid = uid, role=msg.name, flushing=flushing, avatar=avatar)
 
 def get_player_input(name=None, uid=None):
     global glb_uid_dict
@@ -250,7 +266,6 @@ def query_answer(questions: List, key="ans", uid=None):
         suggests_msg = (
             suggests.message + "\n" + format_choices(suggests.choices)
         )
-        print("suggests=", suggests)
         samples = [[choice] for choice in suggests.choices]
         msg = suggests.message
         send_chat_msg(suggests_msg, uid=uid)

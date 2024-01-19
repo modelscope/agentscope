@@ -13,6 +13,7 @@ from utils import (
     CheckpointArgs,
     enable_web_ui,
     send_chat_msg,
+    send_player_msg,
     send_player_input,
     get_chat_msg,
     get_suggests,
@@ -20,7 +21,7 @@ from utils import (
 )
 
 import gradio as gr
-from gradio_groupchat import GroupChat
+import modelscope_gradio_components as mgr
 
 enable_web_ui()
 
@@ -105,7 +106,7 @@ if __name__ == "__main__":
             is_init = True
 
     def check_for_new_session(uid):
-        print(uid)
+        # print(uid)
         if uid not in glb_signed_user:
             glb_signed_user.append(uid)
             game_thread = threading.Thread(target=start_game, args=(uid,))
@@ -136,7 +137,7 @@ if __name__ == "__main__":
         }
         
         user_chat_bot_cover = gr.HTML(format_cover_html(welcome))
-        chatbot = GroupChat(label="Dialog", show_label=False, height=600, visible=False)
+        chatbot = mgr.Chatbot(label="Dialog", show_label=False, height=600, visible=False)
 
         with gr.Row():
             with gr.Column():
@@ -185,7 +186,7 @@ if __name__ == "__main__":
 
         def send_message(msg, uid):
             send_player_input(msg, uid=uid)
-            send_chat_msg(msg, "你", uid=uid)
+            send_player_msg(msg, "你", uid=uid)
             return ""
 
         return_welcome_button = gr.Button(
@@ -219,7 +220,7 @@ if __name__ == "__main__":
         def game_ui():
             visible = True
             invisible = False
-            return {chatbot:GroupChat(visible=visible), 
+            return {chatbot: mgr.Chatbot(visible=visible),
                     user_chat_input: gr.Text(visible=visible), 
                     send_button: gr.Button(visible=visible),
                     new_button: gr.Button(visible=invisible),
@@ -235,7 +236,7 @@ if __name__ == "__main__":
         def welcome_ui():
             visible = True
             invisible = False
-            return {chatbot:GroupChat(visible=invisible), 
+            return {chatbot: mgr.Chatbot(visible=invisible),
                     user_chat_input: gr.Text(visible=invisible), 
                     send_button: gr.Button(visible=invisible),
                     new_button: gr.Button(visible=visible),

@@ -2,6 +2,7 @@
   "name": "王老板"
   "model": "tongyi_model"
   "use_memory": true
+  "avatar": "assets/avatar_wang.png"
   "character_setting":
     "food_preference": >
       1.王老板是本地人。
@@ -29,6 +30,7 @@
   "name": "阿炳"
   "model": "tongyi_model"
   "use_memory": true
+  "avatar": "assets/avatar_abing.png"
   "character_setting":
     "food_preference": >
       1.阿炳也是本地人
@@ -56,6 +58,7 @@
   "name": "老许"
   "model": "tongyi_model"
   "use_memory": true
+  "avatar": "assets/avatar_laoxu.png"
   "character_setting":
     "food_preference": >
       老许最喜欢的是羊肉，比如烤羊肉串和羊肉烧卖；
@@ -82,6 +85,7 @@
   "name": "范老师"
   "model": "tongyi_model"
   "use_memory": true
+  "avatar": "assets/avatar_fan.png"
   "character_setting":
     "food_preference": >
       1. 范老师是山东人
