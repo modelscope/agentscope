@@ -13,7 +13,7 @@ except ImportError:
     openai = None
 
 from ..utils.monitor import MonitorFactory
-from ..utils.monitor import full_name
+from ..utils.monitor import get_full_name
 from ..utils import QuotaExceededError
 from ..utils.token_utils import get_openai_max_length
 
@@ -110,7 +110,7 @@ class OpenAIWrapper(ModelWrapperBase):
         Returns:
             `str`: Metric name of this wrapper.
         """
-        return full_name(name=metric_name, prefix=self.model_name)
+        return get_full_name(name=metric_name, prefix=self.model_name)
 
 
 class OpenAIChatWrapper(OpenAIWrapper):

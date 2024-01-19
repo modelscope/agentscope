@@ -67,7 +67,7 @@ class MonitorBase(ABC):
     def update(self, values: dict, prefix: Optional[str] = None) -> None:
         """Update multiple metrics at once."""
         for k, v in values:
-            self.add(full_name(prefix=prefix, name=k), v)
+            self.add(get_full_name(prefix=prefix, name=k), v)
 
     @abstractmethod
     def clear(self, metric_name: str) -> bool:
@@ -208,7 +208,7 @@ class MonitorBase(ABC):
         """
 
 
-def full_name(name: str, prefix: Optional[str] = None) -> str:
+def get_full_name(name: str, prefix: Optional[str] = None) -> str:
     """get the full name of a metric.
 
     Args:
@@ -654,7 +654,7 @@ class SqliteMonitor(MonitorBase):
             for metric_name, value in values.items():
                 self._add(
                     cursor,
-                    full_name(
+                    get_full_name(
                         name=metric_name,
                         prefix=prefix,
                     ),
@@ -690,9 +690,9 @@ class SqliteMonitor(MonitorBase):
         prefix: Optional[str] = None,
     ) -> bool:
         logger.info(f"set budget {value} to {model_name}")
-        pricing = get_pricing()
+        pricing = _get_pricing()
         if model_name in pricing:
-            budget_metric_name = full_name(
+            budget_metric_name = get_full_name(
                 name="cost",
                 prefix=prefix,
             )
@@ -704,7 +704,7 @@ class SqliteMonitor(MonitorBase):
             if not ok:
                 return False
             for metric_name, unit_price in pricing[model_name].items():
-                token_metric_name = full_name(
+                token_metric_name = get_full_name(
                     name=metric_name,
                     prefix=prefix,
                 )
@@ -725,7 +725,7 @@ class SqliteMonitor(MonitorBase):
             return False
 
 
-def get_pricing() -> dict:
+def _get_pricing() -> dict:
     """Get pricing as a dict
 
     Returns:

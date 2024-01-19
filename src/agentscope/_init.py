@@ -88,7 +88,7 @@ def init(
     setup_logger(dir_log, logger_level)
 
     # Set monitor
-    _ = MonitorFactory.get_monitor(db_path=file_manager.file_db)
+    _ = MonitorFactory.get_monitor(db_path=file_manager.path_db)
 
     # Load config and init agent by configs
     if agent_configs is not None:
