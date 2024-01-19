@@ -27,6 +27,8 @@ class Customer(StateAgent, DialogAgent):
         self.friendship = int(self.config.get("friendship", 60))
 
         self.cur_state = CustomerConv.WARMING_UP
+        # TODO: A customer can be in at most one plot in the current version
+        self.active_plots = []
 
         self.register_state(
             state=CustomerConv.WARMING_UP,
@@ -55,14 +57,24 @@ class Customer(StateAgent, DialogAgent):
         #     > 0
         # )
 
-    def activate_plot(self) -> None:
+    def activate_plot(self, active_plots: list[int]) -> None:
         # when the customer is the main role in a plot, it will be activated
         self.plot_stage = CustomerPlot.ACTIVE
+        for p in active_plots:
+            if str(p) in self.config["character_setting"]["hidden_plot"] \
+                    and len(self.active_plots) == 0:
+                self.active_plots = [str(p)]
+            elif str(p) in self.config["character_setting"]["hidden_plot"]:
+                raise ValueError(
+                    "A customer can be in at most one plot in the current "
+                    "version"
+                )
 
     def deactivate_plot(self) -> None:
         # when the plot in which the customer is a main role is over, the
         # customer will be deactivated
         self.plot_stage = CustomerPlot.NOT_ACTIVE
+        self.active_plots = []
 
     def reply(self, x: dict = None) -> Union[dict, tuple]:
         # TODO:
@@ -70,6 +82,7 @@ class Customer(StateAgent, DialogAgent):
         # the first/last message must have role 'user'.
         if x is not None:
             x["role"] = "user"
+        logger.debug(f"{self.name} state: {self.cur_state} {self.plot_stage} {self.active_plots}")
         return StateAgent.reply(self, x=x)
 
     def _recommendation_to_score(self, x: dict) -> dict:
@@ -114,8 +127,8 @@ class Customer(StateAgent, DialogAgent):
         )
 
         if (
-            score > MIN_BAR_RECEIVED_CONST
-            and self.friendship > MIN_BAR_FRIENDSHIP_CONST
+            score >= MIN_BAR_RECEIVED_CONST
+            and self.friendship >= MIN_BAR_FRIENDSHIP_CONST
         ):
             self.transition(CustomerConv.AFTER_MEAL_CHAT)
             print("---", self.cur_state)
@@ -280,7 +293,7 @@ class Customer(StateAgent, DialogAgent):
                 {
                     "hidden_plot": self.config["character_setting"][
                         "hidden_plot"
-                    ],
+                    ][self.active_plots[0]],
                 },
             )
             if self.cur_state == CustomerConv.AFTER_MEAL_CHAT:

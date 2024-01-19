@@ -21,26 +21,17 @@
   例子1：我也不知道想吃那些菜，但我是四川人，有点无辣不欢，你这边有没有麻辣的菜色？
   例子2: 有没有什么清淡的菜色？我广东人，怕辣，吃不了辣的菜。
   例子3: 我今天比较想吃牛肉，有没有什么推荐？
-"stage_2_prompt": >
-  你扮演的人物名字是{name}，生成的回答要第一人称，生成内容最多20个字。
-  你的基本设定是{character_description}。
-  但是，你最近遇到了一些烦恼{hidden_plot}。
-  你会觉得跟别人分享烦恼让你难堪，所以你不会一下子说出你的烦恼。
-  你生成的回答要简洁明了，每次的回答只能包括基本设定里的一小部分内容。
 "basic_background_prompt": >
   你扮演的人物名字是{name}，生成的回答要第一人称，生成内容最多20个字。
   你的基本设定是{character_description}。
 "hidden_main_plot_prompt": >
-  但是，你最近遇到了一些烦恼{hidden_plot}。
+  你最近的经历是：\n {hidden_plot}。
 "hidden_main_plot_after_meal": >
   你对老板推荐的菜挺满意。你现在和餐馆老板在饭后闲聊。
-  你会觉得跟别人分享烦恼让你难堪，所以你不会一下子说出你的烦恼。
-  你生成的回答要简洁明了，每次的回答只能包括基本设定里的一小部分内容。
-  例子1: 老板，我想打听一下你有没有认识的人有本地的经销渠道？
-  例子2: 老板，你们的菜做的很好！下次我还会来！
+  如果你最近的境遇不好，你会觉得跟别人分享烦恼让你难堪，所以你不会一下子说出你的烦恼的全部内容。
+  你生成的回答要简洁明了，每次的回答只能包括最近经历里的一小部分内容。
 "hidden_main_plot_discussion": >
   现在餐馆老板说可能有人能帮你解决烦恼，你可以和他聊聊。
-  如果是谈生意，你需要把你的利益最大化。
   例子1:感谢老板拉了这个饭局。我也不藏着掖着了，我把我遇到的问题给大家说说吧。
 "regular_after_meal_prompt": >
   你对老板推荐的菜挺满意。你现在和餐馆老板在饭后闲聊。
@@ -80,16 +71,19 @@
 
 "plots":
   - "predecessor_plots": null
-    "main_role": "王老板"
-    "supporting_roles":
+    "main_roles":
+      - "王老板"
       - "阿炳"
-  - "predecessor_plots": null
-    "main_role": "老朱"
     "supporting_roles":
       - "范老师"
-  - "predecessor_plots":
-      - 0
-      - 1
-    "main_role": "阿炳"
-    "supporting_roles":
-      - "老朱"
+      - "老许"
+#  - "predecessor_plots": null
+#    "main_role": "老朱"
+#    "supporting_roles":
+#      - "范老师"
+#  - "predecessor_plots":
+#      - 0
+#      - 1
+#    "main_role": "阿炳"
+#    "supporting_roles":
+#      - "老朱"
