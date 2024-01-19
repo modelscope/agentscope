@@ -251,12 +251,12 @@ def invite_customers(customers, uid):
     select_customer = [
         inquirer.List(
             "invited",
-            message="【系统】系统：今天就没有更多顾客了，您明天有什么邀请计划吗？",
+            message="【系统】今天就没有更多顾客了，您明天有什么邀请计划吗？",
             choices=available_customers,
         ),
     ]
 
-    choose_available_customers = f"""【系统】系统：今天就没有更多顾客了，您明天有什么邀请计划吗？: <select-box shape="card"
+    choose_available_customers = f"""【系统】今天就没有更多顾客了，您明天有什么邀请计划吗？: <select-box shape="card"
                 columns="4" type="checkbox" options=
                 '{json.dumps(available_customers)}' select-once
                 submit-text="确定"></select-box>"""
