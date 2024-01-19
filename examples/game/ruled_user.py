@@ -76,6 +76,9 @@ class RuledUser(AgentBase):
                 if x == {"content": "游戏开始"} and content == "":
                     send_chat_msg("【系统】有顾客光临，请接待。", uid=self.uid)
                     continue
+                elif isinstance(x, dict):
+                    if x.get('content') == "今天老板邀请大家一起来聚聚。" and content == "":
+                        content = "大家好"
 
                 if not hasattr(self, "model") or len(content) == 0:
                     break

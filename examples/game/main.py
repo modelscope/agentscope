@@ -39,7 +39,7 @@ def invited_group_chat(
     if len(invited_customer) == 0:
         return cur_plots_indices
     invited_names = [c.name for c in invited_customer]
-    send_chat_msg("===== invited group chat ====", uid=uid)
+    send_chat_msg("【系统】群聊开始", uid=uid)
     send_chat_msg(f"老板今天邀请了{invited_names}，大家一起聊聊", uid=uid)
     announcement = {"role": "user", "content": "今天老板邀请大家一起来聚聚。"}
     with msghub(invited_customer + [player], announcement=announcement):
