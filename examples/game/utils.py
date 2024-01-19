@@ -10,6 +10,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from agentscope.message import Msg
 from enums import StagePerNight
+from queue import Empty
 
 USE_WEB_UI = False
 
@@ -200,7 +201,7 @@ def send_suggests(suggests, uid=None):
     while not glb_queue_chat_suggests.empty():
         try:
             glb_queue_chat_suggests.get_nowait()
-        except glb_queue_chat_suggests.Empty:
+        except Empty:
             break
 
     if msg == "end":
