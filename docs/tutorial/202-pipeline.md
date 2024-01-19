@@ -12,7 +12,7 @@ Here is the base class for all pipeline types:
 
 ```python
 class PipelineBase(Operator):
-  	"""Base interface of all pipelines."""
+   """Base interface of all pipelines."""
     # ... [code omitted for brevity]
     @abstractmethod
     def __call__(self, x: Optional[dict] = None) -> dict:
@@ -47,7 +47,7 @@ AgentScope provides two main types of pipelines based on their implementation st
 
     ```python
     # Just invoke
-    x = funcpipeline(x, agent1, agent2, agent3)
+    x = funcpipeline(agent1, agent2, agent3, x)
     ```
 
 Pipelines are categorized based on their functionality, much like programming language constructs. The table below outlines the different pipelines available in AgentScope:
@@ -65,19 +65,19 @@ Pipelines are categorized based on their functionality, much like programming la
 
 This section illustrates how pipelines can simplify the implementation of logic in multi-agent applications by comparing the usage of pipelines versus approaches without pipelines.
 
-**Note：** Please note that in the examples provided below, we use the term `agent` to represent any instance that can act as an `_Operator`. This is for ease of understanding and to illustrate how pipelines orchestrate interactions between different operations. You can replace `agent` with any `_Operator`, thus allowing for a mix of `agent` and `pipeline` in practice.
+**Note：** Please note that in the examples provided below, we use the term `agent` to represent any instance that can act as an `Operator`. This is for ease of understanding and to illustrate how pipelines orchestrate interactions between different operations. You can replace `agent` with any `Operator`, thus allowing for a mix of `agent` and `pipeline` in practice.
 
 #### `SequentialPipeline`
 
 * Without pipeline:
 
-  ```
+  ```python
   x = agent1(x)
   x = agent2(x)
   x = agent3(x)
   ```
 
-- Using pipeline:
+* Using pipeline:
 
   ```python
   from agentscope.pipelines import SequentialPipeline
@@ -86,12 +86,12 @@ This section illustrates how pipelines can simplify the implementation of logic 
   x = pipe(x)
   ```
 
-- Using functional pipeline:
+* Using functional pipeline:
 
   ```python
   from agentscope.pipelines import sequentialpipeline
 
-  x = sequentialpipeline(x, [agent1, agent2, agent3])
+  x = sequentialpipeline([agent1, agent2, agent3], x)
   ```
 
 #### `IfElsePipeline`
@@ -105,7 +105,7 @@ This section illustrates how pipelines can simplify the implementation of logic 
       x = agent2(x)
   ```
 
-- Using pipeline:
+* Using pipeline:
 
   ```python
   from agentscope.pipelines import IfElsePipeline
@@ -114,12 +114,12 @@ This section illustrates how pipelines can simplify the implementation of logic 
   x = pipe(x)
   ```
 
-- Using functional pipeline:
+* Using functional pipeline:
 
   ```python
   from agentscope.functional import ifelsepipeline
 
-  x = ifelsepipeline(x, condition, agent1, agent2)
+  x = ifelsepipeline(condition, agent1, agent2, x)
   ```
 
 #### `SwitchPipeline`
@@ -136,7 +136,7 @@ This section illustrates how pipelines can simplify the implementation of logic 
       x = default_agent(x)
   ```
 
-- Using pipeline:
+* Using pipeline:
 
   ```python
   from agentscope.pipelines import SwitchPipeline
@@ -146,13 +146,13 @@ This section illustrates how pipelines can simplify the implementation of logic 
   x = pipe(x)
   ```
 
-- Using functional pipeline:
+* Using functional pipeline:
 
   ```python
   from agentscope.functional import switchpipeline
 
   case_operators = {case1: agent1, case2: agent2}
-  x = switchpipeline(x, condition, case_operators, default_agent)
+  x = switchpipeline(condition, case_operators, default_agent, x)
   ```
 
 #### `ForLoopPipeline`
@@ -180,19 +180,19 @@ This section illustrates how pipelines can simplify the implementation of logic 
   ```python
   from agentscope.functional import forlooppipeline
 
-  x = forlooppipeline(x, agent, max_iterations, break_condition)
+  x = forlooppipeline(agent, max_iterations, break_condition, x)
   ```
 
 #### `WhileLoopPipeline`
 
-  * Without pipeline:
+* Without pipeline:
 
     ```python
     while condition(x):
         x = agent(x)
     ```
 
-  * Using pipeline:
+* Using pipeline:
 
     ```python
     from agentscope.pipelines import WhileLoopPipeline
@@ -201,16 +201,18 @@ This section illustrates how pipelines can simplify the implementation of logic 
     x = pipe(x)
     ```
 
-  - Using functional pipeline:
+* Using functional pipeline:
 
     ```python
     from agentscope.functional import whilelooppipeline
 
-    x = whilelooppipeline(x, agent, condition)
+    x = whilelooppipeline(agent, condition, x)
     ```
 
 ### Pipeline Combination
+
 It's worth noting that AgentScope supports the combination of pipelines to create complex interactions. For example, we can create a pipeline that executes a sequence of agents in order, and then executes another pipeline that executes a sequence of agents in condition.
+
 ```python
 from agentscope.pipelines import SequentialPipeline, ParallelPipeline
 # Create a pipeline that executes agents in order
@@ -222,7 +224,6 @@ pipe3 = SequentialPipeline([pipe1, pipe2])
 # Invoke the pipeline
 x = pipe3(x)
 ```
-
 
 ## MsgHub
 
@@ -241,11 +242,11 @@ class MsgHubManager:
             agent.observe(msg)
 
     def add(self, new_participant: Union[Sequence[AgentBase], AgentBase]) -> None:
-      	"""Add new participant into this hub"""
+       """Add new participant into this hub"""
         # ... [code omitted for brevity]
 
     def delete(self, participant: Union[Sequence[AgentBase], AgentBase]) -> None:
-      	"""Delete agents from participant."""
+       """Delete agents from participant."""
         # ... [code omitted for brevity]
 ```
 
@@ -294,7 +295,5 @@ hub.add(new_agent)
 # Remove an existing participant
 hub.delete(existing_agent)
 ```
-
-
 
 [[Return to the top]](#agent-interactions-dive-deeper-into-pipelines-and-message-hub)
