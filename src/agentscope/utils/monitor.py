@@ -336,10 +336,6 @@ class SqliteMonitor(MonitorBase):
                 """,
             )
 
-    def _get_trigger_name(self, metric_name: str) -> str:
-        """Get the name of the trigger on a certain metric"""
-        return f"{self.table_name}.{metric_name}.trigger"
-
     def register(
         self,
         metric_name: str,

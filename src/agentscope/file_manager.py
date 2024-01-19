@@ -82,8 +82,9 @@ class _FileManager:
     def init(self, save_dir: str, save_api_invoke: bool = False) -> None:
         """Set the directory for saving files."""
         self.dir = save_dir
-        if not os.path.exists(save_dir):
-            os.makedirs(save_dir)
+        runtime_dir = os.path.join(save_dir, Runtime.runtime_id)
+        if not os.path.exists(runtime_dir):
+            os.makedirs(runtime_dir)
 
         self.save_api_invoke = save_api_invoke
 
