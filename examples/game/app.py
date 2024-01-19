@@ -16,7 +16,10 @@ from utils import (
 )
 
 import gradio as gr
-from gradio_groupchat import GroupChat
+
+# from gradio_groupchat import GroupChat
+import modelscope_gradio_components as mgr
+
 
 enable_web_ui()
 
@@ -50,6 +53,12 @@ def get_chat() -> List[List]:
     return glb_history_chat[-MAX_NUM_DISPLAY_MSG:]
 
 
+def fn(data: gr.EventData):
+    # print(data._data['value'])
+    send_player_input(data._data["value"])
+    # send_chat_msg("".join(data._data['value']), "你")
+
+
 if __name__ == "__main__":
 
     def start_game():
@@ -73,8 +82,8 @@ if __name__ == "__main__":
         # Users can select the interested exp
 
         with gr.Row():
-            chatbot = GroupChat(label="Dialog", show_label=False, height=600)
-
+            # chatbot = GroupChat(label="Dialog", show_label=False, height=600)
+            chatbot = mgr.Chatbot(label="Dialog", show_label=False, height=600)
         with gr.Row():
             with gr.Column():
                 user_chat_input = gr.Textbox(
@@ -133,6 +142,9 @@ if __name__ == "__main__":
         send_button.click(send_message, user_chat_input, user_chat_input)
         export_button.click(export_chat_history, [], export_output)
         user_chat_input.submit(send_message, user_chat_input, user_chat_input)
+
+        chatbot.custom(fn=fn)
+
         demo.load(get_chat, inputs=None, outputs=chatbot, every=0.5)
         demo.load(update_suggest, outputs=user_chat_bot_suggest, every=0.5)
         demo.load(start_game)

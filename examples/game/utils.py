@@ -10,6 +10,9 @@ from dataclasses import dataclass
 from agentscope.message import Msg
 from enums import StagePerNight
 
+import gradio as gr
+
+
 USE_WEB_UI = False
 
 
@@ -117,7 +120,7 @@ glb_queue_chat_suggests = Queue()
 def send_chat_msg(msg, role="系统"):
     print(msg)
     if get_use_web_ui():
-        glb_queue_chat_msg.put([role, msg])
+        glb_queue_chat_msg.put([None, msg])
 
 
 def get_chat_msg():
@@ -130,19 +133,19 @@ def get_chat_msg():
 
 def send_player_input(msg, role="餐厅老板"):
     if get_use_web_ui():
-        glb_queue_chat_input.put([role, msg])
+        glb_queue_chat_input.put([msg, None])
 
 
 def send_pretty_msg(msg):
     speak_print(msg)
     if get_use_web_ui():
-        glb_queue_chat_msg.put([msg.name, msg.content])
+        glb_queue_chat_msg.put([None, msg.content])
 
 
 def get_player_input(name=None):
     if get_use_web_ui():
         print("wait queue input")
-        content = glb_queue_chat_input.get(block=True)[1]
+        content = glb_queue_chat_input.get(block=True)[0]
     else:
         content = input(f"{name}: ")
     return content
@@ -203,11 +206,11 @@ def query_answer(questions: List, key="ans"):
         print("suggests=", suggests)
         samples = [[choice] for choice in suggests.choices]
         msg = suggests.message
-        send_chat_msg(suggests_msg)
+        # send_chat_msg(suggests_msg)
         send_suggests((msg, samples))
         return get_player_input()
     else:
-        answer = inquirer.prompt(questions)[key]
+        answer = [inquirer.prompt(questions)[key]]  # return list
     return answer
 
 

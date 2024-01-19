@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 import os
 import yaml
 import inquirer
@@ -50,15 +51,28 @@ def invited_group_chat(
                     choices=["是", "否", "结束邀请对话"],
                 ),
             ]
+
+            choose_during_chatting = f"""【系统】你要发言吗？ <select-box shape="card"
+                               columns="3" type="checkbox" options=
+                               '
+                               {json.dumps(["是", "否", "结束邀请对话"])}'
+                               select-once></select-box>"""
+
+            send_chat_msg({"text": choose_during_chatting, "flushing": False})
+
             answer = query_answer(questions, "ans")
-            if answer == "是":
+            if isinstance(answer, str):
+                send_chat_msg("【系统】请在列表中选择。")
+                continue
+
+            if answer == ["是"]:
                 msg = player(announcement)
-            elif answer == "否":
+            elif answer == ["否"]:
                 msg = None
-            elif answer == "结束邀请对话":
+            elif answer == ["结束邀请对话"]:
                 break
             else:
-                send_chat_msg("【系统】请重新选择。")
+                send_chat_msg("【系统】请在列表中选择。")
                 continue
             for c in invited_customer:
                 msg = c(msg)
@@ -83,10 +97,18 @@ def invited_group_chat(
                     choices=invited_names + ["跳过"],
                 ),
             ]
+
+            choose_role_story = f"""【系统】：需要以哪位角色的视角生成一段完整故事吗？: <select-box
+            shape="card"
+                        columns="10" type="checkbox" options=
+                        '{json.dumps(invited_names + ["跳过"])}' select-once></select-box>"""
+
+            send_chat_msg({"text": choose_role_story, "flushing": False})
+
             answer = query_answer(questions, "ans")
             end_query_answer()
             for c in invited_customer:
-                if c.name == answer:
+                if c.name == answer[0]:
                     c.generate_pov_story()
             for c in invited_customer:
                 c.refine_background()
@@ -168,7 +190,16 @@ def one_on_one_loop(customers, player):
             ),
         ]
 
-        answer = query_answer(questions, "ans")
+        choose_after_meal = f"""【系统】接下来你会说些什么吗？
+            <select-box shape="card" columns="1" type="checkbox" options=
+            '{json.dumps(["感谢您的今天来我们这里消费。这里是赠送的果盘，"
+                                    "请您享用。还有什么是我能为您做的呢？",
+                                 "感谢您的光顾。(结束与该顾客的当天对话)"])}'
+                                 select-once></select-box>"""
+
+        send_chat_msg({"text": choose_after_meal, "flushing": False})
+
+        answer = query_answer(questions, "ans")[0]
         end_query_answer()
         if answer == "感谢您的光顾。(结束与该顾客的当天对话)":
             continue
@@ -203,15 +234,24 @@ def invite_customers(customers):
                 choices=available_customers + ["END"],
             ),
         ]
+
+        choose_available_customers = f"""【系统】系统：今天就没有更多顾客了，您明天有什么邀请计划吗？: <select-box shape="card"
+                    columns="4" type="checkbox" options=
+                    '{json.dumps(available_customers)}' select-once
+                    submit-text="确定"></select-box>"""
+
+        send_chat_msg({"text": choose_available_customers, "flushing": False})
+
         answer = query_answer(select_customer, "invited")
         if answer == "END":
             break
-        if answer not in available_customers:
-            send_chat_msg("【系统】请重新选择。")
+        if not set(answer).issubset(set(available_customers)):
+            send_chat_msg("【系统】请在列表中选择。")
             continue
 
-        invited_customers.append(answer)
-        available_customers.remove(answer)
+        invited_customers.extend(answer)
+        # available_customers.remove(answer)
+        break
     end_query_answer()
     return invited_customers
 

@@ -100,6 +100,8 @@ class RuledUser(AgentBase):
             for key in required_keys:
                 kwargs[key] = get_player_input(key)
 
+        # breakpoint()
+
         if content == "做菜":
             content = self.cook()
             kwargs["food"] = content
@@ -137,7 +139,7 @@ class RuledUser(AgentBase):
             for item in sublist
         ]
 
-        ingredients_list = ["**清空**", "**结束**"] + ingredients_list
+        # ingredients_list = ["**清空**", "**结束**"] + ingredients_list
         cook_list = []
         questions = [
             inquirer.List(
@@ -147,20 +149,32 @@ class RuledUser(AgentBase):
             ),
         ]
         while True:
-            send_chat_msg(f"【系统】当前已选择的食材是{cook_list}。")
-            sel_ingr = query_answer(questions, "ingredient")
+            choose_ingredient = f"""请选择需要的食材: <select-box shape="card"
+            columns="10" type="checkbox" options=
+            '{json.dumps(ingredients_list)}' select-once
+            submit-text="确定"></select-box>"""
 
-            if sel_ingr in ["结束", "**结束**"]:  # For gradio
+            send_chat_msg({"text": choose_ingredient, "flushing": False})
+
+            # send_chat_msg(f"【系统】当前已选择的食材是{cook_list}。")
+            sel_ingr = query_answer(questions, "ingredient")
+            if isinstance(sel_ingr, str):
+                send_chat_msg("【系统】请在列表中进行选择。")
+                continue
+
+            if sel_ingr in [["结束"], ["**结束**"]]:  # For gradio
                 if len(cook_list) > 0:
                     break
                 send_chat_msg("【系统】你没有选中任何食材。")
-            elif sel_ingr in ["清空", "**清空**"]:  # For gradio
+            elif sel_ingr in [["清空"], ["**清空**"]]:  # For gradio
                 cook_list.clear()
-            elif sel_ingr not in ingredients_list:
+            elif not set(sel_ingr).issubset(set(ingredients_list)):
+                print("cook list", cook_list)
                 send_chat_msg("【系统】不可用食材，请重新选择。")
                 continue
             else:
-                cook_list.append(sel_ingr)
+                cook_list.extend(sel_ingr)
+                break
         end_query_answer()
 
         prompt = self.cook_prompt.format_map(
