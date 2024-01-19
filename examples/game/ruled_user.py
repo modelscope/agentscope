@@ -163,20 +163,8 @@ class RuledUser(AgentBase):
             if isinstance(sel_ingr, str):
                 send_chat_msg("【系统】请在列表中进行选择。", uid=self.uid)
                 continue
-
-            if sel_ingr in [["结束"], ["**结束**"]]:  # For gradio
-                if len(cook_list) > 0:
-                    break
-                send_chat_msg("【系统】你没有选中任何食材。", uid=self.uid)
-            elif sel_ingr in [["清空"], ["**清空**"]]:  # For gradio
-                cook_list.clear()
-            elif not set(sel_ingr).issubset(set(ingredients_list)):
-                print("cook list", cook_list)
-                send_chat_msg("【系统】不可用食材，请重新选择。", uid=self.uid)
-                continue
-            else:
-                cook_list.extend(sel_ingr)
-                break
+            cook_list = sel_ingr
+            break
 
 
         prompt = self.cook_prompt.format_map(

@@ -60,24 +60,25 @@ def invited_group_chat(
 
             send_chat_msg({"text": choose_during_chatting, "flushing":
                 False}, uid=uid)
-
-            answer = query_answer(questions, "ans", uid=uid)
-            if isinstance(answer, str):
-                send_chat_msg("【系统】请在列表中选择。", uid=uid)
-                continue
-
-            if answer == ["是"]:
-                msg = player(announcement)
-            elif answer == ["否"]:
-                msg = None
-            elif answer == ["结束邀请对话"]:
+            end_flag = False
+            while True:
+                answer = query_answer(questions, "ans", uid=uid)
+                if isinstance(answer, str):
+                    send_chat_msg("【系统】请在列表中选择。", uid=uid)
+                    continue
+                elif answer == ["是"]:
+                    msg = player(announcement)
+                elif answer == ["否"]:
+                    msg = None
+                elif answer == ["结束邀请对话"]:
+                    end_flag = True
+                break
+            if end_flag:
                 break
             else:
-                send_chat_msg("【系统】请重新选择。", uid=uid)
-                continue
-            for c in invited_customer:
-                msg = c(msg)
-                send_pretty_msg(msg, uid=uid)
+                for c in invited_customer:
+                    msg = c(msg)
+                    send_pretty_msg(msg, uid=uid)
 
     invited_names.sort()
 
@@ -105,8 +106,12 @@ def invited_group_chat(
 
             send_chat_msg({"text": choose_role_story, "flushing": False}, uid=uid)
 
-            answer = query_answer(questions, "ans", uid=uid)
-
+            while True:
+                answer = query_answer(questions, "ans", uid=uid)
+                if isinstance(answer, str):
+                    send_chat_msg("【系统】请在列表中选择。", uid=uid)
+                    continue
+                break
             for c in invited_customer:
                 if c.name == answer[0]:
                     c.generate_pov_story()
@@ -242,35 +247,30 @@ def invite_customers(customers, uid):
     if len(available_customers) == 0:
         send_chat_msg("【系统】：您目前无法邀请任何一个顾客（所有顾客好感度均低于80）。", uid=uid)
 
-    while len(available_customers) > 0:
-        select_customer = [
-            inquirer.List(
-                "invited",
-                message="【系统】系统：今天就没有更多顾客了，您明天有什么邀请计划吗？",
-                choices=available_customers + ["END"],
-            ),
-        ]
+    select_customer = [
+        inquirer.List(
+            "invited",
+            message="【系统】系统：今天就没有更多顾客了，您明天有什么邀请计划吗？",
+            choices=available_customers,
+        ),
+    ]
 
-        choose_available_customers = f"""【系统】系统：今天就没有更多顾客了，您明天有什么邀请计划吗？: <select-box shape="card"
-                    columns="4" type="checkbox" options=
-                    '{json.dumps(available_customers)}' select-once
-                    submit-text="确定"></select-box>"""
+    choose_available_customers = f"""【系统】系统：今天就没有更多顾客了，您明天有什么邀请计划吗？: <select-box shape="card"
+                columns="4" type="checkbox" options=
+                '{json.dumps(available_customers)}' select-once
+                submit-text="确定"></select-box>"""
 
-        send_chat_msg({"text": choose_available_customers, "flushing":
-            False}, uid=uid)
+    send_chat_msg({"text": choose_available_customers, "flushing":
+        False}, uid=uid)
 
+    while True:
         answer = query_answer(select_customer, "invited",  uid=uid)
-        if answer == "END":
-            break
-        if not set(answer).issubset(set(available_customers)):
+        if isinstance(answer, str):
             send_chat_msg("【系统】请在列表中选择。", uid=uid)
             continue
-
-        invited_customers.extend(answer)
-        # available_customers.remove(answer)
-        break
-
-    return invited_customers
+        else:
+            invited_customers = answer
+            return invited_customers
 
 
 def main(args) -> None:
