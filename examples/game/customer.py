@@ -18,6 +18,7 @@ MIN_BAR_FRIENDSHIP_CONST = 30
 
 class Customer(StateAgent, DialogAgent):
     def __init__(self, game_config: dict, **kwargs: Any):
+        self.uid = kwargs.pop("uid")
         super().__init__(**kwargs)
         self.game_config = game_config
         self.max_itr_preorder = 5
@@ -122,6 +123,7 @@ class Customer(StateAgent, DialogAgent):
             f"【系统】{self.name}: 好感度变化 "
             f"{change_symbol}{change_in_friendship} "
             f"当前好感度为 {self.friendship}",
+            uid=self.uid,
         )
 
         if (
@@ -224,7 +226,7 @@ class Customer(StateAgent, DialogAgent):
         )
 
         analysis = self.model(messages=prompt)
-        send_chat_msg(f"聊完之后，{self.name}在想:" + analysis)
+        send_chat_msg(f"聊完之后，{self.name}在想:" + analysis, uid=self.uid)
 
         update_prompt = self.game_config["update_background"].format_map(
             {
@@ -235,7 +237,10 @@ class Customer(StateAgent, DialogAgent):
         )
         update_msg = Msg(role="user", name="system", content=update_prompt)
         new_background = self.model(messages=[update_msg])
-        send_chat_msg(f"根据对话，{self.name}的背景更新为：" + new_background)
+        send_chat_msg(
+            f"根据对话，{self.name}的背景更新为：" + new_background,
+            uid=self.uid,
+        )
         self.background = new_background
 
     def _validated_history_messages(self, recent_n: int = 10):
@@ -266,7 +271,7 @@ class Customer(StateAgent, DialogAgent):
         msg = Msg(name="system", role="user", content=pov_prompt)
         pov_story = self.model(messages=[msg])
         print("*" * 20)
-        send_chat_msg(pov_story)
+        send_chat_msg(pov_story, uid=self.uid)
         print("*" * 20)
 
     def _gen_plot_related_prompt(self) -> str:

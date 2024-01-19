@@ -33,13 +33,14 @@ def invited_group_chat(
     invited_customer,
     player,
     cur_plots_indices,
+    uid,
 ) -> Optional[int]:
     logger.debug("\n---active_plots:" + str(cur_plots_indices))
     if len(invited_customer) == 0:
         return cur_plots_indices
     invited_names = [c.name for c in invited_customer]
-    send_chat_msg("===== invited group chat ====")
-    send_chat_msg(f"老板今天邀请了{invited_names}，大家一起聊聊")
+    send_chat_msg("===== invited group chat ====", uid=uid)
+    send_chat_msg(f"老板今天邀请了{invited_names}，大家一起聊聊", uid=uid)
     announcement = {"role": "user", "content": "今天老板邀请大家一起来聚聚。"}
     with msghub(invited_customer + [player], announcement=announcement):
         for _ in range(10):
@@ -50,7 +51,7 @@ def invited_group_chat(
                     choices=["是", "否", "结束邀请对话"],
                 ),
             ]
-            answer = query_answer(questions, "ans")
+            answer = query_answer(questions, "ans", uid=uid)
             if answer == "是":
                 msg = player(announcement)
             elif answer == "否":
@@ -58,12 +59,12 @@ def invited_group_chat(
             elif answer == "结束邀请对话":
                 break
             else:
-                send_chat_msg("【系统】请重新选择。")
+                send_chat_msg("【系统】请重新选择。", uid=uid)
                 continue
             for c in invited_customer:
                 msg = c(msg)
-                send_pretty_msg(msg)
-        end_query_answer()
+                send_pretty_msg(msg, uid=uid)
+        end_query_answer(uid=uid)
 
     invited_names.sort()
 
@@ -73,7 +74,7 @@ def invited_group_chat(
 
         # TODO: decided by multi factor: chat history of msghub, correct_names
         if invited_names == correct_names:
-            send_chat_msg("===== successfully unlock a plot =======")
+            send_chat_msg("===== successfully unlock a plot =======", uid=uid)
             questions = [
                 inquirer.List(
                     "ans",
@@ -81,8 +82,8 @@ def invited_group_chat(
                     choices=invited_names + ["跳过"],
                 ),
             ]
-            answer = query_answer(questions, "ans")
-            end_query_answer()
+            answer = query_answer(questions, "ans", uid=uid)
+            end_query_answer(uid=uid)
             for c in invited_customer:
                 if c.name == answer:
                     c.generate_pov_story()
@@ -92,7 +93,7 @@ def invited_group_chat(
     return None
 
 
-def one_on_one_loop(customers, player):
+def one_on_one_loop(customers, player, uid):
     visit_customers = [c for c in customers if c.visit()]
     # random.shuffle(visit_customers)
 
@@ -117,17 +118,21 @@ def one_on_one_loop(customers, player):
     ingr = "\n".join(
         f"{key}: {value}" for key, value in ingredient_today.items()
     )
-    send_chat_msg(f"【系统】今天拥有的食材是：\n {ingr}")
+    send_chat_msg(f"【系统】今天拥有的食材是：\n {ingr}", uid=uid)
 
     player.set_ingredients(ingredient_today)
 
     if not visit_customers:
-        send_chat_msg("【系统】今天没有出现客人，请增加与客人的好感度以增大出现概率")
+        send_chat_msg("【系统】今天没有出现客人，请增加与客人的好感度以增大出现概率", uid=uid)
     else:
-        send_chat_msg(f"【系统】今天出现的客人: {[c.name for c in visit_customers]}")
+        send_chat_msg(
+            f"【系统】今天出现的客人: {[c.name for c in visit_customers]}",
+            uid=uid,
+        )
     for customer in visit_customers:
         send_chat_msg(
             f"【系统】顾客{customer.name} 进入餐馆 (当前好感度为: {customer.friendship})",
+            uid=uid,
         )
         msg = player({"content": "游戏开始"})
         while True:
@@ -138,13 +143,15 @@ def one_on_one_loop(customers, player):
                     f"【系统】顾客对菜本身的评价：{msg['content']}\n"
                     f"【系统】{customer.name}（顾客）享用完之后，"
                     f"综合满意度为{msg['score']}\n",
+                    uid=uid,
                 )
                 break
-            send_pretty_msg(msg)
+            send_pretty_msg(msg, uid=uid)
             send_chat_msg(
                 "【系统】请输入“做菜”启动做菜程序，它会按所选定食材产生菜品。 \n"
                 "【系统】对话轮次过多会使得顾客综合满意度下降。 \n"
                 "【系统】若不输入任何内容直接按回车键，顾客将离开餐馆。",
+                uid=uid,
             )
             msg = player(msg)
             if len(msg["content"]) == 0 or "[TERMINATE]" in msg["content"]:
@@ -152,7 +159,7 @@ def one_on_one_loop(customers, player):
 
         if isinstance(msg, dict):
             if len(msg["content"]) == 0 or msg["score"] < 4:
-                send_chat_msg(f"【系统】顾客{customer.name} 离开餐馆")
+                send_chat_msg(f"【系统】顾客{customer.name} 离开餐馆", uid=uid)
                 continue
 
         questions = [
@@ -166,8 +173,8 @@ def one_on_one_loop(customers, player):
             ),
         ]
 
-        answer = query_answer(questions, "ans")
-        end_query_answer()
+        answer = query_answer(questions, "ans", uid=uid)
+        end_query_answer(uid=uid)
         if answer == "感谢您的光顾。(结束与该顾客的当天对话)":
             continue
         msg = Msg(role="user", name="餐馆老板", content=answer)
@@ -175,23 +182,23 @@ def one_on_one_loop(customers, player):
         while True:
             msg = customer(msg)
             # print(f"{customer_reply.name}（顾客）:" + customer_reply.content)
-            send_pretty_msg(msg)
-            send_chat_msg("【系统】若不输入任何内容直接按回车键，顾客将离开餐馆。")
+            send_pretty_msg(msg, uid=uid)
+            send_chat_msg("【系统】若不输入任何内容直接按回车键，顾客将离开餐馆。", uid=uid)
             msg = player(msg)
             if len(msg["content"]) == 0:
-                send_chat_msg(f"【系统】顾客{customer.name} 离开餐馆")
+                send_chat_msg(f"【系统】顾客{customer.name} 离开餐馆", uid=uid)
                 break
     return visit_customers
 
 
-def invite_customers(customers):
+def invite_customers(customers, uid):
     available_customers = [
         c.name for c in customers if c.friendship >= MIN_BAR_FRIENDSHIP_CONST
     ]
     invited_customers = []
 
     if len(available_customers) == 0:
-        send_chat_msg("【系统】：您目前无法邀请任何一个顾客（所有顾客好感度均低于80）。")
+        send_chat_msg("【系统】：您目前无法邀请任何一个顾客（所有顾客好感度均低于80）。", uid=uid)
 
     while len(available_customers) > 0:
         select_customer = [
@@ -201,16 +208,16 @@ def invite_customers(customers):
                 choices=available_customers + ["END"],
             ),
         ]
-        answer = query_answer(select_customer, "invited")
+        answer = query_answer(select_customer, "invited", uid=uid)
         if answer == "END":
             break
         if answer not in available_customers:
-            send_chat_msg("【系统】请重新选择。")
+            send_chat_msg("【系统】请重新选择。", uid=uid)
             continue
 
         invited_customers.append(answer)
         available_customers.remove(answer)
-    end_query_answer()
+    end_query_answer(uid=uid)
     return invited_customers
 
 
@@ -224,7 +231,7 @@ def main(args) -> None:
     在游戏中，玩家需要经营餐厅、与顾客互动并决定邀请哪些顾客参与对话，以推动故事剧情的发展。
     通过与顾客的互动，玩家可以解锁剧情并发展餐馆的故事，体验不同的情节和结局。
     """
-    send_chat_msg(game_description)
+    send_chat_msg(game_description, uid=args.uid)
 
     with open(
         "config/customer_config.yaml",
@@ -243,10 +250,11 @@ def main(args) -> None:
             game_config=args.game_config,
             model=cfg["model"],
             use_memory=True,
+            uid=args.uid,
         )
         for cfg in customer_configs
     ]
-
+    user_configs["uid"] = args.uid
     player = RuledUser(**user_configs)
 
     if args.load_checkpoint is not None:
@@ -296,6 +304,7 @@ def main(args) -> None:
                 checkpoint.invited_customers,
                 player,
                 checkpoint.cur_plots,
+                args.uid,
             )
             if done_plot_idx is not None:
                 # once successful finish a current plot...
@@ -330,12 +339,13 @@ def main(args) -> None:
             checkpoint.visit_customers = one_on_one_loop(
                 rest_customers,
                 player,
+                args.uid,
             )
             checkpoint.stage_per_night = StagePerNight.MAKING_INVITATION
         elif checkpoint.stage_per_night == StagePerNight.MAKING_INVITATION:
             # ============ making invitation decision =============
             # player make invitation
-            invited = invite_customers(checkpoint.visit_customers)
+            invited = invite_customers(checkpoint.visit_customers, args.uid)
             checkpoint.stage_per_night = StagePerNight.INVITED_CHAT
             invited_customers = [c for c in customers if c.name in invited]
             checkpoint.invited_customers = invited_customers
@@ -368,4 +378,5 @@ if __name__ == "__main__":
     agentscope.init(model_configs=[TONGYI_CONFIG], logger_level="DEBUG")
     args = CheckpointArgs()
     args.game_config = GAME_CONFIG
+    main.uid = None
     main(args)
