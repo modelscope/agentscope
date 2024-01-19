@@ -6,6 +6,7 @@ from datetime import datetime
 from colorist import BgBrightColor
 import inquirer
 from multiprocessing import Queue
+from collections import defaultdict
 from dataclasses import dataclass
 from agentscope.message import Msg
 from enums import StagePerNight
@@ -112,18 +113,27 @@ def enable_web_ui():
     USE_WEB_UI = True
 
 
-glb_queue_chat_msg = Queue()
-glb_queue_chat_input = Queue()
-glb_queue_chat_suggests = Queue()
+def init_uid_queues():
+    return {
+        "glb_queue_chat_msg": Queue(),
+        "glb_queue_chat_input": Queue(),
+    }
 
 
-def send_chat_msg(msg, role="系统"):
+glb_uid_dict = defaultdict(init_uid_queues)
+
+
+def send_chat_msg(msg, role="系统", uid=None):
     print(msg)
     if get_use_web_ui():
+        global glb_uid_dict
+        glb_queue_chat_msg = glb_uid_dict[uid]["glb_queue_chat_msg"]
         glb_queue_chat_msg.put([None, msg])
 
 
-def get_chat_msg():
+def get_chat_msg(uid=None):
+    global glb_uid_dict
+    glb_queue_chat_msg = glb_uid_dict[uid]["glb_queue_chat_msg"]
     if not glb_queue_chat_msg.empty():
         line = glb_queue_chat_msg.get(block=False)
         if line is not None:
@@ -131,48 +141,46 @@ def get_chat_msg():
     return None
 
 
-def send_player_input(msg, role="餐厅老板"):
+def send_player_input(msg, role="餐厅老板", uid=None):
     if get_use_web_ui():
-        glb_queue_chat_input.put([msg, None])
+# <<<<<<< HEAD
+#         glb_queue_chat_input.put([msg, None])
+# =======
+        global glb_uid_dict
+        glb_queue_chat_input = glb_uid_dict[uid]["glb_queue_chat_input"]
+        glb_queue_chat_input.put([None, msg])
+# >>>>>>> origin/game_dev
 
 
-def send_pretty_msg(msg):
+def send_pretty_msg(msg, uid=None):
     speak_print(msg)
     if get_use_web_ui():
+# <<<<<<< HEAD
+#         glb_queue_chat_msg.put([None, msg.content])
+# =======
+        global glb_uid_dict
+        glb_queue_chat_msg = glb_uid_dict[uid]["glb_queue_chat_msg"]
         glb_queue_chat_msg.put([None, msg.content])
+# >>>>>>> origin/game_dev
 
 
-def get_player_input(name=None):
+def get_player_input(name=None, uid=None):
+    global glb_uid_dict
     if get_use_web_ui():
         print("wait queue input")
-        content = glb_queue_chat_input.get(block=True)[0]
+# <<<<<<< HEAD
+#         content = glb_queue_chat_input.get(block=True)[0]
+# =======
+        glb_queue_chat_input = glb_uid_dict[uid]["glb_queue_chat_input"]
+        content = glb_queue_chat_input.get(block=True)[1]
+        print(content)
+        if content == "**Reset**":
+            glb_uid_dict[uid] = init_uid_queues()
+            raise ResetException
+# >>>>>>> origin/game_dev
     else:
         content = input(f"{name}: ")
     return content
-
-
-def send_suggests(suggests):
-    msg, _ = suggests
-
-    while not glb_queue_chat_suggests.empty():
-        try:
-            glb_queue_chat_suggests.get_nowait()
-        except glb_queue_chat_suggests.Empty:
-            break
-
-    if msg == "end":
-        return
-    else:
-        glb_queue_chat_suggests.put(suggests)
-
-
-def get_suggests():
-    msg = None
-    samples = None
-    if not glb_queue_chat_suggests.empty():
-        msg, samples = glb_queue_chat_suggests.get(block=False)
-        glb_queue_chat_suggests.put((msg, samples))
-    return msg, samples
 
 
 def format_choices(choices):
@@ -190,36 +198,27 @@ def format_choices(choices):
         formatted_choices += choice_str
         line_length += choice_length
 
-    # 去除多余的空格
     formatted_choices = formatted_choices.rstrip()
 
     return formatted_choices
 
 
-def query_answer(questions: List, key="ans"):
+def query_answer(questions: List, key="ans", uid=None):
     if get_use_web_ui():
-        suggests = questions[0]
-        assert isinstance(suggests, inquirer.questions.List)
-        suggests_msg = (
-            suggests.message + "\n" + format_choices(suggests.choices)
-        )
-        print("suggests=", suggests)
-        samples = [[choice] for choice in suggests.choices]
-        msg = suggests.message
-        # send_chat_msg(suggests_msg)
-        send_suggests((msg, samples))
-        return get_player_input()
+
+        return get_player_input(uid=uid)
     else:
         answer = [inquirer.prompt(questions)[key]]  # return list
     return answer
 
 
-def end_query_answer():
-    if get_use_web_ui():
-        send_suggests(("end", None))
 
 
 @dataclass
 class CheckpointArgs:
     load_checkpoint: str = None
     save_checkpoint: str = "./checkpoints/cp-"
+
+
+class ResetException(Exception):
+    pass
