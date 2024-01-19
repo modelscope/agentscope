@@ -8,16 +8,20 @@ import uuid
 import os
 from agentscope.utils import MonitorBase, QuotaExceededError, MonitorFactory
 
-from agentscope.utils.monitor import DictMonitor, SqliteMonitor
+from agentscope.utils.monitor import SqliteMonitor
 
 
 class MonitorFactoryTest(unittest.TestCase):
     "Test class for MonitorFactory"
 
+    def setUp(self) -> None:
+        self.db_path = f"test-{uuid.uuid4()}.db"
+        _ = MonitorFactory.get_monitor(db_path=self.db_path)
+
     def test_get_monitor(self) -> None:
         """Test get monitor method of MonitorFactory."""
-        monitor1 = MonitorFactory.get_monitor("dict")
-        monitor2 = MonitorFactory.get_monitor("dict")
+        monitor1 = MonitorFactory.get_monitor()
+        monitor2 = MonitorFactory.get_monitor()
         self.assertEqual(monitor1, monitor2)
         self.assertTrue(
             monitor1.register("token_num", metric_unit="token", quota=200),
@@ -25,6 +29,9 @@ class MonitorFactoryTest(unittest.TestCase):
         self.assertTrue(monitor2.exists("token_num"))
         self.assertTrue(monitor2.remove("token_num"))
         self.assertFalse(monitor1.exists("token_num"))
+
+    def tearDown(self) -> None:
+        os.remove(self.db_path)
 
 
 class MonitorTestBase(unittest.TestCase):
@@ -160,13 +167,6 @@ class MonitorTestBase(unittest.TestCase):
             agenta_metrics["agentA.token_num"],
             {"value": 10.0, "unit": "token", "quota": 200},
         )
-
-
-class DictMonitorTest(MonitorTestBase):
-    """Test class for DictMonitor"""
-
-    def get_monitor_instance(self) -> MonitorBase:
-        return DictMonitor()
 
 
 class SqliteMonitorTest(MonitorTestBase):

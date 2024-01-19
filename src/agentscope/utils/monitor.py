@@ -2,15 +2,17 @@
 """ Monitor for agentscope """
 
 import re
-import copy
 import sqlite3
 from abc import ABC
 from abc import abstractmethod
 from contextlib import contextmanager
-from typing import Optional, Any, Generator
+from typing import Optional, Generator
 from loguru import logger
 
-from agentscope.constants import _DEFAULT_MONITOR_TABLE_NAME
+from agentscope.constants import (
+    _DEFAULT_MONITOR_TABLE_NAME,
+    _DEFAULT_SQLITE_DB_PATH,
+)
 
 
 class MonitorBase(ABC):
@@ -229,159 +231,16 @@ class QuotaExceededError(Exception):
 
     def __init__(
         self,
-        metric_name: Optional[str] = None,
-        quota: Optional[float] = None,
+        name: str,
     ) -> None:
-        if metric_name is not None and quota is not None:
-            self.message = f"Metric [{metric_name}] exceeds quota [{quota}]"
-            super().__init__(self.message)
-        else:
-            super().__init__()
+        """Init a QuotaExceedError instance.
 
-
-def return_false_if_not_exists(  # type: ignore [no-untyped-def]
-    func,
-):
-    """A decorator used to check whether the attribute exists.
-    It will return False directly without executing the function,
-    if the metric does not exist.
-    """
-
-    def inner(
-        monitor: MonitorBase,
-        metric_name: str,
-        *args: tuple,
-        **kwargs: dict,
-    ) -> bool:
-        if not monitor.exists(metric_name):
-            logger.warning(f"Metric [{metric_name}] not exists.")
-            return False
-        return func(monitor, metric_name, *args, **kwargs)
-
-    return inner
-
-
-def return_none_if_not_exists(  # type: ignore [no-untyped-def]
-    func,
-):
-    """A decorator used to check whether the attribute exists.
-    It will return None directly without executing the function,
-    if the metric does not exist.
-    """
-
-    def inner(  # type: ignore [no-untyped-def]
-        monitor: MonitorBase,
-        metric_name: str,
-        *args: tuple,
-        **kwargs: dict,
-    ):
-        if not monitor.exists(metric_name):
-            logger.warning(f"Metric [{metric_name}] not exists.")
-            return None
-        return func(monitor, metric_name, *args, **kwargs)
-
-    return inner
-
-
-class DictMonitor(MonitorBase):
-    """MonitorBase implementation based on dictionary."""
-
-    def __init__(self) -> None:
-        self.metrics = {}
-
-    def register(
-        self,
-        metric_name: str,
-        metric_unit: Optional[str] = None,
-        quota: Optional[float] = None,
-    ) -> bool:
-        if metric_name in self.metrics:
-            logger.warning(f"Metric [{metric_name}] is already registered.")
-            return False
-        self.metrics[metric_name] = {
-            "value": 0.0,
-            "unit": metric_unit,
-            "quota": quota,
-        }
-        logger.info(
-            f"Register metric [{metric_name}] to Monitor with unit "
-            f"[{metric_unit}] and quota [{quota}]",
-        )
-        return True
-
-    @return_false_if_not_exists
-    def add(self, metric_name: str, value: float) -> bool:
-        if (
-            self.metrics[metric_name]["quota"] is not None
-            and self.metrics[metric_name]["value"] + value
-            > self.metrics[metric_name]["quota"]
-        ):
-            logger.warning(f"Metric [{metric_name}] quota exceeded.")
-            raise QuotaExceededError(
-                metric_name=metric_name,
-                quota=self.metrics[metric_name]["quota"],
-            )
-        self.metrics[metric_name]["value"] += value
-        return True
-
-    def exists(self, metric_name: str) -> bool:
-        return metric_name in self.metrics
-
-    @return_false_if_not_exists
-    def clear(self, metric_name: str) -> bool:
-        self.metrics[metric_name]["value"] = 0.0
-        return True
-
-    @return_false_if_not_exists
-    def remove(self, metric_name: str) -> bool:
-        self.metrics.pop(metric_name)
-        logger.info(f"Remove metric [{metric_name}] from monitor.")
-        return True
-
-    @return_none_if_not_exists
-    def get_value(self, metric_name: str) -> Optional[float]:
-        if metric_name not in self.metrics:
-            return None
-        return self.metrics[metric_name]["value"]
-
-    @return_none_if_not_exists
-    def get_unit(self, metric_name: str) -> Optional[str]:
-        if metric_name not in self.metrics:
-            return None
-        return self.metrics[metric_name]["unit"]
-
-    @return_none_if_not_exists
-    def get_quota(self, metric_name: str) -> Optional[float]:
-        return self.metrics[metric_name]["quota"]
-
-    @return_false_if_not_exists
-    def set_quota(self, metric_name: str, quota: float) -> bool:
-        self.metrics[metric_name]["quota"] = quota
-        return True
-
-    @return_none_if_not_exists
-    def get_metric(self, metric_name: str) -> Optional[dict]:
-        return copy.deepcopy(self.metrics[metric_name])
-
-    def get_metrics(self, filter_regex: Optional[str] = None) -> dict:
-        if filter_regex is None:
-            return copy.deepcopy(self.metrics)
-        else:
-            pattern = re.compile(filter_regex)
-            return {
-                key: copy.deepcopy(value)
-                for key, value in self.metrics.items()
-                if pattern.search(key)
-            }
-
-    def register_budget(
-        self,
-        model_name: str,
-        value: float,
-        prefix: Optional[str] = "local",
-    ) -> bool:
-        logger.warning("DictMonitor doesn't support register_budget")
-        return False
+        Args:
+            name (`str`): name of the metric which exceeds quota.
+        """
+        self.message = f"Metric [{name}] exceeds quota."
+        self.name = name
+        super().__init__(self.message)
 
 
 @contextmanager
@@ -519,7 +378,7 @@ class SqliteMonitor(MonitorBase):
                 (value, metric_name),
             )
         except sqlite3.IntegrityError as e:
-            raise QuotaExceededError() from e
+            raise QuotaExceededError(metric_name) from e
 
     def add(self, metric_name: str, value: float) -> bool:
         with sqlite_transaction(self.db_path) as cursor:
@@ -767,23 +626,21 @@ class MonitorFactory:
     def get_monitor(
         cls,
         impl_type: Optional[str] = None,
-        **kwargs: Any,
+        db_path: str = _DEFAULT_SQLITE_DB_PATH,
     ) -> MonitorBase:
         """Get the monitor instance.
 
         Args:
             impl_type (`Optional[str]`, optional): the type of monitor,
-                currently supports `sqlite` and `dict`, the default is
-                `sqlite`.
+                currently supports `sqlite` only.
+            db_path (`Optional[str]`, optional): path to the sqlite db file.
 
         Returns:
             `MonitorBase`: the monitor instance.
         """
         if cls._instance is None:
             if impl_type is None or impl_type.lower() == "sqlite":
-                cls._instance = SqliteMonitor(**kwargs)
-            elif impl_type.lower() == "dict":
-                cls._instance = DictMonitor()
+                cls._instance = SqliteMonitor(db_path=db_path)
             else:
                 raise NotImplementedError(
                     "Monitor with type [{type}] is not implemented.",
