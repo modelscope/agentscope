@@ -8,7 +8,7 @@ AgentScope is designed to be fully distributed, agent instances in one applicati
 
 [The actor model](https://en.wikipedia.org/wiki/Actor_model) is a popular concept in concurrent programming and adopted by AgentScope. Every agent is an actor and interacts with other agents through messages. The flow of messages implies the execution order of the agent. Each agent has a `reply` method that consumes a message and generates another message, and the generated message can be sent to other agents. For example, the figure below shows the workflow of multiple agents. `A` to `F` are all agents, and the arrows represent messages.
 
-```mermaid
+```{mermaid}
 graph LR;
 A-->B
 A-->C
@@ -33,7 +33,7 @@ z = C(x)
 
 Although this code appears to be executed completely sequentially, AgentScope will **automatically detect potential parallelism** in your code as shown in the flow graph below, which means `C` will not wait for `B` to complete before starting execution.
 
-```mermaid
+```{mermaid}
 graph LR;
 A-->B
 A-->C

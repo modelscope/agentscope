@@ -24,9 +24,8 @@ AgentScope Documentation
 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :glob:
-   :hidden:
    :caption: AgentScope API Reference
 
    agentscope.agents
