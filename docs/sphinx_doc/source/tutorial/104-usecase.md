@@ -10,7 +10,7 @@ Let the adventure begin to unlock the potential of multi-agent applications with
 
 ## Getting Started
 
-Firstly, ensure that you have installed and configured AgentScope properly. Besides, we will involve the basic concepts of `Model API`,  `Agent`, `Msg`, and `Pipeline,` as described in [Tutorial-Concept](https://alibaba.github.io/AgentScope/tutorial/102-concepts.md). The overview of this tutorial is shown below:
+Firstly, ensure that you have installed and configured AgentScope properly. Besides, we will involve the basic concepts of `Model API`,  `Agent`, `Msg`, and `Pipeline,` as described in [Tutorial-Concept](https://alibaba.github.io/AgentScope/tutorial/102-concepts.html). The overview of this tutorial is shown below:
 
 * [Step 1: Prepare **Model API** and Set Model Configs](#step-1-prepare-model-api-and-set-model-configs)
 * [Step 2: Define the Roles of Each **Agent**](#step-2-define-the-roles-of-each-agent)
@@ -22,7 +22,7 @@ Firstly, ensure that you have installed and configured AgentScope properly. Besi
 
 ### Step 1: Prepare Model API and Set Model Configs
 
-As we discussed in the last tutorial, you need to prepare your model configurations into a JSON file for standard OpenAI chat API, FastChat, and vllm. More details and advanced usages such as configuring local models with POST API are presented in [Tutorial-Model-API](https://alibaba.github.io/AgentScope/tutorial/203-model.md).
+As we discussed in the last tutorial, you need to prepare your model configurations into a JSON file for standard OpenAI chat API, FastChat, and vllm. More details and advanced usages such as configuring local models with POST API are presented in [Tutorial-Model-API](https://alibaba.github.io/AgentScope/tutorial/203-model.html).
 
 ```json
 [

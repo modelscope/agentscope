@@ -26,7 +26,7 @@ model_config = {
 }
 ```
 
-For open-source models, we support integration with various model interfaces such as HuggingFace, ModelScope, FastChat, and vllm. You can find scripts on deploying these services in the `scripts` directory, and we defer the detailed instructions to [[Using Different Model Sources with Model API]](https://alibaba.github.io/AgentScope/tutorial/203-model.md).
+For open-source models, we support integration with various model interfaces such as HuggingFace, ModelScope, FastChat, and vllm. You can find scripts on deploying these services in the `scripts` directory, and we defer the detailed instructions to [[Using Different Model Sources with Model API]](https://alibaba.github.io/AgentScope/tutorial/203-model.html).
 
 You can register your configuration by calling AgentScope's initilization method as follow. Besides, you can also load more than one config by calling init mutliple times.
 ```python
@@ -55,7 +55,7 @@ dialogAgent = DialogAgent(name="assistant", model="gpt-4")
 userAgent = UserAgent()
 ```
 
-**NOTE**: Please refer to [[Customizing Your Custom Agent with Agent Pool]](https://alibaba.github.io/AgentScope/tutorial/201-agent.md) for all available agents.
+**NOTE**: Please refer to [[Customizing Your Custom Agent with Agent Pool]](https://alibaba.github.io/AgentScope/tutorial/201-agent.html) for all available agents.
 
 ## Step3: Agent Conversation
 
@@ -96,7 +96,7 @@ while x is None or x.content != "exit":
 	x = sequentialpipeline([dialog_agent, user_agent])
 ```
 
-For more details about how to utilize pipelines for complex agent interactions, please refer to [[Agent Interactions: Dive deeper into Pipelines and Message Hub]](https://alibaba.github.io/AgentScope/tutorial/202-pipeline.md).
+For more details about how to utilize pipelines for complex agent interactions, please refer to [[Agent Interactions: Dive deeper into Pipelines and Message Hub]](https://alibaba.github.io/AgentScope/tutorial/202-pipeline.html).
 
 
 

@@ -8,11 +8,11 @@ The `AgentBase` class is the architectural cornerstone for all agent constructs 
 
 Each AgentBase derivative is composed of several key characteristics:
 
-* `memory`: This attribute enables agents to retain and recall past interactions, allowing them to maintain context in ongoing conversations. For more details about `memory`, we defer to [Memory and Message Management](https://alibaba.github.io/AgentScope/tutorial/205-memory.md).
+* `memory`: This attribute enables agents to retain and recall past interactions, allowing them to maintain context in ongoing conversations. For more details about `memory`, we defer to [Memory and Message Management](https://alibaba.github.io/AgentScope/tutorial/205-memory.html).
 
-* `model`: The model is the computational engine of the agent, responsible for making a response given existing memory and input. For more details about `model`, we defer to [Using Different Model Sources with Model API]https://alibaba.github.io/AgentScope/tutorial/203-model.md).
+* `model`: The model is the computational engine of the agent, responsible for making a response given existing memory and input. For more details about `model`, we defer to [Using Different Model Sources with Model API]https://alibaba.github.io/AgentScope/tutorial/203-model.html).
 
-* `sys_prompt` & `engine`: The system prompt acts as predefined instructions that guide the agent in its interactions; and the `engine` is used to dynamically generate a suitable prompt. For more details about them, we defer to [Prompt Engine](https://alibaba.github.io/AgentScope/tutorial/206-prompt.md).
+* `sys_prompt` & `engine`: The system prompt acts as predefined instructions that guide the agent in its interactions; and the `engine` is used to dynamically generate a suitable prompt. For more details about them, we defer to [Prompt Engine](https://alibaba.github.io/AgentScope/tutorial/206-prompt.html).
 
 In addition to these attributes, `AgentBase` endows agents with pivotal methods such as `observe` and `reply`:
 
