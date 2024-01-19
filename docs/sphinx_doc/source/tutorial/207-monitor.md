@@ -1,3 +1,5 @@
+(207-monitor)=
+
 # Monitor
 
 In multi-agent applications, particularly those that rely on external model APIs, it's crucial to monitor the usage and cost to prevent overutilization and ensure compliance with rate limits. The `MonitorBase` class and its implementation, `DictMonitor`, provide a way to track and regulate the usage of such APIs in your applications. In this tutorial, you'll learn how to use them to monitor API calls.
@@ -94,7 +96,5 @@ Get the singleton instance of the monitor:
 ```python
 monitor = MonitorFactory.get_monitor()
 ```
-
-
 
 [[Return to the top]](#monitoring-and-logging)

@@ -1,3 +1,5 @@
+(208-distribute)=
+
 # Make Your Applications Distributed
 
 AgentScope is designed to be fully distributed, agent instances in one application can be deployed on different machines and run in parallel. This tutorial will introduce the features of AgentScope distributed and the distributed deployment method.

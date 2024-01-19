@@ -1,3 +1,5 @@
+(203-model)=
+
 # Using Different Model Sources with Model API
 
 AgentScope allows for the integration of multi-modal models from various sources. The core step is the initialization process, where once initialized with a certain config, all agent instances globally select the appropriate model APIs based on the model name specified (e.g., `model='gpt-4'`):
@@ -21,7 +23,7 @@ where the model configs could be a list of dict:
             "temperature": 0.0
         }
     },
-  	{
+    {
         "type": "openai_dall_e",
         "name": "dall-e-3",
         "parameters": {
@@ -68,6 +70,7 @@ pip install Flask, transformers
 ```
 
 Taking model `meta-llama/Llama-2-7b-chat-hf` and port `8000` as an example, set up the model API serving by running the following command.
+
 ```bash
 python flask_transformers/setup_hf_service.py
     --model_name_or_path meta-llama/Llama-2-7b-chat-hf
@@ -97,7 +100,6 @@ In AgentScope, you can load the model with the following model configs: `./flask
 
 In this model serving, the messages from post requests should be in **STRING** format. You can use [templates for chat model](https://huggingface.co/docs/transformers/main/chat_templating) from *transformers* with a little modification based on `./flask_transformers/setup_hf_service.py`.
 
-
 #### With ModelScope Library
 
 ##### Install Libraries and Set up Serving
@@ -119,7 +121,6 @@ python flask_modelscope/setup_ms_service.py
 
 You can replace `modelscope/Llama-2-7b-ms` with any model card in modelscope model hub.
 
-
 ##### How to use AgentScope
 
 In AgentScope, you can load the model with the following model configs: `flask_modelscope/model_config.json`.
@@ -140,7 +141,6 @@ In AgentScope, you can load the model with the following model configs: `flask_m
 
 Similar to the example of transformers, the messages from post requests should be in **STRING format**.
 
-
 ### FastChat
 
 [FastChat](https://github.com/lm-sys/FastChat) is an open platform that provides a quick setup for model serving with OpenAI-compatible RESTful APIs.
@@ -160,10 +160,13 @@ bash fastchat_script/fastchat_setup.sh -m meta-llama/Llama-2-7b-chat-hf -p 8000
 ```
 
 #### Supported Models
+
 Refer to [supported model list](https://github.com/lm-sys/FastChat/blob/main/docs/model_support.md#supported-models) of FastChat.
 
 #### How to use in AgentScope
+
 Now you can load the model in AgentScope by the following model config: `fastchat_script/model_config.json`.
+
 ```json
 {
     "type": "openai",
@@ -183,6 +186,7 @@ Now you can load the model in AgentScope by the following model config: `fastcha
 [vllm](https://github.com/vllm-project/vllm) is a high-throughput inference and serving engine for LLMs.
 
 #### Install Libraries and Set up Serving
+
 To install vllm, run
 
 ```bash
@@ -200,6 +204,7 @@ bash vllm_script/vllm_setup.sh -m meta-llama/Llama-2-7b-chat-hf -p 8000
 Please refer to the [supported models list](https://docs.vllm.ai/en/latest/models/supported_models.html) of vllm.
 
 #### How to use in AgentScope
+
 Now you can load the model in AgentScope by the following model config: `vllm_script/model_config.json`.
 
 ```json
@@ -216,13 +221,12 @@ Now you can load the model in AgentScope by the following model config: `vllm_sc
 }
 ```
 
-
 ## Model Inference API
 
 Both [Huggingface](https://huggingface.co/docs/api-inference/index) and [ModelScope](https://www.modelscope.cn) provide model inference API, which can be used with AgentScope post API model wrapper.
 Taking `gpt2` in HuggingFace inference API as an example, you can use the following model config in AgentScope.
 
-```bash
+```json
 {
     "type": "post_api",
     "name": 'gpt2',
@@ -246,7 +250,5 @@ model.eval()
 # Do remember to re-implement the `reply` method to tokenize *message*!
 agent = YourAgent(name='agent', model=model, tokenizer=tokenizer)
 ```
-
-
 
 [[Return to the top]](#using-different-model-sources-with-model-api)

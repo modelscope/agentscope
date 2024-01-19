@@ -12,24 +12,24 @@ AgentScope is an innovative multi-agent platform designed to empower developers 
 
 ### Getting Started
 
-- [Installation Guide](tutorial/101-installation.md)
-- [Fundamental Concepts](tutorial/102-concepts.md)
-- [Getting Started with a Simple Example](tutorial/103-example.md)
-- [Crafting Your First Application](tutorial/104-usecase.md)
-- [Logging and WebUI](tutorial/105-logging.md)
+- [Installation Guide](101-installation)
+- [Fundamental Concepts](102-concepts)
+- [Getting Started with a Simple Example](103-example)
+- [Crafting Your First Application](104-usecase)
+- [Logging and WebUI](105-logging)
 
 ### Advanced Exploration
 
-- [Customizing Your Own Agent](tutorial/201-agent.md)
-- [Agent Interactions: Dive deeper into Pipelines and Message Hub](tutorial/202-pipeline.md)
-- [Using Different Model Sources with Model API](tutorial/203-model.md)
-- [Enhancing Agent Capabilities with Service Functions](tutorial/204-service.md)
-- [Memory and Message Management](tutorial/205-memory.md)
-- [Prompt Engine](tutorial/206-prompt.md)
-- [Monitoring](tutorial/207-monitor.md)
-- [Distributed Deployment](tutorial/208-distribute.md)
+- [Customizing Your Own Agent](201-agent)
+- [Agent Interactions: Dive deeper into Pipelines and Message Hub](202-pipeline)
+- [Using Different Model Sources with Model API](203-model)
+- [Enhancing Agent Capabilities with Service Functions](204-service)
+- [Memory and Message Management](205-memory)
+- [Prompt Engine](206-prompt)
+- [Monitoring](207-monitor)
+- [Distributed Deployment](208-distribute)
 
 ### Getting Involved
 
-* [Joining The AgentScope Community](tutorial/301-community.md)
-* [Contributing to AgentScope](tutorial/302-contribute.md)
+- [Joining The AgentScope Community](301-community)
+- [Contributing to AgentScope](302-contribute)

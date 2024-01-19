@@ -1,3 +1,5 @@
+(104-usecase)=
+
 # Crafting Your First Application
 
 <img src="https://img.alicdn.com/imgextra/i3/O1CN01dFpOh82643mygUh2Z_!!6000000007607-2-tps-1024-1024.png" alt="img" style="zoom:25%;" />
@@ -10,19 +12,25 @@ Let the adventure begin to unlock the potential of multi-agent applications with
 
 ## Getting Started
 
-Firstly, ensure that you have installed and configured AgentScope properly. Besides, we will involve the basic concepts of `Model API`,  `Agent`, `Msg`, and `Pipeline,` as described in [Tutorial-Concept](https://alibaba.github.io/AgentScope/tutorial/102-concepts.html). The overview of this tutorial is shown below:
+Firstly, ensure that you have installed and configured AgentScope properly. Besides, we will involve the basic concepts of `Model API`,  `Agent`, `Msg`, and `Pipeline,` as described in [Tutorial-Concept](102-concepts). The overview of this tutorial is shown below:
 
-* [Step 1: Prepare **Model API** and Set Model Configs](#step-1-prepare-model-api-and-set-model-configs)
-* [Step 2: Define the Roles of Each **Agent**](#step-2-define-the-roles-of-each-agent)
-* [Step 3: **Initialize** AgentScope and the Agents](#step-3-initialize-agentscope-and-the-agents)
-* [Step 4: Set Up the Game Logic with **Pipelines**](#step-4-set-up-the-game-logic-with-pipelines)
-* [Step 5: **Run** the Application](#step-5-run-the-application)
+- [Crafting Your First Application](#crafting-your-first-application)
+  - [Getting Started](#getting-started)
+    - [Step 1: Prepare Model API and Set Model Configs](#step-1-prepare-model-api-and-set-model-configs)
+    - [Step 2: Define the Roles of Each Agent](#step-2-define-the-roles-of-each-agent)
+    - [Step 3: Initialize AgentScope and the Agents](#step-3-initialize-agentscope-and-the-agents)
+    - [Step 4: Set Up the Game Logic](#step-4-set-up-the-game-logic)
+      - [Leverage Pipeline and MsgHub](#leverage-pipeline-and-msghub)
+      - [Implement Werewolf Pipeline](#implement-werewolf-pipeline)
+    - [Step 5: Run the Application](#step-5-run-the-application)
+  - [Next step](#next-step)
+  - [Other Example Applications](#other-example-applications)
 
 **Note**: all the configurations and code for this tutorial can be found in `examples/werewolf`.
 
 ### Step 1: Prepare Model API and Set Model Configs
 
-As we discussed in the last tutorial, you need to prepare your model configurations into a JSON file for standard OpenAI chat API, FastChat, and vllm. More details and advanced usages such as configuring local models with POST API are presented in [Tutorial-Model-API](https://alibaba.github.io/AgentScope/tutorial/203-model.html).
+As we discussed in the last tutorial, you need to prepare your model configurations into a JSON file for standard OpenAI chat API, FastChat, and vllm. More details and advanced usages such as configuring local models with POST API are presented in [Tutorial-Model-API](203-model).
 
 ```json
 [
@@ -138,7 +146,7 @@ To simplify the construction of agent communication, AgentScope provides two hel
 
 The game logic is divided into two major phases: (1) night when werewolves act, and (2) daytime when all players discuss and vote. Each phase will be handled by a section of code using pipelines to manage multi-agent communications.
 
-* **1.1 Night Phase: Werewolves Discuss and Vote**
+- **1.1 Night Phase: Werewolves Discuss and Vote**
 
 During the night phase, werewolves must discuss among themselves to decide on a target. The `msghub` function creates a message hub for the werewolves to communicate in, where every message sent by an agent is observable by all other agents within the `msghub`.
 
@@ -169,7 +177,7 @@ After the discussion, werewolves proceed to vote for their target, and the major
         )
 ```
 
-* **1.2 Witch's Turn**
+- **1.2 Witch's Turn**
 
 If the witch is still alive, she gets the opportunity to use her powers to either save the player chosen by the werewolves or use her poison.
 
@@ -178,7 +186,7 @@ If the witch is still alive, she gets the opportunity to use her powers to eithe
     healing_used_tonight = False
     if witch in survivors:
         if healing:
-        	# Witch decides whether to use the healing potion
+            # Witch decides whether to use the healing potion
             hint = HostMsg(
                 content=Prompts.to_witch_resurrect.format_map(
                     {"witch_name": witch.name, "dead_name": dead_player[0]},
@@ -191,7 +199,7 @@ If the witch is still alive, she gets the opportunity to use her powers to eithe
                 healing = False
 ```
 
-* **1.3 Seer's Turn**
+- **1.3 Seer's Turn**
 
 The seer has a chance to reveal the true identity of a player. This information can be crucial for the villagers. The `observe()` function allows each agent to take note of a message without immediately replying to it.
 
@@ -210,7 +218,7 @@ The seer has a chance to reveal the true identity of a player. This information 
         seer.observe(hint)
 ```
 
-* **1.4 Update Alive Players**
+- **1.4 Update Alive Players**
 
 Based on the actions taken during the night, the list of surviving players needs to be updated.
 
@@ -219,7 +227,7 @@ Based on the actions taken during the night, the list of surviving players needs
     survivors, wolves = update_alive_players(survivors, wolves, dead_player)
 ```
 
-* **2.1 Daytime Phase: Discussion and Voting**
+- **2.1 Daytime Phase: Discussion and Voting**
 
 During the day, all players will discuss and then vote to eliminate a suspected werewolf.
 
@@ -239,7 +247,7 @@ During the day, all players will discuss and then vote to eliminate a suspected 
         survivors, wolves = update_alive_players(survivors, wolves, vote_res)
 ```
 
-* **2.2 Check for Winning Conditions**
+- **2.2 Check for Winning Conditions**
 
 After each phase, the game checks if the werewolves or villagers have won.
 
@@ -249,7 +257,7 @@ After each phase, the game checks if the werewolves or villagers have won.
             break
 ```
 
-* **2.3 Continue to the Next Round**
+- **2.3 Continue to the Next Round**
 
 If neither werewolves nor villagers win, the game continues to the next round.
 
@@ -311,14 +319,11 @@ Moderator: The day is coming, all the players open your eyes. Last night is peac
 
 Now you've grasped how to conveniently set up a multi-agent application with AgentScope. Feel free to tailor the game to include additional roles and introduce more sophisticated strategies. For more advanced tutorials that delve deeper into more capabilities of AgentScope, such as *memory management* and *service functions* utilized by agents, please refer to the tutorials in the **Advanced Exploration** section and look up the API references.
 
-
 ## Other Example Applications
 
 - Example of Simple Group Conversation: [examples/Simple Conversation](https://github.com/alibaba/AgentScope/tree/main/examples/simple_chat/README.md)
 - Example of Werewolves: [examples/Werewolves](https://github.com/alibaba/AgentScope/tree/main/examples/werewolves/README.md)
 - Example of Distributed Agents: [examples/Distributed Agents](https://github.com/alibaba/AgentScope/tree/main/examples/distributed_agents/README.md)
 - ...
-
-
 
 [[Return to the top]](#crafting-your-first-application)

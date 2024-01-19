@@ -1,3 +1,5 @@
+(206-prompt)=
+
 # Prompt Engine
 
 **Prompt** is a crucial component in interacting with language models, especially when seeking to generate specific types of outputs or guide the model toward desired behaviors. This tutorial will guide you through the use of the `PromptEngine` class, which simplifies the process of crafting prompts for LLMs.
@@ -6,7 +8,7 @@
 
 The `PromptEngine` class provides a structured way to combine different components of a prompt, such as instructions, hints, dialogue history, and user inputs, into a format that is suitable for the underlying language model.
 
-### Key Features of PromptEngine:
+### Key Features of PromptEngine
 
 - **Model Compatibility**: It works with any `ModelWrapperBase` subclass.
 - **Shrink Policy**: It offers two policies for handling prompts that exceed the maximum length: `ShrinkPolicy.TRUNCATE` to simply truncate the prompt, and `ShrinkPolicy.SUMMARIZE` to summarize part of the dialog history to save space.
@@ -60,7 +62,5 @@ hint_prompt = "Find the weather in {location}."
 
 prompt = engine.join(system_prompt, user_input, hint_prompt, format_map=variables)
 ```
-
-
 
 [[Return to the top]](#prompt-engine)

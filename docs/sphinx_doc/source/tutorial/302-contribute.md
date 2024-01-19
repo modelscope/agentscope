@@ -1,3 +1,5 @@
+(302-contribute)=
+
 # Contributing to AgentScope
 
 Our community thrives on the diverse ideas and contributions of its members. Whether you're fixing a bug, adding a new feature, improving the documentation,  or adding examples, your help is welcome. Here's how you can contribute:
@@ -5,6 +7,7 @@ Our community thrives on the diverse ideas and contributions of its members. Whe
 ## Report Bugs and Ask For New Features?
 
 Did you find a bug or have a feature request? Please first check the issue tracker to see if it has already been reported. If not, feel free to open a new issue. Include as much detail as possible:
+
 - A descriptive title
 - Clear description of the issue
 - Steps to reproduce the problem
@@ -63,7 +66,5 @@ We will review your pull request. This process might involve some discussion, ad
 ### Code Review
 
 Wait for us to review your pull request. We may suggest some changes or improvements. Keep an eye on your GitHub notifications and be responsive to any feedback.
-
-
 
 [[Return to the top]](#contributing-to-agentScope)

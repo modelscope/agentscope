@@ -1,3 +1,5 @@
+(204-service)=
+
 # Enhancing Agent Capabilities with Service Functions
 
 **Service functions**, often referred to simply as **Service**, constitute a versatile suite of utility tools that can be used to enhance the functionality of agents. A service is designed to perform a specific task like web search, code interpretation, or file processing. Services can be invoked by agents and other components for reuse across different scenarios.
@@ -9,14 +11,14 @@ The design behind `Service` distinguishes them from typical Python functions. In
 ```python
 def demo_service() -> ServiceResponse:
     #do some specifc actions
-	# ......
-	res = ServiceResponse({status=status, content=content})
-	return res
+    # ......
+    res = ServiceResponse({status=status, content=content})
+    return res
 
 
 class ServiceResponse(dict):
     """Used to wrap the execution results of the services"""
-		# ... [code omitted for brevity]
+    # ... [code omitted for brevity]
 
     def __init__(
         self,
@@ -129,6 +131,5 @@ class YourAgent(AgentBase):
 
         # ... [code omitted for brevity]
 ```
-
 
 [[Return to the top]](#enhancing-agent-capabilities-with-service-functions)

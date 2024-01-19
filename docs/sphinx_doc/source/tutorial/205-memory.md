@@ -1,3 +1,5 @@
+(205-memory)=
+
 # Memory and Message Management
 
 **Message** represents individual pieces of information or interactions flowing between/within agents. **Memory** refers to the storage and retrieval of historical information and serves as the storage and management system for the messages. This allows the agent to remember past interactions, maintain context, and provide more coherent and relevant responses.
@@ -48,9 +50,9 @@ The `Msg` ("Message") subclass extends `MessageBase` and represents a standard *
 
 ```python
 class Msg(MessageBase):
-  	# ... [code omitted for brevity]
+    # ... [code omitted for brevity]
 
-  	def to_str(self) -> str:
+    def to_str(self) -> str:
         return f"{self.name}: {self.content}"
 
     def serialize(self) -> str:
@@ -66,7 +68,7 @@ The `Tht` ("Thought") subclass is a specialized form of `MessageBase` used for e
 
 ```python
 class Tht(MessageBase):
-  	# ... [code omitted for brevity]
+    # ... [code omitted for brevity]
 
     def to_str(self) -> str:
         return f"{self.name} thought: {self.content}"
@@ -93,7 +95,7 @@ class MemoryBase(ABC):
         recent_n: Optional[int] = None,
         filter_func: Optional[Callable[[int, dict], bool]] = None,
     ) -> Union[list, str]:
-      	raise NotImplementedError
+        raise NotImplementedError
 
     def add(self, memories: Union[list[dict], dict]) -> None:
         raise NotImplementedError
@@ -140,7 +142,5 @@ The `TemporaryMemory` class is a concrete implementation of `MemoryBase`, provid
 - **`get_embeddings`**: Return the embeddings for all messages in memory. If a message does not have an embedding and an embedding model is provided, it will generate and store the embedding for the message.
 
 For more details about the usage of `Memory` and `Msg`, please refer to the API references.
-
-
 
 [[Return to the top]](#memory-and-message-management)

@@ -1,3 +1,5 @@
+(105-logging)=
+
 # Logging and WebUI
 
 Welcome to the tutorial on logging in multi-agent applications with AgentScope. We'll also touch on how you can visualize these logs using a simple web interface. This guide will help you track the agent's interactions and system information in a clearer and more organized way.
@@ -65,17 +67,22 @@ logger.error("The agent encountered an unexpected error while processing a reque
 To visualize these logs, we provide a customized gradio component in `src/agentscope/web_ui`.
 
 ### Quick Running
+
 For convince, we provide the pre-built app in a wheel file, you can run the WebUI in the following command:
+
 ```shell
 pip install gradio_groupchat-0.0.1-py3-none-any.whl
 python app.py
 ```
+
 After the init and entering the UI port printed by `app.py`, e.g., `http://127.0.0.1:7860/`, you can choose `run.log.demo` in the top-middle `FileSelector` window (it's a demo log file provided by us). Then, the dialog and system log should be shown correctly in the bottom windows.
 
 ![webui](https://img.alicdn.com/imgextra/i2/O1CN01hSaFue1EdL2yCEznc_!!6000000000374-2-tps-3066-1808.png)
 
 ### For Other Customization
+
 To customize the backend, or the frontend of the provided WebUI, you can
+
 ```shell
 # generate the template codes
 # for network connectivity problem, try to run
@@ -91,12 +98,11 @@ gradio cc dev
 ```
 
 If you want to release the modification, you can do
+
 ```shell
 gradio cc build
 pip install <path-to-whl>
 python app.py
 ```
-
-
 
 [[Return to the top]](#logging-and-webui)

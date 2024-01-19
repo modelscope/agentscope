@@ -1,3 +1,5 @@
+(103-example)=
+
 # Getting Started with a Simple Example
 
 AgentScope is a versatile platform for building and running multi-agent applications. We provide various pre-built examples that will help you quickly understand how to create and use multi-agent for various applications. In this tutorial, you will learn how to set up a **simple agent-based interaction**.
@@ -13,10 +15,9 @@ Agent is the basic composition and communication unit in AgentScope. To initiali
 | Embedding | `openai_embedding` | API for text embeddings                                                     |
 | General usages in POST       | `post_api`         | *Huggingface* and *ModelScope* Inference API, and other customized post API |
 
-
 Each API has its specific configuration requirements. For example, to configure an OpenAI API, you would need to fill out the following fields in the model config in a dict, a yaml file or a json file:
 
-```
+```python
 model_config = {
     "type": "openai",               # Choose from "openai", "openai_dall_e", or "openai_embedding"
     "name": "{your_config_name}",   # A unique identifier for your config
@@ -26,9 +27,10 @@ model_config = {
 }
 ```
 
-For open-source models, we support integration with various model interfaces such as HuggingFace, ModelScope, FastChat, and vllm. You can find scripts on deploying these services in the `scripts` directory, and we defer the detailed instructions to [[Using Different Model Sources with Model API]](https://alibaba.github.io/AgentScope/tutorial/203-model.html).
+For open-source models, we support integration with various model interfaces such as HuggingFace, ModelScope, FastChat, and vllm. You can find scripts on deploying these services in the `scripts` directory, and we defer the detailed instructions to [[Using Different Model Sources with Model API]](203-model).
 
 You can register your configuration by calling AgentScope's initilization method as follow. Besides, you can also load more than one config by calling init mutliple times.
+
 ```python
 import agentscope
 
@@ -37,7 +39,6 @@ openai_cfg_dict = {...dict_filling...}
 modelscope_cfg_dict = {...dict_filling...}
 agentscope.init(model_configs=[openai_cfg_dict, modelscope_cfg_dict])
 ```
-
 
 ## Step2: Create Agents
 
@@ -55,7 +56,7 @@ dialogAgent = DialogAgent(name="assistant", model="gpt-4")
 userAgent = UserAgent()
 ```
 
-**NOTE**: Please refer to [[Customizing Your Custom Agent with Agent Pool]](https://alibaba.github.io/AgentScope/tutorial/201-agent.html) for all available agents.
+**NOTE**: Please refer to [[Customizing Your Custom Agent with Agent Pool]](201-agent) for all available agents.
 
 ## Step3: Agent Conversation
 
@@ -81,7 +82,7 @@ while True:
 
     # Terminate the conversation if the user types "exit"
     if x.content == "exit":
-  	    print("Exiting the conversation.")
+        print("Exiting the conversation.")
         break
 ```
 
@@ -93,11 +94,9 @@ from agentscope.pipelines.functional import sequentialpipeline
 # Execute the conversation loop within a pipeline structure
 x = None
 while x is None or x.content != "exit":
-	x = sequentialpipeline([dialog_agent, user_agent])
+  x = sequentialpipeline([dialog_agent, user_agent])
 ```
 
-For more details about how to utilize pipelines for complex agent interactions, please refer to [[Agent Interactions: Dive deeper into Pipelines and Message Hub]](https://alibaba.github.io/AgentScope/tutorial/202-pipeline.html).
-
-
+For more details about how to utilize pipelines for complex agent interactions, please refer to [[Agent Interactions: Dive deeper into Pipelines and Message Hub]](202-pipeline).
 
 [[Return to the top]](#getting-started-with-a-simple-example)

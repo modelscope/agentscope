@@ -1,3 +1,5 @@
+(202-pipeline)=
+
 # Agent Interactions: Dive deeper into Pipelines and Message Hub
 
 **Pipeline & MsgHub** (message hub) are one or a sequence of steps describing how the structured `Msg` passes between multi-agents, which streamlines the process of collaboration across agents.

@@ -1,5 +1,5 @@
 Advanced Exploration
-===============
+====================
 
 .. toctree::
    :maxdepth: 2

@@ -1,3 +1,5 @@
+(102-concepts)=
+
 # Fundamental Concepts
 
 In this tutorial, you'll have an initial understanding of the **fundamental concepts** of AgentScope. We will focus on how a multi-agent application runs based on our platform and familiarize you with the essential terms. Let's get started!
@@ -11,7 +13,6 @@ In this tutorial, you'll have an initial understanding of the **fundamental conc
 * **Memory** refers to the structures (e.g., list-like memory, database-based memory) used to store and manage `Msg` (Message) that agents need to remember and store. This can include chat history, knowledge, or other data that informs the agent's future actions.
 * **Service** is a collection of functionality tools (e.g., web search, code interpreter, file processing) that provide specific capabilities or processes that are independent of an agent's memory state. Services can be invoked by agents or other components and designed to be reusable across different scenarios.
 * **Pipeline** refers to the interaction order or pattern of agents in a task. AgentScope provides built-in `pipelines` to streamline the process of collaboration across multiple agents, such as `SequentialPipeline` and `ForLoopPipeline`. When a `Pipeline` is executed, the *message* passes from predecessors to successors with intermediate results for the task.
-
 
 ## Code Structure
 
@@ -41,7 +42,5 @@ AgentScope
 ├── ... ..
 └── ... ..
 ```
-
-
 
 [[Return to the top]](#fundamental-concepts)

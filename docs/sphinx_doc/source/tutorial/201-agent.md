@@ -1,3 +1,5 @@
+(201-agent)=
+
 # Customizing Your Own Agent
 
 This tutorial helps you to understand the `Agent` in mode depth and navigate through the process of crafting your own custom agent with AgentScope. We start by introducing the fundamental abstraction called `AgentBase`, which serves as the base class to maintain the general behaviors of all agents. Then, we will go through the *AgentPool*, an ensemble of pre-built, specialized agents, each designed with a specific purpose in mind. Finally, we will demonstrate how to customize your own agent, ensuring it fits the needs of your project.
@@ -8,11 +10,11 @@ The `AgentBase` class is the architectural cornerstone for all agent constructs 
 
 Each AgentBase derivative is composed of several key characteristics:
 
-* `memory`: This attribute enables agents to retain and recall past interactions, allowing them to maintain context in ongoing conversations. For more details about `memory`, we defer to [Memory and Message Management](https://alibaba.github.io/AgentScope/tutorial/205-memory.html).
+* `memory`: This attribute enables agents to retain and recall past interactions, allowing them to maintain context in ongoing conversations. For more details about `memory`, we defer to [Memory and Message Management](205-memory).
 
-* `model`: The model is the computational engine of the agent, responsible for making a response given existing memory and input. For more details about `model`, we defer to [Using Different Model Sources with Model API]https://alibaba.github.io/AgentScope/tutorial/203-model.html).
+* `model`: The model is the computational engine of the agent, responsible for making a response given existing memory and input. For more details about `model`, we defer to [Using Different Model Sources with Model API](203-model).
 
-* `sys_prompt` & `engine`: The system prompt acts as predefined instructions that guide the agent in its interactions; and the `engine` is used to dynamically generate a suitable prompt. For more details about them, we defer to [Prompt Engine](https://alibaba.github.io/AgentScope/tutorial/206-prompt.html).
+* `sys_prompt` & `engine`: The system prompt acts as predefined instructions that guide the agent in its interactions; and the `engine` is used to dynamically generate a suitable prompt. For more details about them, we defer to [Prompt Engine](206-prompt).
 
 In addition to these attributes, `AgentBase` endows agents with pivotal methods such as `observe` and `reply`:
 
@@ -20,7 +22,6 @@ In addition to these attributes, `AgentBase` endows agents with pivotal methods 
 * `reply()`: This is the primary method that developers must implement. It defines the agent's behavior in response to an incoming *message*, encapsulating the logic that results in the agent's output.
 
 Besides, for unified interfaces and type hints, we introduce another base class `Operator`, which indicates performing some operation on input data by the `__call__` function. And we make `AgentBase` a subclass of `Operator`.
-
 
 ```python
 class AgentBase(Operator):
@@ -37,7 +38,7 @@ class AgentBase(Operator):
     ) -> None:
 
     # ... [code omitted for brevity]
-	def observe(self, x: Union[dict, Sequence[dict]]) -> None:
+ def observe(self, x: Union[dict, Sequence[dict]]) -> None:
         # An optional method for updating the agent's internal state based on
         # messages it has observed. This method can be used to enrich the
         # agent's understanding and memory without producing an immediate
@@ -58,7 +59,7 @@ class AgentBase(Operator):
 
 ## Exploring the AgentPool
 
-The *AgentPool* within AgentScope is a curated ensemble of ready-to-use, specialized agents. Each of these agents is tailored for a distinct role and comes equipped with default behaviors that address specific tasks. The *AgentPool* is designed to expedite the development process by providing various templates of `Agent `.
+The *AgentPool* within AgentScope is a curated ensemble of ready-to-use, specialized agents. Each of these agents is tailored for a distinct role and comes equipped with default behaviors that address specific tasks. The *AgentPool* is designed to expedite the development process by providing various templates of `Agent`.
 
 Below is a table summarizing the functionality of some of the key agents available in the Agent Pool:
 
@@ -78,7 +79,7 @@ Below, we provide usages of how to configure various agents from the AgentPool:
 
 ### `DialogAgent`
 
-- **Reply Method**: The `reply` method is where the main logic for processing input *message* and generating responses.
+* **Reply Method**: The `reply` method is where the main logic for processing input *message* and generating responses.
 
 ```python
 def reply(self, x: dict = None) -> dict:
@@ -101,7 +102,7 @@ def reply(self, x: dict = None) -> dict:
     return msg
 ```
 
-- **Usages:** To tailor a `DialogAgent` for a customer service bot:
+* **Usages:** To tailor a `DialogAgent` for a customer service bot:
 
 ```python
 from agentscope.agents import DialogAgent
@@ -121,7 +122,7 @@ service_bot = DialogAgent(**dialog_agent_config)
 
 ### `UserAgent`
 
-- **Reply Method**: This method processes user input by prompting for content and if needed, additional keys and a URL. The gathered data is stored in a *message* object in the agent's memory for logging or later use and returns the message as a response.
+* **Reply Method**: This method processes user input by prompting for content and if needed, additional keys and a URL. The gathered data is stored in a *message* object in the agent's memory for logging or later use and returns the message as a response.
 
 ```python
 def reply(
@@ -156,7 +157,7 @@ def reply(
     return msg
 ```
 
-- **Usages:** To configure a `UserAgent` for collecting user input and URLs (of file, image, video, audio , or website):
+* **Usages:** To configure a `UserAgent` for collecting user input and URLs (of file, image, video, audio , or website):
 
 ```python
 from agentscope.agents import UserAgent
@@ -170,7 +171,5 @@ user_agent_config = {
 # Create and configure the UserAgent
 user_proxy_agent = UserAgent(**user_agent_config)
 ```
-
-
 
 [[Return to the top]](#customizing-your-own-agent)
