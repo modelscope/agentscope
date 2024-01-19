@@ -68,9 +68,7 @@ def invited_group_chat(
     invited_names.sort()
 
     for idx in cur_plots_indices:
-        correct_names = [game_config["plots"][idx]["main_role"]] + game_config[
-            "plots"
-        ][idx]["supporting_roles"]
+        correct_names = game_config["plots"][idx]["main_roles"]
         correct_names.sort()
 
         # TODO: decided by multi factor: chat history of msghub, correct_names
@@ -96,7 +94,7 @@ def invited_group_chat(
 
 def one_on_one_loop(customers, player):
     visit_customers = [c for c in customers if c.visit()]
-    random.shuffle(visit_customers)
+    # random.shuffle(visit_customers)
 
     with open(
         "config/ingredients.yaml",
@@ -282,7 +280,7 @@ def main(args) -> None:
     to_activate_customers = set(to_activate_customers)
     for c in customers:
         if c.name in to_activate_customers:
-            c.activate_plot()
+            c.activate_plot(active_plots)
 
     while True:
         # daily loop
@@ -300,6 +298,15 @@ def main(args) -> None:
                 checkpoint.cur_plots,
             )
             if done_plot_idx is not None:
+                # once successful finish a current plot...
+                # deactivate the active roles in the done plot
+                deactivate_customers = \
+                    GAME_CONFIG["plots"][done_plot_idx]["main_roles"] + \
+                    GAME_CONFIG["plots"][done_plot_idx]["supporting_roles"]
+                for c in checkpoint.customers:
+                    if c.name in deactivate_customers:
+                        c.deactivate_plot()
+                # find the roles and plot to be activated
                 next_active_roles, active_plots = check_active_plot(
                     plots,
                     done_plot_idx,
@@ -310,7 +317,7 @@ def main(args) -> None:
                 next_active_roles = set(next_active_roles)
                 for c in checkpoint.customers:
                     if c.name in next_active_roles:
-                        c.activate_plot()
+                        c.activate_plot(active_plots)
             checkpoint.stage_per_night = StagePerNight.CASUAL_CHAT_FOR_MEAL
         elif checkpoint.stage_per_night == StagePerNight.CASUAL_CHAT_FOR_MEAL:
             # ==========  one-on-one loop =================

@@ -55,6 +55,27 @@ def check_active_plot(
     plots: list[dict],
     curr_done: Optional[int],
 ) -> tuple[list[str], list[int]]:
+    """
+    params: plots: list of plots
+    params: curr_done: current done plot index
+    return
+    to_be_activated: list of customers to be activate
+    active_plots: list of active plots
+    Current plots are list of dicts as following:
+    [
+        {
+            "main_roles": ["customer1", "customer2"],
+            "predecessor_plots": None,
+            "supporting_roles": ["customer3", "customer4"]
+        },
+        {
+            "main_roles": ["customer3", "customer4"],
+            "predecessor_plots": [0],
+            "supporting_roles": ["customer2", "customer5"],
+        },
+        ...
+    ]
+    """
     # insure all plots have been added 'state'
     for p in plots:
         if "state" not in p:
@@ -73,7 +94,9 @@ def check_active_plot(
     for idx, p in enumerate(plots):
         # activate all plots has no dependency and not done yet
         if p["predecessor_plots"] is None and p["state"] == "non-active":
-            to_be_activated.append(p["main_role"])
+            to_be_activated += p["main_roles"]
+            to_be_activated += p["supporting_roles"] if p["supporting_roles"] \
+                                                        is not None else []
             p["state"] = "active"
             active_plots.append(idx)
         elif p["predecessor_plots"] is not None:
@@ -86,7 +109,9 @@ def check_active_plot(
 
             if to_activate:
                 p["state"] = "active"
-                to_be_activated.append(p["main_role"])
+                to_be_activated += p["main_roles"]
+                to_be_activated += p["supporting_roles"] if \
+                    p["supporting_roles"] is not None else []
                 active_plots.append(idx)
         elif p["state"] == "active":
             active_plots.append(idx)
