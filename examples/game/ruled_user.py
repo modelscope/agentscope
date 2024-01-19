@@ -47,12 +47,14 @@ class RuledUser(AgentBase):
         sys_prompt: Optional[str] = None,
         ingredients_dict: Optional[dict] = None,
         cook_prompt: Optional[str] = None,
+        **kwargs: Any,
     ) -> None:
         """Initialize a RuledUser object."""
         super().__init__(name=name, model=model, sys_prompt=sys_prompt)
         self.retry_time = 10
         self.ingredients_dict = ingredients_dict
         self.cook_prompt = cook_prompt
+        self.uid = kwargs.get("uid", None)
 
     def reply(
         self,
@@ -71,9 +73,9 @@ class RuledUser(AgentBase):
         time.sleep(0.5)
         while True:
             try:
-                content = get_player_input(self.name)
+                content = get_player_input(self.name, uid=self.uid)
                 if x == {"content": "游戏开始"} and content == "":
-                    send_chat_msg("【系统】有顾客光临，请接待。")
+                    send_chat_msg("【系统】有顾客光临，请接待。", uid=self.uid)
                     continue
 
                 if not hasattr(self, "model") or len(content) == 0:
@@ -88,9 +90,10 @@ class RuledUser(AgentBase):
                     f" {ruler_res.get('reason', 'Unknown reason')}\n"
                     f"【请重试】",
                     "⚠️",
+                    uid=self.uid,
                 )
             except UnicodeDecodeError as e:
-                send_chat_msg(f"【无效输入】 {e}\n 【请重试】", "⚠️")
+                send_chat_msg(f"【无效输入】 {e}\n 【请重试】", "⚠️", uid=self.uid)
 
         kwargs = {}
         if required_keys is not None:
@@ -98,7 +101,7 @@ class RuledUser(AgentBase):
                 required_keys = [required_keys]
 
             for key in required_keys:
-                kwargs[key] = get_player_input(key)
+                kwargs[key] = get_player_input(key, uid=self.uid)
 
         if content == "做菜":
             content = self.cook()
@@ -147,21 +150,21 @@ class RuledUser(AgentBase):
             ),
         ]
         while True:
-            send_chat_msg(f"【系统】当前已选择的食材是{cook_list}。")
-            sel_ingr = query_answer(questions, "ingredient")
+            send_chat_msg(f"【系统】当前已选择的食材是{cook_list}。", uid=self.uid)
+            sel_ingr = query_answer(questions, "ingredient", uid=self.uid)
 
             if sel_ingr in ["结束", "**结束**"]:  # For gradio
                 if len(cook_list) > 0:
                     break
-                send_chat_msg("【系统】你没有选中任何食材。")
+                send_chat_msg("【系统】你没有选中任何食材。", uid=self.uid)
             elif sel_ingr in ["清空", "**清空**"]:  # For gradio
                 cook_list.clear()
             elif sel_ingr not in ingredients_list:
-                send_chat_msg("【系统】不可用食材，请重新选择。")
+                send_chat_msg("【系统】不可用食材，请重新选择。", uid=self.uid)
                 continue
             else:
                 cook_list.append(sel_ingr)
-        end_query_answer()
+        end_query_answer(uid=self.uid)
 
         prompt = self.cook_prompt.format_map(
             {"ingredient": "+".join(cook_list)},
@@ -174,6 +177,7 @@ class RuledUser(AgentBase):
         send_chat_msg(
             # f"【系统】魔法锅周围光芒四射，你听到了轻微的咔哒声。当一切平静下来，一道《{food}》出现在你眼前。",
             f"【系统】你开始撸起袖子、开启炉灶。。。。当一切平静下来，一道《{food}》出现在客人眼前。",
+            uid=self.uid,
         )
 
         return food
