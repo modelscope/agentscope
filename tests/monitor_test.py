@@ -31,6 +31,7 @@ class MonitorFactoryTest(unittest.TestCase):
         self.assertFalse(monitor1.exists("token_num"))
 
     def tearDown(self) -> None:
+        MonitorFactory._instance = None  # pylint: disable=W0212
         os.remove(self.db_path)
 
 
