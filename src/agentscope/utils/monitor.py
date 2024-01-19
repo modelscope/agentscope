@@ -308,6 +308,8 @@ class SqliteMonitor(MonitorBase):
         self.db_path = db_path
         self.table_name = table_name
         self._create_monitor_table(drop_exists)
+        logger.info(
+            f"SqliteMonitor initialization completed at [{self.db_path}]")
 
     def _create_monitor_table(self, drop_exists: bool = False) -> None:
         """Internal method to create a table in sqlite3."""
@@ -335,6 +337,9 @@ class SqliteMonitor(MonitorBase):
                 END;
                 """,
             )
+        logger.info(f'Init [{self.table_name}] as the monitor table')
+        logger.info(
+            f'Init [{self.table_name}_quota_exceeded] as the monitor trigger')
 
     def register(
         self,
