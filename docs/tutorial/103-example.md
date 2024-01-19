@@ -71,7 +71,7 @@ message_from_alice = Msg("Alice", "Hi!")
 message_from_bob = Msg("Bob", "What about this picture I took?", url="/path/to/picture.jpg")
 ```
 
-To start a conversation between two agents, such as `dialogAgent` and `userAgent`, you can use the following loop. The conversation continues until the user inputs `"exit"` which terminates the interaction.
+To start a conversation between two agents, such as `dialog_agent` and `user_agent`, you can use the following loop. The conversation continues until the user inputs `"exit"` which terminates the interaction.
 
 ```python
 x = None
@@ -88,14 +88,12 @@ while True:
 For a more advanced approach, AgentScope offers the option of using pipelines to manage the flow of messages between agents. The `sequentialpipeline` stands for sequential speech, where each agent receive message from last agent and generate its response accordingly.
 
 ```python
-from agentscope.pipelines.functional import (
-    sequentialpipeline,
-)
+from agentscope.pipelines.functional import sequentialpipeline
 
 # Execute the conversation loop within a pipeline structure
 x = None
 while x is None or x.content != "exit":
-	x = sequentialpipeline(dialogAgent, userAgent)
+	x = sequentialpipeline([dialog_agent, user_agent])
 ```
 
 For more details about how to utilize pipelines for complex agent interactions, please refer to [[Agent Interactions: Dive deeper into Pipelines and Message Hub]](https://github.com/alibaba/AgentScope/tree/main/docs/tutorial/202-pipeline.md).

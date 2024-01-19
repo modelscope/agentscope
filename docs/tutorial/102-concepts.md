@@ -24,11 +24,11 @@ AgentScope
 │   |   ├── memory               # Structures for agent memory.
 │   |   ├── models               # Interfaces for integrating diverse model APIs.
 │   |   ├── pipeline             # Fundamental components and implementations for running pipelines.
-│   |   ├── rpc			             # Rpc module for agent distributed deployment.
+│   |   ├── rpc                  # Rpc module for agent distributed deployment.
 │   |   ├── service              # Services offering functions independent of memory and state.
 │   |   ├── utils                # Auxiliary utilities and helper functions.
 │   |   ├── message.py           # Definitions and implementations of messaging between agents.
-|   |   ├── web_ui				       # WebUI used to show dialogs.
+|   |   ├── web_ui               # WebUI used to show dialogs.
 │   |   ├── prompt.py            # Prompt engineering module for model input.
 │   |   ├── ... ..
 │   |   ├── ... ..
