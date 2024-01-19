@@ -58,8 +58,9 @@ def invited_group_chat(
                                {json.dumps(["是", "否", "结束邀请对话"])}'
                                select-once></select-box>"""
 
-            send_chat_msg({"text": choose_during_chatting, "flushing":
-                False}, uid=uid)
+            # send_chat_msg({"text": choose_during_chatting, "flushing":
+            #     False}, uid=uid)
+            send_chat_msg(choose_during_chatting, flushing=False, uid=uid)
             end_flag = False
             while True:
                 answer = query_answer(questions, "ans", uid=uid)
@@ -78,14 +79,12 @@ def invited_group_chat(
             else:
                 for c in invited_customer:
                     msg = c(msg)
-                    send_pretty_msg(msg, uid=uid)
+                    send_pretty_msg(msg, uid=uid, avatar=c.avatar)
 
     invited_names.sort()
 
     for idx in cur_plots_indices:
-        correct_names = [game_config["plots"][idx]["main_role"]] + game_config[
-            "plots"
-        ][idx]["supporting_roles"]
+        correct_names = game_config["plots"][idx]["main_roles"]
         correct_names.sort()
 
         # TODO: decided by multi factor: chat history of msghub, correct_names
@@ -104,7 +103,7 @@ def invited_group_chat(
                         columns="10" type="checkbox" options=
                         '{json.dumps(invited_names + ["跳过"])}' select-once></select-box>"""
 
-            send_chat_msg({"text": choose_role_story, "flushing": False}, uid=uid)
+            send_chat_msg(choose_role_story, flushing=False, uid=uid)
 
             while True:
                 answer = query_answer(questions, "ans", uid=uid)
@@ -123,7 +122,7 @@ def invited_group_chat(
 
 def one_on_one_loop(customers, player, uid):
     visit_customers = [c for c in customers if c.visit()]
-    random.shuffle(visit_customers)
+    # random.shuffle(visit_customers)
 
     with open(
         "config/ingredients.yaml",
@@ -168,17 +167,18 @@ def one_on_one_loop(customers, player, uid):
             if "score" in msg:
                 send_chat_msg(
                     f"【系统】{customer.name}（顾客）接受了你的菜。\n"
-                    f"【系统】顾客对菜本身的评价：{msg['content']}\n"
-                    f"【系统】{customer.name}（顾客）享用完之后，"
+                    f" 顾客对菜本身的评价：{msg['content']}\n"
+                    f" {customer.name}（顾客）享用完之后，"
                     f"综合满意度为{msg['score']}\n",
                     uid=uid,
                 )
                 break
-            send_pretty_msg(msg, uid=uid)
+
+            send_pretty_msg(msg, uid=uid, avatar=customer.avatar)
             send_chat_msg(
                 "【系统】请输入“做菜”启动做菜程序，它会按所选定食材产生菜品。 \n"
-                "【系统】对话轮次过多会使得顾客综合满意度下降。 \n"
-                "【系统】若不输入任何内容直接按回车键，顾客将离开餐馆。",
+                " 对话轮次过多会使得顾客综合满意度下降。 \n"
+                " 若不输入任何内容直接按回车键，顾客将离开餐馆。",
                 uid=uid,
             )
             msg = player(msg)
@@ -208,7 +208,7 @@ def one_on_one_loop(customers, player, uid):
                                  "感谢您的光顾。(结束与该顾客的当天对话)", "自定义输入"])}'
                                  select-once></select-box>"""
 
-        send_chat_msg({"text": choose_after_meal, "flushing": False}, uid=uid)
+        send_chat_msg(choose_after_meal, flushing=False, uid=uid)
 
         while True:
             answer = query_answer(questions, "ans", uid=uid)
@@ -229,7 +229,8 @@ def one_on_one_loop(customers, player, uid):
         while True:
             msg = customer(msg)
             # print(f"{customer_reply.name}（顾客）:" + customer_reply.content)
-            send_pretty_msg(msg, uid=uid)
+
+            send_pretty_msg(msg, uid=uid,avatar=customer.avatar)
             send_chat_msg("【系统】若不输入任何内容直接按回车键，顾客将离开餐馆。", uid=uid)
             msg = player(msg)
             if len(msg["content"]) == 0:
@@ -260,8 +261,7 @@ def invite_customers(customers, uid):
                 '{json.dumps(available_customers)}' select-once
                 submit-text="确定"></select-box>"""
 
-    send_chat_msg({"text": choose_available_customers, "flushing":
-        False}, uid=uid)
+    send_chat_msg(choose_available_customers, flushing=False, uid=uid)
 
     while True:
         answer = query_answer(select_customer, "invited",  uid=uid)
@@ -340,7 +340,7 @@ def main(args) -> None:
     to_activate_customers = set(to_activate_customers)
     for c in customers:
         if c.name in to_activate_customers:
-            c.activate_plot()
+            c.activate_plot(active_plots)
 
     while True:
         # daily loop
@@ -359,6 +359,15 @@ def main(args) -> None:
                 args.uid,
             )
             if done_plot_idx is not None:
+                # once successful finish a current plot...
+                # deactivate the active roles in the done plot
+                deactivate_customers = \
+                    GAME_CONFIG["plots"][done_plot_idx]["main_roles"] + \
+                    GAME_CONFIG["plots"][done_plot_idx]["supporting_roles"]
+                for c in checkpoint.customers:
+                    if c.name in deactivate_customers:
+                        c.deactivate_plot()
+                # find the roles and plot to be activated
                 next_active_roles, active_plots = check_active_plot(
                     plots,
                     done_plot_idx,
@@ -369,7 +378,7 @@ def main(args) -> None:
                 next_active_roles = set(next_active_roles)
                 for c in checkpoint.customers:
                     if c.name in next_active_roles:
-                        c.activate_plot()
+                        c.activate_plot(active_plots)
             checkpoint.stage_per_night = StagePerNight.CASUAL_CHAT_FOR_MEAL
         elif checkpoint.stage_per_night == StagePerNight.CASUAL_CHAT_FOR_MEAL:
             # ==========  one-on-one loop =================

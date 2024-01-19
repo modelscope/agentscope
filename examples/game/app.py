@@ -13,16 +13,14 @@ from utils import (
     CheckpointArgs,
     enable_web_ui,
     send_chat_msg,
+    send_player_msg,
     send_player_input,
     get_chat_msg,
     ResetException,
 )
 
 import gradio as gr
-
-# from gradio_groupchat import GroupChat
 import modelscope_gradio_components as mgr
-
 
 enable_web_ui()
 
@@ -141,7 +139,6 @@ if __name__ == "__main__":
         }
 
         user_chat_bot_cover = gr.HTML(format_cover_html(welcome))
-        # chatbot = GroupChat(label="Dialog", show_label=False, height=600, visible=False)
         chatbot = mgr.Chatbot(label="Dialog", show_label=False, height=600, visible=False)
 
         with gr.Row():
@@ -183,7 +180,7 @@ if __name__ == "__main__":
 
         def send_message(msg, uid):
             send_player_input(msg, uid=uid)
-            send_chat_msg(msg, "你", uid=uid)
+            send_player_msg(msg, "你", uid=uid)
             return ""
 
         return_welcome_button = gr.Button(

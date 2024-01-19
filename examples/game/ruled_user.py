@@ -50,7 +50,7 @@ class RuledUser(AgentBase):
     ) -> None:
         """Initialize a RuledUser object."""
         super().__init__(name=name, model=model, sys_prompt=sys_prompt)
-        self.retry_time = 10
+        self.retry_time = 3
         self.ingredients_dict = ingredients_dict
         self.cook_prompt = cook_prompt
         self.uid = kwargs.get("uid", None)
@@ -85,14 +85,15 @@ class RuledUser(AgentBase):
                     break
 
                 send_chat_msg(
-                    f"【输入被规则禁止】"
+                    f"【系统】输入被规则禁止"
                     f" {ruler_res.get('reason', 'Unknown reason')}\n"
-                    f"【请重试】",
+                    f"请重试",
                     "⚠️",
                     uid=self.uid,
                 )
-            except UnicodeDecodeError as e:
-                send_chat_msg(f"【无效输入】 {e}\n 【请重试】", "⚠️", uid=self.uid)
+            except (UnicodeDecodeError, ValueError) as e:
+                send_chat_msg(f"【系统】无效输入 {e}\n 请重试", "⚠️", uid=self.uid)
+
 
         kwargs = {}
         if required_keys is not None:
@@ -156,7 +157,7 @@ class RuledUser(AgentBase):
                     '{json.dumps(ingredients_list)}' select-once
                     submit-text="确定"></select-box>"""
 
-        send_chat_msg({"text": choose_ingredient, "flushing": False},
+        send_chat_msg(choose_ingredient, flushing=False,
                       uid=self.uid)
         while True:
             sel_ingr = query_answer(questions, "ingredient", uid=self.uid)
