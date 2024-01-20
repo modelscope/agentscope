@@ -105,7 +105,7 @@ class PromptEngine:
         accept any number and type of arguments. If prompt type is
         `PromptType.STRING`, the arguments will be joined by `"\\\\n"`. If
         prompt type is `PromptType.LIST`, the string arguments will be
-        converted to `Message` from `system`.
+        converted to `Msg` from `system`.
         """
         # TODO: achieve the summarize function
         if self.prompt_type == PromptType.STRING:
@@ -134,7 +134,7 @@ class PromptEngine:
         return prompt_str
 
     def join_to_list(self, *args: Any, format_map: Union[dict, None]) -> list:
-        """Join prompt components to a list of `Message` objects."""
+        """Join prompt components to a list of `Msg` objects."""
         prompt = []
         for item in args:
             if isinstance(item, list):

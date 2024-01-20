@@ -5,6 +5,7 @@ from typing import Any
 from typing import Mapping
 from ..agents.operator import Operator
 
+# A single Operator or a Sequence of Operators
 Operators = Union[Operator, Sequence[Operator]]
 
 
