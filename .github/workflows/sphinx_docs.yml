@@ -1,8 +1,13 @@
 name: Deploy Sphinx documentation to Pages
 
 on:
-  release:
-    types: [published]
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - 'docs/**/*'
+  push:
+    branches:
+      - main
 
 jobs:
   pages:
@@ -12,19 +17,27 @@ jobs:
       OS: ${{ matrix.os }}
       PYTHON: '3.9'
     steps:
-    - uses: actions/checkout@master
+    - name: Checkout repository
+      uses: actions/checkout@master
     - name: Setup Python ${{ matrix.python-version }}
       uses: actions/setup-python@master
       with:
         python_version: ${{ matrix.python-version }}
     - id: deployment
+      name: Build Documentation
       uses: sphinx-notes/pages@v3
       with:
         documentation_path: ./docs/sphinx_doc/source
         python_version: ${{ matrix.python-version }}
         publish: false
         requirements_path: ./docs/sphinx_doc/requirements.txt
+    - name: Upload Documentation
+      uses: actions/upload-artifact@v3
+      with:
+        name: SphinxDoc
+        path: ${{ steps.deployment.outputs.artifact }}
     - uses: peaceiris/actions-gh-pages@v3
+      if: github.event_name == 'push' && github_ref == 'refs/heads/main'
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ${{ steps.deployment.outputs.artifact }}

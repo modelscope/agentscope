@@ -8,8 +8,23 @@
 AgentScope Documentation
 ======================================
 
+
+.. include:: tutorial/main.md
+   :parser: myst_parser.sphinx_
+
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
+   :glob:
+   :hidden:
+   :caption: AgentScope Tutorial
+
+   tutorial/quick_start.rst
+   tutorial/advance.rst
+   tutorial/contribute.rst
+
+
+.. toctree::
+   :maxdepth: 1
    :glob:
    :caption: AgentScope API Reference
 
@@ -23,15 +38,6 @@ AgentScope Documentation
    agentscope.utils
    agentscope.web_ui
    agentscope
-
-.. include:: tutorial/main.md
-   :parser: myst_parser.sphinx_
-
-.. toctree::
-   :maxdepth: 1
-   :glob:
-   :hidden:
-   :caption: AgentScope Tutorial
 
 Indices and tables
 ==================
