@@ -167,7 +167,11 @@ glb_uid_dict = defaultdict(init_uid_queues)
 
 
 def send_chat_msg(
-    msg, role="系统", uid=None, flushing=False, avatar="./assets/bot.jpg"
+    msg,
+    role="系统",
+    uid=None,
+    flushing=False,
+    avatar="./assets/bot.jpg",
 ):
     print(msg)
     if get_use_web_ui():
@@ -181,12 +185,16 @@ def send_chat_msg(
                     "flushing": flushing,
                     "avatar": avatar,
                 },
-            ]
+            ],
         )
 
 
 def send_player_msg(
-    msg, role="你", uid=None, flushing=False, avatar="./assets/user.jpg"
+    msg,
+    role="你",
+    uid=None,
+    flushing=False,
+    avatar="./assets/user.jpg",
 ):
     print(msg)
     if get_use_web_ui():
@@ -200,7 +208,7 @@ def send_player_msg(
                     "avatar": avatar,
                 },
                 None,
-            ]
+            ],
         )
 
 

@@ -58,8 +58,6 @@ def invited_group_chat(
                                {json.dumps(["是", "否", "结束邀请对话"])}'
                                select-once></select-box>"""
 
-            # send_chat_msg({"text": choose_during_chatting, "flushing":
-            #     False}, uid=uid)
             send_chat_msg(choose_during_chatting, flushing=False, uid=uid)
             end_flag = False
             while True:
@@ -89,7 +87,7 @@ def invited_group_chat(
 
         # TODO: decided by multi factor: chat history of msghub, correct_names
         if invited_names == correct_names:
-            send_chat_msg("===== successfully unlock a plot =======", uid=uid)
+            send_chat_msg("===== 剧情解锁成功 =======", uid=uid)
             questions = [
                 inquirer.List(
                     "ans",
@@ -101,7 +99,8 @@ def invited_group_chat(
             choose_role_story = f"""【系统】：需要以哪位角色的视角生成一段完整故事吗？: <select-box
             shape="card"
                         columns="10" type="checkbox" options=
-                        '{json.dumps(invited_names + ["跳过"])}' select-once></select-box>"""
+                        '{json.dumps(invited_names + ["跳过"])}'
+                        select-once></select-box>"""
 
             send_chat_msg(choose_role_story, flushing=False, uid=uid)
 
@@ -258,8 +257,8 @@ def invite_customers(customers, uid):
         ),
     ]
 
-    choose_available_customers = f"""【系统】今天就没有更多顾客了，您明天有什么邀请计划吗？: <select-box shape="card"
-                columns="4" type="checkbox" options=
+    choose_available_customers = f"""【系统】今天就没有更多顾客了，您明天有什么邀请计划吗？:
+    <select-box shape="card columns="4" type="checkbox" options=
                 '{json.dumps(available_customers)}' select-once
                 submit-text="确定"></select-box>"""
 

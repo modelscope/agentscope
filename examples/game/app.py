@@ -144,7 +144,10 @@ if __name__ == "__main__":
 
         user_chat_bot_cover = gr.HTML(format_cover_html(welcome))
         chatbot = mgr.Chatbot(
-            label="Dialog", show_label=False, height=600, visible=False
+            label="Dialog",
+            show_label=False,
+            height=600,
+            visible=False,
         )
 
         with gr.Row():
@@ -177,7 +180,10 @@ if __name__ == "__main__":
         with export:
             with gr.Column():
                 export_button = gr.Button("导出完整游戏记录")
-                export_output = gr.File(label="下载完整游戏记录", visible=False)
+                export_output = gr.File(
+                    label="下载完整游戏记录",
+                    visible=False,
+                )
 
         def send_message(msg, uid):
             send_player_input(msg, uid=uid)
@@ -236,10 +242,14 @@ if __name__ == "__main__":
 
         # submit message
         send_button.click(
-            send_message, [user_chat_input, uuid], user_chat_input
+            send_message,
+            [user_chat_input, uuid],
+            user_chat_input,
         )
         user_chat_input.submit(
-            send_message, [user_chat_input, uuid], user_chat_input
+            send_message,
+            [user_chat_input, uuid],
+            user_chat_input,
         )
 
         chatbot.custom(fn=fn_choice, inputs=[uuid])

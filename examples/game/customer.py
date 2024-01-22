@@ -85,7 +85,8 @@ class Customer(StateAgent, DialogAgent):
         if x is not None:
             x["role"] = "user"
         logger.debug(
-            f"{self.name} state: {self.cur_state} {self.plot_stage} {self.active_plots}"
+            f"{self.name} state: {self.cur_state} {self.plot_stage}"
+            f" {self.active_plots}",
         )
         return StateAgent.reply(self, x=x)
 

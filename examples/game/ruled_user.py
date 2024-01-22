@@ -13,6 +13,7 @@ from utils import (
     send_chat_msg,
     query_answer,
     get_player_input,
+    ResetException,
 )
 
 
@@ -79,6 +80,8 @@ class RuledUser(AgentBase):
                 elif isinstance(x, dict):
                     if x.get("content") == "今天老板邀请大家一起来聚聚。" and content == "":
                         content = "大家好"
+                    elif x.get("content") == "自定义输入" and content == "":
+                        content = "你好"
 
                 if not hasattr(self, "model") or len(content) == 0:
                     break
@@ -94,7 +97,9 @@ class RuledUser(AgentBase):
                     "⚠️",
                     uid=self.uid,
                 )
-            except (UnicodeDecodeError, ValueError) as e:
+            except ResetException:
+                raise ResetException
+            except Exception as e:
                 send_chat_msg(f"【系统】无效输入 {e}\n 请重试", "⚠️", uid=self.uid)
 
         kwargs = {}
@@ -104,8 +109,6 @@ class RuledUser(AgentBase):
 
             for key in required_keys:
                 kwargs[key] = get_player_input(key, uid=self.uid)
-
-        # breakpoint()
 
         if content == "做菜":
             content = self.cook()
@@ -144,7 +147,6 @@ class RuledUser(AgentBase):
             for item in sublist
         ]
 
-        # ingredients_list = ["**清空**", "**结束**"] + ingredients_list
         cook_list = []
         questions = [
             inquirer.List(
@@ -155,7 +157,8 @@ class RuledUser(AgentBase):
         ]
 
         choose_ingredient = f"""请选择需要的食材: <select-box shape="card"
-                    columns="10" type="checkbox" options=
+                     type="checkbox"
+                    options=
                     '{json.dumps(ingredients_list)}' select-once
                     submit-text="确定"></select-box>"""
 
