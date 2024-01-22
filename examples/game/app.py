@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-from typing import List
+import base64
 import os
 import yaml
 import datetime
 import threading
 from collections import defaultdict
+from typing import List
 
 import agentscope
 
@@ -41,8 +42,6 @@ glb_history_dict = defaultdict(init_uid_list)
 glb_signed_user = []
 is_init = False
 MAX_NUM_DISPLAY_MSG = 20
-
-import base64
 
 
 # 图片本地路径转换为 base64 格式
@@ -126,6 +125,8 @@ if __name__ == "__main__":
         check_uuid(uid)
         if uid not in glb_signed_user:
             glb_signed_user.append(uid)
+            print("==========Signed User==========")
+            print(len(glb_signed_user), glb_signed_user)
             game_thread = threading.Thread(target=start_game, args=(uid,))
             game_thread.start()
 
