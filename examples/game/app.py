@@ -181,22 +181,23 @@ if __name__ == "__main__":
         }
 
         user_chat_bot_cover = gr.HTML(format_cover_html(welcome))
-        chatbot = mgr.Chatbot(
-            label="Dialog",
-            show_label=False,
-            height=400,
-            visible=False,
-            bubble_full_width=False,
-        )
+        with gr.Row():
+            chatbot = mgr.Chatbot(
+                label="Dialog",
+                show_label=False,
+                height=500,
+                visible=False,
+                bubble_full_width=False,
+            )
 
-        chatsys = mgr.Chatbot(
-            label="系统栏",
-            show_label=True,
-            height=200,
-            visible=False,
-            bubble_full_width=False,
-            layout="panel",
-        )
+            chatsys = mgr.Chatbot(
+                label="系统栏",
+                show_label=True,
+                height=500,
+                visible=False,
+                bubble_full_width=False,
+                layout="panel",
+            )
 
         with gr.Row():
             with gr.Column():
