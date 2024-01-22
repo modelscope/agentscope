@@ -80,18 +80,24 @@ class BasicRpcAgentTest(unittest.TestCase):
         # get name without waiting for the server
         self.assertEqual(result.name, "a")
         js_placeholder_result = result.serialize()
-        self.assertTrue(result.is_placeholder)
+        self.assertTrue(result._is_placeholder)  # pylint: disable=W0212
         placeholder_result = deserialize(js_placeholder_result)
         self.assertTrue(isinstance(placeholder_result, PlaceholderMessage))
         self.assertEqual(placeholder_result.name, "a")
-        self.assertTrue(placeholder_result.is_placeholder)
+        self.assertTrue(
+            placeholder_result._is_placeholder,  # pylint: disable=W0212
+        )
         # wait to get content
         self.assertEqual(result.content, msg.content)
-        self.assertFalse(result.is_placeholder)
+        self.assertFalse(result._is_placeholder)  # pylint: disable=W0212
         self.assertEqual(result.id, 0)
-        self.assertTrue(placeholder_result.is_placeholder)
+        self.assertTrue(
+            placeholder_result._is_placeholder,  # pylint: disable=W0212
+        )
         self.assertEqual(placeholder_result.content, msg.content)
-        self.assertFalse(placeholder_result.is_placeholder)
+        self.assertFalse(
+            placeholder_result._is_placeholder,  # pylint: disable=W0212
+        )
         self.assertEqual(placeholder_result.id, 0)
         # check msg
         js_msg_result = result.serialize()
