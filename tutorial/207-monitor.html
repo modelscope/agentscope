@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Monitor &mdash; AgentScope  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Make Your Applications Distributed" href="208-distribute.html" />
+    <link rel="prev" title="Prompt Engine" href="206-prompt.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="advance.html">Advanced Exploration</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="201-agent.html">Customizing Your Own Agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="202-pipeline.html">Agent Interactions: Dive deeper into Pipelines and Message Hub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="203-model.html">Using Different Model Sources with Model API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="204-service.html">Enhancing Agent Capabilities with Service Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="205-memory.html">Memory and Message Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="206-prompt.html">Prompt Engine</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Monitor</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#understanding-the-monitorbase-class">Understanding the <code class="docutils literal notranslate"><span class="pre">MonitorBase</span></code> Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-the-dictmonitor-class">Using the <code class="docutils literal notranslate"><span class="pre">DictMonitor</span></code> Class</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#initializing-dictmonitor">Initializing DictMonitor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#registering-api-usage-metrics">Registering API Usage Metrics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#updating-metrics">Updating Metrics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#handling-quotas">Handling Quotas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#retrieving-metrics">Retrieving Metrics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#resetting-and-removing-metrics">Resetting and Removing Metrics</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#using-singleton-access">Using Singleton Access</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#acquiring-the-singleton-monitor-instance">Acquiring the Singleton Monitor Instance</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="208-distribute.html">Make Your Applications Distributed</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">Get Involved</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.agents.html">Agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.configs.html">Configs package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.memory.html">Memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.models.html">Models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.pipelines.html">Pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.service.html">Service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.rpc.html">RPC package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.utils.html">Utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.web_ui.html">Web UI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.html">Module contents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="advance.html">Advanced Exploration</a></li>
+      <li class="breadcrumb-item active">Monitor</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorial/207-monitor.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="monitor">
+<span id="id1"></span><h1>Monitor<a class="headerlink" href="#monitor" title="Link to this heading"></a></h1>
+<p>In multi-agent applications, particularly those that rely on external model APIs, it’s crucial to monitor the usage and cost to prevent overutilization and ensure compliance with rate limits. The <code class="docutils literal notranslate"><span class="pre">MonitorBase</span></code> class and its implementation, <code class="docutils literal notranslate"><span class="pre">DictMonitor</span></code>, provide a way to track and regulate the usage of such APIs in your applications. In this tutorial, you’ll learn how to use them to monitor API calls.</p>
+<section id="understanding-the-monitorbase-class">
+<h2>Understanding the <code class="docutils literal notranslate"><span class="pre">MonitorBase</span></code> Class<a class="headerlink" href="#understanding-the-monitorbase-class" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">MonitorBase</span></code> class serves as an interface for setting up a monitoring system that tracks various metrics, especially focusing on API usage. It defines methods that enable registration, checking, updating, and management of metrics related to API calls.</p>
+<p>Here are the key methods of <code class="docutils literal notranslate"><span class="pre">MonitorBase</span></code>:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">register</span></code></strong>: Initializes a metric for tracking, such as the number of API calls made, with an optional quota to enforce limits.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">exists</span></code></strong>: Checks whether a metric is already being tracked.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">add</span></code></strong>: Increments the metric by a specified value, used to count each API call made.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">update</span></code></strong>: Updates multiple metrics at once, useful for batching updates.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">clear</span></code></strong>: Resets a metric to zero, which can be useful when the quota period resets.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">remove</span></code></strong>: Removes a metric from monitoring.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">get_value</span></code></strong>: Retrieves the current count for a particular metric.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">get_unit</span></code></strong>: Fetches the unit associated with the metric (e.g., “calls”).</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">get_quota</span></code></strong>: Obtains the maximum number of allowed API calls.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">set_quota</span></code></strong>: Adjusts the quota for a metric, if the terms of API usage change.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">get_metric</span></code></strong>: Returns detailed information about a specific metric.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">get_metrics</span></code></strong>: Retrieves information about all tracked metrics, with optional filtering based on metric names.</p></li>
+</ul>
+</section>
+<section id="using-the-dictmonitor-class">
+<h2>Using the <code class="docutils literal notranslate"><span class="pre">DictMonitor</span></code> Class<a class="headerlink" href="#using-the-dictmonitor-class" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">DictMonitor</span></code> class is a subclass of the <code class="docutils literal notranslate"><span class="pre">MonitorBase</span></code> class, which is implemented in an in-memory dictionary.</p>
+<section id="initializing-dictmonitor">
+<h3>Initializing DictMonitor<a class="headerlink" href="#initializing-dictmonitor" title="Link to this heading"></a></h3>
+<p>Create an instance of <code class="docutils literal notranslate"><span class="pre">DictMonitor</span></code> to begin monitoring:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">monitor</span> <span class="o">=</span> <span class="n">DictMonitor</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="registering-api-usage-metrics">
+<h3>Registering API Usage Metrics<a class="headerlink" href="#registering-api-usage-metrics" title="Link to this heading"></a></h3>
+<p>Register a new metric to start monitoring the number of tokens:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;token_num&quot;</span><span class="p">,</span> <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span> <span class="n">quota</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="updating-metrics">
+<h3>Updating Metrics<a class="headerlink" href="#updating-metrics" title="Link to this heading"></a></h3>
+<p>Increment the <code class="docutils literal notranslate"><span class="pre">token_num</span></code> metric:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">monitor</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;token_num&quot;</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="handling-quotas">
+<h3>Handling Quotas<a class="headerlink" href="#handling-quotas" title="Link to this heading"></a></h3>
+<p>If the number of API calls exceeds the quota, a <code class="docutils literal notranslate"><span class="pre">QuotaExceededError</span></code> will be thrown:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
+    <span class="n">monitor</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;api_calls&quot;</span><span class="p">,</span> <span class="n">amount</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">QuotaExceededError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="c1"># Handle the exceeded quota, e.g., by pausing API calls</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="retrieving-metrics">
+<h3>Retrieving Metrics<a class="headerlink" href="#retrieving-metrics" title="Link to this heading"></a></h3>
+<p>Get the current number of tokens used:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">token_num_used</span> <span class="o">=</span> <span class="n">monitor</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;token_num&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="resetting-and-removing-metrics">
+<h3>Resetting and Removing Metrics<a class="headerlink" href="#resetting-and-removing-metrics" title="Link to this heading"></a></h3>
+<p>Reset the number of token count at the start of a new period:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">monitor</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="s2">&quot;token_num&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Remove the metric if it’s no longer needed:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">monitor</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;token_num&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="using-singleton-access">
+<h2>Using Singleton Access<a class="headerlink" href="#using-singleton-access" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">MonitorFactory</span></code> provides a singleton instance of a <code class="docutils literal notranslate"><span class="pre">MonitorBase</span></code> to ensure consistent access throughout your application.</p>
+<section id="acquiring-the-singleton-monitor-instance">
+<h3>Acquiring the Singleton Monitor Instance<a class="headerlink" href="#acquiring-the-singleton-monitor-instance" title="Link to this heading"></a></h3>
+<p>Get the singleton instance of the monitor:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">monitor</span> <span class="o">=</span> <span class="n">MonitorFactory</span><span class="o">.</span><span class="n">get_monitor</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="#monitoring-and-logging"><span class="xref myst">[Return to the top]</span></a></p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="206-prompt.html" class="btn btn-neutral float-left" title="Prompt Engine" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="208-distribute.html" class="btn btn-neutral float-right" title="Make Your Applications Distributed" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Alibaba Tongyi Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting Started with a Simple Example &mdash; AgentScope  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Crafting Your First Application" href="104-usecase.html" />
+    <link rel="prev" title="Fundamental Concepts" href="102-concepts.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="quick_start.html">Getting Started</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="101-installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="102-concepts.html">Fundamental Concepts</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Getting Started with a Simple Example</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#step1-prepare-model-configs">Step1: Prepare Model Configs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step2-create-agents">Step2: Create Agents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step3-agent-conversation">Step3: Agent Conversation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="104-usecase.html">Crafting Your First Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="105-logging.html">Logging and WebUI</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="advance.html">Advanced Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">Get Involved</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.agents.html">Agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.configs.html">Configs package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.memory.html">Memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.models.html">Models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.pipelines.html">Pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.service.html">Service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.rpc.html">RPC package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.utils.html">Utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.web_ui.html">Web UI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.html">Module contents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="quick_start.html">Getting Started</a></li>
+      <li class="breadcrumb-item active">Getting Started with a Simple Example</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorial/103-example.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="getting-started-with-a-simple-example">
+<span id="example"></span><h1>Getting Started with a Simple Example<a class="headerlink" href="#getting-started-with-a-simple-example" title="Link to this heading"></a></h1>
+<p>AgentScope is a versatile platform for building and running multi-agent applications. We provide various pre-built examples that will help you quickly understand how to create and use multi-agent for various applications. In this tutorial, you will learn how to set up a <strong>simple agent-based interaction</strong>.</p>
+<section id="step1-prepare-model-configs">
+<h2>Step1: Prepare Model Configs<a class="headerlink" href="#step1-prepare-model-configs" title="Link to this heading"></a></h2>
+<p>Agent is the basic composition and communication unit in AgentScope. To initialize a model-based agent, you need to prepare your configs for avaliable models. AgentScope supports a variety of APIs for pre-trained models. Here is a table outlining the supported APIs and the type of arguments required for each:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Model Usage</p></th>
+<th class="head"><p>Type Argument in AgentScope</p></th>
+<th class="head"><p>Supported APIs</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Text generation</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">openai</span></code></p></td>
+<td><p>Standard <em>OpenAI</em> chat API, FastChat and vllm</p></td>
+</tr>
+<tr class="row-odd"><td><p>Image generation</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">openai_dall_e</span></code></p></td>
+<td><p><em>DALL-E</em> API for generating images</p></td>
+</tr>
+<tr class="row-even"><td><p>Embedding</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">openai_embedding</span></code></p></td>
+<td><p>API for text embeddings</p></td>
+</tr>
+<tr class="row-odd"><td><p>General usages in POST</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">post_api</span></code></p></td>
+<td><p><em>Huggingface</em> and <em>ModelScope</em> Inference API, and other customized post API</p></td>
+</tr>
+</tbody>
+</table>
+<p>Each API has its specific configuration requirements. For example, to configure an OpenAI API, you would need to fill out the following fields in the model config in a dict, a yaml file or a json file:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;openai&quot;</span><span class="p">,</span>               <span class="c1"># Choose from &quot;openai&quot;, &quot;openai_dall_e&quot;, or &quot;openai_embedding&quot;</span>
+    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{your_config_name}</span><span class="s2">&quot;</span><span class="p">,</span>   <span class="c1"># A unique identifier for your config</span>
+    <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{model_name}</span><span class="s2">&quot;</span><span class="p">,</span>   <span class="c1"># The model identifier used in the OpenAI API, such as &quot;gpt-3.5-turbo&quot;, &quot;gpt-4&quot;, or &quot;text-embedding-ada-002&quot;</span>
+    <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;xxx&quot;</span><span class="p">,</span>               <span class="c1"># Your OpenAI API key. If unset, the environment variable OPENAI_API_KEY is used.</span>
+    <span class="s2">&quot;organization&quot;</span><span class="p">:</span> <span class="s2">&quot;xxx&quot;</span><span class="p">,</span>          <span class="c1"># Your OpenAI organization ID. If unset, the environment variable OPENAI_ORGANIZATION is used.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>For open-source models, we support integration with various model interfaces such as HuggingFace, ModelScope, FastChat, and vllm. You can find scripts on deploying these services in the <code class="docutils literal notranslate"><span class="pre">scripts</span></code> directory, and we defer the detailed instructions to <a class="reference internal" href="203-model.html#model"><span class="std std-ref">[Using Different Model Sources with Model API]</span></a>.</p>
+<p>You can register your configuration by calling AgentScope’s initilization method as follow. Besides, you can also load more than one config by calling init mutliple times.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">agentscope</span>
+
+<span class="c1"># init once by passing a list of config dict</span>
+<span class="n">openai_cfg_dict</span> <span class="o">=</span> <span class="p">{</span><span class="o">...</span><span class="n">dict_filling</span><span class="o">...</span><span class="p">}</span>
+<span class="n">modelscope_cfg_dict</span> <span class="o">=</span> <span class="p">{</span><span class="o">...</span><span class="n">dict_filling</span><span class="o">...</span><span class="p">}</span>
+<span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">model_configs</span><span class="o">=</span><span class="p">[</span><span class="n">openai_cfg_dict</span><span class="p">,</span> <span class="n">modelscope_cfg_dict</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="step2-create-agents">
+<h2>Step2: Create Agents<a class="headerlink" href="#step2-create-agents" title="Link to this heading"></a></h2>
+<p>Creating agents is straightforward in AgentScope. After initializing AgentScope with your model configurations (Step 1 above), you can then define each agent with its corresponding role and specific model.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">agentscope</span>
+<span class="kn">from</span> <span class="nn">agentscope.agents</span> <span class="kn">import</span> <span class="n">DialogAgent</span><span class="p">,</span> <span class="n">UserAgent</span>
+
+<span class="c1"># read model configs</span>
+<span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">model_configs</span><span class="o">=</span><span class="s2">&quot;./openai_model_configs.json&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create a dialog agent and a user agent</span>
+<span class="n">dialogAgent</span> <span class="o">=</span> <span class="n">DialogAgent</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-4&quot;</span><span class="p">)</span>
+<span class="n">userAgent</span> <span class="o">=</span> <span class="n">UserAgent</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><strong>NOTE</strong>: Please refer to <a class="reference internal" href="201-agent.html#agent"><span class="std std-ref">[Customizing Your Custom Agent with Agent Pool]</span></a> for all available agents.</p>
+</section>
+<section id="step3-agent-conversation">
+<h2>Step3: Agent Conversation<a class="headerlink" href="#step3-agent-conversation" title="Link to this heading"></a></h2>
+<p>“Message” is the primary means of communication between agents in AgentScope. They are Python dictionaries comprising essential fields like the actual <code class="docutils literal notranslate"><span class="pre">content</span></code> of this message and the sender’s <code class="docutils literal notranslate"><span class="pre">name</span></code>. Optionally, a message can include a <code class="docutils literal notranslate"><span class="pre">url</span></code> to either a local file (image, video or audio) or website.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+
+<span class="c1"># Example of a simple text message from Alice</span>
+<span class="n">message_from_alice</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span> <span class="s2">&quot;Hi!&quot;</span><span class="p">)</span>
+
+<span class="c1"># Example of a message from Bob with an attached image</span>
+<span class="n">message_from_bob</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;Bob&quot;</span><span class="p">,</span> <span class="s2">&quot;What about this picture I took?&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="s2">&quot;/path/to/picture.jpg&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To start a conversation between two agents, such as <code class="docutils literal notranslate"><span class="pre">dialog_agent</span></code> and <code class="docutils literal notranslate"><span class="pre">user_agent</span></code>, you can use the following loop. The conversation continues until the user inputs <code class="docutils literal notranslate"><span class="pre">&quot;exit&quot;</span></code> which terminates the interaction.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">dialogAgent</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">userAgent</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="c1"># Terminate the conversation if the user types &quot;exit&quot;</span>
+    <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">content</span> <span class="o">==</span> <span class="s2">&quot;exit&quot;</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Exiting the conversation.&quot;</span><span class="p">)</span>
+        <span class="k">break</span>
+</pre></div>
+</div>
+<p>For a more advanced approach, AgentScope offers the option of using pipelines to manage the flow of messages between agents. The <code class="docutils literal notranslate"><span class="pre">sequentialpipeline</span></code> stands for sequential speech, where each agent receive message from last agent and generate its response accordingly.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.pipelines.functional</span> <span class="kn">import</span> <span class="n">sequentialpipeline</span>
+
+<span class="c1"># Execute the conversation loop within a pipeline structure</span>
+<span class="n">x</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="k">while</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">x</span><span class="o">.</span><span class="n">content</span> <span class="o">!=</span> <span class="s2">&quot;exit&quot;</span><span class="p">:</span>
+  <span class="n">x</span> <span class="o">=</span> <span class="n">sequentialpipeline</span><span class="p">([</span><span class="n">dialog_agent</span><span class="p">,</span> <span class="n">user_agent</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>For more details about how to utilize pipelines for complex agent interactions, please refer to <a class="reference internal" href="202-pipeline.html#pipeline"><span class="std std-ref">[Agent Interactions: Dive deeper into Pipelines and Message Hub]</span></a>.</p>
+<p><a class="reference internal" href="#getting-started-with-a-simple-example"><span class="xref myst">[Return to the top]</span></a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="102-concepts.html" class="btn btn-neutral float-left" title="Fundamental Concepts" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="104-usecase.html" class="btn btn-neutral float-right" title="Crafting Your First Application" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Alibaba Tongyi Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

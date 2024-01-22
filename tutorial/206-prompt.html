@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prompt Engine &mdash; AgentScope  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Monitor" href="207-monitor.html" />
+    <link rel="prev" title="Memory and Message Management" href="205-memory.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="advance.html">Advanced Exploration</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="201-agent.html">Customizing Your Own Agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="202-pipeline.html">Agent Interactions: Dive deeper into Pipelines and Message Hub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="203-model.html">Using Different Model Sources with Model API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="204-service.html">Enhancing Agent Capabilities with Service Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="205-memory.html">Memory and Message Management</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Prompt Engine</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#understanding-the-promptengine-class">Understanding the <code class="docutils literal notranslate"><span class="pre">PromptEngine</span></code> Class</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#key-features-of-promptengine">Key Features of PromptEngine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#initialization">Initialization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#joining-prompt-components">Joining Prompt Components</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="207-monitor.html">Monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="208-distribute.html">Make Your Applications Distributed</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">Get Involved</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.agents.html">Agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.configs.html">Configs package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.memory.html">Memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.models.html">Models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.pipelines.html">Pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.service.html">Service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.rpc.html">RPC package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.utils.html">Utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.web_ui.html">Web UI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.html">Module contents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="advance.html">Advanced Exploration</a></li>
+      <li class="breadcrumb-item active">Prompt Engine</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorial/206-prompt.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="prompt-engine">
+<span id="prompt"></span><h1>Prompt Engine<a class="headerlink" href="#prompt-engine" title="Link to this heading"></a></h1>
+<p><strong>Prompt</strong> is a crucial component in interacting with language models, especially when seeking to generate specific types of outputs or guide the model toward desired behaviors. This tutorial will guide you through the use of the <code class="docutils literal notranslate"><span class="pre">PromptEngine</span></code> class, which simplifies the process of crafting prompts for LLMs.</p>
+<section id="understanding-the-promptengine-class">
+<h2>Understanding the <code class="docutils literal notranslate"><span class="pre">PromptEngine</span></code> Class<a class="headerlink" href="#understanding-the-promptengine-class" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">PromptEngine</span></code> class provides a structured way to combine different components of a prompt, such as instructions, hints, dialogue history, and user inputs, into a format that is suitable for the underlying language model.</p>
+<section id="key-features-of-promptengine">
+<h3>Key Features of PromptEngine<a class="headerlink" href="#key-features-of-promptengine" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Model Compatibility</strong>: It works with any <code class="docutils literal notranslate"><span class="pre">ModelWrapperBase</span></code> subclass.</p></li>
+<li><p><strong>Shrink Policy</strong>: It offers two policies for handling prompts that exceed the maximum length: <code class="docutils literal notranslate"><span class="pre">ShrinkPolicy.TRUNCATE</span></code> to simply truncate the prompt, and <code class="docutils literal notranslate"><span class="pre">ShrinkPolicy.SUMMARIZE</span></code> to summarize part of the dialog history to save space.</p></li>
+<li><p><strong>Prompt Type</strong>: It supports both string and list-style prompts, aligning with the model’s preferred input format.</p></li>
+</ul>
+</section>
+<section id="initialization">
+<h3>Initialization<a class="headerlink" href="#initialization" title="Link to this heading"></a></h3>
+<p>When creating an instance of <code class="docutils literal notranslate"><span class="pre">PromptEngine</span></code>, you can specify the target model and, optionally, the shrinking policy, the maximum length of the prompt, the prompt type, and a summarization model (could be the same as the target model).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">OpenAIWrapper</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">engine</span> <span class="o">=</span> <span class="n">PromptEngine</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="joining-prompt-components">
+<h3>Joining Prompt Components<a class="headerlink" href="#joining-prompt-components" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">join</span></code> method of <code class="docutils literal notranslate"><span class="pre">PromptEngine</span></code> provides a unified interface to handle an arbitrary number of components for constructing the final prompt.</p>
+<section id="output-string-type-prompt">
+<h4>Output String Type Prompt<a class="headerlink" href="#output-string-type-prompt" title="Link to this heading"></a></h4>
+<p>If the model expects a string-type prompt, components are joined with a newline character:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">system_prompt</span> <span class="o">=</span> <span class="s2">&quot;You&#39;re a helpful assistant.&quot;</span>
+<span class="n">memory</span> <span class="o">=</span> <span class="o">...</span> <span class="c1"># can be dict, list, or string</span>
+<span class="n">hint_prompt</span> <span class="o">=</span> <span class="s2">&quot;Please respond in JSON format.&quot;</span>
+
+<span class="n">prompt</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">system_prompt</span><span class="p">,</span> <span class="n">memory</span><span class="p">,</span> <span class="n">hint_prompt</span><span class="p">)</span>
+<span class="c1"># the result will be [ &quot;You&#39;re a helpful assistant.&quot;, {&quot;name&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What&#39;s the weather like today?&quot;}]</span>
+</pre></div>
+</div>
+</section>
+<section id="output-list-type-prompt">
+<h4>Output List Type Prompt<a class="headerlink" href="#output-list-type-prompt" title="Link to this heading"></a></h4>
+<p>For models that work with list-type prompts,e.g., OpenAI and Huggingface chat models, the components can be converted to Message objects, whose type is list of dict:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">system_prompt</span> <span class="o">=</span> <span class="s2">&quot;You&#39;re a helpful assistant.&quot;</span>
+<span class="n">user_messages</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;What&#39;s the weather like today?&quot;</span><span class="p">}]</span>
+
+<span class="n">prompt</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">system_prompt</span><span class="p">,</span> <span class="n">user_messages</span><span class="p">)</span>
+<span class="c1"># the result should be: [{&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;You&#39;re a helpful assistant.&quot;}, {&quot;name&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What&#39;s the weather like today?&quot;}]</span>
+</pre></div>
+</div>
+</section>
+<section id="formatting-prompts-in-dynamic-way">
+<h4>Formatting Prompts in Dynamic Way<a class="headerlink" href="#formatting-prompts-in-dynamic-way" title="Link to this heading"></a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">PromptEngine</span></code> supports dynamic prompts using the <code class="docutils literal notranslate"><span class="pre">format_map</span></code> parameter, allowing you to flexibly inject various variables into the prompt components for different scenarios:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;London&quot;</span><span class="p">}</span>
+<span class="n">hint_prompt</span> <span class="o">=</span> <span class="s2">&quot;Find the weather in </span><span class="si">{location}</span><span class="s2">.&quot;</span>
+
+<span class="n">prompt</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">system_prompt</span><span class="p">,</span> <span class="n">user_input</span><span class="p">,</span> <span class="n">hint_prompt</span><span class="p">,</span> <span class="n">format_map</span><span class="o">=</span><span class="n">variables</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="#prompt-engine"><span class="xref myst">[Return to the top]</span></a></p>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="205-memory.html" class="btn btn-neutral float-left" title="Memory and Message Management" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="207-monitor.html" class="btn btn-neutral float-right" title="Monitor" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Alibaba Tongyi Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

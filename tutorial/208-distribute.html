@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Make Your Applications Distributed &mdash; AgentScope  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Get Involved" href="contribute.html" />
+    <link rel="prev" title="Monitor" href="207-monitor.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="advance.html">Advanced Exploration</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="201-agent.html">Customizing Your Own Agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="202-pipeline.html">Agent Interactions: Dive deeper into Pipelines and Message Hub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="203-model.html">Using Different Model Sources with Model API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="204-service.html">Enhancing Agent Capabilities with Service Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="205-memory.html">Memory and Message Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="206-prompt.html">Prompt Engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="207-monitor.html">Monitor</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Make Your Applications Distributed</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#features">Features</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#every-agent-is-an-actor">Every agent is an “Actor”</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#write-centrally-run-distributedly">Write centrally, run distributedly</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#easy-distributed-deployment">Easy Distributed Deployment</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#write-your-agents">Write your agents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#run-in-multi-process-mode">Run in multi-process mode</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#run-on-multiple-machines">Run on multiple machines</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">Get Involved</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.agents.html">Agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.configs.html">Configs package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.memory.html">Memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.models.html">Models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.pipelines.html">Pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.service.html">Service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.rpc.html">RPC package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.utils.html">Utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.web_ui.html">Web UI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.html">Module contents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="advance.html">Advanced Exploration</a></li>
+      <li class="breadcrumb-item active">Make Your Applications Distributed</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorial/208-distribute.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="make-your-applications-distributed">
+<span id="distribute"></span><h1>Make Your Applications Distributed<a class="headerlink" href="#make-your-applications-distributed" title="Link to this heading"></a></h1>
+<p>AgentScope is designed to be fully distributed, agent instances in one application can be deployed on different machines and run in parallel. This tutorial will introduce the features of AgentScope distributed and the distributed deployment method.</p>
+<section id="features">
+<h2>Features<a class="headerlink" href="#features" title="Link to this heading"></a></h2>
+<section id="every-agent-is-an-actor">
+<h3>Every agent is an “Actor”<a class="headerlink" href="#every-agent-is-an-actor" title="Link to this heading"></a></h3>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/Actor_model">The actor model</a> is a popular concept in concurrent programming and adopted by AgentScope. Every agent is an actor and interacts with other agents through messages. The flow of messages implies the execution order of the agent. Each agent has a <code class="docutils literal notranslate"><span class="pre">reply</span></code> method that consumes a message and generates another message, and the generated message can be sent to other agents. For example, the figure below shows the workflow of multiple agents. <code class="docutils literal notranslate"><span class="pre">A</span></code> to <code class="docutils literal notranslate"><span class="pre">F</span></code> are all agents, and the arrows represent messages.</p>
+<div class="mermaid">
+            graph LR;
+A--&gt;B
+A--&gt;C
+B--&gt;D
+C--&gt;D
+E--&gt;F
+D--&gt;F
+        </div><p>Among them, <code class="docutils literal notranslate"><span class="pre">B</span></code> and <code class="docutils literal notranslate"><span class="pre">C</span></code> can start execution simultaneously after receiving the message from <code class="docutils literal notranslate"><span class="pre">A</span></code>, and <code class="docutils literal notranslate"><span class="pre">E</span></code> can run immediately without waiting for <code class="docutils literal notranslate"><span class="pre">A</span></code>, <code class="docutils literal notranslate"><span class="pre">B</span></code>, <code class="docutils literal notranslate"><span class="pre">C,</span></code> and <code class="docutils literal notranslate"><span class="pre">D</span></code>.
+By implementing each agent as an actor, an agent will automatically wait for its input <code class="docutils literal notranslate"><span class="pre">Msg</span></code> before starting to execute the reply method, and multiple agents can also automatically execute <code class="docutils literal notranslate"><span class="pre">reply</span></code> at the same time if their input messages are ready, which avoids complex parallel control and makes things simple.</p>
+</section>
+<section id="write-centrally-run-distributedly">
+<h3>Write centrally, run distributedly<a class="headerlink" href="#write-centrally-run-distributedly" title="Link to this heading"></a></h3>
+<p>In AgentScope, agents can be started as separate processes on the same or different machines. However, application developers do not need to pay attention to where these agents are running; you only need to write application code in the main process using the procedural programming paradigm. AgentScope will help you convert the task into a distributed version. The following is a piece of application code: <code class="docutils literal notranslate"><span class="pre">A</span></code>, <code class="docutils literal notranslate"><span class="pre">B</span></code>, and <code class="docutils literal notranslate"><span class="pre">C</span></code> are running on different machines.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">C</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Although this code appears to be executed completely sequentially, AgentScope will <strong>automatically detect potential parallelism</strong> in your code as shown in the flow graph below, which means <code class="docutils literal notranslate"><span class="pre">C</span></code> will not wait for <code class="docutils literal notranslate"><span class="pre">B</span></code> to complete before starting execution.</p>
+<div class="mermaid">
+            graph LR;
+A--&gt;B
+A--&gt;C
+        </div></section>
+</section>
+<section id="easy-distributed-deployment">
+<h2>Easy Distributed Deployment<a class="headerlink" href="#easy-distributed-deployment" title="Link to this heading"></a></h2>
+<p>Please follow the steps below to deploy your application distributedly.</p>
+<section id="write-your-agents">
+<h3>Write your agents<a class="headerlink" href="#write-your-agents" title="Link to this heading"></a></h3>
+<p>To use distributed functionality, your agent class needs to inherit from <code class="docutils literal notranslate"><span class="pre">RpcAgentBase</span></code>.
+<code class="docutils literal notranslate"><span class="pre">RpcAgentBase</span></code> requires several additional parameters compared to <code class="docutils literal notranslate"><span class="pre">AgentBase</span></code> during initialization.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">host</span></code>: the hostname or IP address of the machine where the agent runs, defaults to <code class="docutils literal notranslate"><span class="pre">localhost</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">port</span></code>: the port of this agent’s RPC server, defaults to <code class="docutils literal notranslate"><span class="pre">80</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">launch_server</span></code>: whether to launch an RPC server locally, defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">local_mode</span></code>: set to <code class="docutils literal notranslate"><span class="pre">True</span></code> if all agents run on the same machine, defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+<p>But don’t worry, <code class="docutils literal notranslate"><span class="pre">RpcAgentBase</span></code> shares the same interface as <code class="docutils literal notranslate"><span class="pre">AgentBase</span></code>, you only need to implement the <code class="docutils literal notranslate"><span class="pre">reply</span></code> method. You can even copy the <code class="docutils literal notranslate"><span class="pre">reply</span></code> method of an <code class="docutils literal notranslate"><span class="pre">AgentBase</span></code> subclass and use it in <code class="docutils literal notranslate"><span class="pre">RpcAgentBase</span></code>.</p>
+</section>
+<section id="run-in-multi-process-mode">
+<h3>Run in multi-process mode<a class="headerlink" href="#run-in-multi-process-mode" title="Link to this heading"></a></h3>
+<p>AgentScope supports deployment in multi-process mode, where each agent is a sub-process of the application’s main process, and all agents run on the same machine.
+Its usage is very similar to single-process mode. The only difference lies in the initialization phase.</p>
+<p>Suppose you have classes <code class="docutils literal notranslate"><span class="pre">A</span></code> and <code class="docutils literal notranslate"><span class="pre">B</span></code>, both of which inherit from <code class="docutils literal notranslate"><span class="pre">RpcAgentBase</span></code>.
+You can run the application in multi-process mode by passing in an additional parameter <code class="docutils literal notranslate"><span class="pre">port</span></code>, the other parts are completely the same as the single-process mode.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import packages</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;A&quot;</span><span class="p">,</span>
+    <span class="o">...</span><span class="p">,</span>
+    <span class="n">port</span><span class="o">=</span><span class="mi">12001</span><span class="p">,</span> <span class="c1"># port is required, other fields like host, launch_server and local_mode use the default value</span>
+<span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
+    <span class="o">...</span><span class="p">,</span>
+    <span class="n">port</span><span class="o">=</span><span class="mi">12002</span><span class="p">,</span> <span class="c1"># port is required</span>
+<span class="p">)</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="k">while</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">x</span><span class="o">.</span><span class="n">content</span> <span class="o">!=</span> <span class="s1">&#39;exit&#39;</span><span class="p">:</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">a</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">b</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="run-on-multiple-machines">
+<h3>Run on multiple machines<a class="headerlink" href="#run-on-multiple-machines" title="Link to this heading"></a></h3>
+<p>AgentScope also supports to run agents on multiple machines. In this case, you need to start agents separately. For example, you can use the following code to start agent <code class="docutils literal notranslate"><span class="pre">A</span></code> on the machine with IP address <code class="docutils literal notranslate"><span class="pre">ip_a</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import packages</span>
+
+<span class="n">server_a</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;A&quot;</span><span class="p">,</span>
+    <span class="o">...</span><span class="p">,</span>
+    <span class="n">host</span><span class="o">=</span><span class="n">ip_a</span><span class="p">,</span>
+    <span class="n">port</span><span class="o">=</span><span class="mi">12001</span><span class="p">,</span>
+    <span class="n">local_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">server_a</span><span class="o">.</span><span class="n">launch</span><span class="p">()</span>
+<span class="n">server_a</span><span class="o">.</span><span class="n">wait_until_terminate</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Similarly, you can start agent <code class="docutils literal notranslate"><span class="pre">B</span></code> on the machine with IP address <code class="docutils literal notranslate"><span class="pre">ip_b</span></code>.
+Please make sure that the two machines can access each other using the IP addresses.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import packages</span>
+
+<span class="n">server_b</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
+    <span class="o">...</span><span class="p">,</span>
+    <span class="n">host</span><span class="o">=</span><span class="n">ip_b</span><span class="p">,</span>
+    <span class="n">port</span><span class="o">=</span><span class="mi">12001</span><span class="p">,</span>
+    <span class="n">local_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">server_b</span><span class="o">.</span><span class="n">launch</span><span class="p">()</span>
+<span class="n">server_b</span><span class="o">.</span><span class="n">wait_until_terminate</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Then, you can run the application’s main process on any machine that can access <code class="docutils literal notranslate"><span class="pre">ip_a</span></code> and <code class="docutils literal notranslate"><span class="pre">ip_b</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import packages</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;A&quot;</span><span class="p">,</span>
+    <span class="o">...</span><span class="p">,</span>
+    <span class="n">host</span><span class="o">=</span><span class="n">ip_a</span><span class="p">,</span>
+    <span class="n">port</span><span class="o">=</span><span class="mi">12001</span><span class="p">,</span>
+    <span class="n">launch_server</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
+    <span class="o">...</span><span class="p">,</span>
+    <span class="n">host</span><span class="o">=</span><span class="n">ip_b</span><span class="p">,</span>
+    <span class="n">port</span><span class="o">=</span><span class="mi">12002</span><span class="p">,</span>
+    <span class="n">launch_server</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="k">while</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">x</span><span class="o">.</span><span class="n">content</span> <span class="o">!=</span> <span class="s1">&#39;exit&#39;</span><span class="p">:</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">a</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">b</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="#make-your-applications-distributed"><span class="xref myst">[Return to the top]</span></a></p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="207-monitor.html" class="btn btn-neutral float-left" title="Monitor" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="contribute.html" class="btn btn-neutral float-right" title="Get Involved" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Alibaba Tongyi Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

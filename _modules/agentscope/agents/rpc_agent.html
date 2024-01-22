@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.agents.rpc_agent &mdash; AgentScope  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/quick_start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/advance.html">Advanced Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/contribute.html">Get Involved</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">Agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.configs.html">Configs package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">Memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">Models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">Pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">Service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">RPC package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">Utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web_ui.html">Web UI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">Module contents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">agentscope.agents.rpc_agent</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for agentscope.agents.rpc_agent</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot; Base class for Rpc Agent &quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Event</span>
+<span class="kn">from</span> <span class="nn">multiprocessing.synchronize</span> <span class="kn">import</span> <span class="n">Event</span> <span class="k">as</span> <span class="n">EventClass</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">queue</span> <span class="kn">import</span> <span class="n">Queue</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span> <span class="nn">concurrent</span> <span class="kn">import</span> <span class="n">futures</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">grpc</span>
+    <span class="kn">from</span> <span class="nn">grpc</span> <span class="kn">import</span> <span class="n">ServicerContext</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">grpc</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ServicerContext</span> <span class="o">=</span> <span class="n">Any</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">expiringdict</span> <span class="kn">import</span> <span class="n">ExpiringDict</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">ExpiringDict</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="kn">from</span> <span class="nn">agentscope._init</span> <span class="kn">import</span> <span class="n">_INIT_SETTINGS</span>
+<span class="kn">from</span> <span class="nn">agentscope._init</span> <span class="kn">import</span> <span class="n">init</span>
+<span class="kn">from</span> <span class="nn">agentscope.agents.agent</span> <span class="kn">import</span> <span class="n">AgentBase</span>
+<span class="kn">from</span> <span class="nn">agentscope.rpc.rpc_agent_pb2</span> <span class="kn">import</span> <span class="n">RpcMsg</span>  <span class="c1"># pylint: disable=E0611</span>
+<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">MessageBase</span>
+<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">PlaceholderMessage</span>
+<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">deserialize</span>
+<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">serialize</span>
+<span class="kn">from</span> <span class="nn">agentscope.utils.logging_utils</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">agentscope.rpc.rpc_agent_client</span> <span class="kn">import</span> <span class="n">RpcAgentClient</span>
+<span class="kn">from</span> <span class="nn">agentscope.rpc.rpc_agent_pb2_grpc</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">RpcAgentServicer</span><span class="p">,</span>
+    <span class="n">add_RpcAgentServicer_to_server</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="rpc_servicer_method">
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.rpc_servicer_method">[docs]</a>
+<span class="k">def</span> <span class="nf">rpc_servicer_method</span><span class="p">(</span>  <span class="c1"># type: ignore [no-untyped-def]</span>
+    <span class="n">func</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A decorator used to identify that the specific method is an rpc agent</span>
+<span class="sd">    servicer method, which can only be run in the rpc server process.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">inner</span><span class="p">(</span><span class="n">rpc_agent</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>  <span class="c1"># type: ignore [no-untyped-def]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rpc_agent</span><span class="o">.</span><span class="n">is_servicer</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Detect main process try to use rpc servicer method </span><span class="se">\</span>
+<span class="s2">                 [</span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">]&quot;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">rpc_agent</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">inner</span></div>
+
+
+
+<div class="viewcode-block" id="RpcAgentBase">
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgentBase">[docs]</a>
+<span class="k">class</span> <span class="nc">RpcAgentBase</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">,</span> <span class="n">RpcAgentServicer</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract service of RpcAgent, also act as AgentBase.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Please implement reply method based on the functionality of your</span>
+<span class="sd">        agent.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">sys_prompt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_memory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">memory_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+        <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">80</span><span class="p">,</span>
+        <span class="n">max_pool_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">max_timeout_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1800</span><span class="p">,</span>
+        <span class="n">launch_server</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">local_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">lazy_launch</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">is_servicer</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Init a RpcAgentBase instance.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (`str`):</span>
+<span class="sd">                The name of the agent.</span>
+<span class="sd">            config (`Optional[dict]`):</span>
+<span class="sd">                The configuration of the agent, if provided, the agent will</span>
+<span class="sd">                be initialized from the config rather than the other</span>
+<span class="sd">                parameters.</span>
+<span class="sd">            sys_prompt (`Optional[str]`):</span>
+<span class="sd">                The system prompt of the agent, which can be passed by args</span>
+<span class="sd">                or hard-coded in the agent.</span>
+<span class="sd">            model (`Optional[Union[Callable[..., Any], str]]`, defaults to</span>
+<span class="sd">            None):</span>
+<span class="sd">                The callable model object or the model name, which is used to</span>
+<span class="sd">                load model from configuration.</span>
+<span class="sd">            use_memory (`bool`, defaults to `True`):</span>
+<span class="sd">                Whether the agent has memory.</span>
+<span class="sd">            memory_config (`Optional[dict]`):</span>
+<span class="sd">                The config of memory.</span>
+<span class="sd">            host (`str`, defaults to &quot;localhost&quot;):</span>
+<span class="sd">                Hostname of the rpc agent server.</span>
+<span class="sd">            port (`int`, defaults to `80`):</span>
+<span class="sd">                Port of the rpc agent server.</span>
+<span class="sd">            max_pool_size (`int`, defaults to `100`):</span>
+<span class="sd">                The max number of task results that the server can</span>
+<span class="sd">                accommodate. Note that the oldest result will be deleted</span>
+<span class="sd">                after exceeding the pool size.</span>
+<span class="sd">            max_timeout_seconds (`int`, defaults to `1800`):</span>
+<span class="sd">                Timeout for task results. Note that expired results will be</span>
+<span class="sd">                deleted.</span>
+<span class="sd">            launch_server (`bool`, defaults to `True`):</span>
+<span class="sd">                Launch a rpc server locally.</span>
+<span class="sd">            local_mode (`bool`, defaults to `True`):</span>
+<span class="sd">                The started server only listens to local requests.</span>
+<span class="sd">            lazy_launch (`bool`, defaults to `True`):</span>
+<span class="sd">                Only launch the server when the agent is called.</span>
+<span class="sd">            is_servicer (`bool`, defaults to `False`):</span>
+<span class="sd">                Used as a servicer of rpc server.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="n">config</span><span class="p">,</span>
+            <span class="n">sys_prompt</span><span class="p">,</span>
+            <span class="n">model</span><span class="p">,</span>
+            <span class="n">use_memory</span><span class="p">,</span>
+            <span class="n">memory_config</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_servicer</span> <span class="o">=</span> <span class="n">is_servicer</span>
+
+        <span class="c1"># prohibit servicer object from launching a new server</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="p">(</span><span class="n">is_servicer</span> <span class="ow">and</span> <span class="n">launch_server</span><span class="p">)</span>
+        <span class="c1"># launch_server is True only in the main process</span>
+        <span class="k">if</span> <span class="n">launch_server</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">server_launcher</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
+                <span class="n">sys_prompt</span><span class="o">=</span><span class="n">sys_prompt</span><span class="p">,</span>
+                <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+                <span class="n">use_memory</span><span class="o">=</span><span class="n">use_memory</span><span class="p">,</span>
+                <span class="n">memory_config</span><span class="o">=</span><span class="n">memory_config</span><span class="p">,</span>
+                <span class="n">agent_class</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span>
+                <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span>
+                <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
+                <span class="n">max_pool_size</span><span class="o">=</span><span class="n">max_pool_size</span><span class="p">,</span>
+                <span class="n">max_timeout_seconds</span><span class="o">=</span><span class="n">max_timeout_seconds</span><span class="p">,</span>
+                <span class="n">local_mode</span><span class="o">=</span><span class="n">local_mode</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">server_launcher</span><span class="o">.</span><span class="n">port</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">lazy_launch</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">server_launcher</span><span class="o">.</span><span class="n">launch</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">RpcAgentClient</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">server_launcher</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># is_servicer is True only in the rpc server process</span>
+        <span class="k">if</span> <span class="n">is_servicer</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">result_pool</span> <span class="o">=</span> <span class="n">ExpiringDict</span><span class="p">(</span>
+                <span class="n">max_len</span><span class="o">=</span><span class="n">max_pool_size</span><span class="p">,</span>
+                <span class="n">max_age_seconds</span><span class="o">=</span><span class="n">max_timeout_seconds</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">task_queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">worker_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">process_tasks</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">worker_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">task_id_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">task_id_counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># connect to an existing rpc server</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">launch_server</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_servicer</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">RpcAgentClient</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RpcAgentBase.get_task_id">
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgentBase.get_task_id">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_task_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the auto-increment task id.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_id_lock</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">task_id_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_id_counter</span></div>
+
+
+<div class="viewcode-block" id="RpcAgentBase.call_func">
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgentBase.call_func">[docs]</a>
+    <span class="k">def</span> <span class="nf">call_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">RpcMsg</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="n">ServicerContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RpcMsg</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">target_func</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">target_func</span><span class="p">)(</span><span class="n">request</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported method </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">target_func</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">RpcMsg</span><span class="p">(</span>
+                <span class="n">value</span><span class="o">=</span><span class="n">Msg</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="n">content</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Unsupported method </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">target_func</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">serialize</span><span class="p">(),</span>
+            <span class="p">)</span></div>
+
+
+    <span class="nd">@rpc_servicer_method</span>
+    <span class="k">def</span> <span class="nf">_call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">RpcMsg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RpcMsg</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Call function of RpcAgentService</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            request (`RpcMsg`):</span>
+<span class="sd">                Message containing input parameters or input parameter</span>
+<span class="sd">                placeholders.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `RpcMsg`: A serialized Msg instance with attributes name, host,</span>
+<span class="sd">            port and task_id</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">deserialize</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">task_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_task_id</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task_queue</span><span class="o">.</span><span class="n">put</span><span class="p">((</span><span class="n">task_id</span><span class="p">,</span> <span class="n">msg</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">RpcMsg</span><span class="p">(</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">Msg</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">content</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
+                <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
+                <span class="n">task_id</span><span class="o">=</span><span class="n">task_id</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">serialize</span><span class="p">(),</span>
+        <span class="p">)</span>
+
+    <span class="nd">@rpc_servicer_method</span>
+    <span class="k">def</span> <span class="nf">_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">RpcMsg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RpcMsg</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get function of RpcAgentService</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            request (`RpcMsg`):</span>
+<span class="sd">                Identifier of message, with json format::</span>
+
+<span class="sd">                {</span>
+<span class="sd">                    &#39;task_id&#39;: int</span>
+<span class="sd">                }</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `RpcMsg`: Concrete values of the specific message (or part of it).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># todo: add format specification of request</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="c1"># todo: implement the waiting in a more elegant way, add timeout</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_pool</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="s2">&quot;task_id&quot;</span><span class="p">],</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">RpcMsg</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+
+    <span class="nd">@rpc_servicer_method</span>
+    <span class="k">def</span> <span class="nf">_observe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">RpcMsg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RpcMsg</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Observe function of RpcAgentService</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            request (`RpcMsg`):</span>
+<span class="sd">                The serialized input to be observed.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `RpcMsg`: Empty RpcMsg.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">msgs</span> <span class="o">=</span> <span class="n">deserialize</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">msgs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">PlaceholderMessage</span><span class="p">):</span>
+                <span class="n">msg</span><span class="o">.</span><span class="n">update_value</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">msgs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">RpcMsg</span><span class="p">()</span>
+
+<div class="viewcode-block" id="RpcAgentBase.process_tasks">
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgentBase.process_tasks">[docs]</a>
+    <span class="k">def</span> <span class="nf">process_tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Task processing thread.&quot;&quot;&quot;</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">task_id</span><span class="p">,</span> <span class="n">task_msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="n">task_msg</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">result_pool</span><span class="p">[</span><span class="n">task_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="RpcAgentBase.reply">
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgentBase.reply">[docs]</a>
+    <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reply function used in the rpc agent server process.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Agent [</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">] is missing the required &quot;</span>
+            <span class="sa">f</span><span class="s1">&#39;&quot;reply&quot; function.&#39;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RpcAgentBase.observe">
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgentBase.observe">[docs]</a>
+    <span class="k">def</span> <span class="nf">observe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Observe the input, store it in memory and don&#39;t response to it.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (`Union[dict, Sequence[dict]]`):</span>
+<span class="sd">                The input to be observed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">server_launcher</span><span class="o">.</span><span class="n">launch</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">RpcAgentClient</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">call_func</span><span class="p">(</span>
+            <span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;_observe&quot;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">serialize</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>  <span class="c1"># type: ignore [arg-type]</span>
+        <span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Call function used in the main process.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">MessageBase</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">server_launcher</span><span class="o">.</span><span class="n">launch</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">RpcAgentClient</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+        <span class="n">res_msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">call_func</span><span class="p">(</span>
+            <span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;_call&quot;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">PlaceholderMessage</span><span class="p">(</span>
+            <span class="o">**</span><span class="n">deserialize</span><span class="p">(</span><span class="n">res_msg</span><span class="p">),</span>  <span class="c1"># type: ignore [arg-type]</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_audience</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_broadcast_to_audience</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+<div class="viewcode-block" id="RpcAgentBase.stop">
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgentBase.stop">[docs]</a>
+    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stop the RpcAgent and the launched rpc server.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">server_launcher</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">server_launcher</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">server_launcher</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">server_launcher</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="setup_rcp_agent_server">
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.setup_rcp_agent_server">[docs]</a>
+<span class="k">def</span> <span class="nf">setup_rcp_agent_server</span><span class="p">(</span>
+    <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">servicer_class</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">RpcAgentServicer</span><span class="p">],</span>
+    <span class="n">start_event</span><span class="p">:</span> <span class="n">EventClass</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">stop_event</span><span class="p">:</span> <span class="n">EventClass</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="n">local_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">init_settings</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup gRPC server rpc agent.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        port (`int`):</span>
+<span class="sd">            The socket port monitored by grpc server.</span>
+<span class="sd">        servicer_class (`Type[RpcAgentServicer]`):</span>
+<span class="sd">            An implementation of RpcAgentBaseService.</span>
+<span class="sd">        start_event (`EventClass`, defaults to `None`):</span>
+<span class="sd">            An Event instance used to determine whether the child process</span>
+<span class="sd">            has been started.</span>
+<span class="sd">        stop_event (`EventClass`, defaults to `None`):</span>
+<span class="sd">            The stop Event instance used to determine whether the child</span>
+<span class="sd">            process has been stopped.</span>
+<span class="sd">        max_workers (`int`, defaults to `4`):</span>
+<span class="sd">            max worker number of grpc server.</span>
+<span class="sd">        local_mode (`bool`, defaults to `None`):</span>
+<span class="sd">            Only listen to local requests.</span>
+<span class="sd">        init_settings (`dict`, defaults to `None`):</span>
+<span class="sd">            Init settings.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">init_settings</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">init</span><span class="p">(</span><span class="o">**</span><span class="n">init_settings</span><span class="p">)</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">grpc</span><span class="o">.</span><span class="n">server</span><span class="p">(</span><span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="n">max_workers</span><span class="p">))</span>
+    <span class="n">servicer</span> <span class="o">=</span> <span class="n">servicer_class</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">add_RpcAgentServicer_to_server</span><span class="p">(</span><span class="n">servicer</span><span class="p">,</span> <span class="n">server</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">local_mode</span><span class="p">:</span>
+        <span class="n">server</span><span class="o">.</span><span class="n">add_insecure_port</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;localhost:</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">server</span><span class="o">.</span><span class="n">add_insecure_port</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;0.0.0.0:</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;rpc server [</span><span class="si">{</span><span class="n">servicer_class</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">] at port [</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">] started &quot;</span>
+        <span class="s2">&quot;successfully&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">start_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+    <span class="n">stop_event</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Stopping rpc server [</span><span class="si">{</span><span class="n">servicer_class</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">] at port [</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;rpc server [</span><span class="si">{</span><span class="n">servicer_class</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">] at port [</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">] stopped &quot;</span>
+        <span class="s2">&quot;successfully&quot;</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="RpcAgentServerLauncher">
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgentServerLauncher">[docs]</a>
+<span class="k">class</span> <span class="nc">RpcAgentServerLauncher</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Launcher of rpc agent server.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">sys_prompt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_memory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">memory_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">agent_class</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">RpcAgentBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+        <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_pool_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">max_timeout_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1800</span><span class="p">,</span>
+        <span class="n">local_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Init a rpc agent server launcher.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (`str`):</span>
+<span class="sd">                The name of the agent.</span>
+<span class="sd">            config (`Optional[dict]`):</span>
+<span class="sd">                The configuration of the agent, if provided, the agent will</span>
+<span class="sd">                be initialized from the config rather than the other</span>
+<span class="sd">                parameters.</span>
+<span class="sd">            sys_prompt (`Optional[str]`):</span>
+<span class="sd">                The system prompt of the agent, which can be passed by args</span>
+<span class="sd">                or hard-coded in the agent.</span>
+<span class="sd">            model (`Optional[Union[Callable[..., Any], str]]`, defaults to</span>
+<span class="sd">            None):</span>
+<span class="sd">                The callable model object or the model name, which is used to</span>
+<span class="sd">                load model from configuration.</span>
+<span class="sd">            use_memory (`bool`, defaults to `True`):</span>
+<span class="sd">                Whether the agent has memory.</span>
+<span class="sd">            memory_config (`Optional[dict]`):</span>
+<span class="sd">                The config of memory.</span>
+<span class="sd">            agent_class (`Type[RpcAgentBase]`, defaults to `None`):</span>
+<span class="sd">                The RpcAgentBase class used in rpc agent server as a servicer.</span>
+<span class="sd">            host (`str`, defaults to `&quot;localhost&quot;`):</span>
+<span class="sd">                Hostname of the rpc agent server.</span>
+<span class="sd">            port (`int`, defaults to `None`):</span>
+<span class="sd">                Port of the rpc agent server.</span>
+<span class="sd">            max_pool_size (`int`, defaults to `100`):</span>
+<span class="sd">                Max number of task results that the server can accommodate.</span>
+<span class="sd">            max_timeout_seconds (`int`, defaults to `1800`):</span>
+<span class="sd">                Timeout for task results.</span>
+<span class="sd">            local_mode (`bool`, defaults to `True`):</span>
+<span class="sd">                Whether the started rpc server only listens to local</span>
+<span class="sd">                requests.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sys_prompt</span> <span class="o">=</span> <span class="n">sys_prompt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_memory</span> <span class="o">=</span> <span class="n">use_memory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">memory_config</span> <span class="o">=</span> <span class="n">memory_config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent_class</span> <span class="o">=</span> <span class="n">agent_class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_port</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_pool_size</span> <span class="o">=</span> <span class="n">max_pool_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_timeout_seconds</span> <span class="o">=</span> <span class="n">max_timeout_seconds</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">local_model</span> <span class="o">=</span> <span class="n">local_mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
+
+<div class="viewcode-block" id="RpcAgentServerLauncher.find_available_port">
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgentServerLauncher.find_available_port">[docs]</a>
+    <span class="k">def</span> <span class="nf">find_available_port</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get an unoccupied socket port number.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span> <span class="k">as</span> <span class="n">s</span><span class="p">:</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">getsockname</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="RpcAgentServerLauncher.check_port">
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgentServerLauncher.check_port">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_port</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the port is available.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            port (`int`):</span>
+<span class="sd">                the port number being checked.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `int`: the port number that passed the check. If the port is found</span>
+<span class="sd">            to be occupied, an available port number will be automatically</span>
+<span class="sd">            returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">port</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_available_port</span><span class="p">()</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;gRpc server port is not provided, automatically select &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">new_port</span><span class="si">}</span><span class="s2">] as the port number.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">new_port</span>
+        <span class="k">with</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span> <span class="k">as</span> <span class="n">s</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">connect_ex</span><span class="p">((</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">new_port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_available_port</span><span class="p">()</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Port [</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">] is occupied, use [</span><span class="si">{</span><span class="n">new_port</span><span class="si">}</span><span class="s2">] instead&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="n">new_port</span>
+        <span class="k">return</span> <span class="n">port</span></div>
+
+
+<div class="viewcode-block" id="RpcAgentServerLauncher.launch">
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgentServerLauncher.launch">[docs]</a>
+    <span class="k">def</span> <span class="nf">launch</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;launch a local rpc agent server.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Starting rpc server [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_class</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">] at port&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">]...&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">start_event</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>
+        <span class="n">server_process</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span>
+            <span class="n">target</span><span class="o">=</span><span class="n">setup_rcp_agent_server</span><span class="p">,</span>
+            <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
+                <span class="s2">&quot;servicer_class&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_class</span><span class="p">,</span>
+                <span class="s2">&quot;start_event&quot;</span><span class="p">:</span> <span class="n">start_event</span><span class="p">,</span>
+                <span class="s2">&quot;stop_event&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span><span class="p">,</span>
+                <span class="s2">&quot;local_mode&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_model</span><span class="p">,</span>
+                <span class="s2">&quot;init_settings&quot;</span><span class="p">:</span> <span class="n">_INIT_SETTINGS</span><span class="p">,</span>
+                <span class="s2">&quot;kwargs&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="s2">&quot;config&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span>
+                    <span class="s2">&quot;sys_prompt&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sys_prompt</span><span class="p">,</span>
+                    <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+                    <span class="s2">&quot;use_memory&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_memory</span><span class="p">,</span>
+                    <span class="s2">&quot;memory_config&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory_config</span><span class="p">,</span>
+                    <span class="s2">&quot;host&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
+                    <span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
+                    <span class="s2">&quot;max_pool_size&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_pool_size</span><span class="p">,</span>
+                    <span class="s2">&quot;max_timeout_seconds&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_timeout_seconds</span><span class="p">,</span>
+                    <span class="s2">&quot;launch_server&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                    <span class="s2">&quot;lazy_launch&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                    <span class="s2">&quot;is_servicer&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                    <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">,</span>
+                <span class="p">},</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+        <span class="n">server_process</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="n">start_event</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="n">server_process</span></div>
+
+
+<div class="viewcode-block" id="RpcAgentServerLauncher.wait_until_terminate">
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgentServerLauncher.wait_until_terminate">[docs]</a>
+    <span class="k">def</span> <span class="nf">wait_until_terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wait for server process&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">join</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="RpcAgentServerLauncher.shutdown">
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgentServerLauncher.shutdown">[docs]</a>
+    <span class="k">def</span> <span class="nf">shutdown</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Shutdown the rpc agent server.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Rpc server [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_class</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">] at port&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot; [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">] is killed.&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="kc">None</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Alibaba Tongyi Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
