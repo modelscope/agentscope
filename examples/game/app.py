@@ -77,7 +77,7 @@ def format_cover_html(config: dict, bot_avatar_path="assets/bg.png"):
 
 
 def export_chat_history(uid):
-    check_uuid(uid)
+    uid = check_uuid(uid)
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     export_filename = f"chat_history_{timestamp}.txt"
 
@@ -95,7 +95,7 @@ def get_chat(uid) -> List[List]:
         `List[List]`: The parsed history, list of tuple, [(role, msg), ...]
 
     """
-    check_uuid(uid)
+    uid = check_uuid(uid)
     global glb_history_dict
     line = get_chat_msg(uid=uid)
     if line is not None:
@@ -122,16 +122,16 @@ if __name__ == "__main__":
             is_init = True
 
     def check_for_new_session(uid):
-        check_uuid(uid)
+        uid = check_uuid(uid)
         if uid not in glb_signed_user:
             glb_signed_user.append(uid)
             print("==========Signed User==========")
-            print(len(glb_signed_user), glb_signed_user)
+            print(f"Total number of users: {len(glb_signed_user)}")
             game_thread = threading.Thread(target=start_game, args=(uid,))
             game_thread.start()
 
     def start_game(uid):
-        check_uuid(uid)
+        uid = check_uuid(uid)
         with open("./config/game_config.yaml", "r", encoding="utf-8") as file:
             GAME_CONFIG = yaml.safe_load(file)
 
@@ -198,7 +198,7 @@ if __name__ == "__main__":
                 )
 
         def send_message(msg, uid):
-            check_uuid(uid)
+            uid = check_uuid(uid)
             send_player_input(msg, uid=uid)
             send_player_msg(msg, "你", uid=uid)
             return ""
@@ -209,7 +209,7 @@ if __name__ == "__main__":
         )
 
         def send_reset_message(uid):
-            check_uuid(uid)
+            uid = check_uuid(uid)
             global glb_history_dict
             glb_history_dict[uid] = init_uid_list()
             send_player_input("**Reset**", uid=uid)
