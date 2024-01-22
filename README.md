@@ -10,14 +10,9 @@ AgentScope is an innovative multi-agent platform designed to empower developers 
 
 Welcome to join our community on
 
-- [Discord](https://discord.gg/Fwg5hZ2S)
-- DingDing group
-
-    <img width="100" height="100" src="https://img.alicdn.com/imgextra/i2/O1CN01tuJ5971OmAqNg9cOw_!!6000000001747-0-tps-444-460.jpg" alt="AgentScope-dingtalk">
-
-- Wechat group
-
-    <img width="100" src="https://img.alicdn.com/imgextra/i3/O1CN01UyfWfx1CYBM3WqlBy_!!6000000000092-2-tps-400-400.png" alt="AgentScope-wechat">
+| Discord | DingTalk | WeChat |
+|:-------:|:--------:|:------:|
+| [Discord](https://discord.gg/Fwg5hZ2S) | ![image](https://img.alicdn.com/imgextra/i2/O1CN01tuJ5971OmAqNg9cOw_!!6000000001747-0-tps-444-460.jpg alt='dingtalk') | ![image](https://img.alicdn.com/imgextra/i3/O1CN01UyfWfx1CYBM3WqlBy_!!6000000000092-2-tps-400-400.png alt='wechat') |
 
 Table of Contents
 =================
