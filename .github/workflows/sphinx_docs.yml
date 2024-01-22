@@ -12,8 +12,12 @@ on:
 
 jobs:
   pages:
-    runs-on: ubuntu-latest
     timeout-minutes: 20
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ['3.9']
     env:
       OS: ${{ matrix.os }}
       PYTHON: '3.9'
