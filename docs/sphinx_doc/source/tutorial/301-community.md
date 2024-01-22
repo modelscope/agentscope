@@ -11,7 +11,7 @@ Becoming a part of the AgentScope community allows you to connect with other use
 
 ## Discord
 
-- **Join our Discord:** Collaborate with the AgentScope community in real-time. Engage in discussions, seek assistance, and share your experiences and insights on [Discord](https://discord.gg/Fwg5hZ2S).
+- **Join our Discord:** Collaborate with the AgentScope community in real-time. Engage in discussions, seek assistance, and share your experiences and insights on [Discord](https://discord.gg/eYMpfnkG8h).
 
 ## DingTalk (钉钉)
 
@@ -19,7 +19,7 @@ Becoming a part of the AgentScope community allows you to connect with other use
 
   Scan the QR code below on DingTalk to join:
 
-  <img width="150" src="https://img.alicdn.com/imgextra/i2/O1CN01tuJ5971OmAqNg9cOw_!!6000000001747-0-tps-444-460.jpg" alt="AgentScope-logo">
+  <img width="150" src="https://img.alicdn.com/imgextra/i2/O1CN01tuJ5971OmAqNg9cOw_!!6000000001747-0-tps-444-460.jpg" alt="AgentScope-dingtalk">
 
   Our DingTalk group invitation: [AgentScope DingTalk Group](https://qr.dingtalk.com/action/joingroup?code=v1,k1,20IUyRX5XZQ2vWjKDsjvI9dhcXjGZi3bq1pFfDZINCM=&_dt_no_comment=1&origin=11)
 
