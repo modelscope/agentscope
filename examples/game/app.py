@@ -6,7 +6,7 @@ import datetime
 import threading
 from collections import defaultdict
 from typing import List
-
+from multiprocessing import Event
 import agentscope
 
 from utils import (
@@ -40,7 +40,7 @@ def check_uuid(uid):
 
 glb_history_dict = defaultdict(init_uid_list)
 glb_signed_user = []
-is_init = False
+is_init = Event()
 MAX_NUM_DISPLAY_MSG = 20
 
 
@@ -110,9 +110,9 @@ def fn_choice(data: gr.EventData, uid):
 
 if __name__ == "__main__":
 
+
     def init_game():
-        global is_init
-        if not is_init:
+        if not is_init.is_set():
             TONGYI_CONFIG = {
                 "type": "tongyi",
                 "name": "tongyi_model",
@@ -120,7 +120,7 @@ if __name__ == "__main__":
                 "api_key": os.environ.get("TONGYI_API_KEY"),
             }
             agentscope.init(model_configs=[TONGYI_CONFIG], logger_level="INFO")
-            is_init = True
+            is_init.set()
 
     def check_for_new_session(uid):
         uid = check_uuid(uid)
@@ -132,6 +132,7 @@ if __name__ == "__main__":
             game_thread.start()
 
     def start_game(uid):
+        is_init.wait()
         uid = check_uuid(uid)
         with open("./config/game_config.yaml", "r", encoding="utf-8") as file:
             GAME_CONFIG = yaml.safe_load(file)
