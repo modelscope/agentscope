@@ -55,18 +55,11 @@
 <li class="toctree-l2"><a class="reference internal" href="205-memory.html">Memory and Message Management</a></li>
 <li class="toctree-l2"><a class="reference internal" href="206-prompt.html">Prompt Engine</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Monitor</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#understanding-the-monitorbase-class">Understanding the <code class="docutils literal notranslate"><span class="pre">MonitorBase</span></code> Class</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#using-the-dictmonitor-class">Using the <code class="docutils literal notranslate"><span class="pre">DictMonitor</span></code> Class</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#initializing-dictmonitor">Initializing DictMonitor</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#registering-api-usage-metrics">Registering API Usage Metrics</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#updating-metrics">Updating Metrics</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#handling-quotas">Handling Quotas</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#retrieving-metrics">Retrieving Metrics</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#resetting-and-removing-metrics">Resetting and Removing Metrics</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#using-singleton-access">Using Singleton Access</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#acquiring-the-singleton-monitor-instance">Acquiring the Singleton Monitor Instance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#understanding-the-monitor-in-agentscope">Understanding the Monitor in AgentScope</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-the-monitor">Using the Monitor</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#get-a-monitor-instance">Get a Monitor Instance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#basic-usage">Basic Usage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#advanced-usage">Advanced Usage</a></li>
 </ul>
 </li>
 </ul>
@@ -117,9 +110,9 @@
              
   <section id="monitor">
 <span id="id1"></span><h1>Monitor<a class="headerlink" href="#monitor" title="Link to this heading"></a></h1>
-<p>In multi-agent applications, particularly those that rely on external model APIs, it’s crucial to monitor the usage and cost to prevent overutilization and ensure compliance with rate limits. The <code class="docutils literal notranslate"><span class="pre">MonitorBase</span></code> class and its implementation, <code class="docutils literal notranslate"><span class="pre">DictMonitor</span></code>, provide a way to track and regulate the usage of such APIs in your applications. In this tutorial, you’ll learn how to use them to monitor API calls.</p>
-<section id="understanding-the-monitorbase-class">
-<h2>Understanding the <code class="docutils literal notranslate"><span class="pre">MonitorBase</span></code> Class<a class="headerlink" href="#understanding-the-monitorbase-class" title="Link to this heading"></a></h2>
+<p>In multi-agent applications, particularly those that rely on external model APIs, it’s crucial to monitor the usage and cost to prevent overutilization and ensure compliance with rate limits. The <code class="docutils literal notranslate"><span class="pre">MonitorBase</span></code> class and its implementation, <code class="docutils literal notranslate"><span class="pre">SqliteMonitor</span></code>, provide a way to track and regulate the usage of such APIs in your applications. In this tutorial, you’ll learn how to use them to monitor API calls.</p>
+<section id="understanding-the-monitor-in-agentscope">
+<h2>Understanding the Monitor in AgentScope<a class="headerlink" href="#understanding-the-monitor-in-agentscope" title="Link to this heading"></a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">MonitorBase</span></code> class serves as an interface for setting up a monitoring system that tracks various metrics, especially focusing on API usage. It defines methods that enable registration, checking, updating, and management of metrics related to API calls.</p>
 <p>Here are the key methods of <code class="docutils literal notranslate"><span class="pre">MonitorBase</span></code>:</p>
 <ul class="simple">
@@ -135,34 +128,41 @@
 <li><p><strong><code class="docutils literal notranslate"><span class="pre">set_quota</span></code></strong>: Adjusts the quota for a metric, if the terms of API usage change.</p></li>
 <li><p><strong><code class="docutils literal notranslate"><span class="pre">get_metric</span></code></strong>: Returns detailed information about a specific metric.</p></li>
 <li><p><strong><code class="docutils literal notranslate"><span class="pre">get_metrics</span></code></strong>: Retrieves information about all tracked metrics, with optional filtering based on metric names.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">register_budget</span></code></strong>: Sets a budget for a certain API call, which will initialize a series of metrics used to calculate the cost.</p></li>
 </ul>
 </section>
-<section id="using-the-dictmonitor-class">
-<h2>Using the <code class="docutils literal notranslate"><span class="pre">DictMonitor</span></code> Class<a class="headerlink" href="#using-the-dictmonitor-class" title="Link to this heading"></a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">DictMonitor</span></code> class is a subclass of the <code class="docutils literal notranslate"><span class="pre">MonitorBase</span></code> class, which is implemented in an in-memory dictionary.</p>
-<section id="initializing-dictmonitor">
-<h3>Initializing DictMonitor<a class="headerlink" href="#initializing-dictmonitor" title="Link to this heading"></a></h3>
-<p>Create an instance of <code class="docutils literal notranslate"><span class="pre">DictMonitor</span></code> to begin monitoring:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">monitor</span> <span class="o">=</span> <span class="n">DictMonitor</span><span class="p">()</span>
+<section id="using-the-monitor">
+<h2>Using the Monitor<a class="headerlink" href="#using-the-monitor" title="Link to this heading"></a></h2>
+<section id="get-a-monitor-instance">
+<h3>Get a Monitor Instance<a class="headerlink" href="#get-a-monitor-instance" title="Link to this heading"></a></h3>
+<p>Get a monitor instance from <code class="docutils literal notranslate"><span class="pre">MonitorFactory</span></code> to begin monitoring, and note that multiple calls to the <code class="docutils literal notranslate"><span class="pre">get_monitor</span></code> method return the same monitor instance.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># make sure you have called agentscope.init(...) before</span>
+<span class="n">monitor</span> <span class="o">=</span> <span class="n">MonitorFactory</span><span class="o">.</span><span class="n">get_monitor</span><span class="p">()</span>
 </pre></div>
 </div>
+<blockquote>
+<div><p>Currently the above code returns a <code class="docutils literal notranslate"><span class="pre">SqliteMonitor</span></code> instance, which is initialized in <code class="docutils literal notranslate"><span class="pre">agentscope.init</span></code>.
+The <code class="docutils literal notranslate"><span class="pre">SqliteMonitor</span></code> class is the default implementation of <code class="docutils literal notranslate"><span class="pre">MonitorBase</span></code> class, which is based on Sqlite3.</p>
+</div></blockquote>
 </section>
+<section id="basic-usage">
+<h3>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading"></a></h3>
 <section id="registering-api-usage-metrics">
-<h3>Registering API Usage Metrics<a class="headerlink" href="#registering-api-usage-metrics" title="Link to this heading"></a></h3>
+<h4>Registering API Usage Metrics<a class="headerlink" href="#registering-api-usage-metrics" title="Link to this heading"></a></h4>
 <p>Register a new metric to start monitoring the number of tokens:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;token_num&quot;</span><span class="p">,</span> <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span> <span class="n">quota</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <section id="updating-metrics">
-<h3>Updating Metrics<a class="headerlink" href="#updating-metrics" title="Link to this heading"></a></h3>
+<h4>Updating Metrics<a class="headerlink" href="#updating-metrics" title="Link to this heading"></a></h4>
 <p>Increment the <code class="docutils literal notranslate"><span class="pre">token_num</span></code> metric:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">monitor</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;token_num&quot;</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <section id="handling-quotas">
-<h3>Handling Quotas<a class="headerlink" href="#handling-quotas" title="Link to this heading"></a></h3>
+<h4>Handling Quotas<a class="headerlink" href="#handling-quotas" title="Link to this heading"></a></h4>
 <p>If the number of API calls exceeds the quota, a <code class="docutils literal notranslate"><span class="pre">QuotaExceededError</span></code> will be thrown:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
     <span class="n">monitor</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;api_calls&quot;</span><span class="p">,</span> <span class="n">amount</span><span class="p">)</span>
@@ -173,14 +173,14 @@
 </div>
 </section>
 <section id="retrieving-metrics">
-<h3>Retrieving Metrics<a class="headerlink" href="#retrieving-metrics" title="Link to this heading"></a></h3>
+<h4>Retrieving Metrics<a class="headerlink" href="#retrieving-metrics" title="Link to this heading"></a></h4>
 <p>Get the current number of tokens used:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">token_num_used</span> <span class="o">=</span> <span class="n">monitor</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;token_num&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <section id="resetting-and-removing-metrics">
-<h3>Resetting and Removing Metrics<a class="headerlink" href="#resetting-and-removing-metrics" title="Link to this heading"></a></h3>
+<h4>Resetting and Removing Metrics<a class="headerlink" href="#resetting-and-removing-metrics" title="Link to this heading"></a></h4>
 <p>Reset the number of token count at the start of a new period:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">monitor</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="s2">&quot;token_num&quot;</span><span class="p">)</span>
 </pre></div>
@@ -191,16 +191,76 @@
 </div>
 </section>
 </section>
-<section id="using-singleton-access">
-<h2>Using Singleton Access<a class="headerlink" href="#using-singleton-access" title="Link to this heading"></a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">MonitorFactory</span></code> provides a singleton instance of a <code class="docutils literal notranslate"><span class="pre">MonitorBase</span></code> to ensure consistent access throughout your application.</p>
-<section id="acquiring-the-singleton-monitor-instance">
-<h3>Acquiring the Singleton Monitor Instance<a class="headerlink" href="#acquiring-the-singleton-monitor-instance" title="Link to this heading"></a></h3>
-<p>Get the singleton instance of the monitor:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">monitor</span> <span class="o">=</span> <span class="n">MonitorFactory</span><span class="o">.</span><span class="n">get_monitor</span><span class="p">()</span>
+<section id="advanced-usage">
+<h3>Advanced Usage<a class="headerlink" href="#advanced-usage" title="Link to this heading"></a></h3>
+<blockquote>
+<div><p>Features here are under development, the interface may continue to change.</p>
+</div></blockquote>
+<section id="using-prefix-to-distinguish-metrics">
+<h4>Using <code class="docutils literal notranslate"><span class="pre">prefix</span></code> to Distinguish Metrics<a class="headerlink" href="#using-prefix-to-distinguish-metrics" title="Link to this heading"></a></h4>
+<p>Assume you have multiple agents/models that use the same API call, but you want to calculate their token usage separately, you can add a unique <code class="docutils literal notranslate"><span class="pre">prefix</span></code> before the original metric name, and <code class="docutils literal notranslate"><span class="pre">get_full_name</span></code> provides such functionality.</p>
+<p>For example, if model_A and model_B both use the OpenAI API, you can register these metrics by the following code.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.utils.monitor</span> <span class="kn">import</span> <span class="n">get_full_name</span>
+
+<span class="o">...</span>
+
+<span class="c1"># in model_A</span>
+<span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">get_full_name</span><span class="p">(</span><span class="s1">&#39;prompt_tokens&#39;</span><span class="p">,</span> <span class="s1">&#39;model_A&#39;</span><span class="p">))</span>
+<span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">get_full_name</span><span class="p">(</span><span class="s1">&#39;completion_tokens&#39;</span><span class="p">,</span> <span class="s1">&#39;model_A&#39;</span><span class="p">))</span>
+
+<span class="c1"># in model_B</span>
+<span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">get_full_name</span><span class="p">(</span><span class="s1">&#39;prompt_tokens&#39;</span><span class="p">,</span> <span class="s1">&#39;model_B&#39;</span><span class="p">))</span>
+<span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">get_full_name</span><span class="p">(</span><span class="s1">&#39;completion_tokens&#39;</span><span class="p">,</span> <span class="s1">&#39;model_B&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
+<p>To update those metrics, just use the <code class="docutils literal notranslate"><span class="pre">update</span></code> method.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># in model_A</span>
+<span class="n">monitor</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">openai_response</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(),</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;model_A&#39;</span><span class="p">)</span>
+
+<span class="c1"># in model_B</span>
+<span class="n">monitor</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">openai_response</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(),</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;model_B&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To get metrics of a specific model, please use the <code class="docutils literal notranslate"><span class="pre">get_metrics</span></code> method.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># get metrics of model_A</span>
+<span class="n">model_A_metrics</span> <span class="o">=</span> <span class="n">monitor</span><span class="o">.</span><span class="n">get_metrics</span><span class="p">(</span><span class="s1">&#39;model_A&#39;</span><span class="p">)</span>
+
+<span class="c1"># get metrics of model_B</span>
+<span class="n">model_B_metrics</span> <span class="o">=</span> <span class="n">monitor</span><span class="o">.</span><span class="n">get_metrics</span><span class="p">(</span><span class="s1">&#39;model_B&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="register-a-budget-for-an-api">
+<h4>Register a budget for an API<a class="headerlink" href="#register-a-budget-for-an-api" title="Link to this heading"></a></h4>
+<p>Currently, the Monitor already supports automatically calculating the cost of API calls based on various metrics, and you can directly set a budget of a model to avoid exceeding the quota.</p>
+<p>Suppose you are using <code class="docutils literal notranslate"><span class="pre">gpt-4-turbo</span></code> and your budget is $10, you can use the following code.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model_name</span> <span class="o">=</span> <span class="s1">&#39;gpt-4-turbo&#39;</span>
+<span class="n">monitor</span><span class="o">.</span><span class="n">register_budget</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">model_name</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Use <code class="docutils literal notranslate"><span class="pre">prefix</span></code> to set budgets for different models that use the same API.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model_name</span> <span class="o">=</span> <span class="s1">&#39;gpt-4-turbo&#39;</span>
+<span class="c1"># in model_A</span>
+<span class="n">monitor</span><span class="o">.</span><span class="n">register_budget</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;model_A.</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="c1"># in model_B</span>
+<span class="n">monitor</span><span class="o">.</span><span class="n">register_budget</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;model_B.</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">register_budget</span></code> will automatically register metrics that are required to calculate the total cost, calculate the total cost when these metrics are updated, and throw a <code class="docutils literal notranslate"><span class="pre">QuotaExceededError</span></code> when the budget is exceeded.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model_name</span> <span class="o">=</span> <span class="s1">&#39;gpt-4-turbo&#39;</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">monitor</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">openai_response</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(),</span> <span class="n">prefix</span><span class="o">=</span><span class="n">model_name</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">QuotaExceededError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="c1"># Handle the exceeded quota</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p><strong>Note:</strong> This feature is still in the experimental stage and only supports some specified APIs, which are listed in <code class="docutils literal notranslate"><span class="pre">agentscope.utils.monitor._get_pricing</span></code>.</p>
+</div></blockquote>
 <p><a class="reference internal" href="#monitoring-and-logging"><span class="xref myst">[Return to the top]</span></a></p>
+</section>
 </section>
 </section>
 </section>
