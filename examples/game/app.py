@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from typing import List
+import base64
 import os
 import yaml
 import datetime
-import uuid
 import threading
 from collections import defaultdict
+from typing import List
 
 import agentscope
 
@@ -29,12 +29,19 @@ def init_uid_list():
     return []
 
 
+def check_uuid(uid):
+    if not uid or uid == '':
+        if os.getenv('MODELSCOPE_ENVIRONMENT') == 'studio':
+            raise gr.Error('请登陆后使用! (Please login first)')
+        else:
+            uid = 'local_user'
+    return uid
+
+
 glb_history_dict = defaultdict(init_uid_list)
 glb_signed_user = []
 is_init = False
 MAX_NUM_DISPLAY_MSG = 20
-
-import base64
 
 
 # 图片本地路径转换为 base64 格式
@@ -70,6 +77,7 @@ def format_cover_html(config: dict, bot_avatar_path="assets/bg.png"):
 
 
 def export_chat_history(uid):
+    uid = check_uuid(uid)
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     export_filename = f"chat_history_{timestamp}.txt"
 
@@ -87,6 +95,7 @@ def get_chat(uid) -> List[List]:
         `List[List]`: The parsed history, list of tuple, [(role, msg), ...]
 
     """
+    uid = check_uuid(uid)
     global glb_history_dict
     line = get_chat_msg(uid=uid)
     if line is not None:
@@ -95,6 +104,7 @@ def get_chat(uid) -> List[List]:
 
 
 def fn_choice(data: gr.EventData, uid):
+    uid = check_uuid(uid)
     send_player_input(data._data["value"], uid=uid)
 
 
@@ -113,12 +123,16 @@ if __name__ == "__main__":
             is_init = True
 
     def check_for_new_session(uid):
+        uid = check_uuid(uid)
         if uid not in glb_signed_user:
             glb_signed_user.append(uid)
+            print("==========Signed User==========")
+            print(f"Total number of users: {len(glb_signed_user)}")
             game_thread = threading.Thread(target=start_game, args=(uid,))
             game_thread.start()
 
     def start_game(uid):
+        uid = check_uuid(uid)
         with open("./config/game_config.yaml", "r", encoding="utf-8") as file:
             GAME_CONFIG = yaml.safe_load(file)
 
@@ -134,8 +148,7 @@ if __name__ == "__main__":
                 print("重置成功")
 
     with gr.Blocks(css="assets/app.css") as demo:
-        # Users can select the interested exp
-        uuid = gr.State(uuid.uuid4)
+        uuid = gr.Textbox(label='modelscope_uuid', visible=False)
 
         welcome = {
             "name": "饮食男女",
@@ -186,6 +199,7 @@ if __name__ == "__main__":
                 )
 
         def send_message(msg, uid):
+            uid = check_uuid(uid)
             send_player_input(msg, uid=uid)
             send_player_msg(msg, "你", uid=uid)
             return ""
@@ -196,6 +210,7 @@ if __name__ == "__main__":
         )
 
         def send_reset_message(uid):
+            uid = check_uuid(uid)
             global glb_history_dict
             glb_history_dict[uid] = init_uid_list()
             send_player_input("**Reset**", uid=uid)
