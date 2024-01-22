@@ -44,4 +44,4 @@ jobs:
       if: ${{ github.event_name == 'push' }}
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: 'docs/sphinx_doc/build'
+        publish_dir: 'docs/sphinx_doc/build/html'
