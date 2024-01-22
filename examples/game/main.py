@@ -380,5 +380,5 @@ if __name__ == "__main__":
     agentscope.init(model_configs=[TONGYI_CONFIG], logger_level="DEBUG")
     args = CheckpointArgs()
     args.game_config = GAME_CONFIG
-    main.uid = None
+    args.uid = None
     main(args)
