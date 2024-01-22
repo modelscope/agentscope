@@ -157,9 +157,8 @@ class RuledUser(AgentBase):
         ]
 
         choose_ingredient = f"""请选择需要的食材: <select-box shape="card"
-                     type="checkbox"
-                    options=
-                    '{json.dumps(ingredients_list)}' select-once
+                     type="checkbox" item-width="1000"
+                    options='{json.dumps(ingredients_list)}' select-once
                     submit-text="确定"></select-box>"""
 
         send_chat_msg(
