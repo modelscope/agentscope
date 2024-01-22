@@ -275,6 +275,9 @@ class RpcAgentBase(AgentBase, RpcAgentServicer):
         """Task processing thread."""
         while True:
             task_id, task_msg = self.task_queue.get()
+            # TODO: optimize this and avoid blocking
+            if isinstance(task_msg, PlaceholderMessage):
+                task_msg.update_value()
             result = self.reply(task_msg)
             self.result_pool[task_id] = result
 
