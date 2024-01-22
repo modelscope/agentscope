@@ -14,6 +14,7 @@ from agentscope.constants import (
     _DEFAULT_SUBDIR_CODE,
     _DEFAULT_SUBDIR_FILE,
     _DEFAULT_SUBDIR_INVOKE,
+    _DEFAULT_SQLITE_DB_PATH,
     _DEFAULT_IMAGE_NAME,
 )
 
@@ -48,6 +49,10 @@ class _FileManager:
             os.makedirs(path)
         return path
 
+    def _get_file_path(self, file_name: str) -> str:
+        """Get the path of the file."""
+        return os.path.join(self.dir, Runtime.runtime_id, file_name)
+
     @property
     def dir_log(self) -> str:
         """The directory for saving logs."""
@@ -69,11 +74,17 @@ class _FileManager:
         """The directory for saving api invocations."""
         return self._get_and_create_subdir(_DEFAULT_SUBDIR_INVOKE)
 
+    @property
+    def path_db(self) -> str:
+        """The path to the sqlite db file."""
+        return self._get_file_path(_DEFAULT_SQLITE_DB_PATH)
+
     def init(self, save_dir: str, save_api_invoke: bool = False) -> None:
         """Set the directory for saving files."""
         self.dir = save_dir
-        if not os.path.exists(save_dir):
-            os.makedirs(save_dir)
+        runtime_dir = os.path.join(save_dir, Runtime.runtime_id)
+        if not os.path.exists(runtime_dir):
+            os.makedirs(runtime_dir)
 
         self.save_api_invoke = save_api_invoke
 

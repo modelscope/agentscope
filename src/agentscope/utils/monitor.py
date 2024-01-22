@@ -2,11 +2,17 @@
 """ Monitor for agentscope """
 
 import re
-import copy
+import sqlite3
 from abc import ABC
 from abc import abstractmethod
-from typing import Optional, Any
+from contextlib import contextmanager
+from typing import Optional, Generator
 from loguru import logger
+
+from agentscope.constants import (
+    _DEFAULT_MONITOR_TABLE_NAME,
+    _DEFAULT_SQLITE_DB_PATH,
+)
 
 
 class MonitorBase(ABC):
@@ -60,10 +66,10 @@ class MonitorBase(ABC):
             `bool`: whether the operation success.
         """
 
-    def update(self, **kwargs: Any) -> None:
+    def update(self, values: dict, prefix: Optional[str] = None) -> None:
         """Update multiple metrics at once."""
-        for k, v in kwargs.items():
-            self.add(k, v)
+        for k, v in values:
+            self.add(get_full_name(prefix=prefix, name=k), v)
 
     @abstractmethod
     def clear(self, metric_name: str) -> bool:
@@ -182,64 +188,160 @@ class MonitorBase(ABC):
                 }
         """
 
+    @abstractmethod
+    def register_budget(
+        self,
+        model_name: str,
+        value: float,
+        prefix: Optional[str] = "local",
+    ) -> bool:
+        """Register model call budget to the monitor, the monitor will raise
+        QuotaExceededError, when budget is exceeded.
+
+        Args:
+            model_name (`str`): model that requires budget.
+            value (`float`): the budget value.
+            prefix (`Optional[str]`, default `None`): used to distinguish
+                multiple budget registrations. For multiple registrations with
+                the same `prefix`, only the first time will take effect.
+
+        Returns:
+            `bool`: whether the operation success.
+        """
+
+
+def get_full_name(name: str, prefix: Optional[str] = None) -> str:
+    """Get the full name of a metric.
+
+    Args:
+        metric_name (`str`): name of a metric.
+        prefix (` Optional[str]`, default `None`): metric prefix.
+
+    Returns:
+        `str`: the full name of the metric
+    """
+    if prefix is None:
+        return name
+    else:
+        return f"{prefix}.{name}"
+
 
 class QuotaExceededError(Exception):
     """An Exception used to indicate that a certain metric exceeds quota"""
 
-    def __init__(self, metric_name: str, quota: float) -> None:
-        self.message = f"Metric [{metric_name}] exceed quota [{quota}]"
+    def __init__(
+        self,
+        name: str,
+    ) -> None:
+        """Init a QuotaExceedError instance.
+
+        Args:
+            name (`str`): name of the metric which exceeds quota.
+        """
+        self.message = f"Metric [{name}] exceeds quota."
+        self.name = name
         super().__init__(self.message)
 
 
-def return_false_if_not_exists(  # type: ignore [no-untyped-def]
-    func,
-):
-    """A decorator used to check whether the attribute exists.
-    It will return False directly without executing the function,
-    if the metric does not exist.
+@contextmanager
+def sqlite_transaction(db_path: str) -> Generator:
+    """Get a sqlite transaction cursor.
+
+    Args:
+        db_path (`str`): path to the sqlite db file
+
+    Yields:
+        `Generator`: a cursor with transaction
     """
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    try:
+        conn.execute("BEGIN")
+        yield cursor
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        raise e
+    finally:
+        cursor.close()
+        conn.close()
 
-    def inner(
-        monitor: MonitorBase,
-        metric_name: str,
-        *args: tuple,
-        **kwargs: dict,
-    ) -> bool:
-        if not monitor.exists(metric_name):
-            logger.warning(f"Metric [{metric_name}] not exists.")
-            return False
-        return func(monitor, metric_name, *args, **kwargs)
 
-    return inner
+@contextmanager
+def sqlite_cursor(db_path: str) -> Generator:
+    """Get a sqlite cursor.
 
+    Args:
+        db_path (`str`): path to the sqlite db file
 
-def return_none_if_not_exists(  # type: ignore [no-untyped-def]
-    func,
-):
-    """A decorator used to check whether the attribute exists.
-    It will return None directly without executing the function,
-    if the metric does not exist.
+    Yields:
+        `Generator`: a cursor
     """
-
-    def inner(  # type: ignore [no-untyped-def]
-        monitor: MonitorBase,
-        metric_name: str,
-        *args: tuple,
-        **kwargs: dict,
-    ):
-        if not monitor.exists(metric_name):
-            logger.warning(f"Metric [{metric_name}] not exists.")
-            return None
-        return func(monitor, metric_name, *args, **kwargs)
-
-    return inner
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    try:
+        yield cursor
+    finally:
+        cursor.close()
+        conn.close()
 
 
-class DictMonitor(MonitorBase):
-    """MonitorBase implementation based on dictionary."""
+class SqliteMonitor(MonitorBase):
+    """A monitor based on sqlite"""
 
-    def __init__(self) -> None:
-        self.metrics = {}
+    def __init__(
+        self,
+        db_path: str,
+        table_name: str = _DEFAULT_MONITOR_TABLE_NAME,
+        drop_exists: bool = False,
+    ) -> None:
+        """Initialize a SqliteMonitor.
+
+        Args:
+            db_path (`str`): path to the sqlite db file.
+            table_name (`str`, optional): the table name used by the monitor.
+                Defaults to _DEFAULT_MONITOR_TABLE_NAME.
+            drop_exists (bool, optional): whether to delete the original table
+            when the table already exists. Defaults to False.
+        """
+        super().__init__()
+        self.db_path = db_path
+        self.table_name = table_name
+        self._create_monitor_table(drop_exists)
+        logger.info(
+            f"SqliteMonitor initialization completed at [{self.db_path}]",
+        )
+
+    def _create_monitor_table(self, drop_exists: bool = False) -> None:
+        """Internal method to create a table in sqlite3."""
+        with sqlite_transaction(self.db_path) as cursor:
+            if drop_exists:
+                cursor.execute(f"DROP TABLE IF EXISTS {self.table_name};")
+            cursor.execute(
+                f"""
+                CREATE TABLE IF NOT EXISTS {self.table_name} (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT UNIQUE NOT NULL,
+                    value REAL NOT NULL,
+                    quota REAL,
+                    unit TEXT
+                );""",
+            )
+            cursor.execute(
+                f"""
+                CREATE TRIGGER IF NOT EXISTS {self.table_name}_quota_exceeded
+                BEFORE UPDATE ON {self.table_name}
+                FOR EACH ROW
+                WHEN OLD.quota is not NULL AND NEW.value > OLD.quota
+                BEGIN
+                    SELECT RAISE(FAIL, 'QuotaExceeded');
+                END;
+                """,
+            )
+        logger.info(f"Init [{self.table_name}] as the monitor table")
+        logger.info(
+            f"Init [{self.table_name}_quota_exceeded] as the monitor trigger",
+        )
 
     def register(
         self,
@@ -247,84 +349,269 @@ class DictMonitor(MonitorBase):
         metric_unit: Optional[str] = None,
         quota: Optional[float] = None,
     ) -> bool:
-        if metric_name in self.metrics:
-            logger.warning(f"Metric [{metric_name}] is already registered.")
-            return False
-        self.metrics[metric_name] = {
-            "value": 0.0,
-            "unit": metric_unit,
-            "quota": quota,
-        }
-        logger.info(
-            f"Register metric [{metric_name}] to Monitor with unit "
-            f"[{metric_unit}] and quota [{quota}]",
-        )
-        return True
+        with sqlite_transaction(self.db_path) as cursor:
+            if self._exists(cursor, metric_name):
+                return False
+            cursor.execute(
+                f"""
+                INSERT INTO {self.table_name} (name, value, quota, unit)
+                VALUES (?, ?, ?, ?)
+                """,
+                (metric_name, 0.0, quota, metric_unit),
+            )
+            logger.info(
+                f"Register metric [{metric_name}] to SqliteMonitor with unit "
+                f"[{metric_unit}] and quota [{quota}]",
+            )
+            return True
 
-    @return_false_if_not_exists
+    def _add(
+        self,
+        cursor: sqlite3.Cursor,
+        metric_name: str,
+        value: float,
+    ) -> None:
+        try:
+            cursor.execute(
+                f"""
+                    UPDATE {self.table_name}
+                    SET value = value + ?
+                    WHERE name = ?
+                """,
+                (value, metric_name),
+            )
+        except sqlite3.IntegrityError as e:
+            raise QuotaExceededError(metric_name) from e
+
     def add(self, metric_name: str, value: float) -> bool:
-        self.metrics[metric_name]["value"] += value
-        if (
-            self.metrics[metric_name]["quota"] is not None
-            and self.metrics[metric_name]["value"]
-            > self.metrics[metric_name]["quota"]
-        ):
-            logger.warning(f"Metric [{metric_name}] quota exceeded.")
-            raise QuotaExceededError(
-                metric_name=metric_name,
-                quota=self.metrics[metric_name]["quota"],
+        with sqlite_transaction(self.db_path) as cursor:
+            if not self._exists(cursor, metric_name):
+                return False
+            self._add(cursor, metric_name, value)
+            return True
+
+    def clear(self, metric_name: str) -> bool:
+        with sqlite_transaction(self.db_path) as cursor:
+            if not self._exists(cursor, metric_name):
+                return False
+            cursor.execute(
+                f"""
+                UPDATE {self.table_name}
+                SET value = value + ?
+                WHERE name = ?
+            """,
+                (0.0, metric_name),
+            )
+            return True
+
+    def remove(self, metric_name: str) -> bool:
+        with sqlite_transaction(self.db_path) as cursor:
+            if not self._exists(cursor, metric_name):
+                return False
+            cursor.execute(
+                f"""
+                DELETE FROM {self.table_name}
+                WHERE name = ?""",
+                (metric_name,),
             )
         return True
 
-    def exists(self, metric_name: str) -> bool:
-        return metric_name in self.metrics
+    def _get_metric(self, cursor: sqlite3.Cursor, metric_name: str) -> dict:
+        cursor.execute(
+            f"""
+            SELECT value, quota, unit FROM {self.table_name}
+            WHERE name = ?""",
+            (metric_name,),
+        )
+        row = cursor.fetchone()
+        if row:
+            value, quota, unit = row
+            return {
+                "value": value,
+                "quota": quota,
+                "unit": unit,
+            }
+        else:
+            raise RuntimeError(f"Fail to get metric {metric_name}")
 
-    @return_false_if_not_exists
-    def clear(self, metric_name: str) -> bool:
-        self.metrics[metric_name]["value"] = 0.0
-        return True
-
-    @return_false_if_not_exists
-    def remove(self, metric_name: str) -> bool:
-        self.metrics.pop(metric_name)
-        logger.info(f"Remove metric [{metric_name}] from monitor.")
-        return True
-
-    @return_none_if_not_exists
     def get_value(self, metric_name: str) -> Optional[float]:
-        if metric_name not in self.metrics:
-            return None
-        return self.metrics[metric_name]["value"]
+        with sqlite_cursor(self.db_path) as cursor:
+            if not self._exists(cursor, metric_name):
+                return None
+            metric = self._get_metric(cursor, metric_name)
+            return metric["value"]
 
-    @return_none_if_not_exists
-    def get_unit(self, metric_name: str) -> Optional[str]:
-        if metric_name not in self.metrics:
-            return None
-        return self.metrics[metric_name]["unit"]
-
-    @return_none_if_not_exists
     def get_quota(self, metric_name: str) -> Optional[float]:
-        return self.metrics[metric_name]["quota"]
+        with sqlite_cursor(self.db_path) as cursor:
+            if not self._exists(cursor, metric_name):
+                return None
+            metric = self._get_metric(cursor, metric_name)
+            return metric["quota"]
 
-    @return_false_if_not_exists
     def set_quota(self, metric_name: str, quota: float) -> bool:
-        self.metrics[metric_name]["quota"] = quota
-        return True
+        with sqlite_transaction(self.db_path) as cursor:
+            if not self._exists(cursor, metric_name):
+                return False
+            cursor.execute(
+                f"""
+                UPDATE {self.table_name}
+                SET quota = ?
+                WHERE name = ?
+            """,
+                (quota, metric_name),
+            )
+            return True
 
-    @return_none_if_not_exists
+    def get_unit(self, metric_name: str) -> Optional[str]:
+        with sqlite_cursor(self.db_path) as cursor:
+            if not self._exists(cursor, metric_name):
+                return None
+            metric = self._get_metric(cursor, metric_name)
+            return metric["unit"]
+
     def get_metric(self, metric_name: str) -> Optional[dict]:
-        return copy.deepcopy(self.metrics[metric_name])
+        with sqlite_cursor(self.db_path) as cursor:
+            if not self._exists(cursor, metric_name):
+                return None
+            return self._get_metric(cursor, metric_name)
 
     def get_metrics(self, filter_regex: Optional[str] = None) -> dict:
+        with sqlite_cursor(self.db_path) as cursor:
+            cursor.execute(f"SELECT * FROM {self.table_name}")
+            rows = cursor.fetchall()
+            metrics = {
+                row[1]: {
+                    "value": row[2],
+                    "quota": row[3],
+                    "unit": row[4],
+                }
+                for row in rows
+            }
         if filter_regex is None:
-            return copy.deepcopy(self.metrics)
+            return metrics
         else:
             pattern = re.compile(filter_regex)
             return {
-                key: copy.deepcopy(value)
-                for key, value in self.metrics.items()
+                key: value
+                for key, value in metrics.items()
                 if pattern.search(key)
             }
+
+    def _exists(self, cursor: sqlite3.Cursor, name: str) -> bool:
+        cursor.execute(
+            f"""
+            SELECT 1 FROM {self.table_name}
+            WHERE name = ? LIMIT 1
+        """,
+            (name,),
+        )
+        return cursor.fetchone() is not None
+
+    def exists(self, metric_name: str) -> bool:
+        with sqlite_cursor(self.db_path) as cursor:
+            return self._exists(cursor, metric_name)
+
+    def update(self, values: dict, prefix: Optional[str] = None) -> None:
+        with sqlite_transaction(self.db_path) as cursor:
+            for metric_name, value in values.items():
+                self._add(
+                    cursor,
+                    get_full_name(
+                        name=metric_name,
+                        prefix=prefix,
+                    ),
+                    value,
+                )
+
+    def _create_update_cost_trigger(
+        self,
+        token_metric: str,
+        cost_metric: str,
+        unit_price: float,
+    ) -> None:
+        with sqlite_transaction(self.db_path) as cursor:
+            cursor.execute(
+                f"""
+                CREATE TRIGGER IF NOT EXISTS
+                "{self.table_name}_{token_metric}_{cost_metric}_price"
+                AFTER UPDATE OF value ON "{self.table_name}"
+                FOR EACH ROW
+                WHEN NEW.name = "{token_metric}"
+                BEGIN
+                    UPDATE {self.table_name}
+                    SET value = value + (NEW.value - OLD.value) * {unit_price}
+                    WHERE name = "{cost_metric}";
+                END;
+                """,
+            )
+
+    def register_budget(
+        self,
+        model_name: str,
+        value: float,
+        prefix: Optional[str] = None,
+    ) -> bool:
+        logger.info(f"set budget {value} to {model_name}")
+        pricing = _get_pricing()
+        if model_name in pricing:
+            budget_metric_name = get_full_name(
+                name="cost",
+                prefix=prefix,
+            )
+            ok = self.register(
+                metric_name=budget_metric_name,
+                metric_unit="dollor",
+                quota=value,
+            )
+            if not ok:
+                return False
+            for metric_name, unit_price in pricing[model_name].items():
+                token_metric_name = get_full_name(
+                    name=metric_name,
+                    prefix=prefix,
+                )
+                self.register(
+                    metric_name=token_metric_name,
+                    metric_unit="token",
+                )
+                self._create_update_cost_trigger(
+                    token_metric_name,
+                    budget_metric_name,
+                    unit_price,
+                )
+            return True
+        else:
+            logger.warning(
+                f"Calculate budgets for model [{model_name}] is not supported",
+            )
+            return False
+
+
+def _get_pricing() -> dict:
+    """Get pricing as a dict
+
+    Returns:
+        `dict`: the dict with pricing information.
+    """
+    # TODO: get pricing from files
+    return {
+        "gpt-4-turbo": {
+            "prompt_tokens": 0.00001,
+            "completion_tokens": 0.00003,
+        },
+        "gpt-4": {
+            "prompt_tokens": 0.00003,
+            "completion_tokens": 0.00006,
+        },
+        "gpt-4-32k": {
+            "prompt_tokens": 0.00006,
+            "completion_tokens": 0.00012,
+        },
+        "gpt-3.5-turbo": {
+            "prompt_tokens": 0.000001,
+            "completion_tokens": 0.000002,
+        },
+    }
 
 
 class MonitorFactory:
@@ -334,24 +621,31 @@ class MonitorFactory:
 
         from agentscope.utils import MonitorFactory
         monitor = MonitorFactory.get_monitor()
-
     """
 
     _instance = None
 
     @classmethod
-    def get_monitor(cls, impl_type: Optional[str] = None) -> MonitorBase:
+    def get_monitor(
+        cls,
+        impl_type: Optional[str] = None,
+        db_path: str = _DEFAULT_SQLITE_DB_PATH,
+    ) -> MonitorBase:
         """Get the monitor instance.
+
+        Args:
+            impl_type (`Optional[str]`, optional): the type of monitor,
+                currently supports `sqlite` only.
+            db_path (`Optional[str]`, optional): path to the sqlite db file.
 
         Returns:
             `MonitorBase`: the monitor instance.
         """
         if cls._instance is None:
-            # todo: init a specific monitor implementation by input args
-            if impl_type is None or impl_type.lower() == "dict":
-                cls._instance = DictMonitor()
+            if impl_type is None or impl_type.lower() == "sqlite":
+                cls._instance = SqliteMonitor(db_path=db_path)
             else:
                 raise NotImplementedError(
                     "Monitor with type [{type}] is not implemented.",
                 )
-        return cls._instance
+        return cls._instance  # type: ignore [return-value]
