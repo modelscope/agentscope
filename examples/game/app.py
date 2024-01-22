@@ -3,7 +3,6 @@ from typing import List
 import os
 import yaml
 import datetime
-import uuid
 import threading
 from collections import defaultdict
 
@@ -27,6 +26,15 @@ enable_web_ui()
 
 def init_uid_list():
     return []
+
+
+def check_uuid(uid):
+    if not uid or uid == '':
+        if os.getenv('MODELSCOPE_ENVIRONMENT') == 'studio':
+            raise gr.Error('请登陆后使用! (Please login first)')
+        else:
+            uid = 'local_user'
+    return uid
 
 
 glb_history_dict = defaultdict(init_uid_list)
@@ -70,6 +78,7 @@ def format_cover_html(config: dict, bot_avatar_path="assets/bg.png"):
 
 
 def export_chat_history(uid):
+    check_uuid(uid)
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     export_filename = f"chat_history_{timestamp}.txt"
 
@@ -87,6 +96,7 @@ def get_chat(uid) -> List[List]:
         `List[List]`: The parsed history, list of tuple, [(role, msg), ...]
 
     """
+    check_uuid(uid)
     global glb_history_dict
     line = get_chat_msg(uid=uid)
     if line is not None:
@@ -113,12 +123,14 @@ if __name__ == "__main__":
             is_init = True
 
     def check_for_new_session(uid):
+        check_uuid(uid)
         if uid not in glb_signed_user:
             glb_signed_user.append(uid)
             game_thread = threading.Thread(target=start_game, args=(uid,))
             game_thread.start()
 
     def start_game(uid):
+        check_uuid(uid)
         with open("./config/game_config.yaml", "r", encoding="utf-8") as file:
             GAME_CONFIG = yaml.safe_load(file)
 
@@ -134,8 +146,7 @@ if __name__ == "__main__":
                 print("重置成功")
 
     with gr.Blocks(css="assets/app.css") as demo:
-        # Users can select the interested exp
-        uuid = gr.State(uuid.uuid4)
+        uuid = gr.Textbox(label='modelscope_uuid', visible=False)
 
         welcome = {
             "name": "饮食男女",
@@ -186,6 +197,7 @@ if __name__ == "__main__":
                 )
 
         def send_message(msg, uid):
+            check_uuid(uid)
             send_player_input(msg, uid=uid)
             send_player_msg(msg, "你", uid=uid)
             return ""
@@ -196,6 +208,7 @@ if __name__ == "__main__":
         )
 
         def send_reset_message(uid):
+            check_uuid(uid)
             global glb_history_dict
             glb_history_dict[uid] = init_uid_list()
             send_player_input("**Reset**", uid=uid)
