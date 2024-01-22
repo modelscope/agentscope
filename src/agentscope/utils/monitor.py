@@ -211,7 +211,7 @@ class MonitorBase(ABC):
 
 
 def get_full_name(name: str, prefix: Optional[str] = None) -> str:
-    """get the full name of a metric.
+    """Get the full name of a metric.
 
     Args:
         metric_name (`str`): name of a metric.
