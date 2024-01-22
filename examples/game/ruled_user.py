@@ -156,8 +156,8 @@ class RuledUser(AgentBase):
             ),
         ]
 
-        choose_ingredient = f"""请选择需要的食材: <select-box shape="card"
-                     type="checkbox" item-width="1000"
+        choose_ingredient = f"""【系统】请选择需要的食材: <select-box shape="card"
+                     type="checkbox" item-width="auto"
                     options='{json.dumps(ingredients_list)}' select-once
                     submit-text="确定"></select-box>"""
 

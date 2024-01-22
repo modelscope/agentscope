@@ -53,7 +53,7 @@ def invited_group_chat(
             ]
 
             choose_during_chatting = f"""【系统】你要发言吗？ <select-box shape="card"
-                               columns="3" type="checkbox" options=
+                                type="checkbox" item-width="auto" options=
                                '
                                {json.dumps(["是", "否", "结束邀请对话"])}'
                                select-once></select-box>"""
@@ -101,7 +101,7 @@ def invited_group_chat(
 
             choose_role_story = f"""【系统】：需要以哪位角色的视角生成一段完整故事吗？: <select-box
             shape="card"
-                        columns="10" type="checkbox" options=
+                        item-width="auto" type="checkbox" options=
                         '{json.dumps(invited_names + ["跳过"])}'
                         select-once></select-box>"""
 
@@ -204,7 +204,7 @@ def one_on_one_loop(customers, player, uid):
         ]
 
         choose_after_meal = f"""【系统】接下来你会说些什么吗？
-            <select-box shape="card" columns="1" type="checkbox" options=
+            <select-box shape="card" item-width="auto" type="checkbox" options=
             '{json.dumps(["感谢您的今天来我们这里消费。这里是赠送的果盘，"
                                     "请您享用。还有什么是我能为您做的呢？",
                                  "感谢您的光顾。(结束与该顾客的当天对话)", "自定义输入"])}'
@@ -261,7 +261,7 @@ def invite_customers(customers, uid):
     ]
 
     choose_available_customers = f"""【系统】今天就没有更多顾客了，您明天有什么邀请计划吗？:
-    <select-box shape="card columns="4" type="checkbox" options=
+    <select-box shape="card"  type="checkbox" item-width="auto" options=
                 '{json.dumps(available_customers)}' select-once
                 submit-text="确定"></select-box>"""
 
