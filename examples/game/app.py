@@ -32,7 +32,7 @@ def init_uid_list():
 glb_history_dict = defaultdict(init_uid_list)
 glb_signed_user = []
 is_init = False
-MAX_NUM_DISPLAY_MSG = 20
+MAX_NUM_DISPLAY_MSG = 10
 
 import base64
 
@@ -268,7 +268,7 @@ if __name__ == "__main__":
 
         # update chat history
         demo.load(init_game)
-        demo.load(check_for_new_session, inputs=[uuid], every=0.1)
+        demo.load(check_for_new_session, inputs=[uuid], every=0.25)
         demo.load(get_chat, inputs=[uuid], outputs=chatbot, every=0.5)
 
     demo.queue()

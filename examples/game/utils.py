@@ -25,15 +25,15 @@ class GameCheckpoint:
         self,
         stage_per_night: StagePerNight,
         customers: list,
-        cur_plots: list,
-        done_plots: list,
+        cur_plots: list[int],
+        all_plots: dict,
         invited_customers: list,
         visit_customers: list,
     ):
         self.stage_per_night = stage_per_night
         self.customers = customers
         self.cur_plots = cur_plots
-        self.done_plots = done_plots
+        self.all_plots = all_plots
         self.invited_customers = invited_customers
         self.visit_customers = visit_customers
 
@@ -65,80 +65,6 @@ def get_avatar_files(assets_path="assets"):
 
 def get_a_random_avatar():
     return random.choices(get_avatar_files())
-
-
-def check_active_plot(
-    plots: list[dict],
-    curr_done: Optional[int],
-) -> tuple[list[str], list[int]]:
-    """
-    params: plots: list of plots
-    params: curr_done: current done plot index
-    return
-    to_be_activated: list of customers to be activate
-    active_plots: list of active plots
-    Current plots are list of dicts as following:
-    [
-        {
-            "main_roles": ["customer1", "customer2"],
-            "predecessor_plots": None,
-            "supporting_roles": ["customer3", "customer4"]
-        },
-        {
-            "main_roles": ["customer3", "customer4"],
-            "predecessor_plots": [0],
-            "supporting_roles": ["customer2", "customer5"],
-        },
-        ...
-    ]
-    """
-    # insure all plots have been added 'state'
-    for p in plots:
-        if "state" not in p:
-            p["state"] = "non-active"
-    to_be_activated = []
-    active_plots = []
-
-    if curr_done is not None:
-        if isinstance(curr_done, int):
-            plots[curr_done]["state"] = "done"
-        if isinstance(curr_done, list):
-            for i in curr_done:
-                plots[i]["state"] = "done"
-
-    # activate those with dependencies and the dependencies are done
-    for idx, p in enumerate(plots):
-        # activate all plots has no dependency and not done yet
-        if p["predecessor_plots"] is None and p["state"] == "non-active":
-            to_be_activated += p["main_roles"]
-            to_be_activated += (
-                p["supporting_roles"]
-                if p["supporting_roles"] is not None
-                else []
-            )
-            p["state"] = "active"
-            active_plots.append(idx)
-        elif p["predecessor_plots"] is not None:
-            to_activate = all(
-                [
-                    plots[pre_p]["state"] == "done"
-                    for pre_p in p["predecessor_plots"]
-                ],
-            )
-
-            if to_activate:
-                p["state"] = "active"
-                to_be_activated += p["main_roles"]
-                to_be_activated += (
-                    p["supporting_roles"]
-                    if p["supporting_roles"] is not None
-                    else []
-                )
-                active_plots.append(idx)
-        elif p["state"] == "active":
-            active_plots.append(idx)
-
-    return to_be_activated, active_plots
 
 
 def get_use_web_ui():
