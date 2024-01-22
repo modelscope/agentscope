@@ -99,7 +99,7 @@ def send_chat_msg(
     flushing=False,
     avatar="./assets/bot.jpg",
 ):
-    print(msg)
+    print("send_chat_msg:", msg)
     if get_use_web_ui():
         global glb_uid_dict
         glb_queue_chat_msg = glb_uid_dict[uid]["glb_queue_chat_msg"]
@@ -122,7 +122,7 @@ def send_player_msg(
     flushing=False,
     avatar="./assets/user.jpg",
 ):
-    print(msg)
+    print("send_player_msg:", msg)
     if get_use_web_ui():
         global glb_uid_dict
         glb_queue_chat_msg = glb_uid_dict[uid]["glb_queue_chat_msg"]
