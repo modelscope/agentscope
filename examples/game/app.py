@@ -104,6 +104,7 @@ def get_chat(uid) -> List[List]:
 
 
 def fn_choice(data: gr.EventData, uid):
+    uid = check_uuid(uid)
     send_player_input(data._data["value"], uid=uid)
 
 
