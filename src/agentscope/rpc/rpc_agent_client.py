@@ -1,13 +1,19 @@
 # -*- coding: utf-8 -*-
 """ Client of rpc agent server """
 
+from typing import Any
+
 try:
     import grpc
 except ImportError:
     grpc = None
 
-from agentscope.rpc.rpc_agent_pb2 import RpcMsg  # pylint: disable=E0611
-from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentStub
+try:
+    from agentscope.rpc.rpc_agent_pb2 import RpcMsg  # pylint: disable=E0611
+    from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentStub
+except ModuleNotFoundError:
+    RpcMsg = Any
+    RpcAgentStub = Any
 
 
 class RpcAgentClient:

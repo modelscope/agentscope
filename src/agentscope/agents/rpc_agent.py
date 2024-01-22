@@ -32,15 +32,15 @@ except ImportError:
 from agentscope._init import _INIT_SETTINGS
 from agentscope._init import init
 from agentscope.agents.agent import AgentBase
-from agentscope.rpc.rpc_agent_pb2 import RpcMsg  # pylint: disable=E0611
 from agentscope.message import MessageBase
 from agentscope.message import Msg
 from agentscope.message import PlaceholderMessage
 from agentscope.message import deserialize
 from agentscope.message import serialize
 from agentscope.utils.logging_utils import logger
-from agentscope.rpc.rpc_agent_client import RpcAgentClient
-from agentscope.rpc.rpc_agent_pb2_grpc import (
+from agentscope.rpc import (
+    RpcAgentClient,
+    RpcMsg,
     RpcAgentServicer,
     add_RpcAgentServicer_to_server,
 )
