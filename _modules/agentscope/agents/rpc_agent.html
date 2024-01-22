@@ -122,15 +122,15 @@
 <span class="kn">from</span> <span class="nn">agentscope._init</span> <span class="kn">import</span> <span class="n">_INIT_SETTINGS</span>
 <span class="kn">from</span> <span class="nn">agentscope._init</span> <span class="kn">import</span> <span class="n">init</span>
 <span class="kn">from</span> <span class="nn">agentscope.agents.agent</span> <span class="kn">import</span> <span class="n">AgentBase</span>
-<span class="kn">from</span> <span class="nn">agentscope.rpc.rpc_agent_pb2</span> <span class="kn">import</span> <span class="n">RpcMsg</span>  <span class="c1"># pylint: disable=E0611</span>
 <span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">MessageBase</span>
 <span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
 <span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">PlaceholderMessage</span>
 <span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">deserialize</span>
 <span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">serialize</span>
 <span class="kn">from</span> <span class="nn">agentscope.utils.logging_utils</span> <span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">from</span> <span class="nn">agentscope.rpc.rpc_agent_client</span> <span class="kn">import</span> <span class="n">RpcAgentClient</span>
-<span class="kn">from</span> <span class="nn">agentscope.rpc.rpc_agent_pb2_grpc</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">agentscope.rpc</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">RpcAgentClient</span><span class="p">,</span>
+    <span class="n">RpcMsg</span><span class="p">,</span>
     <span class="n">RpcAgentServicer</span><span class="p">,</span>
     <span class="n">add_RpcAgentServicer_to_server</span><span class="p">,</span>
 <span class="p">)</span>
