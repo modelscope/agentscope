@@ -18,27 +18,27 @@ jobs:
       OS: ${{ matrix.os }}
       PYTHON: '3.9'
     steps:
-    - name: Checkout repository
+    - name: Checkout Repository
       uses: actions/checkout@master
     - name: Setup Python ${{ matrix.python-version }}
       uses: actions/setup-python@master
       with:
         python_version: ${{ matrix.python-version }}
-    - id: deployment
+    - name: Install Dependencies
+      run: |
+        pip install -q -e .[full]
+    - id: build
       name: Build Documentation
-      uses: sphinx-notes/pages@v3
-      with:
-        documentation_path: ./docs/sphinx_doc/source
-        python_version: ${{ matrix.python-version }}
-        publish: false
-        requirements_path: ./docs/sphinx_doc/requirements.txt
+      run: |
+        cd docs/sphinx_doc
+        make clean html
     - name: Upload Documentation
       uses: actions/upload-artifact@v3
       with:
         name: SphinxDoc
-        path: ${{ steps.deployment.outputs.artifact }}
+        path: 'docs/sphinx_doc/build'
     - uses: peaceiris/actions-gh-pages@v3
       if: ${{ github.event_name == 'push' }}
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ${{ steps.deployment.outputs.artifact }}
+        publish_dir: 'docs/sphinx_doc/build'
