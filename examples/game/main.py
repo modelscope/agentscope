@@ -213,8 +213,10 @@ def one_on_one_loop(customers, player, uid):
         while True:
             answer = query_answer(questions, "ans", uid=uid)
             if isinstance(answer, str):
-                send_chat_msg("【系统】请在列表中选择。",
-                              uid=uid)
+                send_chat_msg(
+                    "【系统】请在列表中选择。",
+                    uid=uid,
+                )
                 continue
             break
 
@@ -223,14 +225,14 @@ def one_on_one_loop(customers, player, uid):
         if answer == "感谢您的光顾。(结束与该顾客的当天对话)":
             continue
         elif answer == "自定义输入":
-            answer = player({"content": answer})['content']
+            answer = player({"content": answer})["content"]
         msg = Msg(role="user", name="餐馆老板", content=answer)
         player.observe(msg)
         while True:
             msg = customer(msg)
             # print(f"{customer_reply.name}（顾客）:" + customer_reply.content)
 
-            send_pretty_msg(msg, uid=uid,avatar=customer.avatar)
+            send_pretty_msg(msg, uid=uid, avatar=customer.avatar)
             send_chat_msg("【系统】若不输入任何内容直接按回车键，顾客将离开餐馆。", uid=uid)
             msg = player(msg)
             if len(msg["content"]) == 0:
@@ -264,7 +266,7 @@ def invite_customers(customers, uid):
     send_chat_msg(choose_available_customers, flushing=False, uid=uid)
 
     while True:
-        answer = query_answer(select_customer, "invited",  uid=uid)
+        answer = query_answer(select_customer, "invited", uid=uid)
         if isinstance(answer, str):
             send_chat_msg("【系统】请在列表中选择。", uid=uid)
             continue
@@ -361,9 +363,10 @@ def main(args) -> None:
             if done_plot_idx is not None:
                 # once successful finish a current plot...
                 # deactivate the active roles in the done plot
-                deactivate_customers = \
-                    GAME_CONFIG["plots"][done_plot_idx]["main_roles"] + \
-                    GAME_CONFIG["plots"][done_plot_idx]["supporting_roles"]
+                deactivate_customers = (
+                    GAME_CONFIG["plots"][done_plot_idx]["main_roles"]
+                    + GAME_CONFIG["plots"][done_plot_idx]["supporting_roles"]
+                )
                 for c in checkpoint.customers:
                     if c.name in deactivate_customers:
                         c.deactivate_plot()

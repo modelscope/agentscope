@@ -35,25 +35,28 @@ is_init = False
 MAX_NUM_DISPLAY_MSG = 20
 
 import base64
+
+
 # 图片本地路径转换为 base64 格式
 def covert_image_to_base64(image_path):
     # 获得文件后缀名
-    ext = image_path.split('.')[-1]
-    if ext not in ['gif', 'jpeg', 'png']:
-        ext = 'jpeg'
+    ext = image_path.split(".")[-1]
+    if ext not in ["gif", "jpeg", "png"]:
+        ext = "jpeg"
 
-    with open(image_path, 'rb') as image_file:
+    with open(image_path, "rb") as image_file:
         # Read the file
         encoded_string = base64.b64encode(image_file.read())
 
         # Convert bytes to string
-        base64_data = encoded_string.decode('utf-8')
+        base64_data = encoded_string.decode("utf-8")
 
-        # 生成base64编码的地址 
-        base64_url = f'data:image/{ext};base64,{base64_data}'
+        # 生成base64编码的地址
+        base64_url = f"data:image/{ext};base64,{base64_data}"
         return base64_url
 
-def format_cover_html(config: dict, bot_avatar_path='assets/bg.png'):
+
+def format_cover_html(config: dict, bot_avatar_path="assets/bg.png"):
     image_src = covert_image_to_base64(bot_avatar_path)
     return f"""
 <div class="bot_cover">
@@ -64,6 +67,7 @@ def format_cover_html(config: dict, bot_avatar_path='assets/bg.png'):
     <div class="bot_desp">{config.get("description", "快来经营你的餐厅吧")}</div>
 </div>
 """
+
 
 def export_chat_history(uid):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -129,27 +133,29 @@ if __name__ == "__main__":
             except ResetException:
                 print("重置成功")
 
-    with gr.Blocks(css='assets/app.css') as demo:
+    with gr.Blocks(css="assets/app.css") as demo:
         # Users can select the interested exp
         uuid = gr.State(uuid.uuid4)
 
         welcome = {
             "name": "饮食男女",
-            "description": "这是一款模拟餐馆经营的文字冒险游戏, 快来开始吧😊"
+            "description": "这是一款模拟餐馆经营的文字冒险游戏, 快来开始吧😊",
         }
 
         user_chat_bot_cover = gr.HTML(format_cover_html(welcome))
-        chatbot = mgr.Chatbot(label="Dialog", show_label=False, height=600, visible=False)
+        chatbot = mgr.Chatbot(
+            label="Dialog", show_label=False, height=600, visible=False
+        )
 
         with gr.Row():
             with gr.Column():
-                    new_button = gr.Button(
-                        value="🚀新的探险",
-                    )
+                new_button = gr.Button(
+                    value="🚀新的探险",
+                )
             with gr.Column():
-                    resume_button = gr.Button(
-                        value="🔥续写情缘",
-                    )
+                resume_button = gr.Button(
+                    value="🔥续写情缘",
+                )
 
         with gr.Row():
             with gr.Column():
@@ -161,11 +167,10 @@ if __name__ == "__main__":
                     visible=False,
                 )
 
-
         with gr.Column():
             send_button = gr.Button(
                 value="📣发送",
-                visible=False
+                visible=False,
             )
 
         export = gr.Accordion("导出选项", open=False, visible=False)
@@ -173,10 +178,6 @@ if __name__ == "__main__":
             with gr.Column():
                 export_button = gr.Button("导出完整游戏记录")
                 export_output = gr.File(label="下载完整游戏记录", visible=False)
-
-
-
-
 
         def send_message(msg, uid):
             send_player_input(msg, uid=uid)
@@ -197,53 +198,68 @@ if __name__ == "__main__":
         def game_ui():
             visible = True
             invisible = False
-            return {chatbot: mgr.Chatbot(visible=visible),
-                    user_chat_input: gr.Text(visible=visible), 
-                    send_button: gr.Button(visible=visible),
-                    new_button: gr.Button(visible=invisible),
-                    resume_button: gr.Button(visible=invisible),
-                    return_welcome_button: gr.Button(visible=visible),
-                    export: gr.Accordion(visible=visible),
-                    user_chat_bot_cover:gr.HTML(visible=invisible)}
+            return {
+                chatbot: mgr.Chatbot(visible=visible),
+                user_chat_input: gr.Text(visible=visible),
+                send_button: gr.Button(visible=visible),
+                new_button: gr.Button(visible=invisible),
+                resume_button: gr.Button(visible=invisible),
+                return_welcome_button: gr.Button(visible=visible),
+                export: gr.Accordion(visible=visible),
+                user_chat_bot_cover: gr.HTML(visible=invisible),
+            }
 
         def welcome_ui():
             visible = True
             invisible = False
-            return {chatbot: mgr.Chatbot(visible=invisible),
-                    user_chat_input: gr.Text(visible=invisible), 
-                    send_button: gr.Button(visible=invisible),
-                    new_button: gr.Button(visible=visible),
-                    resume_button: gr.Button(visible=visible),
-                    return_welcome_button: gr.Button(visible=invisible),
-                    export: gr.Accordion(visible=invisible),
-                    user_chat_bot_cover:gr.HTML(visible=visible)}
+            return {
+                chatbot: mgr.Chatbot(visible=invisible),
+                user_chat_input: gr.Text(visible=invisible),
+                send_button: gr.Button(visible=invisible),
+                new_button: gr.Button(visible=visible),
+                resume_button: gr.Button(visible=visible),
+                return_welcome_button: gr.Button(visible=invisible),
+                export: gr.Accordion(visible=invisible),
+                user_chat_bot_cover: gr.HTML(visible=visible),
+            }
 
-        outputs = [chatbot, user_chat_input, send_button, new_button, resume_button,return_welcome_button, export, user_chat_bot_cover]
-       
+        outputs = [
+            chatbot,
+            user_chat_input,
+            send_button,
+            new_button,
+            resume_button,
+            return_welcome_button,
+            export,
+            user_chat_bot_cover,
+        ]
+
         # submit message
-        send_button.click(send_message, [user_chat_input, uuid], user_chat_input)
-        user_chat_input.submit(send_message, [user_chat_input, uuid], user_chat_input)
+        send_button.click(
+            send_message, [user_chat_input, uuid], user_chat_input
+        )
+        user_chat_input.submit(
+            send_message, [user_chat_input, uuid], user_chat_input
+        )
 
         chatbot.custom(fn=fn_choice, inputs=[uuid])
 
-        # change ui 
+        # change ui
         new_button.click(game_ui, outputs=outputs)
         resume_button.click(game_ui, outputs=outputs)
         return_welcome_button.click(welcome_ui, outputs=outputs)
 
-        # start game 
+        # start game
         new_button.click(send_reset_message, inputs=[uuid])
         resume_button.click(check_for_new_session, inputs=[uuid])
-        
-        # export 
-        export_button.click(export_chat_history, [uuid], export_output)
 
+        # export
+        export_button.click(export_chat_history, [uuid], export_output)
 
         # update chat history
         demo.load(init_game)
         demo.load(check_for_new_session, inputs=[uuid], every=0.1)
         demo.load(get_chat, inputs=[uuid], outputs=chatbot, every=0.5)
-
 
     demo.queue()
     demo.launch()

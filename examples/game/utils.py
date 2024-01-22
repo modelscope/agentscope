@@ -57,12 +57,15 @@ def load_game_checkpoint(checkpoint_path: str) -> GameCheckpoint:
 def speak_print(m: Msg):
     print(f"{BgBrightColor.BLUE}{m.name}{BgBrightColor.OFF}: {m.content}")
 
-def get_avatar_files(assets_path='assets'):
-    files = Path(assets_path).glob('*avatar*')
+
+def get_avatar_files(assets_path="assets"):
+    files = Path(assets_path).glob("*avatar*")
     return [str(file) for file in files]
+
 
 def get_a_random_avatar():
     return random.choices(get_avatar_files())
+
 
 def check_active_plot(
     plots: list[dict],
@@ -108,8 +111,11 @@ def check_active_plot(
         # activate all plots has no dependency and not done yet
         if p["predecessor_plots"] is None and p["state"] == "non-active":
             to_be_activated += p["main_roles"]
-            to_be_activated += p["supporting_roles"] if p["supporting_roles"] \
-                                                        is not None else []
+            to_be_activated += (
+                p["supporting_roles"]
+                if p["supporting_roles"] is not None
+                else []
+            )
             p["state"] = "active"
             active_plots.append(idx)
         elif p["predecessor_plots"] is not None:
@@ -123,8 +129,11 @@ def check_active_plot(
             if to_activate:
                 p["state"] = "active"
                 to_be_activated += p["main_roles"]
-                to_be_activated += p["supporting_roles"] if \
-                    p["supporting_roles"] is not None else []
+                to_be_activated += (
+                    p["supporting_roles"]
+                    if p["supporting_roles"] is not None
+                    else []
+                )
                 active_plots.append(idx)
         elif p["state"] == "active":
             active_plots.append(idx)
@@ -153,29 +162,47 @@ def init_uid_queues():
         "glb_queue_chat_input": Queue(),
     }
 
+
 glb_uid_dict = defaultdict(init_uid_queues)
 
-def send_chat_msg(msg, role="系统", uid=None, flushing=False, avatar='./assets/bot.jpg'):
-    print(msg)
-    if get_use_web_ui():
-        global glb_uid_dict
-        glb_queue_chat_msg = glb_uid_dict[uid]["glb_queue_chat_msg"]
-        glb_queue_chat_msg.put([None, 
-                {"text": msg,
-                "flushing": flushing,
-                "avatar": avatar
-                }])
 
-def send_player_msg(msg, role="你", uid= None, flushing=False, avatar='./assets/user.jpg'):
+def send_chat_msg(
+    msg, role="系统", uid=None, flushing=False, avatar="./assets/bot.jpg"
+):
     print(msg)
     if get_use_web_ui():
         global glb_uid_dict
         glb_queue_chat_msg = glb_uid_dict[uid]["glb_queue_chat_msg"]
-        glb_queue_chat_msg.put([ 
-                {"text": msg,
-                "flushing": flushing,
-                "avatar": avatar
-                },None])
+        glb_queue_chat_msg.put(
+            [
+                None,
+                {
+                    "text": msg,
+                    "flushing": flushing,
+                    "avatar": avatar,
+                },
+            ]
+        )
+
+
+def send_player_msg(
+    msg, role="你", uid=None, flushing=False, avatar="./assets/user.jpg"
+):
+    print(msg)
+    if get_use_web_ui():
+        global glb_uid_dict
+        glb_queue_chat_msg = glb_uid_dict[uid]["glb_queue_chat_msg"]
+        glb_queue_chat_msg.put(
+            [
+                {
+                    "text": msg,
+                    "flushing": flushing,
+                    "avatar": avatar,
+                },
+                None,
+            ]
+        )
+
 
 def get_chat_msg(uid=None):
     global glb_uid_dict
@@ -186,17 +213,26 @@ def get_chat_msg(uid=None):
             return line
     return None
 
+
 def send_player_input(msg, role="餐厅老板", uid=None):
     if get_use_web_ui():
         global glb_uid_dict
         glb_queue_chat_input = glb_uid_dict[uid]["glb_queue_chat_input"]
         glb_queue_chat_input.put([None, msg])
 
-def send_pretty_msg(msg, uid=None,flushing=True, avatar='./assets/bot.jpg'):
+
+def send_pretty_msg(msg, uid=None, flushing=True, avatar="./assets/bot.jpg"):
     speak_print(msg)
     if get_use_web_ui():
         global glb_uid_dict
-        send_chat_msg(msg.content, uid = uid, role=msg.name, flushing=flushing, avatar=avatar)
+        send_chat_msg(
+            msg.content,
+            uid=uid,
+            role=msg.name,
+            flushing=flushing,
+            avatar=avatar,
+        )
+
 
 def get_player_input(name=None, uid=None):
     global glb_uid_dict
@@ -213,38 +249,6 @@ def get_player_input(name=None, uid=None):
     return content
 
 
-# <<<<<<< HEAD
-# =======
-# def send_suggests(suggests, uid=None):
-#     msg, _ = suggests
-#     global glb_uid_dict
-#     glb_queue_chat_suggests = glb_uid_dict[uid]["glb_queue_chat_suggests"]
-#     while not glb_queue_chat_suggests.empty():
-#         try:
-#             glb_queue_chat_suggests.get_nowait()
-#         except Empty:
-#             break
-#
-#     if msg == "end":
-#         return
-#     else:
-#         glb_queue_chat_suggests.put(suggests)
-#
-#
-# def get_suggests(uid=None):
-#     msg = None
-#     samples = None
-#
-#     global glb_uid_dict
-#     glb_queue_chat_suggests = glb_uid_dict[uid]["glb_queue_chat_suggests"]
-#
-#     if not glb_queue_chat_suggests.empty():
-#         msg, samples = glb_queue_chat_suggests.get(block=False)
-#         glb_queue_chat_suggests.put((msg, samples))
-#     return msg, samples
-#
-#
-# >>>>>>> origin/game_dev
 def format_choices(choices):
     formatted_choices = ""
     line_length = 0
@@ -267,25 +271,10 @@ def format_choices(choices):
 
 def query_answer(questions: List, key="ans", uid=None):
     if get_use_web_ui():
-# <<<<<<< HEAD
-#
-# =======
-#         suggests = questions[0]
-#         assert isinstance(suggests, inquirer.questions.List)
-#         suggests_msg = (
-#             suggests.message + "\n" + format_choices(suggests.choices)
-#         )
-#         samples = [[choice] for choice in suggests.choices]
-#         msg = suggests.message
-#         send_chat_msg(suggests_msg, uid=uid)
-#         send_suggests((msg, samples), uid=uid)
-# >>>>>>> origin/game_dev
         return get_player_input(uid=uid)
     else:
         answer = [inquirer.prompt(questions)[key]]  # return list
     return answer
-
-
 
 
 @dataclass

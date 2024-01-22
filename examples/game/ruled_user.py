@@ -77,7 +77,7 @@ class RuledUser(AgentBase):
                     send_chat_msg("【系统】有顾客光临，请接待。", uid=self.uid)
                     continue
                 elif isinstance(x, dict):
-                    if x.get('content') == "今天老板邀请大家一起来聚聚。" and content == "":
+                    if x.get("content") == "今天老板邀请大家一起来聚聚。" and content == "":
                         content = "大家好"
 
                 if not hasattr(self, "model") or len(content) == 0:
@@ -96,7 +96,6 @@ class RuledUser(AgentBase):
                 )
             except (UnicodeDecodeError, ValueError) as e:
                 send_chat_msg(f"【系统】无效输入 {e}\n 请重试", "⚠️", uid=self.uid)
-
 
         kwargs = {}
         if required_keys is not None:
@@ -160,8 +159,11 @@ class RuledUser(AgentBase):
                     '{json.dumps(ingredients_list)}' select-once
                     submit-text="确定"></select-box>"""
 
-        send_chat_msg(choose_ingredient, flushing=False,
-                      uid=self.uid)
+        send_chat_msg(
+            choose_ingredient,
+            flushing=False,
+            uid=self.uid,
+        )
         while True:
             sel_ingr = query_answer(questions, "ingredient", uid=self.uid)
             if isinstance(sel_ingr, str):
@@ -169,7 +171,6 @@ class RuledUser(AgentBase):
                 continue
             cook_list = sel_ingr
             break
-
 
         prompt = self.cook_prompt.format_map(
             {"ingredient": "+".join(cook_list)},
