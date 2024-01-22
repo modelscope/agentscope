@@ -11,7 +11,7 @@ Becoming a part of the AgentScope community allows you to connect with other use
 
 ## Discord
 
-- **Join our Discord:** Collaborate with the AgentScope community in real-time. Engage in discussions, seek assistance, and share your experiences and insights on [Discord](https://discord.gg/Fwg5hZ2S).
+- **Join our Discord:** Collaborate with the AgentScope community in real-time. Engage in discussions, seek assistance, and share your experiences and insights on [Discord](https://discord.gg/eYMpfnkG8h).
 
 ## DingTalk (钉钉)
 
