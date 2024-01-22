@@ -7,7 +7,7 @@ import json
 
 from loguru import logger
 
-from .rpc.rpc_agent_client import RpcAgentClient
+from .rpc import RpcAgentClient
 from .utils.tools import _get_timestamp
 
 
