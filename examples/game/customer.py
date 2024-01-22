@@ -22,7 +22,7 @@ class Customer(StateAgent, DialogAgent):
         self.game_config = game_config
         self.max_itr_preorder = 5
         self.preorder_itr_count = 0
-        self.avatar = self.config.get('avatar', get_a_random_avatar())
+        self.avatar = self.config.get("avatar", get_a_random_avatar())
         self.background = self.config["character_setting"]["background"]
         self.friendship = int(self.config.get("friendship", 60))
 
@@ -61,13 +61,15 @@ class Customer(StateAgent, DialogAgent):
         # when the customer is the main role in a plot, it will be activated
         self.plot_stage = CustomerPlot.ACTIVE
         for p in active_plots:
-            if str(p) in self.config["character_setting"]["hidden_plot"] \
-                    and len(self.active_plots) == 0:
+            if (
+                str(p) in self.config["character_setting"]["hidden_plot"]
+                and len(self.active_plots) == 0
+            ):
                 self.active_plots = [str(p)]
             elif str(p) in self.config["character_setting"]["hidden_plot"]:
                 raise ValueError(
                     "A customer can be in at most one plot in the current "
-                    "version"
+                    "version",
                 )
 
     def deactivate_plot(self) -> None:
@@ -82,7 +84,10 @@ class Customer(StateAgent, DialogAgent):
         # the first/last message must have role 'user'.
         if x is not None:
             x["role"] = "user"
-        logger.debug(f"{self.name} state: {self.cur_state} {self.plot_stage} {self.active_plots}")
+        logger.debug(
+            f"{self.name} state: {self.cur_state} {self.plot_stage}"
+            f" {self.active_plots}",
+        )
         return StateAgent.reply(self, x=x)
 
     def _recommendation_to_score(self, x: dict) -> dict:

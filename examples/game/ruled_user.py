@@ -13,7 +13,7 @@ from utils import (
     send_chat_msg,
     query_answer,
     get_player_input,
-    end_query_answer,
+    ResetException,
 )
 
 
@@ -51,7 +51,7 @@ class RuledUser(AgentBase):
     ) -> None:
         """Initialize a RuledUser object."""
         super().__init__(name=name, model=model, sys_prompt=sys_prompt)
-        self.retry_time = 10
+        self.retry_time = 3
         self.ingredients_dict = ingredients_dict
         self.cook_prompt = cook_prompt
         self.uid = kwargs.get("uid", None)
@@ -77,6 +77,11 @@ class RuledUser(AgentBase):
                 if x == {"content": "游戏开始"} and content == "":
                     send_chat_msg("【系统】有顾客光临，请接待。", uid=self.uid)
                     continue
+                elif isinstance(x, dict):
+                    if x.get("content") == "今天老板邀请大家一起来聚聚。" and content == "":
+                        content = "大家好"
+                    elif x.get("content") == "自定义输入" and content == "":
+                        content = "你好"
 
                 if not hasattr(self, "model") or len(content) == 0:
                     break
@@ -86,14 +91,16 @@ class RuledUser(AgentBase):
                     break
 
                 send_chat_msg(
-                    f"【输入被规则禁止】"
+                    f"【系统】输入被规则禁止"
                     f" {ruler_res.get('reason', 'Unknown reason')}\n"
-                    f"【请重试】",
+                    f"请重试",
                     "⚠️",
                     uid=self.uid,
                 )
-            except UnicodeDecodeError as e:
-                send_chat_msg(f"【无效输入】 {e}\n 【请重试】", "⚠️", uid=self.uid)
+            except ResetException:
+                raise ResetException
+            except Exception as e:
+                send_chat_msg(f"【系统】无效输入 {e}\n 请重试", "⚠️", uid=self.uid)
 
         kwargs = {}
         if required_keys is not None:
@@ -140,7 +147,6 @@ class RuledUser(AgentBase):
             for item in sublist
         ]
 
-        ingredients_list = ["**清空**", "**结束**"] + ingredients_list
         cook_list = []
         questions = [
             inquirer.List(
@@ -149,22 +155,24 @@ class RuledUser(AgentBase):
                 choices=ingredients_list,
             ),
         ]
-        while True:
-            send_chat_msg(f"【系统】当前已选择的食材是{cook_list}。", uid=self.uid)
-            sel_ingr = query_answer(questions, "ingredient", uid=self.uid)
 
-            if sel_ingr in ["结束", "**结束**"]:  # For gradio
-                if len(cook_list) > 0:
-                    break
-                send_chat_msg("【系统】你没有选中任何食材。", uid=self.uid)
-            elif sel_ingr in ["清空", "**清空**"]:  # For gradio
-                cook_list.clear()
-            elif sel_ingr not in ingredients_list:
-                send_chat_msg("【系统】不可用食材，请重新选择。", uid=self.uid)
+        choose_ingredient = f"""请选择需要的食材: <select-box shape="card"
+                     type="checkbox" item-width="1000"
+                    options='{json.dumps(ingredients_list)}' select-once
+                    submit-text="确定"></select-box>"""
+
+        send_chat_msg(
+            choose_ingredient,
+            flushing=False,
+            uid=self.uid,
+        )
+        while True:
+            sel_ingr = query_answer(questions, "ingredient", uid=self.uid)
+            if isinstance(sel_ingr, str):
+                send_chat_msg("【系统】请在列表中进行选择。", uid=self.uid)
                 continue
-            else:
-                cook_list.append(sel_ingr)
-        end_query_answer(uid=self.uid)
+            cook_list = sel_ingr
+            break
 
         prompt = self.cook_prompt.format_map(
             {"ingredient": "+".join(cook_list)},

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 import os
 import yaml
 import inquirer
@@ -24,7 +25,6 @@ from utils import (
     send_pretty_msg,
     query_answer,
     CheckpointArgs,
-    end_query_answer,
 )
 
 
@@ -39,7 +39,7 @@ def invited_group_chat(
     if len(invited_customer) == 0:
         return cur_plots_indices
     invited_names = [c.name for c in invited_customer]
-    send_chat_msg("===== invited group chat ====", uid=uid)
+    send_chat_msg("【系统】群聊开始", uid=uid)
     send_chat_msg(f"老板今天邀请了{invited_names}，大家一起聊聊", uid=uid)
     announcement = {"role": "user", "content": "今天老板邀请大家一起来聚聚。"}
     with msghub(invited_customer + [player], announcement=announcement):
@@ -51,20 +51,33 @@ def invited_group_chat(
                     choices=["是", "否", "结束邀请对话"],
                 ),
             ]
-            answer = query_answer(questions, "ans", uid=uid)
-            if answer == "是":
-                msg = player(announcement)
-            elif answer == "否":
-                msg = None
-            elif answer == "结束邀请对话":
+
+            choose_during_chatting = f"""【系统】你要发言吗？ <select-box shape="card"
+                               columns="3" type="checkbox" options=
+                               '
+                               {json.dumps(["是", "否", "结束邀请对话"])}'
+                               select-once></select-box>"""
+
+            send_chat_msg(choose_during_chatting, flushing=False, uid=uid)
+            end_flag = False
+            while True:
+                answer = query_answer(questions, "ans", uid=uid)
+                if isinstance(answer, str):
+                    send_chat_msg("【系统】请在列表中选择。", uid=uid)
+                    continue
+                elif answer == ["是"]:
+                    msg = player(announcement)
+                elif answer == ["否"]:
+                    msg = None
+                elif answer == ["结束邀请对话"]:
+                    end_flag = True
+                break
+            if end_flag:
                 break
             else:
-                send_chat_msg("【系统】请重新选择。", uid=uid)
-                continue
-            for c in invited_customer:
-                msg = c(msg)
-                send_pretty_msg(msg, uid=uid,avatar=c.avatar)
-        end_query_answer(uid=uid)
+                for c in invited_customer:
+                    msg = c(msg)
+                    send_pretty_msg(msg, uid=uid, avatar=c.avatar)
 
     invited_names.sort()
 
@@ -74,7 +87,7 @@ def invited_group_chat(
 
         # TODO: decided by multi factor: chat history of msghub, correct_names
         if invited_names == correct_names:
-            send_chat_msg("===== successfully unlock a plot =======", uid=uid)
+            send_chat_msg("===== 剧情解锁成功 =======", uid=uid)
             questions = [
                 inquirer.List(
                     "ans",
@@ -82,10 +95,23 @@ def invited_group_chat(
                     choices=invited_names + ["跳过"],
                 ),
             ]
-            answer = query_answer(questions, "ans", uid=uid)
-            end_query_answer(uid=uid)
+
+            choose_role_story = f"""【系统】：需要以哪位角色的视角生成一段完整故事吗？: <select-box
+            shape="card"
+                        columns="10" type="checkbox" options=
+                        '{json.dumps(invited_names + ["跳过"])}'
+                        select-once></select-box>"""
+
+            send_chat_msg(choose_role_story, flushing=False, uid=uid)
+
+            while True:
+                answer = query_answer(questions, "ans", uid=uid)
+                if isinstance(answer, str):
+                    send_chat_msg("【系统】请在列表中选择。", uid=uid)
+                    continue
+                break
             for c in invited_customer:
-                if c.name == answer:
+                if c.name == answer[0]:
                     c.generate_pov_story()
             for c in invited_customer:
                 c.refine_background()
@@ -140,18 +166,18 @@ def one_on_one_loop(customers, player, uid):
             if "score" in msg:
                 send_chat_msg(
                     f"【系统】{customer.name}（顾客）接受了你的菜。\n"
-                    f"【系统】顾客对菜本身的评价：{msg['content']}\n"
-                    f"【系统】{customer.name}（顾客）享用完之后，"
+                    f" 顾客对菜本身的评价：{msg['content']}\n"
+                    f" {customer.name}（顾客）享用完之后，"
                     f"综合满意度为{msg['score']}\n",
                     uid=uid,
                 )
                 break
 
-            send_pretty_msg(msg, uid=uid, avatar= customer.avatar)
+            send_pretty_msg(msg, uid=uid, avatar=customer.avatar)
             send_chat_msg(
                 "【系统】请输入“做菜”启动做菜程序，它会按所选定食材产生菜品。 \n"
-                "【系统】对话轮次过多会使得顾客综合满意度下降。 \n"
-                "【系统】若不输入任何内容直接按回车键，顾客将离开餐馆。",
+                " 对话轮次过多会使得顾客综合满意度下降。 \n"
+                " 若不输入任何内容直接按回车键，顾客将离开餐馆。",
                 uid=uid,
             )
             msg = player(msg)
@@ -174,17 +200,38 @@ def one_on_one_loop(customers, player, uid):
             ),
         ]
 
-        answer = query_answer(questions, "ans", uid=uid)
-        end_query_answer(uid=uid)
+        choose_after_meal = f"""【系统】接下来你会说些什么吗？
+            <select-box shape="card" columns="1" type="checkbox" options=
+            '{json.dumps(["感谢您的今天来我们这里消费。这里是赠送的果盘，"
+                                    "请您享用。还有什么是我能为您做的呢？",
+                                 "感谢您的光顾。(结束与该顾客的当天对话)", "自定义输入"])}'
+                                 select-once></select-box>"""
+
+        send_chat_msg(choose_after_meal, flushing=False, uid=uid)
+
+        while True:
+            answer = query_answer(questions, "ans", uid=uid)
+            if isinstance(answer, str):
+                send_chat_msg(
+                    "【系统】请在列表中选择。",
+                    uid=uid,
+                )
+                continue
+            break
+
+        answer = answer[0]
+
         if answer == "感谢您的光顾。(结束与该顾客的当天对话)":
             continue
+        elif answer == "自定义输入":
+            answer = player({"content": answer})["content"]
         msg = Msg(role="user", name="餐馆老板", content=answer)
         player.observe(msg)
         while True:
             msg = customer(msg)
             # print(f"{customer_reply.name}（顾客）:" + customer_reply.content)
 
-            send_pretty_msg(msg, uid=uid,avatar=customer.avatar)
+            send_pretty_msg(msg, uid=uid, avatar=customer.avatar)
             send_chat_msg("【系统】若不输入任何内容直接按回车键，顾客将离开餐馆。", uid=uid)
             msg = player(msg)
             if len(msg["content"]) == 0:
@@ -202,25 +249,29 @@ def invite_customers(customers, uid):
     if len(available_customers) == 0:
         send_chat_msg("【系统】：您目前无法邀请任何一个顾客（所有顾客好感度均低于80）。", uid=uid)
 
-    while len(available_customers) > 0:
-        select_customer = [
-            inquirer.List(
-                "invited",
-                message="【系统】系统：今天就没有更多顾客了，您明天有什么邀请计划吗？",
-                choices=available_customers + ["END"],
-            ),
-        ]
-        answer = query_answer(select_customer, "invited", uid=uid)
-        if answer == "END":
-            break
-        if answer not in available_customers:
-            send_chat_msg("【系统】请重新选择。", uid=uid)
-            continue
+    select_customer = [
+        inquirer.List(
+            "invited",
+            message="【系统】今天就没有更多顾客了，您明天有什么邀请计划吗？",
+            choices=available_customers,
+        ),
+    ]
 
-        invited_customers.append(answer)
-        available_customers.remove(answer)
-    end_query_answer(uid=uid)
-    return invited_customers
+    choose_available_customers = f"""【系统】今天就没有更多顾客了，您明天有什么邀请计划吗？:
+    <select-box shape="card columns="4" type="checkbox" options=
+                '{json.dumps(available_customers)}' select-once
+                submit-text="确定"></select-box>"""
+
+    send_chat_msg(choose_available_customers, flushing=False, uid=uid)
+
+    while True:
+        answer = query_answer(select_customer, "invited", uid=uid)
+        if isinstance(answer, str):
+            send_chat_msg("【系统】请在列表中选择。", uid=uid)
+            continue
+        else:
+            invited_customers = answer
+            return invited_customers
 
 
 def main(args) -> None:
@@ -311,9 +362,10 @@ def main(args) -> None:
             if done_plot_idx is not None:
                 # once successful finish a current plot...
                 # deactivate the active roles in the done plot
-                deactivate_customers = \
-                    GAME_CONFIG["plots"][done_plot_idx]["main_roles"] + \
-                    GAME_CONFIG["plots"][done_plot_idx]["supporting_roles"]
+                deactivate_customers = (
+                    GAME_CONFIG["plots"][done_plot_idx]["main_roles"]
+                    + GAME_CONFIG["plots"][done_plot_idx]["supporting_roles"]
+                )
                 for c in checkpoint.customers:
                     if c.name in deactivate_customers:
                         c.deactivate_plot()
