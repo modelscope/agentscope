@@ -4,14 +4,19 @@ Unit tests for Monitor classes
 """
 
 import unittest
-
+import uuid
+import os
 from agentscope.utils import MonitorBase, QuotaExceededError, MonitorFactory
 
-from agentscope.utils.monitor import DictMonitor
+from agentscope.utils.monitor import SqliteMonitor
 
 
 class MonitorFactoryTest(unittest.TestCase):
     "Test class for MonitorFactory"
+
+    def setUp(self) -> None:
+        self.db_path = f"test-{uuid.uuid4()}.db"
+        _ = MonitorFactory.get_monitor(db_path=self.db_path)
 
     def test_get_monitor(self) -> None:
         """Test get monitor method of MonitorFactory."""
@@ -24,6 +29,10 @@ class MonitorFactoryTest(unittest.TestCase):
         self.assertTrue(monitor2.exists("token_num"))
         self.assertTrue(monitor2.remove("token_num"))
         self.assertFalse(monitor1.exists("token_num"))
+
+    def tearDown(self) -> None:
+        MonitorFactory._instance = None  # pylint: disable=W0212
+        os.remove(self.db_path)
 
 
 class MonitorTestBase(unittest.TestCase):
@@ -91,7 +100,7 @@ class MonitorTestBase(unittest.TestCase):
         self.assertTrue(self.monitor.set_quota("token_num", 200))
         # add success and check new value
         self.assertTrue(self.monitor.add("token_num", 10))
-        self.assertEqual(self.monitor.get_value("token_num"), 111)
+        self.assertEqual(self.monitor.get_value("token_num"), 20)
         # clear an existing metric
         self.assertTrue(self.monitor.clear("token_num"))
         # clear an not existing metric
@@ -161,8 +170,64 @@ class MonitorTestBase(unittest.TestCase):
         )
 
 
-class DictMonitorTest(MonitorTestBase):
-    """Test class for DictMonitor"""
+class SqliteMonitorTest(MonitorTestBase):
+    """Test class for SqliteMonitor"""
 
     def get_monitor_instance(self) -> MonitorBase:
-        return DictMonitor()
+        self.db_path = f"test-{uuid.uuid4()}.db"
+        return SqliteMonitor(self.db_path)
+
+    def tearDown(self) -> None:
+        os.remove(self.db_path)
+
+    def test_register_budget(self) -> None:
+        """Test register_budget method of monitor"""
+        self.assertTrue(
+            self.monitor.register_budget(
+                model_name="gpt-4",
+                value=5,
+                prefix="agent_A.gpt-4",
+            ),
+        )
+        # register an existing model with different prefix is ok
+        self.assertTrue(
+            self.monitor.register_budget(
+                model_name="gpt-4",
+                value=15,
+                prefix="agent_B.gpt-4",
+            ),
+        )
+        gpt_4_3d = {
+            "prompt_tokens": 50000,
+            "completion_tokens": 25000,
+            "total_tokens": 750000,
+        }
+        # agentA uses 3 dollors
+        self.monitor.update(gpt_4_3d, prefix="agent_A.gpt-4")
+        # agentA uses another 3 dollors and exceeds quota
+        self.assertRaises(
+            QuotaExceededError,
+            self.monitor.update,
+            gpt_4_3d,
+            "agent_A.gpt-4",
+        )
+        self.assertLess(
+            self.monitor.get_value(  # type: ignore [arg-type]
+                "agent_A.gpt-4.cost",
+            ),
+            5,
+        )
+        # register an existing model with existing prefix is wrong
+        self.assertFalse(
+            self.monitor.register_budget(
+                model_name="gpt-4",
+                value=5,
+                prefix="agent_A.gpt-4",
+            ),
+        )
+        self.assertEqual(
+            self.monitor.get_value(  # type: ignore [arg-type]
+                "agent_A.gpt-4.cost",
+            ),
+            3,
+        )

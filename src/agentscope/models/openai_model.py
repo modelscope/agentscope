@@ -12,7 +12,8 @@ try:
 except ImportError:
     openai = None
 
-from ..utils import MonitorFactory
+from ..utils.monitor import MonitorFactory
+from ..utils.monitor import get_full_name
 from ..utils import QuotaExceededError
 from ..utils.token_utils import get_openai_max_length
 
@@ -28,6 +29,7 @@ class OpenAIWrapper(ModelWrapperBase):
         organization: str = None,
         client_args: dict = None,
         generate_args: dict = None,
+        budget: float = None,
     ) -> None:
         """Initialize the openai client.
 
@@ -49,6 +51,9 @@ class OpenAIWrapper(ModelWrapperBase):
             generate_args (`dict`, default `None`):
                 The extra keyword arguments used in openai api generation,
                 e.g. `temperature`, `seed`.
+            budget (`float`, default `None`):
+                The total budget using this model. Set to `None` means no
+                limit.
         """
         super().__init__(name)
 
@@ -77,7 +82,17 @@ class OpenAIWrapper(ModelWrapperBase):
 
         # Set monitor accordingly
         self.monitor = None
+        self.budget = budget
+        self._register_budget()
         self._register_default_metrics()
+
+    def _register_budget(self) -> None:
+        self.monitor = MonitorFactory.get_monitor()
+        self.monitor.register_budget(
+            model_name=self.model_name,
+            value=self.budget,
+            prefix=self.model_name,
+        )
 
     def _register_default_metrics(self) -> None:
         """Register metrics to the monitor."""
@@ -95,7 +110,7 @@ class OpenAIWrapper(ModelWrapperBase):
         Returns:
             `str`: Metric name of this wrapper.
         """
-        return f"{self.__class__.__name__}.{self.model_name}.{metric_name}"
+        return get_full_name(name=metric_name, prefix=self.model_name)
 
 
 class OpenAIChatWrapper(OpenAIWrapper):
@@ -193,7 +208,10 @@ class OpenAIChatWrapper(OpenAIWrapper):
 
         # step5: update monitor accordingly
         try:
-            self.monitor.update(**response.usage.model_dump())
+            self.monitor.update(
+                response.usage.model_dump(),
+                prefix=self.model_name,
+            )
         except QuotaExceededError as e:
             # TODO: optimize quota exceeded error handling process
             logger.error(e.message)

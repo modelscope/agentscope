@@ -11,33 +11,36 @@ on:
 
 jobs:
   pages:
-    runs-on: ubuntu-latest
     timeout-minutes: 20
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ['3.9']
     env:
       OS: ${{ matrix.os }}
       PYTHON: '3.9'
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@master
+    - uses: actions/checkout@master
     - name: Setup Python ${{ matrix.python-version }}
       uses: actions/setup-python@master
       with:
-        python_version: ${{ matrix.python-version }}
-    - id: deployment
+        python-version: ${{ matrix.python-version }}
+    - name: Install Dependencies
+      run: |
+        pip install -q -e .[full]
+    - id: build
       name: Build Documentation
-      uses: sphinx-notes/pages@v3
-      with:
-        documentation_path: ./docs/sphinx_doc/source
-        python_version: ${{ matrix.python-version }}
-        publish: false
-        requirements_path: ./docs/sphinx_doc/requirements.txt
+      run: |
+        cd docs/sphinx_doc
+        make clean html
     - name: Upload Documentation
       uses: actions/upload-artifact@v3
       with:
         name: SphinxDoc
-        path: ${{ steps.deployment.outputs.artifact }}
+        path: 'docs/sphinx_doc/build'
     - uses: peaceiris/actions-gh-pages@v3
-      if: github.event_name == 'push' && github_ref == 'refs/heads/main'
+      if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ${{ steps.deployment.outputs.artifact }}
+        publish_dir: 'docs/sphinx_doc/build/html'

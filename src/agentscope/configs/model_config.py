@@ -3,6 +3,7 @@
 from typing import Any
 from ..constants import _DEFAULT_MAX_RETRIES
 from ..constants import _DEFAULT_MESSAGES_KEY
+from ..constants import _DEFAULT_API_BUDGET
 
 
 class CfgBase(dict):
@@ -56,6 +57,9 @@ class OpenAICfg(CfgBase):
     generate_args: dict = None
     """The arguments used in openai api generation, e.g. `temperature`,
     `seed`."""
+
+    budget: float = _DEFAULT_API_BUDGET
+    """The total budget using this model. Set to `None` means no limit."""
 
 
 class PostApiCfg(CfgBase):
@@ -113,3 +117,6 @@ class PostApiCfg(CfgBase):
     """The key of the prompt messages in `requests.post()`,
     e.g. `request.post(json={${messages_key}: messages, **json_args})`. For
     huggingface and modelscope inference API, the key is `inputs`"""
+
+    budget: float = _DEFAULT_API_BUDGET
+    """The total budget using this model. Set to `None` means no limit."""
