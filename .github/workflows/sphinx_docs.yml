@@ -38,7 +38,7 @@ jobs:
         name: SphinxDoc
         path: ${{ steps.deployment.outputs.artifact }}
     - uses: peaceiris/actions-gh-pages@v3
-      if: ${{ github.event_name == 'push' && (github.ref_name == 'main' || startsWith(github.ref_name, 'feature')) }}
+      if: ${{ github.event_name == 'push' }}
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ${{ steps.deployment.outputs.artifact }}
