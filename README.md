@@ -2,7 +2,7 @@
 
 AgentScope is an innovative multi-agent platform designed to empower developers to build multi-agent applications with ease, reliability, and high performance. It features three high-level capabilities:
 
-- **Easy-to-Use**: Programming in pure Python with various pre-built components for immediate use, suitable for developers or users with varying levels of customization requirements.
+- **Easy-to-Use**: Programming in pure Python with various pre-built components for immediate use, suitable for developers or users with varying levels of customization requirements. Detailed documentation and examples are provided to help you get started, see our [Tutorial](https://alibaba.github.io/AgentScope/tutorial/contribute.html).
 
 - **High Robustness**: Supporting customized fault-tolerance controls and retry mechanisms to enhance application stability.
 
@@ -138,7 +138,7 @@ For post requests APIs, the config contains the following fields.
 ```
 
 AgentScope provides fruitful scripts to fast deploy model services in [Scripts](./scripts/README.md).
-For more details of model services, refer to our [Tutorial](https://alibaba.github.io/AgentScope/index.html) and [API Document](https://alibaba.github.io/AgentScope/index.html).
+For more details of model services, refer to our [Tutorial](https://alibaba.github.io/AgentScope/index.html#welcome-to-agentscope-tutorial-hub) and [API Document](https://alibaba.github.io/AgentScope/index.html#indices-and-tables).
 
 #### Step 2: Create Agents
 
@@ -308,7 +308,7 @@ pip install -e .\[dev\]
 pre-commit install
 ```
 
-Please refer to our [Tutorial](https://alibaba.github.io/AgentScope/) for more details.
+Please refer to our [Contribution Guide](https://alibaba.github.io/AgentScope/tutorial/contribute.html) for more details.
 
 ## References
 
