@@ -11,7 +11,7 @@ from typing import Optional
 import agentscope
 from agentscope.message import Msg
 from agentscope.msghub import msghub
-from config_uitls import load_user_cfg
+from config_uitls import load_user_cfg, load_configs
 from customer import Customer, MIN_BAR_FRIENDSHIP_CONST
 from enums import CustomerConv, StagePerNight
 from ruled_user import RuledUser
@@ -126,13 +126,7 @@ def one_on_one_loop(customers, player, uid):
     visit_customers = [c for c in customers if c.visit()]
     # random.shuffle(visit_customers)
 
-    with open(
-        "config/ingredients.yaml",
-        "r",
-        encoding="utf-8",
-    ) as ingredients_file:
-        ingredients = yaml.safe_load(ingredients_file)
-
+    ingredients = load_configs("config/ingredients.yaml")
     ingredient_today = {}
     for category, items in ingredients.items():
         ingredient_today[category] = (
@@ -287,16 +281,8 @@ def main(args) -> None:
     通过与顾客的互动，玩家可以解锁剧情并发展餐馆的故事，体验不同的情节和结局。
     """
     send_chat_msg(game_description, uid=args.uid)
-
-    with open(
-        "config/customer_config.yaml",
-        "r",
-        encoding="utf-8",
-    ) as customer_file:
-        customer_configs = yaml.safe_load(customer_file)
     customer_configs = load_user_cfg(args.uid)
-    with open("config/user.yaml", "r", encoding="utf-8") as user_file:
-        user_configs = yaml.safe_load(user_file)
+    user_configs = load_configs("config/user.yaml")
 
     customers = [
         Customer(
@@ -311,10 +297,7 @@ def main(args) -> None:
     ]
     user_configs["uid"] = args.uid
     player = RuledUser(**user_configs)
-
-    with open("config/plot_config.yaml", "r", encoding="utf-8") as plot_file:
-        plot_config = yaml.safe_load(plot_file)
-
+    plot_config = load_configs("config/plot_config.yaml")
     all_plots = parse_plots(plot_config, customers)
 
     if args.load_checkpoint is not None:
@@ -408,9 +391,7 @@ if __name__ == "__main__":
         default="./checkpoints/cp-",
     )
     args = parser.parse_args()
-    with open("./config/game_config.yaml", "r", encoding="utf-8") as file:
-        GAME_CONFIG = yaml.safe_load(file)
-
+    GAME_CONFIG = load_configs("config/game_config.yaml")
     TONGYI_CONFIG = {
         "type": "tongyi",
         "name": "tongyi_model",

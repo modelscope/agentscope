@@ -8,7 +8,7 @@ from collections import defaultdict
 from typing import List
 from multiprocessing import Event
 import agentscope
-from config_uitls import load_user_cfg, save_user_cfg, load_default_cfg
+from config_uitls import load_user_cfg, save_user_cfg, load_default_cfg, load_configs
 from utils import (
     CheckpointArgs,
     enable_web_ui,
@@ -159,9 +159,7 @@ if __name__ == "__main__":
     def start_game(uid):
         is_init.wait()
         uid = check_uuid(uid)
-        with open("./config/game_config.yaml", "r", encoding="utf-8") as file:
-            GAME_CONFIG = yaml.safe_load(file)
-
+        GAME_CONFIG = load_configs("config/game_config.yaml")
         args = CheckpointArgs()
         args.game_config = GAME_CONFIG
         args.uid = uid
