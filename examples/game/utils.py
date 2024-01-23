@@ -19,6 +19,7 @@ from queue import Empty
 
 import gradio as gr
 
+SYS_MSG_PREFIX='【系统】'
 
 USE_WEB_UI = False
 
@@ -97,7 +98,7 @@ glb_uid_dict = defaultdict(init_uid_queues)
 
 def send_chat_msg(
     msg,
-    role="系统",
+    role=None,
     uid=None,
     flushing=False,
     avatar="./assets/bot.jpg",
@@ -111,6 +112,7 @@ def send_chat_msg(
                 None,
                 {
                     "text": msg,
+                    "name": role,
                     "flushing": flushing,
                     "avatar": avatar,
                 },
@@ -120,7 +122,7 @@ def send_chat_msg(
 
 def send_player_msg(
     msg,
-    role="你",
+    role="我",
     uid=None,
     flushing=False,
     avatar="./assets/user.jpg",
@@ -133,6 +135,7 @@ def send_player_msg(
             [
                 {
                     "text": msg,
+                    "name": role,
                     "flushing": flushing,
                     "avatar": avatar,
                 },

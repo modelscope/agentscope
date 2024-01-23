@@ -15,6 +15,7 @@ from utils import (
     send_player_msg,
     send_player_input,
     get_chat_msg,
+    SYS_MSG_PREFIX,
     ResetException,
 )
 
@@ -104,7 +105,7 @@ def get_dial_chat(uid) -> List[List]:
     for line in glb_history_dict[uid]:
         _, msg = line
         if isinstance(msg, dict):
-            if "【系统】" not in msg.get("text", ""):
+            if SYS_MSG_PREFIX not in msg.get("text", ""):
                 dial_msg.append(line)
         else:
             # User chat, format: (msg, None)
@@ -121,7 +122,7 @@ def get_sys_chat(uid) -> List[List]:
     for line in glb_history_dict[uid]:
         _, msg = line
         if isinstance(msg, dict):
-            if "【系统】" in msg.get("text", ""):
+            if SYS_MSG_PREFIX in msg.get("text", ""):
                 sys_msg.append(line)
 
     return sys_msg[-MAX_NUM_DISPLAY_MSG:]
@@ -283,7 +284,7 @@ if __name__ == "__main__":
         def send_message(msg, uid):
             uid = check_uuid(uid)
             send_player_input(msg, uid=uid)
-            send_player_msg(msg, "你", uid=uid)
+            send_player_msg(msg, "我", uid=uid)
             return ""
 
         return_welcome_button = gr.Button(
