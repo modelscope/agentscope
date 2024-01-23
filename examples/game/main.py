@@ -14,30 +14,29 @@ from agentscope.msghub import msghub
 from customer import Customer, MIN_BAR_FRIENDSHIP_CONST
 from enums import CustomerConv, StagePerNight
 from ruled_user import RuledUser
+from plot import parse_plots, GamePlot, check_active_plot
 
 
 from utils import (
     GameCheckpoint,
     load_game_checkpoint,
     save_game_checkpoint,
-    check_active_plot,
     send_chat_msg,
-    send_pretty_msg,
     query_answer,
     CheckpointArgs,
 )
 
 
 def invited_group_chat(
-    game_config,
-    invited_customer,
-    player,
-    cur_plots_indices,
-    uid,
+    invited_customer: list[Customer],
+    player: RuledUser,
+    cur_plots_indices: list[int],
+    all_plots: dict[int, GamePlot],
+    uid: int,
 ) -> Optional[int]:
     logger.debug("\n---active_plots:" + str(cur_plots_indices))
     if len(invited_customer) == 0:
-        return cur_plots_indices
+        return None
     invited_names = [c.name for c in invited_customer]
     send_chat_msg("【系统】群聊开始", uid=uid)
     send_chat_msg(f"老板今天邀请了{invited_names}，大家一起聊聊", uid=uid)
@@ -77,12 +76,14 @@ def invited_group_chat(
             else:
                 for c in invited_customer:
                     msg = c(msg)
-                    send_pretty_msg(msg, uid=uid, avatar=c.avatar)
 
     invited_names.sort()
 
     for idx in cur_plots_indices:
-        correct_names = game_config["plots"][idx]["main_roles"]
+        correct_names = [c.name for c in all_plots[idx].main_roles]
+        # if there is no main roles in the current plot, it is a endless plot
+        if len(correct_names) == 0:
+            return None
         correct_names.sort()
 
         # TODO: decided by multi factor: chat history of msghub, correct_names
@@ -142,9 +143,10 @@ def one_on_one_loop(customers, player, uid):
             else items
         )
     ingr = "\n".join(
-        f"{key}: {value}" for key, value in ingredient_today.items()
+        f"\n{key}: {' '.join([str(i) for i in value])}" for key, value in
+        ingredient_today.items()
     )
-    send_chat_msg(f"【系统】今天拥有的食材是：\n {ingr}", uid=uid)
+    send_chat_msg(f"【系统】今天拥有的食材是：\n{ingr}", uid=uid)
 
     player.set_ingredients(ingredient_today)
 
@@ -173,7 +175,6 @@ def one_on_one_loop(customers, player, uid):
                 )
                 break
 
-            send_pretty_msg(msg, uid=uid, avatar=customer.avatar)
             send_chat_msg(
                 "【系统】请输入“做菜”启动做菜程序，它会按所选定食材产生菜品。 \n"
                 " 对话轮次过多会使得顾客综合满意度下降。 \n"
@@ -231,7 +232,6 @@ def one_on_one_loop(customers, player, uid):
             msg = customer(msg)
             # print(f"{customer_reply.name}（顾客）:" + customer_reply.content)
 
-            send_pretty_msg(msg, uid=uid, avatar=customer.avatar)
             send_chat_msg("【系统】若不输入任何内容直接按回车键，顾客将离开餐馆。", uid=uid)
             msg = player(msg)
             if len(msg["content"]) == 0:
@@ -310,6 +310,11 @@ def main(args) -> None:
     user_configs["uid"] = args.uid
     player = RuledUser(**user_configs)
 
+    with open("config/plot_config.yaml", "r", encoding="utf-8") as plot_file:
+        plot_config = yaml.safe_load(plot_file)
+
+    all_plots = parse_plots(plot_config, customers)
+
     if args.load_checkpoint is not None:
         checkpoint = load_game_checkpoint(args.load_checkpoint)
         logger.debug(
@@ -320,28 +325,20 @@ def main(args) -> None:
     else:
         invited_customers = []
         stage_per_night = StagePerNight.CASUAL_CHAT_FOR_MEAL
-        cur_plots, done_plots = [], []
         checkpoint = GameCheckpoint(
             stage_per_night=stage_per_night,
-            cur_plots=cur_plots,
-            done_plots=done_plots,
+            all_plots=all_plots,
+            cur_plots=[],
             customers=customers,
             invited_customers=invited_customers,
             visit_customers=[],
         )
 
-    # set current plot and done plots
     # initialize main role of current plot cur_state
-    plots = args.game_config["plots"]
-    for i in checkpoint.done_plots:
-        plots[i]["state"] = "done"
-    to_activate_customers, active_plots = check_active_plot(plots, None)
-    checkpoint.cur_plots = active_plots
-    logger.debug(str(to_activate_customers) + str(active_plots))
-    to_activate_customers = set(to_activate_customers)
-    for c in customers:
-        if c.name in to_activate_customers:
-            c.activate_plot(active_plots)
+    checkpoint.cur_plots = check_active_plot(
+        checkpoint.all_plots, checkpoint.cur_plots, None
+    )
+    logger.debug("initially active plots: " + str(checkpoint.cur_plots))
 
     while True:
         # daily loop
@@ -353,34 +350,24 @@ def main(args) -> None:
                 c.transition(CustomerConv.INVITED_GROUP_PLOT)
             # initial cur_state of the
             done_plot_idx = invited_group_chat(
-                args.game_config,
                 checkpoint.invited_customers,
                 player,
                 checkpoint.cur_plots,
+                checkpoint.all_plots,
                 args.uid,
             )
             if done_plot_idx is not None:
                 # once successful finish a current plot...
                 # deactivate the active roles in the done plot
-                deactivate_customers = (
-                    GAME_CONFIG["plots"][done_plot_idx]["main_roles"]
-                    + GAME_CONFIG["plots"][done_plot_idx]["supporting_roles"]
-                )
-                for c in checkpoint.customers:
-                    if c.name in deactivate_customers:
-                        c.deactivate_plot()
+                checkpoint.all_plots[done_plot_idx].deactivate_roles()
+
                 # find the roles and plot to be activated
-                next_active_roles, active_plots = check_active_plot(
-                    plots,
+                checkpoint.cur_plots = check_active_plot(
+                    checkpoint.all_plots,
+                    checkpoint.cur_plots,
                     done_plot_idx,
                 )
-                logger.debug("---active_plots:", active_plots)
-                checkpoint.cur_plots = active_plots
-                checkpoint.done_plots.append(done_plot_idx)
-                next_active_roles = set(next_active_roles)
-                for c in checkpoint.customers:
-                    if c.name in next_active_roles:
-                        c.activate_plot(active_plots)
+                logger.debug("---active_plots:", checkpoint.cur_plots)
             checkpoint.stage_per_night = StagePerNight.CASUAL_CHAT_FOR_MEAL
         elif checkpoint.stage_per_night == StagePerNight.CASUAL_CHAT_FOR_MEAL:
             # ==========  one-on-one loop =================

@@ -1,17 +1,17 @@
 "food_judge_prompt": >
-  根据人物的背景信息，判断这个人会有多喜欢吃一道菜。打分从1到10。
+  现在进入一个角色扮演游戏，你要根据你所扮演人物的背景信息，判断你会有多喜欢吃一道菜。打分从1到10。
   例子1
   人物喜好：某某是广东人，喜欢海鲜和清淡口味的菜，比如清蒸鱼
   推荐菜：火爆肥肠
-  打分：1分
+  打分：我打1分
   例子2
   人物喜好：某某是北京人，喜欢传统老北京的平民菜式，比如炸酱面
   推荐菜：卤煮
-  打分：8分
+  打分：我打8分
   请根据下面信息完成打分
   人物喜好：{food_preference}
   推荐菜：{food}
-  打分：
+  根据你所扮演人物以第一人称打分：
 "order_prompt": >
   你扮演的人物名字是{name}，生成的回答要第一人称，生成内容最多20个字。
   你的基本设定是{character_description}。
@@ -68,22 +68,3 @@
   背景：{background}
   对话：{conversation}
   生成故事：
-
-"plots":
-  - "predecessor_plots": null
-    "main_roles":
-      - "王老板"
-      - "阿炳"
-    "supporting_roles":
-      - "范老师"
-      - "老许"
-#  - "predecessor_plots": null
-#    "main_role": "老朱"
-#    "supporting_roles":
-#      - "范老师"
-#  - "predecessor_plots":
-#      - 0
-#      - 1
-#    "main_role": "阿炳"
-#    "supporting_roles":
-#      - "老朱"
