@@ -236,13 +236,16 @@ class PlaceholderMessage(MessageBase):
             timestamp=timestamp,
             **kwargs,
         )
-        self._host = host
-        self._port = port
-
-        self._client = RpcAgentClient(host, port)
-        self._task_id = task_id
         # placeholder indicates whether the real message is still in rpc server
         self._is_placeholder = True
+        self._host = host
+        self._port = port
+        self._client = RpcAgentClient(host, port)
+        self._task_id = task_id
+
+    def __is_local(self, key: Any) -> bool:
+        return key in PlaceholderMessage.LOCAL_ATTRS \
+            or not self._is_placeholder
 
     def __getattr__(self, __name: str) -> Any:
         """Get attribute value from PlaceholderMessage. Get value from rpc
@@ -251,20 +254,25 @@ class PlaceholderMessage(MessageBase):
         Args:
             __name (`str`):
                 Attribute name.
-
         """
-        if (
-            __name not in PlaceholderMessage.LOCAL_ATTRS
-            and self._is_placeholder
-        ):
+        if not self.__is_local(__name):
             self.update_value()
         return MessageBase.__getattr__(self, __name)
 
+    def __getitem__(self, __key: Any) -> Any:
+        """Get item value from PlaceholderMessage. Get value from rpc
+        agent server if necessary.
+
+        Args:
+            __key (`Any`):
+                Item name.
+        """
+        if not self.__is_local(__key):
+            self.update_value()
+        return MessageBase.__getitem__(self, __key)
+
     def to_str(self) -> str:
-        if self._is_placeholder:
-            return f"{self.name}: [message from {self._host}:{self._port}]"
-        else:
-            return f"{self.name}: {self.content}"
+        return f"{self.name}: {self.content}"
 
     def update_value(self) -> MessageBase:
         """Get attribute values from rpc agent server immediately"""

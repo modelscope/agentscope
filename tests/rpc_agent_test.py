@@ -79,11 +79,13 @@ class BasicRpcAgentTest(unittest.TestCase):
         result = agent_a(msg)
         # get name without waiting for the server
         self.assertEqual(result.name, "a")
+        self.assertEqual(result["name"], "a")
         js_placeholder_result = result.serialize()
         self.assertTrue(result._is_placeholder)  # pylint: disable=W0212
         placeholder_result = deserialize(js_placeholder_result)
         self.assertTrue(isinstance(placeholder_result, PlaceholderMessage))
         self.assertEqual(placeholder_result.name, "a")
+        self.assertEqual(placeholder_result["name"], "a")
         self.assertTrue(
             placeholder_result._is_placeholder,  # pylint: disable=W0212
         )
@@ -131,6 +133,17 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertEqual(result.name, "a")
         # waiting for server
         self.assertEqual(result.content, msg.content)
+        # test dict usage
+        msg = Msg(name="System", content={"text": "hi world"})
+        result = agent_a(msg)
+        # get name without waiting for the server
+        self.assertEqual(result["name"], "a")
+        # waiting for server
+        self.assertEqual(result["content"], msg.content)
+        # test to_str
+        msg = Msg(name="System", content={"text": "test"})
+        result = agent_a(msg)
+        self.assertEqual(result.to_str(), "a: {'text': 'test'}")
         launcher.shutdown()
 
     def test_multi_rpc_agent(self) -> None:

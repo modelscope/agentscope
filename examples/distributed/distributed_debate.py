@@ -108,13 +108,13 @@ def run_main_process(parsed_args: argparse.Namespace) -> None:
     with msghub(participants=participants, announcement=hint):
         for _ in range(3):
             pro_resp = pro_agent(x)
-            logger.chat(pro_resp.update_value())
+            logger.chat(pro_resp)
             con_resp = con_agent(pro_resp)
-            logger.chat(con_resp.update_value())
+            logger.chat(con_resp)
             x = judge_agent(con_resp)
-            logger.chat(x.update_value())
+            logger.chat(x)
         x = judge_agent(x)
-        logger.chat(x.update_value())
+        logger.chat(x)
 
 
 if __name__ == "__main__":
