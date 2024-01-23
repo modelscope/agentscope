@@ -87,7 +87,7 @@ def export_chat_history(uid):
     return gr.update(value=export_filename, visible=True)
 
 
-def get_chat(uid) -> List[List]:
+def get_dial_chat(uid) -> List[List]:
     """Load the chat info from the queue, and put it into the history
 
     Returns:
@@ -99,7 +99,32 @@ def get_chat(uid) -> List[List]:
     line = get_chat_msg(uid=uid)
     if line is not None:
         glb_history_dict[uid] += [line]
-    return glb_history_dict[uid][-MAX_NUM_DISPLAY_MSG:]
+
+    dial_msg = []
+    for line in glb_history_dict[uid]:
+        _, msg = line
+        if isinstance(msg, dict):
+            if "【系统】" not in msg.get("text", ""):
+                dial_msg.append(line)
+        else:
+            # User chat, format: (msg, None)
+            dial_msg.append(line)
+
+    return dial_msg[-MAX_NUM_DISPLAY_MSG:]
+
+
+def get_sys_chat(uid) -> List[List]:
+    uid = check_uuid(uid)
+    global glb_history_dict
+
+    sys_msg = []
+    for line in glb_history_dict[uid]:
+        _, msg = line
+        if isinstance(msg, dict):
+            if "【系统】" in msg.get("text", ""):
+                sys_msg.append(line)
+
+    return sys_msg[-MAX_NUM_DISPLAY_MSG:]
 
 
 def fn_choice(data: gr.EventData, uid):
@@ -166,12 +191,23 @@ if __name__ == "__main__":
                     with gr.Column():
                         resume_button = gr.Button(value='🔥续写情缘', )
 
-        chatbot = mgr.Chatbot(
-            label='Dialog',
-            show_label=False,
-            height=600,
-            visible=False,
-        )
+        with gr.Row():
+            chatbot = mgr.Chatbot(
+                label="Dialog",
+                show_label=False,
+                height=500,
+                visible=False,
+                bubble_full_width=False,
+            )
+
+            chatsys = mgr.Chatbot(
+                label="系统栏",
+                show_label=True,
+                height=500,
+                visible=False,
+                bubble_full_width=False,
+                layout="panel",
+            )
 
         with config_tab:
             with gr.Row():
@@ -268,6 +304,7 @@ if __name__ == "__main__":
             return {
                 tabs: gr.Tabs(visible=invisible),
                 chatbot: mgr.Chatbot(visible=visible),
+                chatsys: mgr.Chatbot(visible=visible),
                 user_chat_input: gr.Text(visible=visible),
                 send_button: gr.Button(visible=visible),
                 new_button: gr.Button(visible=invisible),
@@ -283,6 +320,7 @@ if __name__ == "__main__":
             return {
                 tabs: gr.Tabs(visible=visible),
                 chatbot: mgr.Chatbot(visible=invisible),
+                chatsys: mgr.Chatbot(visible=invisible),
                 user_chat_input: gr.Text(visible=invisible),
                 send_button: gr.Button(visible=invisible),
                 new_button: gr.Button(visible=visible),
@@ -449,6 +487,7 @@ if __name__ == "__main__":
         outputs = [
             tabs,
             chatbot,
+            chatsys,
             user_chat_input,
             send_button,
             new_button,
@@ -471,6 +510,7 @@ if __name__ == "__main__":
         )
 
         chatbot.custom(fn=fn_choice, inputs=[uuid])
+        chatsys.custom(fn=fn_choice, inputs=[uuid])
 
         # change ui
         new_button.click(game_ui, outputs=outputs)
@@ -488,7 +528,15 @@ if __name__ == "__main__":
         # update chat history
         demo.load(init_game)
         demo.load(check_for_new_session, inputs=[uuid], every=0.1)
-        demo.load(get_chat, inputs=[uuid], outputs=chatbot, every=0.5)
+
+        demo.load(get_dial_chat,
+                  inputs=[uuid],
+                  outputs=chatbot,
+                  every=0.5)
+        demo.load(get_sys_chat,
+                  inputs=[uuid],
+                  outputs=chatsys,
+                  every=0.5,)
 
     demo.queue()
     demo.launch()
