@@ -5,7 +5,7 @@ import numpy as np
 from loguru import logger
 
 from enums import CustomerConv, CustomerPlot
-from utils import send_chat_msg, get_a_random_avatar, send_pretty_msg
+from utils import send_chat_msg, get_a_random_avatar
 from agentscope.agents import StateAgent, DialogAgent
 from agentscope.message import Msg
 
@@ -88,10 +88,7 @@ class Customer(StateAgent, DialogAgent):
             f"{self.name} state: {self.cur_state} {self.plot_stage}"
             f" {self.active_plots}",
         )
-
-        msg = StateAgent.reply(self, x=x)
-        send_pretty_msg(msg, uid=self.uid, avatar=self.avatar)
-        return msg
+        return StateAgent.reply(self, x=x)
 
     def _recommendation_to_score(self, x: dict) -> dict:
         food = x["content"]
@@ -234,11 +231,7 @@ class Customer(StateAgent, DialogAgent):
         )
 
         analysis = self.model(messages=prompt)
-        send_pretty_msg(
-            f"聊完之后，{self.name}在想:" + analysis,
-            uid=self.uid,
-            avatar=self.avatar,
-        )
+        send_chat_msg(f"聊完之后，{self.name}在想:" + analysis, uid=self.uid)
 
         update_prompt = self.game_config["update_background"].format_map(
             {
@@ -250,7 +243,7 @@ class Customer(StateAgent, DialogAgent):
         update_msg = Msg(role="user", name="system", content=update_prompt)
         new_background = self.model(messages=[update_msg])
         send_chat_msg(
-            f"【系统】根据对话，{self.name}的背景更新为：" + new_background,
+            f"根据对话，{self.name}的背景更新为：" + new_background,
             uid=self.uid,
         )
         self.background = new_background
