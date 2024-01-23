@@ -51,7 +51,11 @@ distribute_requires = minimal_requires + rpc_requires
 dev_requires = minimal_requires + test_requires
 
 full_requires = (
-    minimal_requires + rpc_requires + service_requires + doc_requires + test_requires
+    minimal_requires
+    + rpc_requires
+    + service_requires
+    + doc_requires
+    + test_requires
 )
 
 with open("README.md", "r", encoding="UTF-8") as fh:
