@@ -17,7 +17,12 @@ with open("src/agentscope/_version.py", encoding="UTF-8") as f:
 NAME = "agentscope"
 URL = "https://github.com/alibaba/AgentScope"
 
-rpc_requires = ["grpcio", "grpcio-tools", "expiringdict"]
+rpc_requires = [
+    "grpcio==1.60.0",
+    "grpcio-tools==1.60.0",
+    "protobuf==4.25.0",
+    "expiringdict",
+]
 
 service_requires = ["docker", "pymongo", "pymysql"]
 
@@ -37,7 +42,7 @@ minimal_requires = [
     "tiktoken",
     "Pillow",
     "requests",
-    "openai",
+    "openai>=1.3.0",
     "numpy",
 ]
 
