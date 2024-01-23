@@ -226,7 +226,6 @@ class CheckpointArgs:
 class ResetException(Exception):
     pass
 
-
 def generate_picture(prompt):
     dashscope.api_key = os.environ.get("DASHSCOPE_API_KEY") or dashscope.api_key
     assert dashscope.api_key

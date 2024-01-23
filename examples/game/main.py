@@ -183,7 +183,7 @@ def one_on_one_loop(customers, player, uid):
 
         if isinstance(msg, dict):
             if len(msg["content"]) == 0 or msg["score"] < 4:
-                send_chat_msg(f"f顾客{customer.name} 离开餐馆", uid=uid)
+                send_chat_msg(f"{SYS_MSG_PREFIX}顾客{customer.name} 离开餐馆", uid=uid)
                 continue
 
         questions = [
