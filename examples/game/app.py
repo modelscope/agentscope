@@ -41,7 +41,7 @@ def check_uuid(uid):
 glb_history_dict = defaultdict(init_uid_list)
 glb_signed_user = []
 is_init = False
-MAX_NUM_DISPLAY_MSG = 30
+MAX_NUM_DISPLAY_MSG = 20
 
 
 # 图片本地路径转换为 base64 格式

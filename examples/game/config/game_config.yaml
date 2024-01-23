@@ -68,22 +68,3 @@
   背景：{background}
   对话：{conversation}
   生成故事：
-
-"plots":
-  - "predecessor_plots": null
-    "main_roles":
-      - "王老板"
-      - "阿炳"
-    "supporting_roles":
-      - "范老师"
-      - "老许"
-#  - "predecessor_plots": null
-#    "main_role": "老朱"
-#    "supporting_roles":
-#      - "范老师"
-#  - "predecessor_plots":
-#      - 0
-#      - 1
-#    "main_role": "阿炳"
-#    "supporting_roles":
-#      - "老朱"
