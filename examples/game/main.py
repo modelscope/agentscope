@@ -154,7 +154,7 @@ def one_on_one_loop(customers, player, uid):
         send_chat_msg("【系统】今天没有出现客人，请增加与客人的好感度以增大出现概率", uid=uid)
     else:
         send_chat_msg(
-            f"【系统】今天出现的客人: {[c.name for c in visit_customers]}",
+            f"【系统】今天出现的客人: {' '.join([c.name for c in visit_customers])}",
             uid=uid,
         )
     for customer in visit_customers:
