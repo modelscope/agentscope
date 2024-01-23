@@ -299,6 +299,7 @@ class ResetException(Exception):
 
 
 def generate_picture(prompt):
+    dashscope.api_key = os.environ.get("DASHSCOPE_API_KEY")
     assert dashscope.api_key
     rsp = dashscope.ImageSynthesis.call(
         model=dashscope.ImageSynthesis.Models.wanx_v1,
