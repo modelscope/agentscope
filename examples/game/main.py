@@ -145,9 +145,10 @@ def one_on_one_loop(customers, player, uid):
             else items
         )
     ingr = "\n".join(
-        f"{key}: {value}" for key, value in ingredient_today.items()
+        f"\n{key}: {' '.join([str(i) for i in value])}" for key, value in
+        ingredient_today.items()
     )
-    send_chat_msg(f"【系统】今天拥有的食材是：\n {ingr}", uid=uid)
+    send_chat_msg(f"【系统】今天拥有的食材是：\n{ingr}", uid=uid)
 
     player.set_ingredients(ingredient_today)
 
