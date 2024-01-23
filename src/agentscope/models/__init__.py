@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ Import modules in models package."""
 import json
-from typing import Union
+from typing import Union, Sequence
 
 from loguru import logger
 

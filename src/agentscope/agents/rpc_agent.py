@@ -16,6 +16,7 @@ from typing import Union
 from typing import Type
 from typing import Sequence
 from concurrent import futures
+from loguru import logger
 
 try:
     import grpc
@@ -29,15 +30,13 @@ try:
 except ImportError:
     ExpiringDict = None
 
-from agentscope._init import _INIT_SETTINGS
-from agentscope._init import init
+from agentscope._init import init_process, _INIT_SETTINGS
 from agentscope.agents.agent import AgentBase
 from agentscope.message import MessageBase
 from agentscope.message import Msg
 from agentscope.message import PlaceholderMessage
 from agentscope.message import deserialize
 from agentscope.message import serialize
-from agentscope.utils.logging_utils import logger
 from agentscope.rpc import (
     RpcAgentClient,
     RpcMsg,
@@ -144,6 +143,7 @@ class RpcAgentBase(AgentBase, RpcAgentServicer):
         # prohibit servicer object from launching a new server
         assert not (is_servicer and launch_server)
         # launch_server is True only in the main process
+        self.server_launcher = None
         if launch_server:
             self.server_launcher = RpcAgentServerLauncher(
                 name=name,
@@ -164,8 +164,6 @@ class RpcAgentBase(AgentBase, RpcAgentServicer):
             if not lazy_launch:
                 self.server_launcher.launch()
                 self.client = RpcAgentClient(host=self.host, port=self.port)
-        else:
-            self.server_launcher = None
         # is_servicer is True only in the rpc server process
         if is_servicer:
             self.result_pool = ExpiringDict(
@@ -369,7 +367,7 @@ def setup_rcp_agent_server(
     """
 
     if init_settings is not None:
-        init(**init_settings)
+        init_process(**init_settings)
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
     servicer = servicer_class(**kwargs)
     add_RpcAgentServicer_to_server(servicer, server)

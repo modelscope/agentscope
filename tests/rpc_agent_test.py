@@ -4,7 +4,10 @@ Unit tests for rpc agent classes
 """
 import unittest
 import time
+import shutil
+from loguru import logger
 
+import agentscope
 from agentscope.agents import AgentBase
 from agentscope.agents import RpcAgentBase
 from agentscope.agents.rpc_agent import RpcAgentServerLauncher
@@ -13,6 +16,7 @@ from agentscope.message import PlaceholderMessage
 from agentscope.message import deserialize
 from agentscope.msghub import msghub
 from agentscope.pipelines import sequentialpipeline
+from agentscope.utils import MonitorFactory, QuotaExceededError
 
 
 class DemoRpcAgent(RpcAgentBase):
@@ -62,8 +66,49 @@ class DemoRpcAgentWithMemory(RpcAgentBase):
         return msg
 
 
+class DemoRpcAgentWithMonitor(RpcAgentBase):
+    """A demo Rpc agent that use monitor"""
+
+    def reply(self, x: dict = None) -> dict:
+        monitor = MonitorFactory.get_monitor()
+        try:
+            monitor.update({"msg_num": 1})
+        except QuotaExceededError:
+            x.content["quota_exceeded"] = True
+            logger.chat(
+                {
+                    "name": self.name,
+                    "content": "quota_exceeded",
+                },
+            )
+            return x
+        x.content["msg_num"] = monitor.get_value("msg_num")
+        logger.chat(
+            {
+                "name": self.name,
+                "content": f"msg_num {x.content['msg_num']}",
+            },
+        )
+        time.sleep(0.2)
+        return x
+
+
 class BasicRpcAgentTest(unittest.TestCase):
     "Test cases for Rpc Agent"
+
+    def setUp(self) -> None:
+        """Init for Rpc Agent Test"""
+        agentscope.init(
+            project="test",
+            name="rpc_agent",
+            save_dir="./test_runs",
+            save_log=True,
+        )
+
+    def tearDown(self) -> None:
+        MonitorFactory._instance = None  # pylint: disable=W0212
+        logger.remove()
+        shutil.rmtree("./test_runs")
 
     def test_single_rpc_agent_server(self) -> None:
         """test setup a single rpc agent"""
@@ -85,7 +130,10 @@ class BasicRpcAgentTest(unittest.TestCase):
         placeholder_result = deserialize(js_placeholder_result)
         self.assertTrue(isinstance(placeholder_result, PlaceholderMessage))
         self.assertEqual(placeholder_result.name, "a")
-        self.assertEqual(placeholder_result["name"], "a")
+        self.assertEqual(
+            placeholder_result["name"],  # type: ignore [call-overload]
+            "a",
+        )
         self.assertTrue(
             placeholder_result._is_placeholder,  # pylint: disable=W0212
         )
@@ -277,3 +325,38 @@ class BasicRpcAgentTest(unittest.TestCase):
             self.assertEqual(x_c.content["mem_size"], 7)
             x_c = sequentialpipeline(participants, x_c)
             self.assertEqual(x_c.content["mem_size"], 10)
+
+    def test_standalone_multiprocess_init(self) -> None:
+        """test compatibility with agentscope.init"""
+        monitor = MonitorFactory.get_monitor()
+        monitor.register("msg_num", quota=10)
+        host = "localhost"
+        # automatically
+        port1 = 12001
+        port2 = 12002
+        # rpc agent a
+        agent_a = DemoRpcAgentWithMonitor(
+            name="a",
+            host=host,
+            port=port1,
+            lazy_launch=False,
+        )
+        # local agent b
+        agent_b = DemoRpcAgentWithMonitor(
+            name="b",
+            host=host,
+            port=port2,
+            lazy_launch=False,
+        )
+        msg = Msg(name="System", content={"msg_num": 0})
+        j = 0
+        for _ in range(5):
+            msg = agent_a(msg)
+            self.assertEqual(msg["content"]["msg_num"], j + 1)
+            msg = agent_b(msg)
+            self.assertEqual(msg["content"]["msg_num"], j + 2)
+            j += 2
+        msg = agent_a(msg)
+        self.assertTrue(msg["content"]["quota_exceeded"])
+        msg = agent_b(msg)
+        self.assertTrue(msg["content"]["quota_exceeded"])

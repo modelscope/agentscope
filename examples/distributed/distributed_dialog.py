@@ -35,7 +35,7 @@ def parse_args() -> argparse.Namespace:
 def setup_assistant_server(assistant_host: str, assistant_port: int) -> None:
     """Set up assistant rpc server"""
     agentscope.init(
-        model_configs="configs/model_configs_pxc.json",
+        model_configs="configs/model_configs.json",
     )
     assistant_server_launcher = RpcAgentServerLauncher(
         name="Assitant",
@@ -54,7 +54,7 @@ def setup_assistant_server(assistant_host: str, assistant_port: int) -> None:
 def run_main_process(assistant_host: str, assistant_port: int) -> None:
     """Run dialog main process"""
     agentscope.init(
-        model_configs="configs/model_configs_pxc.json",
+        model_configs="configs/model_configs.json",
     )
     assistant_agent = RpcDialogAgent(
         name="Assistant",

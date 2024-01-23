@@ -174,15 +174,15 @@ def setup_logger(
             `"DEBUG"`, `"INFO"`, `"SUCCESS"`, `"WARNING"`, `"ERROR"`,
             `"CRITICAL"`.
     """
-    # redirect stderr to record errors in logging
-    sys.stderr = _Stream()
-
     # avoid reinit in subprocess
     if hasattr(logger, "chat"):
         return
 
+    # redirect stderr to record errors in logging
+    sys.stderr = _Stream()
+
     # add chat function for logger
-    logger.level("CHAT", no=20, color="<yellow>")
+    logger.level("CHAT", no=21, color="<yellow>")
     logger.chat = _chat
 
     # set logging level
@@ -193,11 +193,10 @@ def setup_logger(
     if path_log is not None:
         if not os.path.exists(path_log):
             os.makedirs(path_log)
-
-        path_log_file = os.path.join(path_log, "file_{time}.log")
+        path_log_file = os.path.join(path_log, "all.log")
         path_log_file_only_chat = os.path.join(
             path_log,
-            "file_{time}.log.chat",
+            "chat.log",
         )
 
         # save all logging into file
