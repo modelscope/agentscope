@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
 import pickle
+from http import HTTPStatus
 from typing import Optional, List
 from datetime import datetime
+
+import dashscope
 from colorist import BgBrightColor
 import inquirer
 import random
@@ -219,3 +222,19 @@ class CheckpointArgs:
 
 class ResetException(Exception):
     pass
+
+
+def generate_picture(prompt):
+    dashscope.api_key = os.environ.get("DASHSCOPE_API_KEY") or dashscope.api_key
+    assert dashscope.api_key
+    rsp = dashscope.ImageSynthesis.call(
+        model=dashscope.ImageSynthesis.Models.wanx_v1,
+        prompt=prompt,
+        n=1,
+        size='1024*1024')
+    if rsp.status_code == HTTPStatus.OK:
+        return rsp.output['results'][0]['url']
+
+    else:
+        print('Failed, status_code: %s, code: %s, message: %s' %
+              (rsp.status_code, rsp.code, rsp.message))
