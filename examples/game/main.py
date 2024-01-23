@@ -11,6 +11,7 @@ from typing import Optional
 import agentscope
 from agentscope.message import Msg
 from agentscope.msghub import msghub
+from config_uitls import load_user_cfg
 from customer import Customer, MIN_BAR_FRIENDSHIP_CONST
 from enums import CustomerConv, StagePerNight
 from ruled_user import RuledUser
@@ -292,7 +293,7 @@ def main(args) -> None:
         encoding="utf-8",
     ) as customer_file:
         customer_configs = yaml.safe_load(customer_file)
-
+    customer_configs = load_user_cfg(args.uid)
     with open("config/user.yaml", "r", encoding="utf-8") as user_file:
         user_configs = yaml.safe_load(user_file)
 

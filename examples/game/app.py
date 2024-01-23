@@ -8,11 +8,10 @@ from collections import defaultdict
 from typing import List
 from multiprocessing import Event
 import agentscope
-
+from config_uitls import load_user_cfg, save_user_cfg, load_default_cfg
 from utils import (
     CheckpointArgs,
     enable_web_ui,
-    send_chat_msg,
     send_player_msg,
     send_player_input,
     get_chat_msg,
@@ -152,27 +151,73 @@ if __name__ == "__main__":
         uuid = gr.Textbox(label='modelscope_uuid', visible=False)
 
         welcome = {
-            "name": "饮食男女",
-            "description": "这是一款模拟餐馆经营的文字冒险游戏, 快来开始吧😊",
+            'name': '饮食男女',
+            'description': '这是一款模拟餐馆经营的文字冒险游戏, 快来开始吧😊',
         }
+        tabs = gr.Tabs(visible=True)
+        with tabs:
+            welcome_tab = gr.Tab('游戏界面', id=0)
+            config_tab = gr.Tab('游戏配置', id=1)
+            with welcome_tab:
+                user_chat_bot_cover = gr.HTML(format_cover_html(welcome))
+                with gr.Row():
+                    with gr.Column():
+                        new_button = gr.Button(value='🚀新的探险', )
+                    with gr.Column():
+                        resume_button = gr.Button(value='🔥续写情缘', )
 
-        user_chat_bot_cover = gr.HTML(format_cover_html(welcome))
         chatbot = mgr.Chatbot(
-            label="Dialog",
+            label='Dialog',
             show_label=False,
             height=600,
             visible=False,
         )
 
-        with gr.Row():
-            with gr.Column():
-                new_button = gr.Button(
-                    value="🚀新的探险",
+        with config_tab:
+            with gr.Row():
+                role_selector = gr.Dropdown(label='选择角色查看或者编辑')
+                create_role_button = gr.Button('🆕创建角色')
+                del_role_button = gr.Button('🧹删除角色')
+                save_role_button = gr.Button('🛄保存角色')
+                restore_role_button = gr.Button('🔄恢复默认')
+            with gr.Row():
+                avatar_file = gr.Image(
+                    label='头像',
+                    sources=['upload'],
+                    interactive=True,
+                    type='filepath',
+                    scale=1,
+                    width=182,
+                    height=182,
                 )
-            with gr.Column():
-                resume_button = gr.Button(
-                    value="🔥续写情缘",
-                )
+                with gr.Column(scale=4):
+                    role_name = gr.Textbox(label='角色名称',
+                                           placeholder='请输入角色名称',
+                                           interactive=True)
+                    with gr.Row():
+                        use_memory = gr.Checkbox(label='记忆功能',
+                                                 info='是否开启角色记忆功能')
+                        model_name = gr.Textbox(label='模型设置')
+            with gr.Accordion(label='角色特征', open=True):
+                food_preference = gr.Textbox(label='食物偏好',
+                                             placeholder='请输入喜欢的食物')
+                background = gr.Textbox(label='背景介绍', placeholder='请输入角色背景')
+                hidden_plot = gr.Dataframe(label='隐藏剧情设置',
+                                           show_label=True,
+                                           datatype=['str', 'str'],
+                                           headers=['id', '剧情描述'],
+                                           type='array',
+                                           wrap=True,
+                                           col_count=(2, 'fixed'),
+                                           interactive=True)
+                plugin_background = gr.Dataframe(label='角色插件隐藏背景设置',
+                                                 show_label=True,
+                                                 datatype=['str'],
+                                                 headers=['角色背景'],
+                                                 type='array',
+                                                 wrap=True,
+                                                 col_count=(1, 'fixed'),
+                                                 interactive=True)
 
         with gr.Row():
             with gr.Column():
@@ -221,6 +266,7 @@ if __name__ == "__main__":
             visible = True
             invisible = False
             return {
+                tabs: gr.Tabs(visible=invisible),
                 chatbot: mgr.Chatbot(visible=visible),
                 user_chat_input: gr.Text(visible=visible),
                 send_button: gr.Button(visible=visible),
@@ -235,6 +281,7 @@ if __name__ == "__main__":
             visible = True
             invisible = False
             return {
+                tabs: gr.Tabs(visible=visible),
                 chatbot: mgr.Chatbot(visible=invisible),
                 user_chat_input: gr.Text(visible=invisible),
                 send_button: gr.Button(visible=invisible),
@@ -245,7 +292,162 @@ if __name__ == "__main__":
                 user_chat_bot_cover: gr.HTML(visible=visible),
             }
 
+        def configure_role(name, uid):
+            uid = check_uuid(uid)
+            roles = load_user_cfg(uid)
+            role = None
+            for r in roles:
+                if r['name'] == name:
+                    role = r
+
+            character_setting = role['character_setting']
+
+            hidden_plots = [
+                [k, v] for k, v in character_setting['hidden_plot'].items()
+            ]
+            plugin_backgrounds = [
+                [str] for str in character_setting['plugin_background']
+            ]
+            if role:
+                # no role in config
+                return {
+                    avatar_file: gr.Image(value=role['avatar'],
+                                          interactive=True),
+                    role_name: role['name'],
+                    use_memory: gr.Checkbox(value=role['use_memory']),
+                    model_name: role['model'],
+                    food_preference: character_setting['food_preference'],
+                    background: character_setting['background'],
+                    hidden_plot: hidden_plots,
+                    plugin_background: plugin_backgrounds,
+                }
+            else:
+                return {
+                    avatar_file: gr.Image(value=None, interactive=True),
+                    role_name: '',
+                    use_memory: gr.Checkbox(label='是否开启记忆功能'),
+                    model_name: '',
+                    food_preference: '',
+                    background: '',
+                    hidden_plot: None,
+                    plugin_background: None
+                }
+
+        role_config_options = [
+            avatar_file, role_name, use_memory, model_name, food_preference,
+            background, hidden_plot, plugin_background
+        ]
+        role_selector.change(configure_role,
+                             inputs=[role_selector, uuid],
+                             outputs=role_config_options)
+
+        def on_config_tab_select(uid):
+            uid = check_uuid(uid)
+            roles = load_user_cfg(uid)
+            role_names = [role['name'] for role in roles]
+            if len(role_names) < 1:
+                gr.Warning('配置中没有发现角色，可以点击恢复默认')
+                return gr.Dropdown()
+            return gr.Dropdown(value=role_names[0], choices=role_names)
+
+        def create_role():
+            return {
+                avatar_file:
+                gr.Image(value=None),
+                role_name:
+                gr.Text(value=None), #, interactive=True),
+                use_memory:
+                gr.Checkbox(value=None, label='是否开启记忆功能'), #, interactive=True),
+                model_name:
+                gr.Text(value='tongyi_model'),
+                food_preference:
+                gr.Text(value=None, ), #interactive=True),
+                background:
+                gr.Textbox(value=None),# , interactive=True),
+                hidden_plot:
+                gr.DataFrame(value=[['', '']]),# , interactive=True),
+                plugin_background:
+                gr.DataFrame(value=[['']]), #, interactive=True)
+            }
+
+        def delete_role(role_name, uid):
+            uid = check_uuid(uid)
+            roles = load_user_cfg(uid)
+            del_role = None
+
+            for role in roles:
+                if role['name'] == role_name:
+                    del_role = role
+            if del_role in roles and len(roles) >= 2:
+                roles.pop(roles.index(del_role))
+            else:
+                gr.Warning('至少需要一名角色。')
+            save_user_cfg(roles, uid)
+            role_names = [role['name'] for role in roles]
+            return gr.Dropdown(value=role_names[0], choices=role_names)
+
+        def save_role(avatar_file, role_name, use_memory, model_name,
+                      food_preference, background, hidden_plot,
+                      plugin_background, uid):
+            uid = check_uuid(uid)
+            roles = load_user_cfg(uid)
+            if role_name == '':
+                gr.Warning('必须给一个新角色起一个名字')
+                role_names = [role['name'] for role in roles]
+                return gr.Dropdown(value=role_names[0], choices=role_names)
+
+            new_role = dict()
+
+            for role in roles:
+                if role['name'] == role_name:
+                    new_role = role
+                    break
+            if new_role in roles:
+                roles.pop(roles.index(new_role))
+            new_role = dict()
+            new_role['avatar'] = avatar_file
+            new_role['name'] = role_name
+            new_role['use_memory'] = use_memory
+            new_role['model'] = model_name
+            character_setting = new_role.get('character_setting', dict())
+            character_setting['food_preference'] = food_preference
+            character_setting['background'] = background
+            character_setting['hidden_plot'] = {
+                it[0]: it[1]
+                for it in hidden_plot
+            }
+            character_setting['plugin_background'] = [
+                it[0] for it in plugin_background
+            ]
+            new_role['character_setting'] = character_setting
+            roles.append(new_role)
+            save_user_cfg(roles, uid)
+            role_names = [role['name'] for role in roles]
+            return gr.Dropdown(value=role_name, choices=role_names)
+
+        def restore_default_cfg(uid):
+            uid = check_uuid(uid)
+            roles = load_default_cfg(uid)
+            role_names = [role['name'] for role in roles]
+            return gr.Dropdown(value=role_names[0], choices=role_names)
+
+        restore_role_button.click(restore_default_cfg,
+                                  inputs=[uuid],
+                                  outputs=role_selector)
+        del_role_button.click(delete_role,
+                              inputs=[role_name, uuid],
+                              outputs=[role_selector
+                                       ])  #+ role_config_options )
+        save_role_button.click(save_role,
+                               inputs=role_config_options + [uuid],
+                               outputs=role_selector)
+        create_role_button.click(create_role, outputs=role_config_options)
+        config_tab.select(on_config_tab_select,
+                          inputs=[uuid],
+                          outputs=role_selector)
+
         outputs = [
+            tabs,
             chatbot,
             user_chat_input,
             send_button,
@@ -282,6 +484,7 @@ if __name__ == "__main__":
         # export
         export_button.click(export_chat_history, [uuid], export_output)
 
+        # demo.load(update_role_selector, outputs=[role_selector])
         # update chat history
         demo.load(init_game)
         demo.load(check_for_new_session, inputs=[uuid], every=0.1)
