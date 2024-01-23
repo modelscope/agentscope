@@ -524,7 +524,6 @@ if __name__ == "__main__":
         # export
         export_button.click(export_chat_history, [uuid], export_output)
 
-        # demo.load(update_role_selector, outputs=[role_selector])
         # update chat history
         demo.load(init_game)
         demo.load(check_for_new_session, inputs=[uuid], every=0.1)
