@@ -2,7 +2,7 @@
 
 AgentScope is an innovative multi-agent platform designed to empower developers to build multi-agent applications with ease, reliability, and high performance. It features three high-level capabilities:
 
-- **Easy-to-Use**: Programming in pure Python with various pre-built components for immediate use, suitable for developers or users with varying levels of customization requirements. Detailed documentation and examples are provided to help you get started, see our [Tutorial](https://alibaba.github.io/AgentScope/tutorial/contribute.html).
+- **Easy-to-Use**: Programming in pure Python with various pre-built components for immediate use, suitable for developers or users with varying levels of customization requirements. Detailed documentation and examples are provided to help you get started, see our [Tutorial](https://alibaba.github.io/AgentScope/).
 
 - **High Robustness**: Supporting customized fault-tolerance controls and retry mechanisms to enhance application stability.
 
