@@ -14,6 +14,7 @@ from utils import (
     query_answer,
     get_player_input,
     ResetException,
+    generate_picture,
 )
 
 
@@ -181,10 +182,12 @@ class RuledUser(AgentBase):
         food = self.model(messages=[message])
         # random_quality = random.choice(list(FoodQuality)).value
         # food = random_quality + food
-
+        picture_prompt = f"请根据菜品'{food}', 生成一幅与之对应的色香味巨全，让人有食欲的图。"
+        picture_url = generate_picture(picture_prompt)
         send_chat_msg(
             # f"【系统】魔法锅周围光芒四射，你听到了轻微的咔哒声。当一切平静下来，一道《{food}》出现在你眼前。",
-            f"【系统】你开始撸起袖子、开启炉灶。。。。当一切平静下来，一道《{food}》出现在客人眼前。",
+            f"【系统】你开始撸起袖子、开启炉灶。。。。当一切平静下来，一道《{food}》出现在客人眼前。"
+            f"![image]({picture_url})",
             uid=self.uid,
         )
 
