@@ -60,10 +60,9 @@ But don't worry, `RpcAgentBase` shares the same interface as `AgentBase`, you on
 ### Run in multi-process mode
 
 AgentScope supports deployment in multi-process mode, where each agent is a sub-process of the application's main process, and all agents run on the same machine.
-Its usage is very similar to single-process mode. The only difference lies in the initialization phase.
+The usage is exactly the same as single process mode, and you only need to ensure that the agents used are instances of `RpcAgentBase` subclasses.
 
 Suppose you have classes `A` and `B`, both of which inherit from `RpcAgentBase`.
-You can run the application in multi-process mode by passing in an additional parameter `port`, the other parts are completely the same as the single-process mode.
 
 ```python
 # import packages
@@ -71,12 +70,10 @@ You can run the application in multi-process mode by passing in an additional pa
 a = A(
     name="A",
     ...,
-    port=12001, # port is required, other fields like host, launch_server and local_mode use the default value
 )
 b = B(
     name="B",
     ...,
-    port=12002, # port is required
 )
 
 x = None

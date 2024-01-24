@@ -81,7 +81,7 @@ class RpcAgentBase(AgentBase, RpcAgentServicer):
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
         host: str = "localhost",
-        port: int = 12000,
+        port: int = None,
         max_pool_size: int = 100,
         max_timeout_seconds: int = 1800,
         launch_server: bool = True,
