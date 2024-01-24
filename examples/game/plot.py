@@ -6,7 +6,7 @@ from loguru import logger
 from customer import Customer
 
 
-def always_true() -> bool:
+def always_true(**kwargs) -> bool:
     return True
 
 
@@ -93,14 +93,17 @@ class GamePlot:
         # set state to active
         if can_activate:
             self.state = self.PlotState.ACTIVE
+            logger.debug(f"activate plot {self.id}")
             # activate roles in the current plot
             for role in self.main_roles + self.supporting_roles:
                 role.activate_plot([self.id])
+                logger.debug(f"activate role {role.name} for "
+                             f"plot {role.active_plots}")
             return True
         else:
             return False
 
-    def check_plot_condition(
+    def check_plot_condition_done(
             self,
             roles: list[Customer],
             all_plots: dict[int, GamePlot],
@@ -108,7 +111,11 @@ class GamePlot:
     ) -> tuple[bool, list[int]]:
         # when the invited roles are the same as the main roles of the plot,
         # this plot is considered done
-        if self.main_roles == roles:
+        correct_names = [r.name for r in self.main_roles]
+        input_names = [r.name for r in roles]
+        correct_names.sort()
+        input_names.sort()
+        if input_names == correct_names:
             logger.debug(f"Plot {self.id} is done")
             self.state = self.PlotState.DONE
         else:
@@ -116,7 +123,8 @@ class GamePlot:
 
         unblock_ids = []
         for i in range(len(self.support_following_plots)):
-            unblock = self.support_following_plots[i][1](roles, **kwargs)
+            unblock = self.support_following_plots[i][1](**kwargs)
+            logger.debug(f"{i}, {unblock}, {self.max_unblock_plots}")
             if unblock and self.max_unblock_plots > 0:
                 self.support_following_plots[i] = (
                     self.support_following_plots[i][0],
@@ -125,7 +133,9 @@ class GamePlot:
                 self.max_unblock_plots -= 1
                 unblock_plot = all_plots[self.support_following_plots[i][0]]
                 unblock_ids.append(unblock_plot.id)
-
+                logger.debug(f"unblock plot {unblock_plot.id}")
+        self.deactivate_roles()
+        self.state = self.PlotState.DONE
         return True, unblock_ids
 
 
@@ -144,6 +154,10 @@ def parse_plots(
             main_roles=[roles_map[r] for r in cfg["main_roles"] or []],
             supporting_roles=[roles_map[r] for r in cfg["supporting_roles"] or []],
         )
+        if "max_unblock_plots" in cfg:
+            gplot.max_unblock_plots = int(cfg["max_unblock_plots"])
+        else:
+            gplot.max_unblock_plots = 0
         plots[gplot.id] = gplot
 
     # add dependencies
@@ -184,11 +198,10 @@ def check_active_plot(
     else:
         prev_active.remove(curr_done)
         active_plots = prev_active
+        logger.debug(f"active_plots {active_plots}")
         for p_id, unlock in all_plots[curr_done].support_following_plots:
+            # iterate all downstream plot of the current done plot
+            logger.debug(f"{p_id}, {unlock}, {all_plots[curr_done].is_done()}")
             if unlock and all_plots[p_id].activate():
                 active_plots.append(p_id)
     return active_plots
-
-
-if __name__ == "__main__":
-    plot = GamePlot(1)
