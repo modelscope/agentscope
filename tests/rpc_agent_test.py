@@ -284,23 +284,14 @@ class BasicRpcAgentTest(unittest.TestCase):
 
     def test_msghub_compatibility(self) -> None:
         """test compatibility with msghub"""
-        port1 = 12001
-        port2 = 12002
-        port3 = 12003
         agent_a = DemoRpcAgentWithMemory(
             name="a",
-            lazy_launch=False,
-            port=port1,
         )
         agent_b = DemoRpcAgentWithMemory(
             name="b",
-            lazy_launch=False,
-            port=port2,
         )
         agent_c = DemoRpcAgentWithMemory(
             name="c",
-            lazy_launch=False,
-            port=port3,
         )
         participants = [agent_a, agent_b, agent_c]
         annonuncement_msgs = [
