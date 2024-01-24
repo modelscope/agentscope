@@ -6,7 +6,7 @@ Becoming a part of the AgentScope community allows you to connect with other use
 
 ## GitHub
 
-- **Star and Watch the AgentScope Repository:** Show your support and stay updated on our progress by starring and watching the [AgentScope repository](https://github.com/alibaba/AgentScope).
+- **Star and Watch the AgentScope Repository:** Show your support and stay updated on our progress by starring and watching the [AgentScope repository](https://github.com/modelscope/agentscope).
 - **Submit Issues and Pull Requests:** If you encounter any problems or have suggestions, submit an issue to the relevant repository. We also welcome pull requests for bug fixes, improvements, or new features.
 
 ## Discord

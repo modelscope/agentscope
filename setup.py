@@ -15,7 +15,7 @@ with open("src/agentscope/_version.py", encoding="UTF-8") as f:
     ).group(1)
 
 NAME = "agentscope"
-URL = "https://github.com/alibaba/AgentScope"
+URL = "https://github.com/modelscope/agentscope"
 
 rpc_requires = [
     "grpcio==1.60.0",
