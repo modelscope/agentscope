@@ -5,7 +5,7 @@ import numpy as np
 from loguru import logger
 
 from enums import CustomerConv, CustomerPlot
-from utils import send_chat_msg, get_a_random_avatar, send_pretty_msg
+from utils import send_chat_msg, get_a_random_avatar, send_pretty_msg, SYS_MSG_PREFIX
 from agentscope.agents import StateAgent, DialogAgent
 from agentscope.message import Msg
 
@@ -127,7 +127,7 @@ class Customer(StateAgent, DialogAgent):
         self.friendship += change_in_friendship
         change_symbol = "+" if change_in_friendship >= 0 else ""
         send_chat_msg(
-            f"【系统】{self.name}: 好感度变化 "
+            f" {SYS_MSG_PREFIX}{self.name}: 好感度变化 "
             f"{change_symbol}{change_in_friendship} "
             f"当前好感度为 {self.friendship}",
             uid=self.uid,
@@ -249,7 +249,7 @@ class Customer(StateAgent, DialogAgent):
         update_msg = Msg(role="user", name="system", content=update_prompt)
         new_background = self.model(messages=[update_msg])
         send_chat_msg(
-            f"【系统】根据对话，{self.name}的背景更新为：" + new_background,
+            f" {SYS_MSG_PREFIX}根据对话，{self.name}的背景更新为：" + new_background,
             uid=self.uid,
         )
         self.background = new_background

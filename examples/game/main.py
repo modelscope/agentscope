@@ -11,7 +11,7 @@ from typing import Optional
 import agentscope
 from agentscope.message import Msg
 from agentscope.msghub import msghub
-from config_uitls import load_user_cfg
+from config_uitls import load_user_cfg, load_configs
 from customer import Customer, MIN_BAR_FRIENDSHIP_CONST
 from enums import CustomerConv, StagePerNight
 from ruled_user import RuledUser
@@ -24,6 +24,7 @@ from utils import (
     save_game_checkpoint,
     send_chat_msg,
     query_answer,
+    SYS_MSG_PREFIX,
     CheckpointArgs,
 )
 
@@ -39,7 +40,7 @@ def invited_group_chat(
     if len(invited_customer) == 0:
         return None
     invited_names = [c.name for c in invited_customer]
-    send_chat_msg("【系统】群聊开始", uid=uid)
+    send_chat_msg(f"{SYS_MSG_PREFIX}群聊开始", uid=uid)
     send_chat_msg(f"老板今天邀请了{invited_names}，大家一起聊聊", uid=uid)
     announcement = {"role": "user", "content": "今天老板邀请大家一起来聚聚。"}
     with msghub(invited_customer + [player], announcement=announcement):
@@ -47,12 +48,12 @@ def invited_group_chat(
             questions = [
                 inquirer.List(
                     "ans",
-                    message="【系统】：你要发言吗？",
+                    message=f"{SYS_MSG_PREFIX}：你要发言吗？",
                     choices=["是", "否", "结束邀请对话"],
                 ),
             ]
 
-            choose_during_chatting = f"""【系统】你要发言吗？ <select-box shape="card"
+            choose_during_chatting = f"""【{SYS_MSG_PREFIX}你要发言吗？ <select-box shape="card"
                                 type="checkbox" item-width="auto" options=
                                '
                                {json.dumps(["是", "否", "结束邀请对话"])}'
@@ -63,7 +64,7 @@ def invited_group_chat(
             while True:
                 answer = query_answer(questions, "ans", uid=uid)
                 if isinstance(answer, str):
-                    send_chat_msg("【系统】请在列表中选择。", uid=uid)
+                    send_chat_msg(f"{SYS_MSG_PREFIX}请在列表中选择。", uid=uid)
                     continue
                 elif answer == ["是"]:
                     msg = player(announcement)
@@ -93,12 +94,12 @@ def invited_group_chat(
             questions = [
                 inquirer.List(
                     "ans",
-                    message="【系统】：需要以哪位角色的视角生成一段完整故事吗？",
+                    message=f"{SYS_MSG_PREFIX}：需要以哪位角色的视角生成一段完整故事吗？",
                     choices=invited_names + ["跳过"],
                 ),
             ]
 
-            choose_role_story = f"""【系统】：需要以哪位角色的视角生成一段完整故事吗？: <select-box
+            choose_role_story = f"""{SYS_MSG_PREFIX}：需要以哪位角色的视角生成一段完整故事吗？: <select-box
             shape="card"
                         item-width="auto" type="checkbox" options=
                         '{json.dumps(invited_names + ["跳过"])}'
@@ -109,7 +110,7 @@ def invited_group_chat(
             while True:
                 answer = query_answer(questions, "ans", uid=uid)
                 if isinstance(answer, str):
-                    send_chat_msg("【系统】请在列表中选择。", uid=uid)
+                    send_chat_msg(f"{SYS_MSG_PREFIX}请在列表中选择。", uid=uid)
                     continue
                 break
             for c in invited_customer:
@@ -125,13 +126,7 @@ def one_on_one_loop(customers, player, uid):
     visit_customers = [c for c in customers if c.visit()]
     # random.shuffle(visit_customers)
 
-    with open(
-        "config/ingredients.yaml",
-        "r",
-        encoding="utf-8",
-    ) as ingredients_file:
-        ingredients = yaml.safe_load(ingredients_file)
-
+    ingredients = load_configs("config/ingredients.yaml")
     ingredient_today = {}
     for category, items in ingredients.items():
         ingredient_today[category] = (
@@ -147,20 +142,20 @@ def one_on_one_loop(customers, player, uid):
         f"\n{key}: {' '.join([str(i) for i in value])}" for key, value in
         ingredient_today.items()
     )
-    send_chat_msg(f"【系统】今天拥有的食材是：\n{ingr}", uid=uid)
+    send_chat_msg(f"{SYS_MSG_PREFIX}今天拥有的食材是：\n{ingr}", uid=uid)
 
     player.set_ingredients(ingredient_today)
 
     if not visit_customers:
-        send_chat_msg("【系统】今天没有出现客人，请增加与客人的好感度以增大出现概率", uid=uid)
+        send_chat_msg(f"{SYS_MSG_PREFIX}今天没有出现客人，请增加与客人的好感度以增大出现概率", uid=uid)
     else:
         send_chat_msg(
-            f"【系统】今天出现的客人: {' '.join([c.name for c in visit_customers])}",
+            f"{SYS_MSG_PREFIX}今天出现的客人: {' '.join([c.name for c in visit_customers])}",
             uid=uid,
         )
     for customer in visit_customers:
         send_chat_msg(
-            f"【系统】顾客{customer.name} 进入餐馆 (当前好感度为: {customer.friendship})",
+            f"{SYS_MSG_PREFIX}顾客{customer.name} 进入餐馆 (当前好感度为: {customer.friendship})",
             uid=uid,
         )
         msg = player({"content": "游戏开始"})
@@ -168,7 +163,7 @@ def one_on_one_loop(customers, player, uid):
             msg = customer(msg)
             if "score" in msg:
                 send_chat_msg(
-                    f"【系统】{customer.name}（顾客）接受了你的菜。\n"
+                    f"{SYS_MSG_PREFIX}{customer.name}（顾客）接受了你的菜。\n"
                     f" 顾客对菜本身的评价：{msg['content']}\n"
                     f" {customer.name}（顾客）享用完之后，"
                     f"综合满意度为{msg['score']}\n",
@@ -177,7 +172,7 @@ def one_on_one_loop(customers, player, uid):
                 break
 
             send_chat_msg(
-                "【系统】请输入“做菜”启动做菜程序，它会按所选定食材产生菜品。 \n"
+                f"{SYS_MSG_PREFIX}请输入“做菜”启动做菜程序，它会按所选定食材产生菜品。 \n"
                 " 对话轮次过多会使得顾客综合满意度下降。 \n"
                 " 若不输入任何内容直接按回车键，顾客将离开餐馆。",
                 uid=uid,
@@ -188,13 +183,13 @@ def one_on_one_loop(customers, player, uid):
 
         if isinstance(msg, dict):
             if len(msg["content"]) == 0 or msg["score"] < 4:
-                send_chat_msg(f"【系统】顾客{customer.name} 离开餐馆", uid=uid)
+                send_chat_msg(f"{SYS_MSG_PREFIX}顾客{customer.name} 离开餐馆", uid=uid)
                 continue
 
         questions = [
             inquirer.List(
                 "ans",
-                message="【系统】：接下来你会说些什么吗？",
+                message=f"{SYS_MSG_PREFIX}：接下来你会说些什么吗？",
                 choices=[
                     "感谢您的今天来我们这里消费。这里是赠送的果盘，请您享用。还有什么是我能为您做的呢？",
                     "感谢您的光顾。(结束与该顾客的当天对话)",
@@ -202,7 +197,7 @@ def one_on_one_loop(customers, player, uid):
             ),
         ]
 
-        choose_after_meal = f"""【系统】接下来你会说些什么吗？
+        choose_after_meal = f"""{SYS_MSG_PREFIX}接下来你会说些什么吗？
             <select-box shape="card" item-width="auto" type="checkbox" options=
             '{json.dumps(["感谢您的今天来我们这里消费。这里是赠送的果盘，"
                                     "请您享用。还有什么是我能为您做的呢？",
@@ -215,7 +210,7 @@ def one_on_one_loop(customers, player, uid):
             answer = query_answer(questions, "ans", uid=uid)
             if isinstance(answer, str):
                 send_chat_msg(
-                    "【系统】请在列表中选择。",
+                    "{SYS_MSG_PREFIX}请在列表中选择。",
                     uid=uid,
                 )
                 continue
@@ -233,10 +228,10 @@ def one_on_one_loop(customers, player, uid):
             msg = customer(msg)
             # print(f"{customer_reply.name}（顾客）:" + customer_reply.content)
 
-            send_chat_msg("【系统】若不输入任何内容直接按回车键，顾客将离开餐馆。", uid=uid)
+            send_chat_msg(f"{SYS_MSG_PREFIX}若不输入任何内容直接按回车键，顾客将离开餐馆。", uid=uid)
             msg = player(msg)
             if len(msg["content"]) == 0:
-                send_chat_msg(f"【系统】顾客{customer.name} 离开餐馆", uid=uid)
+                send_chat_msg(f"{SYS_MSG_PREFIX}顾客{customer.name} 离开餐馆", uid=uid)
                 break
     return visit_customers
 
@@ -248,17 +243,17 @@ def invite_customers(customers, uid):
     invited_customers = []
 
     if len(available_customers) == 0:
-        send_chat_msg("【系统】：您目前无法邀请任何一个顾客（所有顾客好感度均低于80）。", uid=uid)
+        send_chat_msg(f"{SYS_MSG_PREFIX}：您目前无法邀请任何一个顾客（所有顾客好感度均低于80）。", uid=uid)
 
     select_customer = [
         inquirer.List(
             "invited",
-            message="【系统】今天就没有更多顾客了，您明天有什么邀请计划吗？",
+            message=f"{SYS_MSG_PREFIX}今天就没有更多顾客了，您明天有什么邀请计划吗？",
             choices=available_customers,
         ),
     ]
 
-    choose_available_customers = f"""【系统】今天就没有更多顾客了，您明天有什么邀请计划吗？:
+    choose_available_customers = f"""{SYS_MSG_PREFIX}今天就没有更多顾客了，您明天有什么邀请计划吗？:
     <select-box shape="card"  type="checkbox" item-width="auto" options=
                 '{json.dumps(available_customers)}' select-once
                 submit-text="确定"></select-box>"""
@@ -268,7 +263,7 @@ def invite_customers(customers, uid):
     while True:
         answer = query_answer(select_customer, "invited", uid=uid)
         if isinstance(answer, str):
-            send_chat_msg("【系统】请在列表中选择。", uid=uid)
+            send_chat_msg(f"{SYS_MSG_PREFIX}请在列表中选择。", uid=uid)
             continue
         else:
             invited_customers = answer
@@ -276,8 +271,8 @@ def invite_customers(customers, uid):
 
 
 def main(args) -> None:
-    game_description = """
-    【系统】
+    game_description = f"""
+    {SYS_MSG_PREFIX}
     这是一款模拟餐馆经营的文字冒险游戏。
     玩家扮演餐馆老板，通过与顾客互动来经营餐馆并解锁剧情。
     游戏分为四个阶段：选择食材做菜，随意聊天，一对一互动以及邀请对话。
@@ -286,16 +281,8 @@ def main(args) -> None:
     通过与顾客的互动，玩家可以解锁剧情并发展餐馆的故事，体验不同的情节和结局。
     """
     send_chat_msg(game_description, uid=args.uid)
-
-    with open(
-        "config/customer_config.yaml",
-        "r",
-        encoding="utf-8",
-    ) as customer_file:
-        customer_configs = yaml.safe_load(customer_file)
     customer_configs = load_user_cfg(args.uid)
-    with open("config/user.yaml", "r", encoding="utf-8") as user_file:
-        user_configs = yaml.safe_load(user_file)
+    user_configs = load_configs("config/user.yaml")
 
     customers = [
         Customer(
@@ -310,10 +297,7 @@ def main(args) -> None:
     ]
     user_configs["uid"] = args.uid
     player = RuledUser(**user_configs)
-
-    with open("config/plot_config.yaml", "r", encoding="utf-8") as plot_file:
-        plot_config = yaml.safe_load(plot_file)
-
+    plot_config = load_configs("config/plot_config.yaml")
     all_plots = parse_plots(plot_config, customers)
 
     if args.load_checkpoint is not None:
@@ -407,9 +391,7 @@ if __name__ == "__main__":
         default="./checkpoints/cp-",
     )
     args = parser.parse_args()
-    with open("./config/game_config.yaml", "r", encoding="utf-8") as file:
-        GAME_CONFIG = yaml.safe_load(file)
-
+    GAME_CONFIG = load_configs("config/game_config.yaml")
     TONGYI_CONFIG = {
         "type": "tongyi",
         "name": "tongyi_model",

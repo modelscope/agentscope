@@ -4,10 +4,9 @@ import shutil
 import yaml
 
 DEFAULT_AGENT_DIR = '/tmp/as_game/'
-DEFAULT_BUILDER_CONFIG_DIR = os.path.join(DEFAULT_AGENT_DIR, 'config')
-DEFAULT_BUILDER_CONFIG_FILE = os.path.join(DEFAULT_BUILDER_CONFIG_DIR,
-                                           'customer_config.yaml')
-
+DEFAULT_CONFIG_DIR = os.path.join(DEFAULT_AGENT_DIR, 'config')
+DEFAULT_CONFIG_FILENAME='customer_config.yaml'
+DEFAULT_CONFIG_FILE = os.path.join(DEFAULT_CONFIG_DIR, DEFAULT_CONFIG_FILENAME)
 
 def load_configs(config_file):
     with open(config_file, 'r', encoding='utf-8') as f:
@@ -21,19 +20,18 @@ def save_configs(configs, config_file):
 
 
 def get_user_dir(uuid_str=''):
-    return os.path.join(DEFAULT_BUILDER_CONFIG_DIR, uuid_str)
+    user_dir = DEFAULT_CONFIG_DIR
+    user_dir = user_dir.replace('config', 'config/user')
+    if uuid_str != '':
+        user_dir = user_dir.replace('user', uuid_str)
+    os.makedirs(user_dir, exist_ok=True)
+    return user_dir
 
 
 def get_user_cfg_file(uuid_str='', use_default=False):
-    cfg_file = DEFAULT_BUILDER_CONFIG_FILE
-    cfg_file = cfg_file.replace('config/', 'config/user/')
-
-    if uuid_str != '':
-        cfg_file = cfg_file.replace('user', uuid_str)
-
+    cfg_dir = get_user_dir(uuid_str)
+    cfg_file = os.path.join(cfg_dir, DEFAULT_CONFIG_FILENAME)
     if not os.path.exists(cfg_file) or use_default:
-        # create parents directory
-        os.makedirs(os.path.dirname(cfg_file), exist_ok=True)
         # copy the template to the address
         cfg_file_temp = './config/customer_config.yaml'
 
