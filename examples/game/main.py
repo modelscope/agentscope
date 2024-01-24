@@ -155,7 +155,7 @@ def one_on_one_loop(customers, player, uid):
         )
     for customer in visit_customers:
         send_chat_msg(
-            f"{SYS_MSG_PREFIX}顾客{customer.name} 进入餐馆 (当前好感度为: {customer.friendship})",
+            f"{SYS_MSG_PREFIX}顾客{customer.name} 进入餐馆 (当前好感度为: {round(customer.friendship, 2)})",
             uid=uid,
         )
         msg = player({"content": "游戏开始"})
@@ -166,7 +166,7 @@ def one_on_one_loop(customers, player, uid):
                     f"{SYS_MSG_PREFIX}{customer.name}（顾客）接受了你的菜。\n"
                     f" 顾客对菜本身的评价：{msg['content']}\n"
                     f" {customer.name}（顾客）享用完之后，"
-                    f"综合满意度为{msg['score']}\n",
+                    f"综合满意度为{round(msg['score'], 2)}\n",
                     uid=uid,
                 )
                 break
@@ -289,7 +289,7 @@ def main(args) -> None:
             name=cfg["name"],
             config=cfg,
             game_config=args.game_config,
-            model=cfg["model"],
+            model=os.environ.get("HTTP_LLM_MODEL") if cfg["model"] == "post_api" else cfg["model"],
             use_memory=True,
             uid=args.uid,
         )
@@ -399,7 +399,24 @@ if __name__ == "__main__":
         "api_key": os.environ.get("TONGYI_API_KEY"),
     }
 
-    agentscope.init(model_configs=[TONGYI_CONFIG], logger_level="DEBUG")
+    HTTP_LLM_CONFIG = {
+        "type": "post_api",
+        "name": os.environ.get("HTTP_LLM_MODEL"),
+        "headers": {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {os.environ.get('HTTP_LLM_API_KEY')}"
+        },
+        "api_url": os.environ.get("HTTP_LLM_URL"),
+        "messages_key": "messages",
+        "json_args": {
+            "model": os.environ.get("HTTP_LLM_MODEL"),
+            "n": 1,
+            "temperature": 0.7,
+        }
+
+    }
+
+    agentscope.init(model_configs=[TONGYI_CONFIG, HTTP_LLM_CONFIG], logger_level="DEBUG")
     args = CheckpointArgs()
     args.game_config = GAME_CONFIG
     args.uid = None

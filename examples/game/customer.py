@@ -5,14 +5,22 @@ import numpy as np
 from loguru import logger
 
 from enums import CustomerConv, CustomerPlot
-from utils import send_chat_msg, get_a_random_avatar, send_pretty_msg, SYS_MSG_PREFIX
+from utils import SYS_MSG_PREFIX
 from agentscope.agents import StateAgent, DialogAgent
 from agentscope.message import Msg
+
+from utils import (
+    send_chat_msg,
+    get_a_random_avatar,
+    send_pretty_msg,
+    replace_names_in_messages,
+)
 
 HISTORY_WINDOW = 10
 # TODO: for debug, set the score bars to be lower
 MIN_BAR_RECEIVED_CONST = 4
 MIN_BAR_FRIENDSHIP_CONST = 30
+MESSAGE_KEYS = ["name", "role", "content"]
 
 
 class Customer(StateAgent, DialogAgent):
@@ -113,7 +121,7 @@ class Customer(StateAgent, DialogAgent):
             return 2.0
 
         score, text = self.model(
-            messages=[message],
+            [{key: getattr(message, key) for key in MESSAGE_KEYS if hasattr(message, key)}],
             parse_func=_parse_score,
             fault_handler=_default_score,
             max_retries=3,
@@ -128,8 +136,8 @@ class Customer(StateAgent, DialogAgent):
         change_symbol = "+" if change_in_friendship >= 0 else ""
         send_chat_msg(
             f" {SYS_MSG_PREFIX}{self.name}: 好感度变化 "
-            f"{change_symbol}{change_in_friendship} "
-            f"当前好感度为 {self.friendship}",
+            f"{change_symbol}{round(change_in_friendship, 2)} "
+            f"当前好感度为 {round(self.friendship, 2)}",
             uid=self.uid,
         )
 
@@ -165,7 +173,8 @@ class Customer(StateAgent, DialogAgent):
         logger.debug(system_prompt)
         if x is not None:
             self.memory.add(x)
-        reply = self.model(messages=prompt)
+
+        reply = self.model(replace_names_in_messages(prompt))
         reply_msg = Msg(role="assistant", name=self.name, content=reply)
         self.memory.add(reply_msg)
         return reply_msg
@@ -187,21 +196,20 @@ class Customer(StateAgent, DialogAgent):
 
         system_msg = Msg(role="user", name="system", content=prompt)
 
-        # prepare prompt
-        prompt = self.engine.join(
+        join_args = [
             self._validated_history_messages(recent_n=HISTORY_WINDOW),
             system_msg,
-        )
+        ]
+
+        if x is not None:
+            join_args.append(x)
+            self.memory.add(x)
+
+        prompt = self.engine.join(*join_args)
 
         logger.debug(f"{self.name} history prompt: {prompt}")
 
-        if x is not None:
-            messages = prompt + [x]
-            self.memory.add(x)
-        else:
-            messages = prompt
-
-        reply = self.model(messages=messages)
+        reply = self.model(replace_names_in_messages(prompt))
 
         reply_msg = Msg(role="assistant", name=self.name, content=reply)
         self.memory.add(reply_msg)
@@ -232,9 +240,14 @@ class Customer(StateAgent, DialogAgent):
             system_msg,
         )
 
-        analysis = self.model(messages=prompt)
+        analysis = self.model(replace_names_in_messages(prompt))
+        analysis_msg = Msg(
+            role="user",
+            name=self.name,
+            content=f"聊完之后，{self.name}在想:" + analysis
+        )
         send_pretty_msg(
-            f"聊完之后，{self.name}在想:" + analysis,
+            analysis_msg,
             uid=self.uid,
             avatar=self.avatar,
         )
@@ -247,10 +260,16 @@ class Customer(StateAgent, DialogAgent):
             },
         )
         update_msg = Msg(role="user", name="system", content=update_prompt)
-        new_background = self.model(messages=[update_msg])
+        new_background = self.model([{key: getattr(update_msg, key) for key in MESSAGE_KEYS if hasattr(update_msg, key)}])
+        bg_msg = Msg(
+            role="user",
+            name=self.name,
+            content=f" {SYS_MSG_PREFIX}根据对话，{self.name}的背景更新为：" + new_background,
+        )
         send_chat_msg(
-            f" {SYS_MSG_PREFIX}根据对话，{self.name}的背景更新为：" + new_background,
+            bg_msg,
             uid=self.uid,
+            avatar=self.avatar,
         )
         self.background = new_background
 
@@ -280,7 +299,7 @@ class Customer(StateAgent, DialogAgent):
             },
         )
         msg = Msg(name="system", role="user", content=pov_prompt)
-        pov_story = self.model(messages=[msg])
+        pov_story = self.model([{key: getattr(msg, key) for key in MESSAGE_KEYS if hasattr(msg, key)}])
         print("*" * 20)
         send_chat_msg(pov_story, uid=self.uid)
         print("*" * 20)

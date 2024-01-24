@@ -1,6 +1,6 @@
 -
   "name": "王老板"
-  "model": "tongyi_model"
+  "model": "post_api"
   "use_memory": true
   "avatar": "assets/avatar_wang.png"
   "character_setting":
@@ -28,7 +28,7 @@
       - "今天陪一个吃辣的客户一起来，希望照顾对方感受，他想点一道有一点辣的菜。"
 -
   "name": "阿炳"
-  "model": "tongyi_model"
+  "model": "post_api"
   "use_memory": true
   "avatar": "assets/avatar_abing.png"
   "character_setting":
@@ -56,7 +56,7 @@
       - "阿炳前两天谈成一个大生意，公司给他发了特别奖金。他今晚想忙里抽闲，犒劳自己。"
 -
   "name": "老许"
-  "model": "tongyi_model"
+  "model": "post_api"
   "use_memory": true
   "avatar": "assets/avatar_laoxu.png"
   "character_setting":
@@ -83,7 +83,7 @@
       - ""
 -
   "name": "范老师"
-  "model": "tongyi_model"
+  "model": "post_api"
   "use_memory": true
   "avatar": "assets/avatar_fan.png"
   "character_setting":

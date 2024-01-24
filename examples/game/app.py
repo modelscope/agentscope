@@ -152,7 +152,25 @@ if __name__ == "__main__":
                 "model_name": "qwen-max-1201",
                 "api_key": os.environ.get("TONGYI_API_KEY"),
             }
-            agentscope.init(model_configs=[TONGYI_CONFIG], logger_level="INFO")
+            HTTP_LLM_CONFIG = {
+                "type": "post_api",
+                "name": os.environ.get("HTTP_LLM_MODEL"),
+                "headers": {
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {os.environ.get('HTTP_LLM_API_KEY')}"
+                },
+                "api_url": os.environ.get("HTTP_LLM_URL"),
+                "messages_key": "messages",
+                "json_args": {
+                    "model": os.environ.get("HTTP_LLM_MODEL"),
+                    "n": 1,
+                    "temperature": 0.7,
+                }
+
+            }
+
+            agentscope.init(model_configs=[TONGYI_CONFIG, HTTP_LLM_CONFIG],
+                            logger_level="DEBUG")
             is_init.set()
 
     def check_for_new_session(uid):

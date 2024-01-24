@@ -25,7 +25,7 @@ doc_requires = ["sphinx", "sphinx-autobuild", "sphinx_rtd_theme"]
 
 test_requires = ["pytest", "pytest-cov", "pre-commit"]
 
-game_requires = ["inquirer", "colorist", "dashscope", "gradio", "pyyaml"]
+game_requires = ["inquirer", "colorist", "dashscope", "gradio", "pyyaml", "pypinyin"]
 
 # released requires
 minimal_requires = [
