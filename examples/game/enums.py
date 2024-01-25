@@ -5,6 +5,7 @@ import enum
 class CustomerConv(enum.IntEnum):
     """Enum for customer status."""
 
+    OPENING = -1
     WARMING_UP = 0
     AFTER_MEAL_CHAT = 1
     INVITED_GROUP_PLOT = 2

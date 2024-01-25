@@ -26,7 +26,66 @@ from utils import (
     query_answer,
     SYS_MSG_PREFIX,
     CheckpointArgs,
+    OPENING_ROUND
 )
+
+
+def begin_task(main_role, player):
+    player.fixed_openings()
+    main_role.fixed_openings()
+    msg = {"content": "开场"}
+    main_role.transition(CustomerConv.OPENING)
+    if player.openings_option:
+        choices = list(player.openings_option.values()) + ["自定义"]
+    else:
+        choices = None
+
+    for i in range(OPENING_ROUND):
+        send_chat_msg(
+            f"{SYS_MSG_PREFIX}剩余询问次数{OPENING_ROUND - i}",
+            uid=player.uid,
+        )
+        if choices:
+            questions = [
+                inquirer.List(
+                    "ans",
+                    message=f"{SYS_MSG_PREFIX}：你想要问什么？(空输入主角将直接离开) ",
+                    choices=choices,
+                ),
+            ]
+
+            choose_during_chatting = f"""{SYS_MSG_PREFIX}你想要问什么？(空输入主角将直接离开) 
+            <select-box shape="card"
+                                            type="checkbox" item-width="auto" options=
+                                           '
+                                           {json.dumps(choices)}'
+                                           select-once></select-box>"""
+
+            send_chat_msg(
+                choose_during_chatting,
+                flushing=False,
+                uid=player.uid,
+            )
+            answer = query_answer(questions, "ans", uid=player.uid)
+            if isinstance(answer, str):
+                if answer == "":
+                    break
+                else:
+                    msg = player.talk(answer)
+
+            elif isinstance(answer, list) and len(answer):
+                if answer[0] in choices:
+                    if answer[0] == "自定义":
+                        msg = player(msg)
+                    else:
+                        msg = player.talk(answer[0], is_display=True)
+            else:  # Walk away
+                break
+        else:
+            msg = player(msg)
+        msg = main_role(msg)
+    main_role.fixed_quit_openings()
+    main_role.transition(CustomerConv.WARMING_UP)
 
 
 def invited_group_chat(
@@ -53,7 +112,7 @@ def invited_group_chat(
                 ),
             ]
 
-            choose_during_chatting = f"""【{SYS_MSG_PREFIX}你要发言吗？ <select-box shape="card"
+            choose_during_chatting = f"""{SYS_MSG_PREFIX}你要发言吗？ <select-box shape="card"
                                 type="checkbox" item-width="auto" options=
                                '
                                {json.dumps(["是", "否", "结束邀请对话"])}'
@@ -326,6 +385,8 @@ def main(args) -> None:
         checkpoint.all_plots, checkpoint.cur_plots, None
     )
     logger.debug("initially active plots: " + str(checkpoint.cur_plots))
+
+    begin_task(main_role=customers[0], player=player)
 
     while True:
         # daily loop
