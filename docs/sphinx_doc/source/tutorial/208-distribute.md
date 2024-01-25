@@ -96,7 +96,6 @@ server_a = RpcAgentServerLauncher(
     },
     host=ip_a,
     port=12001,
-    local_mode=False,
 )
 server_a.launch()
 server_a.wait_until_terminate()
@@ -116,7 +115,6 @@ server_b = RpcAgentServerLauncher(
     },
     host=ip_b,
     port=12001,
-    local_mode=False,
 )
 server_b.launch()
 server_b.wait_until_terminate()

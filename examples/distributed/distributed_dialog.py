@@ -46,7 +46,6 @@ def setup_assistant_server(assistant_host: str, assistant_port: int) -> None:
         },
         host=assistant_host,
         port=assistant_port,
-        local_mode=False,
     )
     assistant_server_launcher.launch()
     assistant_server_launcher.wait_until_terminate()

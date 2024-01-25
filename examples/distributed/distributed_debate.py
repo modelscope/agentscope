@@ -73,7 +73,6 @@ def setup_server(parsed_args: argparse.Namespace) -> None:
             agent_kwargs=config,
             host=host,
             port=port,
-            local_mode=False,
         )
         server_launcher.launch()
         server_launcher.wait_until_terminate()

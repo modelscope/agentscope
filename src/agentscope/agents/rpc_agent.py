@@ -305,7 +305,7 @@ class RpcAgentServerLauncher:
         port: int = None,
         max_pool_size: int = 100,
         max_timeout_seconds: int = 1800,
-        local_mode: bool = True,
+        local_mode: bool = False,
     ) -> None:
         """Init a rpc agent server launcher.
 
@@ -324,7 +324,7 @@ class RpcAgentServerLauncher:
                 Max number of task results that the server can accommodate.
             max_timeout_seconds (`int`, defaults to `1800`):
                 Timeout for task results.
-            local_mode (`bool`, defaults to `True`):
+            local_mode (`bool`, defaults to `False`):
                 Whether the started rpc server only listens to local
                 requests.
         """
