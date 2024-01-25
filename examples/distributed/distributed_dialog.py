@@ -7,7 +7,7 @@ from loguru import logger
 
 import agentscope
 from agentscope.agents.user_agent import UserAgent
-from agentscope.agents.rpc_dialog_agent import RpcDialogAgent
+from agentscope.agents.dialog_agent import DialogAgent
 from agentscope.agents.rpc_agent import RpcAgentServerLauncher
 
 
@@ -38,14 +38,16 @@ def setup_assistant_server(assistant_host: str, assistant_port: int) -> None:
         model_configs="configs/model_configs.json",
     )
     assistant_server_launcher = RpcAgentServerLauncher(
-        name="Assitant",
-        agent_class=RpcDialogAgent,
-        host=assistant_host,
-        port=assistant_port,
-        sys_prompt="You are a helpful assistant.",
-        model="gpt-3.5-turbo",
-        use_memory=True,
-        local_mode=False,
+        agent_class=DialogAgent,
+        agent_kwargs={
+            "name": "Assitant",
+            "host": assistant_host,
+            "port": assistant_port,
+            "sys_prompt": "You are a helpful assistant.",
+            "model": "gpt-3.5-turbo",
+            "use_memory": True,
+            "local_mode": False,
+        },
     )
     assistant_server_launcher.launch()
     assistant_server_launcher.wait_until_terminate()
@@ -56,8 +58,9 @@ def run_main_process(assistant_host: str, assistant_port: int) -> None:
     agentscope.init(
         model_configs="configs/model_configs.json",
     )
-    assistant_agent = RpcDialogAgent(
+    assistant_agent = DialogAgent(
         name="Assistant",
+    ).to_distributed(
         host=assistant_host,
         port=assistant_port,
         launch_server=False,

@@ -1,21 +1,22 @@
 # -*- coding: utf-8 -*-
 """ Base class for Rpc Agent """
 
-from multiprocessing import Process
-from multiprocessing import Event
+from multiprocessing import (
+    Process,
+    Event,
+    Pipe,
+)
 from multiprocessing.synchronize import Event as EventClass
-from multiprocessing import Pipe
 import socket
 import threading
 import time
 import json
-from queue import Queue
 from typing import Any
-from typing import Callable
 from typing import Optional
 from typing import Union
 from typing import Type
 from typing import Sequence
+from queue import Queue
 from concurrent import futures
 from loguru import logger
 
@@ -33,11 +34,12 @@ except ImportError:
 
 from agentscope._init import init_process, _INIT_SETTINGS
 from agentscope.agents.agent import AgentBase
-from agentscope.message import MessageBase
-from agentscope.message import Msg
-from agentscope.message import PlaceholderMessage
-from agentscope.message import deserialize
-from agentscope.message import serialize
+from agentscope.message import (
+    Msg,
+    PlaceholderMessage,
+    deserialize,
+    serialize,
+)
 from agentscope.rpc import (
     RpcAgentClient,
     RpcMsg,
@@ -64,22 +66,14 @@ def rpc_servicer_method(  # type: ignore [no-untyped-def]
     return inner
 
 
-class RpcAgentBase(AgentBase, RpcAgentServicer):
-    """Abstract service of RpcAgent, also act as AgentBase.
-
-    Note:
-        Please implement reply method based on the functionality of your
-        agent.
-    """
+class RpcAgent(AgentBase):
+    """A wrapper to extend an AgentBase into a gRPC Client."""
 
     def __init__(
         self,
+        agent_class: Type[AgentBase],
+        agent_configs: dict,
         name: str,
-        config: Optional[dict] = None,
-        sys_prompt: Optional[str] = None,
-        model: Optional[Union[Callable[..., Any], str]] = None,
-        use_memory: bool = True,
-        memory_config: Optional[dict] = None,
         host: str = "localhost",
         port: int = None,
         max_pool_size: int = 100,
@@ -87,247 +81,52 @@ class RpcAgentBase(AgentBase, RpcAgentServicer):
         launch_server: bool = True,
         local_mode: bool = True,
         lazy_launch: bool = True,
-        is_servicer: bool = False,
     ) -> None:
-        """Init a RpcAgentBase instance.
-
-        Args:
-            name (`str`):
-                The name of the agent.
-            config (`Optional[dict]`):
-                The configuration of the agent, if provided, the agent will
-                be initialized from the config rather than the other
-                parameters.
-            sys_prompt (`Optional[str]`):
-                The system prompt of the agent, which can be passed by args
-                or hard-coded in the agent.
-            model (`Optional[Union[Callable[..., Any], str]]`, defaults to
-            None):
-                The callable model object or the model name, which is used to
-                load model from configuration.
-            use_memory (`bool`, defaults to `True`):
-                Whether the agent has memory.
-            memory_config (`Optional[dict]`):
-                The config of memory.
-            host (`str`, defaults to "localhost"):
-                Hostname of the rpc agent server.
-            port (`int`, defaults to `None`):
-                Port of the rpc agent server.
-            max_pool_size (`int`, defaults to `100`):
-                The max number of task results that the server can
-                accommodate. Note that the oldest result will be deleted
-                after exceeding the pool size.
-            max_timeout_seconds (`int`, defaults to `1800`):
-                Timeout for task results. Note that expired results will be
-                deleted.
-            launch_server (`bool`, defaults to `True`):
-                Launch a rpc server locally.
-            local_mode (`bool`, defaults to `True`):
-                The started server only listens to local requests.
-            lazy_launch (`bool`, defaults to `True`):
-                Only launch the server when the agent is called.
-            is_servicer (`bool`, defaults to `False`):
-                Used as a servicer of rpc server.
-        """
-        super().__init__(
-            name,
-            config,
-            sys_prompt,
-            model,
-            use_memory,
-            memory_config,
-        )
+        super().__init__(name=name)
         self.host = host
         self.port = port
-        self.is_servicer = is_servicer
-
-        # prohibit servicer object from launching a new server
-        assert not (is_servicer and launch_server)
-        # launch_server is True only in the main process
         self.server_launcher = None
+        self.client = None
         if launch_server:
             self.server_launcher = RpcAgentServerLauncher(
-                name=name,
-                config=config,
-                sys_prompt=sys_prompt,
-                model=model,
-                use_memory=use_memory,
-                memory_config=memory_config,
-                agent_class=self.__class__,
+                agent_class=agent_class,
+                agent_args=agent_configs["args"],
+                agent_kwargs=agent_configs["kwargs"],
                 host=host,
                 port=port,
                 max_pool_size=max_pool_size,
                 max_timeout_seconds=max_timeout_seconds,
                 local_mode=local_mode,
             )
-            self.client = None
             if not lazy_launch:
                 self._launch_server()
-        # is_servicer is True only in the rpc server process
-        if is_servicer:
-            self.result_pool = ExpiringDict(
-                max_len=max_pool_size,
-                max_age_seconds=max_timeout_seconds,
-            )
-            self.task_queue = Queue()
-            self.worker_thread = threading.Thread(target=self.process_tasks)
-            self.worker_thread.start()
-            self.task_id_lock = threading.Lock()
-            self.task_id_counter = 0
-
-        # connect to an existing rpc server
-        if not launch_server and not is_servicer:
+        else:
             self.client = RpcAgentClient(host=self.host, port=self.port)
 
     def _launch_server(self) -> None:
-        """Launch a rpc server and update the port and the client
-        """
+        """Launch a rpc server and update the port and the client"""
         self.server_launcher.launch()
         self.port = self.server_launcher.port
         self.client = RpcAgentClient(host=self.host, port=self.port)
 
-    def get_task_id(self) -> int:
-        """Get the auto-increment task id."""
-        with self.task_id_lock:
-            self.task_id_counter += 1
-            return self.task_id_counter
-
-    def call_func(self, request: RpcMsg, _: ServicerContext) -> RpcMsg:
-        if hasattr(self, request.target_func):
-            return getattr(self, request.target_func)(request)
-        else:
-            logger.error(f"Unsupported method {request.target_func}")
-            return RpcMsg(
-                value=Msg(
-                    name=self.name,
-                    content=f"Unsupported method {request.target_func}",
-                ).serialize(),
-            )
-
-    @rpc_servicer_method
-    def _call(self, request: RpcMsg) -> RpcMsg:
-        """Call function of RpcAgentService
-
-        Args:
-            request (`RpcMsg`):
-                Message containing input parameters or input parameter
-                placeholders.
-
-        Returns:
-            `RpcMsg`: A serialized Msg instance with attributes name, host,
-            port and task_id
-        """
-        if request.value:
-            msg = deserialize(request.value)
-        else:
-            msg = None
-        task_id = self.get_task_id()
-        self.task_queue.put((task_id, msg))
-        return RpcMsg(
-            value=Msg(
-                name=self.name,
-                content=None,
-                host=self.host,
-                port=self.port,
-                task_id=task_id,
-            ).serialize(),
-        )
-
-    @rpc_servicer_method
-    def _get(self, request: RpcMsg) -> RpcMsg:
-        """Get function of RpcAgentService
-
-        Args:
-            request (`RpcMsg`):
-                Identifier of message, with json format::
-
-                {
-                    'task_id': int
-                }
-
-        Returns:
-            `RpcMsg`: Concrete values of the specific message (or part of it).
-        """
-        # todo: add format specification of request
-        msg = json.loads(request.value)
-        # todo: implement the waiting in a more elegant way, add timeout
-        while True:
-            result = self.result_pool.get(msg["task_id"], None)
-            if result is not None:
-                return RpcMsg(value=result.serialize())
-            time.sleep(0.1)
-
-    @rpc_servicer_method
-    def _observe(self, request: RpcMsg) -> RpcMsg:
-        """Observe function of RpcAgentService
-
-        Args:
-            request (`RpcMsg`):
-                The serialized input to be observed.
-
-        Returns:
-            `RpcMsg`: Empty RpcMsg.
-        """
-        msgs = deserialize(request.value)
-        for msg in msgs:
-            if isinstance(msg, PlaceholderMessage):
-                msg.update_value()
-        self.memory.add(msgs)
-        return RpcMsg()
-
-    def process_tasks(self) -> None:
-        """Task processing thread."""
-        while True:
-            task_id, task_msg = self.task_queue.get()
-            # TODO: optimize this and avoid blocking
-            if isinstance(task_msg, PlaceholderMessage):
-                task_msg.update_value()
-            result = self.reply(task_msg)
-            self.result_pool[task_id] = result
-
     def reply(self, x: dict = None) -> dict:
-        """Reply function used in the rpc agent server process."""
-        raise NotImplementedError(
-            f"Agent [{type(self).__name__}] is missing the required "
-            f'"reply" function.',
-        )
-
-    def observe(self, x: Union[dict, Sequence[dict]]) -> None:
-        """Observe the input, store it in memory and don't response to it.
-
-        Args:
-            x (`Union[dict, Sequence[dict]]`):
-                The input to be observed.
-        """
-        if self.client is None:
-            self._launch_server()
-        self.client.call_func(
-            func_name="_observe",
-            value=serialize(x),  # type: ignore [arg-type]
-        )
-
-    def __call__(self, *args: Any, **kwargs: Any) -> dict:
-        """Call function used in the main process."""
-        if args is not None and len(args) > 0:
-            x = args[0]
-        elif kwargs is not None and len(kwargs) > 0:
-            x = kwargs["x"]
-        else:
-            x = None
-        if x is not None:
-            assert isinstance(x, MessageBase)
         if self.client is None:
             self._launch_server()
         res_msg = self.client.call_func(
             func_name="_call",
             value=x.serialize() if x is not None else "",
         )
-        res = PlaceholderMessage(
+        return PlaceholderMessage(
             **deserialize(res_msg),  # type: ignore [arg-type]
         )
-        if self._audience is not None:
-            self._broadcast_to_audience(res)
-        return res
+
+    def observe(self, x: Union[dict, Sequence[dict]]) -> None:
+        if self.client is None:
+            self._launch_server()
+        self.client.call_func(
+            func_name="_observe",
+            value=serialize(x),  # type: ignore [arg-type]
+        )
 
     def stop(self) -> None:
         """Stop the RpcAgent and the launched rpc server."""
@@ -340,15 +139,19 @@ class RpcAgentBase(AgentBase, RpcAgentServicer):
 
 
 def setup_rcp_agent_server(
+    agent_class: Type[AgentBase],
+    agent_args: tuple,
+    agent_kwargs: dict,
+    host: str,
     port: int,
-    servicer_class: Type[RpcAgentServicer],
+    init_settings: dict = None,
     start_event: EventClass = None,
     stop_event: EventClass = None,
     pipe: int = None,
-    max_workers: int = 4,
     local_mode: bool = True,
-    init_settings: dict = None,
-    kwargs: dict = None,
+    max_pool_size: int = 100,
+    max_timeout_seconds: int = 1800,
+    max_workers: int = 4,
 ) -> None:
     """Setup gRPC server rpc agent.
 
@@ -375,18 +178,24 @@ def setup_rcp_agent_server(
 
     if init_settings is not None:
         init_process(**init_settings)
+    servicer = RpcServerSideWrapper(
+        agent_class(*agent_args, **agent_kwargs),
+        host=host,
+        port=port,
+        max_pool_size=max_pool_size,
+        max_timeout_seconds=max_timeout_seconds,
+    )
     while True:
         try:
             port = check_port(port)
+            servicer.port = port
             logger.info(
-                f"Starting rpc server [{servicer_class.__name__}] at port"
+                f"Starting rpc server [{agent_class.__name__}] at port"
                 f" [{port}]...",
             )
             server = grpc.server(
                 futures.ThreadPoolExecutor(max_workers=max_workers),
             )
-            kwargs['port'] = port
-            servicer = servicer_class(**kwargs)
             add_RpcAgentServicer_to_server(servicer, server)
             if local_mode:
                 server.add_insecure_port(f"localhost:{port}")
@@ -396,22 +205,22 @@ def setup_rcp_agent_server(
             break
         except OSError:
             logger.warning(
-                f"Failed to start rpc server at port [{port}], "
+                f"Failed to start rpc server at port [{port}]"
                 f"try another port",
             )
     logger.info(
-        f"rpc server [{servicer_class.__name__}] at port [{port}] started "
+        f"rpc server [{agent_class.__name__}] at port [{port}] started "
         "successfully",
     )
     pipe.send(port)
     start_event.set()
     stop_event.wait()
     logger.info(
-        f"Stopping rpc server [{servicer_class.__name__}] at port [{port}]",
+        f"Stopping rpc server [{agent_class.__name__}] at port [{port}]",
     )
     server.stop(0)
     logger.info(
-        f"rpc server [{servicer_class.__name__}] at port [{port}] stopped "
+        f"rpc server [{agent_class.__name__}] at port [{port}] stopped "
         "successfully",
     )
 
@@ -457,13 +266,9 @@ class RpcAgentServerLauncher:
 
     def __init__(
         self,
-        name: str,
-        config: Optional[dict] = None,
-        sys_prompt: Optional[str] = None,
-        model: Optional[Union[Callable[..., Any], str]] = None,
-        use_memory: bool = True,
-        memory_config: Optional[dict] = None,
-        agent_class: Type[RpcAgentBase] = None,
+        agent_class: Type[AgentBase] = None,
+        agent_args: tuple = (),
+        agent_kwargs: dict = None,
         host: str = "localhost",
         port: int = None,
         max_pool_size: int = 100,
@@ -505,13 +310,10 @@ class RpcAgentServerLauncher:
                 Whether the started rpc server only listens to local
                 requests.
         """
-        self.name = name
-        self.config = config
-        self.sys_prompt = sys_prompt
-        self.model = model
-        self.use_memory = use_memory
-        self.memory_config = memory_config
+        # TODO: update docstring
         self.agent_class = agent_class
+        self.agent_args = agent_args
+        self.agent_kwargs = agent_kwargs
         self.host = host
         self.port = check_port(port)
         self.max_pool_size = max_pool_size
@@ -530,29 +332,18 @@ class RpcAgentServerLauncher:
         server_process = Process(
             target=setup_rcp_agent_server,
             kwargs={
+                "agent_class": self.agent_class,
+                "agent_args": self.agent_args,
+                "agent_kwargs": self.agent_kwargs,
+                "host": self.host,
                 "port": self.port,
-                "servicer_class": self.agent_class,
+                "init_settings": _INIT_SETTINGS,
                 "start_event": start_event,
                 "stop_event": self.stop_event,
                 "pipe": child_con,
+                "max_pool_size": self.max_pool_size,
+                "max_timeout_seconds": self.max_timeout_seconds,
                 "local_mode": self.local_model,
-                "init_settings": _INIT_SETTINGS,
-                "kwargs": {
-                    "name": self.name,
-                    "config": self.config,
-                    "sys_prompt": self.sys_prompt,
-                    "model": self.model,
-                    "use_memory": self.use_memory,
-                    "memory_config": self.memory_config,
-                    "host": self.host,
-                    "port": self.port,
-                    "max_pool_size": self.max_pool_size,
-                    "max_timeout_seconds": self.max_timeout_seconds,
-                    "launch_server": False,
-                    "lazy_launch": False,
-                    "is_servicer": True,
-                    **self.kwargs,
-                },
             },
         )
         server_process.start()
@@ -580,3 +371,142 @@ class RpcAgentServerLauncher:
                     f" [{self.port}] is killed.",
                 )
             self.server = None
+
+
+class RpcServerSideWrapper(RpcAgentServicer):
+    """A wrapper to extend an AgentBase into a gRPC Servicer."""
+
+    def __init__(
+        self,
+        agent_instance: AgentBase,
+        host: str = "localhost",
+        port: int = None,
+        max_pool_size: int = 100,
+        max_timeout_seconds: int = 1800,
+    ):
+        """Init the service side wrapper.
+
+        Args:
+            agent_instance (`AgentBase`): an instance of `AgentBase`.
+            host (`str`, defaults to "localhost"):
+                Hostname of the rpc agent server.
+            port (`int`, defaults to `None`):
+                Port of the rpc agent server.
+            max_pool_size (`int`, defaults to `100`):
+                The max number of task results that the server can
+                accommodate. Note that the oldest result will be deleted
+                after exceeding the pool size.
+            max_timeout_seconds (`int`, defaults to `1800`):
+                Timeout for task results. Note that expired results will be
+                deleted.
+        """
+        self.host = host
+        self.port = port
+        self.result_pool = ExpiringDict(
+            max_len=max_pool_size,
+            max_age_seconds=max_timeout_seconds,
+        )
+        self.task_queue = Queue()
+        self.worker_thread = threading.Thread(target=self.process_tasks)
+        self.worker_thread.start()
+        self.task_id_lock = threading.Lock()
+        self.task_id_counter = 0
+        self.agent = agent_instance
+
+    def get_task_id(self) -> int:
+        """Get the auto-increment task id."""
+        with self.task_id_lock:
+            self.task_id_counter += 1
+            return self.task_id_counter
+
+    def call_func(self, request: RpcMsg, _: ServicerContext) -> RpcMsg:
+        """Call the specific servicer function.
+        """
+        if hasattr(self, request.target_func):
+            return getattr(self, request.target_func)(request)
+        else:
+            logger.error(f"Unsupported method {request.target_func}")
+            return RpcMsg(
+                value=Msg(
+                    name=self.agent.name,
+                    content=f"Unsupported method {request.target_func}",
+                ).serialize(),
+            )
+
+    def _call(self, request: RpcMsg) -> RpcMsg:
+        """Call function of RpcAgentService
+
+        Args:
+            request (`RpcMsg`):
+                Message containing input parameters or input parameter
+                placeholders.
+
+        Returns:
+            `RpcMsg`: A serialized Msg instance with attributes name, host,
+            port and task_id
+        """
+        if request.value:
+            msg = deserialize(request.value)
+        else:
+            msg = None
+        task_id = self.get_task_id()
+        self.task_queue.put((task_id, msg))
+        return RpcMsg(
+            value=Msg(
+                name=self.agent.name,
+                content=None,
+                host=self.host,
+                port=self.port,
+                task_id=task_id,
+            ).serialize(),
+        )
+
+    def _get(self, request: RpcMsg) -> RpcMsg:
+        """Get function of RpcAgentService
+
+        Args:
+            request (`RpcMsg`):
+                Identifier of message, with json format::
+
+                {
+                    'task_id': int
+                }
+
+        Returns:
+            `RpcMsg`: Concrete values of the specific message (or part of it).
+        """
+        # todo: add format specification of request
+        msg = json.loads(request.value)
+        # todo: implement the waiting in a more elegant way, add timeout
+        while True:
+            result = self.result_pool.get(msg["task_id"], None)
+            if result is not None:
+                return RpcMsg(value=result.serialize())
+            time.sleep(0.1)
+
+    def _observe(self, request: RpcMsg) -> RpcMsg:
+        """Observe function of RpcAgentService
+
+        Args:
+            request (`RpcMsg`):
+                The serialized input to be observed.
+
+        Returns:
+            `RpcMsg`: Empty RpcMsg.
+        """
+        msgs = deserialize(request.value)
+        for msg in msgs:
+            if isinstance(msg, PlaceholderMessage):
+                msg.update_value()
+        self.agent.observe(msgs)
+        return RpcMsg()
+
+    def process_tasks(self) -> None:
+        """Task processing thread."""
+        while True:
+            task_id, task_msg = self.task_queue.get()
+            # TODO: optimize this and avoid blocking
+            if isinstance(task_msg, PlaceholderMessage):
+                task_msg.update_value()
+            result = self.agent.reply(task_msg)
+            self.result_pool[task_id] = result

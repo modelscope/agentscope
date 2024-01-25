@@ -9,7 +9,6 @@ from loguru import logger
 
 import agentscope
 from agentscope.agents import AgentBase
-from agentscope.agents import RpcAgentBase
 from agentscope.agents.rpc_agent import RpcAgentServerLauncher
 from agentscope.message import Msg
 from agentscope.message import PlaceholderMessage
@@ -19,7 +18,7 @@ from agentscope.pipelines import sequentialpipeline
 from agentscope.utils import MonitorFactory, QuotaExceededError
 
 
-class DemoRpcAgent(RpcAgentBase):
+class DemoRpcAgent(AgentBase):
     """A demo Rpc agent for test usage."""
 
     def __init__(self, **kwargs) -> None:  # type: ignore [no-untyped-def]
@@ -34,7 +33,7 @@ class DemoRpcAgent(RpcAgentBase):
         return x
 
 
-class DemoRpcAgentAdd(RpcAgentBase):
+class DemoRpcAgentAdd(AgentBase):
     """A demo Rpc agent for test usage"""
 
     def reply(self, x: dict = None) -> dict:
@@ -54,7 +53,7 @@ class DemoLocalAgentAdd(AgentBase):
         return x
 
 
-class DemoRpcAgentWithMemory(RpcAgentBase):
+class DemoRpcAgentWithMemory(AgentBase):
     """A demo Rpc agent that count its memory"""
 
     def reply(self, x: dict = None) -> dict:
@@ -66,7 +65,7 @@ class DemoRpcAgentWithMemory(RpcAgentBase):
         return msg
 
 
-class DemoRpcAgentWithMonitor(RpcAgentBase):
+class DemoRpcAgentWithMonitor(AgentBase):
     """A demo Rpc agent that use monitor"""
 
     def reply(self, x: dict = None) -> dict:
@@ -116,6 +115,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         port = 12001
         agent_a = DemoRpcAgent(
             name="a",
+        ).to_distributed(
             host=host,
             port=port,
         )
@@ -162,15 +162,18 @@ class BasicRpcAgentTest(unittest.TestCase):
     def test_connect_to_an_existing_rpc_server(self) -> None:
         """test connecting to an existing server"""
         launcher = RpcAgentServerLauncher(
-            name="a",
-            host="127.0.0.1",
             # choose port automatically
-            local_mode=False,
             agent_class=DemoRpcAgent,
+            agent_kwargs={
+                "name": "a",
+            },
+            local_mode=False,
+            host="127.0.0.1",
         )
         launcher.launch()
         agent_a = DemoRpcAgent(
             name="a",
+        ).to_distributed(
             host="127.0.0.1",
             port=launcher.port,
             launch_server=False,
@@ -202,18 +205,21 @@ class BasicRpcAgentTest(unittest.TestCase):
         port3 = 12003
         agent_a = DemoRpcAgentAdd(
             name="a",
+        ).to_distributed(
             host=host,
             port=port1,
             lazy_launch=False,
         )
         agent_b = DemoRpcAgentAdd(
             name="b",
+        ).to_distributed(
             host=host,
             port=port2,
             lazy_launch=False,
         )
         agent_c = DemoRpcAgentAdd(
             name="c",
+        ).to_distributed(
             host=host,
             port=port3,
             lazy_launch=False,
@@ -259,6 +265,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         # rpc agent a
         agent_a = DemoRpcAgentAdd(
             name="a",
+        ).to_distributed(
             host=host,
             port=port1,
             lazy_launch=False,
@@ -270,6 +277,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         # rpc agent c
         agent_c = DemoRpcAgentAdd(
             name="c",
+        ).to_distributed(
             host=host,
             port=port2,
             lazy_launch=False,
@@ -286,13 +294,13 @@ class BasicRpcAgentTest(unittest.TestCase):
         """test compatibility with msghub"""
         agent_a = DemoRpcAgentWithMemory(
             name="a",
-        )
+        ).to_distributed()
         agent_b = DemoRpcAgentWithMemory(
             name="b",
-        )
+        ).to_distributed()
         agent_c = DemoRpcAgentWithMemory(
             name="c",
-        )
+        ).to_distributed()
         participants = [agent_a, agent_b, agent_c]
         annonuncement_msgs = [
             Msg(name="System", content="Announcement 1"),
@@ -328,6 +336,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         # rpc agent a
         agent_a = DemoRpcAgentWithMonitor(
             name="a",
+        ).to_distributed(
             host=host,
             port=port1,
             lazy_launch=False,
@@ -335,6 +344,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         # local agent b
         agent_b = DemoRpcAgentWithMonitor(
             name="b",
+        ).to_distributed(
             host=host,
             port=port2,
             lazy_launch=False,

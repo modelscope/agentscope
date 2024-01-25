@@ -2,20 +2,29 @@
 """ Base class for Agent """
 
 from __future__ import annotations
+from abc import ABCMeta
 from typing import Optional
 from typing import Sequence
 from typing import Union
 from typing import Any
 from typing import Callable
-
 from loguru import logger
 
-from .operator import Operator
-from ..models import load_model_by_name
-from ..memory import TemporaryMemory
+from agentscope.agents.operator import Operator
+from agentscope.models import load_model_by_name
+from agentscope.memory import TemporaryMemory
 
 
-class AgentBase(Operator):
+class _RecordInitSettingMeta(ABCMeta):
+    """A wrapper to record the init args into `init_settings` field."""
+
+    def __call__(cls, *args: tuple, **kwargs: dict) -> Any:
+        instance = super().__call__(*args, **kwargs)
+        instance.init_settings = {"args": args, "kwargs": kwargs}
+        return instance
+
+
+class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
     """Base class for all agents.
 
     All agents should inherit from this class and implement the `reply`
@@ -172,3 +181,31 @@ class AgentBase(Operator):
         """Broadcast the input to all audiences."""
         for agent in self._audience:
             agent.observe(x)
+
+    def to_distributed(
+        self,
+        host: str = "localhost",
+        port: int = None,
+        max_pool_size: int = 100,
+        max_timeout_seconds: int = 1800,
+        launch_server: bool = True,
+        local_mode: bool = True,
+        lazy_launch: bool = True,
+    ) -> AgentBase:
+        """Convert current agent instance into a distributed version"""
+        from .rpc_agent import RpcAgent
+
+        if issubclass(self.__class__, RpcAgent):
+            return self
+        return RpcAgent(
+            agent_class=self.__class__,
+            agent_configs=self.init_settings,
+            name=self.name,
+            host=host,
+            port=port,
+            max_pool_size=max_pool_size,
+            max_timeout_seconds=max_timeout_seconds,
+            launch_server=launch_server,
+            local_mode=local_mode,
+            lazy_launch=lazy_launch,
+        )

@@ -6,7 +6,7 @@ import json
 
 import agentscope
 from agentscope.msghub import msghub
-from agentscope.agents.rpc_dialog_agent import RpcDialogAgent
+from agentscope.agents.dialog_agent import DialogAgent
 from agentscope.agents.rpc_agent import RpcAgentServerLauncher
 from agentscope.message import Msg
 from agentscope.utils.logging_utils import logger
@@ -72,7 +72,7 @@ def setup_server(parsed_args: argparse.Namespace) -> None:
             host=host,
             port=port,
             local_mode=False,
-            agent_class=RpcDialogAgent,
+            agent_class=DialogAgent,
             **config,
         )
         server_launcher.launch()
@@ -84,20 +84,23 @@ def run_main_process(parsed_args: argparse.Namespace) -> None:
     agentscope.init(
         model_configs="configs/model_configs.json",
     )
-    pro_agent = RpcDialogAgent(
+    pro_agent = DialogAgent(
         name="Pro",
+    ).to_distributed(
         host=parsed_args.pro_host,
         port=parsed_args.pro_port,
         launch_server=False,
     )
-    con_agent = RpcDialogAgent(
+    con_agent = DialogAgent(
         name="Con",
+    ).to_distributed(
         host=parsed_args.con_host,
         port=parsed_args.con_port,
         launch_server=False,
     )
-    judge_agent = RpcDialogAgent(
+    judge_agent = DialogAgent(
         name="Judge",
+    ).to_distributed(
         host=parsed_args.judge_host,
         port=parsed_args.judge_port,
         launch_server=False,
