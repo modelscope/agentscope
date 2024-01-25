@@ -6,7 +6,7 @@ class Prompts:
     """Prompts for werewolf game"""
 
     to_wolves = (
-        "{}, you are werewolves. If you are alone, eliminate a player, else "
+        "{}, if you are the only werewolf, eliminate a player. Otherwise, "
         "discuss with your teammates and reach an agreement. Response in the "
         "following format which can be loaded by python json.loads()\n"
         "{{\n"
@@ -29,9 +29,9 @@ class Prompts:
     to_wolves_res = "The player with the most votes is {}."
 
     to_witch_resurrect = (
-        "{witch_name}, you're witch. Tonight {dead_name} is eliminated. Would "
-        "you like to resurrect {dead_name}? Response in the following format "
-        "which can be loaded by python json.loads()\n"
+        "{witch_name}, you're the witch. Tonight {dead_name} is eliminated. "
+        "Would you like to resurrect {dead_name}? Response in the following "
+        "format which can be loaded by python json.loads()\n"
         "{{\n"
         '    "thought": "thought",\n'
         '    "speak": "thoughts summary to say",\n'
@@ -50,7 +50,7 @@ class Prompts:
     )
 
     to_seer = (
-        "{}, you're seer. Which player in {} would you like to check "
+        "{}, you're the seer. Which player in {} would you like to check "
         "tonight? Response in the following json format which can be loaded "
         "by python json.loads()\n"
         "{{\n"
@@ -59,7 +59,7 @@ class Prompts:
         "}}"
     )
 
-    to_seer_result = "Okay, the role of {} is {}."
+    to_seer_result = "Okay, the role of {} is a {}."
 
     to_all_danger = (
         "The day is coming, all the players open your eyes. Last night, "
@@ -87,11 +87,11 @@ class Prompts:
 
     to_all_vote = (
         "Now the alive players are {}. Given the game rules and your role, "
-        "based on the situation and the information you gain, to vote a "
-        "player among alive players and to win the "
-        "game, it's time to vote one player among the alive players, please "
-        "cast your vote on who you believe is a werewolf. Response in the "
-        "following format which can be loaded by python json.loads()\n"
+        "based on the situation and the information you gain, to win the "
+        "game, it's time to vote one player eliminated among the alive "
+        "players, please cast your vote on who you believe is a werewolf. "
+        "Response in the following format which can be loaded by python "
+        "json.loads()\n"
         "{{\n"
         '    "thought": "thought",\n'
         '    "speak": "player_name"\n'
