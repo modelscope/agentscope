@@ -321,9 +321,9 @@ Now you've grasped how to conveniently set up a multi-agent application with Age
 
 ## Other Example Applications
 
-- Example of Simple Group Conversation: [examples/Simple Conversation](https://github.com/alibaba/AgentScope/tree/main/examples/simple_chat/README.md)
-- Example of Werewolves: [examples/Werewolves](https://github.com/alibaba/AgentScope/tree/main/examples/werewolves/README.md)
-- Example of Distributed Agents: [examples/Distributed Agents](https://github.com/alibaba/AgentScope/tree/main/examples/distributed_agents/README.md)
+- Example of Simple Group Conversation: [examples/Simple Conversation](https://github.com/modelscope/agentscope/tree/main/examples/simple_chat/README.md)
+- Example of Werewolves: [examples/Werewolves](https://github.com/modelscope/agentscope/tree/main/examples/werewolves/README.md)
+- Example of Distributed Agents: [examples/Distributed Agents](https://github.com/modelscope/agentscope/tree/main/examples/distributed_agents/README.md)
 - ...
 
 [[Return to the top]](#crafting-your-first-application)

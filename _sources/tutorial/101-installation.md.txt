@@ -54,7 +54,7 @@ For users who prefer to install AgentScope directly from the source code, follow
 
 ```bash
 # Pull the source code from Github
-git clone https://github.com/alibaba/AgentScope.git
+git clone https://github.com/modelscope/agentscope.git
 cd AgentScope
 
 # For centralized multi-agent applications
