@@ -43,7 +43,6 @@ def setup_assistant_server(assistant_host: str, assistant_port: int) -> None:
             "sys_prompt": "You are a helpful assistant.",
             "model": "gpt-3.5-turbo",
             "use_memory": True,
-            "local_mode": False,
         },
         host=assistant_host,
         port=assistant_port,
@@ -60,6 +59,9 @@ def run_main_process(assistant_host: str, assistant_port: int) -> None:
     )
     assistant_agent = DialogAgent(
         name="Assistant",
+        sys_prompt="You are a helpful assistant.",
+        model="gpt-3.5-turbo",
+        use_memory=True,
     ).to_dist(
         host=assistant_host,
         port=assistant_port,

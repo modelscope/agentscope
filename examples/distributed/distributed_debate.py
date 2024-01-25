@@ -57,7 +57,7 @@ def parse_args() -> argparse.Namespace:
 def setup_server(parsed_args: argparse.Namespace) -> None:
     """Setup rpc server for participant agent"""
     agentscope.init(
-        model_configs="configs/model_configs.json",
+        model_configs="configs/model_configs_pxc.json",
     )
     with open(
         "configs/debate_agent_configs.json",
@@ -82,29 +82,35 @@ def setup_server(parsed_args: argparse.Namespace) -> None:
 def run_main_process(parsed_args: argparse.Namespace) -> None:
     """Setup the main debate competition process"""
     agentscope.init(
-        model_configs="configs/model_configs.json",
+        model_configs="configs/model_configs_pxc.json",
     )
-    pro_agent = DialogAgent(
-        name="Pro",
-    ).to_dist(
-        host=parsed_args.pro_host,
-        port=parsed_args.pro_port,
-        launch_server=False,
-    )
-    con_agent = DialogAgent(
-        name="Con",
-    ).to_dist(
-        host=parsed_args.con_host,
-        port=parsed_args.con_port,
-        launch_server=False,
-    )
-    judge_agent = DialogAgent(
-        name="Judge",
-    ).to_dist(
-        host=parsed_args.judge_host,
-        port=parsed_args.judge_port,
-        launch_server=False,
-    )
+    with open(
+        "configs/debate_agent_configs.json",
+        "r",
+        encoding="utf-8",
+    ) as f:
+        configs = json.load(f)
+        pro_agent = DialogAgent(
+            **configs["pro"],
+        ).to_dist(
+            host=parsed_args.pro_host,
+            port=parsed_args.pro_port,
+            launch_server=False,
+        )
+        con_agent = DialogAgent(
+            **configs["con"],
+        ).to_dist(
+            host=parsed_args.con_host,
+            port=parsed_args.con_port,
+            launch_server=False,
+        )
+        judge_agent = DialogAgent(
+            **configs["judge"],
+        ).to_dist(
+            host=parsed_args.judge_host,
+            port=parsed_args.judge_port,
+            launch_server=False,
+        )
     participants = [pro_agent, con_agent, judge_agent]
     hint = Msg(name="System", content=ANNOUNCEMENT)
     x = None
