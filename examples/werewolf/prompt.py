@@ -8,7 +8,7 @@ class Prompts:
     to_wolves = (
         "{}, you are werewolves. If you are alone, eliminate a player, else "
         "discuss with your teammates and reach an agreement. Response in the "
-        "following format which can be loaded by python json.loads()"
+        "following format which can be loaded by python json.loads()\n"
         "{{\n"
         '    "thought": "thought",\n'
         '    "speak": "thoughts summary to say to others",\n'
@@ -35,7 +35,7 @@ class Prompts:
         "{{\n"
         '    "thought": "thought",\n'
         '    "speak": "thoughts summary to say",\n'
-        '    "resurrect": "true/false"\n'
+        '    "resurrect": true/false\n'
         "}}"
     )
 
@@ -44,7 +44,8 @@ class Prompts:
         "json format which can be loaded by python json.loads()\n"
         "{{\n"
         '    "thought": "thought", \n'
-        '    "speak": "False or player_name"\n'
+        '    "speak": "thoughts summary to say",\n'
+        '    "eliminate": ture/false\n'
         "}}"
     )
 

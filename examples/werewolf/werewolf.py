@@ -35,7 +35,7 @@ for i in range(1, MAX_GAME_ROUND + 1):
     with msghub(wolves, announcement=hint) as hub:
         for _ in range(MAX_WEREWOLF_DISCUSSION_ROUND):
             x = sequentialpipeline(wolves)
-            if x.agreement:
+            if x.get("agreement", False):
                 break
 
         # werewolves vote
@@ -56,14 +56,14 @@ for i in range(1, MAX_GAME_ROUND + 1):
                     {"witch_name": witch.name, "dead_name": dead_player[0]},
                 ),
             )
-            if witch(hint).resurrect:
+            if witch(hint).get("resurrect", False):
                 healing_used_tonight = True
                 dead_player.pop()
                 healing = False
 
         if poison and not healing_used_tonight:
             x = witch(HostMsg(content=Prompts.to_witch_poison))
-            if "False" not in x.content:
+            if x.get("eliminate", False):
                 dead_player.append(extract_name_and_id(x.content)[0])
                 poison = False
 
