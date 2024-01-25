@@ -30,8 +30,6 @@ class RpcAgentClient:
         """
         self.host = host
         self.port = port
-        self.channel = grpc.insecure_channel(f"{self.host}:{self.port}")
-        self.stub = RpcAgentStub(self.channel)
 
     def call_func(self, func_name: str, value: str = None) -> str:
         """Call the specific function of rpc server.
@@ -43,7 +41,9 @@ class RpcAgentClient:
         Returns:
             str: serialized return data.
         """
-        result_msg = self.stub.call_func(
-            RpcMsg(value=value, target_func=func_name),
-        )
-        return result_msg.value
+        with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
+            stub = RpcAgentStub(channel)
+            result_msg = stub.call_func(
+                RpcMsg(value=value, target_func=func_name),
+            )
+            return result_msg.value
