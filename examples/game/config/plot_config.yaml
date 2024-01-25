@@ -1,7 +1,18 @@
 - "plot_id": 0
   "predecessor_plots": null
   "main_roles":
-    - "王老板"
+    - "王先生"
+    - "老许"
+  "supporting_roles": null
+  "max_unblock_plots": 1
+  "unblock_following_plots":
+    - "unblock_chk_func": "always"
+      "unblock_plot": 1
+- "plot_id": 1
+  "predecessor_plots":
+    - 0
+  "main_roles":
+    - "王先生"
     - "阿炳"
   "supporting_roles":
     - "范老师"
@@ -9,8 +20,8 @@
   "max_unblock_plots": 1
   "unblock_following_plots":
     - "unblock_chk_func": "always"
-      "unblock_plot": 1
-- "plot_id": 1
+      "unblock_plot": 2
+- "plot_id": 2
   "predecessor_plots":
     - 0
   "main_roles": null

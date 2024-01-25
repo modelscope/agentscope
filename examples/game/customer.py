@@ -79,6 +79,9 @@ class Customer(StateAgent, DialogAgent):
                     "A customer can be in at most one plot in the current "
                     "version",
                 )
+            else:
+                logger.error(f"Plot {p} is not defined in the hidden_plot")
+                raise ValueError
 
     def deactivate_plot(self) -> None:
         # when the plot in which the customer is a main role is over, the

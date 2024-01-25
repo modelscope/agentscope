@@ -82,14 +82,16 @@ def invited_group_chat(
     invited_names.sort()
 
     for idx in cur_plots_indices:
-        correct_names = [c.name for c in all_plots[idx].main_roles]
         # if there is no main roles in the current plot, it is a endless plot
-        if len(correct_names) == 0:
+        if len(all_plots[idx].main_roles) == 0:
             return None
-        correct_names.sort()
 
         # TODO: decided by multi factor: chat history of msghub, correct_names
-        if invited_names == correct_names:
+        is_done, unblock_ids = all_plots[idx].check_plot_condition_done(
+            invited_customer, all_plots
+        )
+
+        if is_done:
             send_chat_msg("===== 剧情解锁成功 =======", uid=uid)
             questions = [
                 inquirer.List(
@@ -341,18 +343,15 @@ def main(args) -> None:
                 checkpoint.all_plots,
                 args.uid,
             )
+            logger.debug(f"done plot: {done_plot_idx}")
             if done_plot_idx is not None:
-                # once successful finish a current plot...
-                # deactivate the active roles in the done plot
-                checkpoint.all_plots[done_plot_idx].deactivate_roles()
-
                 # find the roles and plot to be activated
                 checkpoint.cur_plots = check_active_plot(
                     checkpoint.all_plots,
                     checkpoint.cur_plots,
                     done_plot_idx,
                 )
-                logger.debug("---active_plots:", checkpoint.cur_plots)
+                logger.debug(f"---active_plots:{checkpoint.cur_plots}")
             checkpoint.stage_per_night = StagePerNight.CASUAL_CHAT_FOR_MEAL
         elif checkpoint.stage_per_night == StagePerNight.CASUAL_CHAT_FOR_MEAL:
             # ==========  one-on-one loop =================
