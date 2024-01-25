@@ -366,6 +366,10 @@ class RpcAgentServerLauncher:
         self.port = self.parent_con.recv()
         start_event.wait()
         self.server = server_process
+        logger.info(
+            f"Launch [{self.agent_class.__name__}] server at "
+            f"[{self.host}:{self.port}] success",
+        )
 
     def wait_until_terminate(self) -> None:
         """Wait for server process"""
