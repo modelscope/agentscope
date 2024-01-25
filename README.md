@@ -52,7 +52,7 @@ To install AgentScope, you need to have Python 3.9 or higher installed.
 
 ```bash
 # Pull the source code from github
-git clone https://github.com/alibaba/AgentScope.git
+git clone https://github.com/modelscope/agentscope.git
 
 # Install the package in editable mode
 cd AgentScope
