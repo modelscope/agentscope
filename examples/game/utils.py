@@ -15,7 +15,7 @@ from dataclasses import dataclass
 from agentscope.message import Msg
 from enums import StagePerNight
 from pathlib import Path
-from queue import Empty
+from pypinyin import lazy_pinyin, Style
 
 import gradio as gr
 
@@ -230,13 +230,24 @@ def generate_picture(prompt):
     dashscope.api_key = os.environ.get("DASHSCOPE_API_KEY") or dashscope.api_key
     assert dashscope.api_key
     rsp = dashscope.ImageSynthesis.call(
-        model=dashscope.ImageSynthesis.Models.wanx_v1,
+        model="wanx-lite",
         prompt=prompt,
         n=1,
-        size='1024*1024')
+        size='768*768')
     if rsp.status_code == HTTPStatus.OK:
         return rsp.output['results'][0]['url']
 
     else:
         print('Failed, status_code: %s, code: %s, message: %s' %
               (rsp.status_code, rsp.code, rsp.message))
+
+
+def replace_names_in_messages(messages):
+    for line in messages:
+        if 'name' in line:
+            name = line['name']
+            if any('一' <= char <= '鿿' for char in name):
+                # 将中文名字转换为带音调的拼音
+                pinyin_name = ''.join(lazy_pinyin(name, style=Style.TONE3))
+                line['name'] = pinyin_name
+    return messages

@@ -82,14 +82,16 @@ def invited_group_chat(
     invited_names.sort()
 
     for idx in cur_plots_indices:
-        correct_names = [c.name for c in all_plots[idx].main_roles]
         # if there is no main roles in the current plot, it is a endless plot
-        if len(correct_names) == 0:
+        if len(all_plots[idx].main_roles) == 0:
             return None
-        correct_names.sort()
 
         # TODO: decided by multi factor: chat history of msghub, correct_names
-        if invited_names == correct_names:
+        is_done, unblock_ids = all_plots[idx].check_plot_condition_done(
+            invited_customer, all_plots
+        )
+
+        if is_done:
             send_chat_msg("===== 剧情解锁成功 =======", uid=uid)
             questions = [
                 inquirer.List(
@@ -155,7 +157,7 @@ def one_on_one_loop(customers, player, uid):
         )
     for customer in visit_customers:
         send_chat_msg(
-            f"{SYS_MSG_PREFIX}顾客{customer.name} 进入餐馆 (当前好感度为: {customer.friendship})",
+            f"{SYS_MSG_PREFIX}顾客{customer.name} 进入餐馆 (当前好感度为: {round(customer.friendship, 2)})",
             uid=uid,
         )
         msg = player({"content": "游戏开始"})
@@ -166,7 +168,7 @@ def one_on_one_loop(customers, player, uid):
                     f"{SYS_MSG_PREFIX}{customer.name}（顾客）接受了你的菜。\n"
                     f" 顾客对菜本身的评价：{msg['content']}\n"
                     f" {customer.name}（顾客）享用完之后，"
-                    f"综合满意度为{msg['score']}\n",
+                    f"综合满意度为{round(msg['score'], 2)}\n",
                     uid=uid,
                 )
                 break
@@ -289,7 +291,7 @@ def main(args) -> None:
             name=cfg["name"],
             config=cfg,
             game_config=args.game_config,
-            model=cfg["model"],
+            model=os.environ.get("HTTP_LLM_MODEL") if cfg["model"] == "post_api" else cfg["model"],
             use_memory=True,
             uid=args.uid,
         )
@@ -341,18 +343,15 @@ def main(args) -> None:
                 checkpoint.all_plots,
                 args.uid,
             )
+            logger.debug(f"done plot: {done_plot_idx}")
             if done_plot_idx is not None:
-                # once successful finish a current plot...
-                # deactivate the active roles in the done plot
-                checkpoint.all_plots[done_plot_idx].deactivate_roles()
-
                 # find the roles and plot to be activated
                 checkpoint.cur_plots = check_active_plot(
                     checkpoint.all_plots,
                     checkpoint.cur_plots,
                     done_plot_idx,
                 )
-                logger.debug("---active_plots:", checkpoint.cur_plots)
+                logger.debug(f"---active_plots:{checkpoint.cur_plots}")
             checkpoint.stage_per_night = StagePerNight.CASUAL_CHAT_FOR_MEAL
         elif checkpoint.stage_per_night == StagePerNight.CASUAL_CHAT_FOR_MEAL:
             # ==========  one-on-one loop =================
@@ -399,7 +398,24 @@ if __name__ == "__main__":
         "api_key": os.environ.get("TONGYI_API_KEY"),
     }
 
-    agentscope.init(model_configs=[TONGYI_CONFIG], logger_level="DEBUG")
+    HTTP_LLM_CONFIG = {
+        "type": "post_api",
+        "name": os.environ.get("HTTP_LLM_MODEL"),
+        "headers": {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {os.environ.get('HTTP_LLM_API_KEY')}"
+        },
+        "api_url": os.environ.get("HTTP_LLM_URL"),
+        "messages_key": "messages",
+        "json_args": {
+            "model": os.environ.get("HTTP_LLM_MODEL"),
+            "n": 1,
+            "temperature": 0.7,
+        }
+
+    }
+
+    agentscope.init(model_configs=[TONGYI_CONFIG, HTTP_LLM_CONFIG], logger_level="DEBUG")
     args = CheckpointArgs()
     args.game_config = GAME_CONFIG
     args.uid = None

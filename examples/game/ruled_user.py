@@ -4,6 +4,7 @@ import json
 import random
 from enum import Enum
 from typing import Optional, Union, Any, Callable
+from loguru import logger
 
 import inquirer
 import re
@@ -17,6 +18,7 @@ from utils import (
     ResetException,
     generate_picture,
     send_player_msg,
+    SYS_MSG_PREFIX
 )
 
 
@@ -78,7 +80,7 @@ class RuledUser(AgentBase):
             try:
                 content = get_player_input(self.name, uid=self.uid)
                 if x == {"content": "游戏开始"} and content == "":
-                    send_chat_msg("【系统】有顾客光临，请接待。", uid=self.uid)
+                    send_chat_msg(f" {SYS_MSG_PREFIX}有顾客光临，请接待。", uid=self.uid)
                     continue
                 elif isinstance(x, dict):
                     if x.get("content") == "今天老板邀请大家一起来聚聚。" and content == "":
@@ -94,7 +96,7 @@ class RuledUser(AgentBase):
                     break
 
                 send_chat_msg(
-                    f"【系统】输入被规则禁止"
+                    f" {SYS_MSG_PREFIX}输入被规则禁止"
                     f" {ruler_res.get('reason', 'Unknown reason')}\n"
                     f"请重试",
                     "⚠️",
@@ -103,7 +105,8 @@ class RuledUser(AgentBase):
             except ResetException:
                 raise ResetException
             except Exception as e:
-                send_chat_msg(f"【系统】无效输入，请重试！", "⚠️", uid=self.uid)
+                logger.debug(e)
+                send_chat_msg(f" {SYS_MSG_PREFIX}无效输入，请重试！", "⚠️", uid=self.uid)
 
         kwargs = {}
         if required_keys is not None:
@@ -159,7 +162,7 @@ class RuledUser(AgentBase):
             ),
         ]
 
-        choose_ingredient = f"""【系统】请选择需要的食材: <select-box shape="card"
+        choose_ingredient = f""" {SYS_MSG_PREFIX}请选择需要的食材: <select-box shape="card"
                      type="checkbox" item-width="auto"
                     options='{json.dumps(ingredients_list)}' select-once
                     submit-text="确定"></select-box>"""
@@ -172,7 +175,7 @@ class RuledUser(AgentBase):
         while True:
             sel_ingr = query_answer(questions, "ingredient", uid=self.uid)
             if isinstance(sel_ingr, str):
-                send_chat_msg("【系统】请在列表中进行选择。", uid=self.uid)
+                send_chat_msg(f" {SYS_MSG_PREFIX}请在列表中进行选择。", uid=self.uid)
                 continue
             cook_list = sel_ingr
             break
@@ -188,7 +191,6 @@ class RuledUser(AgentBase):
         picture_prompt = f"请根据菜品《{food}》, 生成一幅与之对应的色香味巨全，让人有食欲的图。"
         picture_url = generate_picture(picture_prompt)
         send_player_msg(
-            # f"【系统】魔法锅周围光芒四射，你听到了轻微的咔哒声。当一切平静下来，一道《{food}》出现在你眼前。",
             f" 撸袖挥勺，热浪腾空。一番烹饪后，一道《{food}》出现在客人眼前。"
             f"![image]({picture_url})",
             uid=self.uid,
