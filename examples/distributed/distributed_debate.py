@@ -69,11 +69,11 @@ def setup_server(parsed_args: argparse.Namespace) -> None:
         host = getattr(parsed_args, f"{parsed_args.role}_host")
         port = getattr(parsed_args, f"{parsed_args.role}_port")
         server_launcher = RpcAgentServerLauncher(
+            agent_class=DialogAgent,
+            agent_kwargs=config,
             host=host,
             port=port,
             local_mode=False,
-            agent_class=DialogAgent,
-            **config,
         )
         server_launcher.launch()
         server_launcher.wait_until_terminate()
@@ -86,21 +86,21 @@ def run_main_process(parsed_args: argparse.Namespace) -> None:
     )
     pro_agent = DialogAgent(
         name="Pro",
-    ).to_distributed(
+    ).to_dist(
         host=parsed_args.pro_host,
         port=parsed_args.pro_port,
         launch_server=False,
     )
     con_agent = DialogAgent(
         name="Con",
-    ).to_distributed(
+    ).to_dist(
         host=parsed_args.con_host,
         port=parsed_args.con_port,
         launch_server=False,
     )
     judge_agent = DialogAgent(
         name="Judge",
-    ).to_distributed(
+    ).to_dist(
         host=parsed_args.judge_host,
         port=parsed_args.judge_port,
         launch_server=False,

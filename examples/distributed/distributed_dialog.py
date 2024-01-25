@@ -2,7 +2,6 @@
 """ An example of distributed dialog """
 
 import argparse
-import time
 from loguru import logger
 
 import agentscope
@@ -41,13 +40,14 @@ def setup_assistant_server(assistant_host: str, assistant_port: int) -> None:
         agent_class=DialogAgent,
         agent_kwargs={
             "name": "Assitant",
-            "host": assistant_host,
-            "port": assistant_port,
             "sys_prompt": "You are a helpful assistant.",
             "model": "gpt-3.5-turbo",
             "use_memory": True,
             "local_mode": False,
         },
+        host=assistant_host,
+        port=assistant_port,
+        local_mode=False,
     )
     assistant_server_launcher.launch()
     assistant_server_launcher.wait_until_terminate()
@@ -60,7 +60,7 @@ def run_main_process(assistant_host: str, assistant_port: int) -> None:
     )
     assistant_agent = DialogAgent(
         name="Assistant",
-    ).to_distributed(
+    ).to_dist(
         host=assistant_host,
         port=assistant_port,
         launch_server=False,
@@ -77,7 +77,6 @@ def run_main_process(assistant_host: str, assistant_port: int) -> None:
     while not msg.content.endswith("exit"):
         msg = assistant_agent(msg)
         logger.chat(msg)
-        time.sleep(0.5)
         msg = user_agent(msg)
 
 

@@ -115,7 +115,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         port = 12001
         agent_a = DemoRpcAgent(
             name="a",
-        ).to_distributed(
+        ).to_dist(
             host=host,
             port=port,
         )
@@ -169,11 +169,12 @@ class BasicRpcAgentTest(unittest.TestCase):
             },
             local_mode=False,
             host="127.0.0.1",
+            port=12010,
         )
         launcher.launch()
         agent_a = DemoRpcAgent(
             name="a",
-        ).to_distributed(
+        ).to_dist(
             host="127.0.0.1",
             port=launcher.port,
             launch_server=False,
@@ -205,21 +206,21 @@ class BasicRpcAgentTest(unittest.TestCase):
         port3 = 12003
         agent_a = DemoRpcAgentAdd(
             name="a",
-        ).to_distributed(
+        ).to_dist(
             host=host,
             port=port1,
             lazy_launch=False,
         )
         agent_b = DemoRpcAgentAdd(
             name="b",
-        ).to_distributed(
+        ).to_dist(
             host=host,
             port=port2,
             lazy_launch=False,
         )
         agent_c = DemoRpcAgentAdd(
             name="c",
-        ).to_distributed(
+        ).to_dist(
             host=host,
             port=port3,
             lazy_launch=False,
@@ -265,7 +266,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         # rpc agent a
         agent_a = DemoRpcAgentAdd(
             name="a",
-        ).to_distributed(
+        ).to_dist(
             host=host,
             port=port1,
             lazy_launch=False,
@@ -277,7 +278,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         # rpc agent c
         agent_c = DemoRpcAgentAdd(
             name="c",
-        ).to_distributed(
+        ).to_dist(
             host=host,
             port=port2,
             lazy_launch=False,
@@ -294,13 +295,13 @@ class BasicRpcAgentTest(unittest.TestCase):
         """test compatibility with msghub"""
         agent_a = DemoRpcAgentWithMemory(
             name="a",
-        ).to_distributed()
+        ).to_dist()
         agent_b = DemoRpcAgentWithMemory(
             name="b",
-        ).to_distributed()
+        ).to_dist()
         agent_c = DemoRpcAgentWithMemory(
             name="c",
-        ).to_distributed()
+        ).to_dist()
         participants = [agent_a, agent_b, agent_c]
         annonuncement_msgs = [
             Msg(name="System", content="Announcement 1"),
@@ -336,7 +337,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         # rpc agent a
         agent_a = DemoRpcAgentWithMonitor(
             name="a",
-        ).to_distributed(
+        ).to_dist(
             host=host,
             port=port1,
             lazy_launch=False,
@@ -344,7 +345,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         # local agent b
         agent_b = DemoRpcAgentWithMonitor(
             name="b",
-        ).to_distributed(
+        ).to_dist(
             host=host,
             port=port2,
             lazy_launch=False,

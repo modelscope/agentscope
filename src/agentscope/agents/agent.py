@@ -182,7 +182,7 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
         for agent in self._audience:
             agent.observe(x)
 
-    def to_distributed(
+    def to_dist(
         self,
         host: str = "localhost",
         port: int = None,
@@ -192,7 +192,27 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
         local_mode: bool = True,
         lazy_launch: bool = True,
     ) -> AgentBase:
-        """Convert current agent instance into a distributed version"""
+        """Convert current agent instance into a distributed version.
+
+        Args:
+            host (`str`, defaults to `"localhost"`):
+                Hostname of the rpc agent server.
+            port (`int`, defaults to `None`):
+                Port of the rpc agent server.
+            max_pool_size (`int`, defaults to `100`):
+                Max number of task results that the server can accommodate.
+            max_timeout_seconds (`int`, defaults to `1800`):
+                Timeout for task results.
+            local_mode (`bool`, defaults to `True`):
+                Whether the started rpc server only listens to local
+                requests.
+            lazy_launch (`bool`, defaults to `True`):
+                Only launch the server when the agent is called.
+
+        Returns:
+            `AgentBase`: the wrapped agent instance with distributed
+            functionality
+        """
         from .rpc_agent import RpcAgent
 
         if issubclass(self.__class__, RpcAgent):

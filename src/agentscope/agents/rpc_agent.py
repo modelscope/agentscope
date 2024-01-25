@@ -71,9 +71,9 @@ class RpcAgent(AgentBase):
 
     def __init__(
         self,
+        name: str,
         agent_class: Type[AgentBase],
         agent_configs: dict,
-        name: str,
         host: str = "localhost",
         port: int = None,
         max_pool_size: int = 100,
@@ -82,6 +82,28 @@ class RpcAgent(AgentBase):
         local_mode: bool = True,
         lazy_launch: bool = True,
     ) -> None:
+        """Initialize a RpcAgent instance.
+
+        Args:
+            agent_class (`Type[AgentBase]`, defaults to `None`):
+                The AgentBase subclass encapsulated by this wrapper.
+            agent_configs (`dict`): The args used to initialize the
+                agent_class.
+            name (`str`): Name of the agent.
+            host (`str`, defaults to `"localhost"`):
+                Hostname of the rpc agent server.
+            port (`int`, defaults to `None`):
+                Port of the rpc agent server.
+            max_pool_size (`int`, defaults to `100`):
+                Max number of task results that the server can accommodate.
+            max_timeout_seconds (`int`, defaults to `1800`):
+                Timeout for task results.
+            local_mode (`bool`, defaults to `True`):
+                Whether the started rpc server only listens to local
+                requests.
+            lazy_launch (`bool`, defaults to `True`):
+                Only launch the server when the agent is called.
+        """
         super().__init__(name=name)
         self.host = host
         self.port = port
@@ -156,10 +178,18 @@ def setup_rcp_agent_server(
     """Setup gRPC server rpc agent.
 
     Args:
+        agent_class (`Type[AgentBase]`):
+            A subclass of AgentBase.
+        agent_args (`tuple`): The args tuple used to initialize the
+            agent_class.
+        agent_kwargs (`dict`): The args dict used to initialize the
+            agent_class.
+        host (`str`, defaults to `"localhost"`):
+            Hostname of the rpc agent server.
         port (`int`):
             The socket port monitored by grpc server.
-        servicer_class (`Type[RpcAgentServicer]`):
-            An implementation of RpcAgentBaseService.
+        init_settings (`dict`, defaults to `None`):
+            Init settings for agentscope.init.
         start_event (`EventClass`, defaults to `None`):
             An Event instance used to determine whether the child process
             has been started.
@@ -168,12 +198,14 @@ def setup_rcp_agent_server(
             process has been stopped.
         pipe (`int`, defaults to `None`):
             A pipe instance used to pass the actual port of the server.
-        max_workers (`int`, defaults to `4`):
-            max worker number of grpc server.
         local_mode (`bool`, defaults to `None`):
             Only listen to local requests.
-        init_settings (`dict`, defaults to `None`):
-            Init settings.
+        max_pool_size (`int`, defaults to `100`):
+            Max number of task results that the server can accommodate.
+        max_timeout_seconds (`int`, defaults to `1800`):
+            Timeout for task results.
+        max_workers (`int`, defaults to `4`):
+            max worker number of grpc server.
     """
 
     if init_settings is not None:
@@ -274,30 +306,16 @@ class RpcAgentServerLauncher:
         max_pool_size: int = 100,
         max_timeout_seconds: int = 1800,
         local_mode: bool = True,
-        **kwargs: Any,
     ) -> None:
         """Init a rpc agent server launcher.
 
         Args:
-            name (`str`):
-                The name of the agent.
-            config (`Optional[dict]`):
-                The configuration of the agent, if provided, the agent will
-                be initialized from the config rather than the other
-                parameters.
-            sys_prompt (`Optional[str]`):
-                The system prompt of the agent, which can be passed by args
-                or hard-coded in the agent.
-            model (`Optional[Union[Callable[..., Any], str]]`, defaults to
-            None):
-                The callable model object or the model name, which is used to
-                load model from configuration.
-            use_memory (`bool`, defaults to `True`):
-                Whether the agent has memory.
-            memory_config (`Optional[dict]`):
-                The config of memory.
-            agent_class (`Type[RpcAgentBase]`, defaults to `None`):
-                The RpcAgentBase class used in rpc agent server as a servicer.
+            agent_class (`Type[AgentBase]`, defaults to `None`):
+                The AgentBase subclass encapsulated by this wrapper.
+            agent_args (`tuple`): The args tuple used to initialize the
+                agent_class.
+            agent_kwargs (`dict`): The args dict used to initialize the
+                agent_class.
             host (`str`, defaults to `"localhost"`):
                 Hostname of the rpc agent server.
             port (`int`, defaults to `None`):
@@ -310,7 +328,6 @@ class RpcAgentServerLauncher:
                 Whether the started rpc server only listens to local
                 requests.
         """
-        # TODO: update docstring
         self.agent_class = agent_class
         self.agent_args = agent_args
         self.agent_kwargs = agent_kwargs
@@ -322,7 +339,6 @@ class RpcAgentServerLauncher:
         self.server = None
         self.stop_event = None
         self.parent_con = None
-        self.kwargs = kwargs
 
     def launch(self) -> None:
         """launch a local rpc agent server."""
@@ -420,8 +436,7 @@ class RpcServerSideWrapper(RpcAgentServicer):
             return self.task_id_counter
 
     def call_func(self, request: RpcMsg, _: ServicerContext) -> RpcMsg:
-        """Call the specific servicer function.
-        """
+        """Call the specific servicer function."""
         if hasattr(self, request.target_func):
             return getattr(self, request.target_func)(request)
         else:
