@@ -92,7 +92,7 @@ More details please refer to the code of [`DictDialogAgent`](../..
     with msghub(wolves, announcement=hint) as hub:
         for _ in range(MAX_WEREWOLF_DISCUSSION_ROUND):
             x = sequentialpipeline(wolves)
-            if x.agreement:
+            if x.get("agreement", False):
                 break
     # ...
 ```
