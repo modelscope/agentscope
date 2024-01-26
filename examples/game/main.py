@@ -80,9 +80,7 @@ def begin_task(openings, main_role, player):
                     if answer[0] == "自定义":
                         msg = player(msg)
                     else:
-                        msg = player.talk(answer[0], is_display=True)
-                        if msg is None:
-                            continue
+                        msg = player.talk(answer[0], is_display=True, ruled=False)
             else:  # Walk away
                 break
         else:
