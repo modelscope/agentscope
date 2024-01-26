@@ -197,7 +197,7 @@ class RuledUser(AgentBase):
 
         return food
 
-    def talk(self, content, is_display=False, ruled=True):
+    def talk(self, content, is_display=False, ruled=False):
         if content is None:
             return None
 
