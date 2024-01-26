@@ -146,6 +146,12 @@
   font-size: 0.9em;
 }
 
-.bot_intro {
-    font-size: 2vw;
+.bot_intro_label {
+  /*white-space: pre-wrap;*/
+  font-size: 20px;
+}
+
+.bot_intro_ctx {
+  white-space: pre-wrap;
+  font-size: 15px;
 }
