@@ -43,8 +43,8 @@ def begin_task(openings, main_role, player):
     else:
         choices = None
 
-    rnd = 0
-    while rnd < OPENING_ROUND:
+    i = 0
+    while i < OPENING_ROUND:
         if choices:
             questions = [
                 inquirer.List(
@@ -87,7 +87,7 @@ def begin_task(openings, main_role, player):
                 break
         else:
             msg = player(msg)
-        rnd += 1
+        i += 1
         msg = main_role(msg)
     main_role.talk(openings["npc_quit_openings"], is_display=True)
     main_role.transition(CustomerConv.WARMING_UP)
