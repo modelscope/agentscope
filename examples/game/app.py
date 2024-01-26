@@ -80,6 +80,8 @@ def format_cover_html(config: dict, bot_avatar_path="assets/bg.png"):
     </div>
     <div class="bot_name">{config.get("name", "经营餐厅")}</div>
     <div class="bot_desp">{config.get("description", "快来经营你的餐厅吧")}</div>
+    <div class="bot_intro">{config.get("introduce", "游戏简介")}</div>
+
 </div>
 """
 
