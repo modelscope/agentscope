@@ -33,10 +33,14 @@ class Customer(StateAgent, DialogAgent):
         self.avatar = self.config.get("avatar", get_a_random_avatar())
         self.background = self.config["character_setting"]["background"]
         self.friendship = int(self.config.get("friendship", 60))
-
         self.cur_state = CustomerConv.WARMING_UP
         # TODO: A customer can be in at most one plot in the current version
         self.active_plots = []
+
+        self.register_state(
+            state=CustomerConv.OPENING,
+            handler=self._opening_chat,
+        )
 
         self.register_state(
             state=CustomerConv.WARMING_UP,
@@ -153,6 +157,36 @@ class Customer(StateAgent, DialogAgent):
         self.preorder_itr_count = 0
 
         return Msg(role="assistant", name=self.name, content=text, score=score)
+
+    def _opening_chat(self, x: dict) -> dict:
+        system_prompt = self.game_config["basic_background_prompt"].format_map(
+            {
+                "name": self.config["name"],
+                "character_description": self.background
+            }
+        ) + self.game_config[
+            "hidden_main_plot_prompt"
+        ].format_map(
+            {
+                "hidden_plot": self.config["character_setting"]["hidden_plot"],
+            },
+        )
+        if x is not None:
+            self.memory.add(x)
+
+        system_msg = Msg(role="user", name="system", content=system_prompt)
+        prompt = self.engine.join(
+            self._validated_history_messages(recent_n=HISTORY_WINDOW),
+            system_msg,
+            x,
+        )
+
+        logger.debug(prompt)
+
+        reply = self.model(replace_names_in_messages(prompt))
+        reply_msg = Msg(role="assistant", name=self.name, content=reply)
+        self.memory.add(reply_msg)
+        return reply_msg
 
     def _pre_meal_chat(self, x: dict) -> dict:
         if "food" in x:
@@ -341,3 +375,21 @@ class Customer(StateAgent, DialogAgent):
                 prompt += self.game_config["invited_chat_prompt"]
 
         return prompt
+
+    def talk(self, content, is_display=True):
+        if content is not None:
+            msg = Msg(
+                role="user",
+                name=self.name,
+                content=content,
+            )
+            self.memory.add(msg)
+            if is_display:
+                send_chat_msg(
+                    content,
+                    role=self.name,
+                    uid=self.uid,
+                    avatar=self.avatar,
+                    flushing=True,
+                )
+            return msg

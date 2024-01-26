@@ -99,7 +99,6 @@ class RuledUser(AgentBase):
                     f" {SYS_MSG_PREFIX}输入被规则禁止"
                     f" {ruler_res.get('reason', 'Unknown reason')}\n"
                     f"请重试",
-                    "⚠️",
                     uid=self.uid,
                 )
             except ResetException:
@@ -197,3 +196,15 @@ class RuledUser(AgentBase):
         )
 
         return food
+
+    def talk(self, content, is_display=False):
+        if content is not None:
+            msg = Msg(
+                self.name,
+                role="user",
+                content=content,
+            )
+            self.memory.add(msg)
+            if is_display:
+                send_player_msg(content, uid=self.uid)
+            return msg
