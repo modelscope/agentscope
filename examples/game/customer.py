@@ -42,6 +42,11 @@ class Customer(StateAgent, DialogAgent):
         self.active_plots = []
 
         self.register_state(
+            state=CustomerConv.OPENING,
+            handler=self._opening_chat,
+        )
+
+        self.register_state(
             state=CustomerConv.WARMING_UP,
             handler=self._pre_meal_chat,
         )
@@ -161,13 +166,12 @@ class Customer(StateAgent, DialogAgent):
         prev_relationship = self.relationship.to_string()
         self.relationship.update(score)
         cur_relationship = self.relationship.to_string()
+        chat_text = f" {SYS_MSG_PREFIX} {self.name}感觉{food}{satisfied}, "
 
         if prev_relationship != cur_relationship:
-            chat_text = f" {SYS_MSG_PREFIX} {self.name}感觉{food}{satisfied}, "
-            f"你们的关系从{prev_relationship}变得{cur_relationship}了"
+            chat_text += f"你们的关系从{prev_relationship}变得{cur_relationship}了"
         else:
-            chat_text = f" {SYS_MSG_PREFIX} {self.name}感觉{food}{satisfied}, "
-            "你们的关系没变化，依旧是{prev_relationship}。"
+            chat_text += f"你们的关系没变化，依旧是{prev_relationship}。"
 
         send_chat_msg(
             chat_text,
@@ -189,6 +193,36 @@ class Customer(StateAgent, DialogAgent):
             score=score,
             relationship=cur_relationship,
         )
+
+    def _opening_chat(self, x: dict) -> dict:
+        system_prompt = self.game_config["basic_background_prompt"].format_map(
+            {
+                "name": self.config["name"],
+                "character_description": self.background
+            }
+        ) + self.game_config[
+            "hidden_main_plot_prompt"
+        ].format_map(
+            {
+                "hidden_plot": self.config["character_setting"]["hidden_plot"],
+            },
+        )
+        if x is not None:
+            self.memory.add(x)
+
+        system_msg = Msg(role="user", name="system", content=system_prompt)
+        prompt = self.engine.join(
+            self._validated_history_messages(recent_n=HISTORY_WINDOW),
+            system_msg,
+            x,
+        )
+
+        logger.debug(prompt)
+
+        reply = self.model(replace_names_in_messages(prompt))
+        reply_msg = Msg(role="assistant", name=self.name, content=reply)
+        self.memory.add(reply_msg)
+        return reply_msg
 
     def _pre_meal_chat(self, x: dict) -> dict:
         if "food" in x:
@@ -396,3 +430,21 @@ class Customer(StateAgent, DialogAgent):
         prompt += self.game_config[self.relationship.prompt]
 
         return prompt
+
+    def talk(self, content, is_display=True):
+        if content is not None:
+            msg = Msg(
+                role="user",
+                name=self.name,
+                content=content,
+            )
+            self.memory.add(msg)
+            if is_display:
+                send_chat_msg(
+                    content,
+                    role=self.name,
+                    uid=self.uid,
+                    avatar=self.avatar,
+                    flushing=True,
+                )
+            return msg

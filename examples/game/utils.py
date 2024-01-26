@@ -19,7 +19,8 @@ from pypinyin import lazy_pinyin, Style
 
 import gradio as gr
 
-SYS_MSG_PREFIX='【系统】'
+SYS_MSG_PREFIX = '【系统】'
+OPENING_ROUND = 3
 
 USE_WEB_UI = False
 
@@ -230,7 +231,7 @@ def generate_picture(prompt):
     dashscope.api_key = os.environ.get("DASHSCOPE_API_KEY") or dashscope.api_key
     assert dashscope.api_key
     rsp = dashscope.ImageSynthesis.call(
-        model="wanx-lite",
+        model='wanx-lite',
         prompt=prompt,
         n=1,
         size='768*768')
