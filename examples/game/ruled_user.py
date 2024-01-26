@@ -101,7 +101,6 @@ class RuledUser(AgentBase):
                     f" {SYS_MSG_PREFIX}输入被规则禁止"
                     f" {ruler_res.get('reason', 'Unknown reason')}\n"
                     f"请重试",
-                    role="系统️",
                     uid=self.uid,
                 )
             except ResetException:
