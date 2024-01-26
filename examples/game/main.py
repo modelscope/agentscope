@@ -43,7 +43,8 @@ def begin_task(openings, main_role, player):
     else:
         choices = None
 
-    for i in range(OPENING_ROUND):
+    rnd = 0
+    while rnd < OPENING_ROUND:
         if choices:
             questions = [
                 inquirer.List(
@@ -71,6 +72,8 @@ def begin_task(openings, main_role, player):
                     break
                 else:
                     msg = player.talk(answer)
+                    if msg is None:
+                        continue
 
             elif isinstance(answer, list) and len(answer):
                 if answer[0] in choices:
@@ -78,10 +81,13 @@ def begin_task(openings, main_role, player):
                         msg = player(msg)
                     else:
                         msg = player.talk(answer[0], is_display=True)
+                        if msg is None:
+                            continue
             else:  # Walk away
                 break
         else:
             msg = player(msg)
+        rnd += 1
         msg = main_role(msg)
     main_role.talk(openings["npc_quit_openings"], is_display=True)
     main_role.transition(CustomerConv.WARMING_UP)

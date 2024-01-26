@@ -199,12 +199,21 @@ class RuledUser(AgentBase):
 
     def talk(self, content, is_display=False):
         if content is not None:
-            msg = Msg(
-                self.name,
-                role="user",
-                content=content,
-            )
-            self.memory.add(msg)
-            if is_display:
-                send_player_msg(content, uid=self.uid)
-            return msg
+            ruler_res = self.is_content_valid(content)
+            if ruler_res.get("allowed") == "true":
+                msg = Msg(
+                    self.name,
+                    role="user",
+                    content=content,
+                )
+                self.memory.add(msg)
+                if is_display:
+                    send_player_msg(content, uid=self.uid)
+                return msg
+            else:
+                send_chat_msg(
+                    f" {SYS_MSG_PREFIX}输入被规则禁止"
+                    f" {ruler_res.get('reason', 'Unknown reason')}\n"
+                    f"请重试",
+                    uid=self.uid,
+                )
