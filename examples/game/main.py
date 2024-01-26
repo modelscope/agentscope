@@ -41,20 +41,16 @@ def begin_task(main_role, player):
         choices = None
 
     for i in range(OPENING_ROUND):
-        send_chat_msg(
-            f"{SYS_MSG_PREFIX}剩余询问次数{OPENING_ROUND - i}",
-            uid=player.uid,
-        )
         if choices:
             questions = [
                 inquirer.List(
                     "ans",
-                    message=f"{SYS_MSG_PREFIX}：你想要问什么？(空输入主角将直接离开) ",
+                    message=f"{SYS_MSG_PREFIX}：你想要问什么？(剩余询问次数{OPENING_ROUND - i}，空输入主角将直接离开) ",
                     choices=choices,
                 ),
             ]
 
-            choose_during_chatting = f"""{SYS_MSG_PREFIX}你想要问什么？(空输入主角将直接离开) 
+            choose_during_chatting = f"""{SYS_MSG_PREFIX}你想要问什么？(剩余询问次数{OPENING_ROUND - i}，空输入主角将直接离开) 
             <select-box shape="card"
                                             type="checkbox" item-width="auto" options=
                                            '
@@ -332,16 +328,16 @@ def invite_customers(customers, uid):
 
 
 def main(args) -> None:
-    game_description = f"""
-    {SYS_MSG_PREFIX}
-    这是一款模拟餐馆经营的文字冒险游戏。
-    玩家扮演餐馆老板，通过与顾客互动来经营餐馆并解锁剧情。
-    游戏分为四个阶段：选择食材做菜，随意聊天，一对一互动以及邀请对话。
-    玩家需要根据顾客的喜好和需求来挑选食材做菜，通过顾客对用餐的满意度来获取好感度并解锁剧情。
-    在游戏中，玩家需要经营餐厅、与顾客互动并决定邀请哪些顾客参与对话，以推动故事剧情的发展。
-    通过与顾客的互动，玩家可以解锁剧情并发展餐馆的故事，体验不同的情节和结局。
-    """
-    send_chat_msg(game_description, uid=args.uid)
+    # game_description = f"""
+    # {SYS_MSG_PREFIX}
+    # 这是一款模拟餐馆经营的文字冒险游戏。
+    # 玩家扮演餐馆老板，通过与顾客互动来经营餐馆并解锁剧情。
+    # 游戏分为四个阶段：选择食材做菜，随意聊天，一对一互动以及邀请对话。
+    # 玩家需要根据顾客的喜好和需求来挑选食材做菜，通过顾客对用餐的满意度来获取好感度并解锁剧情。
+    # 在游戏中，玩家需要经营餐厅、与顾客互动并决定邀请哪些顾客参与对话，以推动故事剧情的发展。
+    # 通过与顾客的互动，玩家可以解锁剧情并发展餐馆的故事，体验不同的情节和结局。
+    # """
+    # send_chat_msg(game_description, uid=args.uid)
     customer_configs = load_user_cfg(args.uid)
     user_configs = load_configs("config/user.yaml")
 
@@ -356,10 +352,23 @@ def main(args) -> None:
         )
         for cfg in customer_configs
     ]
-    user_configs["uid"] = args.uid
-    player = RuledUser(**user_configs)
+
     plot_config = load_configs("config/plot_config.yaml")
+    openings = plot_config.pop(0)
+
     all_plots = parse_plots(plot_config, customers)
+
+    user_configs["uid"] = args.uid
+    user_configs["openings"] = openings.get("openings", None)
+    user_configs["openings_option"] = openings.get("openings_option", None)
+    player = RuledUser(**user_configs)
+
+    if openings.get("task", None):
+        send_chat_msg(
+            f'{SYS_MSG_PREFIX}{openings.get("task", None)}',
+            flushing=False,
+            uid=args.uid,
+        )
 
     if args.load_checkpoint is not None:
         checkpoint = load_game_checkpoint(args.load_checkpoint)
