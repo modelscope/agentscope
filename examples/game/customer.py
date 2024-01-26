@@ -33,8 +33,6 @@ class Customer(StateAgent, DialogAgent):
         self.avatar = self.config.get("avatar", get_a_random_avatar())
         self.background = self.config["character_setting"]["background"]
         self.friendship = int(self.config.get("friendship", 60))
-        self.openings = self.config.get("openings", None)
-        self.quit_openings = self.config.get("quit_openings", None)
         self.cur_state = CustomerConv.WARMING_UP
         # TODO: A customer can be in at most one plot in the current version
         self.active_plots = []
@@ -378,22 +376,20 @@ class Customer(StateAgent, DialogAgent):
 
         return prompt
 
-    def fixed_openings(self):
-        if self.openings:
-            self.memory.add(Msg(role="user", name=self.name, content=self.openings))
-            send_chat_msg(
-                self.openings,
-                role=self.name,
-                uid=self.uid,
-                avatar=self.avatar,
+    def talk(self, content, is_display=True):
+        if content is not None:
+            msg = Msg(
+                role="user",
+                name=self.name,
+                content=content,
             )
-
-    def fixed_quit_openings(self):
-        if self.quit_openings:
-            self.memory.add(Msg(role="user", name=self.name, content=self.quit_openings))
-            send_chat_msg(
-                self.quit_openings,
-                role=self.name,
-                uid=self.uid,
-                avatar=self.avatar,
-            )
+            self.memory.add(msg)
+            if is_display:
+                send_chat_msg(
+                    content,
+                    role=self.name,
+                    uid=self.uid,
+                    avatar=self.avatar,
+                    flushing=True,
+                )
+            return msg

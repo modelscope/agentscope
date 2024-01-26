@@ -3,8 +3,6 @@
   "model": "post_api"
   "use_memory": true
   "avatar": "assets/avatar_wang.png"
-  "openings": "老板，我发现我的招财猫不见了！"
-  "quit_openings": "哎，老板，反正你帮我打听打听吧！（说完，王先生就慌慌张张地跑开了）"
   "character_setting":
     "food_preference": >
       王先生是本地人。

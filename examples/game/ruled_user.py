@@ -60,8 +60,6 @@ class RuledUser(AgentBase):
         self.ingredients_dict = ingredients_dict
         self.cook_prompt = cook_prompt
         self.uid = kwargs.get("uid", None)
-        self.openings = kwargs.get("openings", None)
-        self.openings_option = kwargs.get("openings_option", None)
 
     def reply(
         self,
@@ -199,10 +197,6 @@ class RuledUser(AgentBase):
 
         return food
 
-    def fixed_openings(self):
-        if self.openings:
-            send_player_msg(self.openings, uid=self.uid)
-
     def talk(self, content, is_display=False):
         if content is not None:
             msg = Msg(
@@ -213,4 +207,4 @@ class RuledUser(AgentBase):
             self.memory.add(msg)
             if is_display:
                 send_player_msg(content, uid=self.uid)
-        return msg
+            return msg

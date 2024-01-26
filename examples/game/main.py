@@ -30,13 +30,16 @@ from utils import (
 )
 
 
-def begin_task(main_role, player):
-    player.fixed_openings()
-    main_role.fixed_openings()
+def begin_task(openings, main_role, player):
+    uid = player.uid
+    send_chat_msg(f"{SYS_MSG_PREFIX}开启主线任务《{openings['task']}》"
+                  f"\n\n{openings['openings']}", uid=uid)
+    # send_chat_msg(f"{SYS_MSG_PREFIX}{openings['openings']}", uid=uid)
+    main_role.talk(openings["npc_openings"], is_display=True)
     msg = {"content": "开场"}
     main_role.transition(CustomerConv.OPENING)
-    if player.openings_option:
-        choices = list(player.openings_option.values()) + ["自定义"]
+    if openings.get("user_openings_option", None):
+        choices = list(openings["user_openings_option"].values()) + ["自定义"]
     else:
         choices = None
 
@@ -80,7 +83,7 @@ def begin_task(main_role, player):
         else:
             msg = player(msg)
         msg = main_role(msg)
-    main_role.fixed_quit_openings()
+    main_role.talk(openings["npc_quit_openings"], is_display=True)
     main_role.transition(CustomerConv.WARMING_UP)
 
 
@@ -205,11 +208,11 @@ def one_on_one_loop(customers, player, uid):
 
     if not visit_customers:
         send_chat_msg(f"{SYS_MSG_PREFIX}今天没有出现客人，请增加与客人的好感度以增大出现概率", uid=uid)
-    else:
-        send_chat_msg(
-            f"{SYS_MSG_PREFIX}今天出现的客人: {' '.join([c.name for c in visit_customers])}",
-            uid=uid,
-        )
+    # else:
+    #     send_chat_msg(
+    #         f"{SYS_MSG_PREFIX}今天出现的客人: {' '.join([c.name for c in visit_customers])}",
+    #         uid=uid,
+    #     )
     for customer in visit_customers:
         send_chat_msg(
             f"{SYS_MSG_PREFIX}顾客{customer.name} 进入餐馆 (当前好感度为: {round(customer.friendship, 2)})",
@@ -359,16 +362,7 @@ def main(args) -> None:
     all_plots = parse_plots(plot_config, customers)
 
     user_configs["uid"] = args.uid
-    user_configs["openings"] = openings.get("openings", None)
-    user_configs["openings_option"] = openings.get("openings_option", None)
     player = RuledUser(**user_configs)
-
-    if openings.get("task", None):
-        send_chat_msg(
-            f'{SYS_MSG_PREFIX}{openings.get("task", None)}',
-            flushing=False,
-            uid=args.uid,
-        )
 
     if args.load_checkpoint is not None:
         checkpoint = load_game_checkpoint(args.load_checkpoint)
@@ -395,7 +389,7 @@ def main(args) -> None:
     )
     logger.debug("initially active plots: " + str(checkpoint.cur_plots))
 
-    begin_task(main_role=customers[0], player=player)
+    begin_task(openings=openings, main_role=customers[0], player=player)
 
     while True:
         # daily loop
