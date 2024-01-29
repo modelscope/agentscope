@@ -148,15 +148,15 @@ class Customer(StateAgent, DialogAgent):
         # score_discount = score_discount if score_discount > 0 else 0
         # score = score * score_discount
 
-        change_in_friendship = score - MIN_BAR_RECEIVED_CONST
-        self.friendship += change_in_friendship
-        change_symbol = "+" if change_in_friendship >= 0 else ""
-        send_chat_msg(
-            f" {SYS_MSG_PREFIX}{self.name}: 好感度变化 "
-            f"{change_symbol}{round(change_in_friendship, 2)} "
-            f"当前好感度为 {round(self.friendship, 2)}",
-            uid=self.uid,
-        )
+        # change_in_friendship = score - MIN_BAR_RECEIVED_CONST
+        # self.friendship += change_in_friendship
+        # change_symbol = "+" if change_in_friendship >= 0 else ""
+        # send_chat_msg(
+        #     f" {SYS_MSG_PREFIX}{self.name}: 好感度变化 "
+        #     f"{change_symbol}{round(change_in_friendship, 2)} "
+        #     f"当前好感度为 {round(self.friendship, 2)}",
+        #     uid=self.uid,
+        # )
 
         satisfied = "不满意"
         if self.relationship.is_satisfied(score):
