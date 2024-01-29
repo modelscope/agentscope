@@ -6,7 +6,6 @@ import numpy as np
 from loguru import logger
 
 from enums import CustomerConv, CustomerPlot
-from utils import SYS_MSG_PREFIX
 from agentscope.agents import StateAgent, DialogAgent
 from agentscope.message import Msg
 from relationship import Relationship
@@ -16,6 +15,7 @@ from utils import (
     get_a_random_avatar,
     send_pretty_msg,
     replace_names_in_messages,
+    SYS_MSG_PREFIX,
 )
 
 HISTORY_WINDOW = 10
@@ -531,10 +531,11 @@ class Customer(StateAgent, DialogAgent):
             self.exposed_clues.append(element)
 
         for clue_str in found_clue:
-            logger.debug(f"【发现线索】{clue_str} \n剩余未线索:{len(self.unexposed_clues)}")
+            send_chat_msg(f"【发现线索】{clue_str} \n\n剩余未线索:"
+                          f"{len(self.unexposed_clues)}", uid=self.uid)
             send_clue(
                 clue_str,
-                unexposed=len(self.unexposed_clues),
+                unexposed_num=len(self.unexposed_clues),
                 uid=self.uid,
                 role=self.name,
             )

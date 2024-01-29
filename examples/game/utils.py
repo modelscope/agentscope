@@ -124,7 +124,7 @@ def send_chat_msg(
 
 def send_clue(
     msg,
-    unexposed=0,
+    unexposed_num=0,
     role=None,
     uid=None,
 ):
@@ -136,7 +136,7 @@ def send_clue(
             {
                 "text": msg,
                 "name": role,
-                "unexposed": unexposed,
+                "unexposed_num": unexposed_num,
             }
         )
 
