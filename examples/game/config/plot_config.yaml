@@ -1,4 +1,4 @@
-- "plot_id": 0
+- "plot_id": 1
   "predecessor_plots": null
   "main_roles":
     - "王先生"
@@ -7,7 +7,7 @@
   "max_unblock_plots": 1
   "unblock_following_plots":
     - "unblock_chk_func": "always"
-      "unblock_plot": 1
+      "unblock_plot": 2
   "plot_descriptions":
     "task": >
       找到招财猫
@@ -24,19 +24,17 @@
       老板，我发现我的招财猫不见了！
     "npc_quit_openings": >
       哎，老板，反正你帮我打听打听吧！（说完，王先生就慌慌张张地跑开了）
-- "plot_id": 1
+- "plot_id": 2
   "predecessor_plots":
-    - 0
+    - 1
   "main_roles":
     - "王先生"
-    - "阿炳"
-  "supporting_roles":
-    - "范老师"
     - "老许"
+  "supporting_roles": null
   "max_unblock_plots": 1
   "unblock_following_plots":
     - "unblock_chk_func": "always"
-      "unblock_plot": 2
+      "unblock_plot": 3
   "plot_descriptions":
     "task": >
       准备中。。。
@@ -53,7 +51,7 @@
       准备中。。。
     "npc_quit_openings": >
       准备中。。。
-- "plot_id": 2
+- "plot_id": 3
   "predecessor_plots":
     - 0
   "main_roles": null
