@@ -224,6 +224,34 @@ class Customer(StateAgent, DialogAgent):
         self.memory.add(reply_msg)
         return reply_msg
 
+    def preferred_food(self, ingredients_dict:dict) -> dict:
+        # breakpoint()
+        ingredients_list = [
+            item
+            for sublist in ingredients_dict.values()
+            for item in sublist
+        ]
+        ingredients = "、".join(ingredients_list)
+
+        system_prompt = self.game_config["food_prompt"].format_map(
+            {
+                "name": self.config["name"],
+                "food_preference": self.config["character_setting"]["food_preference"],
+                "ingredients": ingredients,
+            },
+        )
+        system_msg = Msg(role="user", name="system", content=system_prompt)
+        # prepare prompt
+        prompt = self.engine.join(
+            self._validated_history_messages(recent_n=HISTORY_WINDOW),
+            system_msg)
+        logger.debug(system_prompt)
+
+        reply = self.model(replace_names_in_messages(prompt))
+        reply_msg = Msg(role="assistant", name=self.name, content=reply)
+        self.memory.add(reply_msg)
+        return reply_msg
+
     def _pre_meal_chat(self, x: dict) -> dict:
         if "food" in x:
             return self._recommendation_to_score(x)

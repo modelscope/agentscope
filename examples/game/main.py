@@ -224,6 +224,9 @@ def one_on_one_loop(customers, player, uid):
             f"{SYS_MSG_PREFIX}顾客{customer.name} 进入餐馆 (当前熟悉程度为:{customer.relationship.to_string()}）", #", 好感度为: {round(customer.friendship, 2)})",
             uid=uid,
         )
+
+        msg = customer.preferred_food(ingredient_today)
+        customer.talk(msg.content)
         msg = player({"content": "游戏开始"})
         while True:
             msg = customer(msg)
@@ -277,7 +280,7 @@ def one_on_one_loop(customers, player, uid):
             answer = query_answer(questions, "ans", uid=uid)
             if isinstance(answer, str):
                 send_chat_msg(
-                    "{SYS_MSG_PREFIX}请在列表中选择。",
+                    f"{SYS_MSG_PREFIX}请在列表中选择。",
                     uid=uid,
                 )
                 continue
