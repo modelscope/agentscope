@@ -225,37 +225,31 @@ def one_on_one_loop(customers, player, uid):
             uid=uid,
         )
 
-        msg = customer.preferred_food(ingredient_today)
-        customer.talk(msg.content)
-        msg = player({"content": "游戏开始"})
-        while True:
-            msg = customer(msg)
-            if "relationship" in msg:
-                send_chat_msg(
-                    f"{SYS_MSG_PREFIX}{customer.name}（顾客）接受了你的菜。\n"
-                    f" 顾客对菜本身的评价：{msg['content']}\n"
-                    f" {customer.name}（顾客）享用完之后，"
-                    # f"综合满意度为{round(msg['score'], 2)}，"
-                    f"现在你们的关系为{msg['relationship']}了\n",
-                    uid=uid,
-                )
-                break
+        customer({'content': ingredient_today})
+        food = player.cook()
+        msg = Msg(
+            player.name,
+            role="user",
+            content=food,
+            food=food,
+        )
+
+        msg = customer(msg)
+        if "relationship" in msg:
 
             send_chat_msg(
-                f"{SYS_MSG_PREFIX}请输入“做菜”启动做菜程序，它会按所选定食材产生菜品。 \n"
-                " 对话轮次过多会使得顾客综合满意度下降。 \n"
-                " 若不输入任何内容直接按回车键，顾客将离开餐馆。",
+                f"{SYS_MSG_PREFIX}{customer.name}（顾客）品尝了你的菜。\n"
+                f" 顾客对菜本身的评价：{msg['content']}\n"
+                f" {customer.name}（顾客)，"
+                f"现在你们的关系为{msg['relationship']}了\n",
                 uid=uid,
             )
-            msg = player(msg)
-            if len(msg["content"]) == 0 or "[TERMINATE]" in msg["content"]:
-                break
+            
+        if not msg["is_satisfied"]:
+            send_chat_msg(f"{SYS_MSG_PREFIX}顾客{customer.name} 离开餐馆", uid=uid)
+            continue
 
-        if isinstance(msg, dict):
-            if len(msg["content"]) == 0 or msg["score"] < 4:
-                send_chat_msg(f"{SYS_MSG_PREFIX}顾客{customer.name} 离开餐馆", uid=uid)
-                continue
-
+        #  继续挖掘线索
         questions = [
             inquirer.List(
                 "ans",

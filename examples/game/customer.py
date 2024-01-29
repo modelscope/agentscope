@@ -33,10 +33,12 @@ class Customer(StateAgent, DialogAgent):
         self.avatar = self.config.get("avatar", get_a_random_avatar())
         self.background = self.config["character_setting"]["background"]
         self.friendship = int(self.config.get("friendship", 60))
+        self.is_satisfied = False
         self.relationship = Relationship(
             self.config.get("relationship", "陌生"),
             MIN_BAR_RECEIVED_CONST,
         )
+        self.preferred_info = ''
         self.cur_state = CustomerConv.WARMING_UP
         # TODO: A customer can be in at most one plot in the current version
         self.active_plots = []
@@ -119,6 +121,7 @@ class Customer(StateAgent, DialogAgent):
                 "food_preference": self.config["character_setting"][
                     "food_preference"
                 ],
+                'preferred_info': self.preferred_info,
                 "food": food,
             },
         )
@@ -144,29 +147,17 @@ class Customer(StateAgent, DialogAgent):
             max_retries=3,
         )
 
-        # score_discount = 1 - self.preorder_itr_count / self.max_itr_preorder
-        # score_discount = score_discount if score_discount > 0 else 0
-        # score = score * score_discount
-
-        # change_in_friendship = score - MIN_BAR_RECEIVED_CONST
-        # self.friendship += change_in_friendship
-        # change_symbol = "+" if change_in_friendship >= 0 else ""
-        # send_chat_msg(
-        #     f" {SYS_MSG_PREFIX}{self.name}: 好感度变化 "
-        #     f"{change_symbol}{round(change_in_friendship, 2)} "
-        #     f"当前好感度为 {round(self.friendship, 2)}",
-        #     uid=self.uid,
-        # )
-
-        satisfied = "不满意"
+        satisfied_str = "不满意"
+        is_satisfied = False
         if self.relationship.is_satisfied(score):
-            satisfied = "满意"
-        text = satisfied + "，" + text
+            satisfied_str = "满意"
+            is_satisfied = True
+        text = satisfied_str + "，" + text
 
         prev_relationship = self.relationship.to_string()
         self.relationship.update(score)
         cur_relationship = self.relationship.to_string()
-        chat_text = f" {SYS_MSG_PREFIX} {self.name}感觉{food}{satisfied}, "
+        chat_text = f" {SYS_MSG_PREFIX} {self.name}感觉{food}{satisfied_str}, "
 
         if prev_relationship != cur_relationship:
             chat_text += f"你们的关系从{prev_relationship}变得{cur_relationship}了"
@@ -178,7 +169,7 @@ class Customer(StateAgent, DialogAgent):
             uid=self.uid,
         )
 
-        if self.relationship.is_satisfied(score) or (
+        if is_satisfied or (
             score >= MIN_BAR_RECEIVED_CONST
             and self.friendship >= MIN_BAR_FRIENDSHIP_CONST
         ):
@@ -191,6 +182,7 @@ class Customer(StateAgent, DialogAgent):
             name=self.name,
             content=text,
             score=score,
+            is_satisfied=is_satisfied,
             relationship=cur_relationship,
         )
 
@@ -224,7 +216,8 @@ class Customer(StateAgent, DialogAgent):
         self.memory.add(reply_msg)
         return reply_msg
 
-    def preferred_food(self, ingredients_dict:dict) -> dict:
+    def _preferred_food(self, x:dict) -> dict:
+        ingredients_dict = x['content']
         # breakpoint()
         ingredients_list = [
             item
@@ -233,7 +226,7 @@ class Customer(StateAgent, DialogAgent):
         ]
         ingredients = "、".join(ingredients_list)
 
-        system_prompt = self.game_config["food_prompt"].format_map(
+        system_prompt = self.game_config["preferred_food_prompt"].format_map(
             {
                 "name": self.config["name"],
                 "food_preference": self.config["character_setting"]["food_preference"],
@@ -248,6 +241,7 @@ class Customer(StateAgent, DialogAgent):
         logger.debug(system_prompt)
 
         reply = self.model(replace_names_in_messages(prompt))
+        self.preferred_info = reply
         reply_msg = Msg(role="assistant", name=self.name, content=reply)
         self.memory.add(reply_msg)
         return reply_msg
@@ -256,29 +250,7 @@ class Customer(StateAgent, DialogAgent):
         if "food" in x:
             return self._recommendation_to_score(x)
 
-        self.preorder_itr_count += 1
-        system_prompt = self.game_config["order_prompt"].format_map(
-            {
-                "name": self.config["name"],
-                "character_description": self.background
-                + self.config["character_setting"]["food_preference"],
-            },
-        )
-        system_msg = Msg(role="user", name="system", content=system_prompt)
-        # prepare prompt
-        prompt = self.engine.join(
-            self._validated_history_messages(recent_n=HISTORY_WINDOW),
-            system_msg,
-            x,
-        )
-        logger.debug(system_prompt)
-        if x is not None:
-            self.memory.add(x)
-
-        reply = self.model(replace_names_in_messages(prompt))
-        reply_msg = Msg(role="assistant", name=self.name, content=reply)
-        self.memory.add(reply_msg)
-        return reply_msg
+        return self._preferred_food(x)
 
     def _main_plot_chat(self, x: dict) -> dict:
         """
@@ -432,9 +404,9 @@ class Customer(StateAgent, DialogAgent):
                 "character_description": self.background,
             },
         )
+
         if (
             self.plot_stage == CustomerPlot.ACTIVE
-            and self.friendship > MIN_BAR_FRIENDSHIP_CONST
         ):
             # -> prompt for the main role in the current plot
             prompt += self.game_config["hidden_main_plot_prompt"].format_map(

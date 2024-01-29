@@ -115,10 +115,6 @@ class RuledUser(AgentBase):
             for key in required_keys:
                 kwargs[key] = get_player_input(key, uid=self.uid)
 
-        if content == "做菜":
-            content = self.cook()
-            kwargs["food"] = content
-
         # Add additional keys
         msg = Msg(
             self.name,
