@@ -80,6 +80,9 @@ def format_cover_html(config: dict, bot_avatar_path="assets/bg.png"):
     </div>
     <div class="bot_name">{config.get("name", "经营餐厅")}</div>
     <div class="bot_desp">{config.get("description", "快来经营你的餐厅吧")}</div>
+    <div class="bot_intro_label">{config.get("introduction_label", "玩法介绍")}</div>
+    <div class="bot_intro_ctx">
+    {config.get("introduction_context", "玩法介绍")}</div>
 </div>
 """
 
@@ -203,6 +206,13 @@ if __name__ == "__main__":
         welcome = {
             'name': '饮食男女',
             'description': '这是一款模拟餐馆经营的文字冒险游戏, 快来开始吧😊',
+            'introduction_label': "<br>玩法介绍",
+            'introduction_context': "在一个热闹的小镇上<br>"
+                                    "你经营着一家餐馆<br>"
+                                    "最近小镇上出现了一些有意思的事儿<br>"
+                                    "......<br>"
+                                    "通过美味的食物以及真诚的内心去打动顾客<br>"
+                                    "为他们排忧解难"
         }
         tabs = gr.Tabs(visible=True)
         with tabs:
