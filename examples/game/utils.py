@@ -91,6 +91,7 @@ def init_uid_queues():
     return {
         "glb_queue_chat_msg": Queue(),
         "glb_queue_chat_input": Queue(),
+        "glb_queue_clue": Queue(),
     }
 
 
@@ -119,6 +120,37 @@ def send_chat_msg(
                 },
             ],
         )
+
+
+def send_clue(
+    msg,
+    unexposed=0,
+    role=None,
+    uid=None,
+):
+    print("send_clue:", msg)
+    if get_use_web_ui():
+        global glb_uid_dict
+        glb_queue_clue = glb_uid_dict[uid]["glb_queue_clue"]
+        glb_queue_clue.put(
+            {
+                "text": msg,
+                "name": role,
+                "unexposed": unexposed,
+            }
+        )
+
+
+def get_clue(
+    uid=None,
+):
+    global glb_uid_dict
+    glb_queue_clue = glb_uid_dict[uid]["glb_queue_clue"]
+    if not glb_queue_clue.empty():
+        line = glb_queue_clue.get(block=False)
+        if line is not None:
+            return line
+    return None
 
 
 def send_player_msg(
