@@ -524,17 +524,26 @@ class Customer(StateAgent, DialogAgent):
             summary = clue.get("summary", -1)
             if index < len(self.unexposed_clues) and index:
                 indices_to_pop.append(index)
-                found_clue.append(summary)
+                found_clue.append(
+                    {
+                        "name": self.unexposed_clues[index]["name"],
+                        "summary": summary  # Use new summary
+                    }
+                )
         indices_to_pop.sort(reverse=True)
         for index in indices_to_pop:
             element = self.unexposed_clues.pop(index)
             self.exposed_clues.append(element)
 
-        for clue_str in found_clue:
-            send_chat_msg(f"{SYS_MSG_PREFIX}发现新线索：{clue_str} \n\n剩余未发现线索数量:"
-                          f"{len(self.unexposed_clues)}", uid=self.uid)
+        for i, clue in enumerate(found_clue):
+            send_chat_msg(
+                f"{SYS_MSG_PREFIX}发现{self.name}的新线索："
+                f"《{clue['name']}》{clue['summary']} "
+                f"\n\n剩余未发现线索数量:"
+                f"{len(self.unexposed_clues) + len(found_clue) - i - 1}",
+                uid=self.uid)
             send_clue(
-                clue_str,
+                clue,
                 unexposed_num=len(self.unexposed_clues),
                 uid=self.uid,
                 role=self.name,

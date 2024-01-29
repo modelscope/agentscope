@@ -123,18 +123,18 @@ def send_chat_msg(
 
 
 def send_clue(
-    msg,
+    clue,
     unexposed_num=0,
     role=None,
     uid=None,
 ):
-    print("send_clue:", msg)
+    print("send_clue:", clue)
     if get_use_web_ui():
         global glb_uid_dict
         glb_queue_clue = glb_uid_dict[uid]["glb_queue_clue"]
         glb_queue_clue.put(
             {
-                "text": msg,
+                "clue": clue,
                 "name": role,
                 "unexposed_num": unexposed_num,
             }
