@@ -367,10 +367,15 @@ def main(args) -> None:
         elif checkpoint.stage_per_night == StagePerNight.CASUAL_CHAT_FOR_MEAL:
             # ==========  one-on-one loop =================
             # the remaining not invited customers show up with probability
+            central_roles = []
+            for p_idx in checkpoint.cur_plots:
+                for r in checkpoint.all_plots[p_idx].main_roles:
+                    central_roles.append(r.name)
+            unavailable_roles = central_roles + checkpoint.invited_customers
             rest_customers = [
                 c
                 for c in customers
-                if c.name not in checkpoint.invited_customers
+                if c.name not in unavailable_roles
             ]
             checkpoint.visit_customers = one_on_one_loop(
                 rest_customers,
