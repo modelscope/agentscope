@@ -8,7 +8,7 @@ from enums import CustomerConv, CustomerPlot
 from utils import SYS_MSG_PREFIX
 from agentscope.agents import StateAgent, DialogAgent
 from agentscope.message import Msg
-
+from relationship import Relationship
 from utils import (
     send_chat_msg,
     get_a_random_avatar,
@@ -33,6 +33,10 @@ class Customer(StateAgent, DialogAgent):
         self.avatar = self.config.get("avatar", get_a_random_avatar())
         self.background = self.config["character_setting"]["background"]
         self.friendship = int(self.config.get("friendship", 60))
+        self.relationship = Relationship(
+            self.config.get("relationship", "陌生"),
+            MIN_BAR_RECEIVED_CONST,
+        )
         self.cur_state = CustomerConv.WARMING_UP
         # TODO: A customer can be in at most one plot in the current version
         self.active_plots = []
@@ -58,7 +62,7 @@ class Customer(StateAgent, DialogAgent):
         # TODO: refactor to a sub-state
         self.plot_stage = CustomerPlot.NOT_ACTIVE
 
-    def visit(self):
+    def visit(self) -> np.array:
         # TODO: for debug, set the visit prob to be 0.9
         return np.random.binomial(n=1, p=0.9) > 0
         # return (
@@ -128,27 +132,53 @@ class Customer(StateAgent, DialogAgent):
             return 2.0
 
         score, text = self.model(
-            [{key: getattr(message, key) for key in MESSAGE_KEYS if hasattr(message, key)}],
+            [
+                {
+                    key: getattr(message, key)
+                    for key in MESSAGE_KEYS
+                    if hasattr(message, key)
+                },
+            ],
             parse_func=_parse_score,
             fault_handler=_default_score,
             max_retries=3,
         )
 
-        score_discount = 1 - self.preorder_itr_count / self.max_itr_preorder
-        score_discount = score_discount if score_discount > 0 else 0
-        score = score * score_discount
+        # score_discount = 1 - self.preorder_itr_count / self.max_itr_preorder
+        # score_discount = score_discount if score_discount > 0 else 0
+        # score = score * score_discount
 
-        change_in_friendship = score - MIN_BAR_RECEIVED_CONST
-        self.friendship += change_in_friendship
-        change_symbol = "+" if change_in_friendship >= 0 else ""
+        # change_in_friendship = score - MIN_BAR_RECEIVED_CONST
+        # self.friendship += change_in_friendship
+        # change_symbol = "+" if change_in_friendship >= 0 else ""
+        # send_chat_msg(
+        #     f" {SYS_MSG_PREFIX}{self.name}: 好感度变化 "
+        #     f"{change_symbol}{round(change_in_friendship, 2)} "
+        #     f"当前好感度为 {round(self.friendship, 2)}",
+        #     uid=self.uid,
+        # )
+
+        satisfied = "不满意"
+        if self.relationship.is_satisfied(score):
+            satisfied = "满意"
+        text = satisfied + "，" + text
+
+        prev_relationship = self.relationship.to_string()
+        self.relationship.update(score)
+        cur_relationship = self.relationship.to_string()
+        chat_text = f" {SYS_MSG_PREFIX} {self.name}感觉{food}{satisfied}, "
+
+        if prev_relationship != cur_relationship:
+            chat_text += f"你们的关系从{prev_relationship}变得{cur_relationship}了"
+        else:
+            chat_text += f"你们的关系没变化，依旧是{prev_relationship}。"
+
         send_chat_msg(
-            f" {SYS_MSG_PREFIX}{self.name}: 好感度变化 "
-            f"{change_symbol}{round(change_in_friendship, 2)} "
-            f"当前好感度为 {round(self.friendship, 2)}",
+            chat_text,
             uid=self.uid,
         )
 
-        if (
+        if self.relationship.is_satisfied(score) or (
             score >= MIN_BAR_RECEIVED_CONST
             and self.friendship >= MIN_BAR_FRIENDSHIP_CONST
         ):
@@ -156,7 +186,13 @@ class Customer(StateAgent, DialogAgent):
             print("---", self.cur_state)
         self.preorder_itr_count = 0
 
-        return Msg(role="assistant", name=self.name, content=text, score=score)
+        return Msg(
+            role="assistant",
+            name=self.name,
+            content=text,
+            score=score,
+            relationship=cur_relationship,
+        )
 
     def _opening_chat(self, x: dict) -> dict:
         system_prompt = self.game_config["basic_background_prompt"].format_map(
@@ -281,7 +317,7 @@ class Customer(StateAgent, DialogAgent):
         analysis_msg = Msg(
             role="user",
             name=self.name,
-            content=f"聊完之后，{self.name}在想:" + analysis
+            content=f"聊完之后，{self.name}在想:" + analysis,
         )
         send_pretty_msg(
             analysis_msg,
@@ -297,11 +333,20 @@ class Customer(StateAgent, DialogAgent):
             },
         )
         update_msg = Msg(role="user", name="system", content=update_prompt)
-        new_background = self.model([{key: getattr(update_msg, key) for key in MESSAGE_KEYS if hasattr(update_msg, key)}])
+        new_background = self.model(
+            [
+                {
+                    key: getattr(update_msg, key)
+                    for key in MESSAGE_KEYS
+                    if hasattr(update_msg, key)
+                },
+            ],
+        )
         bg_msg = Msg(
             role="user",
             name=self.name,
-            content=f" {SYS_MSG_PREFIX}根据对话，{self.name}的背景更新为：" + new_background,
+            content=f" {SYS_MSG_PREFIX}根据对话，{self.name}的背景更新为："
+            + new_background,
         )
         send_chat_msg(
             bg_msg,
@@ -316,7 +361,7 @@ class Customer(StateAgent, DialogAgent):
             hist_mem[0]["role"], hist_mem[-1]["role"] = "user", "user"
         return hist_mem
 
-    def generate_pov_story(self, recent_n: int = 20):
+    def generate_pov_story(self, recent_n: int = 20) -> None:
         related_mem = self._validated_history_messages(recent_n)
         conversation = ""
         for mem in related_mem:
@@ -336,7 +381,15 @@ class Customer(StateAgent, DialogAgent):
             },
         )
         msg = Msg(name="system", role="user", content=pov_prompt)
-        pov_story = self.model([{key: getattr(msg, key) for key in MESSAGE_KEYS if hasattr(msg, key)}])
+        pov_story = self.model(
+            [
+                {
+                    key: getattr(msg, key)
+                    for key in MESSAGE_KEYS
+                    if hasattr(msg, key)
+                },
+            ],
+        )
         print("*" * 20)
         send_chat_msg(pov_story, uid=self.uid)
         print("*" * 20)
@@ -373,6 +426,8 @@ class Customer(StateAgent, DialogAgent):
                 prompt += self.game_config["regular_after_meal_prompt"]
             else:
                 prompt += self.game_config["invited_chat_prompt"]
+
+        prompt += self.game_config[self.relationship.prompt]
 
         return prompt
 

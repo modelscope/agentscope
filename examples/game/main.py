@@ -219,18 +219,19 @@ def one_on_one_loop(customers, player, uid):
     #     )
     for customer in visit_customers:
         send_chat_msg(
-            f"{SYS_MSG_PREFIX}顾客{customer.name} 进入餐馆 (当前好感度为: {round(customer.friendship, 2)})",
+            f"{SYS_MSG_PREFIX}顾客{customer.name} 进入餐馆 (当前熟悉程度为:{customer.relationship.to_string()}）", #", 好感度为: {round(customer.friendship, 2)})",
             uid=uid,
         )
         msg = player({"content": "游戏开始"})
         while True:
             msg = customer(msg)
-            if "score" in msg:
+            if "relationship" in msg:
                 send_chat_msg(
                     f"{SYS_MSG_PREFIX}{customer.name}（顾客）接受了你的菜。\n"
                     f" 顾客对菜本身的评价：{msg['content']}\n"
                     f" {customer.name}（顾客）享用完之后，"
-                    f"综合满意度为{round(msg['score'], 2)}\n",
+                    # f"综合满意度为{round(msg['score'], 2)}，"
+                    f"现在你们的关系为{msg['relationship']}了\n",
                     uid=uid,
                 )
                 break
