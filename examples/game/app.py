@@ -25,6 +25,14 @@ import modelscope_gradio_components as mgr
 
 enable_web_ui()
 
+role_hint_dict = {
+    "王先生": {"current_hint": ["我丢了招财猫", "那天阿炳带着黑色的袋子"],
+               "current_state_hint_num": 3,
+            "total_hint_num": 10},
+    "老许": {"current_hint": ["xxx", "yyy", "zzz"], "current_state_hint_num": 4,
+            "total_hint_num": 11}
+}
+
 
 def init_uid_list():
     return []
@@ -233,6 +241,31 @@ if __name__ == "__main__":
                 bubble_full_width=False,
                 layout="panel",
             )
+            hint_menu = gr.Accordion(label="角色线索",
+                                     open=False,
+                                     visible=False)
+            with hint_menu:
+                with gr.Column():
+                    for name in role_hint_dict.keys():
+                        label = (name + " "
+                        + str(len(role_hint_dict[name]['current_hint']))
+                        + '/'
+                        + str(role_hint_dict[name]['current_state_hint_num'])
+                        + '/'
+                        + str(role_hint_dict[name]['total_hint_num']))
+                        role = gr.Accordion(
+                            label=label,
+                            open=False)
+
+                        with role:
+                            text = '\n'.join(role_hint_dict[name][
+                                                 'current_hint'])
+                            gr.TextArea(
+                                lines=len(role_hint_dict[name]['current_hint']),
+                                label="已知线索",
+                                placeholder=text,
+                               )
+
 
         with config_tab:
             with gr.Row():
@@ -344,6 +377,7 @@ if __name__ == "__main__":
                 return_welcome_button: gr.Button(visible=visible),
                 export: gr.Accordion(visible=visible),
                 user_chat_bot_cover: gr.HTML(visible=invisible),
+                hint_menu: gr.Accordion(visible=visible)
             }
 
         def welcome_ui():
@@ -360,6 +394,7 @@ if __name__ == "__main__":
                 return_welcome_button: gr.Button(visible=invisible),
                 export: gr.Accordion(visible=invisible),
                 user_chat_bot_cover: gr.HTML(visible=visible),
+                hint_menu: gr.Accordion(visible=invisible)
             }
 
         def configure_role(name, uid):
@@ -537,6 +572,7 @@ if __name__ == "__main__":
             return_welcome_button,
             export,
             user_chat_bot_cover,
+            hint_menu
         ]
 
         # submit message
