@@ -26,65 +26,7 @@ from utils import (
     query_answer,
     SYS_MSG_PREFIX,
     CheckpointArgs,
-    OPENING_ROUND
 )
-
-
-def begin_task(openings, main_role, player):
-    uid = player.uid
-    send_chat_msg(f"{SYS_MSG_PREFIX}开启主线任务《{openings['task']}》"
-                  f"\n\n{openings['openings']}", uid=uid)
-    # send_chat_msg(f"{SYS_MSG_PREFIX}{openings['openings']}", uid=uid)
-    main_role.talk(openings["npc_openings"], is_display=True)
-    msg = {"content": "开场"}
-    main_role.transition(CustomerConv.OPENING)
-    if openings.get("user_openings_option", None):
-        choices = list(openings["user_openings_option"].values()) + ["自定义"]
-    else:
-        choices = None
-
-    for i in range(OPENING_ROUND):
-        if choices:
-            questions = [
-                inquirer.List(
-                    "ans",
-                    message=f"{SYS_MSG_PREFIX}：你想要问什么？(剩余询问次数{OPENING_ROUND - i}，空输入主角将直接离开) ",
-                    choices=choices,
-                ),
-            ]
-
-            choose_during_chatting = f"""{SYS_MSG_PREFIX}你想要问什么？(剩余询问次数{OPENING_ROUND - i}，空输入主角将直接离开) 
-            <select-box shape="card"
-                                            type="checkbox" item-width="auto" options=
-                                           '
-                                           {json.dumps(choices)}'
-                                           select-once></select-box>"""
-
-            send_chat_msg(
-                choose_during_chatting,
-                flushing=False,
-                uid=player.uid,
-            )
-            answer = query_answer(questions, "ans", uid=player.uid)
-            if isinstance(answer, str):
-                if answer == "":
-                    break
-                else:
-                    msg = player.talk(answer)
-
-            elif isinstance(answer, list) and len(answer):
-                if answer[0] in choices:
-                    if answer[0] == "自定义":
-                        msg = player(msg)
-                    else:
-                        msg = player.talk(answer[0], is_display=True)
-            else:  # Walk away
-                break
-        else:
-            msg = player(msg)
-        msg = main_role(msg)
-    main_role.talk(openings["npc_quit_openings"], is_display=True)
-    main_role.transition(CustomerConv.WARMING_UP)
 
 
 def invited_group_chat(
@@ -129,6 +71,7 @@ def invited_group_chat(
                 elif answer == ["否"]:
                     msg = None
                 elif answer == ["结束邀请对话"]:
+                    player.talk("今天的谈话到此位置，感谢大家🙏", is_display=True)
                     end_flag = True
                 break
             if end_flag:
@@ -175,6 +118,7 @@ def invited_group_chat(
                 break
             for c in invited_customer:
                 if c.name == answer[0]:
+                    player.talk(f"我想听听{c.name}的故事", is_display=True)
                     c.generate_pov_story()
             for c in invited_customer:
                 c.refine_background()
@@ -215,18 +159,19 @@ def one_on_one_loop(customers, player, uid):
     #     )
     for customer in visit_customers:
         send_chat_msg(
-            f"{SYS_MSG_PREFIX}顾客{customer.name} 进入餐馆 (当前好感度为: {round(customer.friendship, 2)})",
+            f"{SYS_MSG_PREFIX}顾客{customer.name} 进入餐馆 (当前熟悉程度为:{customer.relationship.to_string()}）", #", 好感度为: {round(customer.friendship, 2)})",
             uid=uid,
         )
         msg = player({"content": "游戏开始"})
         while True:
             msg = customer(msg)
-            if "score" in msg:
+            if "relationship" in msg:
                 send_chat_msg(
                     f"{SYS_MSG_PREFIX}{customer.name}（顾客）接受了你的菜。\n"
                     f" 顾客对菜本身的评价：{msg['content']}\n"
                     f" {customer.name}（顾客）享用完之后，"
-                    f"综合满意度为{round(msg['score'], 2)}\n",
+                    # f"综合满意度为{round(msg['score'], 2)}，"
+                    f"现在你们的关系为{msg['relationship']}了\n",
                     uid=uid,
                 )
                 break
@@ -279,9 +224,13 @@ def one_on_one_loop(customers, player, uid):
         answer = answer[0]
 
         if answer == "感谢您的光顾。(结束与该顾客的当天对话)":
+            player.talk("感谢您的光顾，再见👋", is_display=True)
             continue
         elif answer == "自定义输入":
             answer = player({"content": answer})["content"]
+        else:
+            player.talk("感谢您的今天来我们这里消费。这里是赠送的果盘，请您享用。还有什么是我能为您做的呢？",
+                        is_display=True)
         msg = Msg(role="user", name="餐馆老板", content=answer)
         player.observe(msg)
         while True:
@@ -357,7 +306,6 @@ def main(args) -> None:
     ]
 
     plot_config = load_configs("config/plot_config.yaml")
-    openings = plot_config.pop(0)
 
     all_plots = parse_plots(plot_config, customers)
 
@@ -385,11 +333,9 @@ def main(args) -> None:
 
     # initialize main role of current plot cur_state
     checkpoint.cur_plots = check_active_plot(
-        checkpoint.all_plots, checkpoint.cur_plots, None
+        player, checkpoint.all_plots, checkpoint.cur_plots, None
     )
     logger.debug("initially active plots: " + str(checkpoint.cur_plots))
-
-    begin_task(openings=openings, main_role=customers[0], player=player)
 
     while True:
         # daily loop
@@ -411,6 +357,7 @@ def main(args) -> None:
             if done_plot_idx is not None:
                 # find the roles and plot to be activated
                 checkpoint.cur_plots = check_active_plot(
+                    player,
                     checkpoint.all_plots,
                     checkpoint.cur_plots,
                     done_plot_idx,

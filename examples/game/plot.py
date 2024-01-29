@@ -2,8 +2,18 @@ from __future__ import annotations
 from typing import Optional, Callable, Any, Union
 import enum
 from loguru import logger
+import inquirer
+import json
 
 from customer import Customer
+from ruled_user import RuledUser
+from utils import (
+    send_chat_msg,
+    query_answer,
+    SYS_MSG_PREFIX,
+    OPENING_ROUND
+)
+from enums import CustomerConv
 
 
 def always_true(**kwargs) -> bool:
@@ -33,6 +43,7 @@ class GamePlot:
     def __init__(
             self,
             plot_id: int,
+            plot_descriptions: dict,
             main_roles: Optional[list[Customer]] = None,
             supporting_roles: Optional[list[Customer]] = None,
             max_unblock_plots: Optional[int] = None
@@ -42,6 +53,7 @@ class GamePlot:
         self.supporting_roles = supporting_roles or []
         self.state = self.PlotState.NON_ACTIVE
         self.max_unblock_plots = max_unblock_plots
+        self.plot_description = plot_descriptions
 
         self.predecessor_plots = []
         self.support_following_plots: list[
@@ -74,7 +86,7 @@ class GamePlot:
         for c in self.main_roles + self.supporting_roles:
             c.deactivate_plot()
 
-    def activate(self) -> bool:
+    def activate(self, player) -> bool:
         # check whether this plot can be activated
         can_activate = True
         for pred in self.predecessor_plots:
@@ -99,6 +111,7 @@ class GamePlot:
                 role.activate_plot([self.id])
                 logger.debug(f"activate role {role.name} for "
                              f"plot {role.active_plots}")
+            self._begin_task(player)
             return True
         else:
             return False
@@ -138,6 +151,69 @@ class GamePlot:
         self.state = self.PlotState.DONE
         return True, unblock_ids
 
+    def _begin_task(self, player):
+        openings = self.plot_description
+        # by default, the first main role will trigger the task
+        main_role = self.main_roles[0]
+        uid = player.uid
+        send_chat_msg(f"{SYS_MSG_PREFIX}开启主线任务《{openings['task']}》"
+                      f"\n\n{openings['openings']}", uid=uid)
+        # send_chat_msg(f"{SYS_MSG_PREFIX}{openings['openings']}", uid=uid)
+        main_role.talk(openings["npc_openings"], is_display=True)
+        msg = {"content": "开场"}
+        main_role.transition(CustomerConv.OPENING)
+        if openings.get("user_openings_option", None):
+            choices = list(openings["user_openings_option"].values()) + [
+                "自定义"]
+        else:
+            choices = None
+
+        i = 0
+        while i < OPENING_ROUND:
+            if choices:
+                questions = [
+                    inquirer.List(
+                        "ans",
+                        message=f"{SYS_MSG_PREFIX}：你想要问什么？(剩余询问次数{OPENING_ROUND - i}，空输入主角将直接离开) ",
+                        choices=choices,
+                    ),
+                ]
+
+                choose_during_chatting = f"""{SYS_MSG_PREFIX}你想要问什么？(剩余询问次数{OPENING_ROUND - i}，空输入主角将直接离开) 
+                <select-box shape="card"
+                                                type="checkbox" item-width="auto" options=
+                                               '
+                                               {json.dumps(choices)}'
+                                               select-once></select-box>"""
+
+                send_chat_msg(
+                    choose_during_chatting,
+                    flushing=False,
+                    uid=player.uid,
+                )
+                answer = query_answer(questions, "ans", uid=player.uid)
+                if isinstance(answer, str):
+                    if answer == "":
+                        break
+                    else:
+                        msg = player.talk(answer, ruled=True)
+                        if msg is None:
+                            continue
+
+                elif isinstance(answer, list) and len(answer):
+                    if answer[0] in choices:
+                        if answer[0] == "自定义":
+                            msg = player(msg)
+                        else:
+                            msg = player.talk(answer[0], is_display=True)
+                else:  # Walk away
+                    break
+            else:
+                msg = player(msg)
+            i += 1
+            msg = main_role(msg)
+        main_role.talk(openings["npc_quit_openings"], is_display=True)
+        main_role.transition(CustomerConv.WARMING_UP)
 
 def parse_plots(
         plot_configs: list[dict],
@@ -151,6 +227,7 @@ def parse_plots(
     for cfg in plot_configs:
         gplot = GamePlot(
             int(cfg["plot_id"]),
+            plot_descriptions=cfg["plot_descriptions"],
             main_roles=[roles_map[r] for r in cfg["main_roles"] or []],
             supporting_roles=[roles_map[r] for r in cfg["supporting_roles"] or []],
         )
@@ -178,6 +255,7 @@ def parse_plots(
 
 
 def check_active_plot(
+        player: RuledUser,
         all_plots: dict[int, GamePlot],
         prev_active: list[int],
         curr_done: Optional[int],
@@ -193,7 +271,7 @@ def check_active_plot(
         active_plots = []
         for id, plot in all_plots.items():
             print(id, plot.main_roles)
-            if plot.activate():
+            if plot.activate(player):
                 active_plots.append(id)
     else:
         prev_active.remove(curr_done)
@@ -202,6 +280,6 @@ def check_active_plot(
         for p_id, unlock in all_plots[curr_done].support_following_plots:
             # iterate all downstream plot of the current done plot
             logger.debug(f"{p_id}, {unlock}, {all_plots[curr_done].is_done()}")
-            if unlock and all_plots[p_id].activate():
+            if unlock and all_plots[p_id].activate(player):
                 active_plots.append(p_id)
     return active_plots

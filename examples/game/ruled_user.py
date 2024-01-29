@@ -97,7 +97,7 @@ class RuledUser(AgentBase):
 
                 send_chat_msg(
                     f" {SYS_MSG_PREFIX}输入被规则禁止"
-                    f" {ruler_res.get('reason', 'Unknown reason')}\n"
+                    f" {ruler_res.get('reason', '未知原因')}\n"
                     f"请重试",
                     uid=self.uid,
                 )
@@ -105,7 +105,7 @@ class RuledUser(AgentBase):
                 raise ResetException
             except Exception as e:
                 logger.debug(e)
-                send_chat_msg(f" {SYS_MSG_PREFIX}无效输入，请重试！", "⚠️", uid=self.uid)
+                send_chat_msg(f" {SYS_MSG_PREFIX}无效输入，请重试！", uid=self.uid)
 
         kwargs = {}
         if required_keys is not None:
@@ -197,14 +197,29 @@ class RuledUser(AgentBase):
 
         return food
 
-    def talk(self, content, is_display=False):
-        if content is not None:
-            msg = Msg(
-                self.name,
-                role="user",
-                content=content,
-            )
-            self.memory.add(msg)
-            if is_display:
-                send_player_msg(content, uid=self.uid)
-            return msg
+    def talk(self, content, is_display=False, ruled=False):
+        if content is None:
+            return None
+
+        if ruled:
+            ruler_res = self.is_content_valid(content)
+            if ruler_res.get("allowed") != "true":
+                send_chat_msg(
+                    f"{SYS_MSG_PREFIX}输入被规则禁止"
+                    f"{ruler_res.get('reason', '未知原因')}\n"
+                    "请重试",
+                    uid=self.uid,
+                )
+                return None
+
+        msg = Msg(
+            self.name,
+            role="user",
+            content=content,
+        )
+        self.memory.add(msg)
+
+        if is_display:
+            send_player_msg(content, uid=self.uid)
+
+        return msg
