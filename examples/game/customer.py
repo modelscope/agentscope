@@ -204,7 +204,7 @@ class Customer(StateAgent, DialogAgent):
             "hidden_main_plot_prompt"
         ].format_map(
             {
-                "hidden_plot": self.config["character_setting"]["hidden_plot"],
+                "hidden_plot": self.config["character_setting"]["hidden_plot"][self.active_plots[0]],
             },
         )
         if x is not None:

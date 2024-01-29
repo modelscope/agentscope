@@ -32,7 +32,7 @@ class GameCheckpoint:
         customers: list,
         cur_plots: list[int],
         all_plots: dict,
-        invited_customers: list,
+        invited_customers: list[str],
         visit_customers: list,
     ):
         self.stage_per_night = stage_per_night
