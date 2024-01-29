@@ -71,6 +71,7 @@ def invited_group_chat(
                 elif answer == ["否"]:
                     msg = None
                 elif answer == ["结束邀请对话"]:
+                    player.talk("今天的谈话到此位置，感谢大家🙏", is_display=True)
                     end_flag = True
                 break
             if end_flag:
@@ -117,6 +118,7 @@ def invited_group_chat(
                 break
             for c in invited_customer:
                 if c.name == answer[0]:
+                    player.talk(f"我想听听{c.name}的故事", is_display=True)
                     c.generate_pov_story()
             for c in invited_customer:
                 c.refine_background()
@@ -157,18 +159,19 @@ def one_on_one_loop(customers, player, uid):
     #     )
     for customer in visit_customers:
         send_chat_msg(
-            f"{SYS_MSG_PREFIX}顾客{customer.name} 进入餐馆 (当前好感度为: {round(customer.friendship, 2)})",
+            f"{SYS_MSG_PREFIX}顾客{customer.name} 进入餐馆 (当前熟悉程度为:{customer.relationship.to_string()}）", #", 好感度为: {round(customer.friendship, 2)})",
             uid=uid,
         )
         msg = player({"content": "游戏开始"})
         while True:
             msg = customer(msg)
-            if "score" in msg:
+            if "relationship" in msg:
                 send_chat_msg(
                     f"{SYS_MSG_PREFIX}{customer.name}（顾客）接受了你的菜。\n"
                     f" 顾客对菜本身的评价：{msg['content']}\n"
                     f" {customer.name}（顾客）享用完之后，"
-                    f"综合满意度为{round(msg['score'], 2)}\n",
+                    # f"综合满意度为{round(msg['score'], 2)}，"
+                    f"现在你们的关系为{msg['relationship']}了\n",
                     uid=uid,
                 )
                 break
@@ -221,9 +224,13 @@ def one_on_one_loop(customers, player, uid):
         answer = answer[0]
 
         if answer == "感谢您的光顾。(结束与该顾客的当天对话)":
+            player.talk("感谢您的光顾，再见👋", is_display=True)
             continue
         elif answer == "自定义输入":
             answer = player({"content": answer})["content"]
+        else:
+            player.talk("感谢您的今天来我们这里消费。这里是赠送的果盘，请您享用。还有什么是我能为您做的呢？",
+                        is_display=True)
         msg = Msg(role="user", name="餐馆老板", content=answer)
         player.observe(msg)
         while True:
