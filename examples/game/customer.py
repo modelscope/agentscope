@@ -531,7 +531,7 @@ class Customer(StateAgent, DialogAgent):
             self.exposed_clues.append(element)
 
         for clue_str in found_clue:
-            send_chat_msg(f"【发现线索】{clue_str} \n\n剩余未线索:"
+            send_chat_msg(f"{SYS_MSG_PREFIX}发现新线索：{clue_str} \n\n剩余未发现线索数量:"
                           f"{len(self.unexposed_clues)}", uid=self.uid)
             send_clue(
                 clue_str,
