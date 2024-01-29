@@ -225,6 +225,8 @@ def one_on_one_loop(customers, player, uid):
             uid=uid,
         )
 
+
+        # cook for customer 
         customer({'content': ingredient_today})
         food = player.cook()
         msg = Msg(
@@ -235,15 +237,13 @@ def one_on_one_loop(customers, player, uid):
         )
 
         msg = customer(msg)
-        if "relationship" in msg:
-
-            send_chat_msg(
-                f"{SYS_MSG_PREFIX}{customer.name}（顾客）品尝了你的菜。\n"
-                f" 顾客对菜本身的评价：{msg['content']}\n"
-                f" {customer.name}（顾客)，"
-                f"现在你们的关系为{msg['relationship']}了\n",
-                uid=uid,
-            )
+        send_chat_msg(
+            f"{SYS_MSG_PREFIX}{customer.name}（顾客）品尝了你的菜。\n"
+            f" 顾客对菜本身的评价：{msg['content']}\n"
+            f" {customer.name}（顾客)，"
+            f"现在你们的关系为{msg['relationship']}了\n",
+            uid=uid,
+        )
             
         if not msg["is_satisfied"]:
             send_chat_msg(f"{SYS_MSG_PREFIX}顾客{customer.name} 离开餐馆", uid=uid)
