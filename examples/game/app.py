@@ -137,6 +137,47 @@ def get_story(uid):
 
     story_item = get_story_msg(uid)
 
+    # Only initialize at the first time
+    for c in role_names:  # glb vars, careful!
+        if c not in glb_story_dict[uid]:
+            glb_story_dict[uid][c] = []
+        else:
+            break
+
+    if story_item:
+        glb_story_dict[uid][story_item["name"]].append(story_item["story"])
+
+    flex_container_html = """
+    <div style='margin-bottom: 40px;'>
+    <p></p>
+    """
+
+    for role_name_, stories in glb_story_dict[uid].items():
+        if len(stories) == 0:
+            # Locked story row
+            flex_container_html += f"""
+                <div style='padding: 20px; background: #757575; border-radius: 10px; width: 100%; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;'>
+                    <p style='color: #bdbdbd;'>{role_name_} 的故事</p>
+                    <span style='color: #bdbdbd; font-size: 24px;'>&#128274;</span>  <!-- Unicode lock icon -->
+                </div>
+            """
+        else:
+            # Unlocked story row
+            for index, s in enumerate(stories):
+                flex_container_html += f"""
+                    <div style='padding: 20px; background: #ffffff; border: 1px solid #bdbdbd; border-radius: 10px; width: 100%; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;'>
+                        <p style='color: #333;'>{role_name_} 的第{index + 1}段故事</p>
+                        <span style='color: #333; font-size: 24px;'>&#128275;</span>  <!-- Unicode unlocked icon -->
+                        <div style='width: 100%; margin-top: 10px;'>{s}</div>
+                    </div>
+                """
+
+    flex_container_html += """
+    </div>
+    """
+
+    return gr.HTML(flex_container_html)
+
 
 def get_clue(uid):
     global glb_clue_dict
