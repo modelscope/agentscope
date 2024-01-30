@@ -11,7 +11,7 @@ from typing import Optional
 import agentscope
 from agentscope.message import Msg
 from agentscope.msghub import msghub
-from config_uitls import load_user_cfg, load_configs
+from config_utils import load_user_cfg, load_configs
 from customer import Customer, MIN_BAR_FRIENDSHIP_CONST
 from enums import CustomerConv, StagePerNight
 from ruled_user import RuledUser
