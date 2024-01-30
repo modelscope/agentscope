@@ -21,6 +21,7 @@ import gradio as gr
 
 SYS_MSG_PREFIX = '【系统】'
 OPENING_ROUND = 3
+REVISION_ROUND = 3
 
 USE_WEB_UI = False
 

@@ -26,6 +26,7 @@ from utils import (
     query_answer,
     SYS_MSG_PREFIX,
     CheckpointArgs,
+    REVISION_ROUND,
 )
 
 
@@ -71,7 +72,7 @@ def invited_group_chat(
                 elif answer == ["否"]:
                     msg = None
                 elif answer == ["结束邀请对话"]:
-                    player.talk("今天的谈话到此位置，感谢大家🙏", is_display=True)
+                    player.talk("今天谢谢大家🙏", is_display=True)
                     end_flag = True
                 break
             if end_flag:
@@ -123,10 +124,15 @@ def invited_group_chat(
             for c in invited_customer:
                 c.refine_background()
             return idx
+    for idx in cur_plots_indices:
+        all_plots[idx].max_attempts -= 1
+        if all_plots[idx].max_attempts <= 0:
+            send_chat_msg(f"剧情解锁失败，剧情已结束", uid=uid)
     return None
 
 
-def one_on_one_loop(customers, player, uid):
+def one_on_one_loop(customers, player, uid, checkpoint):
+    contect_chances = 2
     visit_customers = [c for c in customers if c.visit()]
     # random.shuffle(visit_customers)
 
@@ -239,13 +245,93 @@ def one_on_one_loop(customers, player, uid):
             if len(msg["content"]) == 0:
                 send_chat_msg(f"{SYS_MSG_PREFIX}顾客{customer.name} 离开餐馆", uid=uid)
                 break
+
+        confirm_with_main_role(uid, player, checkpoint)
     return visit_customers
 
 
-def invite_customers(customers, uid):
+def confirm_with_main_role(uid, player, checkpoint):
+    contect_chances = {}
+    for p_idx in checkpoint.cur_plots:
+        cur_chances = checkpoint.all_plots[p_idx].contact_chances
+        if cur_chances > 0:
+            contect_chances[checkpoint.all_plots[p_idx].main_roles[0].name] = (p_idx, cur_chances)
+    if len(contect_chances) < 1:
+        return
+
+    questions = [
+        inquirer.List(
+            "ans",
+            message=f"{SYS_MSG_PREFIX}：需要联系以下角色吗？",
+            choices=[
+                f"{k} （剩余机会{v[1]}）" for k, v in contect_chances.items()
+            ] + [f"不需要",]
+        ),
+    ]
+    contect_main_role = f"""{SYS_MSG_PREFIX}：需要联系以下角色吗？？
+        <select-box shape="card" item-width="auto" type="checkbox" options=
+        '{json.dumps(
+        [
+                f"{k} （剩余机会{v[1]}）" for k, v in contect_chances.items()
+        ] + [f"不需要",])}'
+        select-once></select-box>"""
+
+    send_chat_msg(contect_main_role, flushing=False, uid=uid)
+
+    while True:
+        answer = query_answer(questions, "ans", uid=uid)
+        if isinstance(answer, str):
+            send_chat_msg(
+                f"{SYS_MSG_PREFIX}请在列表中选择。",
+                uid=uid,
+            )
+            continue
+        break
+
+    answer = answer[0]
+
+    if answer == "不需要":
+        return
+
+    main_role = None
+    for choice, (p_idx, _) in contect_chances.items():
+        main_role_name = choice.split()[0]
+        if checkpoint.all_plots[p_idx].main_roles[0].name == main_role_name:
+            main_role = checkpoint.all_plots[p_idx].main_roles[0]
+            checkpoint.all_plots[p_idx].contact_chances -= 1
+            break
+    assert main_role is not None
+
+    r = 0
+    msg = {"role": "user", "content": f"联系{main_role}"}
+    while r < REVISION_ROUND:
+        send_chat_msg(
+            f"{SYS_MSG_PREFIX}若不输入任何内容直接按回车键，中止和{main_role.name}对话。"
+            f"（当前机会剩余发言机会 {REVISION_ROUND - r}）",
+            uid=uid
+        )
+        msg = player(msg)
+        if len(msg["content"]) == 0:
+            send_chat_msg(f"{SYS_MSG_PREFIX}结束与{main_role.name}联系",
+                          uid=uid)
+            break
+        msg = main_role(msg)
+        r += 1
+
+
+def invite_customers(customers, uid, checkpoint):
     available_customers = [
         c.name for c in customers if c.friendship >= MIN_BAR_FRIENDSHIP_CONST
     ]
+
+    for p_idx in checkpoint.cur_plots:
+        if "done_condition" in checkpoint.all_plots[p_idx].plot_description:
+            send_chat_msg(
+                f"{SYS_MSG_PREFIX}："
+                f"{checkpoint.all_plots[p_idx].plot_description['done_condition']}",
+                uid=uid
+            )
+        available_customers.append(checkpoint.all_plots[p_idx].main_roles[0].name)
     invited_customers = []
 
     if len(available_customers) == 0:
@@ -366,8 +452,7 @@ def main(args) -> None:
             # the remaining not invited customers show up with probability
             central_roles = []
             for p_idx in checkpoint.cur_plots:
-                for r in checkpoint.all_plots[p_idx].main_roles:
-                    central_roles.append(r.name)
+                central_roles.append(checkpoint.all_plots[p_idx].main_roles[0].name)
             unavailable_roles = central_roles + checkpoint.invited_customers
             rest_customers = [
                 c
@@ -378,12 +463,13 @@ def main(args) -> None:
                 rest_customers,
                 player,
                 args.uid,
+                checkpoint,
             )
             checkpoint.stage_per_night = StagePerNight.MAKING_INVITATION
         elif checkpoint.stage_per_night == StagePerNight.MAKING_INVITATION:
             # ============ making invitation decision =============
             # player make invitation
-            invited = invite_customers(checkpoint.visit_customers, args.uid)
+            invited = invite_customers(checkpoint.visit_customers, args.uid, checkpoint)
             checkpoint.stage_per_night = StagePerNight.INVITED_CHAT
             invited_customers = [c for c in customers if c.name in invited]
             checkpoint.invited_customers = invited_customers
