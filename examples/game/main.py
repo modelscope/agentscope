@@ -309,6 +309,8 @@ def confirm_with_main_role(uid, player, checkpoint):
 
     r = 0
     msg = {"role": "user", "content": f"联系{main_role}"}
+    # todo: more elegant way?
+    main_role.transition(CustomerConv.OPENING)
     while r < REVISION_ROUND:
         send_chat_msg(
             f"{SYS_MSG_PREFIX}若不输入任何内容直接按回车键，中止和{main_role.name}对话。"
