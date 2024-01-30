@@ -156,28 +156,35 @@ def update_role_clue_dict(uid):
 
     flex_container_html_list = []
     for role_name_ in role_clue_dict.keys():
-        flex_container_html = """
-                                    <div style='display: flex; flex-wrap: wrap;'>
-                                """
+        flex_container_html = f"""
+                <div style='margin-bottom: 40px;'>
+                    <div style='display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;'>
+            """
         for clue in role_clue_dict[role_name_]["clue_list"]:
             flex_container_html += f"""
-                                        <div style='flex: 1; min-width: 150px; max-width: 150px; margin: 10px; padding: 10px; border: 1px solid #EAEAEA; border-radius: 10px; box-sizing: border-box;'>
-                                            <img src='
-                                            {clue['image'] if 'image' in clue.keys() else None}' 
-                                            alt='Clue image' style='height: 100px; width: 100%; object-fit: cover; margin-bottom: 5px;'>
-                                            <h4 style='margin: 5px 0; text-align: 
-                                            center; word-wrap: 
-                                            break-word;'>{clue['name']}</h4>
-                                            <p style='margin: 5px 0; 
-                                            word-wrap: break-word;'>
-                                            {clue['content'] if 'content' in clue.keys() else clue['summary']}</p>
-                                        </div>
-                                    """
+                    <div style='flex: 1; min-width: 200px; max-width: 200px; height: 300px; background-color: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin: 10px; padding: 20px; border-radius: 15px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden;'>
+                        <img src='{clue['image'] if 'image' in clue.keys() else "#"}' alt='Clue image' style='height: 150px; width: 100%; object-fit: cover; border-radius: 10px; margin-bottom: 10px;'>
+                        <div style='flex-grow: 1; overflow-y: auto;'>
+                            <h4 style='margin: 5px 0; text-align: center; word-wrap: break-word; font-size: 18px; font-weight: bold;'>{clue['name']}</h4>
+                            <p style='margin: 5px 0; word-wrap: break-word; text-align: justify; font-size: 14px;'>{clue['content'] if 'content' in clue.keys() else clue['summary']}</p>
+                        </div>
+                    </div>
+                """
+        if role_clue_dict[role_name_]['unexposed_num']:
+            for _ in range(role_clue_dict[role_name_]['unexposed_num']):
+                flex_container_html += f"""
+                            <div style='flex: 1; min-width: 200px; max-width: 200px; height: 300px; background: repeating-linear-gradient(45deg, #ccc, #ccc 10px, #ddd 10px, #ddd 20px); opacity: 0.8; margin: 10px; padding: 20px; border-radius: 15px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden;'>
+                                <div style='flex-grow: 1; height: 150px; width: 100%; background-color: #bbb; border-radius: 10px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center;'>
+                                    <span style='color: #fff; font-weight: bold; font-size: 24px;'>?</span>
+                                </div>
+                                <h4 style='margin: 5px 0; text-align: center; word-wrap: break-word; font-size: 18px; font-weight: bold; color: #999;'>待发现</h4>
+                            </div>
+                        """
         flex_container_html += """
                                     </div>
                             """
         flex_container_html_list.append(flex_container_html)
-    return [gr.HTML(x) for x in flex_container_html_list] + [role_clue_dict[role_name_]['unexposed_num'] for role_name_ in role_clue_dict.keys()]
+    return [gr.HTML(x) for x in flex_container_html_list]
 
 
 def fn_choice(data: gr.EventData, uid):
@@ -368,13 +375,21 @@ if __name__ == "__main__":
                     )
 
         with clue_tab:
+            guild_html = """
+            <div style='text-align: center; margin-top: 20px; margin-bottom: 40px; padding: 20px; background: linear-gradient(to right, #f7f7f7, #ffffff); border-left: 5px solid #007bff; border-right: 5px solid #007bff;'>
+                <p style='font-size: 18px; color: #333; max-width: 600px; margin: auto; line-height: 1.6; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;'>
+                    <strong>探索提示：</strong><br>
+                    这些是您在调查过程中已经搜集到的线索卡。随着您与各位角色互动的增加，您对他们的了解将会提升，从而有可能获得更多线索卡。请继续与角色进行对话，探索他们的背景故事，并通过观察和推理揭开隐藏的秘密。
+                </p>
+            </div>
+            """
+            gr.HTML(guild_html)
             role_tabs = gr.Tabs(visible=False)
             roles = load_user_cfg()
             role_names = [role['name'] for role in roles]
             # role_names = ['王先生', '老许']
             # role_tab_list = []
             role_tab_clue_dict = {}
-            role_tab_clue_num_dict = {}
             i = 0
 
             for role_name_t in role_names:
@@ -387,11 +402,6 @@ if __name__ == "__main__":
                 i += 1
                 with role:
                     role_tab_clue_dict[role_name_t] = gr.HTML()
-                    role_tab_clue_num_dict[role_name_t] = gr.Textbox(
-                        label="未暴露线索数量",
-                        value=role_clue_dict[role_name_t]["unexposed_num"],
-                        visible=True,
-                    )
 
 
         def send_message(msg, uid):
@@ -670,7 +680,7 @@ if __name__ == "__main__":
 
         demo.load(update_role_clue_dict,
                   inputs=[uuid],
-                  outputs=[role_tab_clue_dict[i] for i in role_names] + [role_tab_clue_num_dict[i] for i in role_names],
+                  outputs=[role_tab_clue_dict[i] for i in role_names],
                   every=0.5)
 
     demo.queue()
