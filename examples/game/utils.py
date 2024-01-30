@@ -123,13 +123,13 @@ def send_chat_msg(
         )
 
 
-def send_clue(
+def send_clue_msg(
     clue,
     unexposed_num=0,
     role=None,
     uid=None,
 ):
-    print("send_clue:", clue)
+    print("send_clue_msg:", clue)
     if get_use_web_ui():
         global glb_uid_dict
         glb_queue_clue = glb_uid_dict[uid]["glb_queue_clue"]
@@ -142,7 +142,7 @@ def send_clue(
         )
 
 
-def get_clue(
+def get_clue_msg(
     uid=None,
 ):
     global glb_uid_dict
