@@ -124,10 +124,15 @@ def invited_group_chat(
             for c in invited_customer:
                 c.refine_background()
             return idx
+
+    send_chat_msg(f"{SYS_MSG_PREFIX} 剧情解锁失败，没有邀请正确的角色或邀请了过多无关角色。", uid=uid)
     for idx in cur_plots_indices:
         all_plots[idx].max_attempts -= 1
         if all_plots[idx].max_attempts <= 0:
             send_chat_msg(f"剧情解锁失败，剧情已结束", uid=uid)
+    send_chat_msg(
+        f"{SYS_MSG_PREFIX} ======= 进入新的一天的营业时间 ==========",
+        uid=uid)
     return None
 
 
@@ -148,11 +153,11 @@ def one_on_one_loop(customers, player, uid, checkpoint):
             and category not in ["调味品", "其他辅料"]
             else items
         )
-    ingr = "\n".join(
-        f"\n{key}: {' '.join([str(i) for i in value])}" for key, value in
-        ingredient_today.items()
-    )
-    send_chat_msg(f"{SYS_MSG_PREFIX}今天拥有的食材是：\n{ingr}", uid=uid)
+    # ingr = "\n".join(
+    #     f"\n{key}: {' '.join([str(i) for i in value])}" for key, value in
+    #     ingredient_today.items()
+    # )
+    # send_chat_msg(f"{SYS_MSG_PREFIX}今天拥有的食材是：\n{ingr}", uid=uid)
 
     player.set_ingredients(ingredient_today)
 
@@ -324,13 +329,10 @@ def invite_customers(customers, uid, checkpoint):
         c.name for c in customers if c.friendship >= MIN_BAR_FRIENDSHIP_CONST
     ]
 
+    prompt = f"{SYS_MSG_PREFIX}: "
     for p_idx in checkpoint.cur_plots:
         if "done_condition" in checkpoint.all_plots[p_idx].plot_description:
-            send_chat_msg(
-                f"{SYS_MSG_PREFIX}："
-                f"{checkpoint.all_plots[p_idx].plot_description['done_condition']}",
-                uid=uid
-            )
+            prompt += checkpoint.all_plots[p_idx].plot_description['done_condition']
         available_customers.append(checkpoint.all_plots[p_idx].main_roles[0].name)
     invited_customers = []
 
@@ -340,12 +342,12 @@ def invite_customers(customers, uid, checkpoint):
     select_customer = [
         inquirer.List(
             "invited",
-            message=f"{SYS_MSG_PREFIX}今天就没有更多顾客了，您明天有什么邀请计划吗？",
+            message= prompt + "今天就没有更多顾客了，您明天有什么邀请计划吗？",
             choices=available_customers,
         ),
     ]
 
-    choose_available_customers = f"""{SYS_MSG_PREFIX}今天就没有更多顾客了，您明天有什么邀请计划吗？:
+    choose_available_customers = prompt + f"""您明天有什么邀请计划吗？:
     <select-box shape="card"  type="checkbox" item-width="auto" options=
                 '{json.dumps(available_customers)}' select-once
                 submit-text="确定"></select-box>"""
