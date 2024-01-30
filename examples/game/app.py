@@ -149,7 +149,8 @@ def update_role_clue_dict(uid):
     clue_item = get_clue(uid)
     if clue_item:
         role_name_ = clue_item['name']
-        role_clue_dict[role_name_]['clue_list'].append(clue_item['clue'])
+        if clue_item["clue"] is not None:
+            role_clue_dict[role_name_]['clue_list'].append(clue_item['clue'])
         role_clue_dict[role_name_]['unexposed_num'] = clue_item[
             'unexposed_num']
 
@@ -176,19 +177,7 @@ def update_role_clue_dict(uid):
                                     </div>
                             """
         flex_container_html_list.append(flex_container_html)
-    return [gr.HTML(x) for x in flex_container_html_list]
-
-
-def update_role_clue_num_dict(uid):
-
-    uid = check_uuid(uid)
-    clue_item = get_clue(uid)
-    if clue_item:
-        role_name_ = clue_item['name']
-        role_clue_dict[role_name_]['clue_list'].append(clue_item['clue'])
-        role_clue_dict[role_name_]['unexposed_num'] = clue_item[
-            'unexposed_num']
-    return [role_clue_dict[role_name_]['unexposed_num'] for role_name_ in role_clue_dict.keys()]
+    return [gr.HTML(x) for x in flex_container_html_list] + [role_clue_dict[role_name_]['unexposed_num'] for role_name_ in role_clue_dict.keys()]
 
 
 def fn_choice(data: gr.EventData, uid):
@@ -389,8 +378,10 @@ if __name__ == "__main__":
             i = 0
 
             for role_name_t in role_names:
-                role_clue_dict[role_name_t] = {"clue_list": [],
-                                             "unexposed_num": None}
+                role_clue_dict[role_name_t] = {
+                    "clue_list": [],
+                    "unexposed_num": None,
+                }
                 role = gr.Tab(label=role_name_t, id=i)
                 # role_tab_list.append(role_name)
                 i += 1
@@ -679,12 +670,7 @@ if __name__ == "__main__":
 
         demo.load(update_role_clue_dict,
                   inputs=[uuid],
-                  outputs=[role_tab_clue_dict[i] for i in role_names],
-                  every=0.5)
-
-        demo.load(update_role_clue_num_dict,
-                  inputs=[uuid],
-                  outputs=[role_tab_clue_num_dict[i] for i in role_names],
+                  outputs=[role_tab_clue_dict[i] for i in role_names] + [role_tab_clue_num_dict[i] for i in role_names],
                   every=0.5)
 
     demo.queue()

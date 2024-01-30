@@ -149,6 +149,7 @@ def get_clue(
     if not glb_queue_clue.empty():
         line = glb_queue_clue.get(block=False)
         if line is not None:
+            print(f"get_clue: {line}")
             return line
     return None
 
