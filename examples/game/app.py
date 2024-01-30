@@ -158,11 +158,6 @@ def update_role_clue_dict(uid):
     for role_name_ in role_clue_dict.keys():
         flex_container_html = f"""
                 <div style='margin-bottom: 40px;'>
-                    <div style='text-align: center; margin-bottom: 20px;'>
-                        <span style='display: inline-block; padding: 5px; 
-                        background-color: #f9f9f9; border-radius: 10px; 
-                        font-size: 16px;'>未发现的线索数：{role_clue_dict[role_name_]['unexposed_num']}</span>
-                    </div>
                     <div style='display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;'>
             """
         for clue in role_clue_dict[role_name_]["clue_list"]:
@@ -175,6 +170,19 @@ def update_role_clue_dict(uid):
                     </div>
                 </div>
             """
+        if role_clue_dict[role_name_]['unexposed_num']:
+            for _ in range(role_clue_dict[role_name_]['unexposed_num']):
+                flex_container_html += f"""
+                                <div style='flex: 1; min-width: 200px; max-width: 200px; background: repeating-linear-gradient(45deg, #ccc, #ccc 10px, #ddd 10px, #ddd 20px); opacity: 0.8; margin: 10px; padding: 20px; border-radius: 15px; display: flex; flex-direction: column; justify-content: space-between;'>
+                                    <div style='flex-grow: 1; height: 150px; width: 100%; background-color: #bbb; border-radius: 10px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center;'>
+                                        <span style='color: #fff; font-weight: bold; font-size: 24px;'>?</span>
+                                    </div>
+                                    <h4 style='margin: 5px 0; text-align: 
+                                    center; word-wrap: break-word; 
+                                    font-size: 18px; font-weight: bold; 
+                                    color: #999;'>待发现</h4>
+                                </div>
+                            """
         flex_container_html += """
                                     </div>
                             """
