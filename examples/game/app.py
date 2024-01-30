@@ -162,27 +162,24 @@ def update_role_clue_dict(uid):
             """
         for clue in role_clue_dict[role_name_]["clue_list"]:
             flex_container_html += f"""
-                <div style='flex: 1; min-width: 200px; max-width: 200px; background-color: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin: 10px; padding: 20px; border-radius: 15px; display: flex; flex-direction: column; justify-content: space-between;'>
-                    <img src='{clue['image'] if 'image' in clue.keys() else "#"}' alt='Clue image' style='height: 150px; width: 100%; object-fit: cover; border-radius: 10px; margin-bottom: 10px;'>
-                    <div style='flex-grow: 1;'>
-                        <h4 style='margin: 5px 0; text-align: center; word-wrap: break-word; font-size: 18px; font-weight: bold;'>{clue['name']}</h4>
-                        <p style='margin: 5px 0; word-wrap: break-word; text-align: justify; font-size: 14px;'>{clue['content'] if 'content' in clue.keys() else clue['summary']}</p>
+                    <div style='flex: 1; min-width: 200px; max-width: 200px; height: 300px; background-color: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin: 10px; padding: 20px; border-radius: 15px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden;'>
+                        <img src='{clue['image'] if 'image' in clue.keys() else "#"}' alt='Clue image' style='height: 150px; width: 100%; object-fit: cover; border-radius: 10px; margin-bottom: 10px;'>
+                        <div style='flex-grow: 1; overflow-y: auto;'>
+                            <h4 style='margin: 5px 0; text-align: center; word-wrap: break-word; font-size: 18px; font-weight: bold;'>{clue['name']}</h4>
+                            <p style='margin: 5px 0; word-wrap: break-word; text-align: justify; font-size: 14px;'>{clue['content'] if 'content' in clue.keys() else clue['summary']}</p>
+                        </div>
                     </div>
-                </div>
-            """
+                """
         if role_clue_dict[role_name_]['unexposed_num']:
             for _ in range(role_clue_dict[role_name_]['unexposed_num']):
                 flex_container_html += f"""
-                                <div style='flex: 1; min-width: 200px; max-width: 200px; background: repeating-linear-gradient(45deg, #ccc, #ccc 10px, #ddd 10px, #ddd 20px); opacity: 0.8; margin: 10px; padding: 20px; border-radius: 15px; display: flex; flex-direction: column; justify-content: space-between;'>
-                                    <div style='flex-grow: 1; height: 150px; width: 100%; background-color: #bbb; border-radius: 10px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center;'>
-                                        <span style='color: #fff; font-weight: bold; font-size: 24px;'>?</span>
-                                    </div>
-                                    <h4 style='margin: 5px 0; text-align: 
-                                    center; word-wrap: break-word; 
-                                    font-size: 18px; font-weight: bold; 
-                                    color: #999;'>待发现</h4>
+                            <div style='flex: 1; min-width: 200px; max-width: 200px; height: 300px; background: repeating-linear-gradient(45deg, #ccc, #ccc 10px, #ddd 10px, #ddd 20px); opacity: 0.8; margin: 10px; padding: 20px; border-radius: 15px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden;'>
+                                <div style='flex-grow: 1; height: 150px; width: 100%; background-color: #bbb; border-radius: 10px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center;'>
+                                    <span style='color: #fff; font-weight: bold; font-size: 24px;'>?</span>
                                 </div>
-                            """
+                                <h4 style='margin: 5px 0; text-align: center; word-wrap: break-word; font-size: 18px; font-weight: bold; color: #999;'>待发现</h4>
+                            </div>
+                        """
         flex_container_html += """
                                     </div>
                             """
