@@ -178,13 +178,13 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
     transition: box-shadow 0.3s;
 }
 
 .story-row:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
 }
 
 
@@ -211,4 +211,35 @@
 .locked .story-title,
 .locked .lock-icon {
     color: #9e9e9e;
+}
+
+/* 线索卡片样式 */
+.clue-card {
+    flex: 1;
+    min-width: 200px;
+    max-width: 200px;
+    height: 300px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    margin: 10px;
+    padding: 20px;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    transition: box-shadow 0.3s;
+}
+
+/* 鼠标悬停时的阴影效果 */
+.clue-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+}
+
+/* 未发现线索的样式 */
+.clue-card-locked {
+    background: repeating-linear-gradient(45deg, #ccc, #ccc 10px, #ddd 10px, #ddd 20px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    opacity: 0.8;
 }
