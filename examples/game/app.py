@@ -375,6 +375,15 @@ if __name__ == "__main__":
                     )
 
         with clue_tab:
+            guild_html = """
+            <div style='text-align: center; margin-top: 20px; margin-bottom: 40px; padding: 20px; background: linear-gradient(to right, #f7f7f7, #ffffff); border-left: 5px solid #007bff; border-right: 5px solid #007bff;'>
+                <p style='font-size: 18px; color: #333; max-width: 600px; margin: auto; line-height: 1.6; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;'>
+                    <strong>探索提示：</strong><br>
+                    这些是您在调查过程中已经搜集到的线索卡。随着您与各位角色互动的增加，您对他们的了解将会提升，从而有可能获得更多线索卡。请继续与角色进行对话，探索他们的背景故事，并通过观察和推理揭开隐藏的秘密。
+                </p>
+            </div>
+            """
+            gr.HTML(guild_html)
             role_tabs = gr.Tabs(visible=False)
             roles = load_user_cfg()
             role_names = [role['name'] for role in roles]
