@@ -436,11 +436,9 @@ if __name__ == "__main__":
             role_names = [role['name'] for role in roles]
 
             role_tab_clue_dict = {}
-            i = 0
 
             for role_name_t in role_names:
-                role = gr.Tab(label=role_name_t, id=i)
-                i += 1
+                role = gr.Tab(label=role_name_t)
                 with role:
                     role_tab_clue_dict[role_name_t] = gr.HTML()
 
