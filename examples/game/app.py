@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import base64
 import os
-import yaml
 import datetime
 import threading
 from collections import defaultdict
@@ -17,7 +16,8 @@ from utils import (
     get_chat_msg,
     SYS_MSG_PREFIX,
     ResetException,
-    get_clue_msg
+    get_clue_msg,
+    get_story_msg
 )
 from generate_image import generate_user_logo_file
 
@@ -135,26 +135,38 @@ def get_story(uid):
     global glb_story_dict
     uid = check_uuid(uid)
 
+    story_item = get_story_msg(uid)
+
 
 def get_clue(uid):
     global glb_clue_dict
 
     uid = check_uuid(uid)
     clue_item = get_clue_msg(uid)
+
+    # Only initialize at the first time
+    for c in role_names:  # glb vars, careful!
+        if c not in glb_clue_dict[uid]:
+            glb_clue_dict[uid][c] = {
+                'clue_list': [],
+                'unexposed_num': 0,
+            }
+        else:
+            break
+
     if clue_item:
         role_name_ = clue_item['name']
         if clue_item["clue"] is not None:
-            glb_clue_dict[role_name_]['clue_list'].append(clue_item['clue'])
-        glb_clue_dict[role_name_]['unexposed_num'] = clue_item[
-            'unexposed_num']
+            glb_clue_dict[uid][role_name_]['clue_list'].append(clue_item['clue'])
+        glb_clue_dict[uid][role_name_]['unexposed_num'] = clue_item['unexposed_num']
 
     flex_container_html_list = []
-    for role_name_ in glb_clue_dict.keys():
+    for role_name_ in glb_clue_dict[uid].keys():
         flex_container_html = f"""
                 <div style='margin-bottom: 40px;'>
                     <div style='display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;'>
             """
-        for clue in glb_clue_dict[role_name_]["clue_list"]:
+        for clue in glb_clue_dict[uid][role_name_]["clue_list"]:
             flex_container_html += f"""
                     <div style='flex: 1; min-width: 200px; max-width: 200px; height: 300px; background-color: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin: 10px; padding: 20px; border-radius: 15px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden;'>
                         <img src='{clue['image'] if 'image' in clue.keys() else "#"}' alt='Clue image' style='height: 150px; width: 100%; object-fit: cover; border-radius: 10px; margin-bottom: 10px;'>
@@ -164,8 +176,8 @@ def get_clue(uid):
                         </div>
                     </div>
                 """
-        if glb_clue_dict[role_name_]['unexposed_num']:
-            for _ in range(glb_clue_dict[role_name_]['unexposed_num']):
+        if glb_clue_dict[uid][role_name_]['unexposed_num']:
+            for _ in range(glb_clue_dict[uid][role_name_]['unexposed_num']):
                 flex_container_html += f"""
                             <div style='flex: 1; min-width: 200px; max-width: 200px; height: 300px; background: repeating-linear-gradient(45deg, #ccc, #ccc 10px, #ddd 10px, #ddd 20px); box-shadow: 0 4px 8px rgba(0,0,0,0.5); opacity: 0.8; margin: 10px; padding: 20px; border-radius: 15px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden;'>
                                 <div style='flex-grow: 1; height: 150px; width: 100%; background-color: #bbb; border-radius: 10px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center;'>
@@ -387,11 +399,6 @@ if __name__ == "__main__":
             i = 0
 
             for role_name_t in role_names:
-                glb_clue_dict[role_name_t] = \
-                    {
-                        "clue_list": [],
-                        "unexposed_num": None,
-                    }
                 role = gr.Tab(label=role_name_t, id=i)
                 i += 1
                 with role:
