@@ -92,11 +92,15 @@
   height: 100px;
   border-radius: 50%;
   overflow: hidden;
+  position: relative; /* 添加相对定位 */
+  display: flex; /* flex布局 */
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
 }
 
 .bot_avatar img {
-  width: 150px;
-  height: 150px;
+  width: auto; /* 自动调整宽度 */
+  height: 100%; /* 高度与父容器相同 */
 }
 
 .bot_name {
