@@ -543,7 +543,7 @@ class Customer(StateAgent, DialogAgent):
 
         for i, clue in enumerate(found_clue):
             send_chat_msg(
-                f"{SYS_MSG_PREFIX}发现{self.name}的新线索："
+                f"{SYS_MSG_PREFIX}发现{self.name}的新线索（请查看线索栏）："
                 f"《{clue['name']}》{clue['summary']} "
                 f"\n\n剩余未发现线索数量:"
                 f"{len(self.unexposed_clues) + len(found_clue) - i - 1}",
