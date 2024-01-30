@@ -125,11 +125,14 @@ def invited_group_chat(
                 c.refine_background()
             return idx
 
-    send_chat_msg(f"{SYS_MSG_PREFIX} 剧情解锁失败，没有邀请正确的角色或邀请了过多无关角色", uid=uid)
+    send_chat_msg(f"{SYS_MSG_PREFIX} 剧情解锁失败，没有邀请正确的角色或邀请了过多无关角色。", uid=uid)
     for idx in cur_plots_indices:
         all_plots[idx].max_attempts -= 1
         if all_plots[idx].max_attempts <= 0:
             send_chat_msg(f"剧情解锁失败，剧情已结束", uid=uid)
+    send_chat_msg(
+        f"{SYS_MSG_PREFIX} ======= 进入新的一天的营业时间 ==========",
+        uid=uid)
     return None
 
 
