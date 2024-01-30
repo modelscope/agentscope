@@ -148,29 +148,28 @@ def get_story(uid):
         glb_story_dict[uid][story_item["name"]].append(story_item["story"])
 
     flex_container_html = """
-    <div style='margin-bottom: 40px;'>
+    <div class='story-container'>
     <p></p>
-    """
+"""
 
     for role_name_, stories in glb_story_dict[uid].items():
         if len(stories) == 0:
             # Locked story row
             flex_container_html += f"""
-                <div style='padding: 20px; background: #757575; border-radius: 10px; width: 100%; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;'>
-                    <p style='color: #bdbdbd;'>{role_name_} 的故事</p>
-                    <span style='color: #bdbdbd; font-size: 24px;'>&#128274;</span>  <!-- Unicode lock icon -->
-                </div>
-            """
+                        <div class='story-row locked'>
+                            <p class='story-title'>{role_name_} 的故事</p>
+                            <span class='lock-icon'>&#128274;</span>  <!-- Unicode lock icon -->
+                        </div>
+                    """
         else:
             # Unlocked story row
             for index, s in enumerate(stories):
                 flex_container_html += f"""
-                    <div style='padding: 20px; background: #ffffff; border: 1px solid #bdbdbd; border-radius: 10px; width: 100%; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;'>
-                        <p style='color: #333;'>{role_name_} 的第{index + 1}段故事</p>
-                        <span style='color: #333; font-size: 24px;'>&#128275;</span>  <!-- Unicode unlocked icon -->
-                        <div style='width: 100%; margin-top: 10px;'>{s}</div>
-                    </div>
-                """
+                            <div class='story-row'>
+                                <p class='story-title'>{role_name_} 的第{index + 1}段故事</p>
+                                <div class='story-content'>{s}</div>
+                            </div>
+                        """
 
     flex_container_html += """
     </div>
@@ -450,7 +449,7 @@ if __name__ == "__main__":
             <div style='text-align: center; margin-top: 20px; margin-bottom: 40px; padding: 20px; background: linear-gradient(to right, #f7f7f7, #ffffff); border-left: 5px solid #6c757d; border-right: 5px solid #6c757d;'>
                 <p style='font-size: 18px; color: #333; max-width: 600px; margin: auto; line-height: 1.6; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;'>
                     <strong>已解锁的故事：</strong><br>
-                    这里展示了您从各个角色的视角收集到的故事碎片。每个NPC都有自己独特的背景和视角，揭示了案件中不同的维度和秘密。随着您在游戏中的推进，您将解锁他们的个人记忆和见闻，这些都将成为拼凑整个故事的关键部分。请继续探索和对话，解锁更多的视角，深入了解这个复杂的故事。
+                    这里展示了您达成剧情解锁条件后从各个角色的视角收集到的故事碎片。每个NPC都有自己独特的背景和视角，揭示了案件中不同的维度和秘密。随着您在游戏中的推进，您将解锁他们的个人记忆和见闻，这些都将成为拼凑整个故事的关键部分。请继续探索和对话，解锁更多的视角，深入了解这个复杂的故事。
                 </p>
             </div>
 
