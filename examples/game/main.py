@@ -309,6 +309,7 @@ def confirm_with_main_role(uid, player, checkpoint):
 
     r = 0
     msg = {"role": "user", "content": f"联系{main_role}"}
+    # todo: more elegant way?
     main_role.transition(CustomerConv.OPENING)
     while r < REVISION_ROUND:
         send_chat_msg(
