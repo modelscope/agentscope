@@ -71,6 +71,13 @@ class Customer(StateAgent, DialogAgent):
         self.unexposed_clues = self.config.get("clue", None)
         if self.unexposed_clues is None:
             self.unexposed_clues = self.build_clues()
+        # For initialization
+        send_clue(
+            None,
+            unexposed_num=len(self.unexposed_clues),
+            uid=self.uid,
+            role=self.name,
+        )
         self.exposed_clues = []
 
     def visit(self) -> np.array:
