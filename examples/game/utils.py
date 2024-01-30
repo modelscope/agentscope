@@ -218,6 +218,8 @@ def get_player_input(name=None, uid=None):
         if content == "**Reset**":
             glb_uid_dict[uid] = init_uid_queues()
             raise ResetException
+        if content == "**Timeout**":
+            raise InactiveException
     else:
         content = input(f"{name}: ")
     return content
@@ -259,6 +261,11 @@ class CheckpointArgs:
 
 class ResetException(Exception):
     pass
+
+
+class InactiveException(Exception):
+    pass
+
 
 def generate_picture(prompt):
     dashscope.api_key = os.environ.get("DASHSCOPE_API_KEY") or dashscope.api_key

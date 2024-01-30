@@ -17,6 +17,7 @@ from utils import (
     get_chat_msg,
     SYS_MSG_PREFIX,
     ResetException,
+    InactiveException,
     get_clue
 )
 from generate_image import generate_user_logo_file
@@ -245,7 +246,10 @@ if __name__ == "__main__":
             try:
                 main(args)
             except ResetException:
-                print("重置成功")
+                print(f"重置成功：{uid} ")
+            except InactiveException:
+                print(f"超时：{uid} ")
+                break
 
     with gr.Blocks(css="assets/app.css") as demo:
         uuid = gr.Textbox(label='modelscope_uuid', visible=False)
