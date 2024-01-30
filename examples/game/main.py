@@ -94,7 +94,7 @@ def invited_group_chat(
         )
 
         if is_done:
-            send_chat_msg("===== 剧情解锁成功 =======", uid=uid)
+            send_chat_msg(f"{SYS_MSG_PREFIX}恭喜你，剧情解锁成功！", uid=uid)
             questions = [
                 inquirer.List(
                     "ans",

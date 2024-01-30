@@ -11,7 +11,7 @@ from agentscope.message import Msg
 from relationship import Relationship
 from utils import (
     send_chat_msg,
-    send_clue,
+    send_clue_msg,
     get_a_random_avatar,
     send_pretty_msg,
     replace_names_in_messages,
@@ -72,7 +72,7 @@ class Customer(StateAgent, DialogAgent):
         if self.unexposed_clues is None:
             self.unexposed_clues = self.build_clues()
         # For initialization
-        send_clue(
+        send_clue_msg(
             None,
             unexposed_num=len(self.unexposed_clues),
             uid=self.uid,
@@ -413,7 +413,12 @@ class Customer(StateAgent, DialogAgent):
             ],
         )
         print("*" * 20)
-        send_chat_msg(pov_story, uid=self.uid)
+        send_chat_msg(
+            pov_story,
+            role=self.name,
+            uid=self.uid,
+            avatar=self.avatar,
+        )
         print("*" * 20)
 
     def _gen_plot_related_prompt(self) -> str:
@@ -549,7 +554,7 @@ class Customer(StateAgent, DialogAgent):
                 f"\n\n剩余未发现线索数量:"
                 f"{len(self.unexposed_clues) + len(found_clue) - i - 1}",
                 uid=self.uid)
-            send_clue(
+            send_clue_msg(
                 clue,
                 unexposed_num=len(self.unexposed_clues),
                 uid=self.uid,
