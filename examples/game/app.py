@@ -156,28 +156,30 @@ def update_role_clue_dict(uid):
 
     flex_container_html_list = []
     for role_name_ in role_clue_dict.keys():
-        flex_container_html = """
-                                    <div style='display: flex; flex-wrap: wrap;'>
-                                """
+        flex_container_html = f"""
+                <div style='margin-bottom: 40px;'>
+                    <div style='text-align: center; margin-bottom: 20px;'>
+                        <span style='display: inline-block; padding: 5px; 
+                        background-color: #f9f9f9; border-radius: 10px; 
+                        font-size: 16px;'>未发现的线索数：{role_clue_dict[role_name_]['unexposed_num']}</span>
+                    </div>
+                    <div style='display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;'>
+            """
         for clue in role_clue_dict[role_name_]["clue_list"]:
             flex_container_html += f"""
-                                        <div style='flex: 1; min-width: 150px; max-width: 150px; margin: 10px; padding: 10px; border: 1px solid #EAEAEA; border-radius: 10px; box-sizing: border-box;'>
-                                            <img src='
-                                            {clue['image'] if 'image' in clue.keys() else None}' 
-                                            alt='Clue image' style='height: 100px; width: 100%; object-fit: cover; margin-bottom: 5px;'>
-                                            <h4 style='margin: 5px 0; text-align: 
-                                            center; word-wrap: 
-                                            break-word;'>{clue['name']}</h4>
-                                            <p style='margin: 5px 0; 
-                                            word-wrap: break-word;'>
-                                            {clue['content'] if 'content' in clue.keys() else clue['summary']}</p>
-                                        </div>
-                                    """
+                <div style='flex: 1; min-width: 200px; max-width: 200px; background-color: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin: 10px; padding: 20px; border-radius: 15px; display: flex; flex-direction: column; justify-content: space-between;'>
+                    <img src='{clue['image'] if 'image' in clue.keys() else "#"}' alt='Clue image' style='height: 150px; width: 100%; object-fit: cover; border-radius: 10px; margin-bottom: 10px;'>
+                    <div style='flex-grow: 1;'>
+                        <h4 style='margin: 5px 0; text-align: center; word-wrap: break-word; font-size: 18px; font-weight: bold;'>{clue['name']}</h4>
+                        <p style='margin: 5px 0; word-wrap: break-word; text-align: justify; font-size: 14px;'>{clue['content'] if 'content' in clue.keys() else clue['summary']}</p>
+                    </div>
+                </div>
+            """
         flex_container_html += """
                                     </div>
                             """
         flex_container_html_list.append(flex_container_html)
-    return [gr.HTML(x) for x in flex_container_html_list] + [role_clue_dict[role_name_]['unexposed_num'] for role_name_ in role_clue_dict.keys()]
+    return [gr.HTML(x) for x in flex_container_html_list]
 
 
 def fn_choice(data: gr.EventData, uid):
@@ -374,7 +376,6 @@ if __name__ == "__main__":
             # role_names = ['王先生', '老许']
             # role_tab_list = []
             role_tab_clue_dict = {}
-            role_tab_clue_num_dict = {}
             i = 0
 
             for role_name_t in role_names:
@@ -387,11 +388,6 @@ if __name__ == "__main__":
                 i += 1
                 with role:
                     role_tab_clue_dict[role_name_t] = gr.HTML()
-                    role_tab_clue_num_dict[role_name_t] = gr.Textbox(
-                        label="未暴露线索数量",
-                        value=role_clue_dict[role_name_t]["unexposed_num"],
-                        visible=True,
-                    )
 
 
         def send_message(msg, uid):
@@ -670,7 +666,7 @@ if __name__ == "__main__":
 
         demo.load(update_role_clue_dict,
                   inputs=[uuid],
-                  outputs=[role_tab_clue_dict[i] for i in role_names] + [role_tab_clue_num_dict[i] for i in role_names],
+                  outputs=[role_tab_clue_dict[i] for i in role_names],
                   every=0.5)
 
     demo.queue()
