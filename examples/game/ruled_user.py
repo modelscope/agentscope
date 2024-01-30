@@ -132,7 +132,7 @@ class RuledUser(AgentBase):
         prompt = self.sys_prompt.format_map({"content": content})
         message = Msg(name="user", content=prompt, role="user")
         ruler_res = self.model(
-            messages=[message],
+            [message],
             parse_func=json.loads,
             max_retries=self.retry_time,
         )

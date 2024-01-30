@@ -145,3 +145,17 @@
   border-radius: 4px;
   font-size: 0.9em;
 }
+
+.bot_intro_label {
+  /*white-space: pre-wrap;*/
+  font-size: 25px;
+}
+
+.bot_intro_ctx {
+  /*white-space: pre-wrap;*/
+  display: grid;
+  place-items: center;
+  height: 100px;
+  font-size: 18px;
+  text-align: center;
+}

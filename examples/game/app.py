@@ -17,6 +17,7 @@ from utils import (
     get_chat_msg,
     SYS_MSG_PREFIX,
     ResetException,
+    get_clue
 )
 from generate_image import generate_user_logo_file
 
@@ -24,6 +25,8 @@ import gradio as gr
 import modelscope_gradio_components as mgr
 
 enable_web_ui()
+
+role_clue_dict = {}
 
 
 def init_uid_list():
@@ -80,6 +83,9 @@ def format_cover_html(config: dict, bot_avatar_path="assets/bg.png"):
     </div>
     <div class="bot_name">{config.get("name", "经营餐厅")}</div>
     <div class="bot_desp">{config.get("description", "快来经营你的餐厅吧")}</div>
+    <div class="bot_intro_label">{config.get("introduction_label", "玩法介绍")}</div>
+    <div class="bot_intro_ctx">
+    {config.get("introduction_context", "玩法介绍")}</div>
 </div>
 """
 
@@ -136,13 +142,61 @@ def get_sys_chat(uid) -> List[List]:
     return sys_msg[-MAX_NUM_DISPLAY_MSG:]
 
 
+def update_role_clue_dict(uid):
+    global role_clue_dict
+
+    uid = check_uuid(uid)
+    clue_item = get_clue(uid)
+    if clue_item:
+        role_name_ = clue_item['name']
+        role_clue_dict[role_name_]['clue_list'].append(clue_item['clue'])
+        role_clue_dict[role_name_]['unexposed_num'] = clue_item[
+            'unexposed_num']
+
+    flex_container_html_list = []
+    for role_name_ in role_clue_dict.keys():
+        flex_container_html = """
+                                    <div style='display: flex; flex-wrap: wrap;'>
+                                """
+        for clue in role_clue_dict[role_name_]["clue_list"]:
+            flex_container_html += f"""
+                                        <div style='flex: 1; min-width: 150px; max-width: 150px; margin: 10px; padding: 10px; border: 1px solid #EAEAEA; border-radius: 10px; box-sizing: border-box;'>
+                                            <img src='
+                                            {clue['image'] if 'image' in clue.keys() else None}' 
+                                            alt='Clue image' style='height: 100px; width: 100%; object-fit: cover; margin-bottom: 5px;'>
+                                            <h4 style='margin: 5px 0; text-align: 
+                                            center; word-wrap: 
+                                            break-word;'>{clue['name']}</h4>
+                                            <p style='margin: 5px 0; 
+                                            word-wrap: break-word;'>
+                                            {clue['content'] if 'content' in clue.keys() else clue['summary']}</p>
+                                        </div>
+                                    """
+        flex_container_html += """
+                                    </div>
+                            """
+        flex_container_html_list.append(flex_container_html)
+    return [gr.HTML(x) for x in flex_container_html_list]
+
+
+def update_role_clue_num_dict(uid):
+
+    uid = check_uuid(uid)
+    clue_item = get_clue(uid)
+    if clue_item:
+        role_name_ = clue_item['name']
+        role_clue_dict[role_name_]['clue_list'].append(clue_item['clue'])
+        role_clue_dict[role_name_]['unexposed_num'] = clue_item[
+            'unexposed_num']
+    return [role_clue_dict[role_name_]['unexposed_num'] for role_name_ in role_clue_dict.keys()]
+
+
 def fn_choice(data: gr.EventData, uid):
     uid = check_uuid(uid)
     send_player_input(data._data["value"], uid=uid)
 
 
 if __name__ == "__main__":
-
 
     def init_game():
         if not is_init.is_set():
@@ -203,6 +257,13 @@ if __name__ == "__main__":
         welcome = {
             'name': '饮食男女',
             'description': '这是一款模拟餐馆经营的文字冒险游戏, 快来开始吧😊',
+            'introduction_label': "<br>玩法介绍",
+            'introduction_context': "在一个热闹的小镇上<br>"
+                                    "你经营着一家餐馆<br>"
+                                    "最近小镇上出现了一些有意思的事儿<br>"
+                                    "......<br>"
+                                    "通过美味的食物以及真诚的内心去打动顾客<br>"
+                                    "为他们排忧解难"
         }
         tabs = gr.Tabs(visible=True)
         with tabs:
@@ -215,24 +276,6 @@ if __name__ == "__main__":
                         new_button = gr.Button(value='🚀新的探险', )
                     with gr.Column():
                         resume_button = gr.Button(value='🔥续写情缘', )
-
-        with gr.Row():
-            chatbot = mgr.Chatbot(
-                label="Dialog",
-                show_label=False,
-                height=500,
-                visible=False,
-                bubble_full_width=False,
-            )
-
-            chatsys = mgr.Chatbot(
-                label="系统栏",
-                show_label=True,
-                height=500,
-                visible=False,
-                bubble_full_width=False,
-                layout="panel",
-            )
 
         with config_tab:
             with gr.Row():
@@ -286,31 +329,79 @@ if __name__ == "__main__":
                                                  wrap=True,
                                                  col_count=(1, 'fixed'),
                                                  )
+        game_tabs = gr.Tabs(visible=False)
 
-        with gr.Row():
+        with game_tabs:
+            main_tab = gr.Tab('主界面', id=0)
+            clue_tab = gr.Tab('线索', id=1)
+            with main_tab:
+                with gr.Row():
+                    chatbot = mgr.Chatbot(
+                        label="Dialog",
+                        show_label=False,
+                        height=500,
+                        visible=False,
+                        bubble_full_width=False,
+                    )
+
+                    chatsys = mgr.Chatbot(
+                        label="系统栏",
+                        show_label=True,
+                        height=500,
+                        visible=False,
+                        bubble_full_width=False,
+                        layout="panel",
+                    )
+
+            with gr.Row():
+                with gr.Column():
+                    user_chat_input = gr.Textbox(
+                        label="user_chat_input",
+                        placeholder="想说点什么",
+                        show_label=False,
+                        interactive=True,
+                        visible=False,
+                    )
+
             with gr.Column():
-                user_chat_input = gr.Textbox(
-                    label="user_chat_input",
-                    placeholder="想说点什么",
-                    show_label=False,
-                    interactive=True,
+                send_button = gr.Button(
+                    value="📣发送",
                     visible=False,
                 )
 
-        with gr.Column():
-            send_button = gr.Button(
-                value="📣发送",
-                visible=False,
-            )
+            export = gr.Accordion("导出选项", open=False, visible=False)
+            with export:
+                with gr.Column():
+                    export_button = gr.Button("导出完整游戏记录")
+                    export_output = gr.File(
+                        label="下载完整游戏记录",
+                        visible=False,
+                    )
 
-        export = gr.Accordion("导出选项", open=False, visible=False)
-        with export:
-            with gr.Column():
-                export_button = gr.Button("导出完整游戏记录")
-                export_output = gr.File(
-                    label="下载完整游戏记录",
-                    visible=False,
-                )
+        with clue_tab:
+            role_tabs = gr.Tabs(visible=False)
+            roles = load_user_cfg()
+            role_names = [role['name'] for role in roles]
+            # role_names = ['王先生', '老许']
+            # role_tab_list = []
+            role_tab_clue_dict = {}
+            role_tab_clue_num_dict = {}
+            i = 0
+
+            for role_name_t in role_names:
+                role_clue_dict[role_name_t] = {"clue_list": [],
+                                             "unexposed_num": None}
+                role = gr.Tab(label=role_name_t, id=i)
+                # role_tab_list.append(role_name)
+                i += 1
+                with role:
+                    role_tab_clue_dict[role_name_t] = gr.HTML()
+                    role_tab_clue_num_dict[role_name_t] = gr.Textbox(
+                        label="未暴露线索数量",
+                        value=role_clue_dict[role_name_t]["unexposed_num"],
+                        visible=True,
+                    )
+
 
         def send_message(msg, uid):
             uid = check_uuid(uid)
@@ -335,6 +426,8 @@ if __name__ == "__main__":
             invisible = False
             return {
                 tabs: gr.Tabs(visible=invisible),
+                game_tabs: gr.Tabs(visible=visible),
+                role_tabs: gr.Tabs(visible=visible),
                 chatbot: mgr.Chatbot(visible=visible),
                 chatsys: mgr.Chatbot(visible=visible),
                 user_chat_input: gr.Text(visible=visible),
@@ -346,11 +439,14 @@ if __name__ == "__main__":
                 user_chat_bot_cover: gr.HTML(visible=invisible),
             }
 
+
         def welcome_ui():
             visible = True
             invisible = False
             return {
                 tabs: gr.Tabs(visible=visible),
+                game_tabs: gr.Tabs(visible=invisible),
+                role_tabs: gr.Tabs(visible=invisible),
                 chatbot: mgr.Chatbot(visible=invisible),
                 chatsys: mgr.Chatbot(visible=invisible),
                 user_chat_input: gr.Text(visible=invisible),
@@ -528,6 +624,8 @@ if __name__ == "__main__":
 
         outputs = [
             tabs,
+            game_tabs,
+            role_tabs,
             chatbot,
             chatsys,
             user_chat_input,
@@ -577,7 +675,17 @@ if __name__ == "__main__":
         demo.load(get_sys_chat,
                   inputs=[uuid],
                   outputs=chatsys,
-                  every=0.5,)
+                  every=0.5, )
+
+        demo.load(update_role_clue_dict,
+                  inputs=[uuid],
+                  outputs=[role_tab_clue_dict[i] for i in role_names],
+                  every=0.5)
+
+        demo.load(update_role_clue_num_dict,
+                  inputs=[uuid],
+                  outputs=[role_tab_clue_num_dict[i] for i in role_names],
+                  every=0.5)
 
     demo.queue()
     demo.launch()

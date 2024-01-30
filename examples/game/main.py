@@ -26,69 +26,7 @@ from utils import (
     query_answer,
     SYS_MSG_PREFIX,
     CheckpointArgs,
-    OPENING_ROUND
 )
-
-
-def begin_task(openings, main_role, player):
-    uid = player.uid
-    send_chat_msg(f"{SYS_MSG_PREFIX}开启主线任务《{openings['task']}》"
-                  f"\n\n{openings['openings']}", uid=uid)
-    # send_chat_msg(f"{SYS_MSG_PREFIX}{openings['openings']}", uid=uid)
-    main_role.talk(openings["npc_openings"], is_display=True)
-    msg = {"content": "开场"}
-    main_role.transition(CustomerConv.OPENING)
-    if openings.get("user_openings_option", None):
-        choices = list(openings["user_openings_option"].values()) + ["自定义"]
-    else:
-        choices = None
-
-    i = 0
-    while i < OPENING_ROUND:
-        if choices:
-            questions = [
-                inquirer.List(
-                    "ans",
-                    message=f"{SYS_MSG_PREFIX}：你想要问什么？(剩余询问次数{OPENING_ROUND - i}，空输入主角将直接离开) ",
-                    choices=choices,
-                ),
-            ]
-
-            choose_during_chatting = f"""{SYS_MSG_PREFIX}你想要问什么？(剩余询问次数{OPENING_ROUND - i}，空输入主角将直接离开) 
-            <select-box shape="card"
-                                            type="checkbox" item-width="auto" options=
-                                           '
-                                           {json.dumps(choices)}'
-                                           select-once></select-box>"""
-
-            send_chat_msg(
-                choose_during_chatting,
-                flushing=False,
-                uid=player.uid,
-            )
-            answer = query_answer(questions, "ans", uid=player.uid)
-            if isinstance(answer, str):
-                if answer == "":
-                    break
-                else:
-                    msg = player.talk(answer, ruled=True)
-                    if msg is None:
-                        continue
-
-            elif isinstance(answer, list) and len(answer):
-                if answer[0] in choices:
-                    if answer[0] == "自定义":
-                        msg = player(msg)
-                    else:
-                        msg = player.talk(answer[0], is_display=True)
-            else:  # Walk away
-                break
-        else:
-            msg = player(msg)
-        i += 1
-        msg = main_role(msg)
-    main_role.talk(openings["npc_quit_openings"], is_display=True)
-    main_role.transition(CustomerConv.WARMING_UP)
 
 
 def invited_group_chat(
@@ -365,7 +303,6 @@ def main(args) -> None:
     ]
 
     plot_config = load_configs("config/plot_config.yaml")
-    openings = plot_config.pop(0)
 
     all_plots = parse_plots(plot_config, customers)
 
@@ -393,11 +330,9 @@ def main(args) -> None:
 
     # initialize main role of current plot cur_state
     checkpoint.cur_plots = check_active_plot(
-        checkpoint.all_plots, checkpoint.cur_plots, None
+        player, checkpoint.all_plots, checkpoint.cur_plots, None
     )
     logger.debug("initially active plots: " + str(checkpoint.cur_plots))
-
-    begin_task(openings=openings, main_role=customers[0], player=player)
 
     while True:
         # daily loop
@@ -419,6 +354,7 @@ def main(args) -> None:
             if done_plot_idx is not None:
                 # find the roles and plot to be activated
                 checkpoint.cur_plots = check_active_plot(
+                    player,
                     checkpoint.all_plots,
                     checkpoint.cur_plots,
                     done_plot_idx,
@@ -428,10 +364,15 @@ def main(args) -> None:
         elif checkpoint.stage_per_night == StagePerNight.CASUAL_CHAT_FOR_MEAL:
             # ==========  one-on-one loop =================
             # the remaining not invited customers show up with probability
+            central_roles = []
+            for p_idx in checkpoint.cur_plots:
+                for r in checkpoint.all_plots[p_idx].main_roles:
+                    central_roles.append(r.name)
+            unavailable_roles = central_roles + checkpoint.invited_customers
             rest_customers = [
                 c
                 for c in customers
-                if c.name not in checkpoint.invited_customers
+                if c.name not in unavailable_roles
             ]
             checkpoint.visit_customers = one_on_one_loop(
                 rest_customers,

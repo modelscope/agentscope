@@ -1,19 +1,21 @@
 # -*- coding: utf-8 -*-
 from typing import Any, Union, Tuple
 import re
+import json
 import numpy as np
 from loguru import logger
 
 from enums import CustomerConv, CustomerPlot
-from utils import SYS_MSG_PREFIX
 from agentscope.agents import StateAgent, DialogAgent
 from agentscope.message import Msg
 from relationship import Relationship
 from utils import (
     send_chat_msg,
+    send_clue,
     get_a_random_avatar,
     send_pretty_msg,
     replace_names_in_messages,
+    SYS_MSG_PREFIX,
 )
 
 HISTORY_WINDOW = 10
@@ -27,6 +29,7 @@ class Customer(StateAgent, DialogAgent):
     def __init__(self, game_config: dict, **kwargs: Any):
         self.uid = kwargs.pop("uid")
         super().__init__(**kwargs)
+        self.retry_time = 3
         self.game_config = game_config
         self.max_itr_preorder = 5
         self.preorder_itr_count = 0
@@ -63,6 +66,12 @@ class Customer(StateAgent, DialogAgent):
 
         # TODO: refactor to a sub-state
         self.plot_stage = CustomerPlot.NOT_ACTIVE
+
+        # Clues: `unexposed_clues` & `exposed_clues`
+        self.unexposed_clues = self.config.get("clue", None)
+        if self.unexposed_clues is None:
+            self.unexposed_clues = self.build_clues()
+        self.exposed_clues = []
 
     def visit(self) -> np.array:
         # TODO: for debug, set the visit prob to be 0.9
@@ -193,10 +202,10 @@ class Customer(StateAgent, DialogAgent):
                 "character_description": self.background
             }
         ) + self.game_config[
-            "hidden_main_plot_prompt"
-        ].format_map(
+                            "hidden_main_plot_prompt"
+                        ].format_map(
             {
-                "hidden_plot": self.config["character_setting"]["hidden_plot"],
+                "hidden_plot": self.config["character_setting"]["hidden_plot"][self.active_plots[0]],
             },
         )
         if x is not None:
@@ -214,6 +223,9 @@ class Customer(StateAgent, DialogAgent):
         reply = self.model(replace_names_in_messages(prompt))
         reply_msg = Msg(role="assistant", name=self.name, content=reply)
         self.memory.add(reply_msg)
+
+        self.update_clues(reply_msg.content)
+
         return reply_msg
 
     def _preferred_food(self, x:dict) -> dict:
@@ -286,6 +298,9 @@ class Customer(StateAgent, DialogAgent):
 
         reply_msg = Msg(role="assistant", name=self.name, content=reply)
         self.memory.add(reply_msg)
+
+        self.update_clues(reply_msg.content)
+
         return reply_msg
 
     def refine_background(self) -> None:
@@ -448,3 +463,87 @@ class Customer(StateAgent, DialogAgent):
                     flushing=True,
                 )
             return msg
+
+    def build_clues(self):
+        # Get all hidden plot
+        send_chat_msg(f"{SYS_MSG_PREFIX}初始化NPC {self.name}..."
+                      f"（这可能需要一些时间）", uid=self.uid)
+
+        all_plot = ""
+        for i in self.config["character_setting"]["hidden_plot"].values():
+            all_plot += (i + "\n")
+
+        clue_parse_prompt = self.game_config["clue_parse_prompt"] + all_plot
+        message = Msg(name="system", role="user", content=clue_parse_prompt)
+
+        clues = self.model(
+            [
+                {
+                    key: getattr(message, key)
+                    for key in MESSAGE_KEYS
+                    if hasattr(message, key)
+                },
+            ],
+            parse_func=json.loads,
+            max_retries=self.retry_time,
+        )
+        logger.debug(clues)
+        send_chat_msg(f"{SYS_MSG_PREFIX}初始化NPC {self.name}完成！", uid=self.uid)
+        return clues
+
+    def update_clues(self, content):
+
+        if len(self.unexposed_clues) == 0:
+            return
+
+        prompt = self.game_config["clue_detect_prompt"].format_map(
+            {
+                "content": content,
+                "clue": self.unexposed_clues,
+                "name": self.name,
+            }
+        )
+        message = Msg(name="system", content=prompt, role="user")
+        exposed_clues = self.model(
+            [
+                {
+                    key: getattr(message, key)
+                    for key in MESSAGE_KEYS
+                    if hasattr(message, key)
+                },
+            ],
+            parse_func=json.loads,
+            max_retries=self.retry_time,
+        )
+        logger.debug(exposed_clues)
+        indices_to_pop = []
+        found_clue = []
+        for clue in exposed_clues:
+            index = clue.get("index", -1)
+            summary = clue.get("summary", -1)
+            if index < len(self.unexposed_clues) and index:
+                indices_to_pop.append(index)
+                found_clue.append(
+                    {
+                        "name": self.unexposed_clues[index]["name"],
+                        "summary": summary  # Use new summary
+                    }
+                )
+        indices_to_pop.sort(reverse=True)
+        for index in indices_to_pop:
+            element = self.unexposed_clues.pop(index)
+            self.exposed_clues.append(element)
+
+        for i, clue in enumerate(found_clue):
+            send_chat_msg(
+                f"{SYS_MSG_PREFIX}发现{self.name}的新线索："
+                f"《{clue['name']}》{clue['summary']} "
+                f"\n\n剩余未发现线索数量:"
+                f"{len(self.unexposed_clues) + len(found_clue) - i - 1}",
+                uid=self.uid)
+            send_clue(
+                clue,
+                unexposed_num=len(self.unexposed_clues),
+                uid=self.uid,
+                role=self.name,
+            )
