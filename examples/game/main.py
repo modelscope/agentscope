@@ -221,7 +221,7 @@ def one_on_one_loop(customers, player, uid, checkpoint):
             answer = query_answer(questions, "ans", uid=uid)
             if isinstance(answer, str):
                 send_chat_msg(
-                    "{SYS_MSG_PREFIX}请在列表中选择。",
+                    f"{SYS_MSG_PREFIX}请在列表中选择。",
                     uid=uid,
                 )
                 continue
