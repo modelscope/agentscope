@@ -6,10 +6,11 @@ from typing import Optional, List
 from datetime import datetime
 
 import dashscope
+import time
 from colorist import BgBrightColor
 import inquirer
 import random
-from multiprocessing import Queue
+from multiprocessing import Queue, Value
 from collections import defaultdict
 from dataclasses import dataclass
 from agentscope.message import Msg
@@ -17,9 +18,8 @@ from enums import StagePerNight
 from pathlib import Path
 from pypinyin import lazy_pinyin, Style
 
-import gradio as gr
-
 SYS_MSG_PREFIX = '【系统】'
+SYS_TIMEOUT = f"{SYS_MSG_PREFIX}操作超时，请返回首页，开启新的探险。"
 OPENING_ROUND = 3
 REVISION_ROUND = 3
 
@@ -90,6 +90,7 @@ def enable_web_ui():
 
 def init_uid_queues():
     return {
+        "glb_act_timestamp": Value('d', float('inf')),
         "glb_queue_chat_msg": Queue(),
         "glb_queue_chat_input": Queue(),
         "glb_queue_clue": Queue(),
@@ -121,6 +122,9 @@ def send_chat_msg(
                 },
             ],
         )
+        if msg != SYS_TIMEOUT:
+            glb_act_timestamp = glb_uid_dict[uid]["glb_act_timestamp"]
+            glb_act_timestamp.value = time.time()
 
 
 def send_clue(
@@ -176,6 +180,14 @@ def send_player_msg(
                 None,
             ],
         )
+        glb_act_timestamp = glb_uid_dict[uid]["glb_act_timestamp"]
+        glb_act_timestamp.value = time.time()
+
+
+def get_act_timestamp(uid=None):
+    global glb_uid_dict
+    glb_act_timestamp = glb_uid_dict[uid]["glb_act_timestamp"]
+    return glb_act_timestamp.value
 
 
 def get_chat_msg(uid=None):

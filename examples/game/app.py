@@ -2,6 +2,7 @@
 import base64
 import os
 import yaml
+import time
 import datetime
 import threading
 from collections import defaultdict
@@ -14,8 +15,11 @@ from utils import (
     enable_web_ui,
     send_player_msg,
     send_player_input,
+    get_act_timestamp,
+    send_chat_msg,
     get_chat_msg,
     SYS_MSG_PREFIX,
+    SYS_TIMEOUT,
     ResetException,
     InactiveException,
     get_clue
@@ -25,8 +29,10 @@ from generate_image import generate_user_logo_file
 import gradio as gr
 import modelscope_gradio_components as mgr
 
-enable_web_ui()
+MAX_NUM_DISPLAY_MSG = 20
+TIMEOUT = 300
 
+enable_web_ui()
 role_clue_dict = {}
 
 
@@ -53,7 +59,6 @@ def get_role_by_name(name, uid):
 glb_history_dict = defaultdict(init_uid_list)
 glb_signed_user = []
 is_init = Event()
-MAX_NUM_DISPLAY_MSG = 20
 
 
 # 图片本地路径转换为 base64 格式
@@ -186,6 +191,14 @@ def update_role_clue_dict(uid):
                             """
         flex_container_html_list.append(flex_container_html)
     return [gr.HTML(x) for x in flex_container_html_list]
+
+
+def check_act_timestamp(uid):
+    uid = check_uuid(uid)
+    print(f"{uid}: active in {(time.time() - get_act_timestamp(uid))} sec.")
+    if (time.time() - get_act_timestamp(uid)) >= TIMEOUT:
+        send_chat_msg(SYS_TIMEOUT, uid=uid)
+        send_player_input("**Timeout**", uid=uid)
 
 
 def fn_choice(data: gr.EventData, uid):
@@ -686,6 +699,10 @@ if __name__ == "__main__":
                   inputs=[uuid],
                   outputs=[role_tab_clue_dict[i] for i in role_names],
                   every=0.5)
+
+        demo.load(check_act_timestamp,
+                  inputs=[uuid],
+                  every=10)
 
     demo.queue()
     demo.launch()
