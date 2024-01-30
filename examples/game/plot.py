@@ -44,9 +44,10 @@ class GamePlot:
             self,
             plot_id: int,
             plot_descriptions: dict,
+            max_attempts: int = 2,
             main_roles: Optional[list[Customer]] = None,
             supporting_roles: Optional[list[Customer]] = None,
-            max_unblock_plots: Optional[int] = None
+            max_unblock_plots: Optional[int] = None,
     ) -> None:
         self.id = plot_id
         self.main_roles = main_roles or []
@@ -59,6 +60,8 @@ class GamePlot:
         self.support_following_plots: list[
             tuple[int, Union[bool, Callable]]
         ] = []
+        self.contact_chances = 1
+        self.max_attempts = max_attempts
 
     def register_following_plot_check(
             self, plot_id: int, check_func: str
@@ -230,6 +233,7 @@ def parse_plots(
             plot_descriptions=cfg["plot_descriptions"],
             main_roles=[roles_map[r] for r in cfg["main_roles"] or []],
             supporting_roles=[roles_map[r] for r in cfg["supporting_roles"] or []],
+            max_attempts=cfg.get("max_attempt", 2),
         )
         if "max_unblock_plots" in cfg:
             gplot.max_unblock_plots = int(cfg["max_unblock_plots"])

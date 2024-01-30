@@ -364,7 +364,7 @@ class Customer(StateAgent, DialogAgent):
             content=f" {SYS_MSG_PREFIX}根据对话，{self.name}的背景更新为："
             + new_background,
         )
-        send_chat_msg(
+        send_pretty_msg(
             bg_msg,
             uid=self.uid,
             avatar=self.avatar,
