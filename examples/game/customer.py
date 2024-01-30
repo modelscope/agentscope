@@ -520,6 +520,7 @@ class Customer(StateAgent, DialogAgent):
                 },
             ],
             parse_func=json.loads,
+            fault_handler=lambda response: [],
             max_retries=self.retry_time,
         )
         logger.debug(exposed_clues)
