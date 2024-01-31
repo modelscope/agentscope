@@ -2,12 +2,11 @@
 import os
 import pickle
 from http import HTTPStatus
-from typing import Optional, List
+from typing import List
 from datetime import datetime
 
 import base64
 import dashscope
-import time
 
 import requests
 from colorist import BgBrightColor
