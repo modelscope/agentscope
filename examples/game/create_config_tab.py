@@ -8,6 +8,14 @@ from generate_image import generate_user_logo_file
 from utils import check_uuid
 
 
+def convert_to_ds(samples):
+    return [[str(sample).strip()] for sample in samples] if samples else None
+
+
+def convert_to_list(samples):
+    return [sample[0] for sample in samples] if samples else None
+
+
 def get_role_by_name(name, uuid, roles=None):
     uuid = check_uuid(uuid)
     roles = roles or load_user_cfg(uuid=uuid)
@@ -28,7 +36,7 @@ def get_plot_by_id(plot_id, uuid, plots=None):
     uuid = check_uuid(uuid)
     plots = plots or load_user_cfg(cfg_name=PLOT_CFG_NAME, uuid=uuid)
     for plot in plots:
-        if plot["plot_id"] == int(plot_id):
+        if plot["plot_id"] == plot_id:
             return plot
     return None
 
@@ -73,7 +81,7 @@ def config_plot_tab(plot_tab, uuid):
         predecessor_plots = gr.Dataframe(
             label="配置前置剧情",
             show_label=True,
-            datatype=["number"],
+            datatype=["str"],
             headers=["前置剧情id"],
             type="array",
             wrap=True,
@@ -105,7 +113,7 @@ def config_plot_tab(plot_tab, uuid):
             label="设置解锁剧情",
             show_label=True,
             datatype=["str", "str"],
-            headers=["解锁方式", "解锁剧情"],
+            headers=["解锁方式", "解锁剧情ID"],
             type="array",
             wrap=True,
             col_count=(2, "fixed"),
@@ -119,11 +127,10 @@ def config_plot_tab(plot_tab, uuid):
             label="用户开场白选项",
             show_label=True,
             datatype=["str", "str"],
-            headers=["用户选择项"],
+            headers=["编号", "用户选择项"],
             type="array",
             wrap=True,
-            col_count=(1, "fixed"),
-            row_count=(3, "fixed"),
+            col_count=(2, "fixed"),
         )
 
     plot_config_options = [
@@ -152,20 +159,47 @@ def config_plot_tab(plot_tab, uuid):
     def configure_plot(id, uuid):
         uuid = check_uuid(uuid)
         plot = get_plot_by_id(plot_id=id, uuid=uuid)
+
         attempts = plot.get("max_attempts", 2)
+
+        cfg_main_roles = convert_to_ds(plot["main_roles"])
+        cfg_supporting_roles = convert_to_ds(plot["supporting_roles"])
+        cfg_predecessor_plots = convert_to_ds(plot["predecessor_plots"])
+        cfg_max_unblock_plots = plot.get("max_unblock_plots", 1)
+
+        cfg_unblock_following_plots = plot.get("unblock_following_plots", None)
+        cfg_unblock_following_plots = (
+            [
+                [p["unblock_chk_func"], str(p["unblock_plot"])]
+                for p in cfg_unblock_following_plots
+            ]
+            if cfg_unblock_following_plots
+            else None
+        )
+
+        plot_descriptions = plot.get("plot_descriptions", dict())
+
+        cfg_user_openings_option = plot_descriptions.get("user_openings_option", dict())
+
+        cfg_user_openings_option = (
+            [[k, v.strip()] for k, v in cfg_user_openings_option.items()]
+            if cfg_user_openings_option
+            else None
+        )
+
         return {
             plot_id: plot["plot_id"],
-            task_name: plot["plot_descriptions"]["task"].strip("\n"),
+            task_name: plot["plot_descriptions"]["task"].strip(),
             max_attempts: attempts,
-            predecessor_plots: None,
-            main_roles: None,
-            supporting_roles: None,
-            max_unblock_plots: 1,
-            unblock_following_plots: None,
-            openings: "openings",
-            npc_openings: "login",
-            npc_quit_openings: "logout",
-            user_openings_option: None,
+            predecessor_plots: cfg_predecessor_plots,
+            main_roles: cfg_main_roles,
+            supporting_roles: cfg_supporting_roles,
+            max_unblock_plots: cfg_max_unblock_plots,
+            unblock_following_plots: cfg_unblock_following_plots,
+            openings: plot_descriptions.get("openings", "").strip(),
+            npc_openings: plot_descriptions.get("npc_openings", "").strip(),
+            npc_quit_openings: plot_descriptions.get("npc_quit_openings", "").strip(),
+            user_openings_option: cfg_user_openings_option,
         }
 
     def create_plot():
@@ -187,6 +221,7 @@ def config_plot_tab(plot_tab, uuid):
     def delete_plot(plot_id, uuid):
         uuid = check_uuid(uuid)
         plots = load_user_cfg(cfg_name=cfg_name, uuid=uuid)
+        plot_id = int(plot_id)
         del_plot = get_plot_by_id(plot_id=plot_id, uuid=uuid, plots=plots)
 
         if del_plot in plots and len(plots) >= 2:
@@ -216,6 +251,8 @@ def config_plot_tab(plot_tab, uuid):
     ):
         uuid = check_uuid(uuid)
         plot_id = int(plot_id)
+        max_attempts = int(max_attempts)
+        max_unblock_plots = int(max_unblock_plots)
         if plot_id == "":
             gr.Warning("必须给一个新剧情设置一个id")
             return gr.Dropdown()
@@ -227,20 +264,31 @@ def config_plot_tab(plot_tab, uuid):
             plots.append(new_plot)
 
         new_plot["plot_id"] = plot_id
-        new_plot["max_attempts"] = ""
-        new_plot["main_roles"] = None
-        new_plot["supporting_roles"] = None
-        new_plot["max_unblock_plots"] = ""
-        new_plot["unblock_following_plots"] = None
+        new_plot["max_attempts"] = max_attempts
+        new_plot["main_roles"] = convert_to_list(main_roles)
+        new_plot["supporting_roles"] = convert_to_list(supporting_roles)
+        new_plot["max_unblock_plots"] = max_unblock_plots
+        unblock_following_plots = [
+            {"unblock_chk_func": "always", "unblock_plot": int(p[1])}
+            for p in unblock_following_plots
+            if p[1]
+        ]
+
+        if len(unblock_following_plots) > max_unblock_plots:
+            gr.Warning(f"解锁剧情数量超过最大的解锁限制[{max_unblock_plots}]")
+            unblock_following_plots = unblock_following_plots[:max_unblock_plots]
+        new_plot["unblock_following_plots"] = unblock_following_plots
+        new_plot["predecessor_plots"] = [int(p[0]) for p in predecessor_plots if p[0]]
 
         plot_descriptions = new_plot.get("plot_descriptions", dict())
         plot_descriptions["task"] = task_name
-        plot_descriptions["predecessor_plots"] = None
-        plot_descriptions["openings"] = ""
-        plot_descriptions["npc_openings"] = ""
-        plot_descriptions["npc_quit_openings"] = ""
-        plot_descriptions["openings"] = ""
-        plot_descriptions["user_openings_option"] = None
+
+        plot_descriptions["openings"] = openings
+        plot_descriptions["npc_openings"] = npc_openings
+        plot_descriptions["npc_quit_openings"] = npc_quit_openings
+        plot_descriptions["user_openings_option"] = {
+            it[0]: it[1] for it in user_openings_option if it[0]
+        }
         new_plot["plot_descriptions"] = plot_descriptions
         save_user_cfg(plots, cfg_name=cfg_name, uuid=uuid)
         plot_ids = get_plot_ids(uuid=uuid, plots=plots)
@@ -346,15 +394,24 @@ def config_role_tab(role_tab, uuid):
 
         character_setting = role["character_setting"]
         hidden_plots = character_setting["hidden_plot"]
-        hidden_plots = [
-            [str(k), v] for k, v in hidden_plots.items()
-        ] if hidden_plots else None
+        hidden_plots = (
+            [[str(k), v.strip()] for k, v in hidden_plots.items()]
+            if hidden_plots
+            else None
+        )
 
-        plugin_backgrounds = [[str] for str in character_setting["plugin_background"]]
+        plugin_backgrounds = [
+            [string.strip()] for string in character_setting["plugin_background"]
+        ]
         clues = role.get("clue", None)
-        clues = [
-            [str(clue["plot"]), clue["name"], clue["content"]] for clue in clues
-        ] if clues else None
+        clues = (
+            [
+                [str(clue["plot"]), clue["name"], clue["content"].strip()]
+                for clue in clues
+            ]
+            if clues
+            else None
+        )
 
         return {
             avatar_file: gr.Image(value=role["avatar"], interactive=True),
@@ -362,11 +419,11 @@ def config_role_tab(role_tab, uuid):
             avatar_desc: role.get("avatar_desc", ""),
             use_memory: gr.Checkbox(value=role["use_memory"]),
             model_name: role["model"],
-            food_preference: character_setting["food_preference"],
-            background: character_setting["background"],
+            food_preference: character_setting["food_preference"].strip(),
+            background: character_setting["background"].strip(),
             hidden_plot: hidden_plots,
             plugin_background: plugin_backgrounds,
-            plot_clues: clues
+            plot_clues: clues,
         }
 
     role_config_options = [

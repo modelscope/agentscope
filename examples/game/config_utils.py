@@ -50,14 +50,14 @@ def load_default_cfg(cfg_name=CUSTOMER_CFG_NAME, uuid=""):
 
 def load_user_cfg(cfg_name=CUSTOMER_CFG_NAME, uuid=""):
     cfg_file = get_user_cfg_file(cfg_name=cfg_name, uuid=uuid)
-    print(f'load from {cfg_file}')
+    # print(f'load from {cfg_file}')
     config = load_configs(cfg_file)
     return config
 
 
 def save_user_cfg(config, cfg_name=CUSTOMER_CFG_NAME, uuid=""):
     cfg_file = get_user_cfg_file(cfg_name=cfg_name, uuid=uuid)
-    print(f'save to {cfg_file}')
+    # print(f'save to {cfg_file}')
     if uuid != "" and not os.path.exists(os.path.dirname(cfg_file)):
         os.makedirs(os.path.dirname(cfg_file))
     save_configs(config, cfg_file)
