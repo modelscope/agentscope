@@ -163,6 +163,7 @@ class Customer(StateAgent, DialogAgent):
             fault_handler=_default_score,
             max_retries=3,
         )
+
         satisfied_str = "不满意"
         is_satisfied = False
         if self.relationship.is_satisfied(score):

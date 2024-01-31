@@ -138,12 +138,9 @@ def get_chat(uid) -> List[List]:
     line = get_chat_msg(uid=uid)
 
     if line is not None:
-        print("line", line)
         if line[0] and line[0]['text'] == "**i_am_cooking**":
             glb_cook_signal_dict[uid] = True
             glb_cook_string_dict[uid] = "制作中"
-            print("glb_cook_signal_dict[uid]", glb_cook_signal_dict[uid])
-            print("glb_cook_string_dict[uid]", glb_cook_string_dict[uid])
         elif line[0] and line[0]['text'] == "**end_cooking**":
             glb_cook_signal_dict[uid] = False
             glb_cook_string_dict[uid] = ""

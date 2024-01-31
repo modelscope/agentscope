@@ -19,7 +19,7 @@ from utils import (
     InactiveException,
     generate_picture,
     send_player_msg,
-    SYS_MSG_PREFIX,
+    SYS_MSG_PREFIX
 )
 
 
