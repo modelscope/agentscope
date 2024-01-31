@@ -5,6 +5,7 @@ import gradio as gr
 from config_utils import (PLOT_CFG_NAME, load_default_cfg, load_user_cfg,
                           save_user_cfg)
 from generate_image import generate_user_logo_file
+from relationship import Familiarity
 from utils import check_uuid
 
 
@@ -321,6 +322,7 @@ def config_plot_tab(plot_tab, uuid):
 
 
 def config_role_tab(role_tab, uuid):
+    relationship_list = Familiarity.to_list()
     uuid = check_uuid(uuid)
     with gr.Row():
         role_selector = gr.Dropdown(label="选择角色查看或者编辑")
@@ -346,10 +348,12 @@ def config_role_tab(role_tab, uuid):
             )
             gen_avatar_button = gr.Button(value="生成头像")
         with gr.Column(scale=2):
-            role_name = gr.Textbox(
-                label="角色名称",
-                placeholder="请输入角色名称",
-            )
+            with gr.Row():
+                role_name = gr.Textbox(
+                    label="角色名称",
+                    placeholder="请输入角色名称",
+                )
+                relationship = gr.Dropdown(label='熟悉程度', choices=relationship_list)
             with gr.Row():
                 use_memory = gr.Checkbox(label="记忆功能", info="是否开启角色记忆功能")
                 model_name = gr.Textbox(label="模型设置")
@@ -416,6 +420,7 @@ def config_role_tab(role_tab, uuid):
         return {
             avatar_file: gr.Image(value=role["avatar"], interactive=True),
             role_name: role["name"],
+            relationship: gr.Dropdown(value=role.get('relationship', '陌生')),
             avatar_desc: role.get("avatar_desc", ""),
             use_memory: gr.Checkbox(value=role["use_memory"]),
             model_name: role["model"],
@@ -429,6 +434,7 @@ def config_role_tab(role_tab, uuid):
     role_config_options = [
         avatar_file,
         role_name,
+        relationship,
         avatar_desc,
         use_memory,
         model_name,
@@ -451,6 +457,7 @@ def config_role_tab(role_tab, uuid):
         return {
             avatar_file: gr.Image(value=None),
             role_name: "",
+            relationship: gr.Dropdown(value='陌生'),
             avatar_desc: "",
             use_memory: gr.Checkbox(label="是否开启记忆功能"),
             model_name: "",
@@ -479,6 +486,7 @@ def config_role_tab(role_tab, uuid):
     def save_role(
         avatar_file,
         name,
+        relationship,
         avatar_desc,
         use_memory,
         model_name,
@@ -503,6 +511,7 @@ def config_role_tab(role_tab, uuid):
         new_role["avatar"] = avatar_file
         new_role["avatar_desc"] = avatar_desc
         new_role["name"] = name
+        new_role["relationship"] = relationship
         new_role["use_memory"] = use_memory
         new_role["model"] = model_name
         new_role["clue"] = [
