@@ -95,7 +95,6 @@ def init_uid_queues():
         "glb_queue_chat_input": Queue(),
         "glb_queue_clue": Queue(),
         "glb_queue_story": Queue(),
-        "glb_queue_cook_signal_msg": [],
     }
 
 
@@ -187,44 +186,6 @@ def get_story_msg(
         if line is not None:
             return line
     return None
-
-
-def send_cook_signal_msg(
-    msg,
-    role="我",
-    uid=None,
-    flushing=False,
-    avatar="./assets/user.jpg",
-):
-    print("send_cook_signal_msg:", msg)
-    if get_use_web_ui():
-        global glb_uid_dict
-        glb_queue_cook_signal_msg = glb_uid_dict[uid]["glb_queue_cook_signal_msg"]
-        glb_queue_cook_signal_msg.append(
-            [
-                {
-                    "text": msg,
-                    "name": role,
-                    "flushing": flushing,
-                    "avatar": avatar,
-                },
-                None,
-            ],
-        )
-
-
-def get_cook_signal_msg_length(uid=None):
-    global glb_uid_dict
-    glb_queue_cook_signal_msg = glb_uid_dict[uid]["glb_queue_cook_signal_msg"]
-    if glb_queue_cook_signal_msg:
-        line = glb_queue_cook_signal_msg[0]
-        if glb_queue_cook_signal_msg[-1][0]['text'] == "**end_cooking**":
-            glb_uid_dict[uid]["glb_queue_cook_signal_msg"] = []
-            return 0
-        else:
-            glb_queue_cook_signal_msg.append(line)
-            return len(glb_queue_cook_signal_msg)
-    return 0
 
 
 def send_player_msg(
@@ -377,3 +338,15 @@ def replace_names_in_messages(messages):
                 pinyin_name = ''.join(lazy_pinyin(name, style=Style.TONE3))
                 line['name'] = pinyin_name
     return messages
+
+
+def cycle_dots(text: str, num_dots: int = 3) -> str:
+    # 计算当前句尾的点的个数
+    current_dots = len(text) - len(text.rstrip('.'))
+    # 计算下一个状态的点的个数
+    next_dots = (current_dots + 1) % (num_dots + 1)
+    if next_dots == 0:
+        # 避免 '...0', 应该是 '.'
+        next_dots = 1
+    # 移除当前句尾的点，并添加下一个状态的点
+    return text.rstrip('.') + '.' * next_dots

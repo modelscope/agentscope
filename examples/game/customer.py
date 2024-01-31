@@ -151,7 +151,6 @@ class Customer(StateAgent, DialogAgent):
         def _default_score(_: str) -> float:
             return 2.0
 
-        send_model_msg('**before_model_infer**', uid=self.uid,)
         score, text = self.model(
             [
                 {
@@ -164,7 +163,6 @@ class Customer(StateAgent, DialogAgent):
             fault_handler=_default_score,
             max_retries=3,
         )
-        send_model_msg('**end_model_infer**', uid=self.uid)
         satisfied_str = "不满意"
         is_satisfied = False
         if self.relationship.is_satisfied(score):

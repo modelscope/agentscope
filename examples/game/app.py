@@ -23,7 +23,7 @@ from utils import (
     InactiveException,
     get_clue_msg,
     get_story_msg,
-    get_cook_signal_msg_length
+    cycle_dots
 )
 from generate_image import generate_user_logo_file
 
@@ -65,6 +65,8 @@ def get_role_by_name(name, uid):
 glb_history_dict = defaultdict(init_uid_list)
 glb_clue_dict = defaultdict(init_uid_dict)
 glb_story_dict = defaultdict(init_uid_dict)
+glb_cook_signal_dict = defaultdict(init_uid_dict)
+glb_cook_string_dict = defaultdict(init_uid_dict)
 
 glb_signed_user = []
 is_init = Event()
@@ -131,9 +133,22 @@ def export_chat_history(uid):
 def get_chat(uid) -> List[List]:
     uid = check_uuid(uid)
     global glb_history_dict
+    global glb_cook_signal_dict
+    global glb_cook_string_dict
     line = get_chat_msg(uid=uid)
+
     if line is not None:
-        glb_history_dict[uid] += [line]
+        print("line", line)
+        if line[0] and line[0]['text'] == "**i_am_cooking**":
+            glb_cook_signal_dict[uid] = True
+            glb_cook_string_dict[uid] = "制作中"
+            print("glb_cook_signal_dict[uid]", glb_cook_signal_dict[uid])
+            print("glb_cook_string_dict[uid]", glb_cook_string_dict[uid])
+        elif line[0] and line[0]['text'] == "**end_cooking**":
+            glb_cook_signal_dict[uid] = False
+            glb_cook_string_dict[uid] = ""
+        else:
+            glb_history_dict[uid] += [line]
 
     dial_msg, sys_msg = [], []
     for line in glb_history_dict[uid]:
@@ -146,13 +161,14 @@ def get_chat(uid) -> List[List]:
         else:
             # User chat, format: (msg, None)
             dial_msg.append(line)
-    length = get_cook_signal_msg_length(uid=uid)
-    if length > 0:
-        dial_msg.append([{'text': '食物制作中' + ('。' * (length % 4)),
-                          'name': '我', 'flushing': False, 'avatar': "./assets/user.jpg"}, None])
-
-    return dial_msg[-MAX_NUM_DISPLAY_MSG:], sys_msg[-MAX_NUM_DISPLAY_MSG:]
-
+    if glb_cook_signal_dict[uid]:
+        text = cycle_dots(glb_cook_string_dict[uid])
+        glb_cook_string_dict[uid] = text
+        dial_msg.append([{'text': text,'name': '我', 'flushing': False,
+                         'avatar': "./assets/user.jpg"}, None])
+        return dial_msg[-MAX_NUM_DISPLAY_MSG:] , sys_msg[-MAX_NUM_DISPLAY_MSG:]
+    else:
+        return dial_msg[-MAX_NUM_DISPLAY_MSG:], sys_msg[-MAX_NUM_DISPLAY_MSG:]
 
 def get_story(uid):
     global glb_story_dict
