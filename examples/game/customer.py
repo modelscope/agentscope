@@ -16,6 +16,7 @@ from utils import (
     send_pretty_msg,
     replace_names_in_messages,
     SYS_MSG_PREFIX,
+    get_clue_image_b64_url,
 )
 
 HISTORY_WINDOW = 10
@@ -554,12 +555,19 @@ class Customer(StateAgent, DialogAgent):
                 continue
             index = clue.get("index", -1)
             summary = clue.get("summary", -1)
-            if index < len(self.unexposed_clues) and index >= 0:
+            if len(self.unexposed_clues) > index >= 0:
                 indices_to_pop.append(index)
+                # TODO: get index and summary separately can be more stable
                 found_clue.append(
                     {
                         "name": self.unexposed_clues[index]["name"],
-                        "summary": summary  # Use new summary
+                        "summary": summary,  # Use new summary
+                        "image": get_clue_image_b64_url(
+                            customer=self.name,
+                            clue_name=self.unexposed_clues[index]["name"],
+                            uid=self.uid,
+                            content=summary,
+                        )
                     }
                 )
         indices_to_pop.sort(reverse=True)

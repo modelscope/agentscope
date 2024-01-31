@@ -2,11 +2,13 @@
 import os
 import pickle
 from http import HTTPStatus
-from typing import Optional, List
+from typing import List
 from datetime import datetime
 
+import base64
 import dashscope
-import time
+
+import requests
 from colorist import BgBrightColor
 import inquirer
 import random
@@ -19,6 +21,7 @@ from pathlib import Path
 from pypinyin import lazy_pinyin, Style
 
 SYS_MSG_PREFIX = '【系统】'
+DEFAULT_AGENT_IMG_DIR = "/tmp/as_game/config/"
 OPENING_ROUND = 3
 REVISION_ROUND = 3
 
@@ -290,16 +293,23 @@ class ResetException(Exception):
     pass
 
 
-def generate_picture(prompt):
+def generate_picture(prompt, model="wanx-lite"):
     from dashscope.common.error import InvalidTask
     dashscope.api_key = os.environ.get("DASHSCOPE_API_KEY") or dashscope.api_key
     assert dashscope.api_key
     try:
-        rsp = dashscope.ImageSynthesis.call(
-            model='wanx-lite',
-            prompt=prompt,
-            n=1,
-            size='768*768')
+        if model == "wanx-lite":
+            rsp = dashscope.ImageSynthesis.call(
+                model='wanx-lite',
+                prompt=prompt,
+                n=1,
+                size='768*768')
+        else:
+            rsp = dashscope.ImageSynthesis.call(
+                model=dashscope.ImageSynthesis.Models.wanx_v1,
+                prompt=prompt,
+                n=1,
+                size='1024*1024')
         if rsp.status_code == HTTPStatus.OK:
             return rsp.output['results'][0]['url']
 
@@ -308,6 +318,54 @@ def generate_picture(prompt):
                   (rsp.status_code, rsp.code, rsp.message))
     except InvalidTask as e:
         print(e)
+
+
+def get_clue_image_b64_url(customer, clue_name, uid, content):
+    prompt = """
+    Design a simple, flat-style clue card for {clue_name} that abstractly 
+    conveys {content}. Use minimalistic shapes and a limited color palette 
+    to create a clear and visually appealing representation.
+    """
+    extensions = ["gif", "jpeg", "png", "jpg"]
+    try:
+        file_dir = os.path.join(DEFAULT_AGENT_IMG_DIR, uid, customer)
+        if not os.path.exists(file_dir):
+            os.makedirs(file_dir, exist_ok=True)
+
+        file_path = None
+        for ext in extensions:
+            tmp_file_path = os.path.join(file_dir, f"{clue_name}.{ext}")
+            if os.path.exists(tmp_file_path):
+                file_path = tmp_file_path
+                break
+        if file_path is None:
+            url = generate_picture(prompt.format_map({
+                "clue_name": clue_name,
+                "content": content,
+            }))
+            response = requests.get(url)
+            if response.status_code == 200:
+                for ext in extensions:
+                    if f".{ext}" in url:
+                        file_path = os.path.join(file_dir, f"{clue_name}.{ext}")
+                        break
+                if file_path:
+                    with open(file_path, 'wb') as f:
+                        f.write(response.content)
+                else:
+                    raise Exception(f"Unknown file extension: {url}")
+            else:
+                raise Exception(
+                    f"Error downloading image: status code {response.status_code}")
+
+        with open(file_path, "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read())
+            base64_data = encoded_string.decode("utf-8")
+            base64_url = f"data:image/{ext};base64,{base64_data}"
+        return base64_url
+    except Exception as e:
+        print(e)
+        return "#"
 
 
 def replace_names_in_messages(messages):
