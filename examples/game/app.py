@@ -81,7 +81,18 @@ def covert_image_to_base64(image_path):
         return base64_url
 
 
-def format_cover_html(config: dict, bot_avatar_path="assets/bg.png"):
+def format_cover_html(bot_avatar_path="assets/bg.png"):
+    config = {
+        'name': '谜馔',
+        'description': '这是一款模拟餐馆经营的解密推理游戏, 快来开始吧😊',
+        'introduction_label': "<br>玩法介绍",
+        'introduction_context': "在一个热闹的小镇上<br>"
+                                "你经营着一家餐馆<br>"
+                                "最近小镇上发生了一些离奇的事件<br>"
+                                "......<br>"
+                                "通过美味的食物以及真诚的内心去打动顾客<br>"
+                                "为他们排忧解难"
+    }
     image_src = covert_image_to_base64(bot_avatar_path)
     return f"""
 <div class="bot_cover">
@@ -89,7 +100,7 @@ def format_cover_html(config: dict, bot_avatar_path="assets/bg.png"):
         <img src={image_src} />
     </div>
     <div class="bot_name">{config.get("name", "经营餐厅")}</div>
-    <div class="bot_desp">{config.get("description", "快来经营你的餐厅吧")}</div>
+    <div class="bot_desc">{config.get("description", "快来经营你的餐厅吧")}</div>
     <div class="bot_intro_label">{config.get("introduction_label", "玩法介绍")}</div>
     <div class="bot_intro_ctx">
     {config.get("introduction_context", "玩法介绍")}</div>
@@ -295,24 +306,12 @@ if __name__ == "__main__":
 
     with gr.Blocks(css="assets/app.css") as demo:
         uuid = gr.Textbox(label='modelscope_uuid', visible=False)
-
-        welcome = {
-            'name': '饮食男女',
-            'description': '这是一款模拟餐馆经营的文字冒险游戏, 快来开始吧😊',
-            'introduction_label': "<br>玩法介绍",
-            'introduction_context': "在一个热闹的小镇上<br>"
-                                    "你经营着一家餐馆<br>"
-                                    "最近小镇上出现了一些有意思的事儿<br>"
-                                    "......<br>"
-                                    "通过美味的食物以及真诚的内心去打动顾客<br>"
-                                    "为他们排忧解难"
-        }
         tabs = gr.Tabs(visible=True)
         with tabs:
             welcome_tab = gr.Tab('游戏界面', id=0)
             config_tab = gr.Tab('游戏配置', id=1)
             with welcome_tab:
-                user_chat_bot_cover = gr.HTML(format_cover_html(welcome))
+                user_chat_bot_cover = gr.HTML(format_cover_html())
                 with gr.Row():
                     with gr.Column():
                         new_button = gr.Button(value='🚀新的探险', )
