@@ -2,12 +2,13 @@
 import base64
 import os
 import datetime
+import shutil
 import threading
 from collections import defaultdict
 from typing import List
 from multiprocessing import Event
 import agentscope
-from config_uitls import load_user_cfg, save_user_cfg, load_default_cfg, load_configs
+from config_uitls import load_user_cfg, save_user_cfg, load_default_cfg, load_configs, get_user_dir
 from utils import (
     CheckpointArgs,
     enable_web_ui,
@@ -250,6 +251,13 @@ def fn_choice(data: gr.EventData, uid):
     send_player_input(data._data["value"], uid=uid)
 
 
+def clean_config_dir(uid):
+    uid = check_uuid(uid)
+    user_dir = get_user_dir(uid)
+    if os.path.exists(user_dir):
+        gr.Info(f'清理 {user_dir}')
+        shutil.rmtree(user_dir)
+
 if __name__ == "__main__":
 
     def init_game():
@@ -318,6 +326,8 @@ if __name__ == "__main__":
                         new_button = gr.Button(value='🚀新的探险', )
                     with gr.Column():
                         resume_button = gr.Button(value='🔥续写情缘', )
+                    with gr.Column():
+                        clean_button = gr.Button(value='🧹清除缓存', )
 
         with config_tab:
             with gr.Row():
@@ -488,6 +498,7 @@ if __name__ == "__main__":
                 send_button: gr.Button(visible=visible),
                 new_button: gr.Button(visible=invisible),
                 resume_button: gr.Button(visible=invisible),
+                clean_button: gr.Button(visible=invisible),
                 return_welcome_button: gr.Button(visible=visible),
                 export: gr.Accordion(visible=visible),
                 user_chat_bot_cover: gr.HTML(visible=invisible),
@@ -507,6 +518,7 @@ if __name__ == "__main__":
                 send_button: gr.Button(visible=invisible),
                 new_button: gr.Button(visible=visible),
                 resume_button: gr.Button(visible=visible),
+                clean_button: gr.Button(visible=visible),
                 return_welcome_button: gr.Button(visible=invisible),
                 export: gr.Accordion(visible=invisible),
                 user_chat_bot_cover: gr.HTML(visible=visible),
@@ -686,6 +698,7 @@ if __name__ == "__main__":
             send_button,
             new_button,
             resume_button,
+            clean_button,
             return_welcome_button,
             export,
             user_chat_bot_cover,
@@ -714,14 +727,14 @@ if __name__ == "__main__":
         # start game
         new_button.click(send_reset_message, inputs=[uuid])
         resume_button.click(check_for_new_session, inputs=[uuid])
+        clean_button.click(clean_config_dir, inputs=[uuid])
 
         # export
         export_button.click(export_chat_history, [uuid], export_output)
 
         # update chat history
         demo.load(init_game)
-        demo.load(check_for_new_session, inputs=[uuid], every=0.1)
-
+        demo.load(check_for_new_session, inputs=[uuid],every=0.1)
         demo.load(get_chat,
                   inputs=[uuid],
                   outputs=[chatbot, chatsys],
