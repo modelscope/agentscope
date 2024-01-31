@@ -18,7 +18,7 @@ from utils import (
     SYS_MSG_PREFIX,
     ResetException,
     get_clue_msg,
-    get_story_msg
+    get_story_msg,
 )
 from generate_image import generate_user_logo_file
 
