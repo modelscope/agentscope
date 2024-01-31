@@ -486,8 +486,10 @@ if __name__ == "__main__":
 
         def send_reset_message(uid):
             uid = check_uuid(uid)
-            global glb_history_dict
+            global glb_history_dict, glb_clue_dict, glb_story_dict
             glb_history_dict[uid] = init_uid_list()
+            glb_clue_dict[uid] = init_uid_dict()
+            glb_story_dict[uid] = init_uid_dict()
             send_player_input("**Reset**", uid=uid)
             return ""
 
