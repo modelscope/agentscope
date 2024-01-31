@@ -121,8 +121,10 @@ def config_plot_tab(plot_tab, uuid):
         )
     with gr.Row():
         openings = gr.Textbox(label="系统开场白")
-        npc_openings = gr.Textbox(label="NPC进场台词")
-        npc_quit_openings = gr.Textbox(label="NPC退场台词")
+        with gr.Column():
+            npc_openings = gr.Textbox(label="NPC进场台词")
+            npc_quit_openings = gr.Textbox(label="NPC退场台词")
+        done_condition = gr.Textbox(label="完成条件")
     with gr.Row():
         user_openings_option = gr.Dataframe(
             label="用户开场白选项",
@@ -147,6 +149,7 @@ def config_plot_tab(plot_tab, uuid):
         npc_openings,
         npc_quit_openings,
         user_openings_option,
+        done_condition,
     ]
 
     def on_plot_tab_select(uuid):
@@ -201,6 +204,7 @@ def config_plot_tab(plot_tab, uuid):
             npc_openings: plot_descriptions.get("npc_openings", "").strip(),
             npc_quit_openings: plot_descriptions.get("npc_quit_openings", "").strip(),
             user_openings_option: cfg_user_openings_option,
+            done_condition: plot_descriptions.get("done_condition", "").strip(),
         }
 
     def create_plot():
@@ -217,6 +221,7 @@ def config_plot_tab(plot_tab, uuid):
             npc_openings: "",
             npc_quit_openings: "",
             user_openings_option: None,
+            done_condition: ""
         }
 
     def delete_plot(plot_id, uuid):
@@ -248,6 +253,7 @@ def config_plot_tab(plot_tab, uuid):
         npc_openings,
         npc_quit_openings,
         user_openings_option,
+        done_condition,
         uuid,
     ):
         uuid = check_uuid(uuid)
@@ -290,6 +296,7 @@ def config_plot_tab(plot_tab, uuid):
         plot_descriptions["user_openings_option"] = {
             it[0]: it[1] for it in user_openings_option if it[0]
         }
+        plot_descriptions["done_condition"] = done_condition
         new_plot["plot_descriptions"] = plot_descriptions
         save_user_cfg(plots, cfg_name=cfg_name, uuid=uuid)
         plot_ids = get_plot_ids(uuid=uuid, plots=plots)
