@@ -17,7 +17,8 @@ from utils import (
     get_chat_msg,
     SYS_MSG_PREFIX,
     ResetException,
-    get_clue
+    get_clue,
+    check_uuid
 )
 from create_config_tab import create_config_tab
 from generate_image import generate_user_logo_file
@@ -33,22 +34,6 @@ role_clue_dict = {}
 def init_uid_list():
     return []
 
-
-def check_uuid(uid):
-    if not uid or uid == '':
-        if os.getenv('MODELSCOPE_ENVIRONMENT') == 'studio':
-            raise gr.Error('请登陆后使用! (Please login first)')
-        else:
-            uid = 'local_user'
-    return uid
-
-def get_role_by_name(name, uid):
-    uid = check_uuid(uid)
-    roles = load_default_cfg(uid)
-    for role in roles:
-        if role['name'] == role_name:
-            return role
-    return None 
 
 glb_history_dict = defaultdict(init_uid_list)
 glb_signed_user = []

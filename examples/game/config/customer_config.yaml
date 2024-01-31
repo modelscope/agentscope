@@ -3,6 +3,7 @@
   "model": "post_api"
   "use_memory": true
   "avatar": "assets/avatar_wang.png"
+  "relationship": "陌生"
   "character_setting":
     "food_preference": >
       王先生是本地人。
@@ -46,6 +47,7 @@
   "model": "post_api"
   "use_memory": true
   "avatar": "assets/avatar_abing.png"
+  "relationship": "陌生"
   "character_setting":
     "food_preference": >
       1.阿炳也是本地人
@@ -83,6 +85,7 @@
   "model": "post_api"
   "use_memory": true
   "avatar": "assets/avatar_laoxu.png"
+  "relationship": "陌生"
   "character_setting":
     "food_preference": >
       老许最喜欢的是羊肉，比如烤羊肉串和羊肉烧卖；
@@ -124,6 +127,7 @@
   "model": "post_api"
   "use_memory": true
   "avatar": "assets/avatar_fan.png"
+  "relationship": "陌生"
   "character_setting":
     "food_preference": >
       1. 范老师是山东人

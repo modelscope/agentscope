@@ -377,7 +377,7 @@ def main(args) -> None:
     # 通过与顾客的互动，玩家可以解锁剧情并发展餐馆的故事，体验不同的情节和结局。
     # """
     # send_chat_msg(game_description, uid=args.uid)
-    customer_configs = load_user_cfg(args.uid)
+    customer_configs = load_user_cfg(uuid=args.uid)
     user_configs = load_configs("config/user.yaml")
 
     customers = [
