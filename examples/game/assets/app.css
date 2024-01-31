@@ -82,35 +82,50 @@
   justify-content: center;
   align-items: center;
   min-height: 650px;
-  border: 1px solid rgb(229, 231, 235);
-  border-radius: 8px;
-  padding: 20px 40px;
+  border: 1px solid rgba(229, 231, 235, 0.6); /* 在边框中添加一点透明度 */
+  border-radius: 16px; /* 增加边框圆角 */
+  padding: 40px; /* 增加内部间距 */
+  background-color: #ffffff; /* 添加背景颜色 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 添加轻微的阴影效果 */
 }
 
 .bot_avatar {
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   overflow: hidden;
-  position: relative; /* 添加相对定位 */
-  display: flex; /* flex布局 */
-  justify-content: center; /* 水平居中 */
-  align-items: center; /* 垂直居中 */
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15), 0 6px 20px rgba(0, 0, 0, 0.5);
 }
 
 .bot_avatar img {
-  width: auto; /* 自动调整宽度 */
-  height: 100%; /* 高度与父容器相同 */
+  width: auto;
+  height: 100%;
 }
 
 .bot_name {
-  font-size: 36px;
-  margin-top: 10px;
+  font-size: 30px; /* 调整字体大小 */
+  color: #333333; /* 字体颜色更深，增加对比度 */
+  margin-top: 20px; /* 调整名称顶部的间距 */
+  font-weight: bold; /* 字体加粗 */
+  text-transform: uppercase; /* 文字大写 */
+  letter-spacing: 1.5px; /* 增加字母间距 */
+  transition: all 0.3s ease; /* 平滑过渡动画 */
 }
 
 .bot_desc {
-  color: #ddd;
+  color: #444444; /* 字体颜色更深 */
+  font-size: 18px; /* 增加字体大小 */
+  margin: 20px 0; /* 增加上下间距 */
+  text-align: center; /* 文字居中 */
+  line-height: 1.5; /* 增加行高，提升可读性 */
+  transition: all 0.3s ease; /* 平滑过渡动画 */
 }
+
 
 .publish_link_container > a {
   display: block;
@@ -151,18 +166,35 @@
 }
 
 .bot_intro_label {
-  /*white-space: pre-wrap;*/
-  font-size: 25px;
+  font-size: 18px; /* 标题字体大小 */
+  color: #333; /* 字体颜色，这里使用深灰色 */
+  font-weight: bold; /* 字体加粗 */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* 文字阴影 */
+  transition: all 0.3s ease; /* 平滑过渡动画 */
+  padding: 10px; /* 内填充 */
+  margin-bottom: 20px; /* 底部外边距 */
+  border-bottom: 2px solid #ddd; /* 底部边框样式 */
 }
 
 .bot_intro_ctx {
-  /*white-space: pre-wrap;*/
   display: grid;
-  place-items: center;
-  height: 100px;
-  font-size: 18px;
-  text-align: center;
+  place-items: center; /* 完美居中 */
+  height: 100px; /* 高度 */
+  font-size: 15px; /* 正文字体大小 */
+  text-align: center; /* 文字居中 */
+  color: #555; /* 正文字体颜色，这里使用较浅的灰色 */
+  border-radius: 8px; /* 边框圆角 */
+  transition: transform 0.3s ease; /* 平滑过渡动画 */
 }
+
+/* 鼠标悬停时的动画效果 */
+.bot_desc:hover,
+.bot_name:hover,
+.bot_intro_label:hover,
+.bot_intro_ctx:hover {
+  transform: translateY(-5px); /* 向上移动 */
+}
+
 
 .story-container {
     margin-bottom: 40px;
