@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import base64
 import os
-import yaml
 import time
 import datetime
 import threading
@@ -22,22 +21,26 @@ from utils import (
     SYS_TIMEOUT,
     ResetException,
     InactiveException,
-    get_clue
+    get_clue_msg,
+    get_story_msg
 )
 from generate_image import generate_user_logo_file
 
 import gradio as gr
 import modelscope_gradio_components as mgr
 
+enable_web_ui()
+
 MAX_NUM_DISPLAY_MSG = 20
 TIMEOUT = 300
-
-enable_web_ui()
-role_clue_dict = {}
 
 
 def init_uid_list():
     return []
+
+
+def init_uid_dict():
+    return {}
 
 
 def check_uuid(uid):
@@ -48,15 +51,20 @@ def check_uuid(uid):
             uid = 'local_user'
     return uid
 
+
 def get_role_by_name(name, uid):
     uid = check_uuid(uid)
     roles = load_default_cfg(uid)
     for role in roles:
-        if role['name'] == role_name:
+        if role['name'] == name:
             return role
     return None 
 
+
 glb_history_dict = defaultdict(init_uid_list)
+glb_clue_dict = defaultdict(init_uid_dict)
+glb_story_dict = defaultdict(init_uid_dict)
+
 glb_signed_user = []
 is_init = Event()
 
@@ -108,78 +116,117 @@ def export_chat_history(uid):
     return gr.update(value=export_filename, visible=True)
 
 
-def get_dial_chat(uid) -> List[List]:
-    """Load the chat info from the queue, and put it into the history
-
-    Returns:
-        `List[List]`: The parsed history, list of tuple, [(role, msg), ...]
-
-    """
+def get_chat(uid) -> List[List]:
     uid = check_uuid(uid)
     global glb_history_dict
     line = get_chat_msg(uid=uid)
     if line is not None:
         glb_history_dict[uid] += [line]
 
-    dial_msg = []
+    dial_msg, sys_msg = [], []
     for line in glb_history_dict[uid]:
         _, msg = line
         if isinstance(msg, dict):
             if SYS_MSG_PREFIX not in msg.get("text", ""):
                 dial_msg.append(line)
+            else:
+                sys_msg.append(line)
         else:
             # User chat, format: (msg, None)
             dial_msg.append(line)
 
-    return dial_msg[-MAX_NUM_DISPLAY_MSG:]
+    return dial_msg[-MAX_NUM_DISPLAY_MSG:], sys_msg[-MAX_NUM_DISPLAY_MSG:]
 
 
-def get_sys_chat(uid) -> List[List]:
+def get_story(uid):
+    global glb_story_dict
     uid = check_uuid(uid)
-    global glb_history_dict
 
-    sys_msg = []
-    for line in glb_history_dict[uid]:
-        _, msg = line
-        if isinstance(msg, dict):
-            if SYS_MSG_PREFIX in msg.get("text", ""):
-                sys_msg.append(line)
+    story_item = get_story_msg(uid)
 
-    return sys_msg[-MAX_NUM_DISPLAY_MSG:]
+    # Only initialize at the first time
+    for c in role_names:  # glb vars, careful!
+        if c not in glb_story_dict[uid]:
+            glb_story_dict[uid][c] = []
+        else:
+            break
+
+    if story_item:
+        glb_story_dict[uid][story_item["name"]].append(story_item["story"])
+
+    flex_container_html = """
+    <div class='story-container'>
+    <p></p>
+"""
+
+    for role_name_, stories in glb_story_dict[uid].items():
+        if len(stories) == 0:
+            # Locked story row
+            flex_container_html += f"""
+                        <div class='story-row locked'>
+                            <p class='story-title'>{role_name_} 的故事</p>
+                            <span class='lock-icon'>&#128274;</span>  <!-- Unicode lock icon -->
+                        </div>
+                    """
+        else:
+            # Unlocked story row
+            for index, s in enumerate(stories):
+                flex_container_html += f"""
+                            <div class='story-row'>
+                                <p class='story-title'>{role_name_} 的第{index + 1}段故事</p>
+                                <div class='story-content'>{s}</div>
+                            </div>
+                        """
+
+    flex_container_html += """
+    </div>
+    """
+
+    return gr.HTML(flex_container_html)
 
 
-def update_role_clue_dict(uid):
-    global role_clue_dict
+def get_clue(uid):
+    global glb_clue_dict
 
     uid = check_uuid(uid)
-    clue_item = get_clue(uid)
+    clue_item = get_clue_msg(uid)
+
+    # Only initialize at the first time
+    for c in role_names:  # glb vars, careful!
+        if c not in glb_clue_dict[uid]:
+            glb_clue_dict[uid][c] = {
+                'clue_list': [],
+                'unexposed_num': 0,
+            }
+        else:
+            break
+
     if clue_item:
         role_name_ = clue_item['name']
         if clue_item["clue"] is not None:
-            role_clue_dict[role_name_]['clue_list'].append(clue_item['clue'])
-        role_clue_dict[role_name_]['unexposed_num'] = clue_item[
-            'unexposed_num']
+            glb_clue_dict[uid][role_name_]['clue_list'].append(clue_item['clue'])
+        glb_clue_dict[uid][role_name_]['unexposed_num'] = clue_item['unexposed_num']
 
     flex_container_html_list = []
-    for role_name_ in role_clue_dict.keys():
+    for role_name_ in glb_clue_dict[uid].keys():
         flex_container_html = f"""
                 <div style='margin-bottom: 40px;'>
                     <div style='display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;'>
             """
-        for clue in role_clue_dict[role_name_]["clue_list"]:
+        for clue in glb_clue_dict[uid][role_name_]["clue_list"]:
             flex_container_html += f"""
-                    <div style='flex: 1; min-width: 200px; max-width: 200px; height: 300px; background-color: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin: 10px; padding: 20px; border-radius: 15px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden;'>
-                        <img src='{clue['image'] if 'image' in clue.keys() else "#"}' alt='Clue image' style='height: 150px; width: 100%; object-fit: cover; border-radius: 10px; margin-bottom: 10px;'>
-                        <div style='flex-grow: 1; overflow-y: auto;'>
-                            <h4 style='margin: 5px 0; text-align: center; word-wrap: break-word; font-size: 18px; font-weight: bold;'>{clue['name']}</h4>
-                            <p style='margin: 5px 0; word-wrap: break-word; text-align: justify; font-size: 14px;'>{clue['content'] if 'content' in clue.keys() else clue['summary']}</p>
-                        </div>
-                    </div>
-                """
-        if role_clue_dict[role_name_]['unexposed_num']:
-            for _ in range(role_clue_dict[role_name_]['unexposed_num']):
+                       <div class='clue-card'>
+                           <img src='{clue['image'] if 'image' in clue.keys() else "#"}' alt='Clue image' style='height: 150px; width: 100%; object-fit: cover; border-radius: 10px; margin-bottom: 10px;'>
+                           <div style='flex-grow: 1; overflow-y: auto;'>
+                               <h4 style='margin: 5px 0; text-align: center; word-wrap: break-word; font-size: 18px; font-weight: bold;'>{clue['name']}</h4>
+                               <p style='margin: 5px 0; word-wrap: break-word; text-align: justify; font-size: 14px;'>{clue['content'] if 'content' in clue.keys() else clue['summary']}</p>
+                           </div>
+                       </div>
+                   """
+        if glb_clue_dict[uid][role_name_]['unexposed_num']:
+            for _ in range(glb_clue_dict[uid][role_name_]['unexposed_num']):
                 flex_container_html += f"""
-                            <div style='flex: 1; min-width: 200px; max-width: 200px; height: 300px; background: repeating-linear-gradient(45deg, #ccc, #ccc 10px, #ddd 10px, #ddd 20px); opacity: 0.8; margin: 10px; padding: 20px; border-radius: 15px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden;'>
+                            <div class='clue-card clue-card-locked'>
                                 <div style='flex-grow: 1; height: 150px; width: 100%; background-color: #bbb; border-radius: 10px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center;'>
                                     <span style='color: #fff; font-weight: bold; font-size: 24px;'>?</span>
                                 </div>
@@ -347,6 +394,7 @@ if __name__ == "__main__":
         with game_tabs:
             main_tab = gr.Tab('主界面', id=0)
             clue_tab = gr.Tab('线索', id=1)
+            story_tab = gr.Tab('故事', id=2)
             with main_tab:
                 with gr.Row():
                     chatbot = mgr.Chatbot(
@@ -404,22 +452,26 @@ if __name__ == "__main__":
             role_tabs = gr.Tabs(visible=False)
             roles = load_user_cfg()
             role_names = [role['name'] for role in roles]
-            # role_names = ['王先生', '老许']
-            # role_tab_list = []
+
             role_tab_clue_dict = {}
-            i = 0
 
             for role_name_t in role_names:
-                role_clue_dict[role_name_t] = {
-                    "clue_list": [],
-                    "unexposed_num": None,
-                }
-                role = gr.Tab(label=role_name_t, id=i)
-                # role_tab_list.append(role_name)
-                i += 1
+                role = gr.Tab(label=role_name_t)
                 with role:
                     role_tab_clue_dict[role_name_t] = gr.HTML()
 
+        with story_tab:
+            story_html = """
+            <div style='text-align: center; margin-top: 20px; margin-bottom: 40px; padding: 20px; background: linear-gradient(to right, #f7f7f7, #ffffff); border-left: 5px solid #6c757d; border-right: 5px solid #6c757d;'>
+                <p style='font-size: 18px; color: #333; max-width: 600px; margin: auto; line-height: 1.6; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;'>
+                    <strong>已解锁的故事：</strong><br>
+                    这里展示了您达成剧情解锁条件后从各个角色的视角收集到的故事碎片。每个NPC都有自己独特的背景和视角，揭示了案件中不同的维度和秘密。随着您在游戏中的推进，您将解锁他们的个人记忆和见闻，这些都将成为拼凑整个故事的关键部分。请继续探索和对话，解锁更多的视角，深入了解这个复杂的故事。
+                </p>
+            </div>
+
+            """
+            gr.HTML(story_html)
+            story_container = gr.HTML()
 
         def send_message(msg, uid):
             uid = check_uuid(uid)
@@ -614,16 +666,16 @@ if __name__ == "__main__":
             role_names = [role['name'] for role in roles]
             return gr.Dropdown(value=role_names[0], choices=role_names)
         
-        def genarate_avatar_file(desc, role_name, uid):
+        def generate_avatar_file(desc, r_name, uid):
             uid = check_uuid(uid)
             if desc == '':
-                role = get_role_by_name(role_name, uid)
+                role = get_role_by_name(r_name, uid)
                 if role:
                     desc = role['character_setting']['background']
-            gen_avatar_file = generate_user_logo_file(desc, role_name, uid)
+            gen_avatar_file = generate_user_logo_file(desc, r_name, uid)
             return gr.Image(value=gen_avatar_file)
 
-        gen_avatar_button.click(genarate_avatar_file, inputs=[avatar_desc, role_name, uuid], outputs=avatar_file)
+        gen_avatar_button.click(generate_avatar_file, inputs=[avatar_desc, role_name, uuid], outputs=avatar_file)
 
         restore_role_button.click(restore_default_cfg,
                                   inputs=[uuid],
@@ -686,18 +738,18 @@ if __name__ == "__main__":
         demo.load(init_game)
         demo.load(check_for_new_session, inputs=[uuid], every=0.1)
 
-        demo.load(get_dial_chat,
+        demo.load(get_chat,
                   inputs=[uuid],
-                  outputs=chatbot,
+                  outputs=[chatbot, chatsys],
                   every=0.5)
-        demo.load(get_sys_chat,
-                  inputs=[uuid],
-                  outputs=chatsys,
-                  every=0.5, )
 
-        demo.load(update_role_clue_dict,
+        demo.load(get_clue,
                   inputs=[uuid],
                   outputs=[role_tab_clue_dict[i] for i in role_names],
+                  every=0.5)
+        demo.load(get_story,
+                  inputs=[uuid],
+                  outputs=[story_container],
                   every=0.5)
 
         demo.load(check_act_timestamp,
