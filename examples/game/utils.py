@@ -94,6 +94,7 @@ def init_uid_queues():
         "glb_queue_chat_input": Queue(),
         "glb_queue_clue": Queue(),
         "glb_queue_story": Queue(),
+        "glb_queue_cook_signal_msg": [],
     }
 
 
@@ -182,6 +183,44 @@ def get_story_msg(
         if line is not None:
             return line
     return None
+
+
+def send_cook_signal_msg(
+    msg,
+    role="我",
+    uid=None,
+    flushing=False,
+    avatar="./assets/user.jpg",
+):
+    print("send_cook_signal_msg:", msg)
+    if get_use_web_ui():
+        global glb_uid_dict
+        glb_queue_cook_signal_msg = glb_uid_dict[uid]["glb_queue_cook_signal_msg"]
+        glb_queue_cook_signal_msg.append(
+            [
+                {
+                    "text": msg,
+                    "name": role,
+                    "flushing": flushing,
+                    "avatar": avatar,
+                },
+                None,
+            ],
+        )
+
+
+def get_cook_signal_msg_length(uid=None):
+    global glb_uid_dict
+    glb_queue_cook_signal_msg = glb_uid_dict[uid]["glb_queue_cook_signal_msg"]
+    if glb_queue_cook_signal_msg:
+        line = glb_queue_cook_signal_msg[0]
+        if glb_queue_cook_signal_msg[-1][0]['text'] == "**end_cooking**":
+            glb_uid_dict[uid]["glb_queue_cook_signal_msg"] = []
+            return 0
+        else:
+            glb_queue_cook_signal_msg.append(line)
+            return len(glb_queue_cook_signal_msg)
+    return 0
 
 
 def send_player_msg(
@@ -294,10 +333,11 @@ def generate_picture(prompt):
     dashscope.api_key = os.environ.get("DASHSCOPE_API_KEY") or dashscope.api_key
     assert dashscope.api_key
     rsp = dashscope.ImageSynthesis.call(
-        model='wanx-lite',
+        # model='wanx-lite',
+        model=dashscope.ImageSynthesis.Models.wanx_v1,
         prompt=prompt,
         n=1,
-        size='768*768')
+        size='1024*1024')
     if rsp.status_code == HTTPStatus.OK:
         return rsp.output['results'][0]['url']
 

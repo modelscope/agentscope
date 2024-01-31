@@ -17,7 +17,8 @@ from utils import (
     SYS_MSG_PREFIX,
     ResetException,
     get_clue_msg,
-    get_story_msg
+    get_story_msg,
+    get_cook_signal_msg_length
 )
 from generate_image import generate_user_logo_file
 
@@ -127,6 +128,10 @@ def get_chat(uid) -> List[List]:
         else:
             # User chat, format: (msg, None)
             dial_msg.append(line)
+    length = get_cook_signal_msg_length(uid=uid)
+    if length > 0:
+        dial_msg.append([{'text': '食物制作中' + ('。' * (length % 4)),
+                          'name': '我', 'flushing': False, 'avatar': "./assets/user.jpg"}, None])
 
     return dial_msg[-MAX_NUM_DISPLAY_MSG:], sys_msg[-MAX_NUM_DISPLAY_MSG:]
 
