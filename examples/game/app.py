@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import base64
 import os
-import time
 import datetime
 import threading
 from collections import defaultdict
@@ -14,13 +13,9 @@ from utils import (
     enable_web_ui,
     send_player_msg,
     send_player_input,
-    get_act_timestamp,
-    send_chat_msg,
     get_chat_msg,
     SYS_MSG_PREFIX,
-    SYS_TIMEOUT,
     ResetException,
-    InactiveException,
     get_clue_msg,
     get_story_msg
 )
@@ -32,7 +27,6 @@ import modelscope_gradio_components as mgr
 enable_web_ui()
 
 MAX_NUM_DISPLAY_MSG = 20
-TIMEOUT = 300
 
 
 def init_uid_list():
@@ -251,14 +245,6 @@ def get_clue(uid):
     return [gr.HTML(x) for x in flex_container_html_list]
 
 
-def check_act_timestamp(uid):
-    uid = check_uuid(uid)
-    print(f"{uid}: active in {(time.time() - get_act_timestamp(uid))} sec.")
-    if (time.time() - get_act_timestamp(uid)) >= TIMEOUT:
-        send_chat_msg(SYS_TIMEOUT, uid=uid)
-        send_player_input("**Timeout**", uid=uid)
-
-
 def fn_choice(data: gr.EventData, uid):
     uid = check_uuid(uid)
     send_player_input(data._data["value"], uid=uid)
@@ -318,9 +304,6 @@ if __name__ == "__main__":
                 main(args)
             except ResetException:
                 print(f"重置成功：{uid} ")
-            except InactiveException:
-                print(f"超时：{uid} ")
-                break
 
     with gr.Blocks(css="assets/app.css") as demo:
         uuid = gr.Textbox(label='modelscope_uuid', visible=False)
@@ -752,10 +735,6 @@ if __name__ == "__main__":
                   inputs=[uuid],
                   outputs=[story_container],
                   every=0.5)
-
-        demo.load(check_act_timestamp,
-                  inputs=[uuid],
-                  every=10)
 
     demo.queue()
     demo.launch()
