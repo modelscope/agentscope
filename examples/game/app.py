@@ -307,7 +307,7 @@ if __name__ == "__main__":
                 break
 
     with gr.Blocks(css="assets/app.css") as demo:
-        uuid = gr.Textbox(label='modelscope_uuid', visible=False)
+        uuid = gr.Textbox(label='modelscope_uuid', visible=True)
         tabs = gr.Tabs(visible=True)
         with tabs:
             welcome_tab = gr.Tab('游戏界面', id=0)
