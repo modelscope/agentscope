@@ -21,7 +21,7 @@ from pathlib import Path
 from pypinyin import lazy_pinyin, Style
 
 SYS_MSG_PREFIX = '【系统】'
-DEFAULT_AGENT_IMG_DIR = "/tmp/as_game/img"
+DEFAULT_AGENT_IMG_DIR = "/tmp/as_game/config/"
 OPENING_ROUND = 3
 REVISION_ROUND = 3
 
@@ -322,13 +322,9 @@ def generate_picture(prompt, model="wanx-lite"):
 
 def get_clue_image_b64_url(customer, clue_name, uid, content):
     prompt = """
-    Create an abstract, comic-style clue card for the theme {clue_name}. 
-    The card should visually represent the concept of {content} in a way 
-    that is stylistically exaggerated and colorful, typical of comic art. 
-    The imagery should be engaging and easily decipherable, providing clear 
-    hints related to the theme without being too literal. Use bold lines, 
-    dynamic shapes, and vibrant colors to encapsulate the essence of the 
-    clue in an artistic and abstract representation.
+    Design a simple, flat-style clue card for {clue_name} that abstractly 
+    conveys {content}. Use minimalistic shapes and a limited color palette 
+    to create a clear and visually appealing representation.
     """
     extensions = ["gif", "jpeg", "png", "jpg"]
     try:
