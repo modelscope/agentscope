@@ -95,12 +95,13 @@ class Customer(StateAgent, DialogAgent):
         # when the customer is the main role in a plot, it will be activated
         self.plot_stage = CustomerPlot.ACTIVE
         for p in active_plots:
+            logger.debug(f"plot {p}, {active_plots}")
             if (
-                str(p) in self.config["character_setting"]["hidden_plot"]
+                p in self.config["character_setting"]["hidden_plot"]
                 and len(self.active_plots) == 0
             ):
-                self.active_plots = [str(p)]
-            elif str(p) in self.config["character_setting"]["hidden_plot"]:
+                self.active_plots = [p]
+            elif p in self.config["character_setting"]["hidden_plot"]:
                 raise ValueError(
                     "A customer can be in at most one plot in the current "
                     "version",
@@ -323,7 +324,7 @@ class Customer(StateAgent, DialogAgent):
             "hidden_main_plot_prompt"
         ].format_map(
             {
-                "hidden_plot": self.config["character_setting"]["hidden_plot"],
+                "hidden_plot": self.config["character_setting"]["hidden_plot"][self.active_plots[0]],
             },
         )
         analysis_prompt = background_prompt + self.game_config["analysis_conv"]
@@ -393,7 +394,7 @@ class Customer(StateAgent, DialogAgent):
                 conversation += "背景" + ": " + mem["content"]
         background = self.background
         if self.plot_stage == CustomerPlot.ACTIVE:
-            background += self.config["character_setting"]["hidden_plot"]
+            background += self.config["character_setting"]["hidden_plot"][self.active_plots[0]]
 
         pov_prompt = self.game_config["pov_story"].format_map(
             {
@@ -438,7 +439,7 @@ class Customer(StateAgent, DialogAgent):
             # get the clues related to the current plot
             curr_clues = []
             for c in self.config["clue"]:
-                if int(c["plot"]) == int(self.active_plots[0]):
+                if c["plot"] == self.active_plots[0]:
                     curr_clues.append(c)
             # compose the clues according the relationship level
             if not self.relationship.is_max():
