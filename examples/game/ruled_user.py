@@ -16,7 +16,6 @@ from utils import (
     query_answer,
     get_player_input,
     ResetException,
-    InactiveException,
     generate_picture,
     send_player_msg,
     SYS_MSG_PREFIX
@@ -102,7 +101,7 @@ class RuledUser(AgentBase):
                     f"请重试",
                     uid=self.uid,
                 )
-            except (ResetException, InactiveException):
+            except ResetException:
                 raise
             except Exception as e:
                 logger.debug(e)

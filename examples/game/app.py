@@ -1,26 +1,22 @@
 # -*- coding: utf-8 -*-
 import base64
 import os
-import time
 import datetime
+import shutil
 import threading
 from collections import defaultdict
 from typing import List
 from multiprocessing import Event
 import agentscope
-from config_utils import load_user_cfg, save_user_cfg, load_default_cfg, load_configs
+from config_utils import load_user_cfg, save_user_cfg, load_default_cfg, load_configs, get_user_dir
 from utils import (
     CheckpointArgs,
     enable_web_ui,
     send_player_msg,
     send_player_input,
-    get_act_timestamp,
-    send_chat_msg,
     get_chat_msg,
     SYS_MSG_PREFIX,
-    SYS_TIMEOUT,
     ResetException,
-    InactiveException,
     get_clue_msg,
     get_story_msg,
     check_uuid
@@ -34,7 +30,6 @@ import modelscope_gradio_components as mgr
 enable_web_ui()
 
 MAX_NUM_DISPLAY_MSG = 20
-TIMEOUT = 300
 
 
 def init_uid_list():
@@ -235,18 +230,17 @@ def get_clue(uid):
     return [gr.HTML(x) for x in flex_container_html_list]
 
 
-def check_act_timestamp(uid):
-    uid = check_uuid(uid)
-    # print(f"{uid}: active in {(time.time() - get_act_timestamp(uid))} sec.")
-    if (time.time() - get_act_timestamp(uid)) >= TIMEOUT:
-        send_chat_msg(SYS_TIMEOUT, uid=uid)
-        send_player_input("**Timeout**", uid=uid)
-
-
 def fn_choice(data: gr.EventData, uid):
     uid = check_uuid(uid)
     send_player_input(data._data["value"], uid=uid)
 
+
+def clean_config_dir(uid):
+    uid = check_uuid(uid)
+    user_dir = get_user_dir(uid)
+    if os.path.exists(user_dir):
+        gr.Info(f'清理 {user_dir}')
+        shutil.rmtree(user_dir)
 
 if __name__ == "__main__":
 
@@ -302,12 +296,9 @@ if __name__ == "__main__":
                 main(args)
             except ResetException:
                 print(f"重置成功：{uid} ")
-            except InactiveException:
-                print(f"超时：{uid} ")
-                break
 
     with gr.Blocks(css="assets/app.css") as demo:
-        uuid = gr.Textbox(label='modelscope_uuid', visible=True)
+        uuid = gr.Textbox(label='modelscope_uuid', visible=False)
         tabs = gr.Tabs(visible=True)
         with tabs:
             welcome_tab = gr.Tab('游戏界面', id=0)
@@ -319,6 +310,8 @@ if __name__ == "__main__":
                         new_button = gr.Button(value='🚀新的探险', )
                     with gr.Column():
                         resume_button = gr.Button(value='🔥续写情缘', )
+                    with gr.Column():
+                        clean_button = gr.Button(value='🧹清除缓存', )
 
         with config_tab:
             create_config_tab(config_tab, uuid)
@@ -440,6 +433,7 @@ if __name__ == "__main__":
                 send_button: gr.Button(visible=visible),
                 new_button: gr.Button(visible=invisible),
                 resume_button: gr.Button(visible=invisible),
+                clean_button: gr.Button(visible=invisible),
                 return_welcome_button: gr.Button(visible=visible),
                 export: gr.Accordion(visible=visible),
                 user_chat_bot_cover: gr.HTML(visible=invisible),
@@ -459,6 +453,7 @@ if __name__ == "__main__":
                 send_button: gr.Button(visible=invisible),
                 new_button: gr.Button(visible=visible),
                 resume_button: gr.Button(visible=visible),
+                clean_button: gr.Button(visible=visible),
                 return_welcome_button: gr.Button(visible=invisible),
                 export: gr.Accordion(visible=invisible),
                 user_chat_bot_cover: gr.HTML(visible=visible),
@@ -475,6 +470,7 @@ if __name__ == "__main__":
             send_button,
             new_button,
             resume_button,
+            clean_button,
             return_welcome_button,
             export,
             user_chat_bot_cover,
@@ -503,13 +499,13 @@ if __name__ == "__main__":
         # start game
         new_button.click(send_reset_message, inputs=[uuid]).then(check_for_new_session, inputs=[uuid])
         resume_button.click(check_for_new_session, inputs=[uuid])
+        clean_button.click(clean_config_dir, inputs=[uuid])
 
         # export
         export_button.click(export_chat_history, [uuid], export_output)
 
         # update chat history
         demo.load(init_game)
-
         demo.load(get_chat,
                   inputs=[uuid],
                   outputs=[chatbot, chatsys],
@@ -523,10 +519,6 @@ if __name__ == "__main__":
                   inputs=[uuid],
                   outputs=[story_container],
                   every=0.5)
-
-        demo.load(check_act_timestamp,
-                  inputs=[uuid],
-                  every=10)
 
     demo.queue()
     demo.launch()
