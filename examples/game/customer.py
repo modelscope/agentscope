@@ -546,7 +546,12 @@ class Customer(StateAgent, DialogAgent):
         logger.debug(self.unexposed_clues)
         indices_to_pop = []
         found_clue = []
+        if not isinstance(exposed_clues, list):
+            return
+
         for clue in exposed_clues:
+            if not isinstance(clue, dict):
+                continue
             index = clue.get("index", -1)
             summary = clue.get("summary", -1)
             if index < len(self.unexposed_clues) and index >= 0:
