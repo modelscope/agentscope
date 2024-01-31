@@ -5,11 +5,13 @@ from http import HTTPStatus
 from typing import Optional, List
 from datetime import datetime
 
+import gradio as gr
 import dashscope
+import time
 from colorist import BgBrightColor
 import inquirer
 import random
-from multiprocessing import Queue
+from multiprocessing import Queue, Value
 from collections import defaultdict
 from dataclasses import dataclass
 from agentscope.message import Msg
@@ -17,9 +19,8 @@ from enums import StagePerNight
 from pathlib import Path
 from pypinyin import lazy_pinyin, Style
 
-import gradio as gr
-
 SYS_MSG_PREFIX = '【系统】'
+SYS_TIMEOUT = f"{SYS_MSG_PREFIX}操作超时，请返回首页，开启新的探险。"
 OPENING_ROUND = 3
 REVISION_ROUND = 3
 
@@ -90,9 +91,11 @@ def enable_web_ui():
 
 def init_uid_queues():
     return {
+        "glb_act_timestamp": Value('d', float('inf')),
         "glb_queue_chat_msg": Queue(),
         "glb_queue_chat_input": Queue(),
         "glb_queue_clue": Queue(),
+        "glb_queue_story": Queue(),
     }
 
 
@@ -121,15 +124,18 @@ def send_chat_msg(
                 },
             ],
         )
+        if msg != SYS_TIMEOUT:
+            glb_act_timestamp = glb_uid_dict[uid]["glb_act_timestamp"]
+            glb_act_timestamp.value = time.time()
 
 
-def send_clue(
+def send_clue_msg(
     clue,
     unexposed_num=0,
     role=None,
     uid=None,
 ):
-    print("send_clue:", clue)
+    print("send_clue_msg:", clue)
     if get_use_web_ui():
         global glb_uid_dict
         glb_queue_clue = glb_uid_dict[uid]["glb_queue_clue"]
@@ -142,13 +148,42 @@ def send_clue(
         )
 
 
-def get_clue(
+def get_clue_msg(
     uid=None,
 ):
     global glb_uid_dict
     glb_queue_clue = glb_uid_dict[uid]["glb_queue_clue"]
     if not glb_queue_clue.empty():
         line = glb_queue_clue.get(block=False)
+        if line is not None:
+            return line
+    return None
+
+
+def send_story_msg(
+    story,
+    role=None,
+    uid=None,
+):
+    print("send_story_msg:", story)
+    if get_use_web_ui():
+        global glb_uid_dict
+        glb_queue_story = glb_uid_dict[uid]["glb_queue_story"]
+        glb_queue_story.put(
+            {
+                "story": story,
+                "name": role,
+            }
+        )
+
+
+def get_story_msg(
+    uid=None,
+):
+    global glb_uid_dict
+    glb_queue_story = glb_uid_dict[uid]["glb_queue_story"]
+    if not glb_queue_story.empty():
+        line = glb_queue_story.get(block=False)
         if line is not None:
             return line
     return None
@@ -176,6 +211,14 @@ def send_player_msg(
                 None,
             ],
         )
+        glb_act_timestamp = glb_uid_dict[uid]["glb_act_timestamp"]
+        glb_act_timestamp.value = time.time()
+
+
+def get_act_timestamp(uid=None):
+    global glb_uid_dict
+    glb_act_timestamp = glb_uid_dict[uid]["glb_act_timestamp"]
+    return glb_act_timestamp.value
 
 
 def get_chat_msg(uid=None):
@@ -218,6 +261,8 @@ def get_player_input(name=None, uid=None):
         if content == "**Reset**":
             glb_uid_dict[uid] = init_uid_queues()
             raise ResetException
+        if content == "**Timeout**":
+            raise InactiveException
     else:
         content = input(f"{name}: ")
     return content
@@ -259,6 +304,11 @@ class CheckpointArgs:
 
 class ResetException(Exception):
     pass
+
+
+class InactiveException(Exception):
+    pass
+
 
 def generate_picture(prompt):
     dashscope.api_key = os.environ.get("DASHSCOPE_API_KEY") or dashscope.api_key

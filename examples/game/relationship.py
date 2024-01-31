@@ -90,4 +90,5 @@ class Relationship:
         else:
             return "stranger_prompt"
 
-
+    def is_max(self):
+        return self.level == Familiarity.MAX_LEVEL
