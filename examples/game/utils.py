@@ -311,19 +311,23 @@ class InactiveException(Exception):
 
 
 def generate_picture(prompt):
+    from dashscope.common.error import InvalidTask
     dashscope.api_key = os.environ.get("DASHSCOPE_API_KEY") or dashscope.api_key
     assert dashscope.api_key
-    rsp = dashscope.ImageSynthesis.call(
-        model='wanx-lite',
-        prompt=prompt,
-        n=1,
-        size='768*768')
-    if rsp.status_code == HTTPStatus.OK:
-        return rsp.output['results'][0]['url']
+    try:
+        rsp = dashscope.ImageSynthesis.call(
+            model='wanx-lite',
+            prompt=prompt,
+            n=1,
+            size='768*768')
+        if rsp.status_code == HTTPStatus.OK:
+            return rsp.output['results'][0]['url']
 
-    else:
-        print('Failed, status_code: %s, code: %s, message: %s' %
-              (rsp.status_code, rsp.code, rsp.message))
+        else:
+            print('Failed, status_code: %s, code: %s, message: %s' %
+                  (rsp.status_code, rsp.code, rsp.message))
+    except InvalidTask as e:
+        print(e)
 
 
 def replace_names_in_messages(messages):
