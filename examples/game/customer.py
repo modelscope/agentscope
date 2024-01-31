@@ -557,6 +557,7 @@ class Customer(StateAgent, DialogAgent):
             summary = clue.get("summary", -1)
             if len(self.unexposed_clues) > index >= 0:
                 indices_to_pop.append(index)
+                # TODO: get index and summary separately can be more stable
                 found_clue.append(
                     {
                         "name": self.unexposed_clues[index]["name"],
