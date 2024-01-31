@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import base64
 import os
+import time
 import datetime
 import threading
 from collections import defaultdict
@@ -13,9 +14,13 @@ from utils import (
     enable_web_ui,
     send_player_msg,
     send_player_input,
+    get_act_timestamp,
+    send_chat_msg,
     get_chat_msg,
     SYS_MSG_PREFIX,
+    SYS_TIMEOUT,
     ResetException,
+    InactiveException,
     get_clue_msg,
     get_story_msg
 )
@@ -25,6 +30,9 @@ import gradio as gr
 import modelscope_gradio_components as mgr
 
 enable_web_ui()
+
+MAX_NUM_DISPLAY_MSG = 20
+TIMEOUT = 300
 
 
 def init_uid_list():
@@ -59,7 +67,6 @@ glb_story_dict = defaultdict(init_uid_dict)
 
 glb_signed_user = []
 is_init = Event()
-MAX_NUM_DISPLAY_MSG = 20
 
 
 # 图片本地路径转换为 base64 格式
@@ -233,6 +240,14 @@ def get_clue(uid):
     return [gr.HTML(x) for x in flex_container_html_list]
 
 
+def check_act_timestamp(uid):
+    uid = check_uuid(uid)
+    print(f"{uid}: active in {(time.time() - get_act_timestamp(uid))} sec.")
+    if (time.time() - get_act_timestamp(uid)) >= TIMEOUT:
+        send_chat_msg(SYS_TIMEOUT, uid=uid)
+        send_player_input("**Timeout**", uid=uid)
+
+
 def fn_choice(data: gr.EventData, uid):
     uid = check_uuid(uid)
     send_player_input(data._data["value"], uid=uid)
@@ -291,7 +306,10 @@ if __name__ == "__main__":
             try:
                 main(args)
             except ResetException:
-                print("重置成功")
+                print(f"重置成功：{uid} ")
+            except InactiveException:
+                print(f"超时：{uid} ")
+                break
 
     with gr.Blocks(css="assets/app.css") as demo:
         uuid = gr.Textbox(label='modelscope_uuid', visible=False)
@@ -468,8 +486,10 @@ if __name__ == "__main__":
 
         def send_reset_message(uid):
             uid = check_uuid(uid)
-            global glb_history_dict
+            global glb_history_dict, glb_clue_dict, glb_story_dict
             glb_history_dict[uid] = init_uid_list()
+            glb_clue_dict[uid] = init_uid_dict()
+            glb_story_dict[uid] = init_uid_dict()
             send_player_input("**Reset**", uid=uid)
             return ""
 
@@ -733,6 +753,10 @@ if __name__ == "__main__":
                   inputs=[uuid],
                   outputs=[story_container],
                   every=0.5)
+
+        demo.load(check_act_timestamp,
+                  inputs=[uuid],
+                  every=10)
 
     demo.queue()
     demo.launch()
