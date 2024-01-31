@@ -435,12 +435,24 @@ class Customer(StateAgent, DialogAgent):
         if (
             self.plot_stage == CustomerPlot.ACTIVE
         ):
+            # get the clues related to the current plot
+            curr_clues = []
+            for c in self.config["clue"]:
+                if int(c["plot"]) == int(self.active_plots[0]):
+                    curr_clues.append(c)
+            # compose the clues according the relationship level
+            if not self.relationship.is_max():
+                end_idx = len(curr_clues) // 3 * \
+                          self.relationship.level.value
+                hidden_plot = "\n".join(
+                    [c["content"] for c in curr_clues[:end_idx]])
+            else:
+                hidden_plot = "\n".join(
+                    [c["content"] for c in curr_clues])
             # -> prompt for the main role in the current plot
             prompt += self.game_config["hidden_main_plot_prompt"].format_map(
                 {
-                    "hidden_plot": self.config["character_setting"][
-                        "hidden_plot"
-                    ][self.active_plots[0]],
+                    "hidden_plot": hidden_plot,
                 },
             )
             if self.cur_state == CustomerConv.AFTER_MEAL_CHAT:
@@ -455,7 +467,7 @@ class Customer(StateAgent, DialogAgent):
                 prompt += self.game_config["invited_chat_prompt"]
 
         prompt += self.game_config[self.relationship.prompt]
-
+        logger.debug(prompt)
         return prompt
 
     def talk(self, content, is_display=True):
@@ -481,24 +493,25 @@ class Customer(StateAgent, DialogAgent):
         send_chat_msg(f"{SYS_MSG_PREFIX}初始化NPC {self.name}..."
                       f"（这可能需要一些时间）", uid=self.uid)
 
-        all_plot = ""
-        for i in self.config["character_setting"]["hidden_plot"].values():
-            all_plot += (i + "\n")
+        clues = []
+        for i, plot in self.config["character_setting"]["hidden_plot"].items():
+            clue_parse_prompt = self.game_config["clue_parse_prompt"] + plot
+            message = Msg(name="system", role="user", content=clue_parse_prompt)
 
-        clue_parse_prompt = self.game_config["clue_parse_prompt"] + all_plot
-        message = Msg(name="system", role="user", content=clue_parse_prompt)
-
-        clues = self.model(
-            [
-                {
-                    key: getattr(message, key)
-                    for key in MESSAGE_KEYS
-                    if hasattr(message, key)
-                },
-            ],
-            parse_func=json.loads,
-            max_retries=self.retry_time,
-        )
+            curr_clues = self.model(
+                [
+                    {
+                        key: getattr(message, key)
+                        for key in MESSAGE_KEYS
+                        if hasattr(message, key)
+                    },
+                ],
+                parse_func=json.loads,
+                max_retries=self.retry_time,
+            )
+            for c in curr_clues:
+                c["plot"] = i
+                clues.append(c)
         logger.debug(clues)
         send_chat_msg(f"{SYS_MSG_PREFIX}初始化NPC {self.name}完成！", uid=self.uid)
         return clues
@@ -529,12 +542,13 @@ class Customer(StateAgent, DialogAgent):
             max_retries=self.retry_time,
         )
         logger.debug(exposed_clues)
+        logger.debug(self.unexposed_clues)
         indices_to_pop = []
         found_clue = []
         for clue in exposed_clues:
             index = clue.get("index", -1)
             summary = clue.get("summary", -1)
-            if index < len(self.unexposed_clues) and index:
+            if index < len(self.unexposed_clues) and index >= 0:
                 indices_to_pop.append(index)
                 found_clue.append(
                     {
@@ -543,6 +557,7 @@ class Customer(StateAgent, DialogAgent):
                     }
                 )
         indices_to_pop.sort(reverse=True)
+        logger.debug(indices_to_pop)
         for index in indices_to_pop:
             element = self.unexposed_clues.pop(index)
             self.exposed_clues.append(element)
