@@ -6,10 +6,11 @@ from typing import Optional, List
 from datetime import datetime
 
 import dashscope
+import time
 from colorist import BgBrightColor
 import inquirer
 import random
-from multiprocessing import Queue
+from multiprocessing import Queue, Value
 from collections import defaultdict
 from dataclasses import dataclass
 from agentscope.message import Msg
@@ -17,9 +18,8 @@ from enums import StagePerNight
 from pathlib import Path
 from pypinyin import lazy_pinyin, Style
 
-import gradio as gr
-
 SYS_MSG_PREFIX = '【系统】'
+SYS_TIMEOUT = f"{SYS_MSG_PREFIX}操作超时，请返回首页，开启新的探险。"
 OPENING_ROUND = 3
 REVISION_ROUND = 3
 
@@ -90,6 +90,7 @@ def enable_web_ui():
 
 def init_uid_queues():
     return {
+        "glb_act_timestamp": Value('d', float('inf')),
         "glb_queue_chat_msg": Queue(),
         "glb_queue_chat_input": Queue(),
         "glb_queue_clue": Queue(),
@@ -123,6 +124,9 @@ def send_chat_msg(
                 },
             ],
         )
+        if msg != SYS_TIMEOUT:
+            glb_act_timestamp = glb_uid_dict[uid]["glb_act_timestamp"]
+            glb_act_timestamp.value = time.time()
 
 
 def send_clue_msg(
@@ -245,6 +249,14 @@ def send_player_msg(
                 None,
             ],
         )
+        glb_act_timestamp = glb_uid_dict[uid]["glb_act_timestamp"]
+        glb_act_timestamp.value = time.time()
+
+
+def get_act_timestamp(uid=None):
+    global glb_uid_dict
+    glb_act_timestamp = glb_uid_dict[uid]["glb_act_timestamp"]
+    return glb_act_timestamp.value
 
 
 def get_chat_msg(uid=None):
@@ -287,6 +299,8 @@ def get_player_input(name=None, uid=None):
         if content == "**Reset**":
             glb_uid_dict[uid] = init_uid_queues()
             raise ResetException
+        if content == "**Timeout**":
+            raise InactiveException
     else:
         content = input(f"{name}: ")
     return content
@@ -329,20 +343,29 @@ class CheckpointArgs:
 class ResetException(Exception):
     pass
 
+
+class InactiveException(Exception):
+    pass
+
+
 def generate_picture(prompt):
+    from dashscope.common.error import InvalidTask
     dashscope.api_key = os.environ.get("DASHSCOPE_API_KEY") or dashscope.api_key
     assert dashscope.api_key
-    rsp = dashscope.ImageSynthesis.call(
-        model='wanx-lite',
-        prompt=prompt,
-        n=1,
-        size='768*768')
-    if rsp.status_code == HTTPStatus.OK:
-        return rsp.output['results'][0]['url']
+    try:
+        rsp = dashscope.ImageSynthesis.call(
+            model='wanx-lite',
+            prompt=prompt,
+            n=1,
+            size='768*768')
+        if rsp.status_code == HTTPStatus.OK:
+            return rsp.output['results'][0]['url']
 
-    else:
-        print('Failed, status_code: %s, code: %s, message: %s' %
-              (rsp.status_code, rsp.code, rsp.message))
+        else:
+            print('Failed, status_code: %s, code: %s, message: %s' %
+                  (rsp.status_code, rsp.code, rsp.message))
+    except InvalidTask as e:
+        print(e)
 
 
 def replace_names_in_messages(messages):

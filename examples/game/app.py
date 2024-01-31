@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import base64
 import os
+import time
 import datetime
 import threading
 from collections import defaultdict
@@ -13,9 +14,13 @@ from utils import (
     enable_web_ui,
     send_player_msg,
     send_player_input,
+    get_act_timestamp,
+    send_chat_msg,
     get_chat_msg,
     SYS_MSG_PREFIX,
+    SYS_TIMEOUT,
     ResetException,
+    InactiveException,
     get_clue_msg,
     get_story_msg,
     get_cook_signal_msg_length
@@ -26,6 +31,9 @@ import gradio as gr
 import modelscope_gradio_components as mgr
 
 enable_web_ui()
+
+MAX_NUM_DISPLAY_MSG = 20
+TIMEOUT = 300
 
 
 def init_uid_list():
@@ -60,7 +68,6 @@ glb_story_dict = defaultdict(init_uid_dict)
 
 glb_signed_user = []
 is_init = Event()
-MAX_NUM_DISPLAY_MSG = 20
 
 
 # 图片本地路径转换为 base64 格式
@@ -82,7 +89,18 @@ def covert_image_to_base64(image_path):
         return base64_url
 
 
-def format_cover_html(config: dict, bot_avatar_path="assets/bg.png"):
+def format_cover_html(bot_avatar_path="assets/bg.png"):
+    config = {
+        'name': '谜馔',
+        'description': '这是一款模拟餐馆经营的解密推理游戏, 快来开始吧😊',
+        'introduction_label': "<br>玩法介绍",
+        'introduction_context': "在一个热闹的小镇上<br>"
+                                "你经营着一家餐馆<br>"
+                                "最近小镇上发生了一些离奇的事件<br>"
+                                "......<br>"
+                                "通过美味的食物以及真诚的内心去打动顾客<br>"
+                                "为他们排忧解难"
+    }
     image_src = covert_image_to_base64(bot_avatar_path)
     return f"""
 <div class="bot_cover">
@@ -90,7 +108,7 @@ def format_cover_html(config: dict, bot_avatar_path="assets/bg.png"):
         <img src={image_src} />
     </div>
     <div class="bot_name">{config.get("name", "经营餐厅")}</div>
-    <div class="bot_desp">{config.get("description", "快来经营你的餐厅吧")}</div>
+    <div class="bot_desc">{config.get("description", "快来经营你的餐厅吧")}</div>
     <div class="bot_intro_label">{config.get("introduction_label", "玩法介绍")}</div>
     <div class="bot_intro_ctx">
     {config.get("introduction_context", "玩法介绍")}</div>
@@ -238,6 +256,14 @@ def get_clue(uid):
     return [gr.HTML(x) for x in flex_container_html_list]
 
 
+def check_act_timestamp(uid):
+    uid = check_uuid(uid)
+    print(f"{uid}: active in {(time.time() - get_act_timestamp(uid))} sec.")
+    if (time.time() - get_act_timestamp(uid)) >= TIMEOUT:
+        send_chat_msg(SYS_TIMEOUT, uid=uid)
+        send_player_input("**Timeout**", uid=uid)
+
+
 def fn_choice(data: gr.EventData, uid):
     uid = check_uuid(uid)
     send_player_input(data._data["value"], uid=uid)
@@ -296,28 +322,19 @@ if __name__ == "__main__":
             try:
                 main(args)
             except ResetException:
-                print("重置成功")
+                print(f"重置成功：{uid} ")
+            except InactiveException:
+                print(f"超时：{uid} ")
+                break
 
     with gr.Blocks(css="assets/app.css") as demo:
         uuid = gr.Textbox(label='modelscope_uuid', visible=False)
-
-        welcome = {
-            'name': '饮食男女',
-            'description': '这是一款模拟餐馆经营的文字冒险游戏, 快来开始吧😊',
-            'introduction_label': "<br>玩法介绍",
-            'introduction_context': "在一个热闹的小镇上<br>"
-                                    "你经营着一家餐馆<br>"
-                                    "最近小镇上出现了一些有意思的事儿<br>"
-                                    "......<br>"
-                                    "通过美味的食物以及真诚的内心去打动顾客<br>"
-                                    "为他们排忧解难"
-        }
         tabs = gr.Tabs(visible=True)
         with tabs:
             welcome_tab = gr.Tab('游戏界面', id=0)
             config_tab = gr.Tab('游戏配置', id=1)
             with welcome_tab:
-                user_chat_bot_cover = gr.HTML(format_cover_html(welcome))
+                user_chat_bot_cover = gr.HTML(format_cover_html())
                 with gr.Row():
                     with gr.Column():
                         new_button = gr.Button(value='🚀新的探险', )
@@ -473,8 +490,10 @@ if __name__ == "__main__":
 
         def send_reset_message(uid):
             uid = check_uuid(uid)
-            global glb_history_dict
+            global glb_history_dict, glb_clue_dict, glb_story_dict
             glb_history_dict[uid] = init_uid_list()
+            glb_clue_dict[uid] = init_uid_dict()
+            glb_story_dict[uid] = init_uid_dict()
             send_player_input("**Reset**", uid=uid)
             return ""
 
@@ -738,6 +757,10 @@ if __name__ == "__main__":
                   inputs=[uuid],
                   outputs=[story_container],
                   every=0.5)
+
+        demo.load(check_act_timestamp,
+                  inputs=[uuid],
+                  every=10)
 
     demo.queue()
     demo.launch()
