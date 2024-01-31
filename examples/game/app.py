@@ -237,7 +237,7 @@ def get_clue(uid):
 
 def check_act_timestamp(uid):
     uid = check_uuid(uid)
-    print(f"{uid}: active in {(time.time() - get_act_timestamp(uid))} sec.")
+    # print(f"{uid}: active in {(time.time() - get_act_timestamp(uid))} sec.")
     if (time.time() - get_act_timestamp(uid)) >= TIMEOUT:
         send_chat_msg(SYS_TIMEOUT, uid=uid)
         send_player_input("**Timeout**", uid=uid)

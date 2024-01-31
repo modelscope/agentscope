@@ -322,7 +322,8 @@ def config_role_tab(role_tab, uuid):
             label="设置隐藏剧情",
             show_label=True,
             datatype=["str", "str"],
-            headers=["id", "剧情描述"],
+            column_widths=["10%", "95%"],
+            headers=["剧情ID", "剧情描述"],
             type="array",
             wrap=True,
             col_count=(2, "fixed"),
@@ -338,13 +339,14 @@ def config_role_tab(role_tab, uuid):
         )
 
         plot_clues = gr.Dataframe(
-            label="线索",
+            label="线索卡",
             show_label=True,
-            datatype=["str", "str"],
-            headers=["线索名", "线索详情"],
+            datatype=["str", "str", "str"],
+            column_widths=["10%", "10%", "80%"],
+            headers=["剧情ID", "线索名", "线索详情"],
             type="array",
             wrap=True,
-            col_count=(2, "fixed"),
+            col_count=(3, "fixed"),
         )
 
     def configure_role(name, uuid):
@@ -352,12 +354,12 @@ def config_role_tab(role_tab, uuid):
         role = get_role_by_name(name=name, uuid=uuid)
     
         character_setting = role["character_setting"]
-
-        hidden_plots = [[k, v] for k, v in character_setting["hidden_plot"].items()]
+        hidden_plot = character_setting["hidden_plot"]
+        hidden_plots = [[k, v] for k, v in hidden_plot.items()] if hidden_plot else None
+        
         plugin_backgrounds = [[str] for str in character_setting["plugin_background"]]
         clues = role.get("clue", None)
-
-        clues = [[clue["name"], clue["content"]] if clues else None for clue in clues]
+        clues = [[str(clue["plot"]), clue["name"], clue["content"]] for clue in clues] if clues else None
         return {
             avatar_file: gr.Image(value=role["avatar"], interactive=True),
             role_name: role["name"],
@@ -398,13 +400,13 @@ def config_role_tab(role_tab, uuid):
             avatar_file: gr.Image(value=None),
             role_name: "",
             avatar_desc: "",
-            avatar_desc: "",
             use_memory: gr.Checkbox(label="是否开启记忆功能"),
             model_name: "",
             food_preference: "",
             background: "",
             hidden_plot: None,
             plugin_background: None,
+            plot_clues: None
         }
 
     def delete_role(name, uuid):
@@ -451,11 +453,12 @@ def config_role_tab(role_tab, uuid):
         new_role["name"] = name
         new_role["use_memory"] = use_memory
         new_role["model"] = model_name
-        new_role["clue"] = [{"name": clue[0], "content": clue[1]} for clue in clues]
+        new_role["clue"] = [{"plot": int(clue[0]), "name": clue[1], "content": clue[2]} for clue in clues if clue[0]]
+        hidden_plot = {int(it[0]): it[1] for it in hidden_plot if it[0]}
         character_setting = new_role.get("character_setting", dict())
         character_setting["food_preference"] = food_preference
         character_setting["background"] = background
-        character_setting["hidden_plot"] = {it[0]: it[1] for it in hidden_plot}
+        character_setting["hidden_plot"] = hidden_plot
         character_setting["plugin_background"] = [it[0] for it in plugin_background]
         new_role["character_setting"] = character_setting
         save_user_cfg(roles, uuid=uuid)
