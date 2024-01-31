@@ -65,7 +65,6 @@ def get_role_by_name(name, uid):
 glb_history_dict = defaultdict(init_uid_list)
 glb_clue_dict = defaultdict(init_uid_dict)
 glb_story_dict = defaultdict(init_uid_dict)
-glb_cook_signal_dict = defaultdict(init_uid_dict)
 glb_cook_string_dict = defaultdict(init_uid_dict)
 
 glb_signed_user = []
@@ -133,16 +132,13 @@ def export_chat_history(uid):
 def get_chat(uid) -> List[List]:
     uid = check_uuid(uid)
     global glb_history_dict
-    global glb_cook_signal_dict
     global glb_cook_string_dict
     line = get_chat_msg(uid=uid)
 
     if line is not None:
         if line[0] and line[0]['text'] == "**i_am_cooking**":
-            glb_cook_signal_dict[uid] = True
-            glb_cook_string_dict[uid] = "制作中"
+            glb_cook_string_dict[uid] = "做菜中"
         elif line[0] and line[0]['text'] == "**end_cooking**":
-            glb_cook_signal_dict[uid] = False
             glb_cook_string_dict[uid] = ""
         else:
             glb_history_dict[uid] += [line]
@@ -158,14 +154,12 @@ def get_chat(uid) -> List[List]:
         else:
             # User chat, format: (msg, None)
             dial_msg.append(line)
-    if glb_cook_signal_dict[uid]:
+    if glb_cook_string_dict[uid]:
         text = cycle_dots(glb_cook_string_dict[uid])
         glb_cook_string_dict[uid] = text
-        dial_msg.append([{'text': text,'name': '我', 'flushing': False,
+        dial_msg.append([{'text': text, 'name': '我', 'flushing': False,
                          'avatar': "./assets/user.jpg"}, None])
-        return dial_msg[-MAX_NUM_DISPLAY_MSG:] , sys_msg[-MAX_NUM_DISPLAY_MSG:]
-    else:
-        return dial_msg[-MAX_NUM_DISPLAY_MSG:], sys_msg[-MAX_NUM_DISPLAY_MSG:]
+    return dial_msg[-MAX_NUM_DISPLAY_MSG:], sys_msg[-MAX_NUM_DISPLAY_MSG:]
 
 def get_story(uid):
     global glb_story_dict
