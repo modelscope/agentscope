@@ -85,13 +85,10 @@ def setup_server(parsed_args: argparse.Namespace) -> None:
 
 def run_main_process(parsed_args: argparse.Namespace) -> None:
     """Setup the main debate competition process"""
-    agents = agentscope.init(
+    pro_agent, con_agent, judge_agent = agentscope.init(
         model_configs="configs/model_configs.json",
         agent_configs="configs/debate_agent_configs.json",
     )
-    pro_agent = agents[0]
-    con_agent = agents[1]
-    judge_agent = agents[2]
     pro_agent = pro_agent.to_dist(
         host=parsed_args.pro_host,
         port=parsed_args.pro_port,
