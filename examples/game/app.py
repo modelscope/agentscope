@@ -134,7 +134,7 @@ def get_chat(uid) -> List[List]:
     global glb_history_dict
     global glb_doing_signal_dict
     line = get_chat_msg(uid=uid)
-
+    # TODO: 优化显示效果，目前存在输出显示跳跃的问题
     if line is not None:
         if line[0] and line[0]['text'] == "**i_am_cooking**":
             line[0]['text'] = "做菜中"
