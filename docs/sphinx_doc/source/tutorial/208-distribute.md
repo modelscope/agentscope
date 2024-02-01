@@ -56,6 +56,8 @@ Please follow the steps below to deploy your application distributedly.
 - `local_mode`: set to `True` if all agents run on the same machine, defaults to `True`.
 - `lazy_launch`:  if set to `True`, only launch the server when the agent is called.
 
+> The `to_dist` method is implemented based on [gRPC](https://grpc.io/). When 'launch_server' is set to `True`, it will start a gRPC server process, and the original agent will be transferred to the new process to run.
+
 ### Run in multi-process mode
 
 AgentScope supports deployment in multi-process mode, where each agent is a sub-process of the application's main process, and all agents run on the same machine.

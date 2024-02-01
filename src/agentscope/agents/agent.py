@@ -16,11 +16,11 @@ from agentscope.memory import TemporaryMemory
 
 
 class _RecordInitSettingMeta(ABCMeta):
-    """A wrapper to record the init args into `init_settings` field."""
+    """A wrapper to record the init args into `_init_settings` field."""
 
     def __call__(cls, *args: tuple, **kwargs: dict) -> Any:
         instance = super().__call__(*args, **kwargs)
-        instance.init_settings = {"args": args, "kwargs": kwargs}
+        instance._init_settings = {"args": args, "kwargs": kwargs}
         return instance
 
 
@@ -219,7 +219,7 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
             return self
         return RpcAgent(
             agent_class=self.__class__,
-            agent_configs=self.init_settings,
+            agent_configs=self._init_settings,
             name=self.name,
             host=host,
             port=port,

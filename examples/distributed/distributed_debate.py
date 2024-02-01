@@ -65,6 +65,11 @@ def setup_server(parsed_args: argparse.Namespace) -> None:
         encoding="utf-8",
     ) as f:
         configs = json.load(f)
+        configs = {
+            "pro": configs[0]["args"],
+            "con": configs[1]["args"],
+            "judge": configs[2]["args"],
+        }
         config = configs[parsed_args.role]
         host = getattr(parsed_args, f"{parsed_args.role}_host")
         port = getattr(parsed_args, f"{parsed_args.role}_port")
@@ -80,36 +85,28 @@ def setup_server(parsed_args: argparse.Namespace) -> None:
 
 def run_main_process(parsed_args: argparse.Namespace) -> None:
     """Setup the main debate competition process"""
-    agentscope.init(
+    agents = agentscope.init(
         model_configs="configs/model_configs.json",
+        agent_configs="configs/debate_agent_configs.json",
     )
-    with open(
-        "configs/debate_agent_configs.json",
-        "r",
-        encoding="utf-8",
-    ) as f:
-        configs = json.load(f)
-        pro_agent = DialogAgent(
-            **configs["pro"],
-        ).to_dist(
-            host=parsed_args.pro_host,
-            port=parsed_args.pro_port,
-            launch_server=False,
-        )
-        con_agent = DialogAgent(
-            **configs["con"],
-        ).to_dist(
-            host=parsed_args.con_host,
-            port=parsed_args.con_port,
-            launch_server=False,
-        )
-        judge_agent = DialogAgent(
-            **configs["judge"],
-        ).to_dist(
-            host=parsed_args.judge_host,
-            port=parsed_args.judge_port,
-            launch_server=False,
-        )
+    pro_agent = agents[0]
+    con_agent = agents[1]
+    judge_agent = agents[2]
+    pro_agent = pro_agent.to_dist(
+        host=parsed_args.pro_host,
+        port=parsed_args.pro_port,
+        launch_server=False,
+    )
+    con_agent = con_agent.to_dist(
+        host=parsed_args.con_host,
+        port=parsed_args.con_port,
+        launch_server=False,
+    )
+    judge_agent = judge_agent.to_dist(
+        host=parsed_args.judge_host,
+        port=parsed_args.judge_port,
+        launch_server=False,
+    )
     participants = [pro_agent, con_agent, judge_agent]
     hint = Msg(name="System", content=ANNOUNCEMENT)
     x = None
