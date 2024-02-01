@@ -46,15 +46,15 @@ class UserAgent(AgentBase):
             x (`dict`, defaults to `None`):
                 A dictionary containing initial data to be added to memory.
                 Defaults to None.
-            required_keys (`Optional[Union[list[str], str]]`, defaults to
-            None):
+            required_keys \
+                (`Optional[Union[list[str], str]]`, defaults to `None`):
                 Strings that requires user to input, which will be used as
                 the key of the returned dict. Defaults to None.
 
         Returns:
-            dict: A dictionary representing the message object that contains
-                the user's input and any additional details. This is also
-                stored in the object's memory.
+            `dict`: A dictionary representing the message object that contains
+            the user's input and any additional details. This is also
+            stored in the object's memory.
         """
         if x is not None:
             self.memory.add(x)

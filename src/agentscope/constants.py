@@ -4,7 +4,7 @@ from numbers import Number
 from enum import IntEnum
 
 PACKAGE_NAME = "agentscope"
-MSG_TOKEN = f"<{PACKAGE_NAME}_msg>"
+MSG_TOKEN = f"[{PACKAGE_NAME}_msg]"
 
 
 # default values

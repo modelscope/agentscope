@@ -4,18 +4,21 @@ Unit tests for rpc agent classes
 """
 import unittest
 import time
+import shutil
+from loguru import logger
 
+import agentscope
 from agentscope.agents import AgentBase
-from agentscope.agents import RpcAgentBase
 from agentscope.agents.rpc_agent import RpcAgentServerLauncher
 from agentscope.message import Msg
 from agentscope.message import PlaceholderMessage
 from agentscope.message import deserialize
 from agentscope.msghub import msghub
 from agentscope.pipelines import sequentialpipeline
+from agentscope.utils import MonitorFactory, QuotaExceededError
 
 
-class DemoRpcAgent(RpcAgentBase):
+class DemoRpcAgent(AgentBase):
     """A demo Rpc agent for test usage."""
 
     def __init__(self, **kwargs) -> None:  # type: ignore [no-untyped-def]
@@ -30,7 +33,7 @@ class DemoRpcAgent(RpcAgentBase):
         return x
 
 
-class DemoRpcAgentAdd(RpcAgentBase):
+class DemoRpcAgentAdd(AgentBase):
     """A demo Rpc agent for test usage"""
 
     def reply(self, x: dict = None) -> dict:
@@ -50,7 +53,7 @@ class DemoLocalAgentAdd(AgentBase):
         return x
 
 
-class DemoRpcAgentWithMemory(RpcAgentBase):
+class DemoRpcAgentWithMemory(AgentBase):
     """A demo Rpc agent that count its memory"""
 
     def reply(self, x: dict = None) -> dict:
@@ -62,8 +65,49 @@ class DemoRpcAgentWithMemory(RpcAgentBase):
         return msg
 
 
+class DemoRpcAgentWithMonitor(AgentBase):
+    """A demo Rpc agent that use monitor"""
+
+    def reply(self, x: dict = None) -> dict:
+        monitor = MonitorFactory.get_monitor()
+        try:
+            monitor.update({"msg_num": 1})
+        except QuotaExceededError:
+            x.content["quota_exceeded"] = True
+            logger.chat(
+                {
+                    "name": self.name,
+                    "content": "quota_exceeded",
+                },
+            )
+            return x
+        x.content["msg_num"] = monitor.get_value("msg_num")
+        logger.chat(
+            {
+                "name": self.name,
+                "content": f"msg_num {x.content['msg_num']}",
+            },
+        )
+        time.sleep(0.2)
+        return x
+
+
 class BasicRpcAgentTest(unittest.TestCase):
     "Test cases for Rpc Agent"
+
+    def setUp(self) -> None:
+        """Init for Rpc Agent Test"""
+        agentscope.init(
+            project="test",
+            name="rpc_agent",
+            save_dir="./test_runs",
+            save_log=True,
+        )
+
+    def tearDown(self) -> None:
+        MonitorFactory._instance = None  # pylint: disable=W0212
+        logger.remove()
+        shutil.rmtree("./test_runs")
 
     def test_single_rpc_agent_server(self) -> None:
         """test setup a single rpc agent"""
@@ -71,6 +115,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         port = 12001
         agent_a = DemoRpcAgent(
             name="a",
+        ).to_dist(
             host=host,
             port=port,
         )
@@ -79,19 +124,30 @@ class BasicRpcAgentTest(unittest.TestCase):
         result = agent_a(msg)
         # get name without waiting for the server
         self.assertEqual(result.name, "a")
+        self.assertEqual(result["name"], "a")
         js_placeholder_result = result.serialize()
-        self.assertTrue(result.is_placeholder)
+        self.assertTrue(result._is_placeholder)  # pylint: disable=W0212
         placeholder_result = deserialize(js_placeholder_result)
         self.assertTrue(isinstance(placeholder_result, PlaceholderMessage))
         self.assertEqual(placeholder_result.name, "a")
-        self.assertTrue(placeholder_result.is_placeholder)
+        self.assertEqual(
+            placeholder_result["name"],  # type: ignore [call-overload]
+            "a",
+        )
+        self.assertTrue(
+            placeholder_result._is_placeholder,  # pylint: disable=W0212
+        )
         # wait to get content
         self.assertEqual(result.content, msg.content)
-        self.assertFalse(result.is_placeholder)
+        self.assertFalse(result._is_placeholder)  # pylint: disable=W0212
         self.assertEqual(result.id, 0)
-        self.assertTrue(placeholder_result.is_placeholder)
+        self.assertTrue(
+            placeholder_result._is_placeholder,  # pylint: disable=W0212
+        )
         self.assertEqual(placeholder_result.content, msg.content)
-        self.assertFalse(placeholder_result.is_placeholder)
+        self.assertFalse(
+            placeholder_result._is_placeholder,  # pylint: disable=W0212
+        )
         self.assertEqual(placeholder_result.id, 0)
         # check msg
         js_msg_result = result.serialize()
@@ -106,15 +162,19 @@ class BasicRpcAgentTest(unittest.TestCase):
     def test_connect_to_an_existing_rpc_server(self) -> None:
         """test connecting to an existing server"""
         launcher = RpcAgentServerLauncher(
-            name="a",
-            host="127.0.0.1",
             # choose port automatically
-            local_mode=False,
             agent_class=DemoRpcAgent,
+            agent_kwargs={
+                "name": "a",
+            },
+            local_mode=False,
+            host="127.0.0.1",
+            port=12010,
         )
         launcher.launch()
         agent_a = DemoRpcAgent(
             name="a",
+        ).to_dist(
             host="127.0.0.1",
             port=launcher.port,
             launch_server=False,
@@ -125,6 +185,17 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertEqual(result.name, "a")
         # waiting for server
         self.assertEqual(result.content, msg.content)
+        # test dict usage
+        msg = Msg(name="System", content={"text": "hi world"})
+        result = agent_a(msg)
+        # get name without waiting for the server
+        self.assertEqual(result["name"], "a")
+        # waiting for server
+        self.assertEqual(result["content"], msg.content)
+        # test to_str
+        msg = Msg(name="System", content={"text": "test"})
+        result = agent_a(msg)
+        self.assertEqual(result.to_str(), "a: {'text': 'test'}")
         launcher.shutdown()
 
     def test_multi_rpc_agent(self) -> None:
@@ -135,18 +206,21 @@ class BasicRpcAgentTest(unittest.TestCase):
         port3 = 12003
         agent_a = DemoRpcAgentAdd(
             name="a",
+        ).to_dist(
             host=host,
             port=port1,
             lazy_launch=False,
         )
         agent_b = DemoRpcAgentAdd(
             name="b",
+        ).to_dist(
             host=host,
             port=port2,
             lazy_launch=False,
         )
         agent_c = DemoRpcAgentAdd(
             name="c",
+        ).to_dist(
             host=host,
             port=port3,
             lazy_launch=False,
@@ -192,6 +266,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         # rpc agent a
         agent_a = DemoRpcAgentAdd(
             name="a",
+        ).to_dist(
             host=host,
             port=port1,
             lazy_launch=False,
@@ -203,6 +278,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         # rpc agent c
         agent_c = DemoRpcAgentAdd(
             name="c",
+        ).to_dist(
             host=host,
             port=port2,
             lazy_launch=False,
@@ -217,24 +293,15 @@ class BasicRpcAgentTest(unittest.TestCase):
 
     def test_msghub_compatibility(self) -> None:
         """test compatibility with msghub"""
-        port1 = 12001
-        port2 = 12002
-        port3 = 12003
         agent_a = DemoRpcAgentWithMemory(
             name="a",
-            lazy_launch=False,
-            port=port1,
-        )
+        ).to_dist()
         agent_b = DemoRpcAgentWithMemory(
             name="b",
-            lazy_launch=False,
-            port=port2,
-        )
+        ).to_dist()
         agent_c = DemoRpcAgentWithMemory(
             name="c",
-            lazy_launch=False,
-            port=port3,
-        )
+        ).to_dist()
         participants = [agent_a, agent_b, agent_c]
         annonuncement_msgs = [
             Msg(name="System", content="Announcement 1"),
@@ -258,3 +325,40 @@ class BasicRpcAgentTest(unittest.TestCase):
             self.assertEqual(x_c.content["mem_size"], 7)
             x_c = sequentialpipeline(participants, x_c)
             self.assertEqual(x_c.content["mem_size"], 10)
+
+    def test_standalone_multiprocess_init(self) -> None:
+        """test compatibility with agentscope.init"""
+        monitor = MonitorFactory.get_monitor()
+        monitor.register("msg_num", quota=10)
+        host = "localhost"
+        # automatically
+        port1 = 12001
+        port2 = 12002
+        # rpc agent a
+        agent_a = DemoRpcAgentWithMonitor(
+            name="a",
+        ).to_dist(
+            host=host,
+            port=port1,
+            lazy_launch=False,
+        )
+        # local agent b
+        agent_b = DemoRpcAgentWithMonitor(
+            name="b",
+        ).to_dist(
+            host=host,
+            port=port2,
+            lazy_launch=False,
+        )
+        msg = Msg(name="System", content={"msg_num": 0})
+        j = 0
+        for _ in range(5):
+            msg = agent_a(msg)
+            self.assertEqual(msg["content"]["msg_num"], j + 1)
+            msg = agent_b(msg)
+            self.assertEqual(msg["content"]["msg_num"], j + 2)
+            j += 2
+        msg = agent_a(msg)
+        self.assertTrue(msg["content"]["quota_exceeded"])
+        msg = agent_b(msg)
+        self.assertTrue(msg["content"]["quota_exceeded"])

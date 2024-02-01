@@ -6,7 +6,7 @@ import json
 
 import agentscope
 from agentscope.msghub import msghub
-from agentscope.agents.rpc_dialog_agent import RpcDialogAgent
+from agentscope.agents.dialog_agent import DialogAgent
 from agentscope.agents.rpc_agent import RpcAgentServerLauncher
 from agentscope.message import Msg
 from agentscope.utils.logging_utils import logger
@@ -65,15 +65,19 @@ def setup_server(parsed_args: argparse.Namespace) -> None:
         encoding="utf-8",
     ) as f:
         configs = json.load(f)
+        configs = {
+            "pro": configs[0]["args"],
+            "con": configs[1]["args"],
+            "judge": configs[2]["args"],
+        }
         config = configs[parsed_args.role]
         host = getattr(parsed_args, f"{parsed_args.role}_host")
         port = getattr(parsed_args, f"{parsed_args.role}_port")
         server_launcher = RpcAgentServerLauncher(
+            agent_class=DialogAgent,
+            agent_kwargs=config,
             host=host,
             port=port,
-            local_mode=False,
-            agent_class=RpcDialogAgent,
-            **config,
         )
         server_launcher.launch()
         server_launcher.wait_until_terminate()
@@ -81,23 +85,21 @@ def setup_server(parsed_args: argparse.Namespace) -> None:
 
 def run_main_process(parsed_args: argparse.Namespace) -> None:
     """Setup the main debate competition process"""
-    agentscope.init(
+    pro_agent, con_agent, judge_agent = agentscope.init(
         model_configs="configs/model_configs.json",
+        agent_configs="configs/debate_agent_configs.json",
     )
-    pro_agent = RpcDialogAgent(
-        name="Pro",
+    pro_agent = pro_agent.to_dist(
         host=parsed_args.pro_host,
         port=parsed_args.pro_port,
         launch_server=False,
     )
-    con_agent = RpcDialogAgent(
-        name="Con",
+    con_agent = con_agent.to_dist(
         host=parsed_args.con_host,
         port=parsed_args.con_port,
         launch_server=False,
     )
-    judge_agent = RpcDialogAgent(
-        name="Judge",
+    judge_agent = judge_agent.to_dist(
         host=parsed_args.judge_host,
         port=parsed_args.judge_port,
         launch_server=False,
@@ -108,13 +110,13 @@ def run_main_process(parsed_args: argparse.Namespace) -> None:
     with msghub(participants=participants, announcement=hint):
         for _ in range(3):
             pro_resp = pro_agent(x)
-            logger.chat(pro_resp.update_value())
+            logger.chat(pro_resp)
             con_resp = con_agent(pro_resp)
-            logger.chat(con_resp.update_value())
+            logger.chat(con_resp)
             x = judge_agent(con_resp)
-            logger.chat(x.update_value())
+            logger.chat(x)
         x = judge_agent(x)
-        logger.chat(x.update_value())
+        logger.chat(x)
 
 
 if __name__ == "__main__":
