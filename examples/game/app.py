@@ -65,7 +65,7 @@ def get_role_by_name(name, uid):
 glb_history_dict = defaultdict(init_uid_list)
 glb_clue_dict = defaultdict(init_uid_dict)
 glb_story_dict = defaultdict(init_uid_dict)
-glb_cook_string_dict = defaultdict(init_uid_dict)
+glb_doing_signal_dict = defaultdict(init_uid_dict)
 
 glb_signed_user = []
 is_init = Event()
@@ -132,17 +132,19 @@ def export_chat_history(uid):
 def get_chat(uid) -> List[List]:
     uid = check_uuid(uid)
     global glb_history_dict
-    global glb_cook_string_dict
+    global glb_doing_signal_dict
     line = get_chat_msg(uid=uid)
 
     if line is not None:
         if line[0] and line[0]['text'] == "**i_am_cooking**":
-            glb_cook_string_dict[uid] = "做菜中"
-        elif line[0] and line[0]['text'] == "**end_cooking**":
-            glb_cook_string_dict[uid] = ""
+            line[0]['text'] = "做菜中"
+            glb_doing_signal_dict[uid] = line
+        elif line[1] and line[1]['text'] == "**speak**":
+            line[1]['text'] = "思考中"
+            glb_doing_signal_dict[uid] = line
         else:
             glb_history_dict[uid] += [line]
-
+            glb_doing_signal_dict[uid] = []
     dial_msg, sys_msg = [], []
     for line in glb_history_dict[uid]:
         _, msg = line
@@ -154,11 +156,16 @@ def get_chat(uid) -> List[List]:
         else:
             # User chat, format: (msg, None)
             dial_msg.append(line)
-    if glb_cook_string_dict[uid]:
-        text = cycle_dots(glb_cook_string_dict[uid])
-        glb_cook_string_dict[uid] = text
-        dial_msg.append([{'text': text, 'name': '我', 'flushing': False,
-                         'avatar': "./assets/user.jpg"}, None])
+    if glb_doing_signal_dict[uid]:
+        if glb_doing_signal_dict[uid][0]:
+            text = cycle_dots(glb_doing_signal_dict[uid][0]['text'])
+            glb_doing_signal_dict[uid][0]['text'] = text
+        elif glb_doing_signal_dict[uid][1]:
+            text = cycle_dots(glb_doing_signal_dict[uid][1]['text'])
+            glb_doing_signal_dict[uid][1]['text'] = text
+
+        dial_msg.append(glb_doing_signal_dict[uid])
+
     return dial_msg[-MAX_NUM_DISPLAY_MSG:], sys_msg[-MAX_NUM_DISPLAY_MSG:]
 
 def get_story(uid):

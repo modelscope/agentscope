@@ -187,7 +187,6 @@ class RuledUser(AgentBase):
         picture_prompt = f"请根据菜品《{food}》, 生成一幅与之对应的色香味巨全，让人有食欲的图。"
         send_player_msg("**i_am_cooking**", uid=self.uid)
         picture_url = generate_picture(picture_prompt)
-        send_player_msg("**end_cooking**", uid=self.uid)
         send_player_msg(
             f" 撸袖挥勺，热浪腾空。一番烹饪后，一道《{food}》出现在客人眼前。"
             f"![image]({picture_url})",
