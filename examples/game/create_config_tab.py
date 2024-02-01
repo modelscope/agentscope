@@ -550,6 +550,9 @@ def config_role_tab(role_tab, uuid):
             if role:
                 desc = role["character_setting"]["background"]
         gen_avatar_file = generate_user_logo_file(desc, name, uuid)
+        if not gen_avatar_file:
+            gr.Warning('生成头像失败')
+            gen_avatar_file = role['avatar']
         return gr.Image(value=gen_avatar_file)
 
     role_selector.change(
