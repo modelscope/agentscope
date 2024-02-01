@@ -18,6 +18,7 @@ from utils import (
     replace_names_in_messages,
     SYS_MSG_PREFIX,
     get_clue_image_b64_url,
+    extract_keys_from_dict,
 )
 
 HISTORY_WINDOW = 10
@@ -159,13 +160,7 @@ class Customer(StateAgent, DialogAgent):
             return 2.0
 
         score, text = self.model(
-            [
-                {
-                    key: getattr(message, key)
-                    for key in MESSAGE_KEYS
-                    if hasattr(message, key)
-                },
-            ],
+            [extract_keys_from_dict(message, MESSAGE_KEYS)],
             parse_func=_parse_score,
             fault_handler=_default_score,
             max_retries=3,
@@ -366,13 +361,7 @@ class Customer(StateAgent, DialogAgent):
         )
         update_msg = Msg(role="user", name="system", content=update_prompt)
         new_background = self.model(
-            [
-                {
-                    key: getattr(update_msg, key)
-                    for key in MESSAGE_KEYS
-                    if hasattr(update_msg, key)
-                },
-            ],
+            [extract_keys_from_dict(update_msg, MESSAGE_KEYS)]
         )
         bg_msg = Msg(
             role="user",
@@ -414,13 +403,7 @@ class Customer(StateAgent, DialogAgent):
         )
         msg = Msg(name="system", role="user", content=pov_prompt)
         pov_story = self.model(
-            [
-                {
-                    key: getattr(msg, key)
-                    for key in MESSAGE_KEYS
-                    if hasattr(msg, key)
-                },
-            ],
+            [extract_keys_from_dict(msg, MESSAGE_KEYS)]
         )
         print("*" * 20)
         send_chat_msg(
@@ -509,13 +492,7 @@ class Customer(StateAgent, DialogAgent):
             message = Msg(name="system", role="user", content=clue_parse_prompt)
 
             curr_clues = self.model(
-                [
-                    {
-                        key: getattr(message, key)
-                        for key in MESSAGE_KEYS
-                        if hasattr(message, key)
-                    },
-                ],
+                [extract_keys_from_dict(message, MESSAGE_KEYS)],
                 parse_func=json.loads,
                 max_retries=self.retry_time,
             )
@@ -540,13 +517,7 @@ class Customer(StateAgent, DialogAgent):
         )
         message = Msg(name="system", content=prompt, role="user")
         exposed_clues = self.model(
-            [
-                {
-                    key: getattr(message, key)
-                    for key in MESSAGE_KEYS
-                    if hasattr(message, key)
-                },
-            ],
+            [extract_keys_from_dict(message, MESSAGE_KEYS)],
             parse_func=json.loads,
             fault_handler=lambda response: [],
             max_retries=self.retry_time,

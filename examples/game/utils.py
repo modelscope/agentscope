@@ -399,3 +399,7 @@ def check_uuid(uid):
         else:
             uid = 'local_user'
     return uid
+
+
+def extract_keys_from_dict(input_dict, keys_list):
+    return {k: input_dict[k] for k in keys_list if k in input_dict}

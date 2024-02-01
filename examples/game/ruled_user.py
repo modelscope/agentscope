@@ -18,7 +18,8 @@ from utils import (
     ResetException,
     generate_picture,
     send_player_msg,
-    SYS_MSG_PREFIX
+    SYS_MSG_PREFIX,
+    extract_keys_from_dict,
 )
 
 
@@ -41,6 +42,8 @@ class FoodQuality(Enum):
     FRAGRANT = "香的"
     SMOKY = "烟熏味的"
 
+MESSAGE_KEYS = ["name", "role", "content"]
+
 
 class RuledUser(AgentBase):
     """User agent under rules"""
@@ -52,6 +55,7 @@ class RuledUser(AgentBase):
         sys_prompt: Optional[str] = None,
         ingredients_dict: Optional[dict] = None,
         cook_prompt: Optional[str] = None,
+        success_detector_prompt: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         """Initialize a RuledUser object."""
@@ -59,6 +63,7 @@ class RuledUser(AgentBase):
         self.retry_time = 3
         self.ingredients_dict = ingredients_dict
         self.cook_prompt = cook_prompt
+        self.success_detector_prompt = success_detector_prompt
         self.uid = kwargs.get("uid", None)
 
     def reply(
@@ -132,11 +137,51 @@ class RuledUser(AgentBase):
         prompt = self.sys_prompt.format_map({"content": content})
         message = Msg(name="user", content=prompt, role="user")
         ruler_res = self.model(
-            [message],
+            [extract_keys_from_dict(message, MESSAGE_KEYS)],
             parse_func=json.loads,
+            fault_handler=lambda *_: {"allow": "false"},
             max_retries=self.retry_time,
         )
         return ruler_res
+
+    def collect_mem_until_announcement(self, announcement):
+        chat_log = []
+        for i in range(self.memory.size() - 1, -1, -1):
+            # TODO: avoid use `_content`
+            if self.memory._content[i].get("content", None) == announcement.get("content"):
+                break
+            # TODO: avoid use `_content`
+            chat_log.append(self.memory._content[i])
+        chat_log.reverse()
+        return chat_log
+
+    def success_detector(self, condition, announcement):
+        chat_log = self.collect_mem_until_announcement(announcement)
+        chat_log = "\n".join([f"{d['name']}: {d['content']}" for d in chat_log])
+        logger.debug(chat_log)
+        prompt = self.success_detector_prompt.format_map(
+            {
+                "condition": condition,
+                "chat_log": chat_log,
+            }
+        )
+        message = Msg(name="user", content=prompt, role="user")
+        success_res = self.model(
+            [extract_keys_from_dict(message, MESSAGE_KEYS)],
+            parse_func=json.loads,
+            fault_handler=lambda *_: {"finish": "false"},
+            max_retries=self.retry_time,
+        )
+        if success_res.get("finish") == "true":
+            return True
+        else:
+            send_chat_msg(
+                f" {SYS_MSG_PREFIX}未达成游戏完成条件"
+                f" {success_res.get('reason', '未知原因')}\n"
+                f"请继续加油！",
+                uid=self.uid,
+            )
+            return False
 
     def set_ingredients(self, ingredients_dict):
         self.ingredients_dict = ingredients_dict
@@ -147,6 +192,8 @@ class RuledUser(AgentBase):
             for sublist in self.ingredients_dict.values()
             for item in sublist
         ]
+
+        ingredients_list = ["跳过"] + ingredients_list
 
         cook_list = []
         questions = [
@@ -175,11 +222,16 @@ class RuledUser(AgentBase):
             cook_list = sel_ingr
             break
 
+        print(cook_list)
+        if cook_list == ["跳过"]:
+            send_player_msg("不好意思，小店今天暂不接待。", uid=self.uid)
+            return "跳过"
+
         prompt = self.cook_prompt.format_map(
             {"ingredient": "+".join(cook_list)},
         )
         message = Msg(name="user", content=prompt, role="user")
-        food = self.model(messages=[message])
+        food = self.model(messages=[extract_keys_from_dict(message, MESSAGE_KEYS)])
         food = re.sub(r'^[\'"`@!]+|[\'"`@!]+$', '', food)
         # random_quality = random.choice(list(FoodQuality)).value
         # food = random_quality + food
