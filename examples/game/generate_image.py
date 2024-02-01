@@ -2,7 +2,7 @@ import dashscope
 import os
 import requests
 from http import HTTPStatus
-from config_uitls import get_user_dir
+from config_utils import get_user_dir
 LOGO_PROMPT="""根据下面人物背景:{desc}，为这个人物生成一张卡通风格的头像。人类的头像需要占据图像绝大部分。"""
 
 def generate_user_logo_file(desc, name, uuid_str):

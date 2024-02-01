@@ -8,36 +8,32 @@ class Familiarity(Enum):
     MAX_LEVEL = FAMILIAR
     MIN_LEVEL = STRANGER
 
-    @staticmethod
-    def from_value(value):
+    _descriptions = {
+        STRANGER: "陌生",
+        SLIGHTLY_FAMILIAR: "稍微熟悉",
+        FAMILIAR: "熟悉"
+    }
+
+    @classmethod
+    def from_value(cls, value):
         if isinstance(value, Familiarity):
             return value
         elif isinstance(value, int):
-            if value in Familiarity._value2member_map_:
-                return Familiarity._value2member_map_[value]
-            else:
+            try:
+                return cls(value)
+            except ValueError:
                 raise ValueError(f"Invalid integer for Familiarity level: '{value}'")
         elif isinstance(value, str):
-            descriptions = {
-                "陌生": Familiarity.STRANGER,
-                "稍微熟悉": Familiarity.SLIGHTLY_FAMILIAR,
-                "熟悉": Familiarity.FAMILIAR
-            }
-            
-            if value in descriptions:
-                return descriptions[value]
+            for level, description in cls._descriptions.value.items():
+                if value == description:
+                    return cls(level)
             else:
                 raise ValueError(f"Invalid string for Familiarity level: '{value}'")
         else:
             raise TypeError("Value must be a Familiarity instance, integer, or string.")
 
     def __str__(self):
-        descriptions = {
-            Familiarity.STRANGER: "陌生",
-            Familiarity.SLIGHTLY_FAMILIAR: "稍微熟悉",
-            Familiarity.FAMILIAR: "熟悉"
-        }
-        return descriptions.get(self, "Unknown")
+        return self._descriptions.value.get(self.value, "未知")
     
     def __add__(self, other):
         """Increment familiarity, not exceeding 'FAMILIAR'."""
@@ -54,6 +50,10 @@ class Familiarity(Enum):
         new_level = max(self.value - other, Familiarity.MIN_LEVEL.value)
         return Familiarity(new_level)
 
+    @classmethod
+    def to_list(cls):
+        """Return a list of description tuples sorted by enum value."""
+        return list(cls._descriptions.value.values())
 
 class Relationship:
     def __init__(self, init_level=1,

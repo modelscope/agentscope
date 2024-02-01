@@ -5,6 +5,7 @@ from http import HTTPStatus
 from typing import List
 from datetime import datetime
 
+import gradio as gr
 import base64
 import dashscope
 
@@ -377,3 +378,11 @@ def replace_names_in_messages(messages):
                 pinyin_name = ''.join(lazy_pinyin(name, style=Style.TONE3))
                 line['name'] = pinyin_name
     return messages
+
+def check_uuid(uid):
+    if not uid or uid == '':
+        if os.getenv('MODELSCOPE_ENVIRONMENT') == 'studio':
+            raise gr.Error('请登陆后使用! (Please login first)')
+        else:
+            uid = 'local_user'
+    return uid
