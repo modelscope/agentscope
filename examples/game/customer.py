@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import copy
 from typing import Any, Union, Tuple
 import re
 import json
@@ -16,6 +17,7 @@ from utils import (
     send_pretty_msg,
     replace_names_in_messages,
     SYS_MSG_PREFIX,
+    get_clue_image_b64_url,
 )
 
 HISTORY_WINDOW = 10
@@ -45,6 +47,7 @@ class Customer(StateAgent, DialogAgent):
         self.cur_state = CustomerConv.WARMING_UP
         # TODO: A customer can be in at most one plot in the current version
         self.active_plots = []
+        self.prev_active_plots = []
 
         self.register_state(
             state=CustomerConv.OPENING,
@@ -71,6 +74,7 @@ class Customer(StateAgent, DialogAgent):
         self.unexposed_clues = self.config.get("clue", None)
         if self.unexposed_clues is None:
             self.unexposed_clues = self.build_clues()
+            self.config['clue'] = copy.deepcopy(self.unexposed_clues)
         # For initialization
         send_clue_msg(
             None,
@@ -114,7 +118,9 @@ class Customer(StateAgent, DialogAgent):
         # when the plot in which the customer is a main role is over, the
         # customer will be deactivated
         self.plot_stage = CustomerPlot.NOT_ACTIVE
+        self.prev_active_plots = [self.active_plots[0]]
         self.active_plots = []
+
 
     def reply(self, x: dict = None) -> Union[dict, tuple]:
         # TODO:
@@ -325,7 +331,9 @@ class Customer(StateAgent, DialogAgent):
             "hidden_main_plot_prompt"
         ].format_map(
             {
-                "hidden_plot": self.config["character_setting"]["hidden_plot"][self.active_plots[0]],
+                "hidden_plot": self.config["character_setting"][
+                    "hidden_plot"
+                ][self.prev_active_plots[0]],
             },
         )
         analysis_prompt = background_prompt + self.game_config["analysis_conv"]
@@ -555,12 +563,19 @@ class Customer(StateAgent, DialogAgent):
                 continue
             index = clue.get("index", -1)
             summary = clue.get("summary", -1)
-            if index < len(self.unexposed_clues) and index >= 0:
+            if len(self.unexposed_clues) > index >= 0:
                 indices_to_pop.append(index)
+                # TODO: get index and summary separately can be more stable
                 found_clue.append(
                     {
                         "name": self.unexposed_clues[index]["name"],
-                        "summary": summary  # Use new summary
+                        "summary": summary,  # Use new summary
+                        "image": get_clue_image_b64_url(
+                            customer=self.name,
+                            clue_name=self.unexposed_clues[index]["name"],
+                            uid=self.uid,
+                            content=summary,
+                        )
                     }
                 )
         indices_to_pop.sort(reverse=True)
