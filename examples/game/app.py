@@ -246,30 +246,34 @@ if __name__ == "__main__":
 
     def init_game():
         if not is_init.is_set():
-            TONGYI_CONFIG = {
-                "type": "tongyi",
-                "name": "tongyi_model",
-                "model_name": "qwen-max-1201",
-                "api_key": os.environ.get("TONGYI_API_KEY"),
-            }
-            HTTP_LLM_CONFIG = {
-                "type": "post_api",
-                "name": os.environ.get("HTTP_LLM_MODEL"),
-                "headers": {
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {os.environ.get('HTTP_LLM_API_KEY')}"
-                },
-                "api_url": os.environ.get("HTTP_LLM_URL"),
-                "messages_key": "messages",
-                "json_args": {
-                    "model": os.environ.get("HTTP_LLM_MODEL"),
-                    "n": 1,
-                    "temperature": 0.7,
+            register_configs = []
+            if os.environ.get("TONGYI_API_KEY"):
+                tongyi_config = {
+                    "type": "tongyi",
+                    "name": "tongyi_model",
+                    "model_name": "qwen-max-1201",
+                    "api_key": os.environ.get("TONGYI_API_KEY"),
                 }
+                register_configs.append(tongyi_config)
+            if os.environ.get('HTTP_LLM_API_KEY'):
+                http_llm_config = {
+                    "type": "post_api",
+                    "name": os.environ.get("HTTP_LLM_MODEL"),
+                    "headers": {
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {os.environ.get('HTTP_LLM_API_KEY')}"
+                    },
+                    "api_url": os.environ.get("HTTP_LLM_URL"),
+                    "messages_key": "messages",
+                    "json_args": {
+                        "model": os.environ.get("HTTP_LLM_MODEL"),
+                        "n": 1,
+                        "temperature": 0.7,
+                    }
+                }
+                register_configs.append(http_llm_config)
 
-            }
-
-            agentscope.init(model_configs=[TONGYI_CONFIG, HTTP_LLM_CONFIG],
+            agentscope.init(model_configs=register_configs,
                             logger_level="DEBUG")
             is_init.set()
 
