@@ -64,7 +64,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#easy-distributed-deployment">Easy Distributed Deployment</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#write-your-agents">Write your agents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#convert-your-agents">Convert your agents</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#run-in-multi-process-mode">Run in multi-process mode</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#run-on-multiple-machines">Run on multiple machines</a></li>
 </ul>
@@ -151,36 +151,36 @@ A--&gt;C
 <section id="easy-distributed-deployment">
 <h2>Easy Distributed Deployment<a class="headerlink" href="#easy-distributed-deployment" title="Link to this heading"></a></h2>
 <p>Please follow the steps below to deploy your application distributedly.</p>
-<section id="write-your-agents">
-<h3>Write your agents<a class="headerlink" href="#write-your-agents" title="Link to this heading"></a></h3>
-<p>To use distributed functionality, your agent class needs to inherit from <code class="docutils literal notranslate"><span class="pre">RpcAgentBase</span></code>.
-<code class="docutils literal notranslate"><span class="pre">RpcAgentBase</span></code> requires several additional parameters compared to <code class="docutils literal notranslate"><span class="pre">AgentBase</span></code> during initialization.</p>
+<section id="convert-your-agents">
+<h3>Convert your agents<a class="headerlink" href="#convert-your-agents" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">AgentBase</span></code> provided the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> method to convert the agent into a distributed version.
+<code class="docutils literal notranslate"><span class="pre">to_dist</span></code> requires several parameters.</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">host</span></code>: the hostname or IP address of the machine where the agent runs, defaults to <code class="docutils literal notranslate"><span class="pre">localhost</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">port</span></code>: the port of this agent’s RPC server, defaults to <code class="docutils literal notranslate"><span class="pre">80</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">launch_server</span></code>: whether to launch an RPC server locally, defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">local_mode</span></code>: set to <code class="docutils literal notranslate"><span class="pre">True</span></code> if all agents run on the same machine, defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lazy_launch</span></code>:  if set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, only launch the server when the agent is called.</p></li>
 </ul>
-<p>But don’t worry, <code class="docutils literal notranslate"><span class="pre">RpcAgentBase</span></code> shares the same interface as <code class="docutils literal notranslate"><span class="pre">AgentBase</span></code>, you only need to implement the <code class="docutils literal notranslate"><span class="pre">reply</span></code> method. You can even copy the <code class="docutils literal notranslate"><span class="pre">reply</span></code> method of an <code class="docutils literal notranslate"><span class="pre">AgentBase</span></code> subclass and use it in <code class="docutils literal notranslate"><span class="pre">RpcAgentBase</span></code>.</p>
+<blockquote>
+<div><p>The <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> method is implemented based on <a class="reference external" href="https://grpc.io/">gRPC</a>. When ‘launch_server’ is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, it will start a gRPC server process, and the original agent will be transferred to the new process to run.</p>
+</div></blockquote>
 </section>
 <section id="run-in-multi-process-mode">
 <h3>Run in multi-process mode<a class="headerlink" href="#run-in-multi-process-mode" title="Link to this heading"></a></h3>
 <p>AgentScope supports deployment in multi-process mode, where each agent is a sub-process of the application’s main process, and all agents run on the same machine.
-Its usage is very similar to single-process mode. The only difference lies in the initialization phase.</p>
-<p>Suppose you have classes <code class="docutils literal notranslate"><span class="pre">A</span></code> and <code class="docutils literal notranslate"><span class="pre">B</span></code>, both of which inherit from <code class="docutils literal notranslate"><span class="pre">RpcAgentBase</span></code>.
-You can run the application in multi-process mode by passing in an additional parameter <code class="docutils literal notranslate"><span class="pre">port</span></code>, the other parts are completely the same as the single-process mode.</p>
+The usage is exactly the same as single process mode, and you only need to call the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> method after initialization.</p>
+<p>Suppose you have classes <code class="docutils literal notranslate"><span class="pre">A</span></code> and <code class="docutils literal notranslate"><span class="pre">B</span></code>, both of which inherit from <code class="docutils literal notranslate"><span class="pre">AgentBase</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import packages</span>
 
 <span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;A&quot;</span><span class="p">,</span>
     <span class="o">...</span><span class="p">,</span>
-    <span class="n">port</span><span class="o">=</span><span class="mi">12001</span><span class="p">,</span> <span class="c1"># port is required, other fields like host, launch_server and local_mode use the default value</span>
-<span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">()</span>
 <span class="n">b</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
     <span class="o">...</span><span class="p">,</span>
-    <span class="n">port</span><span class="o">=</span><span class="mi">12002</span><span class="p">,</span> <span class="c1"># port is required</span>
-<span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">()</span>
 
 <span class="n">x</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="k">while</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">x</span><span class="o">.</span><span class="n">content</span> <span class="o">!=</span> <span class="s1">&#39;exit&#39;</span><span class="p">:</span>
@@ -195,11 +195,13 @@ You can run the application in multi-process mode by passing in an additional pa
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import packages</span>
 
 <span class="n">server_a</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;A&quot;</span><span class="p">,</span>
-    <span class="o">...</span><span class="p">,</span>
+    <span class="n">agent_class</span><span class="o">=</span><span class="n">A</span><span class="p">,</span>
+    <span class="n">agent_kwargs</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span>
+        <span class="o">...</span>
+    <span class="p">},</span>
     <span class="n">host</span><span class="o">=</span><span class="n">ip_a</span><span class="p">,</span>
     <span class="n">port</span><span class="o">=</span><span class="mi">12001</span><span class="p">,</span>
-    <span class="n">local_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">server_a</span><span class="o">.</span><span class="n">launch</span><span class="p">()</span>
 <span class="n">server_a</span><span class="o">.</span><span class="n">wait_until_terminate</span><span class="p">()</span>
@@ -210,11 +212,13 @@ Please make sure that the two machines can access each other using the IP addres
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import packages</span>
 
 <span class="n">server_b</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
-    <span class="o">...</span><span class="p">,</span>
+    <span class="n">agent_class</span><span class="o">=</span><span class="n">B</span><span class="p">,</span>
+    <span class="n">agent_kwargs</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span>
+        <span class="o">...</span>
+    <span class="p">},</span>
     <span class="n">host</span><span class="o">=</span><span class="n">ip_b</span><span class="p">,</span>
     <span class="n">port</span><span class="o">=</span><span class="mi">12001</span><span class="p">,</span>
-    <span class="n">local_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">server_b</span><span class="o">.</span><span class="n">launch</span><span class="p">()</span>
 <span class="n">server_b</span><span class="o">.</span><span class="n">wait_until_terminate</span><span class="p">()</span>
@@ -225,14 +229,16 @@ Please make sure that the two machines can access each other using the IP addres
 
 <span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;A&quot;</span><span class="p">,</span>
-    <span class="o">...</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">(</span>
     <span class="n">host</span><span class="o">=</span><span class="n">ip_a</span><span class="p">,</span>
     <span class="n">port</span><span class="o">=</span><span class="mi">12001</span><span class="p">,</span>
     <span class="n">launch_server</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">b</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
-    <span class="o">...</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">(</span>
     <span class="n">host</span><span class="o">=</span><span class="n">ip_b</span><span class="p">,</span>
     <span class="n">port</span><span class="o">=</span><span class="mi">12002</span><span class="p">,</span>
     <span class="n">launch_server</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>

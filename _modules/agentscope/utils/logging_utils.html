@@ -266,15 +266,15 @@
 <span class="sd">            `&quot;DEBUG&quot;`, `&quot;INFO&quot;`, `&quot;SUCCESS&quot;`, `&quot;WARNING&quot;`, `&quot;ERROR&quot;`,</span>
 <span class="sd">            `&quot;CRITICAL&quot;`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># redirect stderr to record errors in logging</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="n">_Stream</span><span class="p">()</span>
-
     <span class="c1"># avoid reinit in subprocess</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="s2">&quot;chat&quot;</span><span class="p">):</span>
         <span class="k">return</span>
 
+    <span class="c1"># redirect stderr to record errors in logging</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="n">_Stream</span><span class="p">()</span>
+
     <span class="c1"># add chat function for logger</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">level</span><span class="p">(</span><span class="s2">&quot;CHAT&quot;</span><span class="p">,</span> <span class="n">no</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;&lt;yellow&gt;&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">level</span><span class="p">(</span><span class="s2">&quot;CHAT&quot;</span><span class="p">,</span> <span class="n">no</span><span class="o">=</span><span class="mi">21</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;&lt;yellow&gt;&quot;</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">chat</span> <span class="o">=</span> <span class="n">_chat</span>
 
     <span class="c1"># set logging level</span>
@@ -285,11 +285,10 @@
     <span class="k">if</span> <span class="n">path_log</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path_log</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path_log</span><span class="p">)</span>
-
-        <span class="n">path_log_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path_log</span><span class="p">,</span> <span class="s2">&quot;file_</span><span class="si">{time}</span><span class="s2">.log&quot;</span><span class="p">)</span>
+        <span class="n">path_log_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path_log</span><span class="p">,</span> <span class="s2">&quot;all.log&quot;</span><span class="p">)</span>
         <span class="n">path_log_file_only_chat</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="n">path_log</span><span class="p">,</span>
-            <span class="s2">&quot;file_</span><span class="si">{time}</span><span class="s2">.log.chat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;chat.log&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># save all logging into file</span>

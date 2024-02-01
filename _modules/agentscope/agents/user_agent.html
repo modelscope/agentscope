@@ -140,15 +140,15 @@
 <span class="sd">            x (`dict`, defaults to `None`):</span>
 <span class="sd">                A dictionary containing initial data to be added to memory.</span>
 <span class="sd">                Defaults to None.</span>
-<span class="sd">            required_keys (`Optional[Union[list[str], str]]`, defaults to</span>
-<span class="sd">            None):</span>
+<span class="sd">            required_keys \</span>
+<span class="sd">                (`Optional[Union[list[str], str]]`, defaults to `None`):</span>
 <span class="sd">                Strings that requires user to input, which will be used as</span>
 <span class="sd">                the key of the returned dict. Defaults to None.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            dict: A dictionary representing the message object that contains</span>
-<span class="sd">                the user&#39;s input and any additional details. This is also</span>
-<span class="sd">                stored in the object&#39;s memory.</span>
+<span class="sd">            `dict`: A dictionary representing the message object that contains</span>
+<span class="sd">            the user&#39;s input and any additional details. This is also</span>
+<span class="sd">            stored in the object&#39;s memory.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>

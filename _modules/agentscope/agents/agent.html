@@ -92,22 +92,31 @@
 <span class="sd">&quot;&quot;&quot; Base class for Agent &quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
-
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
-<span class="kn">from</span> <span class="nn">.operator</span> <span class="kn">import</span> <span class="n">Operator</span>
-<span class="kn">from</span> <span class="nn">..models</span> <span class="kn">import</span> <span class="n">load_model_by_name</span>
-<span class="kn">from</span> <span class="nn">..memory</span> <span class="kn">import</span> <span class="n">TemporaryMemory</span>
+<span class="kn">from</span> <span class="nn">agentscope.agents.operator</span> <span class="kn">import</span> <span class="n">Operator</span>
+<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">load_model_by_name</span>
+<span class="kn">from</span> <span class="nn">agentscope.memory</span> <span class="kn">import</span> <span class="n">TemporaryMemory</span>
+
+
+<span class="k">class</span> <span class="nc">_RecordInitSettingMeta</span><span class="p">(</span><span class="n">ABCMeta</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A wrapper to record the init args into `_init_settings` field.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="n">instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">_init_settings</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="n">args</span><span class="p">,</span> <span class="s2">&quot;kwargs&quot;</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">instance</span>
 
 
 <div class="viewcode-block" id="AgentBase">
 <a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.agent.AgentBase">[docs]</a>
-<span class="k">class</span> <span class="nc">AgentBase</span><span class="p">(</span><span class="n">Operator</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">AgentBase</span><span class="p">(</span><span class="n">Operator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">_RecordInitSettingMeta</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for all agents.</span>
 
 <span class="sd">    All agents should inherit from this class and implement the `reply`</span>
@@ -287,7 +296,58 @@
     <span class="k">def</span> <span class="nf">_broadcast_to_audience</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Broadcast the input to all audiences.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_audience</span><span class="p">:</span>
-            <span class="n">agent</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+            <span class="n">agent</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AgentBase.to_dist">
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.agent.AgentBase.to_dist">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_dist</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+        <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_pool_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">max_timeout_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1800</span><span class="p">,</span>
+        <span class="n">launch_server</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">local_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">lazy_launch</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AgentBase</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert current agent instance into a distributed version.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            host (`str`, defaults to `&quot;localhost&quot;`):</span>
+<span class="sd">                Hostname of the rpc agent server.</span>
+<span class="sd">            port (`int`, defaults to `None`):</span>
+<span class="sd">                Port of the rpc agent server.</span>
+<span class="sd">            max_pool_size (`int`, defaults to `100`):</span>
+<span class="sd">                Max number of task results that the server can accommodate.</span>
+<span class="sd">            max_timeout_seconds (`int`, defaults to `1800`):</span>
+<span class="sd">                Timeout for task results.</span>
+<span class="sd">            local_mode (`bool`, defaults to `True`):</span>
+<span class="sd">                Whether the started rpc server only listens to local</span>
+<span class="sd">                requests.</span>
+<span class="sd">            lazy_launch (`bool`, defaults to `True`):</span>
+<span class="sd">                Only launch the server when the agent is called.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `AgentBase`: the wrapped agent instance with distributed</span>
+<span class="sd">            functionality</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">.rpc_agent</span> <span class="kn">import</span> <span class="n">RpcAgent</span>
+
+        <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">RpcAgent</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="n">RpcAgent</span><span class="p">(</span>
+            <span class="n">agent_class</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span>
+            <span class="n">agent_configs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_init_settings</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span>
+            <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
+            <span class="n">max_pool_size</span><span class="o">=</span><span class="n">max_pool_size</span><span class="p">,</span>
+            <span class="n">max_timeout_seconds</span><span class="o">=</span><span class="n">max_timeout_seconds</span><span class="p">,</span>
+            <span class="n">launch_server</span><span class="o">=</span><span class="n">launch_server</span><span class="p">,</span>
+            <span class="n">local_mode</span><span class="o">=</span><span class="n">local_mode</span><span class="p">,</span>
+            <span class="n">lazy_launch</span><span class="o">=</span><span class="n">lazy_launch</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
 
 </pre></div>
 
