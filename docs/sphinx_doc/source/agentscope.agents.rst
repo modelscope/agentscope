@@ -48,11 +48,3 @@ dict_dialog_agent module
    :members:
    :undoc-members:
    :show-inheritance:
-
-rpc_dialog_agent module
--------------------------------
-
-.. automodule:: agentscope.agents.dict_dialog_agent
-   :members:
-   :undoc-members:
-   :show-inheritance:

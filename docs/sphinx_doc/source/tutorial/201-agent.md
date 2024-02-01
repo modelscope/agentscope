@@ -66,7 +66,6 @@ Below is a table summarizing the functionality of some of the key agents availab
 | Agent Type     | Description                                                  | Typical Use Cases                                            |
 | -------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | `AgentBase`    | Serves as the superclass for all agents, providing essential attributes and methods. | The foundation for building any custom agent.                |
-| `RpcAgentBase` | Executes remote procedure calls in distributed mode.         | The foundation for building any custom agent in distributed mode. |
 | `DialogAgent`  | Manages dialogues by understanding context and generating coherent responses. | Customer service bots, virtual assistants.                   |
 | `UserAgent`    | Interacts with the user to collect input, generating messages that may include URLs or additional specifics based on required keys. | Collecting user input for agents                             |
 | *More to Come* | AgentScope is continuously expanding its pool with more specialized agents for diverse applications. |                                                              |

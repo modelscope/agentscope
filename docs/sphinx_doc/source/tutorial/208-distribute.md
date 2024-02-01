@@ -45,25 +45,25 @@ A-->C
 
 Please follow the steps below to deploy your application distributedly.
 
-### Write your agents
+### Convert your agents
 
-To use distributed functionality, your agent class needs to inherit from `RpcAgentBase`.
-`RpcAgentBase` requires several additional parameters compared to `AgentBase` during initialization.
+`AgentBase` provided the `to_dist` method to convert the agent into a distributed version.
+`to_dist` requires several parameters.
 
 - `host`: the hostname or IP address of the machine where the agent runs, defaults to `localhost`.
 - `port`: the port of this agent's RPC server, defaults to `80`.
 - `launch_server`: whether to launch an RPC server locally, defaults to `True`.
 - `local_mode`: set to `True` if all agents run on the same machine, defaults to `True`.
+- `lazy_launch`:  if set to `True`, only launch the server when the agent is called.
 
-But don't worry, `RpcAgentBase` shares the same interface as `AgentBase`, you only need to implement the `reply` method. You can even copy the `reply` method of an `AgentBase` subclass and use it in `RpcAgentBase`.
+> The `to_dist` method is implemented based on [gRPC](https://grpc.io/). When 'launch_server' is set to `True`, it will start a gRPC server process, and the original agent will be transferred to the new process to run.
 
 ### Run in multi-process mode
 
 AgentScope supports deployment in multi-process mode, where each agent is a sub-process of the application's main process, and all agents run on the same machine.
-Its usage is very similar to single-process mode. The only difference lies in the initialization phase.
+The usage is exactly the same as single process mode, and you only need to call the `to_dist` method after initialization.
 
-Suppose you have classes `A` and `B`, both of which inherit from `RpcAgentBase`.
-You can run the application in multi-process mode by passing in an additional parameter `port`, the other parts are completely the same as the single-process mode.
+Suppose you have classes `A` and `B`, both of which inherit from `AgentBase`.
 
 ```python
 # import packages
@@ -71,13 +71,11 @@ You can run the application in multi-process mode by passing in an additional pa
 a = A(
     name="A",
     ...,
-    port=12001, # port is required, other fields like host, launch_server and local_mode use the default value
-)
+).to_dist()
 b = B(
     name="B",
     ...,
-    port=12002, # port is required
-)
+).to_dist()
 
 x = None
 while x is None or x.content != 'exit':
@@ -93,11 +91,13 @@ AgentScope also supports to run agents on multiple machines. In this case, you n
 # import packages
 
 server_a = RpcAgentServerLauncher(
-    name="A",
-    ...,
+    agent_class=A,
+    agent_kwargs={
+        "name": "A"
+        ...
+    },
     host=ip_a,
     port=12001,
-    local_mode=False,
 )
 server_a.launch()
 server_a.wait_until_terminate()
@@ -110,11 +110,13 @@ Please make sure that the two machines can access each other using the IP addres
 # import packages
 
 server_b = RpcAgentServerLauncher(
-    name="B",
-    ...,
+    agent_class=B,
+    agent_kwargs={
+        "name": "B",
+        ...
+    },
     host=ip_b,
     port=12001,
-    local_mode=False,
 )
 server_b.launch()
 server_b.wait_until_terminate()
@@ -127,14 +129,16 @@ Then, you can run the application's main process on any machine that can access 
 
 a = A(
     name="A",
-    ...,
+    ...
+).to_dist(
     host=ip_a,
     port=12001,
     launch_server=False,
 )
 b = B(
     name="B",
-    ...,
+    ...
+).to_dist(
     host=ip_b,
     port=12002,
     launch_server=False,

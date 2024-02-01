@@ -180,14 +180,18 @@ class Tht(MessageBase):
 class PlaceholderMessage(MessageBase):
     """A placeholder for the return message of RpcAgent."""
 
+    PLACEHOLDER_ATTRS = {
+        "_host",
+        "_port",
+        "_client",
+        "_task_id",
+        "_is_placeholder",
+    }
+
     LOCAL_ATTRS = {
-        "host",
-        "port",
-        "client",
-        "task_id",
-        "is_placeholder",
         "name",
         "timestamp",
+        *PLACEHOLDER_ATTRS,
     }
 
     def __init__(
@@ -232,14 +236,17 @@ class PlaceholderMessage(MessageBase):
             timestamp=timestamp,
             **kwargs,
         )
-        # todo: avoid attribute name duplication
-        self.host = host
-        self.port = port
-
-        self.client = RpcAgentClient(self.host, self.port)
-        self.task_id = task_id
         # placeholder indicates whether the real message is still in rpc server
-        self.is_placeholder = True
+        self._is_placeholder = True
+        self._host = host
+        self._port = port
+        self._client = RpcAgentClient(host, port)
+        self._task_id = task_id
+
+    def __is_local(self, key: Any) -> bool:
+        return (
+            key in PlaceholderMessage.LOCAL_ATTRS or not self._is_placeholder
+        )
 
     def __getattr__(self, __name: str) -> Any:
         """Get attribute value from PlaceholderMessage. Get value from rpc
@@ -248,53 +255,57 @@ class PlaceholderMessage(MessageBase):
         Args:
             __name (`str`):
                 Attribute name.
-
         """
-        if (
-            __name not in PlaceholderMessage.LOCAL_ATTRS
-            and self.is_placeholder
-        ):
+        if not self.__is_local(__name):
             self.update_value()
         return MessageBase.__getattr__(self, __name)
 
+    def __getitem__(self, __key: Any) -> Any:
+        """Get item value from PlaceholderMessage. Get value from rpc
+        agent server if necessary.
+
+        Args:
+            __key (`Any`):
+                Item name.
+        """
+        if not self.__is_local(__key):
+            self.update_value()
+        return MessageBase.__getitem__(self, __key)
+
     def to_str(self) -> str:
-        if self.is_placeholder:
-            return f"{self.name}: [message from {self.host}:{self.port}]"
-        else:
-            return f"{self.name}: {self.content}"
+        return f"{self.name}: {self.content}"
 
     def update_value(self) -> MessageBase:
         """Get attribute values from rpc agent server immediately"""
-        if self.is_placeholder:
+        if self._is_placeholder:
             # retrieve real message from rpc agent server
-            result = self.client.call_func(
+            result = self._client.call_func(
                 func_name="_get",
-                value=json.dumps({"task_id": self.task_id}),
+                value=json.dumps({"task_id": self._task_id}),
             )
             self.update(deserialize(result))
             # the actual value has been updated, not a placeholder any more
-            self.is_placeholder = False
+            self._is_placeholder = False
         return self
 
     def serialize(self) -> str:
-        if self.is_placeholder:
+        if self._is_placeholder:
             return json.dumps(
                 {
                     "__type": "PlaceholderMessage",
                     "name": self.name,
                     "content": None,
                     "timestamp": self.timestamp,
-                    "host": self.host,
-                    "port": self.port,
-                    "task_id": self.task_id,
+                    "host": self._host,
+                    "port": self._port,
+                    "task_id": self._task_id,
                 },
             )
         else:
             states = {
                 k: v
                 for k, v in self.items()
-                if k
-                not in ["host", "port", "client", "task_id", "is_placeholder"]
+                if k not in PlaceholderMessage.PLACEHOLDER_ATTRS
             }
             states["__type"] = "Msg"
             return json.dumps(states)
