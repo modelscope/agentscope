@@ -10,6 +10,7 @@ from config_utils import (PLOT_CFG_NAME, compress, decompress_with_file,
                           load_default_cfg, load_user_cfg, save_user_cfg)
 from generate_image import generate_user_logo_file
 from relationship import Familiarity
+from enums import StagePerNight
 from utils import check_uuid
 
 
@@ -151,6 +152,7 @@ def create_config_tab(config_tab, uuid):
 
 def config_plot_tab(plot_tab, uuid):
     cfg_name = PLOT_CFG_NAME
+    plot_stage_choices = StagePerNight.to_list()
     uuid = check_uuid(uuid)
     with gr.Row():
         plot_selector = gr.Dropdown(label="选择剧情id查看或者编辑剧情")
@@ -160,6 +162,7 @@ def config_plot_tab(plot_tab, uuid):
         restore_plot_button = gr.Button("🔄恢复默认")
     with gr.Row():
         plot_id = gr.Textbox(label="剧情id")
+        plot_stages = gr.Dropdown(label="剧情环节选择",value=0, multiselect=True, type='index', choices=plot_stage_choices)
         task_name = gr.Textbox(label="剧情任务")
         max_attempts = gr.Textbox(scale=1, label="尝试次数")
 
@@ -223,6 +226,7 @@ def config_plot_tab(plot_tab, uuid):
 
     plot_config_options = [
         plot_id,
+        plot_stages,
         task_name,
         max_attempts,
         predecessor_plots,
@@ -248,7 +252,6 @@ def config_plot_tab(plot_tab, uuid):
     def configure_plot(id, uuid):
         uuid = check_uuid(uuid)
         plot = get_plot_by_id(plot_id=id, uuid=uuid)
-
         attempts = plot.get("max_attempts", 2)
 
         cfg_main_roles = convert_to_ds(plot["main_roles"])
@@ -276,8 +279,11 @@ def config_plot_tab(plot_tab, uuid):
             else None
         )
 
+        cfg_plot_stages = plot.get("plot_stages", [])
+        cfg_plot_stages = [plot_stage_choices[stage] for stage in cfg_plot_stages]
         return {
             plot_id: plot["plot_id"],
+            plot_stages: gr.Dropdown(value=cfg_plot_stages),
             task_name: plot["plot_descriptions"]["task"].strip(),
             max_attempts: attempts,
             predecessor_plots: cfg_predecessor_plots,
@@ -295,6 +301,7 @@ def config_plot_tab(plot_tab, uuid):
     def create_plot():
         return {
             plot_id: "",
+            plot_stages: gr.Dropdown(value=None),
             task_name: "",
             max_attempts: "",
             predecessor_plots: None,
@@ -327,6 +334,7 @@ def config_plot_tab(plot_tab, uuid):
 
     def save_plot(
         plot_id,
+        plot_stages,
         task_name,
         max_attempts,
         predecessor_plots,
@@ -356,6 +364,7 @@ def config_plot_tab(plot_tab, uuid):
             plots.append(new_plot)
 
         new_plot["plot_id"] = plot_id
+        new_plot["plot_stages"] = plot_stages
         new_plot["max_attempts"] = max_attempts
         new_plot["main_roles"] = convert_to_list(main_roles)
         new_plot["supporting_roles"] = convert_to_list(supporting_roles)
