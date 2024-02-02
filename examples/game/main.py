@@ -446,6 +446,7 @@ def main(args) -> None:
         if len(checkpoint.cur_plots) == 1:
             daily_plot_stages = checkpoint.all_plots[checkpoint.cur_plots[0]].plot_stages
         else:
+            # multi-plot will act by order
             for plot_id in checkpoint.cur_plots:
                 plot_stages = checkpoint.all_plots[plot_id].plot_stages
                 for stage in plot_stages:
@@ -456,7 +457,50 @@ def main(args) -> None:
         logger.debug(f"daily_plot_stages: {daily_plot_stages}")
         logger.debug(f"checkpoint.stage_per_night: {checkpoint.stage_per_night}")
 
-        if checkpoint.stage_per_night == StagePerNight.INVITED_CHAT:
+        # if checkpoint.stage_per_night == StagePerNight.INVITED_CHAT:
+        #     # ============ invited multi-agent loop ===============
+        #     # invitation loop, 1) chat in msghub 2) plot unlock success check
+        #     for c in checkpoint.invited_customers:
+        #         # set customer to invited discussion cur_state
+        #         c.transition(CustomerConv.INVITED_GROUP_PLOT)
+        #     # initial cur_state of the
+        #     done_plot_idx = invited_group_chat(
+        #         checkpoint.invited_customers,
+        #         player,
+        #         checkpoint.cur_plots,
+        #         checkpoint.all_plots,
+        #         args.uid,
+        #     )
+        #     logger.debug(f"done plot: {done_plot_idx}")
+        #     if done_plot_idx is not None:
+        #         # find the roles and plot to be activated
+        #         # Opening happen in this stage
+        #         checkpoint.cur_plots = check_active_plot(
+        #             player,
+        #             checkpoint.all_plots,
+        #             checkpoint.cur_plots,
+        #             done_plot_idx,
+        #         )
+        #         logger.debug(f"---active_plots:{checkpoint.cur_plots}")
+        if checkpoint.stage_per_night == StagePerNight.CASUAL_CHAT_FOR_MEAL:
+            # ==========  one-on-one loop =================
+            # the remaining not invited customers show up with probability
+            central_roles = []
+            for p_idx in checkpoint.cur_plots:
+                central_roles.append(checkpoint.all_plots[p_idx].main_roles[0].name)
+            unavailable_roles = central_roles + checkpoint.invited_customers
+            rest_customers = [
+                c
+                for c in customers
+                if c.name not in unavailable_roles
+            ]
+            checkpoint.visit_customers = one_on_one_loop(
+                rest_customers,
+                player,
+                args.uid,
+                checkpoint,
+            )
+        elif checkpoint.stage_per_night == StagePerNight.MAKING_INVITATION:
             # ============ invited multi-agent loop ===============
             # invitation loop, 1) chat in msghub 2) plot unlock success check
             for c in checkpoint.invited_customers:
@@ -481,25 +525,7 @@ def main(args) -> None:
                     done_plot_idx,
                 )
                 logger.debug(f"---active_plots:{checkpoint.cur_plots}")
-        elif checkpoint.stage_per_night == StagePerNight.CASUAL_CHAT_FOR_MEAL:
-            # ==========  one-on-one loop =================
-            # the remaining not invited customers show up with probability
-            central_roles = []
-            for p_idx in checkpoint.cur_plots:
-                central_roles.append(checkpoint.all_plots[p_idx].main_roles[0].name)
-            unavailable_roles = central_roles + checkpoint.invited_customers
-            rest_customers = [
-                c
-                for c in customers
-                if c.name not in unavailable_roles
-            ]
-            checkpoint.visit_customers = one_on_one_loop(
-                rest_customers,
-                player,
-                args.uid,
-                checkpoint,
-            )
-        elif checkpoint.stage_per_night == StagePerNight.MAKING_INVITATION:
+
             # ============ making invitation decision =============
             # player make invitation
             invited = invite_customers(checkpoint.visit_customers, args.uid, checkpoint)

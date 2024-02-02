@@ -1,8 +1,7 @@
 - "plot_id": 1
   "plot_stages":
-    - 1
-    - 2
     - 0
+    - 1
   "predecessor_plots": null
   "main_roles":
     - "王先生"
@@ -39,7 +38,6 @@
   "plot_stages":
     - 0
     - 1
-    - 2
   "predecessor_plots":
     - 1
   "main_roles":
@@ -70,7 +68,6 @@
   "plot_stages":
     - 0
     - 1
-    - 2
   "predecessor_plots":
     - 2
   "main_roles": null
