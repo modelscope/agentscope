@@ -125,9 +125,15 @@
 
 
 
-<span class="k">def</span> <span class="nf">_get_timestamp</span><span class="p">(</span><span class="n">format_</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_get_timestamp</span><span class="p">(</span>
+    <span class="n">format_</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">,</span>
+    <span class="n">time</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get current timestamp.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">format_</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">format_</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">format_</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="to_openai_dict">
@@ -239,9 +245,20 @@
     <span class="k">return</span> <span class="kc">False</span>
 
 
-<span class="k">def</span> <span class="nf">_generate_random_code</span><span class="p">(</span><span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_generate_random_code</span><span class="p">(</span>
+    <span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="n">uppercase</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">lowercase</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">digits</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get random code.&quot;&quot;&quot;</span>
-    <span class="n">characters</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_letters</span> <span class="o">+</span> <span class="n">string</span><span class="o">.</span><span class="n">digits</span>
+    <span class="n">characters</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">uppercase</span><span class="p">:</span>
+        <span class="n">characters</span> <span class="o">+=</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span>
+    <span class="k">if</span> <span class="n">lowercase</span><span class="p">:</span>
+        <span class="n">characters</span> <span class="o">+=</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_lowercase</span>
+    <span class="k">if</span> <span class="n">digits</span><span class="p">:</span>
+        <span class="n">characters</span> <span class="o">+=</span> <span class="n">string</span><span class="o">.</span><span class="n">digits</span>
     <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">secrets</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">characters</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">))</span>
 </pre></div>
 
