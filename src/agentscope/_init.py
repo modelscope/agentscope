@@ -6,7 +6,7 @@ import shutil
 from typing import Optional, Union, Sequence
 from agentscope import agents
 from .agents import AgentBase
-from ._runtime import Runtime
+from ._runtime import _runtime
 from .file_manager import file_manager
 from .utils.logging_utils import LOG_LEVEL, setup_logger
 from .utils.monitor import MonitorFactory
@@ -73,7 +73,7 @@ def init(
     _INIT_SETTINGS["model_configs"] = model_configs
     _INIT_SETTINGS["project"] = project
     _INIT_SETTINGS["name"] = name
-    _INIT_SETTINGS["runtime_id"] = Runtime.runtime_id
+    _INIT_SETTINGS["runtime_id"] = _runtime.runtime_id
     _INIT_SETTINGS["save_dir"] = save_dir
     _INIT_SETTINGS["save_api_invoke"] = save_api_invoke
     _INIT_SETTINGS["save_log"] = save_log
@@ -119,7 +119,7 @@ def init_process(
     save_log: bool = False,
     logger_level: LOG_LEVEL = _DEFAULT_LOG_LEVEL,
 ) -> None:
-    """A entry to initialize the package in a process.
+    """An entry to initialize the package in a process.
 
     Args:
         project (`Optional[str]`, defaults to `None`):
@@ -147,12 +147,12 @@ def init_process(
         read_model_configs(model_configs)
 
     # Init the runtime
-    Runtime.project = project
-    Runtime.name = name
+    _runtime.project = project
+    _runtime.name = name
     if runtime_id is not None:
-        Runtime.runtime_id = runtime_id
+        _runtime.runtime_id = runtime_id
 
-    # Init file manager
+    # Init file manager and save configs by default
     file_manager.init(save_dir, save_api_invoke)
 
     # Init monitor
