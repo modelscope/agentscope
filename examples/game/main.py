@@ -43,8 +43,8 @@ def invited_group_chat(
         return None
     invited_names = [c.name for c in invited_customer]
     send_chat_msg(f"{SYS_MSG_PREFIX}群聊开始", uid=uid)
-    send_chat_msg(f"老板今天邀请了{invited_names}，大家一起聊聊", uid=uid)
-    announcement = {"role": "user", "content": "今天老板邀请大家一起来聚聚。"}
+    send_chat_msg(f"现在有{invited_names}在店里了。。。", uid=uid)
+    announcement = {"role": "user", "content": "今天老板邀请大家一起来谈事情。"}
     with msghub(invited_customer + [player], announcement=announcement):
         for _ in range(10):
             questions = [
@@ -340,6 +340,8 @@ def invite_customers(customers, uid, checkpoint):
     for p_idx in checkpoint.cur_plots:
         if "done_hint" in checkpoint.all_plots[p_idx].plot_description:
             prompt += checkpoint.all_plots[p_idx].plot_description['done_hint']
+        remain_chance += checkpoint.all_plots[p_idx].plot_description['task'] \
+                         + ": " + str(checkpoint.all_plots[p_idx].max_attempts)
         available_customers.append(checkpoint.all_plots[p_idx].main_roles[0].name)
 
     if len(available_customers) == 0:
@@ -353,7 +355,7 @@ def invite_customers(customers, uid, checkpoint):
         ),
     ]
 
-    choose_available_customers = prompt + f"""您明天有什么邀请计划吗？:
+    choose_available_customers = prompt + f"""（任务剩余机会：{remain_chance}）
     <select-box shape="card"  type="checkbox" item-width="auto" options=
                 '{json.dumps(available_customers)}' select-once
                 submit-text="确定"></select-box>"""
@@ -501,6 +503,12 @@ def main(args) -> None:
                 checkpoint,
             )
         elif checkpoint.stage_per_night == StagePerNight.MAKING_INVITATION:
+            # ============ making invitation decision =============
+            # player make invitation
+            invited = invite_customers(checkpoint.visit_customers, args.uid,
+                                       checkpoint)
+            invited_customers = [c for c in customers if c.name in invited]
+            checkpoint.invited_customers = invited_customers
             # ============ invited multi-agent loop ===============
             # invitation loop, 1) chat in msghub 2) plot unlock success check
             for c in checkpoint.invited_customers:
@@ -525,12 +533,6 @@ def main(args) -> None:
                     done_plot_idx,
                 )
                 logger.debug(f"---active_plots:{checkpoint.cur_plots}")
-
-            # ============ making invitation decision =============
-            # player make invitation
-            invited = invite_customers(checkpoint.visit_customers, args.uid, checkpoint)
-            invited_customers = [c for c in customers if c.name in invited]
-            checkpoint.invited_customers = invited_customers
 
         checkpoint.stage_per_night = get_next_element(daily_plot_stages, checkpoint.stage_per_night)
 
