@@ -18,6 +18,7 @@ from utils import (
     ResetException,
     get_clue_msg,
     get_story_msg,
+    cycle_dots,
     check_uuid
 )
 from create_config_tab import create_config_tab, create_config_accord
@@ -41,6 +42,7 @@ def init_uid_dict():
 glb_history_dict = defaultdict(init_uid_list)
 glb_clue_dict = defaultdict(init_uid_dict)
 glb_story_dict = defaultdict(init_uid_dict)
+glb_doing_signal_dict = defaultdict(init_uid_dict)
 
 glb_signed_user = []
 is_init = Event()
@@ -107,10 +109,19 @@ def export_chat_history(uid):
 def get_chat(uid) -> List[List]:
     uid = check_uuid(uid)
     global glb_history_dict
+    global glb_doing_signal_dict
     line = get_chat_msg(uid=uid)
+    # TODO: 优化显示效果，目前存在输出显示跳跃的问题
     if line is not None:
-        glb_history_dict[uid] += [line]
-
+        if line[0] and line[0]['text'] == "**i_am_cooking**":
+            line[0]['text'] = "做菜中"
+            glb_doing_signal_dict[uid] = line
+        elif line[1] and line[1]['text'] == "**speak**":
+            line[1]['text'] = "思考中"
+            glb_doing_signal_dict[uid] = line
+        else:
+            glb_history_dict[uid] += [line]
+            glb_doing_signal_dict[uid] = []
     dial_msg, sys_msg = [], []
     for line in glb_history_dict[uid]:
         _, msg = line
@@ -122,9 +133,17 @@ def get_chat(uid) -> List[List]:
         else:
             # User chat, format: (msg, None)
             dial_msg.append(line)
+    if glb_doing_signal_dict[uid]:
+        if glb_doing_signal_dict[uid][0]:
+            text = cycle_dots(glb_doing_signal_dict[uid][0]['text'])
+            glb_doing_signal_dict[uid][0]['text'] = text
+        elif glb_doing_signal_dict[uid][1]:
+            text = cycle_dots(glb_doing_signal_dict[uid][1]['text'])
+            glb_doing_signal_dict[uid][1]['text'] = text
+
+        dial_msg.append(glb_doing_signal_dict[uid])
 
     return dial_msg[-MAX_NUM_DISPLAY_MSG:], sys_msg[-MAX_NUM_DISPLAY_MSG:]
-
 
 def get_story(uid):
     global glb_story_dict
@@ -237,30 +256,34 @@ if __name__ == "__main__":
 
     def init_game():
         if not is_init.is_set():
-            TONGYI_CONFIG = {
-                "type": "tongyi",
-                "name": "tongyi_model",
-                "model_name": "qwen-max-1201",
-                "api_key": os.environ.get("TONGYI_API_KEY"),
-            }
-            HTTP_LLM_CONFIG = {
-                "type": "post_api",
-                "name": os.environ.get("HTTP_LLM_MODEL"),
-                "headers": {
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {os.environ.get('HTTP_LLM_API_KEY')}"
-                },
-                "api_url": os.environ.get("HTTP_LLM_URL"),
-                "messages_key": "messages",
-                "json_args": {
-                    "model": os.environ.get("HTTP_LLM_MODEL"),
-                    "n": 1,
-                    "temperature": 0.7,
+            register_configs = []
+            if os.environ.get("TONGYI_API_KEY"):
+                tongyi_config = {
+                    "type": "tongyi",
+                    "name": "tongyi_model",
+                    "model_name": "qwen-max-1201",
+                    "api_key": os.environ.get("TONGYI_API_KEY"),
                 }
+                register_configs.append(tongyi_config)
+            if os.environ.get('HTTP_LLM_API_KEY'):
+                http_llm_config = {
+                    "type": "post_api",
+                    "name": os.environ.get("HTTP_LLM_MODEL"),
+                    "headers": {
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {os.environ.get('HTTP_LLM_API_KEY')}"
+                    },
+                    "api_url": os.environ.get("HTTP_LLM_URL"),
+                    "messages_key": "messages",
+                    "json_args": {
+                        "model": os.environ.get("HTTP_LLM_MODEL"),
+                        "n": 1,
+                        "temperature": 0.7,
+                    }
+                }
+                register_configs.append(http_llm_config)
 
-            }
-
-            agentscope.init(model_configs=[TONGYI_CONFIG, HTTP_LLM_CONFIG],
+            agentscope.init(model_configs=register_configs,
                             logger_level="DEBUG")
             is_init.set()
 

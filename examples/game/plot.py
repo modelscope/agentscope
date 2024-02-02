@@ -123,17 +123,27 @@ class GamePlot:
             self,
             roles: list[Customer],
             all_plots: dict[int, GamePlot],
+            player: RuledUser,
+            announcement: dict,
             **kwargs: Any
     ) -> tuple[bool, list[int]]:
         # when the invited roles are the same as the main roles of the plot,
         # this plot is considered done
-        correct_names = [r.name for r in self.main_roles]
-        input_names = [r.name for r in roles]
-        correct_names.sort()
-        input_names.sort()
-        if input_names == correct_names:
-            logger.debug(f"Plot {self.id} is done")
-            self.state = self.PlotState.DONE
+        correct_names = set([r.name for r in self.main_roles])
+        input_names = set([r.name for r in roles])
+
+        if correct_names <= input_names:
+            logger.debug(f"Start detect Plot {self.id} is done")
+            send_chat_msg(f"{SYS_MSG_PREFIX}判断是否达成剧情完成条件中，请稍等。",
+                          uid=player.uid)
+            is_plot_done = player.success_detector(
+                self.plot_description["done_condition"],
+                announcement,
+            )
+            if is_plot_done:
+                self.state = self.PlotState.DONE
+            else:
+                return False, []
         else:
             return False, []
 

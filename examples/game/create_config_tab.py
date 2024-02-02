@@ -5,12 +5,19 @@ import shutil
 
 import gradio as gr
 
-from config_utils import (PLOT_CFG_NAME, compress, decompress_with_file,
-                          decompress_with_signature, get_user_dir,
-                          load_default_cfg, load_user_cfg, save_user_cfg)
+from config_utils import (
+    PLOT_CFG_NAME,
+    compress,
+    decompress_with_file,
+    decompress_with_signature,
+    get_user_dir,
+    load_default_cfg,
+    load_user_cfg,
+    save_user_cfg,
+)
+from enums import StagePerNight
 from generate_image import generate_user_logo_file
 from relationship import Familiarity
-from enums import StagePerNight
 from utils import check_uuid
 
 
@@ -162,7 +169,14 @@ def config_plot_tab(plot_tab, uuid):
         restore_plot_button = gr.Button("🔄恢复默认")
     with gr.Row():
         plot_id = gr.Textbox(label="剧情id")
-        plot_stages = gr.Dropdown(label="剧情环节选择",value=0, multiselect=True, type='index', choices=plot_stage_choices)
+        plot_stages = gr.Dropdown(
+            label="剧情环节选择",
+            value=0,
+            multiselect=True,
+            type="index",
+            choices=plot_stage_choices,
+            allow_custom_value=True,
+        )
         task_name = gr.Textbox(label="剧情任务")
         max_attempts = gr.Textbox(scale=1, label="尝试次数")
 
@@ -212,7 +226,9 @@ def config_plot_tab(plot_tab, uuid):
         with gr.Column():
             npc_openings = gr.Textbox(label="NPC进场台词")
             npc_quit_openings = gr.Textbox(label="NPC退场台词")
-        done_condition = gr.Textbox(label="完成条件")
+        with gr.Column():
+            done_hint = gr.Textbox(label="完成提示")
+            done_condition = gr.Textbox(label="完成条件")
     with gr.Row():
         user_openings_option = gr.Dataframe(
             label="用户开场白选项",
@@ -238,6 +254,7 @@ def config_plot_tab(plot_tab, uuid):
         npc_openings,
         npc_quit_openings,
         user_openings_option,
+        done_hint,
         done_condition,
     ]
 
@@ -295,6 +312,7 @@ def config_plot_tab(plot_tab, uuid):
             npc_openings: plot_descriptions.get("npc_openings", "").strip(),
             npc_quit_openings: plot_descriptions.get("npc_quit_openings", "").strip(),
             user_openings_option: cfg_user_openings_option,
+            done_hint: plot_descriptions.get("done_hint", "").strip(),
             done_condition: plot_descriptions.get("done_condition", "").strip(),
         }
 
@@ -313,6 +331,7 @@ def config_plot_tab(plot_tab, uuid):
             npc_openings: "",
             npc_quit_openings: "",
             user_openings_option: None,
+            done_hint: "",
             done_condition: "",
         }
 
@@ -346,6 +365,7 @@ def config_plot_tab(plot_tab, uuid):
         npc_openings,
         npc_quit_openings,
         user_openings_option,
+        done_hint,
         done_condition,
         uuid,
     ):
@@ -364,7 +384,7 @@ def config_plot_tab(plot_tab, uuid):
             plots.append(new_plot)
 
         new_plot["plot_id"] = plot_id
-        new_plot["plot_stages"] = plot_stages
+        new_plot["plot_stages"] = sorted(plot_stages)
         new_plot["max_attempts"] = max_attempts
         new_plot["main_roles"] = convert_to_list(main_roles)
         new_plot["supporting_roles"] = convert_to_list(supporting_roles)
@@ -390,6 +410,7 @@ def config_plot_tab(plot_tab, uuid):
         plot_descriptions["user_openings_option"] = {
             it[0]: it[1] for it in user_openings_option if it[0]
         }
+        plot_descriptions["done_hint"] = done_hint
         plot_descriptions["done_condition"] = done_condition
         new_plot["plot_descriptions"] = plot_descriptions
         save_user_cfg(plots, cfg_name=cfg_name, uuid=uuid)

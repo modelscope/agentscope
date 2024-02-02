@@ -379,6 +379,19 @@ def replace_names_in_messages(messages):
                 line['name'] = pinyin_name
     return messages
 
+
+def cycle_dots(text: str, num_dots: int = 3) -> str:
+    # 计算当前句尾的点的个数
+    current_dots = len(text) - len(text.rstrip('.'))
+    # 计算下一个状态的点的个数
+    next_dots = (current_dots + 1) % (num_dots + 1)
+    if next_dots == 0:
+        # 避免 '...0', 应该是 '.'
+        next_dots = 1
+    # 移除当前句尾的点，并添加下一个状态的点
+    return text.rstrip('.') + '.' * next_dots
+
+
 def check_uuid(uid):
     if not uid or uid == '':
         if os.getenv('MODELSCOPE_ENVIRONMENT') == 'studio':
@@ -386,3 +399,7 @@ def check_uuid(uid):
         else:
             uid = 'local_user'
     return uid
+
+
+def extract_keys_from_dict(input_dict, keys_list):
+    return {k: input_dict[k] for k in keys_list if k in input_dict}

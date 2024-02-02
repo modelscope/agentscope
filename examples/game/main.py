@@ -90,7 +90,7 @@ def invited_group_chat(
 
         # TODO: decided by multi factor: chat history of msghub, correct_names
         is_done, unblock_ids = all_plots[idx].check_plot_condition_done(
-            invited_customer, all_plots
+            invited_customer, all_plots, player, announcement
         )
 
         if is_done:
@@ -178,6 +178,11 @@ def one_on_one_loop(customers, player, uid, checkpoint):
         # cook for customer 
         customer({'content': ingredient_today})
         food = player.cook()
+
+        if food == "跳过":
+            send_chat_msg(f"{SYS_MSG_PREFIX}顾客{customer.name} 离开餐馆", uid=uid)
+            continue
+
         msg = Msg(
             player.name,
             role="user",
@@ -202,7 +207,7 @@ def one_on_one_loop(customers, player, uid, checkpoint):
         questions = [
             inquirer.List(
                 "ans",
-                message=f"{SYS_MSG_PREFIX}：接下来你会说些什么吗？",
+                message=f"{SYS_MSG_PREFIX}：接下来你会说些什么吗？(可以继续挖掘线索)",
                 choices=[
                     "感谢您的今天来我们这里消费。这里是赠送的果盘，请您享用。还有什么是我能为您做的呢？",
                     "感谢您的光顾。(结束与该顾客的当天对话)",
@@ -210,7 +215,7 @@ def one_on_one_loop(customers, player, uid, checkpoint):
             ),
         ]
 
-        choose_after_meal = f"""{SYS_MSG_PREFIX}接下来你会说些什么吗？
+        choose_after_meal = f"""{SYS_MSG_PREFIX}接下来你会说些什么吗？(可以继续挖掘线索)
             <select-box shape="card" item-width="auto" type="checkbox" options=
             '{json.dumps(["感谢您的今天来我们这里消费。这里是赠送的果盘，"
                                     "请您享用。还有什么是我能为您做的呢？",
@@ -333,10 +338,9 @@ def invite_customers(customers, uid, checkpoint):
 
     prompt = f"{SYS_MSG_PREFIX}: "
     for p_idx in checkpoint.cur_plots:
-        if "done_condition" in checkpoint.all_plots[p_idx].plot_description:
-            prompt += checkpoint.all_plots[p_idx].plot_description['done_condition']
+        if "done_hint" in checkpoint.all_plots[p_idx].plot_description:
+            prompt += checkpoint.all_plots[p_idx].plot_description['done_hint']
         available_customers.append(checkpoint.all_plots[p_idx].main_roles[0].name)
-    invited_customers = []
 
     if len(available_customers) == 0:
         send_chat_msg(f"{SYS_MSG_PREFIX}：您目前无法邀请任何一个顾客（所有顾客好感度均低于80）。", uid=uid)
@@ -397,6 +401,7 @@ def main(args) -> None:
     all_plots = parse_plots(plot_config, customers)
 
     user_configs["uid"] = args.uid
+    user_configs["model"] = os.environ.get("HTTP_LLM_MODEL") if user_configs["model"] == "post_api" else user_configs["model"]
     player = RuledUser(**user_configs)
 
     if args.load_checkpoint is not None:
