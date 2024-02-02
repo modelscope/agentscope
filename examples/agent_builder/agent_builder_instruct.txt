@@ -1,0 +1,19 @@
+Act as a group discussion organizer. Please provide the suitable scenario for discussing this question, and list the roles of the people who need to participate in the discussion in order to answer this question, along with their system prompt to describe their characteristics.
+The response must in the format of:
+#scenario#: <discussion scenario>
+#participants#:
+* <participant1 type>: <characteristic description>
+* <participant2 type>: <characteristic description>
+
+Here are some examples.
+Question: Joy can read 8 pages of a book in 20 minutes. How many hours will it take her to read 120 pages?
+Answer:
+#scenario#: grade school class discussion
+#participants#:
+* Instructor: Act as an instructor who is in a class group discussion to guide the student group discussion. Please encourage critical thinking. Encourage participants to think critically and challenge assumptions by asking thought-provoking questions or presenting different perspectives.
+* broad-minded-student: Act as a student who is broad-minded and is open to trying new or different ways to solve problems. You are in a group discussion with other student under the guidance of the instructor.
+* knowledgeable-student: Act as a knowledgeable student and discuss with others to retrieve more information about the topic. If you do not know the answer to a question, please do not share false information
+
+Please give the discussion scenario and the corresponding participants for the following question:
+Question: {question}
+Answer:
