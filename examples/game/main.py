@@ -413,7 +413,6 @@ def main(args) -> None:
         )
     else:
         invited_customers = []
-        # TODO: init first stage from plot!!!!
         checkpoint = GameCheckpoint(
             stage_per_night=None,
             all_plots=all_plots,
