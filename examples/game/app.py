@@ -321,7 +321,6 @@ if __name__ == "__main__":
                         label="Dialog",
                         show_label=False,
                         height=500,
-                        visible=False,
                         bubble_full_width=False,
                     )
 
@@ -329,7 +328,6 @@ if __name__ == "__main__":
                         label="系统栏",
                         show_label=True,
                         height=500,
-                        visible=False,
                         bubble_full_width=False,
                         layout="panel",
                     )
@@ -340,25 +338,22 @@ if __name__ == "__main__":
                         label="user_chat_input",
                         placeholder="想说点什么",
                         show_label=False,
-                        interactive=True,
-                        visible=False,
                     )
 
             with gr.Column():
-                send_button = gr.Button(
-                    value="📣发送",
-                    visible=False,
-                )
+                send_button = gr.Button(value="📣发送")
 
-            export = gr.Accordion("导出选项", open=False, visible=False)
+            export = gr.Accordion("导出选项", open=False)
             with export:
                 with gr.Column():
                     export_button = gr.Button("导出完整游戏记录")
                     export_output = gr.File(
                         label="下载完整游戏记录",
-                        visible=False,
+                        elem_classes=["signature-file-uploader"],
+                        visible=False
                     )
-
+            with gr.Row():
+                return_welcome_button = gr.Button(value="↩️返回首页")
         with clue_tab:
             guild_html = """
             <div style='text-align: center; margin-top: 20px; margin-bottom: 40px; padding: 20px; background: linear-gradient(to right, #f7f7f7, #ffffff); border-left: 5px solid #007bff; border-right: 5px solid #007bff;'>
@@ -399,10 +394,6 @@ if __name__ == "__main__":
             send_player_msg(msg, "我", uid=uid)
             return ""
 
-        return_welcome_button = gr.Button(
-            value="↩️返回首页",
-            visible=False,
-        )
 
         def send_reset_message(uid):
             uid = check_uuid(uid)
@@ -414,57 +405,11 @@ if __name__ == "__main__":
             return ""
 
         def game_ui():
-            visible = True
-            invisible = False
-            return {
-                tabs: gr.Tabs(visible=invisible),
-                game_tabs: gr.Tabs(visible=visible),
-                role_tabs: gr.Tabs(visible=visible),
-                chatbot: mgr.Chatbot(visible=visible),
-                chatsys: mgr.Chatbot(visible=visible),
-                user_chat_input: gr.Text(visible=visible),
-                send_button: gr.Button(visible=visible),
-                new_button: gr.Button(visible=invisible),
-                resume_button: gr.Button(visible=invisible),
-                return_welcome_button: gr.Button(visible=visible),
-                export: gr.Accordion(visible=visible),
-                user_chat_bot_cover: gr.HTML(visible=invisible),
-            }
-
+            return gr.update(visible=False), gr.update(visible=True)
 
         def welcome_ui():
-            visible = True
-            invisible = False
-            return {
-                tabs: gr.Tabs(visible=visible),
-                game_tabs: gr.Tabs(visible=invisible),
-                role_tabs: gr.Tabs(visible=invisible),
-                chatbot: mgr.Chatbot(visible=invisible),
-                chatsys: mgr.Chatbot(visible=invisible),
-                user_chat_input: gr.Text(visible=invisible),
-                send_button: gr.Button(visible=invisible),
-                new_button: gr.Button(visible=visible),
-                resume_button: gr.Button(visible=visible),
-                return_welcome_button: gr.Button(visible=invisible),
-                export: gr.Accordion(visible=invisible),
-                user_chat_bot_cover: gr.HTML(visible=visible),
-            }
+            return gr.update(visible=True), gr.update(visible=False)
 
-
-        outputs = [
-            tabs,
-            game_tabs,
-            role_tabs,
-            chatbot,
-            chatsys,
-            user_chat_input,
-            send_button,
-            new_button,
-            resume_button,
-            return_welcome_button,
-            export,
-            user_chat_bot_cover,
-        ]
 
         # submit message
         send_button.click(
@@ -482,9 +427,9 @@ if __name__ == "__main__":
         chatsys.custom(fn=fn_choice, inputs=[uuid])
 
         # change ui
-        new_button.click(game_ui, outputs=outputs)
-        resume_button.click(game_ui, outputs=outputs)
-        return_welcome_button.click(welcome_ui, outputs=outputs)
+        new_button.click(game_ui, outputs=[tabs, game_tabs])
+        resume_button.click(game_ui, outputs=[tabs, game_tabs])
+        return_welcome_button.click(welcome_ui, outputs=[tabs, game_tabs])
 
         # start game
         new_button.click(send_reset_message, inputs=[uuid]).then(check_for_new_session, inputs=[uuid])
