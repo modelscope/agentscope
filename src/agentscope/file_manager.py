@@ -6,7 +6,7 @@ from typing import Any, Union, Optional
 
 import numpy as np
 
-from agentscope._runtime import Runtime
+from agentscope._runtime import _runtime
 from agentscope.utils.tools import _download_file, _get_timestamp
 from agentscope.utils.tools import _generate_random_code
 from agentscope.constants import (
@@ -16,6 +16,7 @@ from agentscope.constants import (
     _DEFAULT_SUBDIR_INVOKE,
     _DEFAULT_SQLITE_DB_PATH,
     _DEFAULT_IMAGE_NAME,
+    _DEFAULT_CFG_NAME,
 )
 
 
@@ -44,19 +45,24 @@ class _FileManager:
     def _get_and_create_subdir(self, subdir: str) -> str:
         """Get the path of the subdir and create the subdir if it does not
         exist."""
-        path = os.path.join(self.dir, Runtime.runtime_id, subdir)
+        path = os.path.join(self.dir, _runtime.runtime_id, subdir)
         if not os.path.exists(path):
             os.makedirs(path)
         return path
 
     def _get_file_path(self, file_name: str) -> str:
         """Get the path of the file."""
-        return os.path.join(self.dir, Runtime.runtime_id, file_name)
+        return os.path.join(self.dir, _runtime.runtime_id, file_name)
+
+    @property
+    def dir_root(self) -> str:
+        """The root directory to save code, information and logs."""
+        return os.path.join(self.dir, _runtime.runtime_id)
 
     @property
     def dir_log(self) -> str:
         """The directory for saving logs."""
-        return os.path.join(self.dir, Runtime.runtime_id)
+        return os.path.join(self.dir, _runtime.runtime_id)
 
     @property
     def dir_file(self) -> str:
@@ -82,11 +88,29 @@ class _FileManager:
     def init(self, save_dir: str, save_api_invoke: bool = False) -> None:
         """Set the directory for saving files."""
         self.dir = save_dir
-        runtime_dir = os.path.join(save_dir, Runtime.runtime_id)
+        runtime_dir = os.path.join(save_dir, _runtime.runtime_id)
         if not os.path.exists(runtime_dir):
             os.makedirs(runtime_dir)
 
         self.save_api_invoke = save_api_invoke
+
+        # Save the project and name to the runtime directory
+        self._save_config()
+
+    def _save_config(self) -> None:
+        """Save the configuration of the runtime in its root directory."""
+        cfg = {
+            "project": _runtime.project,
+            "name": _runtime.name,
+            "id": _runtime.runtime_id,
+            "timestamp": _runtime.timestamp,
+        }
+        with open(
+            os.path.join(self.dir_root, _DEFAULT_CFG_NAME),
+            "w",
+            encoding="utf-8",
+        ) as file:
+            json.dump(cfg, file, indent=4)
 
     def save_api_invocation(
         self,
