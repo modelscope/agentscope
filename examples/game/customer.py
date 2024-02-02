@@ -132,7 +132,8 @@ class Customer(StateAgent, DialogAgent):
             f"{self.name} state: {self.cur_state} {self.plot_stage}"
             f" {self.active_plots}",
         )
-        send_chat_msg("**speak**", uid=self.uid, avatar=self.avatar)
+        send_chat_msg("**speak**", role=self.name, uid=self.uid,
+                      avatar=self.avatar)
         msg = StateAgent.reply(self, x=x)
         send_pretty_msg(msg, uid=self.uid, avatar=self.avatar)
         return msg
