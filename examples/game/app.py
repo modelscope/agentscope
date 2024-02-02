@@ -27,6 +27,7 @@ from generate_image import generate_user_logo_file
 
 import gradio as gr
 import modelscope_gradio_components as mgr
+import re
 
 enable_web_ui()
 
@@ -45,6 +46,7 @@ glb_history_dict = defaultdict(init_uid_list)
 glb_clue_dict = defaultdict(init_uid_dict)
 glb_story_dict = defaultdict(init_uid_dict)
 glb_doing_signal_dict = defaultdict(init_uid_dict)
+glb_end_choosing_index_dict = defaultdict(init_uid_dict)
 
 glb_signed_user = []
 is_init = Event()
@@ -112,18 +114,40 @@ def get_chat(uid) -> List[List]:
     uid = check_uuid(uid)
     global glb_history_dict
     global glb_doing_signal_dict
+    global glb_end_choosing_index_dict
     line = get_chat_msg(uid=uid)
     # TODO: 优化显示效果，目前存在输出显示跳跃的问题
     if line is not None:
+        # print("line", line)
         if line[0] and line[0]['text'] == "**i_am_cooking**":
             line[0]['text'] = "做菜中"
             glb_doing_signal_dict[uid] = line
         elif line[1] and line[1]['text'] == "**speak**":
             line[1]['text'] = "思考中"
             glb_doing_signal_dict[uid] = line
+        elif line[1] and line[1]['text'] == "**end_choosing**":
+            if not glb_end_choosing_index_dict[uid]:
+                glb_end_choosing_index_dict[uid] = -1
+            # print("glb_history_dict[uid]", glb_history_dict[uid])
+            for idx in range(len(glb_history_dict[uid])-1,
+                             glb_end_choosing_index_dict[uid], -1):
+                print("-----------")
+                print(glb_history_dict[uid][idx])
+
+                if (glb_history_dict[uid][idx][1] and "select-box" in
+                        glb_history_dict[uid][idx][1]['text']):
+                    print("before", glb_history_dict[uid][idx])
+                    pattern = re.compile(r'(<select-box[^>]*?)>')
+                    # print("pattern", pattern)
+                    replacement_text = r'\1 disabled="True">'
+                    glb_history_dict[uid][idx][1]['text'] = pattern.sub(replacement_text, glb_history_dict[uid][idx][1]['text'])
+                    print("after ", glb_history_dict[uid][idx])
+            glb_end_choosing_index_dict[uid] = len(glb_history_dict[uid]) - 1
+
         else:
             glb_history_dict[uid] += [line]
             glb_doing_signal_dict[uid] = []
+    print("glb_history_dict[uid]", glb_history_dict[uid])
     dial_msg, sys_msg = [], []
     for line in glb_history_dict[uid]:
         _, msg = line

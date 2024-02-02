@@ -174,6 +174,7 @@ class RuledUser(AgentBase):
                 continue
             cook_list = sel_ingr
             break
+        send_chat_msg("**end_choosing**", uid=self.uid)
 
         prompt = self.cook_prompt.format_map(
             {"ingredient": "+".join(cook_list)},

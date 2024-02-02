@@ -195,11 +195,14 @@ class GamePlot:
                     uid=player.uid,
                 )
                 answer = query_answer(questions, "ans", uid=player.uid)
+                send_chat_msg("**end_choosing**", uid=player.uid)
+
                 if isinstance(answer, str):
                     if answer == "":
                         break
                     else:
                         msg = player.talk(answer, ruled=True)
+                        # send_chat_msg("**end_choosing**", uid=player.uid)
                         if msg is None:
                             continue
 
@@ -209,7 +212,9 @@ class GamePlot:
                             msg = player(msg)
                         else:
                             msg = player.talk(answer[0], is_display=True)
+                    # send_chat_msg("**end_choosing**", uid=player.uid)
                 else:  # Walk away
+                    # send_chat_msg("**end_choosing**", uid=player.uid)
                     break
             else:
                 msg = player(msg)

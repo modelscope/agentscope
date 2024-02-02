@@ -75,6 +75,7 @@ def invited_group_chat(
                     player.talk("今天谢谢大家🙏", is_display=True)
                     end_flag = True
                 break
+            send_chat_msg("**end_choosing**", uid=uid)
             if end_flag:
                 break
             else:
@@ -117,6 +118,8 @@ def invited_group_chat(
                     send_chat_msg(f"{SYS_MSG_PREFIX}请在列表中选择。", uid=uid)
                     continue
                 break
+            send_chat_msg("**end_choosing**", uid=uid)
+
             for c in invited_customer:
                 if c.name == answer[0]:
                     player.talk(f"我想听听{c.name}的故事", is_display=True)
@@ -228,6 +231,7 @@ def one_on_one_loop(customers, player, uid, checkpoint):
                 )
                 continue
             break
+        send_chat_msg("**end_choosing**", uid=uid)
 
         answer = answer[0]
 
@@ -292,6 +296,7 @@ def confirm_with_main_role(uid, player, checkpoint):
             )
             continue
         break
+    send_chat_msg("**end_choosing**", uid=uid)
 
     answer = answer[0]
 
@@ -363,6 +368,7 @@ def invite_customers(customers, uid, checkpoint):
             continue
         else:
             invited_customers = answer
+            send_chat_msg("**end_choosing**", uid=uid)
             return invited_customers
 
 
