@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """ Import modules in models package."""
 import json
-from typing import Union, Sequence
+from typing import Union, Type
 
 from loguru import logger
 
-from .model import ModelWrapperBase
-from .post_model import PostApiModelWrapper
+from .model import ModelWrapperBase, ModelResponse
+from .post_model import PostAPIModelWrapperBase
 from .openai_model import (
     OpenAIWrapper,
     OpenAIChatWrapper,
@@ -17,7 +17,8 @@ from .openai_model import (
 
 __all__ = [
     "ModelWrapperBase",
-    "PostApiModelWrapper",
+    "ModelResponse",
+    "PostAPIModelWrapperBase",
     "OpenAIWrapper",
     "OpenAIChatWrapper",
     "OpenAIDALLEWrapper",
@@ -31,6 +32,35 @@ from ..configs.model_config import OpenAICfg, PostApiCfg
 
 
 _MODEL_CONFIGS = []
+_MODEL_MAP: dict[str, Type[ModelWrapperBase]] = {
+    "openai": OpenAIChatWrapper,
+    "openai_dall_e": OpenAIDALLEWrapper,
+    "openai_embedding": OpenAIEmbeddingWrapper,
+    "post_api": PostAPIModelWrapperBase,
+}
+
+
+def get_model(model_type: str) -> Type[ModelWrapperBase]:
+    """Get the specific type of model wrapper
+
+    Args:
+        model_type (`str`): The model type name.
+
+    Returns:
+        `Type[ModelWrapperBase]`: The corresponding model wrapper class.
+    """
+    if model_type in _MODEL_MAP:
+        return _MODEL_MAP[model_type]
+    elif model_type in ModelWrapperBase.registry:
+        return ModelWrapperBase.registry[  # type: ignore [return-value]
+            model_type
+        ]
+    else:
+        logger.warning(
+            f"Unsupported model_type [{model_type}],"
+            "use PostApiModelWrapper instead.",
+        )
+        return PostAPIModelWrapperBase
 
 
 def load_model_by_name(model_name: str) -> ModelWrapperBase:
@@ -54,18 +84,7 @@ def load_model_by_name(model_name: str) -> ModelWrapperBase:
         )
 
     model_type = config.pop("type")
-    if model_type == "openai":
-        return OpenAIChatWrapper(**config)
-    elif model_type == "openai_dall_e":
-        return OpenAIDALLEWrapper(**config)
-    elif model_type == "openai_embedding":
-        return OpenAIEmbeddingWrapper(**config)
-    elif model_type == "post_api":
-        return PostApiModelWrapper(**config)
-    else:
-        raise ValueError(
-            f"Cannot find [{config['type']}] in loaded configurations.",
-        )
+    return get_model(model_type=model_type)(**config)
 
 
 def clear_model_configs() -> None:

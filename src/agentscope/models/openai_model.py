@@ -4,7 +4,7 @@ from typing import Union, Any
 
 from loguru import logger
 
-from .model import ModelWrapperBase
+from .model import ModelWrapperBase, ModelResponse
 from ..file_manager import file_manager
 
 try:
@@ -138,7 +138,7 @@ class OpenAIChatWrapper(OpenAIWrapper):
         messages: list,
         return_raw: bool = False,
         **kwargs: Any,
-    ) -> Union[str, dict]:
+    ) -> ModelResponse:
         """Processes a list of messages to construct a payload for the OpenAI
         API call. It then makes a request to the OpenAI API and returns the
         response. This method also updates monitoring metrics based on the
@@ -218,9 +218,9 @@ class OpenAIChatWrapper(OpenAIWrapper):
 
         # step6: return raw response if needed
         if return_raw:
-            return response.model_dump()
+            return ModelResponse(raw=response.model_dump())
         else:
-            return response.choices[0].message.content
+            return ModelResponse(text=response.choices[0].message.content)
 
 
 class OpenAIDALLEWrapper(OpenAIWrapper):
@@ -250,7 +250,7 @@ class OpenAIDALLEWrapper(OpenAIWrapper):
         return_raw: bool = False,
         save_local: bool = False,
         **kwargs: Any,
-    ) -> Union[dict, list[str]]:
+    ) -> ModelResponse:
         """
         Args:
             prompt (`str`):
@@ -313,7 +313,7 @@ class OpenAIDALLEWrapper(OpenAIWrapper):
 
         # step4: return raw response if needed
         if return_raw:
-            return response
+            return ModelResponse(raw=response.model_dump())
         else:
             images = response.model_dump()["data"]
             # Get image urls as a list
@@ -321,10 +321,8 @@ class OpenAIDALLEWrapper(OpenAIWrapper):
 
             if save_local:
                 # Return local url if save_local is True
-                local_urls = [file_manager.save_image(_) for _ in urls]
-                return local_urls
-            else:
-                return urls
+                urls = [file_manager.save_image(_) for _ in urls]
+            return ModelResponse(image_urls=urls)
 
 
 class OpenAIEmbeddingWrapper(OpenAIWrapper):
@@ -348,7 +346,7 @@ class OpenAIEmbeddingWrapper(OpenAIWrapper):
         texts: Union[list[str], str],
         return_raw: bool = False,
         **kwargs: Any,
-    ) -> Union[list, dict]:
+    ) -> ModelResponse:
         """Embed the messages with OpenAI embedding API.
 
         Args:
@@ -402,9 +400,13 @@ class OpenAIEmbeddingWrapper(OpenAIWrapper):
         # step4: return raw response if needed
         response_json = response.model_dump()
         if return_raw:
-            return response_json
+            return ModelResponse(raw=response_json)
         else:
             if len(response_json["data"]) == 0:
-                return response_json["data"]["embedding"][0]
+                return ModelResponse(
+                    embedding=response_json["data"]["embedding"][0],
+                )
             else:
-                return [_["embedding"] for _ in response_json["data"]]
+                return ModelResponse(
+                    embedding=[_["embedding"] for _ in response_json["data"]],
+                )

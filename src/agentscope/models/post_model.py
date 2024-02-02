@@ -7,14 +7,14 @@ from typing import Any
 import requests
 from loguru import logger
 
-from .model import ModelWrapperBase
+from .model import ModelWrapperBase, ModelResponse
 from ..constants import _DEFAULT_MAX_RETRIES
 from ..constants import _DEFAULT_MESSAGES_KEY
 from ..constants import _DEFAULT_RETRY_INTERVAL
 
 
-class PostApiModelWrapper(ModelWrapperBase):
-    """The model wrapper for the model deployed on the POST API."""
+class PostAPIModelWrapperBase(ModelWrapperBase):
+    """The base model wrapper for the model deployed on the POST API."""
 
     def __init__(
         self,
@@ -82,7 +82,11 @@ class PostApiModelWrapper(ModelWrapperBase):
         self.messages_key = messages_key
         self.retry_interval = retry_interval
 
-    def __call__(self, input_: str, **kwargs: Any) -> dict:
+    def _parse_response(self, response: dict) -> ModelResponse:
+        """Parse the response json data into ModelResponse"""
+        return ModelResponse(raw=response)
+
+    def __call__(self, input_: str, **kwargs: Any) -> ModelResponse:
         """Calling the model with requests.post.
 
         Args:
@@ -143,12 +147,47 @@ class PostApiModelWrapper(ModelWrapperBase):
 
         # step4: parse the response
         if response.status_code == requests.codes.ok:
-            return response.json()["data"]["response"]["choices"][0][
-                "message"
-            ]["content"]
+            return self._parse_response(response.json())
         else:
             logger.error(json.dumps(request_kwargs, indent=4))
             raise RuntimeError(
                 f"Failed to call the model with "
                 f"requests.codes == {response.status_code}",
             )
+
+
+class PostAPIChatWrapper(PostAPIModelWrapperBase):
+    """A post api model wrapper compatilble with openai chat"""
+
+    def __init__(
+        self,
+        name: str,
+        api_url: str,
+        headers: dict = None,
+        max_length: int = 2048,
+        timeout: int = 30,
+        json_args: dict = None,
+        post_args: dict = None,
+        max_retries: int = _DEFAULT_MAX_RETRIES,
+        messages_key: str = _DEFAULT_MESSAGES_KEY,
+        retry_interval: int = _DEFAULT_RETRY_INTERVAL,
+    ) -> None:
+        super().__init__(
+            name=name,
+            api_url=api_url,
+            headers=headers,
+            max_length=max_length,
+            timeout=timeout,
+            json_args=json_args,
+            post_args=post_args,
+            max_retries=max_retries,
+            messages_key=messages_key,
+            retry_interval=retry_interval,
+        )
+
+    def _parse_response(self, response: dict) -> ModelResponse:
+        return ModelResponse(
+            text=response.json()["data"]["response"]["choices"][0]["message"][
+                "content"
+            ],
+        )

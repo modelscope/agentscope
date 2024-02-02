@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """Unit test for prompt engine."""
 import unittest
-from typing import Union, Any
+from typing import Any
 
 from agentscope.models import read_model_configs
 from agentscope.models import load_model_by_name
-from agentscope.models import OpenAIWrapper
+from agentscope.models import ModelResponse, OpenAIWrapper
 from agentscope.prompt import PromptEngine
 
 
@@ -62,8 +62,8 @@ class PromptEngineTest(unittest.TestCase):
                 self,
                 *args: Any,
                 **kwargs: Any,
-            ) -> Union[str, dict, list]:
-                return ""
+            ) -> ModelResponse:
+                return ModelResponse(text="")
 
             def _register_default_metrics(self) -> None:
                 pass

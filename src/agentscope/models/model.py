@@ -57,7 +57,7 @@ import inspect
 import time
 from abc import ABCMeta
 from functools import wraps
-from typing import Union, Any, Callable
+from typing import Sequence, Any, Callable
 
 from loguru import logger
 
@@ -146,6 +146,53 @@ class _ModelWrapperMeta(ABCMeta):
             attrs["__call__"] = _response_parse_decorator(attrs["__call__"])
         return super().__new__(mcs, name, bases, attrs)
 
+    def __init__(cls, name: Any, bases: Any, attrs: Any) -> None:
+        if not hasattr(cls, "registry"):
+            cls.registry = {}
+        else:
+            cls.registry[name] = cls
+        super().__init__(name, bases, attrs)
+
+
+class ModelResponse:
+    """Encapsulation of data returned by the model.
+
+    The main purpose of this class is to align the return formats of different
+    models and act as a bridge between models and agents.
+    """
+
+    def __init__(
+        self,
+        text: str = None,
+        embedding: Sequence = None,
+        image_urls: Sequence[str] = None,
+        raw: dict = None,
+    ) -> None:
+        self._text = text
+        self._embedding = embedding
+        self._image_urls = image_urls
+        self._raw = raw
+
+    @property
+    def text(self) -> str:
+        """Text field."""
+        return self._text
+
+    @property
+    def embedding(self) -> Sequence:
+        """Embedding field."""
+        return self._embedding
+
+    @property
+    def image_urls(self) -> Sequence[str]:
+        """Image URLs field."""
+        return self._image_urls
+
+    @property
+    def raw(self) -> dict:
+        """Raw dictionary field."""
+        return self._raw
+
 
 class ModelWrapperBase(metaclass=_ModelWrapperMeta):
     """The base class for model wrapper."""
@@ -166,7 +213,7 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
         """
         self.name = name
 
-    def __call__(self, *args: Any, **kwargs: Any) -> Union[str, dict, list]:
+    def __call__(self, *args: Any, **kwargs: Any) -> ModelResponse:
         """Processing input with the model."""
         raise NotImplementedError(
             f"Model Wrapper [{type(self).__name__}]"
