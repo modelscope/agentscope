@@ -2,13 +2,12 @@
 import base64
 import os
 import datetime
-import shutil
 import threading
 from collections import defaultdict
 from typing import List
 from multiprocessing import Event
 import agentscope
-from config_utils import load_user_cfg, save_user_cfg, load_default_cfg, load_configs, get_user_dir
+from config_utils import load_user_cfg, load_configs
 from utils import (
     CheckpointArgs,
     enable_web_ui,
@@ -21,8 +20,7 @@ from utils import (
     get_story_msg,
     check_uuid
 )
-from create_config_tab import create_config_tab
-from generate_image import generate_user_logo_file
+from create_config_tab import create_config_tab, create_config_accord
 
 import gradio as gr
 import modelscope_gradio_components as mgr
@@ -235,13 +233,6 @@ def fn_choice(data: gr.EventData, uid):
     send_player_input(data._data["value"], uid=uid)
 
 
-def clean_config_dir(uid):
-    uid = check_uuid(uid)
-    user_dir = get_user_dir(uid)
-    if os.path.exists(user_dir):
-        gr.Info(f'清理 {user_dir}')
-        shutil.rmtree(user_dir)
-
 if __name__ == "__main__":
 
     def init_game():
@@ -310,8 +301,10 @@ if __name__ == "__main__":
                         new_button = gr.Button(value='🚀新的探险', )
                     with gr.Column():
                         resume_button = gr.Button(value='🔥续写情缘', )
-                    with gr.Column():
-                        clean_button = gr.Button(value='🧹清除缓存', )
+            
+                config_accordion =  gr.Accordion('导入导出配置', open=False)
+                with config_accordion:
+                    create_config_accord(config_accordion, uuid)
 
         with config_tab:
             create_config_tab(config_tab, uuid)
@@ -433,7 +426,6 @@ if __name__ == "__main__":
                 send_button: gr.Button(visible=visible),
                 new_button: gr.Button(visible=invisible),
                 resume_button: gr.Button(visible=invisible),
-                clean_button: gr.Button(visible=invisible),
                 return_welcome_button: gr.Button(visible=visible),
                 export: gr.Accordion(visible=visible),
                 user_chat_bot_cover: gr.HTML(visible=invisible),
@@ -453,7 +445,6 @@ if __name__ == "__main__":
                 send_button: gr.Button(visible=invisible),
                 new_button: gr.Button(visible=visible),
                 resume_button: gr.Button(visible=visible),
-                clean_button: gr.Button(visible=visible),
                 return_welcome_button: gr.Button(visible=invisible),
                 export: gr.Accordion(visible=invisible),
                 user_chat_bot_cover: gr.HTML(visible=visible),
@@ -470,7 +461,6 @@ if __name__ == "__main__":
             send_button,
             new_button,
             resume_button,
-            clean_button,
             return_welcome_button,
             export,
             user_chat_bot_cover,
@@ -499,7 +489,7 @@ if __name__ == "__main__":
         # start game
         new_button.click(send_reset_message, inputs=[uuid]).then(check_for_new_session, inputs=[uuid])
         resume_button.click(check_for_new_session, inputs=[uuid])
-        clean_button.click(clean_config_dir, inputs=[uuid])
+        
 
         # export
         export_button.click(export_chat_history, [uuid], export_output)

@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 
+import os
+import shutil
+
 import gradio as gr
 
-from config_utils import (PLOT_CFG_NAME, load_default_cfg, load_user_cfg,
-                          save_user_cfg)
+from config_utils import (PLOT_CFG_NAME, compress, decompress_with_file,
+                          decompress_with_signature, get_user_dir,
+                          load_default_cfg, load_user_cfg, save_user_cfg)
 from generate_image import generate_user_logo_file
 from relationship import Familiarity
 from utils import check_uuid
@@ -47,6 +51,87 @@ def get_plot_ids(uuid, plots=None):
     plots = plots or load_user_cfg(cfg_name=PLOT_CFG_NAME, uuid=uuid)
     plot_ids = [plot["plot_id"] for plot in plots]
     return plot_ids
+
+
+def share_cfg_dir(uuid):
+    uuid = check_uuid(uuid)
+    try:
+        signature, zip_file = compress(uuid=uuid)
+        return signature, gr.update(value=zip_file)
+    except Exception as e:
+        gr.Warning(str(e))
+        return "", gr.update(value=None)
+
+
+def upload_zip_file(zip_file, uuid):
+    uuid = check_uuid(uuid)
+    try:
+        decompress_with_file(zip_file, uuid=uuid)
+        gr.Info("✅上传配置成功")
+    except Exception as e:
+        gr.Warning("上传文件格式不正确， 请输入zip压缩格式。")
+    return "", gr.update(value=None)
+
+
+def load_from_signature(signature, uuid="other_user"):
+    uuid = check_uuid(uuid)
+    try:
+        zip_file = decompress_with_signature(signature, uuid=uuid)
+        gr.Info("✅加载签名成功")
+    except Exception as e:
+        gr.Warning("签名配置不存在或不正确")
+    return gr.update(value=None)
+
+
+def clean_config_dir(uuid):
+    uuid = check_uuid(uuid)
+    try:
+        user_dir = get_user_dir(uuid)
+        if os.path.exists(user_dir):
+            shutil.rmtree(user_dir)
+            gr.Info(f"✅清理完成：{user_dir}")
+    except Exception as e:
+        gr.Warning("签名配置不存在或不正确")
+    return "", gr.update(value=None)
+
+
+def create_config_accord(accord, uuid):
+    uuid = check_uuid(uuid)
+    with gr.Row():
+        signature = gr.Textbox(
+            label="用于分享或加载", placeholder="可加载朋友分享的签名或者点击分享生成签名", show_copy_button=True
+        )
+        signature_file = gr.File(
+            label="用于分享下载", interactive=False, elem_classes=["signature-file-uploader"]
+        )
+    with gr.Row():
+        load_button = gr.Button(
+            value="🔏加载签名",
+        )
+        upload_button = gr.UploadButton(
+            label="⬆️上传配置",
+        )
+        share_button = gr.Button(
+            value="🔗分享/⬇️下载",
+        )
+        clean_button = gr.Button(
+            value="🧹清除缓存",
+        )
+
+    load_button.click(
+        load_from_signature, inputs=[signature, uuid], outputs=[signature_file]
+    )
+    upload_button.upload(
+        upload_zip_file,
+        inputs=[upload_button, uuid],
+        outputs=[signature, signature_file],
+    )
+    share_button.click(
+        share_cfg_dir, inputs=[uuid], outputs=[signature, signature_file]
+    )
+    clean_button.click(
+        clean_config_dir, inputs=[uuid], outputs=[signature, signature_file]
+    )
 
 
 def create_config_tab(config_tab, uuid):
@@ -221,7 +306,7 @@ def config_plot_tab(plot_tab, uuid):
             npc_openings: "",
             npc_quit_openings: "",
             user_openings_option: None,
-            done_condition: ""
+            done_condition: "",
         }
 
     def delete_plot(plot_id, uuid):
@@ -360,7 +445,7 @@ def config_role_tab(role_tab, uuid):
                     label="角色名称",
                     placeholder="请输入角色名称",
                 )
-                relationship = gr.Dropdown(label='熟悉程度', choices=relationship_list)
+                relationship = gr.Dropdown(label="熟悉程度", choices=relationship_list)
             with gr.Row():
                 use_memory = gr.Checkbox(label="记忆功能", info="是否开启角色记忆功能")
                 model_name = gr.Textbox(label="模型设置")
@@ -427,7 +512,7 @@ def config_role_tab(role_tab, uuid):
         return {
             avatar_file: gr.Image(value=role["avatar"], interactive=True),
             role_name: role["name"],
-            relationship: gr.Dropdown(value=role.get('relationship', '陌生')),
+            relationship: gr.Dropdown(value=role.get("relationship", "陌生")),
             avatar_desc: role.get("avatar_desc", ""),
             use_memory: gr.Checkbox(value=role["use_memory"]),
             model_name: role["model"],
@@ -464,7 +549,7 @@ def config_role_tab(role_tab, uuid):
         return {
             avatar_file: gr.Image(value=None),
             role_name: "",
-            relationship: gr.Dropdown(value='陌生'),
+            relationship: gr.Dropdown(value="陌生"),
             avatar_desc: "",
             use_memory: gr.Checkbox(label="是否开启记忆功能"),
             model_name: "",
@@ -551,8 +636,8 @@ def config_role_tab(role_tab, uuid):
                 desc = role["character_setting"]["background"]
         gen_avatar_file = generate_user_logo_file(desc, name, uuid)
         if not gen_avatar_file:
-            gr.Warning('生成头像失败')
-            gen_avatar_file = role['avatar']
+            gr.Warning("生成头像失败")
+            gen_avatar_file = role["avatar"]
         return gr.Image(value=gen_avatar_file)
 
     role_selector.change(

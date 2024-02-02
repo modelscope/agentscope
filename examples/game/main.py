@@ -11,7 +11,7 @@ from typing import Optional
 import agentscope
 from agentscope.message import Msg
 from agentscope.msghub import msghub
-from config_utils import load_user_cfg, load_configs
+from config_utils import load_user_cfg, load_configs, PLOT_CFG_NAME
 from customer import Customer, MIN_BAR_FRIENDSHIP_CONST
 from enums import CustomerConv, StagePerNight
 from ruled_user import RuledUser
@@ -392,7 +392,7 @@ def main(args) -> None:
         for cfg in customer_configs
     ]
 
-    plot_config = load_configs("config/plot_config.yaml")
+    plot_config = load_user_cfg(cfg_name=PLOT_CFG_NAME,uuid=args.uid)
 
     all_plots = parse_plots(plot_config, customers)
 
