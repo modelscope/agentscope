@@ -231,7 +231,7 @@ class RuledUser(AgentBase):
             {"ingredient": "+".join(cook_list)},
         )
         message = Msg(name="user", content=prompt, role="user")
-        food = self.model(messages=[extract_keys_from_dict(message, MESSAGE_KEYS)])
+        food = self.model([extract_keys_from_dict(message, MESSAGE_KEYS)])
         food = re.sub(r'^[\'"`@!]+|[\'"`@!]+$', '', food)
         # random_quality = random.choice(list(FoodQuality)).value
         # food = random_quality + food

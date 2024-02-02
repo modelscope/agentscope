@@ -19,6 +19,7 @@ from utils import (
     SYS_MSG_PREFIX,
     get_clue_image_b64_url,
     extract_keys_from_dict,
+    send_story_msg,
 )
 
 HISTORY_WINDOW = 10
@@ -405,6 +406,7 @@ class Customer(StateAgent, DialogAgent):
         pov_story = self.model(
             [extract_keys_from_dict(msg, MESSAGE_KEYS)]
         )
+        send_story_msg(pov_story, role=self.name, uid=self.uid)
         print("*" * 20)
         send_chat_msg(
             pov_story,
