@@ -7,7 +7,7 @@ class Prompts:
 
     to_wolves = (
         "{}, if you are the only werewolf, eliminate a player. Otherwise, "
-        "discuss with your teammates and reach an agreement. Response in the "
+        "discuss with your teammates and reach an agreement. Respond in the "
         "following format which can be loaded by python json.loads()\n"
         "{{\n"
         '    "thought": "thought",\n'
@@ -18,7 +18,7 @@ class Prompts:
     )
 
     to_wolves_vote = (
-        "Which player do you vote to kill? Response in the following format "
+        "Which player do you vote to kill? Respond in the following format "
         "which can be loaded by python json.loads()\n"
         "{{\n"
         '   "thought": "thought" ,\n'
@@ -30,7 +30,7 @@ class Prompts:
 
     to_witch_resurrect = (
         "{witch_name}, you're the witch. Tonight {dead_name} is eliminated. "
-        "Would you like to resurrect {dead_name}? Response in the following "
+        "Would you like to resurrect {dead_name}? Respond in the following "
         "format which can be loaded by python json.loads()\n"
         "{{\n"
         '    "thought": "thought",\n'
@@ -40,7 +40,7 @@ class Prompts:
     )
 
     to_witch_poison = (
-        "Would you like to eliminate one player? Response in the following "
+        "Would you like to eliminate one player? Respond in the following "
         "json format which can be loaded by python json.loads()\n"
         "{{\n"
         '    "thought": "thought", \n'
@@ -51,7 +51,7 @@ class Prompts:
 
     to_seer = (
         "{}, you're the seer. Which player in {} would you like to check "
-        "tonight? Response in the following json format which can be loaded "
+        "tonight? Respond in the following json format which can be loaded "
         "by python json.loads()\n"
         "{{\n"
         '    "thought": "thought" ,\n'
@@ -76,7 +76,7 @@ class Prompts:
         "based on the "
         "situation and the information you gain, to vote a player eliminated "
         "among alive players and to win the game, what do you want to say "
-        "to others? You can decide whether to reveal your role. Response in "
+        "to others? You can decide whether to reveal your role. Respond in "
         "the following JSON format which can be loaded by python json.loads("
         ")\n"
         "{{\n"
@@ -90,7 +90,7 @@ class Prompts:
         "based on the situation and the information you gain, to win the "
         "game, it's time to vote one player eliminated among the alive "
         "players, please cast your vote on who you believe is a werewolf. "
-        "Response in the following format which can be loaded by python "
+        "Respond in the following format which can be loaded by python "
         "json.loads()\n"
         "{{\n"
         '    "thought": "thought",\n'
