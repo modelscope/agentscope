@@ -32,9 +32,15 @@ def extract_json_str(json_str: str) -> str:
     return json_str[start_index:]
 
 
-def _get_timestamp(format_: str = "%Y-%m-%d %H:%M:%S") -> str:
+def _get_timestamp(
+    format_: str = "%Y-%m-%d %H:%M:%S",
+    time: datetime.datetime = None,
+) -> str:
     """Get current timestamp."""
-    return datetime.datetime.now().strftime(format_)
+    if time is None:
+        return datetime.datetime.now().strftime(format_)
+    else:
+        return time.strftime(format_)
 
 
 def to_openai_dict(item: dict) -> dict:
@@ -140,7 +146,18 @@ def _download_file(url: str, path_file: str, max_retries: int = 3) -> bool:
     return False
 
 
-def _generate_random_code(length: int = 6) -> str:
+def _generate_random_code(
+    length: int = 6,
+    uppercase: bool = True,
+    lowercase: bool = True,
+    digits: bool = True,
+) -> str:
     """Get random code."""
-    characters = string.ascii_letters + string.digits
+    characters = ""
+    if uppercase:
+        characters += string.ascii_uppercase
+    if lowercase:
+        characters += string.ascii_lowercase
+    if digits:
+        characters += string.digits
     return "".join(secrets.choice(characters) for i in range(length))

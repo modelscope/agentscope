@@ -15,8 +15,11 @@ _DEFAULT_LOG_LEVEL = "INFO"
 _DEFAULT_SUBDIR_CODE = "code"
 _DEFAULT_SUBDIR_FILE = "file"
 _DEFAULT_SUBDIR_INVOKE = "invoke"
+_DEFAULT_CFG_NAME = ".config"
 _DEFAULT_IMAGE_NAME = "image_{}_{}.png"
 _DEFAULT_SQLITE_DB_PATH = "agentscope.db"
+
+
 # for model wrapper
 _DEFAULT_MAX_RETRIES = 3
 _DEFAULT_MESSAGES_KEY = "inputs"
