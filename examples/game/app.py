@@ -46,7 +46,7 @@ glb_history_dict = defaultdict(init_uid_list)
 glb_clue_dict = defaultdict(init_uid_dict)
 glb_story_dict = defaultdict(init_uid_dict)
 glb_doing_signal_dict = defaultdict(init_uid_dict)
-glb_end_choosing_index_dict = defaultdict(init_uid_dict)
+glb_end_choosing_index_dict = defaultdict(lambda: -1)
 
 glb_signed_user = []
 is_init = Event()
@@ -125,8 +125,6 @@ def get_chat(uid) -> List[List]:
             line[1]['text'] = "思考中"
             glb_doing_signal_dict[uid] = line
         elif line[1] and line[1]['text'] == "**end_choosing**":
-            if not glb_end_choosing_index_dict[uid]:
-                glb_end_choosing_index_dict[uid] = -1
             for idx in range(len(glb_history_dict[uid])-1,
                              glb_end_choosing_index_dict[uid], -1):
 
