@@ -132,7 +132,32 @@ def invited_group_chat(
     for idx in cur_plots_indices:
         all_plots[idx].max_attempts -= 1
         if all_plots[idx].max_attempts <= 0:
-            send_chat_msg(f"剧情解锁失败，剧情已结束", uid=uid)
+            restart_plot_choice=['再次挑战']
+            restart_plot = [
+                inquirer.List(
+                    "ans",
+                    message=f"{SYS_MSG_PREFIX}：剧情解锁失败，剧情已结束，可以先复盘一下, 再次挑战。",
+                    choices=restart_plot_choice
+                ),
+            ]
+
+            choose_restart = f"""{SYS_MSG_PREFIX}：剧情解锁失败，剧情已结束，可以先复盘一下, 再次挑战。 <select-box
+            shape="card"
+                        item-width="auto" type="checkbox" options=
+                        '{json.dumps(restart_plot_choice)}'
+                        select-once></select-box>"""
+            send_chat_msg(choose_restart, flushing=False, uid=uid)
+
+            answer = query_answer(restart_plot, "ans", uid=uid)
+            if isinstance(answer, str):
+                send_chat_msg(f"{SYS_MSG_PREFIX}请在列表中选择。", uid=uid)
+                continue
+            else:
+                # send_chat_msg("**end_choosing**", uid=uid)
+                send_chat_msg(f"{SYS_MSG_PREFIX} 再次挑战开始", uid=uid)
+                from utils import ResetException
+                raise ResetException
+
     send_chat_msg(
         f"{SYS_MSG_PREFIX} ======= 进入新的一天的营业时间 ==========",
         uid=uid)
@@ -339,6 +364,7 @@ def confirm_with_main_role(uid, player, checkpoint):
 def invite_customers(customers, uid, checkpoint):
     available_customers = [c.name for c in customers]
 
+    remain_chance = ""
     prompt = f"{SYS_MSG_PREFIX}: "
     for p_idx in checkpoint.cur_plots:
         if "done_hint" in checkpoint.all_plots[p_idx].plot_description:
