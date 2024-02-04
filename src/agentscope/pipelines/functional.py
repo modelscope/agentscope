@@ -6,7 +6,7 @@ from typing import (
     Optional,
     Union,
     Any,
-    Mapping
+    Mapping,
 )
 from ..agents.operator import Operator
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Search question in the web"""
-from typing import Optional, Any
+from typing import Any
 
 from agentscope.service.service_response import ServiceResponse
 from agentscope.utils.common import requests_get
@@ -9,7 +9,7 @@ from agentscope.service.service_status import ServiceExecStatus
 
 def bing_search(
     question: str,
-    bing_api_key: str,
+    api_key: str,
     num_results: int = 10,
     **kwargs: Any,
 ) -> ServiceResponse:
@@ -19,7 +19,7 @@ def bing_search(
     Args:
         question (`str`):
             The search query string.
-        bing_api_key (`str`):
+        api_key (`str`):
             The API key provided for authenticating with the Bing Search API.
         num_results (`int`, defaults to `10`):
             The number of search results to return.
@@ -84,7 +84,7 @@ def bing_search(
     if kwargs:
         params.update(**kwargs)
 
-    headers = {"Ocp-Apim-Subscription-Key": bing_api_key}
+    headers = {"Ocp-Apim-Subscription-Key": api_key}
 
     search_results = requests_get(
         bing_search_url,
@@ -116,8 +116,8 @@ def bing_search(
 
 def google_search(
     question: str,
-    google_api_key: str,
-    google_cse_id: str,
+    api_key: str,
+    cse_id: str,
     num_results: int = 10,
     **kwargs: Any,
 ) -> ServiceResponse:
@@ -127,10 +127,10 @@ def google_search(
     Args:
         question (`str`):
             The search query string.
-        google_api_key (`str`):
+        api_key (`str`):
             The API key provided for authenticating with the Google Custom
             Search JSON API.
-        google_cse_id (`str`):
+        cse_id (`str`):
             The unique identifier of a programmable search engine to use.
         num_results (`int`, defaults to `10`):
             The number of search results to return.
@@ -167,8 +167,8 @@ def google_search(
     # Define the query parameters
     params = {
         "q": question,
-        "key": google_api_key,
-        "cx": google_cse_id,
+        "key": api_key,
+        "cx": cse_id,
         "num": num_results,
     }
     if kwargs:

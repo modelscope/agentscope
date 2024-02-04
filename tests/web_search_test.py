@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import Mock, patch, MagicMock
 
 from agentscope.service import ServiceResponse
-from agentscope.service import web_search
+from agentscope.service import bing_search, google_search
 from agentscope.service.service_status import ServiceExecStatus
 
 
@@ -43,7 +43,6 @@ class TestWebSearches(unittest.TestCase):
         mock_get.return_value = mock_response
 
         # set parameters
-        engine = "Bing"
         bing_api_key = "fake-bing-api-key"
         test_question = "test test_question"
         num_results = 1
@@ -51,8 +50,7 @@ class TestWebSearches(unittest.TestCase):
         headers = {"Ocp-Apim-Subscription-Key": bing_api_key}
 
         # Call the function
-        results = web_search(
-            engine,
+        results = bing_search(
             test_question,
             api_key=bing_api_key,
             num_results=num_results,
@@ -99,7 +97,6 @@ class TestWebSearches(unittest.TestCase):
         mock_get.return_value = mock_response
 
         # set parameter
-        engine = "Google"
         test_question = "test test_question"
         google_api_key = "fake-google-api-key"
         google_cse_id = "fake-google-cse-id"
@@ -113,13 +110,13 @@ class TestWebSearches(unittest.TestCase):
         }
 
         # Call the function
-        results = web_search(
-            engine,
+        results = google_search(
             test_question,
             api_key=google_api_key,
             cse_id=google_cse_id,
             num_results=num_results,
         )
+
         # Assertions
         mock_get.assert_called_once_with(
             "https://www.googleapis.com/customsearch/v1",

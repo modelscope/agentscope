@@ -8,42 +8,43 @@ from typing import (
     Any,
     Tuple,
     Union,
+    Optional,
     Literal,
     get_args,
-    get_origin
+    get_origin,
 )
 
 from docstring_parser import parse
 from loguru import logger
 
-from agentscope.service import bing_search
 
-
-def  _get_type_str(cls):
+def _get_type_str(cls: Any) -> Optional[Union[str, list]]:
     """Get the type string."""
+    type_str = None
     if hasattr(cls, "__origin__"):
         # Typing class
         if cls.__origin__ is Union:
-            return [_get_type_str(_) for _ in get_args(cls)]
+            type_str = [_get_type_str(_) for _ in get_args(cls)]
         elif cls.__origin__ is collections.abc.Sequence:
-            return "array"
+            type_str = "array"
         else:
-            return str(cls.__origin__)
+            type_str = str(cls.__origin__)
     else:
         # Normal class
         if cls is str:
-            return "string"
+            type_str = "string"
         elif cls in [float, int, complex]:
-            return "number"
+            type_str = "number"
         elif cls is bool:
-            return "boolean"
+            type_str = "boolean"
         elif cls is collections.abc.Sequence:
-            return "array"
+            type_str = "array"
         elif cls is None.__class__:
-            return "null"
+            type_str = "null"
         else:
-            return cls.__name__
+            type_str = cls.__name__
 
+    return type_str  # type: ignore[return-value]
 
 
 class ServiceFactory:
@@ -51,8 +52,11 @@ class ServiceFactory:
     prompt format."""
 
     @classmethod
-    def get(self, service_func: Callable[..., Any], **kwargs: Any) -> Tuple[
-        Callable[..., Any], dict]:
+    def get(
+        cls,
+        service_func: Callable[..., Any],
+        **kwargs: Any,
+    ) -> Tuple[Callable[..., Any], dict]:
         """Covnert a service function into a tool function that agent can
         use, and generate a dictionary in JSON Schema format that can be
         used in OpenAI API directly. While for open-source model, developers
@@ -94,52 +98,61 @@ class ServiceFactory:
         docstring = parse(service_func.__doc__)
 
         # Function description
-        func_description = (docstring.short_description or
-                            docstring.long_description)
+        func_description = (
+            docstring.short_description or docstring.long_description
+        )
 
         # The arguments that requires the agent to specify
         args_agent = set(argsspec.args) - set(kwargs.keys())
 
         # Check if the arguments from agent have descriptions in docstring
-        args_description = {_.arg_name: _.description  for _ in
-                            docstring.params}
+        args_description = {
+            _.arg_name: _.description for _ in docstring.params
+        }
 
         # Prepare default values
-        args_defaults = {k: v for k, v in zip(reversed(argsspec.args),
-                                              reversed(argsspec.defaults))}
+        args_defaults = dict(
+            zip(
+                reversed(argsspec.args),
+                reversed(argsspec.defaults),  # type: ignore
+            ),
+        )
+
         args_required = list(set(args_agent) - set(args_defaults.keys()))
 
         # Prepare types of the arguments, remove the return type
-        args_types = {k: v for k, v in argsspec.annotations.items() if k !=
-                      "return"}
+        args_types = {
+            k: v for k, v in argsspec.annotations.items() if k != "return"
+        }
 
         # Prepare argument dictionary
-        properties_field = dict()
+        properties_field = {}
         for key in args_agent:
-            property = dict()
+            arg_property = {}
             # type
             if key in args_types:
                 try:
                     required_type = _get_type_str(args_types[key])
-                    property["type"] = required_type
+                    arg_property["type"] = required_type
                 except Exception:
-                    logger.warning(f"Fail and skip to get the type of the "
-                                   f"argument `{key}`.")
-
+                    logger.warning(
+                        f"Fail and skip to get the type of the "
+                        f"argument `{key}`.",
+                    )
 
                 # For Literal type, add enum field
                 if get_origin(args_types[key]) is Literal:
-                    property["enum"] = list(args_types[key].__args__)
+                    arg_property["enum"] = list(args_types[key].__args__)
 
             # description
             if key in args_description:
-                property["description"] = args_description[key]
+                arg_property["description"] = args_description[key]
 
             # default
             if key in args_defaults and args_defaults[key] is not None:
-                property["default"] = args_defaults[key]
+                arg_property["default"] = args_defaults[key]
 
-            properties_field[key] = property
+            properties_field[key] = arg_property
 
         # Construct the JSON Schema for the service function
         func_dict = {
@@ -150,9 +163,9 @@ class ServiceFactory:
                 "parameters": {
                     "type": "object",
                     "properties": properties_field,
-                    "required": args_required
-                }
-            }
+                    "required": args_required,
+                },
+            },
         }
 
         return tool_func, func_dict

@@ -43,7 +43,7 @@ __all__ = [
     "read_json_file",
     "write_json_file",
     "bing_search",
-    "google_search"
+    "google_search",
     "query_mysql",
     "query_sqlite",
     "query_mongodb",
