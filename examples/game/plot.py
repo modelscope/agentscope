@@ -11,7 +11,8 @@ from utils import (
     send_chat_msg,
     query_answer,
     SYS_MSG_PREFIX,
-    OPENING_ROUND
+    OPENING_ROUND,
+    generate_picture,
 )
 from enums import CustomerConv, StagePerNight
 
@@ -174,7 +175,15 @@ class GamePlot:
         send_chat_msg(f"{SYS_MSG_PREFIX}开启主线任务： {openings['task']} "
                       f"\n\n{openings['openings']}", uid=uid)
         # send_chat_msg(f"{SYS_MSG_PREFIX}{openings['openings']}", uid=uid)
-        main_role.talk(openings["npc_openings"], is_display=True)
+        opening_prompt = openings["npc_openings"]
+        if "opening_image" in openings and len(openings["opening_image"]) > 0:
+            send_chat_msg("**speak**", role=main_role.name, uid=main_role.uid,
+                          avatar=main_role.avatar)
+            picture_url = generate_picture(openings["opening_image"])
+            opening_prompt += "\n" + f"![image]({picture_url})"
+            main_role.talk(opening_prompt, is_display=True, flushing=False)
+        else:
+            main_role.talk(opening_prompt, is_display=True)
         msg = {"content": "开场"}
         main_role.transition(CustomerConv.OPENING)
         if openings.get("user_openings_option", None):

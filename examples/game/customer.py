@@ -471,7 +471,7 @@ class Customer(StateAgent, DialogAgent):
         logger.debug(prompt)
         return prompt
 
-    def talk(self, content, is_display=True):
+    def talk(self, content, is_display=True, flushing=True):
         if content is not None:
             msg = Msg(
                 role="user",
@@ -485,7 +485,7 @@ class Customer(StateAgent, DialogAgent):
                     role=self.name,
                     uid=self.uid,
                     avatar=self.avatar,
-                    flushing=True,
+                    flushing=flushing,
                 )
             return msg
 
