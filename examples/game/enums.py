@@ -23,3 +23,13 @@ class StagePerNight(enum.IntEnum):
 
     CASUAL_CHAT_FOR_MEAL = 0
     MAKING_INVITATION = 1
+
+
+    @classmethod
+    def to_list(cls):
+        _descriptions = {
+        cls.CASUAL_CHAT_FOR_MEAL: "营业环节",
+        cls.MAKING_INVITATION: "解密环节"
+    }
+        """Return a list of description tuples sorted by enum value."""        
+        return list(_descriptions.values())

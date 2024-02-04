@@ -275,3 +275,8 @@
     box-shadow: 0 4px 8px rgba(0,0,0,0.5);
     opacity: 0.8;
 }
+
+.signature-file-uploader {
+  max-height: 100px;
+  align-items: flex-start;
+}
