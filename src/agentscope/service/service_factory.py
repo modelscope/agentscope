@@ -14,7 +14,10 @@ from typing import (
     get_origin,
 )
 
-from docstring_parser import parse
+try:
+    from docstring_parser import parse
+except ImportError:
+    parse = None
 from loguru import logger
 
 
