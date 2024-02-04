@@ -46,16 +46,16 @@ respectively. You can build your own model API serving with few modifications.
 Install Flask and Transformers by following command.
 
 ```bash
-pip install Flask, transformers
+pip install flask torch transformers accelerate
 ```
 
 Taking model `meta-llama/Llama-2-7b-chat-hf` and port `8000` as an example,
 set up the model API serving by running the following command.
 
-```bash
-python flask_transformers/setup_hf_service.py
-    --model_name_or_path meta-llama/Llama-2-7b-chat-hf
-    --device "cuda:0" # or "cpu"
+```shell
+python flask_transformers/setup_hf_service.py \
+    --model_name_or_path meta-llama/Llama-2-7b-chat-hf \
+    --device "cuda:0" \
     --port 8000
 ```
 
@@ -91,16 +91,16 @@ transformers with a little modification in `./flask_transformers/setup_hf_servic
 Install Flask and modelscope by following command.
 
 ```bash
-pip install Flask, modelscope
+pip install flask torch modelscope
 ```
 
 Taking model `modelscope/Llama-2-7b-ms` and port `8000` as an example,
 to set up the model API serving, run the following command.
 
 ```bash
-python flask_modelscope/setup_ms_service.py
-    --model_name_or_path modelscope/Llama-2-7b-ms
-    --device "cuda:0" # or "cpu"
+python flask_modelscope/setup_ms_service.py \
+    --model_name_or_path modelscope/Llama-2-7b-ms \
+    --device "cuda:0" \
     --port 8000
 ```
 
@@ -139,7 +139,7 @@ provides quick setup for model serving with OpenAI-compatible RESTful APIs.
 To install FastChat, run
 
 ```bash
-pip install "fastchat[model_worker,webui]"
+pip install "fschat[model_worker,webui]"
 ```
 
 Taking model `meta-llama/Llama-2-7b-chat-hf` and port `8000` as an example,
@@ -190,7 +190,7 @@ Taking model `meta-llama/Llama-2-7b-chat-hf` and port `8000` as an example,
 to set up model API serving, run
 
 ```bash
-bash vllm_script/vllm_setup.sh -m meta-llama/Llama-2-7b-chat-hf -p 8000
+./vllm_script/vllm_setup.sh -m meta-llama/Llama-2-7b-chat-hf -p 8000
 ```
 
 #### Supported models
