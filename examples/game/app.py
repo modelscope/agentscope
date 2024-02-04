@@ -3,6 +3,7 @@ import base64
 import os
 import datetime
 import threading
+import time
 from collections import defaultdict
 from typing import List
 from multiprocessing import Event
@@ -19,7 +20,8 @@ from utils import (
     get_clue_msg,
     get_story_msg,
     cycle_dots,
-    check_uuid
+    check_uuid,
+    send_chat_msg,
 )
 from create_config_tab import create_config_tab, create_config_accord
 
@@ -30,6 +32,7 @@ import re
 enable_web_ui()
 
 MAX_NUM_DISPLAY_MSG = 20
+FAIL_COUNT_DOWN = 30
 
 
 def init_uid_list():
@@ -48,6 +51,16 @@ glb_end_choosing_index_dict = defaultdict(lambda: -1)
 
 glb_signed_user = []
 is_init = Event()
+
+
+def reset_glb_var(uid):
+    global glb_history_dict, glb_clue_dict, glb_story_dict, \
+        glb_doing_signal_dict, glb_end_choosing_index_dict
+    glb_history_dict[uid] = init_uid_list()
+    glb_clue_dict[uid] = init_uid_dict()
+    glb_story_dict[uid] = init_uid_dict()
+    glb_doing_signal_dict[uid] = init_uid_dict()
+    glb_end_choosing_index_dict[uid] = -1
 
 
 # 图片本地路径转换为 base64 格式
@@ -324,6 +337,12 @@ if __name__ == "__main__":
                 main(args)
             except ResetException:
                 print(f"重置成功：{uid} ")
+            except Exception as e:
+                for i in range(FAIL_COUNT_DOWN, 0, -1):
+                    send_chat_msg(f"{SYS_MSG_PREFIX}发生错误 {e}, 即将在{i}秒后重启",
+                                  uid=uid)
+                    time.sleep(1)
+            reset_glb_var(uid)
 
     with gr.Blocks(css="assets/app.css") as demo:
         uuid = gr.Textbox(label='modelscope_uuid', visible=False)
@@ -434,10 +453,6 @@ if __name__ == "__main__":
 
         def send_reset_message(uid):
             uid = check_uuid(uid)
-            global glb_history_dict, glb_clue_dict, glb_story_dict
-            glb_history_dict[uid] = init_uid_list()
-            glb_clue_dict[uid] = init_uid_dict()
-            glb_story_dict[uid] = init_uid_dict()
             send_player_input("**Reset**", uid=uid)
             return ""
 
