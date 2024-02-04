@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
 """ Functional counterpart for Pipeline """
-from typing import Callable, Sequence, Optional, Union
-from typing import Any
-from typing import Mapping
+from typing import (
+    Callable,
+    Sequence,
+    Optional,
+    Union,
+    Any,
+    Mapping
+)
 from ..agents.operator import Operator
 
 # A single Operator or a Sequence of Operators
