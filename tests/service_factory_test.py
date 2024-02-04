@@ -27,45 +27,41 @@ class ServiceFactoryTest(unittest.TestCase):
         """Test bing_search."""
         # api_key is specified by developer, while question and num_results
         # are specified by model
-        _, doc_dict = ServiceFactory.get(bing_search, bing_api_key="xxx")
-
+        _, doc_dict = ServiceFactory.get(bing_search, api_key="xxx")
+        print(json.dumps(doc_dict, indent=4))
         self.assertDictEqual(
             doc_dict,
             {
                 "type": "function",
                 "function": {
                     "name": "bing_search",
-                    "description": (
-                        "Search question in Bing Search API and "
-                        "return the searching results"
-                    ),
+                    "description": "Search question in Bing Search API and return the searching results",
                     "parameters": {
                         "type": "object",
                         "properties": {
                             "num_results": {
                                 "type": "number",
-                                "description": (
-                                    "The number of search "
-                                    "results to return."
-                                ),
-                                "default": 10,
+                                "description": "The number of search results to return.",
+                                "default": 10
                             },
                             "question": {
                                 "type": "string",
-                                "description": "The search query string.",
+                                "description": "The search query string."
                             },
                         },
-                        "required": ["question"],
-                    },
-                },
-            },
+                        "required": [
+                            "question"
+                        ]
+                    }
+                }
+            }
         )
 
         # Set num_results by developer rather than model
         _, doc_dict = ServiceFactory.get(
             bing_search,
             num_results=3,
-            bing_api_key="xxx",
+            api_key="xxx",
         )
 
         self.assertDictEqual(
