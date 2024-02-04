@@ -2,12 +2,13 @@ import os
 import shutil
 
 import yaml
-
+from compress import get_hash, ZipCompressor
 DEFAULT_AGENT_DIR = "/tmp/as_game/"
 DEFAULT_CFG_DIR = os.path.join(DEFAULT_AGENT_DIR, "config")
 CUSTOMER_CFG_NAME = "customer_config.yaml"
 PLOT_CFG_NAME = "plot_config.yaml"
-
+SIGNATURE_DIR = os.path.join(DEFAULT_AGENT_DIR, "signature")
+SUFFIX = '.zip'
 
 def load_configs(config_file):
     with open(config_file, "r", encoding="utf-8") as f:
@@ -61,3 +62,24 @@ def save_user_cfg(config, cfg_name=CUSTOMER_CFG_NAME, uuid=""):
     if uuid != "" and not os.path.exists(os.path.dirname(cfg_file)):
         os.makedirs(os.path.dirname(cfg_file))
     save_configs(config, cfg_file)
+
+
+def compress(uuid=""):
+    os.makedirs(SIGNATURE_DIR, exist_ok=True)
+    user_dir = get_user_dir(uuid=uuid)
+    signature = get_hash(user_dir)
+    zip_file = os.path.join(SIGNATURE_DIR, signature) + SUFFIX
+    ZipCompressor.compress(user_dir, zip_file)
+    return signature, zip_file
+
+
+def decompress_with_signature(signature, uuid=""):
+    user_dir = get_user_dir(uuid=uuid)
+    zip_file = os.path.join(SIGNATURE_DIR, signature) + SUFFIX
+    ZipCompressor.decompress(zip_file, user_dir)
+    return zip_file
+
+def decompress_with_file(zip_file, uuid=""):
+    user_dir = get_user_dir(uuid=uuid)
+    ZipCompressor.decompress(zip_file, user_dir)
+    return zip_file
