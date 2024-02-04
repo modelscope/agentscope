@@ -296,7 +296,7 @@ class ResetException(Exception):
 
 def generate_picture(prompt, model="wanx-lite"):
     from dashscope.common.error import InvalidTask
-    dashscope.api_key = os.environ.get("DASHSCOPE_API_KEY") or dashscope.api_key
+    dashscope.api_key = os.environ.get("TONGYI_API_KEY") or dashscope.api_key
     assert dashscope.api_key
     try:
         if model == "wanx-lite":
@@ -403,3 +403,15 @@ def check_uuid(uid):
 
 def extract_keys_from_dict(input_dict, keys_list):
     return {k: input_dict[k] for k in keys_list if k in input_dict}
+
+
+def get_next_element(lst, element):
+    if element not in lst:
+        # Return the first if not in list
+        return lst[0]
+
+    next_index = lst.index(element) + 1
+    if next_index >= len(lst):
+        next_index = 0
+
+    return lst[next_index]

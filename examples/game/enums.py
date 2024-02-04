@@ -21,12 +21,10 @@ class CustomerPlot(enum.IntEnum):
 class StagePerNight(enum.Enum):
     """Enum for customer status."""
 
-    INVITED_CHAT = 0
-    CASUAL_CHAT_FOR_MEAL = 1
-    MAKING_INVITATION = 2
+    CASUAL_CHAT_FOR_MEAL = 2
+    MAKING_INVITATION = 3
 
     _descriptions = {
-        INVITED_CHAT: "开场环节",
         CASUAL_CHAT_FOR_MEAL: "营业环节",
         MAKING_INVITATION: "解密环节"
     }

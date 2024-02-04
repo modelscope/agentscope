@@ -13,7 +13,7 @@ from utils import (
     SYS_MSG_PREFIX,
     OPENING_ROUND
 )
-from enums import CustomerConv
+from enums import CustomerConv, StagePerNight
 
 
 def always_true(**kwargs) -> bool:
@@ -48,6 +48,7 @@ class GamePlot:
             main_roles: Optional[list[Customer]] = None,
             supporting_roles: Optional[list[Customer]] = None,
             max_unblock_plots: Optional[int] = None,
+            plot_stages: Optional[list[int]] = None,
     ) -> None:
         self.id = plot_id
         self.main_roles = main_roles or []
@@ -62,6 +63,7 @@ class GamePlot:
         ] = []
         self.contact_chances = 1
         self.max_attempts = max_attempts
+        self.plot_stages = plot_stages
 
     def register_following_plot_check(
             self, plot_id: int, check_func: str
@@ -169,7 +171,7 @@ class GamePlot:
         # by default, the first main role will trigger the task
         main_role = self.main_roles[0]
         uid = player.uid
-        send_chat_msg(f"{SYS_MSG_PREFIX}开启主线任务《{openings['task']}》"
+        send_chat_msg(f"{SYS_MSG_PREFIX}开启主线任务： {openings['task']} "
                       f"\n\n{openings['openings']}", uid=uid)
         # send_chat_msg(f"{SYS_MSG_PREFIX}{openings['openings']}", uid=uid)
         main_role.talk(openings["npc_openings"], is_display=True)
@@ -205,11 +207,14 @@ class GamePlot:
                     uid=player.uid,
                 )
                 answer = query_answer(questions, "ans", uid=player.uid)
+                send_chat_msg("**end_choosing**", uid=player.uid)
+
                 if isinstance(answer, str):
                     if answer == "":
                         break
                     else:
                         msg = player.talk(answer, ruled=True)
+                        # send_chat_msg("**end_choosing**", uid=player.uid)
                         if msg is None:
                             continue
 
@@ -219,7 +224,9 @@ class GamePlot:
                             msg = player(msg)
                         else:
                             msg = player.talk(answer[0], is_display=True)
+                    # send_chat_msg("**end_choosing**", uid=player.uid)
                 else:  # Walk away
+                    # send_chat_msg("**end_choosing**", uid=player.uid)
                     break
             else:
                 msg = player(msg)
@@ -244,6 +251,7 @@ def parse_plots(
             main_roles=[roles_map[r] for r in cfg["main_roles"] or []],
             supporting_roles=[roles_map[r] for r in cfg["supporting_roles"] or []],
             max_attempts=cfg.get("max_attempt", 2),
+            plot_stages=cfg.get("plot_stages", [x for x in range(len(StagePerNight))]),
         )
         if "max_unblock_plots" in cfg:
             gplot.max_unblock_plots = int(cfg["max_unblock_plots"])

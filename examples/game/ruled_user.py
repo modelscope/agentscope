@@ -221,6 +221,7 @@ class RuledUser(AgentBase):
                 continue
             cook_list = sel_ingr
             break
+        send_chat_msg("**end_choosing**", uid=self.uid)
 
         print(cook_list)
         if cook_list == ["跳过"]:
