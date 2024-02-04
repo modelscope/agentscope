@@ -35,26 +35,32 @@ class ServiceFactoryTest(unittest.TestCase):
                 "type": "function",
                 "function": {
                     "name": "bing_search",
-                    "description": "Search question in Bing Search API and return the searching results",
+                    "description": (
+                        "Search question in Bing Search API and "
+                        "return the searching results"
+                    ),
                     "parameters": {
                         "type": "object",
                         "properties": {
                             "num_results": {
                                 "type": "number",
-                                "description": "The number of search results to return.",
-                                "default": 10
+                                "description": (
+                                    "The number of search "
+                                    "results to return."
+                                ),
+                                "default": 10,
                             },
                             "question": {
                                 "type": "string",
-                                "description": "The search query string."
+                                "description": "The search query string.",
                             },
                         },
                         "required": [
-                            "question"
-                        ]
-                    }
-                }
-            }
+                            "question",
+                        ],
+                    },
+                },
+            },
         )
 
         # Set num_results by developer rather than model
