@@ -25,7 +25,6 @@ from utils import (
 HISTORY_WINDOW = 10
 # TODO: for debug, set the score bars to be lower
 MIN_BAR_RECEIVED_CONST = 4
-MIN_BAR_FRIENDSHIP_CONST = 30
 MESSAGE_KEYS = ["name", "role", "content"]
 
 
@@ -39,7 +38,7 @@ class Customer(StateAgent, DialogAgent):
         self.preorder_itr_count = 0
         self.avatar = self.config.get("avatar", get_a_random_avatar())
         self.background = self.config["character_setting"]["background"]
-        self.friendship = int(self.config.get("friendship", 60))
+        # self.friendship = int(self.config.get("friendship", 60))
         self.is_satisfied = False
         self.relationship = Relationship(
             self.config.get("relationship", "陌生"),
@@ -192,7 +191,7 @@ class Customer(StateAgent, DialogAgent):
 
         if is_satisfied or (
             score >= MIN_BAR_RECEIVED_CONST
-            and self.friendship >= MIN_BAR_FRIENDSHIP_CONST
+            # and self.friendship >= MIN_BAR_FRIENDSHIP_CONST
         ):
             self.transition(CustomerConv.AFTER_MEAL_CHAT)
             print("---", self.cur_state)
@@ -424,7 +423,7 @@ class Customer(StateAgent, DialogAgent):
 
     def _gen_plot_related_prompt(self) -> str:
         """
-        generate prompot depending on the state and friendship of the customer
+        generate prompt depending on the state and friendship of the customer
         """
         prompt = self.game_config["basic_background_prompt"].format_map(
             {
