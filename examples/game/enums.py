@@ -18,18 +18,18 @@ class CustomerPlot(enum.IntEnum):
     NOT_ACTIVE = 0
 
 
-class StagePerNight(enum.Enum):
+class StagePerNight(enum.IntEnum):
     """Enum for customer status."""
 
-    CASUAL_CHAT_FOR_MEAL = 2
-    MAKING_INVITATION = 3
+    CASUAL_CHAT_FOR_MEAL = 0
+    MAKING_INVITATION = 1
 
-    _descriptions = {
-        CASUAL_CHAT_FOR_MEAL: "营业环节",
-        MAKING_INVITATION: "解密环节"
-    }
 
     @classmethod
     def to_list(cls):
-        """Return a list of description tuples sorted by enum value."""
-        return list(cls._descriptions.value.values())
+        _descriptions = {
+        cls.CASUAL_CHAT_FOR_MEAL: "营业环节",
+        cls.MAKING_INVITATION: "解密环节"
+    }
+        """Return a list of description tuples sorted by enum value."""        
+        return list(_descriptions.values())
