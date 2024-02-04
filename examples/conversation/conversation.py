@@ -18,7 +18,7 @@ agentscope.init(
             },
         },
         {
-            "model_type": "post_api",
+            "model_type": "post_api_chat",
             "model_id": "my_post_api",
             "api_url": "https://xxx",
             "headers": {},

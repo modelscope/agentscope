@@ -97,12 +97,13 @@ AgentScope supports the following model API services:
   - [HuggingFace](https://huggingface.co/docs/api-inference/index) and [ModelScope](https://www.modelscope.cn/docs/%E9%AD%94%E6%90%ADv1.5%E7%89%88%E6%9C%AC%20Release%20Note%20(20230428)) inference APIs
   - Customized model APIs
 
-|                      | Model Type Argument | Support APIs                                                  |
-|----------------------|---------------------|---------------------------------------------------------------|
-| OpenAI Chat API      | `openai`            | Standard OpenAI Chat API, FastChat and vllm                   |
-| OpenAI DALL-E API    | `openai_dall_e`     | Standard DALL-E API                                           |
-| OpenAI Embedding API | `openai_embedding`  | OpenAI embedding API                                          |
-| Post API             | `post_api`          | Huggingface/ModelScope inference API, and customized post API |
+|                      | Model Type Argument | Support APIs                                                   |
+|----------------------|---------------------|----------------------------------------------------------------|
+| OpenAI Chat API      | `openai`            | Standard OpenAI Chat API, FastChat and vllm                    |
+| OpenAI DALL-E API    | `openai_dall_e`     | Standard DALL-E API                                            |
+| OpenAI Embedding API | `openai_embedding`  | OpenAI embedding API                                           |
+| Post API             | `post_api`          | Huggingface/ModelScope inference API, and customized post API  |
+| Post API Chat        | `post_api_chat`     | A customized POST API which is compatible with OpenAI Chat API |
 
 ##### OpenAI API Config
 

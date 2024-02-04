@@ -84,7 +84,7 @@ class DialogAgent(AgentBase):
         )
 
         # call llm and generate response
-        response = self.model(prompt)
+        response = self.model(prompt).text
         msg = Msg(self.name, response)
 
         # logging and record the message in memory

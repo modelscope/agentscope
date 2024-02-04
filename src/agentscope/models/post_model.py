@@ -174,7 +174,7 @@ class PostAPIChatWrapper(PostAPIModelWrapperBase):
 
     def _parse_response(self, response: dict) -> ModelResponse:
         return ModelResponse(
-            text=response.json()["data"]["response"]["choices"][0]["message"][
+            text=response["data"]["response"]["choices"][0]["message"][
                 "content"
             ],
         )

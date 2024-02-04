@@ -6,7 +6,7 @@ and each model config should follow the following format.
 
     {
         "model_id": "{model_id}",
-        "model_type": "openai" | "post_api",
+        "model_type": "openai" | "post_api" | ...,
         ...
     }
 

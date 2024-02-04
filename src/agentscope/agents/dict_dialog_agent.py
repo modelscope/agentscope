@@ -134,7 +134,7 @@ class DictDialogAgent(AgentBase):
             parse_func=self.parse_func,
             fault_handler=self.fault_handler,
             max_retries=self.max_retries,
-        )
+        ).text
 
         # logging raw messages in debug mode
         logger.debug(json.dumps(response, indent=4))
