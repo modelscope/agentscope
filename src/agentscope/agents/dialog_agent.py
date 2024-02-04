@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """A general dialog agent."""
-from typing import Any, Optional, Union, Callable
+from typing import Optional
 from loguru import logger
 
 from ..message import Msg
@@ -18,7 +18,7 @@ class DialogAgent(AgentBase):
         name: str,
         config: Optional[dict] = None,
         sys_prompt: Optional[str] = None,
-        model: Optional[Union[Callable[..., Any], str]] = None,
+        model_id: str = None,
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
         prompt_type: Optional[PromptType] = PromptType.LIST,
@@ -35,10 +35,8 @@ class DialogAgent(AgentBase):
             sys_prompt (`Optional[str]`):
                 The system prompt of the agent, which can be passed by args
                 or hard-coded in the agent.
-            model (`Optional[Union[Callable[..., Any], str]]`, defaults to
-            None):
-                The callable model object or the model name, which is used to
-                load model from configuration.
+            model_id (`str`, defaults to None):
+                The model id, which is used to load model from configuration.
             use_memory (`bool`, defaults to `True`):
                 Whether the agent has memory.
             memory_config (`Optional[dict]`):
@@ -49,12 +47,12 @@ class DialogAgent(AgentBase):
                 `PromptType.LIST` or `PromptType.STRING`.
         """
         super().__init__(
-            name,
-            config,
-            sys_prompt,
-            model,
-            use_memory,
-            memory_config,
+            name=name,
+            config=config,
+            sys_prompt=sys_prompt,
+            model_id=model_id,
+            use_memory=use_memory,
+            memory_config=memory_config,
         )
 
         # init prompt engine

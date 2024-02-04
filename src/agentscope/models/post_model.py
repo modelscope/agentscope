@@ -18,7 +18,7 @@ class PostAPIModelWrapperBase(ModelWrapperBase):
 
     def __init__(
         self,
-        name: str,
+        model_id: str,
         api_url: str,
         headers: dict = None,
         max_length: int = 2048,
@@ -28,12 +28,13 @@ class PostAPIModelWrapperBase(ModelWrapperBase):
         max_retries: int = _DEFAULT_MAX_RETRIES,
         messages_key: str = _DEFAULT_MESSAGES_KEY,
         retry_interval: int = _DEFAULT_RETRY_INTERVAL,
+        **kwargs: Any,
     ) -> None:
         """Initialize the model wrapper.
 
         Args:
-            name (`str`):
-                The name of the model.
+            model_id (`str`):
+                The id of the model.
             api_url (`str`):
                 The url of the post request api.
             headers (`dict`, defaults to `None`):
@@ -70,8 +71,19 @@ class PostAPIModelWrapperBase(ModelWrapperBase):
                     **post_args
                 )
         """
-        super().__init__(name)
-
+        super().__init__(
+            model_id=model_id,
+            api_url=api_url,
+            headers=headers,
+            max_length=max_length,
+            timeout=timeout,
+            json_args=json_args,
+            post_args=post_args,
+            max_retries=max_retries,
+            messages_key=messages_key,
+            retry_interval=retry_interval,
+            **kwargs,
+        )
         self.api_url = api_url
         self.headers = headers
         self.max_length = max_length
@@ -157,33 +169,8 @@ class PostAPIModelWrapperBase(ModelWrapperBase):
 
 
 class PostAPIChatWrapper(PostAPIModelWrapperBase):
-    """A post api model wrapper compatilble with openai chat"""
-
-    def __init__(
-        self,
-        name: str,
-        api_url: str,
-        headers: dict = None,
-        max_length: int = 2048,
-        timeout: int = 30,
-        json_args: dict = None,
-        post_args: dict = None,
-        max_retries: int = _DEFAULT_MAX_RETRIES,
-        messages_key: str = _DEFAULT_MESSAGES_KEY,
-        retry_interval: int = _DEFAULT_RETRY_INTERVAL,
-    ) -> None:
-        super().__init__(
-            name=name,
-            api_url=api_url,
-            headers=headers,
-            max_length=max_length,
-            timeout=timeout,
-            json_args=json_args,
-            post_args=post_args,
-            max_retries=max_retries,
-            messages_key=messages_key,
-            retry_interval=retry_interval,
-        )
+    """A post api model wrapper compatilble with openai chat, e.g., vLLM,
+    FastChat."""
 
     def _parse_response(self, response: dict) -> ModelResponse:
         return ModelResponse(

@@ -5,12 +5,12 @@ and each model config should follow the following format.
 .. code-block:: python
 
     {
-        "type": "openai" | "post_api",
-        "name": "{model_name}",
+        "model_id": "{model_id}",
+        "model_type": "openai" | "post_api",
         ...
     }
 
-After that, you can specify model by {model_name}.
+After that, you can specify model by {model_id}.
 
 Note:
     The parameters for different types of models are different. For OpenAI API,
@@ -19,9 +19,9 @@ Note:
         .. code-block:: python
 
             {
-                "type": "openai",
-                "name": "{name of your model}",
-                "model_name": "{model_name_for_openai, e.g. gpt-3.5-turbo}",
+                "model_id": "{id of your model}",
+                "model_type": "openai",
+                "model": "{model_name_for_openai, e.g. gpt-3.5-turbo}",
                 "api_key": "{your_api_key}",
                 "organization": "{your_organization, if needed}",
                 "client_args": {
@@ -39,8 +39,8 @@ Note:
         .. code-block:: python
 
             {
-                "type": "post_api",
-                "name": "{model_name}",
+                "model_id": "{model_id}",
+                "model_type": "post_api",
                 "api_url": "{api_url}",
                 "headers": {"Authorization": "Bearer {API_TOKEN}"},
                 "max_length": {max_length_of_model},
@@ -58,6 +58,7 @@ import time
 from abc import ABCMeta
 from functools import wraps
 from typing import Sequence, Any, Callable
+import json
 
 from loguru import logger
 
@@ -65,6 +66,46 @@ from ..file_manager import file_manager
 from ..utils.tools import _get_timestamp
 from ..constants import _DEFAULT_MAX_RETRIES
 from ..constants import _DEFAULT_RETRY_INTERVAL
+
+
+class ModelResponse:
+    """Encapsulation of data returned by the model.
+
+    The main purpose of this class is to align the return formats of different
+    models and act as a bridge between models and agents.
+    """
+
+    def __init__(
+        self,
+        text: str = None,
+        embedding: Sequence = None,
+        image_urls: Sequence[str] = None,
+        raw: dict = None,
+    ) -> None:
+        self._text = text
+        self._embedding = embedding
+        self._image_urls = image_urls
+        self._raw = raw
+
+    @property
+    def text(self) -> str:
+        """Text field."""
+        return self._text
+
+    @property
+    def embedding(self) -> Sequence:
+        """Embedding field."""
+        return self._embedding
+
+    @property
+    def image_urls(self) -> Sequence[str]:
+        """Image URLs field."""
+        return self._image_urls
+
+    @property
+    def raw(self) -> dict:
+        """Raw dictionary field."""
+        return self._raw
 
 
 def _response_parse_decorator(
@@ -154,64 +195,25 @@ class _ModelWrapperMeta(ABCMeta):
         super().__init__(name, bases, attrs)
 
 
-class ModelResponse:
-    """Encapsulation of data returned by the model.
-
-    The main purpose of this class is to align the return formats of different
-    models and act as a bridge between models and agents.
-    """
-
-    def __init__(
-        self,
-        text: str = None,
-        embedding: Sequence = None,
-        image_urls: Sequence[str] = None,
-        raw: dict = None,
-    ) -> None:
-        self._text = text
-        self._embedding = embedding
-        self._image_urls = image_urls
-        self._raw = raw
-
-    @property
-    def text(self) -> str:
-        """Text field."""
-        return self._text
-
-    @property
-    def embedding(self) -> Sequence:
-        """Embedding field."""
-        return self._embedding
-
-    @property
-    def image_urls(self) -> Sequence[str]:
-        """Image URLs field."""
-        return self._image_urls
-
-    @property
-    def raw(self) -> dict:
-        """Raw dictionary field."""
-        return self._raw
-
-
 class ModelWrapperBase(metaclass=_ModelWrapperMeta):
     """The base class for model wrapper."""
 
-    def __init__(
-        self,
-        name: str,
-    ) -> None:
-        r"""Base class for model wrapper.
+    def __init__(self, model_id: str, **kwargs: Any) -> None:
+        """Base class for model wrapper.
 
         All model wrappers should inherit this class and implement the
         `__call__` function.
 
         Args:
-            name (`str`):
-                The name of the model, which is used to extract configuration
+            model_id (`str`):
+                The id of the model, which is used to extract configuration
                 from the config file.
         """
-        self.name = name
+        self.model_id = model_id
+        logger.info(
+            f"Initialize model [{model_id}] with config:\n"
+            f"{json.dumps(kwargs, indent=2)}",
+        )
 
     def __call__(self, *args: Any, **kwargs: Any) -> ModelResponse:
         """Processing input with the model."""

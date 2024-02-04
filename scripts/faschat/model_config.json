@@ -1,7 +1,7 @@
 {
-    "type": "openai",
-    "name": "fs-llama-2",
-    "model_name": "llama-2",
+    "model_type": "openai",
+    "model_id": "fs-llama-2",
+    "model": "llama-2",
     "api_key": "EMPTY",
     "client_args": {
         "base_url": "http:localhost:8000/v1/"

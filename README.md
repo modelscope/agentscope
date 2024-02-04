@@ -97,12 +97,12 @@ AgentScope supports the following model API services:
   - [HuggingFace](https://huggingface.co/docs/api-inference/index) and [ModelScope](https://www.modelscope.cn/docs/%E9%AD%94%E6%90%ADv1.5%E7%89%88%E6%9C%AC%20Release%20Note%20(20230428)) inference APIs
   - Customized model APIs
 
-|                      | Type Argument      | Support APIs                                                  |
-|----------------------|--------------------|---------------------------------------------------------------|
-| OpenAI Chat API      | `openai`           | Standard OpenAI Chat API, FastChat and vllm                   |
-| OpenAI DALL-E API    | `openai_dall_e`    | Standard DALL-E API                                           |
-| OpenAI Embedding API | `openai_embedding` | OpenAI embedding API                                          |
-| Post API             | `post_api`         | Huggingface/ModelScope inference API, and customized post API |
+|                      | Model Type Argument | Support APIs                                                  |
+|----------------------|---------------------|---------------------------------------------------------------|
+| OpenAI Chat API      | `openai`            | Standard OpenAI Chat API, FastChat and vllm                   |
+| OpenAI DALL-E API    | `openai_dall_e`     | Standard DALL-E API                                           |
+| OpenAI Embedding API | `openai_embedding`  | OpenAI embedding API                                          |
+| Post API             | `post_api`          | Huggingface/ModelScope inference API, and customized post API |
 
 ##### OpenAI API Config
 
@@ -110,9 +110,9 @@ For OpenAI APIs, you need to prepare a dict of model config with the following f
 
 ```
 {
-    "type": "openai" | "openai_dall_e" | "openai_embedding",
-    "name": "{your_config_name}",               # The name used to identify your config
-    "model_name": "{model_name, e.g. gpt-4}",   # The used model in openai API
+    "model_id": "{your_config_name}",           # The name used to identify the generated model
+    "model_type": "openai" | "openai_dall_e" | "openai_embedding",
+    "model": "{model name, e.g. gpt-4}",        # The used model in openai API
 
     # Optional
     "api_key": "xxx",                           # The API key for OpenAI API. If not set, env
@@ -128,8 +128,8 @@ For post requests APIs, the config contains the following fields.
 
 ```
 {
-    "type": "post_api",
-    "name": "{your_config_name}",     # The name used to identify config
+    "model_id": "{your_model_id}",    # The name used to identify your model
+    "model_type": "post_api",
     "api_url": "https://xxx",         # The target url
     "headers": {                      # Required headers
       ...

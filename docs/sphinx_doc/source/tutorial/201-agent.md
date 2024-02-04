@@ -32,13 +32,13 @@ class AgentBase(Operator):
             name: str,
             config: Optional[dict] = None,
             sys_prompt: Optional[str] = None,
-            model: Optional[Union[Callable[..., Any], str]] = None,
+            model_id: str = None,
             use_memory: bool = True,
             memory_config: Optional[dict] = None,
     ) -> None:
 
     # ... [code omitted for brevity]
- def observe(self, x: Union[dict, Sequence[dict]]) -> None:
+    def observe(self, x: Union[dict, Sequence[dict]]) -> None:
         # An optional method for updating the agent's internal state based on
         # messages it has observed. This method can be used to enrich the
         # agent's understanding and memory without producing an immediate
@@ -109,7 +109,7 @@ from agentscope.agents import DialogAgent
 # Configuration for the DialogAgent
 dialog_agent_config = {
     "name": "ServiceBot",
-    "model": "gpt-3.5",  # Specify the model used for dialogue generation
+    "model_id": "gpt-3.5",  # Specify the model used for dialogue generation
     "sys_prompt": "Act as AI assistant to interact with the others. Try to "
     "reponse on one line.\n",  # Custom prompt for the agent
     # Other configurations specific to the DialogAgent

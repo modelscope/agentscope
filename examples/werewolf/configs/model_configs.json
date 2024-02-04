@@ -1,7 +1,8 @@
 [
     {
-        "type": "openai",
-        "name": "gpt-4",
+        "model_type": "openai",
+        "model_id": "gpt-4",
+        "model": "gpt-4",
         "api_key": "xxx",
         "organization": "xxx",
         "generate_args": {
@@ -9,12 +10,10 @@
         }
     },
     {
-        "type": "post_api",
-        "name": "my_post_api",
+        "model_type": "post_api",
+        "model_id": "my_post_api",
         "api_url": "https://xxx",
-        "headers": {
-        },
-        "json_args": {
-        }
+        "headers": {},
+        "json_args": {}
     }
 ]

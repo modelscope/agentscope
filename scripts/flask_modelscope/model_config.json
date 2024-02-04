@@ -1,6 +1,6 @@
 {
-    "type": "post_api",
-    "name": "post_llama-2-chat-7b-ms",
+    "model_type": "post_api",
+    "model_id": "post_llama-2-chat-7b-ms",
     "api_url": "http://127.0.0.1:8000/llm/",
     "json_args": {
         "max_length": 4096,

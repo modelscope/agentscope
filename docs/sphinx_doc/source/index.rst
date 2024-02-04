@@ -29,7 +29,6 @@ AgentScope Documentation
    :caption: AgentScope API Reference
 
    agentscope.agents
-   agentscope.configs
    agentscope.memory
    agentscope.models
    agentscope.pipelines

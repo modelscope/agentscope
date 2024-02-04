@@ -16,6 +16,7 @@ from ..utils.monitor import MonitorFactory
 from ..utils.monitor import get_full_name
 from ..utils import QuotaExceededError
 from ..utils.token_utils import get_openai_max_length
+from ..constants import _DEFAULT_API_BUDGET
 
 
 class OpenAIWrapper(ModelWrapperBase):
@@ -23,23 +24,23 @@ class OpenAIWrapper(ModelWrapperBase):
 
     def __init__(
         self,
-        name: str,
-        model_name: str = None,
+        model_id: str,
+        model: str = None,
         api_key: str = None,
         organization: str = None,
         client_args: dict = None,
         generate_args: dict = None,
-        budget: float = None,
+        budget: float = _DEFAULT_API_BUDGET,
+        **kwargs: Any,
     ) -> None:
         """Initialize the openai client.
 
         Args:
-            name (`str`):
-                The name of the model wrapper, which is used to identify
+            model_id (`str`):
+                The id of the model wrapper, which is used to identify
                 model configs.
-            model_name (`str`, default `None`):
-                The name of the model to use in OpenAI API. If not
-                specified, it will be the same as `name`.
+            model (`str`, default `None`):
+                The name of the model to use in OpenAI API.
             api_key (`str`, default `None`):
                 The API key for OpenAI API. If not specified, it will
                 be read from the environment variable `OPENAI_API_KEY`.
@@ -55,14 +56,23 @@ class OpenAIWrapper(ModelWrapperBase):
                 The total budget using this model. Set to `None` means no
                 limit.
         """
-        super().__init__(name)
+        if model is None:
+            model = model_id
+        super().__init__(
+            model_id=model_id,
+            model=model,
+            client_args=client_args,
+            generate_args=generate_args,
+            budget=budget,
+            **kwargs,
+        )
 
         if openai is None:
             raise ImportError(
                 "Cannot find openai package in current python environment.",
             )
 
-        self.model_name = model_name or name
+        self.model = model
         self.generate_args = generate_args or {}
 
         self.client = openai.OpenAI(
@@ -73,10 +83,10 @@ class OpenAIWrapper(ModelWrapperBase):
 
         # Set the max length of OpenAI model
         try:
-            self.max_length = get_openai_max_length(self.model_name)
+            self.max_length = get_openai_max_length(self.model)
         except Exception as e:
             logger.warning(
-                f"fail to get max_length for {self.model_name}: " f"{e}",
+                f"fail to get max_length for {self.model}: " f"{e}",
             )
             self.max_length = None
 
@@ -89,9 +99,9 @@ class OpenAIWrapper(ModelWrapperBase):
     def _register_budget(self) -> None:
         self.monitor = MonitorFactory.get_monitor()
         self.monitor.register_budget(
-            model_name=self.model_name,
+            model_name=self.model,
             value=self.budget,
-            prefix=self.model_name,
+            prefix=self.model,
         )
 
     def _register_default_metrics(self) -> None:
@@ -110,7 +120,7 @@ class OpenAIWrapper(ModelWrapperBase):
         Returns:
             `str`: Metric name of this wrapper.
         """
-        return get_full_name(name=metric_name, prefix=self.model_name)
+        return get_full_name(name=metric_name, prefix=self.model)
 
 
 class OpenAIChatWrapper(OpenAIWrapper):
@@ -191,7 +201,7 @@ class OpenAIChatWrapper(OpenAIWrapper):
 
         # step3: forward to generate response
         response = self.client.chat.completions.create(
-            model=self.model_name,
+            model=self.model,
             messages=messages,
             **kwargs,
         )
@@ -199,7 +209,7 @@ class OpenAIChatWrapper(OpenAIWrapper):
         # step4: record the api invocation if needed
         self._save_model_invocation(
             arguments={
-                "model": self.model_name,
+                "model": self.model,
                 "messages": messages,
                 **kwargs,
             },
@@ -210,7 +220,7 @@ class OpenAIChatWrapper(OpenAIWrapper):
         try:
             self.monitor.update(
                 response.usage.model_dump(),
-                prefix=self.model_name,
+                prefix=self.model,
             )
         except QuotaExceededError as e:
             # TODO: optimize quota exceeded error handling process
@@ -291,7 +301,7 @@ class OpenAIDALLEWrapper(OpenAIWrapper):
         # step2: forward to generate response
         try:
             response = self.client.images.generate(
-                model=self.model_name,
+                model=self.model,
                 prompt=prompt,
                 **kwargs,
             )
@@ -304,7 +314,7 @@ class OpenAIDALLEWrapper(OpenAIWrapper):
         # step3: record the model api invocation if needed
         self._save_model_invocation(
             arguments={
-                "model": self.model_name,
+                "model": self.model,
                 "prompt": prompt,
                 **kwargs,
             },
@@ -383,14 +393,14 @@ class OpenAIEmbeddingWrapper(OpenAIWrapper):
         # step2: forward to generate response
         response = self.client.embeddings.create(
             input=texts,
-            model=self.model_name,
+            model=self.model,
             **kwargs,
         )
 
         # step3: record the model api invocation if needed
         self._save_model_invocation(
             arguments={
-                "model": self.model_name,
+                "model": self.model,
                 "input": texts,
                 **kwargs,
             },
