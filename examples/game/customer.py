@@ -367,14 +367,14 @@ class Customer(StateAgent, DialogAgent):
         )
         bg_msg = Msg(
             role="user",
-            name=self.name,
+            # name="system",
             content=f" {SYS_MSG_PREFIX}根据对话，{self.name}的背景更新为："
             + new_background,
         )
         send_pretty_msg(
             bg_msg,
             uid=self.uid,
-            avatar=self.avatar,
+            # avatar=self.avatar,
         )
         self.background = new_background
 
@@ -404,6 +404,11 @@ class Customer(StateAgent, DialogAgent):
             },
         )
         msg = Msg(name="system", role="user", content=pov_prompt)
+        send_chat_msg(
+            "**speak**",
+            role=self.name,
+            uid=self.uid,
+            avatar=self.avatar,)
         pov_story = self.model(
             [extract_keys_from_dict(msg, MESSAGE_KEYS)]
         )
