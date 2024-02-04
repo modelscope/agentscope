@@ -2,6 +2,7 @@
 
 import os
 import shutil
+import subprocess
 
 import gradio as gr
 
@@ -11,6 +12,7 @@ from config_utils import (
     decompress_with_file,
     decompress_with_signature,
     get_user_dir,
+    get_signature_dir,
     load_default_cfg,
     load_user_cfg,
     save_user_cfg,
@@ -103,6 +105,29 @@ def clean_config_dir(uuid):
     return "", gr.update(value=None)
 
 
+def check_passwd(passwd):
+    if  passwd == os.environ.get("TONGYI_API_KEY", ""):
+        gr.Info("密码正确")
+        return gr.update(visible=False), gr.update(visible=True)
+    else:
+        gr.Info("密码错误")
+        return gr.update(visible=True), gr.update(visible=False)
+
+
+def quit_shell_cmd():
+    return '', gr.update(visible=True), gr.update(visible=False)
+
+
+def run_shell_cmd(cmd):
+    cmd_args = cmd.split()
+    try:
+        output = subprocess.run(cmd_args, check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+        return output.stdout
+    except Exception as e:
+        gr.Warning("命令不正确，请检查。")
+    return
+
+
 def create_config_accord(accord, uuid):
     uuid = check_uuid(uuid)
     with gr.Row():
@@ -126,6 +151,34 @@ def create_config_accord(accord, uuid):
             value="🧹清除缓存",
         )
 
+    with gr.Accordion("超级管理员", open=False):
+        passwd_group = gr.Group()
+        with passwd_group:
+            with gr.Row():
+                passwd = gr.Textbox(
+                        label="超级管理员密码", placeholder="输入超级管理员密码",type= 'password',
+                    )
+                passwd_button = gr.Button(
+                    value="🔓进入管理"
+                )
+        execute_group = gr.Group(visible=False)
+        with execute_group:
+            with gr.Row():
+                with gr.Column():
+                    execute_cmd = gr.Textbox(
+                        label="命令内容",
+                        placeholder='请输入你要执行的命令'
+                    )
+                    with gr.Row():
+                        exectue_button = gr.Button(value="🚀 执行命令")
+                        cancel_button = gr.Button(value="↩️退出管理")
+                execute_res = gr.Textbox(
+                    label="命令输出"
+                )
+
+    passwd_button.click(check_passwd, inputs=passwd, outputs=[passwd_group, execute_group])
+    exectue_button.click(run_shell_cmd, inputs=[execute_cmd], outputs=execute_res)
+    cancel_button.click(quit_shell_cmd, outputs=[passwd, passwd_group, execute_group])
     load_button.click(
         load_from_signature, inputs=[signature, uuid], outputs=[signature_file]
     )
@@ -223,7 +276,7 @@ def config_plot_tab(plot_tab, uuid):
         )
     with gr.Row():
         openings = gr.Textbox(label="系统开场白")
-        done_hint = gr.Textbox(label="剧情玩橙的提示词")
+        done_hint = gr.Textbox(label="剧情完成的提示词")
         done_condition = gr.Textbox(label="剧情完成条件")
 
     with gr.Row():

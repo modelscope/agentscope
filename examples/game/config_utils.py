@@ -63,19 +63,23 @@ def save_user_cfg(config, cfg_name=CUSTOMER_CFG_NAME, uuid=""):
         os.makedirs(os.path.dirname(cfg_file))
     save_configs(config, cfg_file)
 
+def get_signature_dir():
+    os.makedirs(SIGNATURE_DIR, exist_ok=True)
+    return SIGNATURE_DIR
 
 def compress(uuid=""):
-    os.makedirs(SIGNATURE_DIR, exist_ok=True)
+    signature_dir = get_signature_dir()
     user_dir = get_user_dir(uuid=uuid)
     signature = get_hash(user_dir)
-    zip_file = os.path.join(SIGNATURE_DIR, signature) + SUFFIX
+    zip_file = os.path.join(signature_dir, signature) + SUFFIX
     ZipCompressor.compress(user_dir, zip_file)
     return signature, zip_file
 
 
 def decompress_with_signature(signature, uuid=""):
+    signature_dir = get_signature_dir()
     user_dir = get_user_dir(uuid=uuid)
-    zip_file = os.path.join(SIGNATURE_DIR, signature) + SUFFIX
+    zip_file = os.path.join(signature_dir, signature) + SUFFIX
     ZipCompressor.decompress(zip_file, user_dir)
     return zip_file
 
