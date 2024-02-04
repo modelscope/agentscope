@@ -223,12 +223,14 @@ def config_plot_tab(plot_tab, uuid):
         )
     with gr.Row():
         openings = gr.Textbox(label="系统开场白")
-        with gr.Column():
-            npc_openings = gr.Textbox(label="NPC进场台词")
-            npc_quit_openings = gr.Textbox(label="NPC退场台词")
-        with gr.Column():
-            done_hint = gr.Textbox(label="完成提示")
-            done_condition = gr.Textbox(label="完成条件")
+        done_hint = gr.Textbox(label="剧情玩橙的提示词")
+        done_condition = gr.Textbox(label="剧情完成条件")
+
+    with gr.Row():
+        npc_openings = gr.Textbox(label="NPC进场台词")
+        opening_image = gr.Textbox(label="NPC进场配图描述")
+        npc_quit_openings = gr.Textbox(label="NPC退场台词")
+
     with gr.Row():
         user_openings_option = gr.Dataframe(
             label="用户开场白选项",
@@ -253,6 +255,7 @@ def config_plot_tab(plot_tab, uuid):
         openings,
         npc_openings,
         npc_quit_openings,
+        opening_image,
         user_openings_option,
         done_hint,
         done_condition,
@@ -311,6 +314,7 @@ def config_plot_tab(plot_tab, uuid):
             openings: plot_descriptions.get("openings", "").strip(),
             npc_openings: plot_descriptions.get("npc_openings", "").strip(),
             npc_quit_openings: plot_descriptions.get("npc_quit_openings", "").strip(),
+            opening_image: plot_descriptions.get("opening_image", "").strip(),
             user_openings_option: cfg_user_openings_option,
             done_hint: plot_descriptions.get("done_hint", "").strip(),
             done_condition: plot_descriptions.get("done_condition", "").strip(),
@@ -327,9 +331,9 @@ def config_plot_tab(plot_tab, uuid):
             supporting_roles: None,
             max_unblock_plots: "",
             unblock_following_plots: None,
-            openings: "",
             npc_openings: "",
             npc_quit_openings: "",
+            opening_image: "",
             user_openings_option: None,
             done_hint: "",
             done_condition: "",
@@ -364,6 +368,7 @@ def config_plot_tab(plot_tab, uuid):
         openings,
         npc_openings,
         npc_quit_openings,
+        opening_image,
         user_openings_option,
         done_hint,
         done_condition,
@@ -407,6 +412,7 @@ def config_plot_tab(plot_tab, uuid):
         plot_descriptions["openings"] = openings
         plot_descriptions["npc_openings"] = npc_openings
         plot_descriptions["npc_quit_openings"] = npc_quit_openings
+        plot_descriptions["opening_image"] = opening_image
         plot_descriptions["user_openings_option"] = {
             it[0]: it[1] for it in user_openings_option if it[0]
         }
