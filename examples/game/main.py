@@ -12,7 +12,7 @@ import agentscope
 from agentscope.message import Msg
 from agentscope.msghub import msghub
 from config_utils import load_user_cfg, load_configs, PLOT_CFG_NAME
-from customer import Customer, MIN_BAR_FRIENDSHIP_CONST
+from customer import Customer
 from enums import CustomerConv, StagePerNight
 from ruled_user import RuledUser
 from plot import parse_plots, GamePlot, check_active_plot
@@ -337,9 +337,7 @@ def confirm_with_main_role(uid, player, checkpoint):
 
 
 def invite_customers(customers, uid, checkpoint):
-    available_customers = [
-        c.name for c in customers if c.friendship >= MIN_BAR_FRIENDSHIP_CONST
-    ]
+    available_customers = [c.name for c in customers]
 
     prompt = f"{SYS_MSG_PREFIX}: "
     for p_idx in checkpoint.cur_plots:
@@ -348,9 +346,6 @@ def invite_customers(customers, uid, checkpoint):
         remain_chance += checkpoint.all_plots[p_idx].plot_description['task'] \
                          + ": " + str(checkpoint.all_plots[p_idx].max_attempts)
         available_customers.append(checkpoint.all_plots[p_idx].main_roles[0].name)
-
-    if len(available_customers) == 0:
-        send_chat_msg(f"{SYS_MSG_PREFIX}：您目前无法邀请任何一个顾客（所有顾客好感度均低于80）。", uid=uid)
 
     select_customer = [
         inquirer.List(
