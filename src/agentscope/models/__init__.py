@@ -43,7 +43,7 @@ _MODEL_MAP: dict[str, Type[ModelWrapperBase]] = {
 }
 
 
-def get_model(model_type: str) -> Type[ModelWrapperBase]:
+def _get_model_wrapper(model_type: str) -> Type[ModelWrapperBase]:
     """Get the specific type of model wrapper
 
     Args:
@@ -87,7 +87,7 @@ def load_model_by_id(model_id: str) -> ModelWrapperBase:
         )
 
     model_type = config.model_type
-    return get_model(model_type=model_type)(**config)
+    return _get_model_wrapper(model_type=model_type)(**config)
 
 
 def clear_model_configs() -> None:

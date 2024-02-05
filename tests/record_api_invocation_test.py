@@ -48,7 +48,7 @@ class RecordApiInvocation(unittest.TestCase):
             organization="xxx",
         )
 
-        _ = model(messages=[], return_raw=True)
+        _ = model(messages=[])
 
         # assert
         self.assert_invocation_record()

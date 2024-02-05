@@ -103,7 +103,6 @@ AgentScope supports the following model API services:
 | OpenAI DALL-E API    | `openai_dall_e`     | Standard DALL-E API                                            |
 | OpenAI Embedding API | `openai_embedding`  | OpenAI embedding API                                           |
 | Post API             | `post_api`          | Huggingface/ModelScope inference API, and customized post API  |
-| Post API Chat        | `post_api_chat`     | A customized POST API which is compatible with OpenAI Chat API |
 
 ##### OpenAI API Config
 
@@ -111,7 +110,7 @@ For OpenAI APIs, you need to prepare a dict of model config with the following f
 
 ```
 {
-    "model_id": "{your_config_name}",           # The name used to identify the generated model
+    "model_id": "{model id}",                   # To identify the model instance
     "model_type": "openai" | "openai_dall_e" | "openai_embedding",
     "model": "{model name, e.g. gpt-4}",        # The used model in openai API
 
@@ -129,7 +128,7 @@ For post requests APIs, the config contains the following fields.
 
 ```
 {
-    "model_id": "{your_model_id}",    # The name used to identify your model
+    "model_id": "{your_model_id}",    # To identify the model instance
     "model_type": "post_api",
     "api_url": "https://xxx",         # The target url
     "headers": {                      # Required headers

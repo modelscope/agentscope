@@ -11,7 +11,7 @@ from agentscope.models import (
     ModelWrapperBase,
     OpenAIChatWrapper,
     PostAPIModelWrapperBase,
-    get_model,
+    _get_model_wrapper,
     read_model_configs,
     load_model_by_id,
     clear_model_configs,
@@ -32,14 +32,17 @@ class BasicModelTest(unittest.TestCase):
         """Test the automatic registration mechanism of model wrapper."""
         # get model wrapper class by class name
         self.assertEqual(
-            get_model(model_type="TestModelWrapperSimple"),
+            _get_model_wrapper(model_type="TestModelWrapperSimple"),
             TestModelWrapperSimple,
         )
         # get model wrapper class by alias
-        self.assertEqual(get_model(model_type="openai"), OpenAIChatWrapper)
+        self.assertEqual(
+            _get_model_wrapper(model_type="openai"),
+            OpenAIChatWrapper,
+        )
         # return PostAPIModelWrapperBase if model_type is not supported
         self.assertEqual(
-            get_model(model_type="unknown_model_wrapper"),
+            _get_model_wrapper(model_type="unknown_model_wrapper"),
             PostAPIModelWrapperBase,
         )
 

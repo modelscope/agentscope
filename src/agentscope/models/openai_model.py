@@ -146,7 +146,6 @@ class OpenAIChatWrapper(OpenAIWrapper):
     def __call__(
         self,
         messages: list,
-        return_raw: bool = False,
         **kwargs: Any,
     ) -> ModelResponse:
         """Processes a list of messages to construct a payload for the OpenAI
@@ -163,8 +162,6 @@ class OpenAIChatWrapper(OpenAIWrapper):
         Args:
             messages (`list`):
                 A list of messages to process.
-            return_raw (`bool`, default `False`):
-                Whether to return the raw response from OpenAI API.
             **kwargs (`Any`):
                 The keyword arguments to OpenAI chat completions API,
                 e.g. `temperature`, `max_tokens`, `top_p`, etc. Please refer to
@@ -172,8 +169,9 @@ class OpenAIChatWrapper(OpenAIWrapper):
                 for more detailed arguments.
 
         Returns:
-            A dictionary that contains the response of the model and related
-            information (e.g. cost, time, the number of tokens, etc.).
+            `ModelResponse`:
+                The response text in text field, and the raw response in
+                raw field.
 
         Note:
             `parse_func`, `fault_handler` and `max_retries` are reserved for
@@ -226,11 +224,11 @@ class OpenAIChatWrapper(OpenAIWrapper):
             # TODO: optimize quota exceeded error handling process
             logger.error(e.message)
 
-        # step6: return raw response if needed
-        if return_raw:
-            return ModelResponse(raw=response.model_dump())
-        else:
-            return ModelResponse(text=response.choices[0].message.content)
+        # step6: return response
+        return ModelResponse(
+            text=response.choices[0].message.content,
+            raw=response.model_dump(),
+        )
 
 
 class OpenAIDALLEWrapper(OpenAIWrapper):
@@ -257,7 +255,6 @@ class OpenAIDALLEWrapper(OpenAIWrapper):
     def __call__(
         self,
         prompt: str,
-        return_raw: bool = False,
         save_local: bool = False,
         **kwargs: Any,
     ) -> ModelResponse:
@@ -265,12 +262,9 @@ class OpenAIDALLEWrapper(OpenAIWrapper):
         Args:
             prompt (`str`):
                 The prompt string to generate images from.
-            return_raw (`bool`, default `False`):
-                Whether to return the raw response from OpenAI API.
             save_local: (`bool`, default `False`):
                 Whether to save the generated images locally, and replace
-                the returned image url with the local path. When
-                `return_raw` is `True`, this argument is ignored.
+                the returned image url with the local path.
             **kwargs (`Any`):
                 The keyword arguments to OpenAI image generation API, e.g.
                 `n`, `quality`, `response_format`, `size`, etc. Please refer to
@@ -278,9 +272,9 @@ class OpenAIDALLEWrapper(OpenAIWrapper):
                 for more detailed arguments.
 
         Returns:
-            Raw response in json format if `return_raw` is `True`, otherwise
-            a list of image urls. When `save_local` is `False`, the image
-            urls is
+            `ModelResponse`:
+                A list of image urls in image_urls field and the
+                raw response in raw field.
 
         Note:
             `parse_func`, `fault_handler` and `max_retries` are reserved for
@@ -321,18 +315,16 @@ class OpenAIDALLEWrapper(OpenAIWrapper):
             json_response=response.model_dump(),
         )
 
-        # step4: return raw response if needed
-        if return_raw:
-            return ModelResponse(raw=response.model_dump())
-        else:
-            images = response.model_dump()["data"]
-            # Get image urls as a list
-            urls = [_["url"] for _ in images]
+        # step4: return response
+        raw_response = response.model_dump()
+        images = raw_response["data"]
+        # Get image urls as a list
+        urls = [_["url"] for _ in images]
 
-            if save_local:
-                # Return local url if save_local is True
-                urls = [file_manager.save_image(_) for _ in urls]
-            return ModelResponse(image_urls=urls)
+        if save_local:
+            # Return local url if save_local is True
+            urls = [file_manager.save_image(_) for _ in urls]
+        return ModelResponse(image_urls=urls, raw=raw_response)
 
 
 class OpenAIEmbeddingWrapper(OpenAIWrapper):
@@ -354,7 +346,6 @@ class OpenAIEmbeddingWrapper(OpenAIWrapper):
     def __call__(
         self,
         texts: Union[list[str], str],
-        return_raw: bool = False,
         **kwargs: Any,
     ) -> ModelResponse:
         """Embed the messages with OpenAI embedding API.
@@ -362,8 +353,6 @@ class OpenAIEmbeddingWrapper(OpenAIWrapper):
         Args:
             texts (`list[str]` or `str`):
                 The messages used to embed.
-            return_raw (`bool`, default `False`):
-                Whether to return the raw response from OpenAI API.
             **kwargs (`Any`):
                 The keyword arguments to OpenAI embedding API,
                 e.g. `encoding_format`, `user`. Please refer to
@@ -371,8 +360,9 @@ class OpenAIEmbeddingWrapper(OpenAIWrapper):
                 for more detailed arguments.
 
         Returns:
-            A list of embeddings when `return_raw` is `False`, otherwise the
-            raw response from OpenAI API.
+            `ModelResponse`:
+                A list of embeddings in embedding field and the
+                raw response in raw field.
 
         Note:
             `parse_func`, `fault_handler` and `max_retries` are reserved for
@@ -407,16 +397,15 @@ class OpenAIEmbeddingWrapper(OpenAIWrapper):
             json_response=response.model_dump(),
         )
 
-        # step4: return raw response if needed
+        # step4: return response
         response_json = response.model_dump()
-        if return_raw:
-            return ModelResponse(raw=response_json)
+        if len(response_json["data"]) == 0:
+            return ModelResponse(
+                embedding=response_json["data"]["embedding"][0],
+                raw=response_json,
+            )
         else:
-            if len(response_json["data"]) == 0:
-                return ModelResponse(
-                    embedding=response_json["data"]["embedding"][0],
-                )
-            else:
-                return ModelResponse(
-                    embedding=[_["embedding"] for _ in response_json["data"]],
-                )
+            return ModelResponse(
+                embedding=[_["embedding"] for _ in response_json["data"]],
+                raw=response_json,
+            )

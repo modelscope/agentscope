@@ -36,7 +36,7 @@ As we discussed in the last tutorial, you need to prepare your model configurati
 [
     {
         "model_type": "openai",
-        "model_id": "gpt-4",
+        "model_id": "gpt-4-temperature-0.0",
         "model": "gpt-4",
         "api_key": "xxx",
         "organization": "xxx",

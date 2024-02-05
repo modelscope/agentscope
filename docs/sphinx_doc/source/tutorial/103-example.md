@@ -14,13 +14,12 @@ Agent is the basic composition and communication unit in AgentScope. To initiali
 | Image generation            | `openai_dall_e`                   | *DALL-E* API for generating images                                          |
 | Embedding                   | `openai_embedding`                | API for text embeddings                                                     |
 | General usages in POST      | `post_api`                        | *Huggingface* and *ModelScope* Inference API, and other customized post API |
-| Chat usages in POST         | `post_api_chat`                   | POST APIs which are compatible with OpenAI Chat API                         |
 
 Each API has its specific configuration requirements. For example, to configure an OpenAI API, you would need to fill out the following fields in the model config in a dict, a yaml file or a json file:
 
 ```python
 model_config = {
-    "model_id": "{your_model_id}",  # A unique identifier for the generated model wrapper
+    "model_id": "{your_model_id}",  # A unique identifier for the model instance
     "model_type": "openai",         # Choose from "openai", "openai_dall_e", or "openai_embedding"
     "model": "{model_name}",        # The model identifier used in the OpenAI API, such as "gpt-3.5-turbo", "gpt-4", or "text-embedding-ada-002"
     "api_key": "xxx",               # Your OpenAI API key. If unset, the environment variable OPENAI_API_KEY is used.
