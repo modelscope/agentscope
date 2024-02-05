@@ -15,7 +15,7 @@ class LoggerTest(unittest.TestCase):
     Unit test for logger.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Setup for unit test."""
         self.run_dir = "./logger_runs/"
 
@@ -45,9 +45,11 @@ class LoggerTest(unittest.TestCase):
         # To avoid that logging is not finished before the file is read
         time.sleep(3)
 
-        with open(os.path.join(self.run_dir, "logging.chat"),
-                  "r",
-                  encoding="utf-8") as file:
+        with open(
+            os.path.join(self.run_dir, "logging.chat"),
+            "r",
+            encoding="utf-8",
+        ) as file:
             lines = file.readlines()
 
         ground_truth = [
