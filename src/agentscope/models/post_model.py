@@ -178,3 +178,11 @@ class PostAPIChatWrapper(PostAPIModelWrapperBase):
                 "content"
             ],
         )
+
+
+class PostAPIDALLEWrapper(PostAPIModelWrapperBase):
+    """A post api model wrapper compatible with openai dalle"""
+
+    def _parse_response(self, response: dict) -> ModelResponse:
+        urls = [img["url"] for img in response["data"]["response"]["data"]]
+        return ModelResponse(image_urls=urls)
