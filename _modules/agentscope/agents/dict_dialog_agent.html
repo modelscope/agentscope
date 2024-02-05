@@ -242,8 +242,8 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
 
-        <span class="c1"># logging the message</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">chat</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="c1"># Print/speak the message in this agent&#39;s voice</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="c1"># record to memory</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>

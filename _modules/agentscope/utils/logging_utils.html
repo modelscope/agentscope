@@ -90,13 +90,12 @@
   <h1>Source code for agentscope.utils.logging_utils</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Logging utilities.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span>
 
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
-
-<span class="kn">from</span> <span class="nn">agentscope.constants</span> <span class="kn">import</span> <span class="n">MSG_TOKEN</span>
 
 <span class="n">LOG_LEVEL</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span>
     <span class="s2">&quot;TRACE&quot;</span><span class="p">,</span>
@@ -107,6 +106,9 @@
     <span class="s2">&quot;ERROR&quot;</span><span class="p">,</span>
     <span class="s2">&quot;CRITICAL&quot;</span><span class="p">,</span>
 <span class="p">]</span>
+
+<span class="n">LEVEL_CHAT_LOG</span> <span class="o">=</span> <span class="s2">&quot;CHAT_LOG&quot;</span>
+<span class="n">LEVEL_CHAT_SAVE</span> <span class="o">=</span> <span class="s2">&quot;CHAT_SAVE&quot;</span>
 
 
 <span class="k">class</span> <span class="nc">_Stream</span><span class="p">:</span>
@@ -175,72 +177,44 @@
 <span class="sd">            &quot;content&quot; keys, and the message will be logged as &quot;&lt;name/role&gt;:</span>
 <span class="sd">            &lt;content&gt;&quot;.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Save message into file</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">LEVEL_CHAT_SAVE</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">message</span><span class="p">),</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># Print message in terminal with specific format</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">contain_name_or_role</span> <span class="o">=</span> <span class="s2">&quot;name&quot;</span> <span class="ow">in</span> <span class="n">message</span> <span class="ow">or</span> <span class="s2">&quot;role&quot;</span> <span class="ow">in</span> <span class="n">message</span>
         <span class="n">contain_content</span> <span class="o">=</span> <span class="s2">&quot;content&quot;</span> <span class="ow">in</span> <span class="n">message</span>
         <span class="n">contain_url</span> <span class="o">=</span> <span class="s2">&quot;url&quot;</span> <span class="ow">in</span> <span class="n">message</span>
 
         <span class="c1"># print content if contain name or role and contain content</span>
-        <span class="k">if</span> <span class="n">contain_name_or_role</span> <span class="ow">and</span> <span class="n">contain_content</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">contain_name_or_role</span><span class="p">:</span>
             <span class="n">speaker</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">message</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;role&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="n">content</span> <span class="o">=</span> <span class="n">message</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">]</span>
             <span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">)</span> <span class="o">=</span> <span class="n">_get_speaker_color</span><span class="p">(</span><span class="n">speaker</span><span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
-                <span class="s2">&quot;CHAT&quot;</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">m1</span><span class="si">}</span><span class="s2">&lt;b&gt;</span><span class="si">{</span><span class="n">speaker</span><span class="si">}</span><span class="s2">&lt;/b&gt;</span><span class="si">{</span><span class="n">m2</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">content</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-                    <span class="s2">&quot;{&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;{{&quot;</span><span class="p">,</span>
-                <span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;}}&quot;</span><span class="p">),</span>
-                <span class="o">*</span><span class="n">args</span><span class="p">,</span>
-                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-            <span class="p">)</span>
+
+            <span class="n">print_str</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="n">contain_content</span><span class="p">:</span>
+                <span class="n">print_str</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">m1</span><span class="si">}</span><span class="s2">&lt;b&gt;</span><span class="si">{</span><span class="n">speaker</span><span class="si">}</span><span class="s2">&lt;/b&gt;</span><span class="si">{</span><span class="n">m2</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">message</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
 
             <span class="k">if</span> <span class="n">contain_url</span><span class="p">:</span>
-                <span class="c1"># print url if contain name or role and contain url</span>
-                <span class="n">url</span> <span class="o">=</span> <span class="n">message</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]</span>
-                <span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">)</span> <span class="o">=</span> <span class="n">_get_speaker_color</span><span class="p">(</span><span class="n">speaker</span><span class="p">)</span>
-                <span class="c1"># print url one by one if url is a list</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-                    <span class="k">for</span> <span class="n">each_url</span> <span class="ow">in</span> <span class="n">url</span><span class="p">:</span>
-                        <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
-                            <span class="s2">&quot;CHAT&quot;</span><span class="p">,</span>
-                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">m1</span><span class="si">}</span><span class="s2">&lt;b&gt;</span><span class="si">{</span><span class="n">speaker</span><span class="si">}</span><span class="s2">&lt;/b&gt;</span><span class="si">{</span><span class="n">m2</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">each_url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                            <span class="o">*</span><span class="n">args</span><span class="p">,</span>
-                            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-                        <span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
-                        <span class="s2">&quot;CHAT&quot;</span><span class="p">,</span>
-                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">m1</span><span class="si">}</span><span class="s2">&lt;b&gt;</span><span class="si">{</span><span class="n">speaker</span><span class="si">}</span><span class="s2">&lt;/b&gt;</span><span class="si">{</span><span class="n">m2</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
-                        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-                    <span class="p">)</span>
+                <span class="n">print_str</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">m1</span><span class="si">}</span><span class="s2">&lt;b&gt;</span><span class="si">{</span><span class="n">speaker</span><span class="si">}</span><span class="s2">&lt;/b&gt;</span><span class="si">{</span><span class="n">m2</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">message</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="c1"># print raw message if not contain name</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">contain_name_or_role</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">contain_content</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;CHAT&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">message</span><span class="p">),</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># print other types of message directly</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;CHAT&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">print_str</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">print_str</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">print_str</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="s2">&quot;{{&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;}}&quot;</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">LEVEL_CHAT_LOG</span><span class="p">,</span> <span class="n">print_str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="k">return</span>
+
+    <span class="n">message</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">message</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="s2">&quot;{{&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;}}&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">LEVEL_CHAT_LOG</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_level_format</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Format the log record.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;level&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;CHAT&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;level&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">LEVEL_CHAT_LOG</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="s2">&quot;&lt;green&gt;{time:YYYY-MM-DD HH:mm:ss.SSS}&lt;/green&gt; | &lt;level&gt;{&quot;</span>
-            <span class="s2">&quot;level: &lt;8}&lt;/level&gt; | &lt;cyan&gt;</span><span class="si">{name}</span><span class="s2">&lt;/cyan&gt;:&lt;cyan&gt;{&quot;</span>
-            <span class="s2">&quot;function}&lt;/cyan&gt;:&lt;cyan&gt;</span><span class="si">{line}</span><span class="s2">&lt;/cyan&gt; - &lt;level&gt;{&quot;</span>
-            <span class="s2">&quot;message}&lt;/level&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">_level_format_with_special_tokens</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Format the log record.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;level&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;CHAT&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">MSG_TOKEN</span> <span class="o">+</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">MSG_TOKEN</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="s2">&quot;&lt;green&gt;{time:YYYY-MM-DD HH:mm:ss.SSS}&lt;/green&gt; | &lt;level&gt;{&quot;</span>
@@ -274,35 +248,45 @@
     <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="n">_Stream</span><span class="p">()</span>
 
     <span class="c1"># add chat function for logger</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">level</span><span class="p">(</span><span class="s2">&quot;CHAT&quot;</span><span class="p">,</span> <span class="n">no</span><span class="o">=</span><span class="mi">21</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;&lt;yellow&gt;&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">level</span><span class="p">(</span><span class="n">LEVEL_CHAT_LOG</span><span class="p">,</span> <span class="n">no</span><span class="o">=</span><span class="mi">21</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">level</span><span class="p">(</span><span class="n">LEVEL_CHAT_SAVE</span><span class="p">,</span> <span class="n">no</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">chat</span> <span class="o">=</span> <span class="n">_chat</span>
 
     <span class="c1"># set logging level</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
     <span class="c1"># standard output for all logging except chat</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">_level_format</span><span class="p">,</span> <span class="n">enqueue</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span>
+        <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">record</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;level&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="n">LEVEL_CHAT_SAVE</span><span class="p">,</span>
+        <span class="nb">format</span><span class="o">=</span><span class="n">_level_format</span><span class="p">,</span>
+        <span class="n">enqueue</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">path_log</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path_log</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path_log</span><span class="p">)</span>
-        <span class="n">path_log_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path_log</span><span class="p">,</span> <span class="s2">&quot;all.log&quot;</span><span class="p">)</span>
-        <span class="n">path_log_file_only_chat</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">path_log_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path_log</span><span class="p">,</span> <span class="s2">&quot;logging.log&quot;</span><span class="p">)</span>
+        <span class="n">path_chat_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="n">path_log</span><span class="p">,</span>
-            <span class="s2">&quot;chat.log&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;logging.chat&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># save all logging into file</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
             <span class="n">path_log_file</span><span class="p">,</span>
-            <span class="nb">format</span><span class="o">=</span><span class="n">_level_format_with_special_tokens</span><span class="p">,</span>
+            <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">record</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;level&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="n">LEVEL_CHAT_SAVE</span><span class="p">,</span>
+            <span class="nb">format</span><span class="o">=</span><span class="n">_level_format</span><span class="p">,</span>
             <span class="n">enqueue</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span>
         <span class="p">)</span>
+
         <span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
-            <span class="n">path_log_file_only_chat</span><span class="p">,</span>
-            <span class="nb">format</span><span class="o">=</span><span class="n">_level_format</span><span class="p">,</span>
+            <span class="n">path_chat_file</span><span class="p">,</span>
+            <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">record</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;level&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">LEVEL_CHAT_SAVE</span><span class="p">,</span>
+            <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{message}</span><span class="s2">&quot;</span><span class="p">,</span>
             <span class="n">enqueue</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">level</span><span class="o">=</span><span class="s2">&quot;CHAT&quot;</span><span class="p">,</span>
+            <span class="n">level</span><span class="o">=</span><span class="n">LEVEL_CHAT_SAVE</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 </pre></div>
