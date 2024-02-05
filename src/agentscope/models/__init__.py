@@ -34,14 +34,6 @@ __all__ = [
 
 _MODEL_CONFIGS: dict[str, dict] = {}
 
-_MODEL_MAP: dict[str, Type[ModelWrapperBase]] = {
-    "openai": OpenAIChatWrapper,
-    "openai_dall_e": OpenAIDALLEWrapper,
-    "openai_embedding": OpenAIEmbeddingWrapper,
-    "post_api": PostAPIModelWrapperBase,
-    "post_api_chat": PostAPIChatWrapper,
-}
-
 
 def _get_model_wrapper(model_type: str) -> Type[ModelWrapperBase]:
     """Get the specific type of model wrapper
@@ -52,8 +44,10 @@ def _get_model_wrapper(model_type: str) -> Type[ModelWrapperBase]:
     Returns:
         `Type[ModelWrapperBase]`: The corresponding model wrapper class.
     """
-    if model_type in _MODEL_MAP:
-        return _MODEL_MAP[model_type]
+    if model_type in ModelWrapperBase.alias_registry:
+        return ModelWrapperBase.alias_registry[  # type: ignore [return-value]
+            model_type
+        ]
     elif model_type in ModelWrapperBase.registry:
         return ModelWrapperBase.registry[  # type: ignore [return-value]
             model_type

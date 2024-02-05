@@ -190,8 +190,11 @@ class _ModelWrapperMeta(ABCMeta):
     def __init__(cls, name: Any, bases: Any, attrs: Any) -> None:
         if not hasattr(cls, "registry"):
             cls.registry = {}
+            cls.alias_registry = {}
         else:
             cls.registry[name] = cls
+            if hasattr(cls, "alias"):
+                cls.alias_registry[cls.alias] = cls
         super().__init__(name, bases, attrs)
 
 

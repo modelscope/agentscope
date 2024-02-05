@@ -126,6 +126,8 @@ class OpenAIWrapper(ModelWrapperBase):
 class OpenAIChatWrapper(OpenAIWrapper):
     """The model wrapper for OpenAI's chat API."""
 
+    alias: str = "openai"
+
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
         # TODO: set quota to the following metrics
@@ -234,6 +236,8 @@ class OpenAIChatWrapper(OpenAIWrapper):
 class OpenAIDALLEWrapper(OpenAIWrapper):
     """The model wrapper for OpenAI's DALL·E API."""
 
+    alias: str = "openai_dall_e"
+
     _resolutions: list = [
         "1792*1024",
         "1024*1792",
@@ -329,6 +333,8 @@ class OpenAIDALLEWrapper(OpenAIWrapper):
 
 class OpenAIEmbeddingWrapper(OpenAIWrapper):
     """The model wrapper for OpenAI embedding API."""
+
+    alias: str = "openai_embedding"
 
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
