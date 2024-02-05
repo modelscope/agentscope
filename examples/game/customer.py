@@ -364,17 +364,10 @@ class Customer(StateAgent, DialogAgent):
         new_background = self.model(
             [extract_keys_from_dict(update_msg, MESSAGE_KEYS)]
         )
-        bg_msg = Msg(
-            role="user",
-            # name="system",
-            content=f" {SYS_MSG_PREFIX}根据对话，{self.name}的背景更新为："
-            + new_background,
-        )
-        send_pretty_msg(
-            bg_msg,
-            uid=self.uid,
-            # avatar=self.avatar,
-        )
+
+        bg_msg = f" {SYS_MSG_PREFIX}根据对话，{self.name}的背景更新为：" + new_background
+        send_chat_msg(bg_msg, uid=self.uid, flushing=True)
+
         self.background = new_background
 
     def _validated_history_messages(self, recent_n: int = 10):
