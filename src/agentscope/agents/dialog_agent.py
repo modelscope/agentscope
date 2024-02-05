@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """A general dialog agent."""
 from typing import Any, Optional, Union, Callable
-from loguru import logger
 
 from ..message import Msg
 from .agent import AgentBase
@@ -89,8 +88,10 @@ class DialogAgent(AgentBase):
         response = self.model(prompt)
         msg = Msg(self.name, response)
 
-        # logging and record the message in memory
-        logger.chat(msg)
+        # Print/speak the message in this agent's voice
+        self.speak(msg)
+
+        # Record the message in memory
         self.memory.add(msg)
 
         return msg
