@@ -22,7 +22,7 @@ class ModelConfig(dict):
 
         Args:
             model_id (`str`): The id of the generated model wrapper.
-            model_type (`str`, optional): The class name (or its alias) of
+            model_type (`str`, optional): The class name (or its model type) of
                 the generated model wrapper. Defaults to None.
 
         Raises:

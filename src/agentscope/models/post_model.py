@@ -16,7 +16,7 @@ from ..constants import _DEFAULT_RETRY_INTERVAL
 class PostAPIModelWrapperBase(ModelWrapperBase):
     """The base model wrapper for the model deployed on the POST API."""
 
-    alias: str = "post_api"
+    model_type: str = "post_api"
 
     def __init__(
         self,
@@ -174,7 +174,7 @@ class PostAPIChatWrapper(PostAPIModelWrapperBase):
     """A post api model wrapper compatilble with openai chat, e.g., vLLM,
     FastChat."""
 
-    alias: str = "post_api_chat"
+    model_type: str = "post_api_chat"
 
     def _parse_response(self, response: dict) -> ModelResponse:
         return ModelResponse(
@@ -187,7 +187,7 @@ class PostAPIChatWrapper(PostAPIModelWrapperBase):
 class PostAPIDALLEWrapper(PostAPIModelWrapperBase):
     """A post api model wrapper compatible with openai dalle"""
 
-    alias: str = "post_api_dalle"
+    model_type: str = "post_api_dalle"
 
     def _parse_response(self, response: dict) -> ModelResponse:
         urls = [img["url"] for img in response["data"]["response"]["data"]]

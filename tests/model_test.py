@@ -35,7 +35,7 @@ class BasicModelTest(unittest.TestCase):
             _get_model_wrapper(model_type="TestModelWrapperSimple"),
             TestModelWrapperSimple,
         )
-        # get model wrapper class by alias
+        # get model wrapper class by model type
         self.assertEqual(
             _get_model_wrapper(model_type="openai"),
             OpenAIChatWrapper,

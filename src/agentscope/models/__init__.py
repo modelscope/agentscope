@@ -23,6 +23,7 @@ __all__ = [
     "ModelWrapperBase",
     "ModelResponse",
     "PostAPIModelWrapperBase",
+    "PostAPIChatWrapper",
     "OpenAIWrapper",
     "OpenAIChatWrapper",
     "OpenAIDALLEWrapper",
@@ -44,8 +45,8 @@ def _get_model_wrapper(model_type: str) -> Type[ModelWrapperBase]:
     Returns:
         `Type[ModelWrapperBase]`: The corresponding model wrapper class.
     """
-    if model_type in ModelWrapperBase.alias_registry:
-        return ModelWrapperBase.alias_registry[  # type: ignore [return-value]
+    if model_type in ModelWrapperBase.type_registry:
+        return ModelWrapperBase.type_registry[  # type: ignore [return-value]
             model_type
         ]
     elif model_type in ModelWrapperBase.registry:

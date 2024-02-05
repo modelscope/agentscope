@@ -128,7 +128,7 @@ For post requests APIs, the config contains the following fields.
 
 ```
 {
-    "model_id": "{your_model_id}",    # To identify the model instance
+    "model_id": "{model id}",         # To identify the model instance
     "model_type": "post_api",
     "api_url": "https://xxx",         # The target url
     "headers": {                      # Required headers
