@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """A general dialog agent."""
 from typing import Any, Optional, Union, Callable
-from loguru import logger
 
 from ..message import Msg
 from .agent import AgentBase

@@ -103,13 +103,17 @@ def _chat(message: Union[str, dict], *args: Any, **kwargs: Any) -> None:
 
             print_str = []
             if contain_content:
-                print_str.append(f"{m1}<b>{speaker}</b>{m2}: {message['content']}")
+                print_str.append(
+                    f"{m1}<b>{speaker}</b>{m2}: {message['content']}",
+                )
 
             if contain_url:
                 print_str.append(f"{m1}<b>{speaker}</b>{m2}: {message['url']}")
 
             if len(print_str) > 0:
-                print_str = "\n".join(print_str).replace("{", "{{").replace("}", "}}")
+                print_str = (
+                    "\n".join(print_str).replace("{", "{{").replace("}", "}}")
+                )
                 logger.log(LEVEL_CHAT_LOG, print_str, *args, **kwargs)
                 return
 
@@ -164,7 +168,8 @@ def setup_logger(
         filter=lambda record: record["level"].name != LEVEL_CHAT_SAVE,
         format=_level_format,
         enqueue=True,
-        level=level)
+        level=level,
+    )
 
     if path_log is not None:
         if not os.path.exists(path_log):
@@ -189,5 +194,5 @@ def setup_logger(
             filter=lambda record: record["level"].name == LEVEL_CHAT_SAVE,
             format="{message}",
             enqueue=True,
-            level=LEVEL_CHAT_SAVE
+            level=LEVEL_CHAT_SAVE,
         )
