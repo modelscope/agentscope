@@ -224,7 +224,7 @@ class RuledUser(AgentBase):
         send_chat_msg("**end_choosing**", uid=self.uid)
 
         print(cook_list)
-        if cook_list == ["跳过"]:
+        if "跳过" in cook_list:
             send_player_msg("不好意思，小店今天暂不接待。", uid=self.uid)
             return "跳过"
 
