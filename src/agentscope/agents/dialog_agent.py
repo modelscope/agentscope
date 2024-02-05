@@ -89,8 +89,10 @@ class DialogAgent(AgentBase):
         response = self.model(prompt)
         msg = Msg(self.name, response)
 
-        # logging and record the message in memory
-        logger.chat(msg)
+        # Print/speak the message in this agent's voice
+        self.speak(msg)
+
+        # Record the message in memory
         self.memory.add(msg)
 
         return msg
