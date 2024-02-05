@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """ Unit test for logger chat"""
+import os
 import shutil
 import time
 import unittest
@@ -14,10 +15,14 @@ class LoggerTest(unittest.TestCase):
     Unit test for logger.
     """
 
+    def setUp(self):
+        """Setup for unit test."""
+        self.run_dir = "./logger_runs/"
+
     def test_logger_chat(self) -> None:
         """Logger chat."""
 
-        setup_logger("./runs/", level="INFO")
+        setup_logger(self.run_dir, level="INFO")
 
         # str with "\n"
         logger.chat("Test\nChat\n\nMessage\n\n")
@@ -40,7 +45,9 @@ class LoggerTest(unittest.TestCase):
         # To avoid that logging is not finished before the file is read
         time.sleep(3)
 
-        with open("./runs/logging.chat", "r", encoding="utf-8") as file:
+        with open(os.path.join(self.run_dir, "logging.chat"),
+                  "r",
+                  encoding="utf-8") as file:
             lines = file.readlines()
 
         ground_truth = [
@@ -55,7 +62,7 @@ class LoggerTest(unittest.TestCase):
 
     def tearDown(self) -> None:
         """Tear down for LoggerTest."""
-        shutil.rmtree("./runs/")
+        shutil.rmtree(self.run_dir)
 
 
 if __name__ == "__main__":
