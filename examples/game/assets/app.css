@@ -280,3 +280,24 @@
   max-height: 100px;
   align-items: flex-start;
 }
+
+/* style fix */
+.app-chatbot > .generating {
+  border: none !important;
+}
+
+.app-chatbot {
+  height: 500px !important;
+}
+
+@media (max-width: 620px) {
+  .app-chatbot {
+    height: 300px !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .app-chatbot {
+    height: 230px !important;
+  }
+}

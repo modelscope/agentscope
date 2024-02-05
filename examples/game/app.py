@@ -373,20 +373,21 @@ if __name__ == "__main__":
             story_tab = gr.Tab('故事', id=2)
             with main_tab:
                 with gr.Row():
-                    chatbot = mgr.Chatbot(
-                        label="Dialog",
-                        show_label=False,
-                        height=500,
-                        bubble_full_width=False,
-                    )
-
-                    chatsys = mgr.Chatbot(
-                        label="系统栏",
-                        show_label=True,
-                        height=500,
-                        bubble_full_width=False,
-                        layout="panel",
-                    )
+                    with gr.Column(min_width=270):
+                        chatbot = mgr.Chatbot(
+                            elem_classes="app-chatbot",
+                            label="Dialog",
+                            show_label=False,
+                            bubble_full_width=False,
+                        )
+                    with gr.Column(min_width=270):
+                        chatsys = mgr.Chatbot(
+                            elem_classes="app-chatbot",
+                            label="系统栏",
+                            show_label=True,
+                            bubble_full_width=False,
+                            layout="panel",
+                        )
 
             with gr.Row():
                 with gr.Column():
