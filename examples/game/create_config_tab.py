@@ -5,7 +5,7 @@ import shutil
 import subprocess
 
 import gradio as gr
-
+import tempfile
 from config_utils import (
     PLOT_CFG_NAME,
     compress,
@@ -118,15 +118,27 @@ def quit_shell_cmd():
     return '', gr.update(visible=True), gr.update(visible=False)
 
 
-def run_shell_cmd(cmd):
+def run_shell_cmd(cmd, msg):
     cmd_args = cmd.split()
     try:
         output = subprocess.run(cmd_args, check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        return output.stdout
+        return '\n'.join([msg,f'===command===\n{cmd}\n===outputs===', output.stdout])
     except Exception as e:
         gr.Warning("命令不正确，请检查。")
-    return
+    return msg
 
+
+def run_shell_file(cmd, msg):
+    try:
+        with tempfile.NamedTemporaryFile(delete=True) as tfile:
+            tfile.write(cmd.encode('utf-8'))
+            tfile.flush()
+            os.fchmod(tfile.fileno(), 0o755)
+            output = subprocess.run([tfile.name], check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+            return '\n'.join([msg,f'===outputs===', output.stdout])
+    except Exception as e:
+        gr.Warning("命令不正确，请检查。")
+    return msg
 
 def create_config_accord(accord, uuid):
     uuid = check_uuid(uuid)
@@ -161,13 +173,14 @@ def create_config_accord(accord, uuid):
                 passwd_button = gr.Button(
                     value="🔓进入管理"
                 )
-        execute_group = gr.Group(visible=False)
+        execute_group = gr.Group(visible=True)
         with execute_group:
             with gr.Row():
                 with gr.Column():
-                    execute_cmd = gr.Textbox(
+                    execute_cmd = gr.TextArea(
                         label="命令内容",
-                        placeholder='请输入你要执行的命令'
+                        placeholder='请输入你要执行的命令',
+                        value="#!/bin/bash\n",
                     )
                     with gr.Row():
                         exectue_button = gr.Button(value="🚀 执行命令")
@@ -177,7 +190,7 @@ def create_config_accord(accord, uuid):
                 )
 
     passwd_button.click(check_passwd, inputs=passwd, outputs=[passwd_group, execute_group])
-    exectue_button.click(run_shell_cmd, inputs=[execute_cmd], outputs=execute_res)
+    exectue_button.click(run_shell_file, inputs=[execute_cmd,execute_res], outputs=execute_res)
     cancel_button.click(quit_shell_cmd, outputs=[passwd, passwd_group, execute_group])
     load_button.click(
         load_from_signature, inputs=[signature, uuid], outputs=[signature_file]
