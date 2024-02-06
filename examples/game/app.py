@@ -22,8 +22,9 @@ from utils import (
     cycle_dots,
     check_uuid,
     send_chat_msg,
+    MAX_ROLE_NUM
 )
-from create_config_tab import create_config_tab, create_config_accord
+from create_config_tab import create_config_tab, create_config_accord, get_role_names
 
 import gradio as gr
 import modelscope_gradio_components as mgr
@@ -51,7 +52,6 @@ glb_end_choosing_index_dict = defaultdict(lambda: -1)
 
 glb_signed_user = []
 is_init = Event()
-
 
 def reset_glb_var(uid):
     global glb_history_dict, glb_clue_dict, glb_story_dict, \
@@ -178,6 +178,7 @@ def get_story(uid):
 
     story_item = get_story_msg(uid)
 
+    role_names = get_role_names(uuid=uid)
     # Only initialize at the first time
     for c in role_names:  # glb vars, careful!
         if c not in glb_story_dict[uid]:
@@ -224,6 +225,7 @@ def get_clue(uid):
 
     uid = check_uuid(uid)
     clue_item = get_clue_msg(uid)
+    role_names = get_role_names(uuid=uid)
 
     # Only initialize at the first time
     for c in role_names:  # glb vars, careful!
@@ -242,6 +244,7 @@ def get_clue(uid):
         glb_clue_dict[uid][role_name_]['unexposed_num'] = clue_item['unexposed_num']
 
     flex_container_html_list = []
+    role_tab_list = []
     for role_name_ in glb_clue_dict[uid].keys():
         flex_container_html = f"""
                 <div style='margin-bottom: 40px;'>
@@ -271,7 +274,12 @@ def get_clue(uid):
                                     </div>
                             """
         flex_container_html_list.append(flex_container_html)
-    return [gr.HTML(x) for x in flex_container_html_list]
+
+        role_tab_list.append(gr.update(visible=True, label=role_name_, interactive=True))
+    invisible_num = MAX_ROLE_NUM - len(role_tab_list)
+    role_tab_list += [gr.update(visible=False) for i in range(invisible_num)] 
+    role_tab_clue_list = [gr.HTML(x, visible=True) for x in flex_container_html_list ] + [gr.HTML(visible=False) for i in  range(invisible_num)]
+    return role_tab_clue_list + role_tab_list
 
 
 def fn_choice(data: gr.EventData, uid):
@@ -420,17 +428,18 @@ if __name__ == "__main__":
             </div>
             """
             gr.HTML(guild_html)
-            role_tabs = gr.Tabs(visible=False)
-            roles = load_user_cfg()
-            role_names = [role['name'] for role in roles]
-
-            role_tab_clue_dict = {}
-
-            for role_name_t in role_names:
-                role = gr.Tab(label=role_name_t)
-                with role:
-                    role_tab_clue_dict[role_name_t] = gr.HTML()
-
+            ##################### 
+            # hard code: to be fixed
+            # 线索卡初始化了比较多的tab页，通过角色的数量来控制可见范围
+            #####################
+            with gr.Tabs(visible=True):
+                role_clue_html_list = []
+                role_clue_tab_list = []
+                for role_name_t in range(MAX_ROLE_NUM):
+                    role = gr.Tab(label=str(role_name_t), interactive=True)
+                    with role:
+                        role_clue_html_list.append(gr.HTML())
+                    role_clue_tab_list.append(role)
         with story_tab:
             story_html = """
             <div style='text-align: center; margin-top: 20px; margin-bottom: 40px; padding: 20px; background: linear-gradient(to right, #f7f7f7, #ffffff); border-left: 5px solid #6c757d; border-right: 5px solid #6c757d;'>
@@ -500,7 +509,7 @@ if __name__ == "__main__":
 
         demo.load(get_clue,
                   inputs=[uuid],
-                  outputs=[role_tab_clue_dict[i] for i in role_names],
+                  outputs=role_clue_html_list + role_clue_tab_list,
                   every=0.5)
         demo.load(get_story,
                   inputs=[uuid],
