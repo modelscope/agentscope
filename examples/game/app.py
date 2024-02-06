@@ -243,13 +243,15 @@ def get_clue(uid):
             glb_clue_dict[uid][role_name_]['clue_list'].append(clue_item['clue'])
         glb_clue_dict[uid][role_name_]['unexposed_num'] = clue_item['unexposed_num']
 
-    flex_container_html_list = []
-    role_tab_list = []
+    flex_container_html_list = ""
+ 
     for role_name_ in glb_clue_dict[uid].keys():
         flex_container_html = f"""
-                <div style='margin-bottom: 40px;'>
-                    <div style='display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;'>
-            """
+            <div style='margin-bottom: 40px;'>
+                <h2 style='text-align: center;'>{role_name_}</h2> <!-- 角色名作为标题 -->
+                <div style='display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;'>
+        """
+
         for clue in glb_clue_dict[uid][role_name_]["clue_list"]:
             flex_container_html += f"""
                        <div class='clue-card'>
@@ -265,21 +267,19 @@ def get_clue(uid):
                 flex_container_html += f"""
                             <div class='clue-card clue-card-locked'>
                                 <div style='flex-grow: 1; height: 150px; width: 100%; background-color: #bbb; border-radius: 10px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center;'>
-                                    <span style='color: #fff; font-weight: bold; font-size: 24px;'>?</span>
+                                     <!--  <<h4 style='margin: 5px 0; text-align: center; word-wrap: break-word; font-size: 18px; font-weight: bold; color: #999;'>?</h4>-->
+                                    <span class='lock-icon'>&#128274;</span>
                                 </div>
                                 <h4 style='margin: 5px 0; text-align: center; word-wrap: break-word; font-size: 18px; font-weight: bold; color: #999;'>待发现</h4>
                             </div>
                         """
         flex_container_html += """
                                     </div>
+                                    </div>
                             """
-        flex_container_html_list.append(flex_container_html)
-
-        role_tab_list.append(gr.update(visible=True, label=role_name_, interactive=True))
-    invisible_num = MAX_ROLE_NUM - len(role_tab_list)
-    role_tab_list += [gr.update(visible=False) for i in range(invisible_num)] 
-    role_tab_clue_list = [gr.HTML(x, visible=True) for x in flex_container_html_list ] + [gr.HTML(visible=False) for i in  range(invisible_num)]
-    return role_tab_clue_list + role_tab_list
+                            
+        flex_container_html_list += flex_container_html
+    return gr.HTML(flex_container_html_list)
 
 
 def fn_choice(data: gr.EventData, uid):
@@ -432,14 +432,8 @@ if __name__ == "__main__":
             # hard code: to be fixed
             # 线索卡初始化了比较多的tab页，通过角色的数量来控制可见范围
             #####################
-            with gr.Tabs(visible=True):
-                role_clue_html_list = []
-                role_clue_tab_list = []
-                for role_name_t in range(MAX_ROLE_NUM):
-                    role = gr.Tab(label=str(role_name_t), interactive=True)
-                    with role:
-                        role_clue_html_list.append(gr.HTML())
-                    role_clue_tab_list.append(role)
+            clue_container = gr.HTML()
+
         with story_tab:
             story_html = """
             <div style='text-align: center; margin-top: 20px; margin-bottom: 40px; padding: 20px; background: linear-gradient(to right, #f7f7f7, #ffffff); border-left: 5px solid #6c757d; border-right: 5px solid #6c757d;'>
@@ -509,7 +503,7 @@ if __name__ == "__main__":
 
         demo.load(get_clue,
                   inputs=[uuid],
-                  outputs=role_clue_html_list + role_clue_tab_list,
+                  outputs=clue_container,
                   every=0.5)
         demo.load(get_story,
                   inputs=[uuid],
