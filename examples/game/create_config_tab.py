@@ -5,7 +5,7 @@ import shutil
 import subprocess
 
 import gradio as gr
-
+import tempfile
 from config_utils import (
     PLOT_CFG_NAME,
     compress,
@@ -24,11 +24,11 @@ from utils import check_uuid, MAX_ROLE_NUM
 
 
 def convert_to_ds(samples):
-    return [[str(sample).strip()] for sample in samples if sample] if samples else None
+    return [[str(sample).strip()] for sample in samples if sample] or None
 
 
 def convert_to_list(samples):
-    return [sample[0] for sample in samples if sample[0]] if samples else None
+    return [sample[0] for sample in samples if sample[0]] or None
 
 
 def get_role_by_name(name, uuid, roles=None):
@@ -118,15 +118,27 @@ def quit_shell_cmd():
     return '', gr.update(visible=True), gr.update(visible=False)
 
 
-def run_shell_cmd(cmd):
+def run_shell_cmd(cmd, msg):
     cmd_args = cmd.split()
     try:
         output = subprocess.run(cmd_args, check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        return output.stdout
+        return '\n'.join([msg,f'===command===\n{cmd}\n===outputs===', output.stdout])
     except Exception as e:
         gr.Warning("命令不正确，请检查。")
-    return
+    return msg
 
+
+def run_shell_file(cmd, msg):
+    try:
+        with tempfile.NamedTemporaryFile(delete=True) as tfile:
+            tfile.write(cmd.encode('utf-8'))
+            tfile.flush()
+            os.fchmod(tfile.fileno(), 0o755)
+            output = subprocess.run([tfile.name], check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+            return '\n'.join([msg,f'===outputs===', output.stdout])
+    except Exception as e:
+        gr.Warning("命令不正确，请检查。")
+    return msg
 
 def create_config_accord(accord, uuid):
     uuid = check_uuid(uuid)
@@ -165,9 +177,10 @@ def create_config_accord(accord, uuid):
         with execute_group:
             with gr.Row():
                 with gr.Column():
-                    execute_cmd = gr.Textbox(
+                    execute_cmd = gr.TextArea(
                         label="命令内容",
-                        placeholder='请输入你要执行的命令'
+                        placeholder='请输入你要执行的命令',
+                        value="#!/bin/bash\n",
                     )
                     with gr.Row():
                         exectue_button = gr.Button(value="🚀 执行命令")
@@ -177,7 +190,7 @@ def create_config_accord(accord, uuid):
                 )
 
     passwd_button.click(check_passwd, inputs=passwd, outputs=[passwd_group, execute_group])
-    exectue_button.click(run_shell_cmd, inputs=[execute_cmd], outputs=execute_res)
+    exectue_button.click(run_shell_file, inputs=[execute_cmd,execute_res], outputs=execute_res)
     cancel_button.click(quit_shell_cmd, outputs=[passwd, passwd_group, execute_group])
     load_button.click(
         load_from_signature, inputs=[signature, uuid], outputs=[signature_file]
@@ -326,33 +339,26 @@ def config_plot_tab(plot_tab, uuid):
         plot = get_plot_by_id(plot_id=id, uuid=uuid)
         attempts = plot.get("max_attempts", 2)
 
-        cfg_main_roles = convert_to_ds(plot["main_roles"])
-        cfg_supporting_roles = convert_to_ds(plot["supporting_roles"])
-        cfg_predecessor_plots = convert_to_ds(plot["predecessor_plots"])
+        cfg_main_roles = plot.get("main_roles", []) or []
+        cfg_main_roles = convert_to_ds(cfg_main_roles)
+
+        cfg_supporting_roles = plot.get("supporting_roles", []) or []
+        cfg_supporting_roles = convert_to_ds(cfg_supporting_roles)
+
+        cfg_predecessor_plots = plot.get("predecessor_plots", []) or []
+        cfg_predecessor_plots = convert_to_ds(cfg_predecessor_plots)
         cfg_max_unblock_plots = plot.get("max_unblock_plots", 1)
 
-        cfg_unblock_following_plots = plot.get("unblock_following_plots", None)
-        cfg_unblock_following_plots = (
-            [
-                [p["unblock_chk_func"], str(p["unblock_plot"])]
-                for p in cfg_unblock_following_plots
-            ]
-            if cfg_unblock_following_plots
-            else None
-        )
+        cfg_unblock_following_plots = plot.get("unblock_following_plots", dict()) or dict()
+        cfg_unblock_following_plots = [[p["unblock_chk_func"], str(p["unblock_plot"])] for p in cfg_unblock_following_plots if p] or None
 
-        plot_descriptions = plot.get("plot_descriptions", dict())
+        plot_descriptions = plot.get("plot_descriptions", dict()) or dict()
 
-        cfg_user_openings_option = plot_descriptions.get("user_openings_option", dict())
+        cfg_user_openings_option = plot_descriptions.get("user_openings_option", dict()) or dict()
+        cfg_user_openings_option = [[k, v.strip()] for k, v in cfg_user_openings_option.items()] or None
 
-        cfg_user_openings_option = (
-            [[k, v.strip()] for k, v in cfg_user_openings_option.items()]
-            if cfg_user_openings_option
-            else None
-        )
-
-        cfg_plot_stages = plot.get("plot_stages", [])
-        cfg_plot_stages = [plot_stage_choices[stage] for stage in cfg_plot_stages]
+        cfg_plot_stages = plot.get("plot_stages", []) or []
+        cfg_plot_stages = [plot_stage_choices[stage] for stage in cfg_plot_stages] or None
         return {
             plot_id: plot["plot_id"],
             plot_stages: gr.Dropdown(value=cfg_plot_stages),
@@ -442,24 +448,20 @@ def config_plot_tab(plot_tab, uuid):
             plots.append(new_plot)
 
         new_plot["plot_id"] = plot_id
-        new_plot["plot_stages"] = sorted(plot_stages)
+        new_plot["plot_stages"] = sorted(plot_stages) if plot_stages else None
         new_plot["max_attempts"] = max_attempts
         new_plot["main_roles"] = convert_to_list(main_roles)
         new_plot["supporting_roles"] = convert_to_list(supporting_roles)
         new_plot["max_unblock_plots"] = max_unblock_plots
-        unblock_following_plots = [
-            {"unblock_chk_func": "always", "unblock_plot": int(p[1])}
-            for p in unblock_following_plots
-            if all(p)
-        ]
+        unblock_following_plots = [{"unblock_chk_func": "always", "unblock_plot": int(p[1])} for p in unblock_following_plots if p[1]]
 
         if len(unblock_following_plots) > max_unblock_plots:
             gr.Warning(f"解锁剧情数量超过最大的解锁限制[{max_unblock_plots}]")
             unblock_following_plots = unblock_following_plots[:max_unblock_plots]
-        new_plot["unblock_following_plots"] = unblock_following_plots
-        new_plot["predecessor_plots"] = [int(p[0]) for p in predecessor_plots if p[0]]
+        new_plot["unblock_following_plots"] = unblock_following_plots or None
+        new_plot["predecessor_plots"] = [int(p[0]) for p in predecessor_plots if p[0]] or None
 
-        plot_descriptions = new_plot.get("plot_descriptions", dict())
+        plot_descriptions = new_plot.get("plot_descriptions", dict()) or dict()
         plot_descriptions["task"] = task_name
 
         plot_descriptions["openings"] = openings
@@ -468,7 +470,7 @@ def config_plot_tab(plot_tab, uuid):
         plot_descriptions["opening_image"] = opening_image
         plot_descriptions["user_openings_option"] = {
             it[0]: it[1] for it in user_openings_option if all(it)
-        }
+        } or None
         plot_descriptions["done_hint"] = done_hint
         plot_descriptions["done_condition"] = done_condition
         new_plot["plot_descriptions"] = plot_descriptions
@@ -577,25 +579,12 @@ def config_role_tab(role_tab, uuid):
         role = get_role_by_name(name=name, uuid=uuid)
 
         character_setting = role["character_setting"]
-        hidden_plots = character_setting["hidden_plot"]
-        hidden_plots = (
-            [[str(k), v.strip()] for k, v in hidden_plots.items()]
-            if hidden_plots
-            else None
-        )
-
-        plugin_backgrounds = [
-            [string.strip()] for string in character_setting["plugin_background"]
-        ]
-        clues = role.get("clue", None)
-        clues = (
-            [
-                [str(clue["plot"]), clue["name"], clue["content"].strip()]
-                for clue in clues
-            ]
-            if clues
-            else None
-        )
+        hidden_plots = character_setting.get("hidden_plot", dict()) or dict()
+        hidden_plots =[[str(k), v.strip()] for k, v in hidden_plots.items()] or None
+        plugin_backgrounds = character_setting.get("plugin_background", []) or []
+        plugin_backgrounds = [[string.strip()] for string in plugin_backgrounds if string] or None
+        clues = role.get("clue", []) or []
+        clues = [[str(clue["plot"]), clue["name"], clue["content"].strip()]for clue in clues] or None
 
         return {
             avatar_file: gr.Image(value=role["avatar"], interactive=True),
@@ -698,13 +687,13 @@ def config_role_tab(role_tab, uuid):
             {"plot": int(clue[0]), "name": clue[1], "content": clue[2]}
             for clue in clues
             if all(clue)
-        ]
-        hidden_plot = {int(it[0]): it[1] for it in hidden_plot if all(it)}
+        ] or None
+        hidden_plot = {int(it[0]): it[1] for it in hidden_plot if all(it)} or None
         character_setting = new_role.get("character_setting", dict())
         character_setting["food_preference"] = food_preference
         character_setting["background"] = background
         character_setting["hidden_plot"] = hidden_plot
-        character_setting["plugin_background"] = [it[0] for it in plugin_background if it[0]]
+        character_setting["plugin_background"] = [it[0] for it in plugin_background if it[0]] or None
         new_role["character_setting"] = character_setting
         if len(roles) > MAX_ROLE_NUM:
             gr.Warning(f"当前最多支持{MAX_ROLE_NUM}个角色")
