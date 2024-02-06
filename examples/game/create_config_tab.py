@@ -20,7 +20,7 @@ from config_utils import (
 from enums import StagePerNight
 from generate_image import generate_user_logo_file
 from relationship import Familiarity
-from utils import check_uuid
+from utils import check_uuid, MAX_ROLE_NUM
 
 
 def convert_to_ds(samples):
@@ -213,7 +213,6 @@ def create_config_tab(config_tab, uuid):
 def config_plot_tab(plot_tab, uuid):
     cfg_name = PLOT_CFG_NAME
     plot_stage_choices = StagePerNight.to_list()
-    uuid = check_uuid(uuid)
     with gr.Row():
         plot_selector = gr.Dropdown(label="选择剧情id查看或者编辑剧情")
         create_plot_button = gr.Button("🆕创建剧情")
@@ -504,9 +503,8 @@ def config_plot_tab(plot_tab, uuid):
 
 def config_role_tab(role_tab, uuid):
     relationship_list = Familiarity.to_list()
-    uuid = check_uuid(uuid)
     with gr.Row():
-        role_selector = gr.Dropdown(label="选择角色查看或者编辑")
+        role_selector = gr.Dropdown(label="选择角色查看或者编辑", info=f"当前最多支持{MAX_ROLE_NUM}个角色")
         create_role_button = gr.Button("🆕创建角色")
         del_role_button = gr.Button("🧹删除角色")
         save_role_button = gr.Button("🛄保存角色")
@@ -707,8 +705,13 @@ def config_role_tab(role_tab, uuid):
         character_setting["hidden_plot"] = hidden_plot
         character_setting["plugin_background"] = [it[0] for it in plugin_background]
         new_role["character_setting"] = character_setting
+        if len(roles) > MAX_ROLE_NUM:
+            gr.Warning(f"当前最多支持{MAX_ROLE_NUM}个角色")
+            roles = roles[:MAX_ROLE_NUM]
         save_user_cfg(roles, uuid=uuid)
         role_names = [role["name"] for role in roles]
+        if name not in role_names:
+            name = role_names[0]
         return gr.Dropdown(value=name, choices=role_names)
 
     def restore_default_cfg(uuid):
