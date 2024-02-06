@@ -235,18 +235,17 @@ def one_on_one_loop(customers, player, uid, checkpoint):
         questions = [
             inquirer.List(
                 "ans",
-                message=f"{SYS_MSG_PREFIX}：接下来你会说些什么吗？(可以继续挖掘线索)",
+                message=f"{SYS_MSG_PREFIX}：接下来你会说些什么吗？(客人熟悉程度提升了，你可以通过与他对话继续挖掘线索)",
                 choices=[
-                    "感谢您的今天来我们这里消费。这里是赠送的果盘，请您享用。还有什么是我能为您做的呢？",
+                    "很高兴今天能让您满意！我能向您打听点事情吗？",
                     "感谢您的光顾。(结束与该顾客的当天对话)",
                 ],
             ),
         ]
 
-        choose_after_meal = f"""{SYS_MSG_PREFIX}接下来你会说些什么吗？(可以继续挖掘线索)
+        choose_after_meal = f"""{SYS_MSG_PREFIX} 接下来你会说些什么吗？(客人熟悉程度提升了，你可以通过与他对话继续挖掘线索)
             <select-box shape="card" item-width="auto" type="checkbox" options=
-            '{json.dumps(["感谢您的今天来我们这里消费。这里是赠送的果盘，"
-                                    "请您享用。还有什么是我能为您做的呢？",
+            '{json.dumps(["很高兴今天能让您满意！我能向您打听点事情吗？",
                                  "感谢您的光顾。(结束与该顾客的当天对话)", "自定义输入"])}'
                                  select-once></select-box>"""
 
@@ -271,7 +270,7 @@ def one_on_one_loop(customers, player, uid, checkpoint):
         elif answer == "自定义输入":
             answer = player({"content": answer})["content"]
         else:
-            player.talk("感谢您的今天来我们这里消费。这里是赠送的果盘，请您享用。还有什么是我能为您做的呢？",
+            player.talk("很高兴今天能让您满意！我能向您打听点事情吗？",
                         is_display=True)
         msg = Msg(role="user", name="餐馆老板", content=answer)
         player.observe(msg)
