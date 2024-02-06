@@ -24,11 +24,11 @@ from utils import check_uuid, MAX_ROLE_NUM
 
 
 def convert_to_ds(samples):
-    return [[str(sample).strip()] for sample in samples] if samples else None
+    return [[str(sample).strip()] for sample in samples if sample] if samples else None
 
 
 def convert_to_list(samples):
-    return [sample[0] for sample in samples] if samples else None
+    return [sample[0] for sample in samples if sample[0]] if samples else None
 
 
 def get_role_by_name(name, uuid, roles=None):
@@ -375,14 +375,15 @@ def config_plot_tab(plot_tab, uuid):
     def create_plot():
         return {
             plot_id: "",
-            plot_stages: gr.Dropdown(value=None),
+            plot_stages: gr.Dropdown(value=plot_stage_choices[0]),
             task_name: "",
-            max_attempts: "",
+            max_attempts: 2,
             predecessor_plots: None,
             main_roles: None,
             supporting_roles: None,
-            max_unblock_plots: "",
+            max_unblock_plots: 1,
             unblock_following_plots: None,
+            openings: "",
             npc_openings: "",
             npc_quit_openings: "",
             opening_image: "",
@@ -449,7 +450,7 @@ def config_plot_tab(plot_tab, uuid):
         unblock_following_plots = [
             {"unblock_chk_func": "always", "unblock_plot": int(p[1])}
             for p in unblock_following_plots
-            if p[1]
+            if all(p)
         ]
 
         if len(unblock_following_plots) > max_unblock_plots:
@@ -466,7 +467,7 @@ def config_plot_tab(plot_tab, uuid):
         plot_descriptions["npc_quit_openings"] = npc_quit_openings
         plot_descriptions["opening_image"] = opening_image
         plot_descriptions["user_openings_option"] = {
-            it[0]: it[1] for it in user_openings_option if it[0]
+            it[0]: it[1] for it in user_openings_option if all(it)
         }
         plot_descriptions["done_hint"] = done_hint
         plot_descriptions["done_condition"] = done_condition
@@ -696,14 +697,14 @@ def config_role_tab(role_tab, uuid):
         new_role["clue"] = [
             {"plot": int(clue[0]), "name": clue[1], "content": clue[2]}
             for clue in clues
-            if clue[0]
+            if all(clue)
         ]
-        hidden_plot = {int(it[0]): it[1] for it in hidden_plot if it[0]}
+        hidden_plot = {int(it[0]): it[1] for it in hidden_plot if all(it)}
         character_setting = new_role.get("character_setting", dict())
         character_setting["food_preference"] = food_preference
         character_setting["background"] = background
         character_setting["hidden_plot"] = hidden_plot
-        character_setting["plugin_background"] = [it[0] for it in plugin_background]
+        character_setting["plugin_background"] = [it[0] for it in plugin_background if it[0]]
         new_role["character_setting"] = character_setting
         if len(roles) > MAX_ROLE_NUM:
             gr.Warning(f"当前最多支持{MAX_ROLE_NUM}个角色")
