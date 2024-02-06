@@ -245,15 +245,23 @@
     color: #9e9e9e;
 }
 
+.clue-card-container{
+  padding-top: 10px;
+  display: flex; 
+  flex-wrap: wrap; 
+  justify-content: center; 
+  gap: 20px;
+}
 /* 线索卡片样式 */
 .clue-card {
-    flex: 1;
-    min-width: 200px;
+    cursor: pointer;
     max-width: 200px;
-    height: 300px;
+    min-width: 110px;
+    width: calc(50% - 10px);
+    align-items: center;
+    aspect-ratio: 2 / 3;
     background-color: #fff;
     box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-    margin: 10px;
     padding: 20px;
     border-radius: 15px;
     display: flex;
@@ -290,6 +298,10 @@
   height: 500px !important;
 }
 
+.app-chatbot .message-row > .avatar-container {
+  white-space: normal !important;
+}
+
 @media (max-width: 620px) {
   .app-chatbot {
     height: 300px !important;
@@ -300,4 +312,9 @@
   .app-chatbot {
     height: 230px !important;
   }
+ 
+  .app-chatbot .message-row > .message {
+    font-size: 14px !important;
+  }
 }
+

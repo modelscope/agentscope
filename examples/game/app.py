@@ -245,12 +245,12 @@ def get_clue(uid):
     for role_name_ in glb_clue_dict[uid].keys():
         flex_container_html = f"""
                 <div style='margin-bottom: 40px;'>
-                    <div style='display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;'>
+                    <div class="clue-card-container">
             """
         for clue in glb_clue_dict[uid][role_name_]["clue_list"]:
             flex_container_html += f"""
                        <div class='clue-card'>
-                           <img src='{clue['image'] if 'image' in clue.keys() else "#"}' alt='Clue image' style='height: 150px; width: 100%; object-fit: cover; border-radius: 10px; margin-bottom: 10px;'>
+                           <img src='{clue['image'] if 'image' in clue.keys() else "#"}' alt='Clue image' style='width: 90%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 10px; margin-bottom: 10px; flex-shrink: 0;'>
                            <div style='flex-grow: 1; overflow-y: auto;'>
                                <h4 style='margin: 5px 0; text-align: center; word-wrap: break-word; font-size: 18px; font-weight: bold;'>{clue['name']}</h4>
                                <p style='margin: 5px 0; word-wrap: break-word; text-align: justify; font-size: 14px;'>{clue['content'] if 'content' in clue.keys() else clue['summary']}</p>
@@ -261,7 +261,7 @@ def get_clue(uid):
             for _ in range(glb_clue_dict[uid][role_name_]['unexposed_num']):
                 flex_container_html += f"""
                             <div class='clue-card clue-card-locked'>
-                                <div style='flex-grow: 1; height: 150px; width: 100%; background-color: #bbb; border-radius: 10px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center;'>
+                                <div style='flex-grow: 1; width: 100%; background-color: #bbb; border-radius: 10px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center;'>
                                     <span style='color: #fff; font-weight: bold; font-size: 24px;'>?</span>
                                 </div>
                                 <h4 style='margin: 5px 0; text-align: center; word-wrap: break-word; font-size: 18px; font-weight: bold; color: #999;'>待发现</h4>
