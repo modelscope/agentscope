@@ -270,7 +270,7 @@ def one_on_one_loop(customers, player, uid, checkpoint):
         elif answer == "自定义输入":
             answer = player({"content": answer})["content"]
         else:
-            player.talk("感谢您的今天来我们这里消费。这里是赠送的果盘，请您享用。还有什么是我能为您做的呢？",
+            player.talk("很高兴今天能让您满意！我能向您打听点事情吗？",
                         is_display=True)
         msg = Msg(role="user", name="餐馆老板", content=answer)
         player.observe(msg)
