@@ -173,7 +173,7 @@ def create_config_accord(accord, uuid):
                 passwd_button = gr.Button(
                     value="🔓进入管理"
                 )
-        execute_group = gr.Group(visible=True)
+        execute_group = gr.Group(visible=False)
         with execute_group:
             with gr.Row():
                 with gr.Column():
