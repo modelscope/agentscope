@@ -552,6 +552,7 @@ def config_role_tab(role_tab, uuid):
             type="array",
             wrap=True,
             col_count=(2, "fixed"),
+            visible=False,
         )
         plugin_background = gr.Dataframe(
             label="设置角色插件隐藏背景",
@@ -561,6 +562,7 @@ def config_role_tab(role_tab, uuid):
             type="array",
             wrap=True,
             col_count=(1, "fixed"),
+            visible=False,
         )
 
         plot_clues = gr.Dataframe(
