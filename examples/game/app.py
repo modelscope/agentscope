@@ -249,13 +249,13 @@ def get_clue(uid):
         flex_container_html = f"""
             <div style='margin-bottom: 40px;'>
                 <h2 style='text-align: center;'>{role_name_}</h2> <!-- 角色名作为标题 -->
-                <div style='display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;'>
+                <div class='clue-card-container'>
         """
 
         for clue in glb_clue_dict[uid][role_name_]["clue_list"]:
             flex_container_html += f"""
                        <div class='clue-card'>
-                           <img src='{clue['image'] if 'image' in clue.keys() else "#"}' alt='Clue image' style='height: 150px; width: 100%; object-fit: cover; border-radius: 10px; margin-bottom: 10px;'>
+                           <img src='{clue['image'] if 'image' in clue.keys() else "#"}' alt='Clue image' style='width: 90%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 10px; margin-bottom: 10px; flex-shrink: 0;'>
                            <div style='flex-grow: 1; overflow-y: auto;'>
                                <h4 style='margin: 5px 0; text-align: center; word-wrap: break-word; font-size: 18px; font-weight: bold;'>{clue['name']}</h4>
                                <p style='margin: 5px 0; word-wrap: break-word; text-align: justify; font-size: 14px;'>{clue['content'] if 'content' in clue.keys() else clue['summary']}</p>
@@ -266,7 +266,7 @@ def get_clue(uid):
             for _ in range(glb_clue_dict[uid][role_name_]['unexposed_num']):
                 flex_container_html += f"""
                             <div class='clue-card clue-card-locked'>
-                                <div style='flex-grow: 1; height: 150px; width: 100%; background-color: #bbb; border-radius: 10px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center;'>
+                                <div style='flex-grow: 1; width: 100%; background-color: #bbb; border-radius: 10px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center;'>
                                      <!--  <<h4 style='margin: 5px 0; text-align: center; word-wrap: break-word; font-size: 18px; font-weight: bold; color: #999;'>?</h4>-->
                                     <span class='lock-icon'>&#128274;</span>
                                 </div>
@@ -381,20 +381,21 @@ if __name__ == "__main__":
             story_tab = gr.Tab('故事', id=2)
             with main_tab:
                 with gr.Row():
-                    chatbot = mgr.Chatbot(
-                        label="Dialog",
-                        show_label=False,
-                        height=500,
-                        bubble_full_width=False,
-                    )
-
-                    chatsys = mgr.Chatbot(
-                        label="系统栏",
-                        show_label=True,
-                        height=500,
-                        bubble_full_width=False,
-                        layout="panel",
-                    )
+                    with gr.Column(min_width=270):
+                        chatbot = mgr.Chatbot(
+                            elem_classes="app-chatbot",
+                            label="Dialog",
+                            show_label=False,
+                            bubble_full_width=False,
+                        )
+                    with gr.Column(min_width=270):
+                        chatsys = mgr.Chatbot(
+                            elem_classes="app-chatbot",
+                            label="系统栏",
+                            show_label=True,
+                            bubble_full_width=False,
+                            layout="panel",
+                        )
 
             with gr.Row():
                 with gr.Column():
