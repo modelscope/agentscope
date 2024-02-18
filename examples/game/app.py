@@ -22,8 +22,9 @@ from utils import (
     cycle_dots,
     check_uuid,
     send_chat_msg,
+    MAX_ROLE_NUM
 )
-from create_config_tab import create_config_tab, create_config_accord
+from create_config_tab import create_config_tab, create_config_accord, get_role_names
 
 import gradio as gr
 import modelscope_gradio_components as mgr
@@ -51,7 +52,6 @@ glb_end_choosing_index_dict = defaultdict(lambda: -1)
 
 glb_signed_user = []
 is_init = Event()
-
 
 def reset_glb_var(uid):
     global glb_history_dict, glb_clue_dict, glb_story_dict, \
@@ -178,6 +178,7 @@ def get_story(uid):
 
     story_item = get_story_msg(uid)
 
+    role_names = get_role_names(uuid=uid)
     # Only initialize at the first time
     for c in role_names:  # glb vars, careful!
         if c not in glb_story_dict[uid]:
@@ -224,6 +225,7 @@ def get_clue(uid):
 
     uid = check_uuid(uid)
     clue_item = get_clue_msg(uid)
+    role_names = get_role_names(uuid=uid)
 
     # Only initialize at the first time
     for c in role_names:  # glb vars, careful!
@@ -241,12 +243,15 @@ def get_clue(uid):
             glb_clue_dict[uid][role_name_]['clue_list'].append(clue_item['clue'])
         glb_clue_dict[uid][role_name_]['unexposed_num'] = clue_item['unexposed_num']
 
-    flex_container_html_list = []
+    flex_container_html_list = ""
+ 
     for role_name_ in glb_clue_dict[uid].keys():
         flex_container_html = f"""
-                <div style='margin-bottom: 40px;'>
-                    <div class="clue-card-container">
-            """
+            <div style='margin-bottom: 40px;'>
+                <h2 style='text-align: center;'>{role_name_}</h2> <!-- 角色名作为标题 -->
+                <div class='clue-card-container'>
+        """
+
         for clue in glb_clue_dict[uid][role_name_]["clue_list"]:
             flex_container_html += f"""
                        <div class='clue-card'>
@@ -262,16 +267,19 @@ def get_clue(uid):
                 flex_container_html += f"""
                             <div class='clue-card clue-card-locked'>
                                 <div style='flex-grow: 1; width: 100%; background-color: #bbb; border-radius: 10px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center;'>
-                                    <span style='color: #fff; font-weight: bold; font-size: 24px;'>?</span>
+                                     <!--  <<h4 style='margin: 5px 0; text-align: center; word-wrap: break-word; font-size: 18px; font-weight: bold; color: #999;'>?</h4>-->
+                                    <span class='lock-icon'>&#128274;</span>
                                 </div>
                                 <h4 style='margin: 5px 0; text-align: center; word-wrap: break-word; font-size: 18px; font-weight: bold; color: #999;'>待发现</h4>
                             </div>
                         """
         flex_container_html += """
                                     </div>
+                                    </div>
                             """
-        flex_container_html_list.append(flex_container_html)
-    return [gr.HTML(x) for x in flex_container_html_list]
+                            
+        flex_container_html_list += flex_container_html
+    return gr.HTML(flex_container_html_list)
 
 
 def fn_choice(data: gr.EventData, uid):
@@ -421,16 +429,11 @@ if __name__ == "__main__":
             </div>
             """
             gr.HTML(guild_html)
-            role_tabs = gr.Tabs(visible=False)
-            roles = load_user_cfg()
-            role_names = [role['name'] for role in roles]
-
-            role_tab_clue_dict = {}
-
-            for role_name_t in role_names:
-                role = gr.Tab(label=role_name_t)
-                with role:
-                    role_tab_clue_dict[role_name_t] = gr.HTML()
+            ##################### 
+            # hard code: to be fixed
+            # 线索卡初始化了比较多的tab页，通过角色的数量来控制可见范围
+            #####################
+            clue_container = gr.HTML()
 
         with story_tab:
             story_html = """
@@ -501,7 +504,7 @@ if __name__ == "__main__":
 
         demo.load(get_clue,
                   inputs=[uuid],
-                  outputs=[role_tab_clue_dict[i] for i in role_names],
+                  outputs=clue_container,
                   every=0.5)
         demo.load(get_story,
                   inputs=[uuid],
