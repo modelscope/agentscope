@@ -130,12 +130,22 @@ def run_shell_cmd(cmd, msg):
 
 def run_shell_file(cmd, msg):
     try:
-        with tempfile.NamedTemporaryFile(delete=True) as tfile:
-            tfile.write(cmd.encode('utf-8'))
+        with tempfile.NamedTemporaryFile(delete=False, mode='w+t') as tfile:
+            tfile.write(cmd)
             tfile.flush()
             os.fchmod(tfile.fileno(), 0o755)
-            output = subprocess.run([tfile.name], check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-            return '\n'.join([msg,f'===outputs===', output.stdout])
+            tfile.close()
+            output = subprocess.run(
+                [tfile.name],
+                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True
+            )
+            result = '\n'.join([msg, '===outputs===', output.stdout])
+        os.remove(tfile.name)
+        return result
+
     except Exception as e:
         gr.Warning("命令不正确，请检查。")
     return msg
