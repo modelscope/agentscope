@@ -72,7 +72,9 @@ class BasicModelTest(unittest.TestCase):
         model = load_model_by_config_name("my_post_api")
         self.assertEqual(model.config_name, "my_post_api")
         self.assertRaises(
-            ValueError, load_model_by_config_name, "non_existent_id"
+            ValueError,
+            load_model_by_config_name,
+            "non_existent_id",
         )
 
         # load a single config
@@ -95,5 +97,7 @@ class BasicModelTest(unittest.TestCase):
         self.assertEqual(response.text, "test_model_wrapper")
         clear_model_configs()
         self.assertRaises(
-            ValueError, load_model_by_config_name, "test_model_wrapper"
+            ValueError,
+            load_model_by_config_name,
+            "test_model_wrapper",
         )

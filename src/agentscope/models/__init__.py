@@ -130,7 +130,7 @@ def read_model_configs(
     for cfg in format_configs:
         if cfg.config_name in _MODEL_CONFIGS:
             raise ValueError(
-                f"config_name [{cfg.config_name}] already exists."
+                f"config_name [{cfg.config_name}] already exists.",
             )
         _MODEL_CONFIGS[cfg.config_name] = cfg
 
