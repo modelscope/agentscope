@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AgentScope</title>
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static', filename='css/size.css') }}">
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static', filename='css/colors.css') }}">
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static', filename='css/fonts.css') }}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static', filename='css/components.css') }}">
+</head>
+<body>
+
+<!-- Sidebar -->
+<div id="sidebar">
+    <div id="sidebar-title">AgentScope</div>
+    <div class="sidebar-subtitle">Projects</div>
+    <div id="project-list" class="text-cannot-selected"></div>
+
+    <div id="sidebar-contact">
+        <div class="sidebar-row">Feel free to contact us!</div>
+        <div class="sidebar-row">
+            <a id="ding-btn" class="share-btn" title="Dingding" href="https://qr.dingtalk.com/action/joingroup?code=v1,k1,eENWB2Lr4ic2vWjKDsjvI65YxceIsyuDcbfrNF+5+YA=&_dt_no_comment=1&origin=1">
+                <svg class="share-img" viewBox="0 0 1024 1024"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path d="M879.36 393.813a174.933 174.933 0 0 1-11.307 29.014v1.28c-32.853 70.186-118.4 208-118.4 208l-24.96 42.666h120.534l-231.04 306.56 52.266-208.64H571.52l32.853-138.026c-26.666 6.4-58.24 15.36-95.573 27.306 0 0-50.56 29.654-145.493-56.96 0 0-64-56.533-26.88-70.613a1098.24 1098.24 0 0 1 124.586-20.053c64-8.747 104.534-13.44 104.534-13.44s-199.68 2.986-247.04-4.48-106.667-86.614-120.32-156.16c0 0-19.84-38.187 42.666-20.054s320 70.4 320 70.4-335.786-103.04-357.973-128S137.813 124.8 143.36 56.107a15.147 15.147 0 0 1 20.053-13.44S411.52 156.16 581.333 218.453s317.227 94.72 298.027 175.36z">
+                    </path>
+                </svg>
+            </a>
+            <a id="discord-btn" class="share-btn" title="Discord"
+               href="https://discord.gg/eYMpfnkG8h">
+                <svg class="share-img" viewBox="0 0 1280 1024"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1049.062 139.672a3 3 0 0 0-1.528-1.4A970.13 970.13 0 0 0 808.162 64.06a3.632 3.632 0 0 0-3.846 1.82 674.922 674.922 0 0 0-29.8 61.2 895.696 895.696 0 0 0-268.852 0 619.082 619.082 0 0 0-30.27-61.2 3.78 3.78 0 0 0-3.848-1.82 967.378 967.378 0 0 0-239.376 74.214 3.424 3.424 0 0 0-1.576 1.352C78.136 367.302 36.372 589.38 56.86 808.708a4.032 4.032 0 0 0 1.53 2.75 975.332 975.332 0 0 0 293.65 148.378 3.8 3.8 0 0 0 4.126-1.352A696.4 696.4 0 0 0 416.24 860.8a3.72 3.72 0 0 0-2.038-5.176 642.346 642.346 0 0 1-91.736-43.706 3.77 3.77 0 0 1-0.37-6.252 502.094 502.094 0 0 0 18.218-14.274 3.638 3.638 0 0 1 3.8-0.512c192.458 87.834 400.82 87.834 591 0a3.624 3.624 0 0 1 3.848 0.466 469.066 469.066 0 0 0 18.264 14.32 3.768 3.768 0 0 1-0.324 6.252 602.814 602.814 0 0 1-91.78 43.66 3.75 3.75 0 0 0-2 5.222 782.11 782.11 0 0 0 60.028 97.63 3.728 3.728 0 0 0 4.126 1.4A972.096 972.096 0 0 0 1221.4 811.458a3.764 3.764 0 0 0 1.53-2.704c24.528-253.566-41.064-473.824-173.868-669.082zM444.982 675.16c-57.944 0-105.688-53.174-105.688-118.478s46.818-118.482 105.688-118.482c59.33 0 106.612 53.64 105.686 118.478 0 65.308-46.82 118.482-105.686 118.482z m390.76 0c-57.942 0-105.686-53.174-105.686-118.478s46.818-118.482 105.686-118.482c59.334 0 106.614 53.64 105.688 118.478 0 65.308-46.354 118.482-105.688 118.482z">
+                    </path>
+                </svg>
+            </a>
+            <a id="wechat-btn" class="share-btn" title="WeChat"
+               href="http://qr61.cn/oAO4hN/qKFNsbj">
+                <svg class="share-img" viewBox="0 0 1024 1024"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path d="M362.403292 95.115814C163.141681 95.115814 0 230.56555 0 403.339212c0 99.329806 54.179894 181.201646 145.081717 244.411523l-36.119929 108.961787 126.419753-63.811875c45.149912 9.029982 81.87184 18.059965 127.021752 18.059965 11.437978 0 22.875955-0.601999 33.711934-1.203998-7.223986-24.079953-11.437978-49.363904-11.437978-75.851852 0-158.325691 136.051734-286.55144 308.223398-286.55144 12.039976 0 23.477954 0.601999 34.915932 2.407995C696.51264 203.475603 540.594944 95.115814 362.403292 95.115814zM240.79953 339.527337c-24.681952 0-44.547913-19.865961-44.547913-44.547913 0-24.681952 19.865961-44.547913 44.547913-44.547913s44.547913 19.865961 44.547913 44.547913C285.347443 319.661376 265.481481 339.527337 240.79953 339.527337zM495.445032 339.527337c-24.681952 0-44.547913-19.865961-44.547913-44.547913 0-24.681952 19.865961-44.547913 44.547913-44.547913s44.547913 19.865961 44.547913 44.547913C539.992945 319.661376 520.126984 339.527337 495.445032 339.527337zM1024 629.69077c0-145.081717-145.081717-263.073486-307.621399-263.073486-172.171664 0-308.223398 117.99177-308.223398 263.073486 0 145.081717 136.051734 263.073486 308.223398 263.073486 36.119929 0 72.239859-9.029982 108.961787-18.059965l99.329806 54.179894-27.089947-90.299824C969.820106 783.802469 1024 711.56261 1024 629.69077zM620.660788 583.938859c-19.865961 0-36.119929-16.253968-36.119929-36.119929s16.253968-36.119929 36.119929-36.119929 36.119929 16.253968 36.119929 36.119929S640.526749 583.938859 620.660788 583.938859zM817.514403 583.938859c-19.865961 0-36.119929-16.253968-36.119929-36.119929s16.253968-36.119929 36.119929-36.119929 36.119929 16.253968 36.119929 36.119929S837.982363 583.938859 817.514403 583.938859z">
+                    </path>
+                </svg>
+            </a>
+
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div id="main-content">
+    <div id="main-content-title">Runs</div>
+    <div id="custom-toolbar">
+        <input type="text" id="customSearch" placeholder="Search">
+        <button id="refreshButton" class="toolbar-btn" title="Refresh table">
+            <svg class="toolbar-btn-img"
+                 viewBox="0 0 1024 1024"
+                 xmlns="http://www.w3.org/2000/svg">
+                <path d="M281.12 128C151.008 206.4 64 349.024 64 512c0 247.424 200.576 448 448 448a32 32 0 0 0 0-64c-212.064 0-384-171.936-384-384 0-154.976 91.808-288.512 224-349.184V288.64c0 17.344 14.848 31.392 32 31.392 17.664 0 32-13.76 32-31.392V95.392a30.88 30.88 0 0 0-9.376-21.984l0.096-0.224A30.944 30.944 0 0 0 384.608 64H191.392C174.048 64 160 78.848 160 96c0 17.664 13.76 32 31.392 32h89.728z m461.76 768C872.992 817.6 960 674.976 960 512c0-247.424-200.576-448-448-448a32 32 0 0 0 0 64c212.064 0 384 171.936 384 384 0 154.976-91.808 288.512-224 349.184V735.36c0-17.344-14.848-31.392-32-31.392-17.664 0-32 13.76-32 31.392v193.216c0 8.576 3.616 16.32 9.376 21.984l-0.096 0.224a30.944 30.944 0 0 0 22.112 9.184h193.216c17.344 0 31.392-14.848 31.392-32 0-17.664-13.76-32-31.392-32H742.88z">
+                </path>
+            </svg>
+        </button>
+        <div id="columnToggler">
+            <button class="toolbar-btn" data-toggle="dropdown" title="Columns">
+                <svg class="toolbar-btn-img"
+                     viewBox="0 0 1024 1024"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path d="M416 64H128c-35.2 0-64 28.8-64 64v768c0 35.2 28.8 64 64 64h288c35.2 0 64-28.8 64-64V128c0-35.2-28.8-64-64-64z m0 800c0 19.2-12.8 32-32 32H160c-19.2 0-32-12.8-32-32V160c0-19.2 12.8-32 32-32h224c19.2 0 32 12.8 32 32v704zM896 64H608c-35.2 0-64 28.8-64 64v768c0 35.2 28.8 64 64 64h288c35.2 0 64-28.8 64-64V128c0-35.2-28.8-64-64-64z m0 800c0 19.2-12.8 32-32 32H640c-19.2 0-32-12.8-32-32V160c0-19.2 12.8-32 32-32h224c19.2 0 32 12.8 32 32v704z">
+                    </path>
+                </svg>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <div>
+                    <li><input type="checkbox" data-column="all" checked>
+                        ALL
+                    </li>
+                    <li><input type="checkbox" data-column="id" checked> ID
+                    </li>
+                    <li><input type="checkbox" data-column="name" checked>
+                        NAME
+                    </li>
+                    <li><input type="checkbox" data-column="project"
+                               checked> PROJECT
+                    </li>
+                    <li><input type="checkbox" data-column="timestamp"
+                               checked> TIMESTAMP
+                    </li>
+                </div>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div id="table-container">
+        <table id="run-table"
+               class="table table-bordered table-hover table-condensed table-striped">
+            <thead class="table-header">
+            <tr>
+                <th class="text-cannot-selected" data-field="id">ID</th>
+                <th class="text-cannot-selected" data-field="name">NAME</th>
+                <th class="text-cannot-selected" data-field="project">
+                    PROJECT
+                </th>
+                <th class="text-cannot-selected" data-field="timestamp">
+                    TIMESTAMP
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-table.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/socket.io.js') }}"></script>
+<script src="{{ url_for('static', filename='js/home.js') }}"></script>
+<link rel="stylesheet" type="text/css"
+      href="{{ url_for('static', filename='css/home.css') }}">
+
+</body>
+</html>

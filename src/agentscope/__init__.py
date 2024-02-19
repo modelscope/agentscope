@@ -9,6 +9,7 @@ from . import pipelines
 from . import service
 from . import message
 from . import prompt
+from . import web_ui
 
 # objects or function
 from .msghub import msghub

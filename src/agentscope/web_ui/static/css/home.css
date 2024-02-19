@@ -1,0 +1,188 @@
+:root {
+    /*sidebar*/
+    /*Content Title*/
+
+    --main-content-title-total-height: var(--main-content-title-height);
+
+    /*Custom Toolbar*/
+    --custom-toolbar-height: 50px;
+    --custom-toolbar-margin-top: 20px;
+    --custom-toolbar-total-height: calc(var(--custom-toolbar-height) + var(--custom-toolbar-margin-top));
+
+    /*Table Container*/
+    --table-container-margin-top: 10px;
+}
+
+#sidebar {
+    height: var(--sidebar-height);
+    width: var(--sidebar-width);
+    top: 0;
+    left: 0;
+    bottom: 0;
+    position: fixed;
+    background-color: var(--sidebar-bg);
+    padding-top: var(--sidebar-padding-top);
+    padding-bottom: var(--sidebar-padding-bottom);
+    color: var(--sidebar-title-color);
+}
+
+
+#main-content {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    margin-left: var(--main-content-margin-left);
+    padding: var(--main-content-padding);
+    height: var(--main-content-height);
+    width: var(--main-content-width);
+    background: transparent;
+}
+
+#main-content-title {
+    display: flex;
+    align-items: center;
+    font-size: 25px;
+    height: var(--main-content-title-height);
+    color: var(--dark-color);
+}
+
+#table-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    background: #ffffff;
+    margin-top: var(--table-container-margin-top);
+    border: 1px solid var(--border-color);
+    height: calc(100vh - var(--main-content-title-total-height) - var(--custom-toolbar-total-height) - var(--table-container-margin-top));
+    max-height: calc(100vh - var(--main-content-title-total-height) - var(--custom-toolbar-total-height) - var(--table-container-margin-top));
+    border-radius: 3px;
+}
+
+#run-table {
+    height: auto;
+    background: transparent;
+}
+
+#run-table thead tr th {
+    /* Suppose there are 4 columns, each with 25% width */
+    width: 25%;
+    text-align: left;
+    /* Fix table header */
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+#run-table tbody tr td {
+    /* Suppose there are 4 columns, each with 25% width */
+    width: 25%;
+    text-align: left;
+    font-size: 14px;
+}
+
+/* Customized zebra color */
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #e8e8e8;
+}
+
+#run-table tr:hover {
+    background-color: var(--light-color);
+    transition: 0.4s;
+}
+
+#project-list {
+    overflow-y: auto;
+    height: calc(100vh - var(--sidebar-padding-top) - var(--sidebar-title-height) - var(--sidebar-title-margin-bottom) - var(--sidebar-subtitle-height) - var(--sidebar-padding-bottom) - var(--sidebar-contact-height));
+}
+
+.table-header th {
+    background-color: var(--table-header-bg);
+    border: 1px solid #ffffff;
+    color: #ffffff;
+}
+
+/* Disable status bar of table */
+.fixed-table-loading {
+    display: none !important;
+}
+
+#custom-toolbar {
+    height: var(--custom-toolbar-height);
+    display: flex;
+    flex-grow: 1; /* Take up all available space */
+    align-items: center;
+    margin-top: var(--custom-toolbar-margin-top);
+}
+
+#customSearch {
+    height: 40px;
+    flex-grow: 1; /* Take up all available space */
+    padding-left: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    color: var(--dark-color);
+}
+
+#customSearch::placeholder {
+    color: var(--dark-color);
+}
+
+#customSearch:focus {
+    outline-color: var(--dark-color);
+}
+
+.toolbar-btn {
+    height: 40px;
+    width: 40px;
+    border: 0;
+    margin-left: 10px;
+    align-items: center;
+    background-color: transparent;
+    fill: var(--btn-fill-color);
+    border-radius: 5px;
+}
+
+.toolbar-btn:hover {
+    background-color: var(--light-color);
+}
+
+.toolbar-btn:focus {
+    outline: none;
+}
+
+.toolbar-btn:active {
+    background-color: var(--dark-color);
+    fill: #ffffff;
+}
+
+.toolbar-btn-img {
+    width: 25px;
+    height: 25px;
+    object-fit: fill;
+}
+
+
+.dropdown-menu {
+    text-align: center;
+    padding-left: 0;
+}
+
+.dropdown-menu > div {
+    display: inline-block; /* Set the div to inline-block */
+    text-align: left; /* Align text to left */
+}
+
+.dropdown-menu li {
+    text-align: left;
+    list-style-type: none;
+}
+
+.bootstrap-table .asc {
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='none' viewBox='0 0 24 24' stroke='%23ffffff'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 15l7-7 7 7'/%3E%3C/svg%3E") no-repeat right center;
+    padding-right: 20px; /* Ensure that the text does not cover the icon */
+}
+
+.bootstrap-table .desc {
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='none' viewBox='0 0 24 24' stroke='%23ffffff'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E") no-repeat right center;
+    padding-right: 20px; /* Ensure that the text does not cover the icon */
+}
+

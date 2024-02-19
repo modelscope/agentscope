@@ -1,0 +1,32 @@
+:root {
+    /*Length*/
+    /*Sidebar*/
+    --sidebar-title-height: 50px;
+    --sidebar-title-margin-bottom: 50px;
+    --sidebar-width: 250px;
+    --sidebar-height: 100%;
+    --sidebar-padding-top: 60px;
+    --sidebar-padding-bottom: 60px;
+    --sidebar-subtitle-height: 50px;
+
+    --sidebar-title-total-height: calc(var(--sidebar-title-height) + var(--sidebar-title-margin-bottom));
+
+    /*Contact*/
+    --sidebar-share-btn-length: 50px;
+    --sidebar-contact-margin: 20px;
+    --sidebar-contact-padding: 10px;
+    --sidebar-row-height: 40px;
+    --sidebar-contact-border: 1px;
+    --sidebar-contact-height: calc(2 * (var(--sidebar-contact-padding) + var(--sidebar-contact-border) + var(--sidebar-row-height)));
+
+    /*Main content*/
+    --main-content-padding: 65px 40px 40px 40px; /* top right bottom left */
+    --main-content-margin-left: var(--sidebar-width);
+    --main-content-margin-right: 0px;
+    --main-content-height: 100vh;
+    --main-content-width: calc(100% - var(--main-content-margin-left) - var(--main-content-margin-right));
+    --main-content-title-height: 50px;
+
+    /*Font*/
+    --sidebar-font-size: 15px;
+}
