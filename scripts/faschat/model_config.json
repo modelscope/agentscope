@@ -1,6 +1,6 @@
 {
-    "type": "openai",
-    "name": "fs-llama-2",
+    "model_type": "openai",
+    "config_name": "fs-llama-2",
     "model_name": "llama-2",
     "api_key": "EMPTY",
     "client_args": {

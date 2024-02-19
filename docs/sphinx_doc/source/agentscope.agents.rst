@@ -48,3 +48,12 @@ dict_dialog_agent module
    :members:
    :undoc-members:
    :show-inheritance:
+
+
+text_to_image_agent module
+-------------------------------
+
+.. automodule:: agentscope.agents.text_to_image_agent
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -97,12 +97,12 @@ AgentScope supports the following model API services:
   - [HuggingFace](https://huggingface.co/docs/api-inference/index) and [ModelScope](https://www.modelscope.cn/docs/%E9%AD%94%E6%90%ADv1.5%E7%89%88%E6%9C%AC%20Release%20Note%20(20230428)) inference APIs
   - Customized model APIs
 
-|                      | Type Argument      | Support APIs                                                  |
-|----------------------|--------------------|---------------------------------------------------------------|
-| OpenAI Chat API      | `openai`           | Standard OpenAI Chat API, FastChat and vllm                   |
-| OpenAI DALL-E API    | `openai_dall_e`    | Standard DALL-E API                                           |
-| OpenAI Embedding API | `openai_embedding` | OpenAI embedding API                                          |
-| Post API             | `post_api`         | Huggingface/ModelScope inference API, and customized post API |
+|                      | Model Type Argument | Support APIs                                                   |
+|----------------------|---------------------|----------------------------------------------------------------|
+| OpenAI Chat API      | `openai`            | Standard OpenAI Chat API, FastChat and vllm                    |
+| OpenAI DALL-E API    | `openai_dall_e`     | Standard DALL-E API                                            |
+| OpenAI Embedding API | `openai_embedding`  | OpenAI embedding API                                           |
+| Post API             | `post_api`          | Huggingface/ModelScope inference API, and customized post API  |
 
 ##### OpenAI API Config
 
@@ -110,9 +110,9 @@ For OpenAI APIs, you need to prepare a dict of model config with the following f
 
 ```
 {
-    "type": "openai" | "openai_dall_e" | "openai_embedding",
-    "name": "{your_config_name}",               # The name used to identify your config
-    "model_name": "{model_name, e.g. gpt-4}",   # The used model in openai API
+    "config_name": "{config name}",             # The name to identify the config
+    "model_type": "openai" | "openai_dall_e" | "openai_embedding",
+    "model_name": "{model name, e.g. gpt-4}",   # The model in openai API
 
     # Optional
     "api_key": "xxx",                           # The API key for OpenAI API. If not set, env
@@ -128,8 +128,8 @@ For post requests APIs, the config contains the following fields.
 
 ```
 {
-    "type": "post_api",
-    "name": "{your_config_name}",     # The name used to identify config
+    "config_name": "{config name}",   # The name to identify the config
+    "model_type": "post_api",
     "api_url": "https://xxx",         # The target url
     "headers": {                      # Required headers
       ...
@@ -152,7 +152,7 @@ import agentscope
 agentscope.init(model_configs="./model_configs.json")
 
 # Create a dialog agent and a user agent
-dialog_agent = DialogAgent(name="assistant", model="gpt-4")
+dialog_agent = DialogAgent(name="assistant", model_config_name="your_config_name")
 user_agent = UserAgent()
 ```
 

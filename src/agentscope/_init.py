@@ -142,10 +142,6 @@ def init_process(
         logger_level (`LOG_LEVEL`, defaults to `"INFO"`):
             The logging level of logger.
     """
-    # Load model configs if needed
-    if model_configs is not None:
-        read_model_configs(model_configs)
-
     # Init the runtime
     _runtime.project = project
     _runtime.name = name
@@ -161,3 +157,7 @@ def init_process(
     # Init logger
     dir_log = str(file_manager.dir_log) if save_log else None
     setup_logger(dir_log, logger_level)
+
+    # Load model configs if needed
+    if model_configs is not None:
+        read_model_configs(model_configs)
