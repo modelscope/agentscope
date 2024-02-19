@@ -385,8 +385,10 @@ class Customer(StateAgent, DialogAgent):
             else:
                 conversation += "背景" + ": " + mem["content"]
         background = self.background
-        if self.plot_stage == CustomerPlot.ACTIVE:
-            background += self.config["character_setting"]["hidden_plot"][self.active_plots[0]]
+        background += self.config["character_setting"]["hidden_plot"][
+            self.prev_active_plots[0]
+        ]
+        logger.debug(background)
 
         pov_prompt = self.game_config["pov_story"].format_map(
             {
