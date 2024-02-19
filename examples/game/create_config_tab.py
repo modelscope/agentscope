@@ -591,12 +591,21 @@ def config_role_tab(role_tab, uuid):
         role = get_role_by_name(name=name, uuid=uuid)
 
         character_setting = role["character_setting"]
-        hidden_plots = character_setting.get("hidden_plot", dict()) or dict()
-        hidden_plots =[[str(k), v.strip()] for k, v in hidden_plots.items()] or None
         plugin_backgrounds = character_setting.get("plugin_background", []) or []
         plugin_backgrounds = [[string.strip()] for string in plugin_backgrounds if string] or None
         clues = role.get("clue", []) or []
+        hidden_plots = dict()
+        if clues:
+            for item in clues:
+                if item["plot"] in hidden_plots.keys():
+                    hidden_plots[item["plot"]] += "\n" + item["content"]
+                else:
+                    hidden_plots[item["plot"]] = item["content"]
+
         clues = [[str(clue["plot"]), clue["name"], clue["content"].strip()]for clue in clues] or None
+
+        hidden_plots = [[str(k), v.strip()] for k, v in
+                        hidden_plots.items()] or None
 
         return {
             avatar_file: gr.Image(value=role["avatar"], interactive=True),
