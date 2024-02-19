@@ -4,7 +4,7 @@ from typing import Union, Any
 
 from loguru import logger
 
-from .model import ModelWrapperBase
+from .model import ModelWrapperBase, ModelResponse
 from ..file_manager import file_manager
 
 try:
@@ -16,6 +16,7 @@ from ..utils.monitor import MonitorFactory
 from ..utils.monitor import get_full_name
 from ..utils import QuotaExceededError
 from ..utils.token_utils import get_openai_max_length
+from ..constants import _DEFAULT_API_BUDGET
 
 
 class OpenAIWrapper(ModelWrapperBase):
@@ -23,23 +24,22 @@ class OpenAIWrapper(ModelWrapperBase):
 
     def __init__(
         self,
-        name: str,
+        config_name: str,
         model_name: str = None,
         api_key: str = None,
         organization: str = None,
         client_args: dict = None,
         generate_args: dict = None,
-        budget: float = None,
+        budget: float = _DEFAULT_API_BUDGET,
+        **kwargs: Any,
     ) -> None:
         """Initialize the openai client.
 
         Args:
-            name (`str`):
-                The name of the model wrapper, which is used to identify
-                model configs.
+            config_name (`str`):
+                The name of the model config.
             model_name (`str`, default `None`):
-                The name of the model to use in OpenAI API. If not
-                specified, it will be the same as `name`.
+                The name of the model to use in OpenAI API.
             api_key (`str`, default `None`):
                 The API key for OpenAI API. If not specified, it will
                 be read from the environment variable `OPENAI_API_KEY`.
@@ -55,14 +55,23 @@ class OpenAIWrapper(ModelWrapperBase):
                 The total budget using this model. Set to `None` means no
                 limit.
         """
-        super().__init__(name)
+        if model_name is None:
+            model_name = config_name
+        super().__init__(
+            config_name=config_name,
+            model_name=model_name,
+            client_args=client_args,
+            generate_args=generate_args,
+            budget=budget,
+            **kwargs,
+        )
 
         if openai is None:
             raise ImportError(
                 "Cannot find openai package in current python environment.",
             )
 
-        self.model_name = model_name or name
+        self.model = model_name
         self.generate_args = generate_args or {}
 
         self.client = openai.OpenAI(
@@ -73,10 +82,10 @@ class OpenAIWrapper(ModelWrapperBase):
 
         # Set the max length of OpenAI model
         try:
-            self.max_length = get_openai_max_length(self.model_name)
+            self.max_length = get_openai_max_length(self.model)
         except Exception as e:
             logger.warning(
-                f"fail to get max_length for {self.model_name}: " f"{e}",
+                f"fail to get max_length for {self.model}: " f"{e}",
             )
             self.max_length = None
 
@@ -89,9 +98,9 @@ class OpenAIWrapper(ModelWrapperBase):
     def _register_budget(self) -> None:
         self.monitor = MonitorFactory.get_monitor()
         self.monitor.register_budget(
-            model_name=self.model_name,
+            model_name=self.model,
             value=self.budget,
-            prefix=self.model_name,
+            prefix=self.model,
         )
 
     def _register_default_metrics(self) -> None:
@@ -110,11 +119,13 @@ class OpenAIWrapper(ModelWrapperBase):
         Returns:
             `str`: Metric name of this wrapper.
         """
-        return get_full_name(name=metric_name, prefix=self.model_name)
+        return get_full_name(name=metric_name, prefix=self.model)
 
 
 class OpenAIChatWrapper(OpenAIWrapper):
     """The model wrapper for OpenAI's chat API."""
+
+    model_type: str = "openai"
 
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
@@ -136,9 +147,8 @@ class OpenAIChatWrapper(OpenAIWrapper):
     def __call__(
         self,
         messages: list,
-        return_raw: bool = False,
         **kwargs: Any,
-    ) -> Union[str, dict]:
+    ) -> ModelResponse:
         """Processes a list of messages to construct a payload for the OpenAI
         API call. It then makes a request to the OpenAI API and returns the
         response. This method also updates monitoring metrics based on the
@@ -153,8 +163,6 @@ class OpenAIChatWrapper(OpenAIWrapper):
         Args:
             messages (`list`):
                 A list of messages to process.
-            return_raw (`bool`, default `False`):
-                Whether to return the raw response from OpenAI API.
             **kwargs (`Any`):
                 The keyword arguments to OpenAI chat completions API,
                 e.g. `temperature`, `max_tokens`, `top_p`, etc. Please refer to
@@ -162,8 +170,9 @@ class OpenAIChatWrapper(OpenAIWrapper):
                 for more detailed arguments.
 
         Returns:
-            A dictionary that contains the response of the model and related
-            information (e.g. cost, time, the number of tokens, etc.).
+            `ModelResponse`:
+                The response text in text field, and the raw response in
+                raw field.
 
         Note:
             `parse_func`, `fault_handler` and `max_retries` are reserved for
@@ -191,7 +200,7 @@ class OpenAIChatWrapper(OpenAIWrapper):
 
         # step3: forward to generate response
         response = self.client.chat.completions.create(
-            model=self.model_name,
+            model=self.model,
             messages=messages,
             **kwargs,
         )
@@ -199,7 +208,7 @@ class OpenAIChatWrapper(OpenAIWrapper):
         # step4: record the api invocation if needed
         self._save_model_invocation(
             arguments={
-                "model": self.model_name,
+                "model": self.model,
                 "messages": messages,
                 **kwargs,
             },
@@ -210,21 +219,23 @@ class OpenAIChatWrapper(OpenAIWrapper):
         try:
             self.monitor.update(
                 response.usage.model_dump(),
-                prefix=self.model_name,
+                prefix=self.model,
             )
         except QuotaExceededError as e:
             # TODO: optimize quota exceeded error handling process
             logger.error(e.message)
 
-        # step6: return raw response if needed
-        if return_raw:
-            return response.model_dump()
-        else:
-            return response.choices[0].message.content
+        # step6: return response
+        return ModelResponse(
+            text=response.choices[0].message.content,
+            raw=response.model_dump(),
+        )
 
 
 class OpenAIDALLEWrapper(OpenAIWrapper):
     """The model wrapper for OpenAI's DALL·E API."""
+
+    model_type: str = "openai_dall_e"
 
     _resolutions: list = [
         "1792*1024",
@@ -247,20 +258,16 @@ class OpenAIDALLEWrapper(OpenAIWrapper):
     def __call__(
         self,
         prompt: str,
-        return_raw: bool = False,
         save_local: bool = False,
         **kwargs: Any,
-    ) -> Union[dict, list[str]]:
+    ) -> ModelResponse:
         """
         Args:
             prompt (`str`):
                 The prompt string to generate images from.
-            return_raw (`bool`, default `False`):
-                Whether to return the raw response from OpenAI API.
             save_local: (`bool`, default `False`):
                 Whether to save the generated images locally, and replace
-                the returned image url with the local path. When
-                `return_raw` is `True`, this argument is ignored.
+                the returned image url with the local path.
             **kwargs (`Any`):
                 The keyword arguments to OpenAI image generation API, e.g.
                 `n`, `quality`, `response_format`, `size`, etc. Please refer to
@@ -268,9 +275,9 @@ class OpenAIDALLEWrapper(OpenAIWrapper):
                 for more detailed arguments.
 
         Returns:
-            Raw response in json format if `return_raw` is `True`, otherwise
-            a list of image urls. When `save_local` is `False`, the image
-            urls is
+            `ModelResponse`:
+                A list of image urls in image_urls field and the
+                raw response in raw field.
 
         Note:
             `parse_func`, `fault_handler` and `max_retries` are reserved for
@@ -291,7 +298,7 @@ class OpenAIDALLEWrapper(OpenAIWrapper):
         # step2: forward to generate response
         try:
             response = self.client.images.generate(
-                model=self.model_name,
+                model=self.model,
                 prompt=prompt,
                 **kwargs,
             )
@@ -304,31 +311,29 @@ class OpenAIDALLEWrapper(OpenAIWrapper):
         # step3: record the model api invocation if needed
         self._save_model_invocation(
             arguments={
-                "model": self.model_name,
+                "model": self.model,
                 "prompt": prompt,
                 **kwargs,
             },
             json_response=response.model_dump(),
         )
 
-        # step4: return raw response if needed
-        if return_raw:
-            return response
-        else:
-            images = response.model_dump()["data"]
-            # Get image urls as a list
-            urls = [_["url"] for _ in images]
+        # step4: return response
+        raw_response = response.model_dump()
+        images = raw_response["data"]
+        # Get image urls as a list
+        urls = [_["url"] for _ in images]
 
-            if save_local:
-                # Return local url if save_local is True
-                local_urls = [file_manager.save_image(_) for _ in urls]
-                return local_urls
-            else:
-                return urls
+        if save_local:
+            # Return local url if save_local is True
+            urls = [file_manager.save_image(_) for _ in urls]
+        return ModelResponse(image_urls=urls, raw=raw_response)
 
 
 class OpenAIEmbeddingWrapper(OpenAIWrapper):
     """The model wrapper for OpenAI embedding API."""
+
+    model_type: str = "openai_embedding"
 
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
@@ -346,16 +351,13 @@ class OpenAIEmbeddingWrapper(OpenAIWrapper):
     def __call__(
         self,
         texts: Union[list[str], str],
-        return_raw: bool = False,
         **kwargs: Any,
-    ) -> Union[list, dict]:
+    ) -> ModelResponse:
         """Embed the messages with OpenAI embedding API.
 
         Args:
             texts (`list[str]` or `str`):
                 The messages used to embed.
-            return_raw (`bool`, default `False`):
-                Whether to return the raw response from OpenAI API.
             **kwargs (`Any`):
                 The keyword arguments to OpenAI embedding API,
                 e.g. `encoding_format`, `user`. Please refer to
@@ -363,8 +365,9 @@ class OpenAIEmbeddingWrapper(OpenAIWrapper):
                 for more detailed arguments.
 
         Returns:
-            A list of embeddings when `return_raw` is `False`, otherwise the
-            raw response from OpenAI API.
+            `ModelResponse`:
+                A list of embeddings in embedding field and the
+                raw response in raw field.
 
         Note:
             `parse_func`, `fault_handler` and `max_retries` are reserved for
@@ -385,26 +388,29 @@ class OpenAIEmbeddingWrapper(OpenAIWrapper):
         # step2: forward to generate response
         response = self.client.embeddings.create(
             input=texts,
-            model=self.model_name,
+            model=self.model,
             **kwargs,
         )
 
         # step3: record the model api invocation if needed
         self._save_model_invocation(
             arguments={
-                "model": self.model_name,
+                "model": self.model,
                 "input": texts,
                 **kwargs,
             },
             json_response=response.model_dump(),
         )
 
-        # step4: return raw response if needed
+        # step4: return response
         response_json = response.model_dump()
-        if return_raw:
-            return response_json
+        if len(response_json["data"]) == 0:
+            return ModelResponse(
+                embedding=response_json["data"]["embedding"][0],
+                raw=response_json,
+            )
         else:
-            if len(response_json["data"]) == 0:
-                return response_json["data"]["embedding"][0]
-            else:
-                return [_["embedding"] for _ in response_json["data"]]
+            return ModelResponse(
+                embedding=[_["embedding"] for _ in response_json["data"]],
+                raw=response_json,
+            )

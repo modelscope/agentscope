@@ -8,7 +8,7 @@ from agentscope.service import retrieve_from_list, cos_sim
 from agentscope.service.service_status import ServiceExecStatus
 from agentscope.message import MessageBase, Msg, Tht
 from agentscope.memory.temporary_memory import TemporaryMemory
-from agentscope.models import OpenAIEmbeddingWrapper
+from agentscope.models import OpenAIEmbeddingWrapper, ModelResponse
 
 
 class TestRetrieval(unittest.TestCase):
@@ -25,9 +25,9 @@ class TestRetrieval(unittest.TestCase):
             def __init__(self) -> None:
                 pass
 
-            def __call__(self, *args: Any, **kwargs: Any) -> dict:
+            def __call__(self, *args: Any, **kwargs: Any) -> ModelResponse:
                 print(*args, **kwargs)
-                return {}
+                return ModelResponse(raw={})
 
         dummy_model = DummyModel()
 

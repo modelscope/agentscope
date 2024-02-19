@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """Unit test for prompt engine."""
 import unittest
-from typing import Union, Any
+from typing import Any
 
 from agentscope.models import read_model_configs
-from agentscope.models import load_model_by_name
-from agentscope.models import OpenAIWrapper
+from agentscope.models import load_model_by_config_name
+from agentscope.models import ModelResponse, OpenAIWrapper
 from agentscope.prompt import PromptEngine
 
 
@@ -29,8 +29,8 @@ class PromptEngineTest(unittest.TestCase):
         read_model_configs(
             [
                 {
-                    "type": "post_api",
-                    "name": "open-source",
+                    "model_type": "post_api",
+                    "config_name": "open-source",
                     "api_url": "http://xxx",
                     "headers": {"Autherization": "Bearer {API_TOKEN}"},
                     "parameters": {
@@ -38,15 +38,14 @@ class PromptEngineTest(unittest.TestCase):
                     },
                 },
                 {
-                    "type": "openai",
-                    "name": "gpt-4",
-                    "parameters": {
-                        "api_key": "xxx",
-                        "organization_id": "xxx",
-                    },
+                    "model_type": "openai",
+                    "config_name": "gpt-4",
+                    "model_name": "gpt-4",
+                    "api_key": "xxx",
+                    "organization": "xxx",
                 },
             ],
-            empty_first=True,
+            clear_existing=True,
         )
 
     def test_list_prompt(self) -> None:
@@ -62,8 +61,8 @@ class PromptEngineTest(unittest.TestCase):
                 self,
                 *args: Any,
                 **kwargs: Any,
-            ) -> Union[str, dict, list]:
-                return ""
+            ) -> ModelResponse:
+                return ModelResponse(text="")
 
             def _register_default_metrics(self) -> None:
                 pass
@@ -110,7 +109,7 @@ class PromptEngineTest(unittest.TestCase):
 
     def test_str_prompt(self) -> None:
         """Test for string prompt."""
-        model = load_model_by_name("open-source")
+        model = load_model_by_config_name("open-source")
         engine = PromptEngine(model)
 
         prompt = engine.join(

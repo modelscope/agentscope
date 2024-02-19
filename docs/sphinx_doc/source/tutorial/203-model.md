@@ -15,23 +15,25 @@ where the model configs could be a list of dict:
 ```json
 [
     {
-        "type": "openai",
-        "name": "gpt-4",
-        "parameters": {
-            "api_key": "xxx",
-            "organization_id": "xxx",
+        "config_name": "gpt-4-temperature-0.0",
+        "model_type": "openai",
+        "model": "gpt-4",
+        "api_key": "xxx",
+        "organization": "xxx",
+        "generate_args": {
             "temperature": 0.0
         }
     },
     {
-        "type": "openai_dall_e",
-        "name": "dall-e-3",
-        "parameters": {
-            "api_key": "xxx",
-            "organization_id": "xxx",
+        "config_name": "dall-e-3-size-1024x1024",
+        "model_type": "openai_dall_e",
+        "model": "dall-e-3",
+        "api_key": "xxx",
+        "organization": "xxx",
+        "generate_args": {
             "size": "1024x1024"
         }
-    }
+    },
     // Additional models can be configured here
 ]
 ```
@@ -86,8 +88,8 @@ In AgentScope, you can load the model with the following model configs: `./flask
 
 ```json
 {
-    "type": "post_api",
-    "name": "flask_llama2-7b-chat",
+    "model_type": "post_api",
+    "config_name": "flask_llama2-7b-chat",
     "api_url": "http://127.0.0.1:8000/llm/",
     "json_args": {
         "max_length": 4096,
@@ -127,8 +129,8 @@ In AgentScope, you can load the model with the following model configs: `flask_m
 
 ```json
 {
-    "type": "post_api",
-    "name": "flask_llama2-7b-ms",
+    "model_type": "post_api",
+    "config_name": "flask_llama2-7b-ms",
     "api_url": "http://127.0.0.1:8000/llm/",
     "json_args": {
         "max_length": 4096,
@@ -169,8 +171,8 @@ Now you can load the model in AgentScope by the following model config: `fastcha
 
 ```json
 {
-    "type": "openai",
-    "name": "meta-llama/Llama-2-7b-chat-hf",
+    "config_name": "meta-llama/Llama-2-7b-chat-hf",
+    "model_type": "openai",
     "api_key": "EMPTY",
     "client_args": {
         "base_url": "http://127.0.0.1:8000/v1/"
@@ -209,8 +211,8 @@ Now you can load the model in AgentScope by the following model config: `vllm_sc
 
 ```json
 {
-    "type": "openai",
-    "name": "meta-llama/Llama-2-7b-chat-hf",
+    "config_name": "meta-llama/Llama-2-7b-chat-hf",
+    "model_type": "openai",
     "api_key": "EMPTY",
     "client_args": {
         "base_url": "http://127.0.0.1:8000/v1/"
@@ -228,8 +230,8 @@ Taking `gpt2` in HuggingFace inference API as an example, you can use the follow
 
 ```json
 {
-    "type": "post_api",
-    "name": 'gpt2',
+    "config_name": "gpt2",
+    "model_type": "post_api",
     "headers": {
         "Authorization": "Bearer {YOUR_API_TOKEN}"
     }
@@ -248,7 +250,7 @@ model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 model.eval()
 # Do remember to re-implement the `reply` method to tokenize *message*!
-agent = YourAgent(name='agent', model=model, tokenizer=tokenizer)
+agent = YourAgent(name='agent', model_config_name=config_name, tokenizer=tokenizer)
 ```
 
 [[Return to the top]](#using-different-model-sources-with-model-api)

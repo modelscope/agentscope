@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 """ Import modules in models package."""
 import json
-from typing import Union, Sequence
+from typing import Union, Type
 
 from loguru import logger
 
-from .model import ModelWrapperBase
-from .post_model import PostApiModelWrapper
+from .config import ModelConfig
+from .model import ModelWrapperBase, ModelResponse
+from .post_model import (
+    PostAPIModelWrapperBase,
+    PostAPIChatWrapper,
+)
 from .openai_model import (
     OpenAIWrapper,
     OpenAIChatWrapper,
@@ -17,24 +21,48 @@ from .openai_model import (
 
 __all__ = [
     "ModelWrapperBase",
-    "PostApiModelWrapper",
+    "ModelResponse",
+    "PostAPIModelWrapperBase",
+    "PostAPIChatWrapper",
     "OpenAIWrapper",
     "OpenAIChatWrapper",
     "OpenAIDALLEWrapper",
     "OpenAIEmbeddingWrapper",
-    "load_model_by_name",
+    "load_model_by_config_name",
     "read_model_configs",
     "clear_model_configs",
 ]
 
-from ..configs.model_config import OpenAICfg, PostApiCfg
+_MODEL_CONFIGS: dict[str, dict] = {}
 
 
-_MODEL_CONFIGS = []
+def _get_model_wrapper(model_type: str) -> Type[ModelWrapperBase]:
+    """Get the specific type of model wrapper
+
+    Args:
+        model_type (`str`): The model type name.
+
+    Returns:
+        `Type[ModelWrapperBase]`: The corresponding model wrapper class.
+    """
+    if model_type in ModelWrapperBase.type_registry:
+        return ModelWrapperBase.type_registry[  # type: ignore [return-value]
+            model_type
+        ]
+    elif model_type in ModelWrapperBase.registry:
+        return ModelWrapperBase.registry[  # type: ignore [return-value]
+            model_type
+        ]
+    else:
+        logger.warning(
+            f"Unsupported model_type [{model_type}],"
+            "use PostApiModelWrapper instead.",
+        )
+        return PostAPIModelWrapperBase
 
 
-def load_model_by_name(model_name: str) -> ModelWrapperBase:
-    """Load the model by name."""
+def load_model_by_config_name(config_name: str) -> ModelWrapperBase:
+    """Load the model by config name."""
     if len(_MODEL_CONFIGS) == 0:
         raise ValueError(
             "No model configs loaded, please call "
@@ -42,41 +70,29 @@ def load_model_by_name(model_name: str) -> ModelWrapperBase:
         )
 
     # Find model config by name
-    config = None
-    for _ in _MODEL_CONFIGS:
-        if _["name"] == model_name:
-            config = {**_}
-            break
+    if config_name not in _MODEL_CONFIGS:
+        raise ValueError(
+            f"Cannot find [{config_name}] in loaded configurations.",
+        )
+    config = _MODEL_CONFIGS[config_name]
 
     if config is None:
         raise ValueError(
-            f"Cannot find [{model_name}] in loaded configurations.",
+            f"Cannot find [{config_name}] in loaded configurations.",
         )
 
-    model_type = config.pop("type")
-    if model_type == "openai":
-        return OpenAIChatWrapper(**config)
-    elif model_type == "openai_dall_e":
-        return OpenAIDALLEWrapper(**config)
-    elif model_type == "openai_embedding":
-        return OpenAIEmbeddingWrapper(**config)
-    elif model_type == "post_api":
-        return PostApiModelWrapper(**config)
-    else:
-        raise ValueError(
-            f"Cannot find [{config['type']}] in loaded configurations.",
-        )
+    model_type = config.model_type
+    return _get_model_wrapper(model_type=model_type)(**config)
 
 
 def clear_model_configs() -> None:
     """Clear the loaded model configs."""
-    global _MODEL_CONFIGS
-    _MODEL_CONFIGS = []
+    _MODEL_CONFIGS.clear()
 
 
 def read_model_configs(
     configs: Union[dict, str, list],
-    empty_first: bool = False,
+    clear_existing: bool = False,
 ) -> None:
     """read model configs from a path or a list of dicts.
 
@@ -84,14 +100,14 @@ def read_model_configs(
         configs (`Union[str, list, dict]`):
             The path of the model configs | a config dict | a list of model
             configs.
-        empty_first (`bool`, defaults to `False`):
+        clear_existing (`bool`, defaults to `False`):
             Whether to clear the loaded model configs before reading.
 
     Returns:
         `dict`:
             The model configs.
     """
-    if empty_first:
+    if clear_existing:
         clear_model_configs()
 
     if isinstance(configs, str):
@@ -108,40 +124,18 @@ def read_model_configs(
             )
         cfgs = configs
 
-    # Checking
-    format_configs: list[Union[OpenAICfg, PostApiCfg]] = []
-    for cfg in cfgs:
-        if "type" not in cfg:
-            raise ValueError(
-                f"Cannot find `type` in model config: {cfg}, "
-                f'whose value should be choice from ["openai", '
-                f'"post_api"]',
-            )
-
-        if cfg["type"] == "openai":
-            openai_cfg = OpenAICfg()
-            openai_cfg.init(**cfg)
-            format_configs += [openai_cfg]
-
-        elif cfg["type"] == "post_api":
-            post_api_cfg = PostApiCfg()
-            post_api_cfg.init(**cfg)
-            format_configs += [post_api_cfg]
-
-        else:
-            raise ValueError(
-                f"Unknown model type: {cfg['type']}, please "
-                f"choice from ['openai', 'post_api']]",
-            )
+    format_configs = ModelConfig.format_configs(configs=cfgs)
 
     # check if name is unique
-    global _MODEL_CONFIGS
     for cfg in format_configs:
-        if cfg["name"] in [_["name"] for _ in _MODEL_CONFIGS]:
-            raise ValueError(f'Model name "{cfg.name}" already exists.')
-
-        _MODEL_CONFIGS.append(cfg)
+        if cfg.config_name in _MODEL_CONFIGS:
+            raise ValueError(
+                f"config_name [{cfg.config_name}] already exists.",
+            )
+        _MODEL_CONFIGS[cfg.config_name] = cfg
 
     # print the loaded model configs
-    model_names = [_["name"] for _ in _MODEL_CONFIGS]
-    logger.info("Load configs for model: {}", ", ".join(model_names))
+    logger.info(
+        "Load configs for model wrapper: {}",
+        ", ".join(_MODEL_CONFIGS.keys()),
+    )

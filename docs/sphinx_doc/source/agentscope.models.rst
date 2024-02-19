@@ -1,6 +1,14 @@
 Models package
 ==========================
 
+config module
+-------------------------------
+
+.. automodule:: agentscope.models.config
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 model module
 -------------------------------
 
@@ -29,6 +37,6 @@ Module contents
 ---------------
 
 .. automodule:: agentscope.models
-   :members: load_model_by_name, clear_model_configs, read_model_configs
+   :members: load_model_by_config_name, clear_model_configs, read_model_configs
    :undoc-members:
    :show-inheritance:
