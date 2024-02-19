@@ -52,7 +52,6 @@
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">Agents package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.configs.html">Configs package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">Memory package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">Models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">Pipelines package</a></li>
@@ -92,7 +91,7 @@
 <span class="sd">&quot;&quot;&quot;A dict dialog agent that using `parse_func` and `fault_handler` to</span>
 <span class="sd">parse the model response.&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Callable</span>
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
 <span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">Msg</span>
@@ -128,9 +127,8 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">sys_prompt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">model_config_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">use_memory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">memory_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">parse_func</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">,</span>
@@ -143,17 +141,12 @@
 <span class="sd">        Arguments:</span>
 <span class="sd">            name (`str`):</span>
 <span class="sd">                The name of the agent.</span>
-<span class="sd">            config (`Optional[dict]`, defaults to `None`):</span>
-<span class="sd">                The configuration of the agent, if provided, the agent will</span>
-<span class="sd">                be initialized from the config rather than the other</span>
-<span class="sd">                parameters.</span>
 <span class="sd">            sys_prompt (`Optional[str]`, defaults to `None`):</span>
 <span class="sd">                The system prompt of the agent, which can be passed by args</span>
 <span class="sd">                or hard-coded in the agent.</span>
-<span class="sd">            model (`Optional[Union[Callable[..., Any], str]]`, defaults to</span>
-<span class="sd">            `None`):</span>
-<span class="sd">                The callable model object or the model name, which is used to</span>
-<span class="sd">                load model from configuration.</span>
+<span class="sd">            model_config_name (`str`, defaults to None):</span>
+<span class="sd">                The name of the model config, which is used to load model from</span>
+<span class="sd">                configuration.</span>
 <span class="sd">            use_memory (`bool`, defaults to `True`):</span>
 <span class="sd">                Whether the agent has memory.</span>
 <span class="sd">            memory_config (`Optional[dict]`, defaults to `None`):</span>
@@ -174,12 +167,11 @@
 <span class="sd">                `PromptType.LIST` or `PromptType.STRING`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">name</span><span class="p">,</span>
-            <span class="n">config</span><span class="p">,</span>
-            <span class="n">sys_prompt</span><span class="p">,</span>
-            <span class="n">model</span><span class="p">,</span>
-            <span class="n">use_memory</span><span class="p">,</span>
-            <span class="n">memory_config</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">sys_prompt</span><span class="o">=</span><span class="n">sys_prompt</span><span class="p">,</span>
+            <span class="n">model_config_name</span><span class="o">=</span><span class="n">model_config_name</span><span class="p">,</span>
+            <span class="n">use_memory</span><span class="o">=</span><span class="n">use_memory</span><span class="p">,</span>
+            <span class="n">memory_config</span><span class="o">=</span><span class="n">memory_config</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># record the func and handler for parsing and handling faults</span>
@@ -230,7 +222,7 @@
             <span class="n">parse_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parse_func</span><span class="p">,</span>
             <span class="n">fault_handler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fault_handler</span><span class="p">,</span>
             <span class="n">max_retries</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_retries</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">text</span>
 
         <span class="c1"># logging raw messages in debug mode</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>

@@ -8,20 +8,20 @@ AgentScope is a versatile platform for building and running multi-agent applicat
 
 Agent is the basic composition and communication unit in AgentScope. To initialize a model-based agent, you need to prepare your configs for avaliable models. AgentScope supports a variety of APIs for pre-trained models. Here is a table outlining the supported APIs and the type of arguments required for each:
 
-|   Model Usage               | Type Argument in AgentScope     | Supported APIs                                                              |
-| -------------------- | ------------------ |-----------------------------------------------------------------------------|
-| Text generation     | `openai`           | Standard *OpenAI* chat API, FastChat and vllm                               |
-| Image generation   | `openai_dall_e`    | *DALL-E* API for generating images                                          |
-| Embedding | `openai_embedding` | API for text embeddings                                                     |
-| General usages in POST       | `post_api`         | *Huggingface* and *ModelScope* Inference API, and other customized post API |
+|   Model Usage               | Model Type Argument in AgentScope | Supported APIs                                                              |
+| --------------------------- | --------------------------------- |-----------------------------------------------------------------------------|
+| Text generation             | `openai`                          | Standard *OpenAI* chat API, FastChat and vllm                               |
+| Image generation            | `openai_dall_e`                   | *DALL-E* API for generating images                                          |
+| Embedding                   | `openai_embedding`                | API for text embeddings                                                     |
+| General usages in POST      | `post_api`                        | *Huggingface* and *ModelScope* Inference API, and other customized post API |
 
 Each API has its specific configuration requirements. For example, to configure an OpenAI API, you would need to fill out the following fields in the model config in a dict, a yaml file or a json file:
 
 ```python
 model_config = {
-    "type": "openai",               # Choose from "openai", "openai_dall_e", or "openai_embedding"
-    "name": "{your_config_name}",   # A unique identifier for your config
-    "model_name": "{model_name}",   # The model identifier used in the OpenAI API, such as "gpt-3.5-turbo", "gpt-4", or "text-embedding-ada-002"
+    "config_name": "{config_name}", # A unique name for the model config.
+    "model_type": "openai",         # Choose from "openai", "openai_dall_e", or "openai_embedding".
+    "model_name": "{model_name}",   # The model identifier used in the OpenAI API, such as "gpt-3.5-turbo", "gpt-4", or "text-embedding-ada-002".
     "api_key": "xxx",               # Your OpenAI API key. If unset, the environment variable OPENAI_API_KEY is used.
     "organization": "xxx",          # Your OpenAI organization ID. If unset, the environment variable OPENAI_ORGANIZATION is used.
 }
@@ -52,7 +52,7 @@ from agentscope.agents import DialogAgent, UserAgent
 agentscope.init(model_configs="./openai_model_configs.json")
 
 # Create a dialog agent and a user agent
-dialogAgent = DialogAgent(name="assistant", model="gpt-4")
+dialogAgent = DialogAgent(name="assistant", model_config_name="gpt-4")
 userAgent = UserAgent()
 ```
 

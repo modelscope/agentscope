@@ -52,7 +52,6 @@
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">Agents package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.configs.html">Configs package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">Memory package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">Models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">Pipelines package</a></li>
@@ -91,7 +90,6 @@
 
 <div class="genindex-jumpbox">
  <a href="#A"><strong>A</strong></a>
- | <a href="#B"><strong>B</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
  | <a href="#E"><strong>E</strong></a>
@@ -99,7 +97,6 @@
  | <a href="#G"><strong>G</strong></a>
  | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
- | <a href="#J"><strong>J</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
@@ -166,17 +163,17 @@
 </li>
       </ul></li>
       <li>
+    agentscope.agents.text_to_image_agent
+
+      <ul>
+        <li><a href="agentscope.agents.html#module-agentscope.agents.text_to_image_agent">module</a>
+</li>
+      </ul></li>
+      <li>
     agentscope.agents.user_agent
 
       <ul>
         <li><a href="agentscope.agents.html#module-agentscope.agents.user_agent">module</a>
-</li>
-      </ul></li>
-      <li>
-    agentscope.configs.model_config
-
-      <ul>
-        <li><a href="agentscope.configs.html#module-agentscope.configs.model_config">module</a>
 </li>
       </ul></li>
       <li>
@@ -198,6 +195,13 @@
 
       <ul>
         <li><a href="agentscope.models.html#module-agentscope.models">module</a>
+</li>
+      </ul></li>
+      <li>
+    agentscope.models.config
+
+      <ul>
+        <li><a href="agentscope.models.html#module-agentscope.models.config">module</a>
 </li>
       </ul></li>
       <li>
@@ -235,6 +239,8 @@
         <li><a href="agentscope.pipelines.html#module-agentscope.pipelines.pipeline">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     agentscope.rpc.rpc_agent_client
 
@@ -242,8 +248,6 @@
         <li><a href="agentscope.rpc.html#module-agentscope.rpc.rpc_agent_client">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     agentscope.rpc.rpc_agent_pb2_grpc
 
@@ -370,22 +374,6 @@
         <li><a href="agentscope.web_ui.html#module-agentscope.web_ui.app">module</a>
 </li>
       </ul></li>
-      <li><a href="agentscope.configs.html#agentscope.configs.model_config.OpenAICfg.api_key">api_key (agentscope.configs.model_config.OpenAICfg attribute)</a>
-</li>
-      <li><a href="agentscope.configs.html#agentscope.configs.model_config.PostApiCfg.api_url">api_url (agentscope.configs.model_config.PostApiCfg attribute)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="B">B</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="agentscope.configs.html#agentscope.configs.model_config.OpenAICfg.budget">budget (agentscope.configs.model_config.OpenAICfg attribute)</a>
-
-      <ul>
-        <li><a href="agentscope.configs.html#agentscope.configs.model_config.PostApiCfg.budget">(agentscope.configs.model_config.PostApiCfg attribute)</a>
-</li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -402,8 +390,6 @@
         <li><a href="agentscope.rpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.call_func">(agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer method)</a>
 </li>
       </ul></li>
-      <li><a href="agentscope.configs.html#agentscope.configs.model_config.CfgBase">CfgBase (class in agentscope.configs.model_config)</a>
-</li>
       <li><a href="agentscope.utils.html#agentscope.utils.common.chdir">chdir() (in module agentscope.utils.common)</a>
 </li>
       <li><a href="agentscope.agents.html#agentscope.agents.rpc_agent.check_port">check_port() (in module agentscope.agents.rpc_agent)</a>
@@ -423,8 +409,6 @@
       <li><a href="agentscope.agents.html#agentscope.agents.agent.AgentBase.clear_audience">clear_audience() (agentscope.agents.agent.AgentBase method)</a>
 </li>
       <li><a href="agentscope.models.html#agentscope.models.clear_model_configs">clear_model_configs() (in module agentscope.models)</a>
-</li>
-      <li><a href="agentscope.configs.html#agentscope.configs.model_config.OpenAICfg.client_args">client_args (agentscope.configs.model_config.OpenAICfg attribute)</a>
 </li>
       <li><a href="agentscope.service.retrieval.html#agentscope.service.retrieval.similarity.cos_sim">cos_sim() (in module agentscope.service.retrieval.similarity)</a>
 </li>
@@ -464,6 +448,8 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.models.html#agentscope.models.model.ModelResponse.embedding">embedding (agentscope.models.model.ModelResponse property)</a>
+</li>
       <li><a href="agentscope.service.code.html#agentscope.service.code.exec_python.execute_python_code">execute_python_code() (in module agentscope.service.code.exec_python)</a>
 </li>
       <li><a href="agentscope.utils.html#agentscope.utils.monitor.MonitorBase.exists">exists() (agentscope.utils.monitor.MonitorBase method)</a>
@@ -500,14 +486,14 @@
 </li>
       <li><a href="agentscope.pipelines.html#agentscope.pipelines.functional.forlooppipeline">forlooppipeline() (in module agentscope.pipelines.functional)</a>
 </li>
+      <li><a href="agentscope.models.html#agentscope.models.config.ModelConfig.format_configs">format_configs() (agentscope.models.config.ModelConfig class method)</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="agentscope.configs.html#agentscope.configs.model_config.OpenAICfg.generate_args">generate_args (agentscope.configs.model_config.OpenAICfg attribute)</a>
-</li>
       <li><a href="agentscope.web_ui.html#agentscope.web_ui.app.get_chat">get_chat() (in module agentscope.web_ui.app)</a>
 </li>
       <li><a href="agentscope.memory.html#agentscope.memory.temporary_memory.TemporaryMemory.get_embeddings">get_embeddings() (agentscope.memory.temporary_memory.TemporaryMemory method)</a>
@@ -569,10 +555,6 @@
       <li><a href="agentscope.web_ui.html#agentscope.web_ui.app.handle_file_selection">handle_file_selection() (in module agentscope.web_ui.app)</a>
 </li>
   </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="agentscope.configs.html#agentscope.configs.model_config.PostApiCfg.headers">headers (agentscope.configs.model_config.PostApiCfg attribute)</a>
-</li>
-  </ul></td>
 </tr></table>
 
 <h2 id="I">I</h2>
@@ -586,17 +568,9 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.pipelines.html#agentscope.pipelines.functional.ifelsepipeline">ifelsepipeline() (in module agentscope.pipelines.functional)</a>
 </li>
-      <li><a href="agentscope.configs.html#agentscope.configs.model_config.CfgBase.init">init() (agentscope.configs.model_config.CfgBase method)</a>
+      <li><a href="agentscope.models.html#agentscope.models.model.ModelResponse.image_urls">image_urls (agentscope.models.model.ModelResponse property)</a>
 </li>
       <li><a href="agentscope.web_ui.html#agentscope.web_ui.app.is_chat_message_format">is_chat_message_format() (in module agentscope.web_ui.app)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="J">J</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="agentscope.configs.html#agentscope.configs.model_config.PostApiCfg.json_args">json_args (agentscope.configs.model_config.PostApiCfg attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -618,7 +592,7 @@
 </li>
       <li><a href="agentscope.agents.html#agentscope.agents.agent.AgentBase.load_memory">load_memory() (agentscope.agents.agent.AgentBase method)</a>
 </li>
-      <li><a href="agentscope.models.html#agentscope.models.load_model_by_name">load_model_by_name() (in module agentscope.models)</a>
+      <li><a href="agentscope.models.html#agentscope.models.load_model_by_config_name">load_model_by_config_name() (in module agentscope.models)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -626,15 +600,25 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="agentscope.configs.html#agentscope.configs.model_config.PostApiCfg.max_length">max_length (agentscope.configs.model_config.PostApiCfg attribute)</a>
-</li>
-      <li><a href="agentscope.configs.html#agentscope.configs.model_config.PostApiCfg.max_retries">max_retries (agentscope.configs.model_config.PostApiCfg attribute)</a>
-</li>
       <li><a href="agentscope.memory.html#agentscope.memory.memory.MemoryBase">MemoryBase (class in agentscope.memory.memory)</a>
 </li>
-      <li><a href="agentscope.configs.html#agentscope.configs.model_config.PostApiCfg.messages_key">messages_key (agentscope.configs.model_config.PostApiCfg attribute)</a>
+      <li><a href="agentscope.models.html#agentscope.models.openai_model.OpenAIChatWrapper.model_type">model_type (agentscope.models.openai_model.OpenAIChatWrapper attribute)</a>
+
+      <ul>
+        <li><a href="agentscope.models.html#agentscope.models.openai_model.OpenAIDALLEWrapper.model_type">(agentscope.models.openai_model.OpenAIDALLEWrapper attribute)</a>
 </li>
-      <li><a href="agentscope.configs.html#agentscope.configs.model_config.OpenAICfg.model_name">model_name (agentscope.configs.model_config.OpenAICfg attribute)</a>
+        <li><a href="agentscope.models.html#agentscope.models.openai_model.OpenAIEmbeddingWrapper.model_type">(agentscope.models.openai_model.OpenAIEmbeddingWrapper attribute)</a>
+</li>
+        <li><a href="agentscope.models.html#agentscope.models.post_model.PostAPIChatWrapper.model_type">(agentscope.models.post_model.PostAPIChatWrapper attribute)</a>
+</li>
+        <li><a href="agentscope.models.html#agentscope.models.post_model.PostAPIDALLEWrapper.model_type">(agentscope.models.post_model.PostAPIDALLEWrapper attribute)</a>
+</li>
+        <li><a href="agentscope.models.html#agentscope.models.post_model.PostAPIModelWrapperBase.model_type">(agentscope.models.post_model.PostAPIModelWrapperBase attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="agentscope.models.html#agentscope.models.config.ModelConfig">ModelConfig (class in agentscope.models.config)</a>
+</li>
+      <li><a href="agentscope.models.html#agentscope.models.model.ModelResponse">ModelResponse (class in agentscope.models.model)</a>
 </li>
       <li><a href="agentscope.models.html#agentscope.models.model.ModelWrapperBase">ModelWrapperBase (class in agentscope.models.model)</a>
 </li>
@@ -652,15 +636,17 @@
 </li>
         <li><a href="agentscope.agents.html#module-agentscope.agents.rpc_agent">agentscope.agents.rpc_agent</a>
 </li>
-        <li><a href="agentscope.agents.html#module-agentscope.agents.user_agent">agentscope.agents.user_agent</a>
+        <li><a href="agentscope.agents.html#module-agentscope.agents.text_to_image_agent">agentscope.agents.text_to_image_agent</a>
 </li>
-        <li><a href="agentscope.configs.html#module-agentscope.configs.model_config">agentscope.configs.model_config</a>
+        <li><a href="agentscope.agents.html#module-agentscope.agents.user_agent">agentscope.agents.user_agent</a>
 </li>
         <li><a href="agentscope.memory.html#module-agentscope.memory.memory">agentscope.memory.memory</a>
 </li>
         <li><a href="agentscope.memory.html#module-agentscope.memory.temporary_memory">agentscope.memory.temporary_memory</a>
 </li>
         <li><a href="agentscope.models.html#module-agentscope.models">agentscope.models</a>
+</li>
+        <li><a href="agentscope.models.html#module-agentscope.models.config">agentscope.models.config</a>
 </li>
         <li><a href="agentscope.models.html#module-agentscope.models.model">agentscope.models.model</a>
 </li>
@@ -727,14 +713,6 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="agentscope.configs.html#agentscope.configs.model_config.OpenAICfg.name">name (agentscope.configs.model_config.OpenAICfg attribute)</a>
-
-      <ul>
-        <li><a href="agentscope.configs.html#agentscope.configs.model_config.PostApiCfg.name">(agentscope.configs.model_config.PostApiCfg attribute)</a>
-</li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.utils.html#agentscope.utils.token_utils.num_tokens_from_content">num_tokens_from_content() (in module agentscope.utils.token_utils)</a>
 </li>
   </ul></td>
@@ -749,8 +727,6 @@
         <li><a href="agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgent.observe">(agentscope.agents.rpc_agent.RpcAgent method)</a>
 </li>
       </ul></li>
-      <li><a href="agentscope.configs.html#agentscope.configs.model_config.OpenAICfg">OpenAICfg (class in agentscope.configs.model_config)</a>
-</li>
       <li><a href="agentscope.models.html#agentscope.models.openai_model.OpenAIChatWrapper">OpenAIChatWrapper (class in agentscope.models.openai_model)</a>
 </li>
   </ul></td>
@@ -763,8 +739,6 @@
 </li>
       <li><a href="agentscope.agents.html#agentscope.agents.operator.Operator">Operator (class in agentscope.agents.operator)</a>
 </li>
-      <li><a href="agentscope.configs.html#agentscope.configs.model_config.OpenAICfg.organization">organization (agentscope.configs.model_config.OpenAICfg attribute)</a>
-</li>
   </ul></td>
 </tr></table>
 
@@ -775,13 +749,13 @@
 </li>
       <li><a href="agentscope.pipelines.html#agentscope.pipelines.functional.placeholder">placeholder() (in module agentscope.pipelines.functional)</a>
 </li>
-      <li><a href="agentscope.configs.html#agentscope.configs.model_config.PostApiCfg.post_args">post_args (agentscope.configs.model_config.PostApiCfg attribute)</a>
+      <li><a href="agentscope.models.html#agentscope.models.post_model.PostAPIChatWrapper">PostAPIChatWrapper (class in agentscope.models.post_model)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="agentscope.configs.html#agentscope.configs.model_config.PostApiCfg">PostApiCfg (class in agentscope.configs.model_config)</a>
+      <li><a href="agentscope.models.html#agentscope.models.post_model.PostAPIDALLEWrapper">PostAPIDALLEWrapper (class in agentscope.models.post_model)</a>
 </li>
-      <li><a href="agentscope.models.html#agentscope.models.post_model.PostApiModelWrapper">PostApiModelWrapper (class in agentscope.models.post_model)</a>
+      <li><a href="agentscope.models.html#agentscope.models.post_model.PostAPIModelWrapperBase">PostAPIModelWrapperBase (class in agentscope.models.post_model)</a>
 </li>
       <li><a href="agentscope.agents.html#agentscope.agents.rpc_agent.RpcServerSideWrapper.process_tasks">process_tasks() (agentscope.agents.rpc_agent.RpcServerSideWrapper method)</a>
 </li>
@@ -809,6 +783,8 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.models.html#agentscope.models.model.ModelResponse.raw">raw (agentscope.models.model.ModelResponse property)</a>
+</li>
       <li><a href="agentscope.service.file.html#agentscope.service.file.json.read_json_file">read_json_file() (in module agentscope.service.file.json)</a>
 </li>
       <li><a href="agentscope.models.html#agentscope.models.read_model_configs">read_model_configs() (in module agentscope.models)</a>
@@ -827,6 +803,8 @@
         <li><a href="agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.register_budget">(agentscope.utils.monitor.SqliteMonitor method)</a>
 </li>
       </ul></li>
+      <li><a href="agentscope.models.html#agentscope.models.model.ModelWrapperBase.registry">registry (agentscope.models.model.ModelWrapperBase attribute)</a>
+</li>
       <li><a href="agentscope.utils.html#agentscope.utils.monitor.MonitorBase.remove">remove() (agentscope.utils.monitor.MonitorBase method)</a>
 
       <ul>
@@ -841,6 +819,8 @@
         <li><a href="agentscope.agents.html#agentscope.agents.dict_dialog_agent.DictDialogAgent.reply">(agentscope.agents.dict_dialog_agent.DictDialogAgent method)</a>
 </li>
         <li><a href="agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgent.reply">(agentscope.agents.rpc_agent.RpcAgent method)</a>
+</li>
+        <li><a href="agentscope.agents.html#agentscope.agents.text_to_image_agent.TextToImageAgent.reply">(agentscope.agents.text_to_image_agent.TextToImageAgent method)</a>
 </li>
         <li><a href="agentscope.agents.html#agentscope.agents.user_agent.UserAgent.reply">(agentscope.agents.user_agent.UserAgent method)</a>
 </li>
@@ -931,24 +911,22 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.memory.html#agentscope.memory.temporary_memory.TemporaryMemory">TemporaryMemory (class in agentscope.memory.temporary_memory)</a>
 </li>
-      <li><a href="agentscope.configs.html#agentscope.configs.model_config.PostApiCfg.timeout">timeout (agentscope.configs.model_config.PostApiCfg attribute)</a>
+      <li><a href="agentscope.models.html#agentscope.models.model.ModelResponse.text">text (agentscope.models.model.ModelResponse property)</a>
+</li>
+      <li><a href="agentscope.agents.html#agentscope.agents.text_to_image_agent.TextToImageAgent">TextToImageAgent (class in agentscope.agents.text_to_image_agent)</a>
 </li>
       <li><a href="agentscope.utils.html#agentscope.utils.common.timer">timer() (in module agentscope.utils.common)</a>
 </li>
-      <li><a href="agentscope.utils.html#agentscope.utils.tools.to_dialog_str">to_dialog_str() (in module agentscope.utils.tools)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.utils.html#agentscope.utils.tools.to_dialog_str">to_dialog_str() (in module agentscope.utils.tools)</a>
+</li>
       <li><a href="agentscope.agents.html#agentscope.agents.agent.AgentBase.to_dist">to_dist() (agentscope.agents.agent.AgentBase method)</a>
 </li>
       <li><a href="agentscope.utils.html#agentscope.utils.tools.to_openai_dict">to_openai_dict() (in module agentscope.utils.tools)</a>
 </li>
-      <li><a href="agentscope.configs.html#agentscope.configs.model_config.OpenAICfg.type">type (agentscope.configs.model_config.OpenAICfg attribute)</a>
-
-      <ul>
-        <li><a href="agentscope.configs.html#agentscope.configs.model_config.PostApiCfg.type">(agentscope.configs.model_config.PostApiCfg attribute)</a>
+      <li><a href="agentscope.models.html#agentscope.models.model.ModelWrapperBase.type_registry">type_registry (agentscope.models.model.ModelWrapperBase attribute)</a>
 </li>
-      </ul></li>
   </ul></td>
 </tr></table>
 

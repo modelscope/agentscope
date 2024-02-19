@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>agentscope.agents.dialog_agent &mdash; AgentScope  documentation</title>
+  <title>agentscope.agents.text_to_image_agent &mdash; AgentScope  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
 
@@ -77,7 +77,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
-      <li class="breadcrumb-item active">agentscope.agents.dialog_agent</li>
+      <li class="breadcrumb-item active">agentscope.agents.text_to_image_agent</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -86,22 +86,21 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for agentscope.agents.dialog_agent</h1><div class="highlight"><pre>
+  <h1>Source code for agentscope.agents.text_to_image_agent</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;A general dialog agent.&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;A agent that convert text to image.&quot;&quot;&quot;</span>
+
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
-<span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">Msg</span>
 <span class="kn">from</span> <span class="nn">.agent</span> <span class="kn">import</span> <span class="n">AgentBase</span>
-<span class="kn">from</span> <span class="nn">..prompt</span> <span class="kn">import</span> <span class="n">PromptEngine</span>
-<span class="kn">from</span> <span class="nn">..prompt</span> <span class="kn">import</span> <span class="n">PromptType</span>
+<span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">Msg</span>
 
 
-<div class="viewcode-block" id="DialogAgent">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.dialog_agent.DialogAgent">[docs]</a>
-<span class="k">class</span> <span class="nc">DialogAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A simple agent used to perform a dialogue. Your can set its role by</span>
-<span class="sd">    `sys_prompt`.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TextToImageAgent">
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.text_to_image_agent.TextToImageAgent">[docs]</a>
+<span class="k">class</span> <span class="nc">TextToImageAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A agent used to perform text to image tasks.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -110,9 +109,8 @@
         <span class="n">model_config_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">use_memory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">memory_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">prompt_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PromptType</span><span class="p">]</span> <span class="o">=</span> <span class="n">PromptType</span><span class="o">.</span><span class="n">LIST</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the dialog agent.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the text to image agent.</span>
 
 <span class="sd">        Arguments:</span>
 <span class="sd">            name (`str`):</span>
@@ -127,10 +125,6 @@
 <span class="sd">                Whether the agent has memory.</span>
 <span class="sd">            memory_config (`Optional[dict]`):</span>
 <span class="sd">                The config of memory.</span>
-<span class="sd">            prompt_type (`Optional[PromptType]`, defaults to</span>
-<span class="sd">            `PromptType.LIST`):</span>
-<span class="sd">                The type of the prompt organization, chosen from</span>
-<span class="sd">                `PromptType.LIST` or `PromptType.STRING`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
@@ -140,46 +134,20 @@
             <span class="n">memory_config</span><span class="o">=</span><span class="n">memory_config</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="c1"># init prompt engine</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="n">PromptEngine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">prompt_type</span><span class="o">=</span><span class="n">prompt_type</span><span class="p">)</span>
-
-<div class="viewcode-block" id="DialogAgent.reply">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.dialog_agent.DialogAgent.reply">[docs]</a>
+<div class="viewcode-block" id="TextToImageAgent.reply">
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.text_to_image_agent.TextToImageAgent.reply">[docs]</a>
     <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reply function of the agent. Processes the input data,</span>
-<span class="sd">        generates a prompt using the current dialogue memory and system</span>
-<span class="sd">        prompt, and invokes the language model to produce a response. The</span>
-<span class="sd">        response is then formatted and added to the dialogue memory.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            x (`dict`, defaults to `None`):</span>
-<span class="sd">                A dictionary representing the user&#39;s input to the agent. This</span>
-<span class="sd">                input is added to the dialogue memory if provided. Defaults to</span>
-<span class="sd">                None.</span>
-<span class="sd">        Returns:</span>
-<span class="sd">            A dictionary representing the message generated by the agent in</span>
-<span class="sd">            response to the user&#39;s input.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># record the input if needed</span>
         <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-
-        <span class="c1"># prepare prompt</span>
-        <span class="n">prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sys_prompt</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">get_memory</span><span class="p">(),</span>
+        <span class="n">image_urls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">content</span><span class="p">)</span><span class="o">.</span><span class="n">image_urls</span>
+        <span class="c1"># TODO: optimize the construction of content</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="s2">&quot;This is the generated image &quot;</span><span class="p">,</span>
+            <span class="n">url</span><span class="o">=</span><span class="n">image_urls</span><span class="p">,</span>
         <span class="p">)</span>
-
-        <span class="c1"># call llm and generate response</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
-
-        <span class="c1"># Print/speak the message in this agent&#39;s voice</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
-        <span class="c1"># Record the message in memory</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">chat</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
         <span class="k">return</span> <span class="n">msg</span></div>
 </div>
 

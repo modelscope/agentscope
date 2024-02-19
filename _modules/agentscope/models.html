@@ -52,7 +52,6 @@
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.agents.html">Agents package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../agentscope.configs.html">Configs package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.memory.html">Memory package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.models.html">Models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.pipelines.html">Pipelines package</a></li>
@@ -91,12 +90,16 @@
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot; Import modules in models package.&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Type</span>
 
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
-<span class="kn">from</span> <span class="nn">.model</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span>
-<span class="kn">from</span> <span class="nn">.post_model</span> <span class="kn">import</span> <span class="n">PostApiModelWrapper</span>
+<span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">ModelConfig</span>
+<span class="kn">from</span> <span class="nn">.model</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ModelResponse</span>
+<span class="kn">from</span> <span class="nn">.post_model</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">PostAPIModelWrapperBase</span><span class="p">,</span>
+    <span class="n">PostAPIChatWrapper</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.openai_model</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">OpenAIWrapper</span><span class="p">,</span>
     <span class="n">OpenAIChatWrapper</span><span class="p">,</span>
@@ -107,26 +110,50 @@
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;ModelWrapperBase&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;PostApiModelWrapper&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ModelResponse&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PostAPIModelWrapperBase&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PostAPIChatWrapper&quot;</span><span class="p">,</span>
     <span class="s2">&quot;OpenAIWrapper&quot;</span><span class="p">,</span>
     <span class="s2">&quot;OpenAIChatWrapper&quot;</span><span class="p">,</span>
     <span class="s2">&quot;OpenAIDALLEWrapper&quot;</span><span class="p">,</span>
     <span class="s2">&quot;OpenAIEmbeddingWrapper&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;load_model_by_name&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;load_model_by_config_name&quot;</span><span class="p">,</span>
     <span class="s2">&quot;read_model_configs&quot;</span><span class="p">,</span>
     <span class="s2">&quot;clear_model_configs&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
-<span class="kn">from</span> <span class="nn">..configs.model_config</span> <span class="kn">import</span> <span class="n">OpenAICfg</span><span class="p">,</span> <span class="n">PostApiCfg</span>
+<span class="n">_MODEL_CONFIGS</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
 
-<span class="n">_MODEL_CONFIGS</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">def</span> <span class="nf">_get_model_wrapper</span><span class="p">(</span><span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">ModelWrapperBase</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the specific type of model wrapper</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model_type (`str`): The model type name.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `Type[ModelWrapperBase]`: The corresponding model wrapper class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">model_type</span> <span class="ow">in</span> <span class="n">ModelWrapperBase</span><span class="o">.</span><span class="n">type_registry</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ModelWrapperBase</span><span class="o">.</span><span class="n">type_registry</span><span class="p">[</span>  <span class="c1"># type: ignore [return-value]</span>
+            <span class="n">model_type</span>
+        <span class="p">]</span>
+    <span class="k">elif</span> <span class="n">model_type</span> <span class="ow">in</span> <span class="n">ModelWrapperBase</span><span class="o">.</span><span class="n">registry</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ModelWrapperBase</span><span class="o">.</span><span class="n">registry</span><span class="p">[</span>  <span class="c1"># type: ignore [return-value]</span>
+            <span class="n">model_type</span>
+        <span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unsupported model_type [</span><span class="si">{</span><span class="n">model_type</span><span class="si">}</span><span class="s2">],&quot;</span>
+            <span class="s2">&quot;use PostApiModelWrapper instead.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">PostAPIModelWrapperBase</span>
 
 
-<div class="viewcode-block" id="load_model_by_name">
-<a class="viewcode-back" href="../../agentscope.models.html#agentscope.models.load_model_by_name">[docs]</a>
-<span class="k">def</span> <span class="nf">load_model_by_name</span><span class="p">(</span><span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelWrapperBase</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the model by name.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="load_model_by_config_name">
+<a class="viewcode-back" href="../../agentscope.models.html#agentscope.models.load_model_by_config_name">[docs]</a>
+<span class="k">def</span> <span class="nf">load_model_by_config_name</span><span class="p">(</span><span class="n">config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelWrapperBase</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the model by config name.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_MODEL_CONFIGS</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">&quot;No model configs loaded, please call &quot;</span>
@@ -134,30 +161,19 @@
         <span class="p">)</span>
 
     <span class="c1"># Find model config by name</span>
-    <span class="n">config</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">_MODEL_CONFIGS</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">_</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">model_name</span><span class="p">:</span>
-            <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">_</span><span class="p">}</span>
-            <span class="k">break</span>
+    <span class="k">if</span> <span class="n">config_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_MODEL_CONFIGS</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Cannot find [</span><span class="si">{</span><span class="n">config_name</span><span class="si">}</span><span class="s2">] in loaded configurations.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">_MODEL_CONFIGS</span><span class="p">[</span><span class="n">config_name</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Cannot find [</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">] in loaded configurations.&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;Cannot find [</span><span class="si">{</span><span class="n">config_name</span><span class="si">}</span><span class="s2">] in loaded configurations.&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="n">model_type</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;openai&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">OpenAIChatWrapper</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;openai_dall_e&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">OpenAIDALLEWrapper</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;openai_embedding&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">OpenAIEmbeddingWrapper</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;post_api&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">PostApiModelWrapper</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Cannot find [</span><span class="si">{</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">] in loaded configurations.&quot;</span><span class="p">,</span>
-        <span class="p">)</span></div>
+    <span class="n">model_type</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">model_type</span>
+    <span class="k">return</span> <span class="n">_get_model_wrapper</span><span class="p">(</span><span class="n">model_type</span><span class="o">=</span><span class="n">model_type</span><span class="p">)(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span></div>
 
 
 
@@ -165,8 +181,7 @@
 <a class="viewcode-back" href="../../agentscope.models.html#agentscope.models.clear_model_configs">[docs]</a>
 <span class="k">def</span> <span class="nf">clear_model_configs</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Clear the loaded model configs.&quot;&quot;&quot;</span>
-    <span class="k">global</span> <span class="n">_MODEL_CONFIGS</span>
-    <span class="n">_MODEL_CONFIGS</span> <span class="o">=</span> <span class="p">[]</span></div>
+    <span class="n">_MODEL_CONFIGS</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
 
 
 
@@ -174,7 +189,7 @@
 <a class="viewcode-back" href="../../agentscope.models.html#agentscope.models.read_model_configs">[docs]</a>
 <span class="k">def</span> <span class="nf">read_model_configs</span><span class="p">(</span>
     <span class="n">configs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span>
-    <span class="n">empty_first</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">clear_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;read model configs from a path or a list of dicts.</span>
 
@@ -182,14 +197,14 @@
 <span class="sd">        configs (`Union[str, list, dict]`):</span>
 <span class="sd">            The path of the model configs | a config dict | a list of model</span>
 <span class="sd">            configs.</span>
-<span class="sd">        empty_first (`bool`, defaults to `False`):</span>
+<span class="sd">        clear_existing (`bool`, defaults to `False`):</span>
 <span class="sd">            Whether to clear the loaded model configs before reading.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        `dict`:</span>
 <span class="sd">            The model configs.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">empty_first</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">clear_existing</span><span class="p">:</span>
         <span class="n">clear_model_configs</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -206,43 +221,21 @@
             <span class="p">)</span>
         <span class="n">cfgs</span> <span class="o">=</span> <span class="n">configs</span>
 
-    <span class="c1"># Checking</span>
-    <span class="n">format_configs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">OpenAICfg</span><span class="p">,</span> <span class="n">PostApiCfg</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">cfg</span> <span class="ow">in</span> <span class="n">cfgs</span><span class="p">:</span>
-        <span class="k">if</span> <span class="s2">&quot;type&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cfg</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Cannot find `type` in model config: </span><span class="si">{</span><span class="n">cfg</span><span class="si">}</span><span class="s2">, &quot;</span>
-                <span class="sa">f</span><span class="s1">&#39;whose value should be choice from [&quot;openai&quot;, &#39;</span>
-                <span class="sa">f</span><span class="s1">&#39;&quot;post_api&quot;]&#39;</span><span class="p">,</span>
-            <span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;openai&quot;</span><span class="p">:</span>
-            <span class="n">openai_cfg</span> <span class="o">=</span> <span class="n">OpenAICfg</span><span class="p">()</span>
-            <span class="n">openai_cfg</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="o">**</span><span class="n">cfg</span><span class="p">)</span>
-            <span class="n">format_configs</span> <span class="o">+=</span> <span class="p">[</span><span class="n">openai_cfg</span><span class="p">]</span>
-
-        <span class="k">elif</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;post_api&quot;</span><span class="p">:</span>
-            <span class="n">post_api_cfg</span> <span class="o">=</span> <span class="n">PostApiCfg</span><span class="p">()</span>
-            <span class="n">post_api_cfg</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="o">**</span><span class="n">cfg</span><span class="p">)</span>
-            <span class="n">format_configs</span> <span class="o">+=</span> <span class="p">[</span><span class="n">post_api_cfg</span><span class="p">]</span>
-
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Unknown model type: </span><span class="si">{</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, please &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;choice from [&#39;openai&#39;, &#39;post_api&#39;]]&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
+    <span class="n">format_configs</span> <span class="o">=</span> <span class="n">ModelConfig</span><span class="o">.</span><span class="n">format_configs</span><span class="p">(</span><span class="n">configs</span><span class="o">=</span><span class="n">cfgs</span><span class="p">)</span>
 
     <span class="c1"># check if name is unique</span>
-    <span class="k">global</span> <span class="n">_MODEL_CONFIGS</span>
     <span class="k">for</span> <span class="n">cfg</span> <span class="ow">in</span> <span class="n">format_configs</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="n">_</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">_MODEL_CONFIGS</span><span class="p">]:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Model name &quot;</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot; already exists.&#39;</span><span class="p">)</span>
-
-        <span class="n">_MODEL_CONFIGS</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">config_name</span> <span class="ow">in</span> <span class="n">_MODEL_CONFIGS</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;config_name [</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">config_name</span><span class="si">}</span><span class="s2">] already exists.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">_MODEL_CONFIGS</span><span class="p">[</span><span class="n">cfg</span><span class="o">.</span><span class="n">config_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">cfg</span>
 
     <span class="c1"># print the loaded model configs</span>
-    <span class="n">model_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">_</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">_MODEL_CONFIGS</span><span class="p">]</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Load configs for model: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_names</span><span class="p">))</span></div>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s2">&quot;Load configs for model wrapper: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_MODEL_CONFIGS</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
+    <span class="p">)</span></div>
 
 </pre></div>
 

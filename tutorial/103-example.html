@@ -65,7 +65,6 @@
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.agents.html">Agents package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../agentscope.configs.html">Configs package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.memory.html">Memory package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.models.html">Models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.pipelines.html">Pipelines package</a></li>
@@ -110,7 +109,7 @@
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Model Usage</p></th>
-<th class="head"><p>Type Argument in AgentScope</p></th>
+<th class="head"><p>Model Type Argument in AgentScope</p></th>
 <th class="head"><p>Supported APIs</p></th>
 </tr>
 </thead>
@@ -135,9 +134,9 @@
 </table>
 <p>Each API has its specific configuration requirements. For example, to configure an OpenAI API, you would need to fill out the following fields in the model config in a dict, a yaml file or a json file:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;openai&quot;</span><span class="p">,</span>               <span class="c1"># Choose from &quot;openai&quot;, &quot;openai_dall_e&quot;, or &quot;openai_embedding&quot;</span>
-    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{your_config_name}</span><span class="s2">&quot;</span><span class="p">,</span>   <span class="c1"># A unique identifier for your config</span>
-    <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{model_name}</span><span class="s2">&quot;</span><span class="p">,</span>   <span class="c1"># The model identifier used in the OpenAI API, such as &quot;gpt-3.5-turbo&quot;, &quot;gpt-4&quot;, or &quot;text-embedding-ada-002&quot;</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{config_name}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="c1"># A unique name for the model config.</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;openai&quot;</span><span class="p">,</span>         <span class="c1"># Choose from &quot;openai&quot;, &quot;openai_dall_e&quot;, or &quot;openai_embedding&quot;.</span>
+    <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{model_name}</span><span class="s2">&quot;</span><span class="p">,</span>   <span class="c1"># The model identifier used in the OpenAI API, such as &quot;gpt-3.5-turbo&quot;, &quot;gpt-4&quot;, or &quot;text-embedding-ada-002&quot;.</span>
     <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;xxx&quot;</span><span class="p">,</span>               <span class="c1"># Your OpenAI API key. If unset, the environment variable OPENAI_API_KEY is used.</span>
     <span class="s2">&quot;organization&quot;</span><span class="p">:</span> <span class="s2">&quot;xxx&quot;</span><span class="p">,</span>          <span class="c1"># Your OpenAI organization ID. If unset, the environment variable OPENAI_ORGANIZATION is used.</span>
 <span class="p">}</span>
@@ -164,7 +163,7 @@
 <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">model_configs</span><span class="o">=</span><span class="s2">&quot;./openai_model_configs.json&quot;</span><span class="p">)</span>
 
 <span class="c1"># Create a dialog agent and a user agent</span>
-<span class="n">dialogAgent</span> <span class="o">=</span> <span class="n">DialogAgent</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-4&quot;</span><span class="p">)</span>
+<span class="n">dialogAgent</span> <span class="o">=</span> <span class="n">DialogAgent</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span> <span class="n">model_config_name</span><span class="o">=</span><span class="s2">&quot;gpt-4&quot;</span><span class="p">)</span>
 <span class="n">userAgent</span> <span class="o">=</span> <span class="n">UserAgent</span><span class="p">()</span>
 </pre></div>
 </div>

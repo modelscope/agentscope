@@ -21,7 +21,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Configs package" href="agentscope.configs.html" />
+    <link rel="next" title="Memory package" href="agentscope.memory.html" />
     <link rel="prev" title="Contributing to AgentScope" href="tutorial/302-contribute.html" /> 
 </head>
 
@@ -119,9 +119,15 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#module-agentscope.agents.text_to_image_agent">text_to_image_agent module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.text_to_image_agent.TextToImageAgent"><code class="docutils literal notranslate"><span class="pre">TextToImageAgent</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.agents.text_to_image_agent.TextToImageAgent.reply"><code class="docutils literal notranslate"><span class="pre">TextToImageAgent.reply()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.configs.html">Configs package</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">Memory package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">Models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">Pipelines package</a></li>
@@ -584,6 +590,36 @@ with the textual response and may include other keys such as
 </dd></dl>
 
 </section>
+<section id="module-agentscope.agents.text_to_image_agent">
+<span id="text-to-image-agent-module"></span><h2>text_to_image_agent module<a class="headerlink" href="#module-agentscope.agents.text_to_image_agent" title="Link to this heading"></a></h2>
+<p>A agent that convert text to image.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.agents.text_to_image_agent.TextToImageAgent">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.agents.text_to_image_agent.</span></span><span class="sig-name descname"><span class="pre">TextToImageAgent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/agents/text_to_image_agent.html#TextToImageAgent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.text_to_image_agent.TextToImageAgent" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#agentscope.agents.agent.AgentBase" title="agentscope.agents.agent.AgentBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AgentBase</span></code></a></p>
+<p>A agent used to perform text to image tasks.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.agents.text_to_image_agent.TextToImageAgent.reply">
+<span class="sig-name descname"><span class="pre">reply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/agents/text_to_image_agent.html#TextToImageAgent.reply"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.text_to_image_agent.TextToImageAgent.reply" title="Link to this definition"></a></dt>
+<dd><p>Define the actions taken by this agent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<cite>dict</cite>, defaults to <cite>None</cite>) – Dialog history and some environment information</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The agent’s response to the input.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Given that some agents are in an adversarial environment,
+their input doesn’t include the thoughts of other agents.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
 </section>
 
 
@@ -591,7 +627,7 @@ with the textual response and may include other keys such as
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="tutorial/302-contribute.html" class="btn btn-neutral float-left" title="Contributing to AgentScope" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="agentscope.configs.html" class="btn btn-neutral float-right" title="Configs package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="agentscope.memory.html" class="btn btn-neutral float-right" title="Memory package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
