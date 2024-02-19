@@ -376,7 +376,16 @@ class Customer(StateAgent, DialogAgent):
             hist_mem[0]["role"], hist_mem[-1]["role"] = "user", "user"
         return hist_mem
 
-    def generate_pov_story(self, recent_n: int = 20) -> None:
+    def generate_pov_story(self, recent_n: int = 20, force_done_condition="") -> None:
+        if force_done_condition:
+            content = f"我是{self.name}，餐馆老板没有帮助到我，我自己经过努力，调查到了结果" \
+                      f":{force_done_condition}。"
+            msg = Msg(
+                role="user",
+                name=self.name,
+                content=content,
+            )
+            self.memory.add(msg)
         related_mem = self._validated_history_messages(recent_n)
         conversation = ""
         for mem in related_mem:

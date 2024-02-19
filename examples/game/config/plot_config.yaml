@@ -33,7 +33,7 @@
     "npc_quit_openings": >
       哎，老板，反正你帮我打听打听吧！（说完，王先生就慌慌张张地跑开了）
     "done_hint": >
-      你知道谁拿走了王先生的招财猫吗？邀请王先生，并且告诉他谁拿了他的招财猫，才能算成功！
+      你知道谁拿走了王先生的招财猫吗？告诉王先生是谁拿了他的招财猫，找到正确的小偷才能算成功！
     "done_condition": >
       发现阿炳拿走了王先生的招财猫
 - "plot_id": 2
@@ -66,6 +66,10 @@
       准备中。。。
     "npc_quit_openings": >
       准备中。。。
+    "done_hint": >
+      准备中。。。
+    "done_condition": >
+      准备中。。。
 - "plot_id": 3
   "plot_stages":
     - 0
@@ -91,5 +95,9 @@
     "npc_openings": >
       准备中。。。
     "npc_quit_openings": >
+      准备中。。。
+    "done_hint": >
+      准备中。。。
+    "done_condition": >
       准备中。。。
 
