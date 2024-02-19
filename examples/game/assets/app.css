@@ -245,13 +245,6 @@
     color: #9e9e9e;
 }
 
-.clue-card-container{
-  padding-top: 10px;
-  display: flex; 
-  flex-wrap: wrap; 
-  justify-content: center; 
-  gap: 20px;
-}
 /* 线索卡片样式 */
 .clue-card {
     cursor: pointer;
@@ -318,3 +311,78 @@
   }
 }
 
+/* tab基本样式 */
+.mytabs {
+  /*margin: 10px;*/
+  margin-bottom: 40px; /* 添加底部外边距 */
+  white-space: nowrap; /* 确保所有tab都在一行显示 */
+  overflow-x: auto; /* 允许横向滚动 */
+  min-height: 330px; /* 请根据实际内容高度调整此值 */
+}
+
+/* 隐藏radio按钮 */
+.mytabs input[type="radio"] {
+  display: none;
+}
+
+/* 设计样式 */
+.mytabs label {
+  display: inline-block;
+  padding: 10px 20px; /* 增加左右padding */
+  margin-right: 1px;
+  border: 1px solid transparent; /* 灰色边框 */
+  border-bottom: none;
+  cursor: pointer;
+  background-color: #fff; /* 标签默认背景颜色 */
+  transition: background-color 0.3s ease, border-color 0.3s ease; /* 过渡效果 */
+  /*font-size: 16px; !* 字体大小 *!*/
+  color: #333; /* 字体颜色 */
+  border-radius: 5px 5px 0 0; /* 圆角边框，上左和上右设为5px，下左和下右保持为0 */
+  position: relative; /* 使内容区域不影响标签的布局 */
+}
+
+.mytab {
+  display: inline-block; /* 使得tab容器并排显示 */
+  vertical-align: top; /* 对齐标签 */
+  padding-top: 10px;
+  /*display: flex; */
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+/* 隐藏所有.tab-content元素 */
+.mytab-content {
+  display: none;
+  flex-wrap: wrap;
+  border: 1px solid #ccc;
+  padding: 10px 20px; /* 增加左右padding */
+  white-space: normal; /* 允许内容正常换行 */
+  position: absolute; /* 使内容区域不影响标签的布局 */
+  border-top: none; /* 标签已有边框 */
+  left: 0;
+  background: #fff; /* 内容区域的背景颜色 */
+  width: 100%;
+  box-sizing: border-box; /* 保证边框和内边距不会增加宽度 */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* 添加阴影效果 */
+  border-radius: 0 0 5px 5px; /* 圆角边框，下左和下右设为5px，上左和上右保持为0 */
+  justify-content: center;
+  gap: 20px;
+  max-height: 320px; /* 设置最大高度，根据需要调整这个值 */
+  overflow-y: auto; /* 允许超出最大高度时垂直滚动 */
+}
+
+/* 当radio按钮被选中时，改变紧随其后的label的样式 */
+.mytabs input[type="radio"]:checked + label {
+  background-color: #fff; /* 选中标签的背景颜色 */
+  border-color: #ccc; /* 选中标签的边框颜色 */
+  border-bottom: 1px solid #fff; /* 使选中标签与内容区域融合 */
+  border-top: 2px solid #ccc; /* 选中标签的顶部边框，可以设置为你喜欢的颜色 */
+  border-radius: 5px 5px 0 0; /* 调整圆角以覆盖内容区域的顶部边框 */
+}
+
+/* 当radio按钮被选中时，显示对应的.tab-content元素 */
+.mytabs input[type="radio"]:checked ~ .mytab-content {
+  display: flex;
+  border-top: none; /* 移除内容区域的顶部边框以融合选中标签 */
+}

@@ -243,13 +243,21 @@ def get_clue(uid):
             glb_clue_dict[uid][role_name_]['clue_list'].append(clue_item['clue'])
         glb_clue_dict[uid][role_name_]['unexposed_num'] = clue_item['unexposed_num']
 
-    flex_container_html_list = ""
+    flex_container_html_list = """<div class="mytabs">
+    """
  
-    for role_name_ in glb_clue_dict[uid].keys():
+    for i, role_name_ in enumerate(glb_clue_dict[uid].keys()):
+        if i == 0:
+            check_sign = """
+            checked="checked"
+        """
+        else:
+            check_sign = ""
         flex_container_html = f"""
-            <div style='margin-bottom: 40px;'>
-                <h2 style='text-align: center;'>{role_name_}</h2> <!-- 角色名作为标题 -->
-                <div class='clue-card-container'>
+              <div class="mytab">
+                <input type="radio" id="{role_name_}" name="tabControl" {check_sign}>
+                <label for="{role_name_}">{role_name_}</label>
+                <div class="mytab-content">
         """
 
         for clue in glb_clue_dict[uid][role_name_]["clue_list"]:
@@ -279,6 +287,10 @@ def get_clue(uid):
                             """
                             
         flex_container_html_list += flex_container_html
+    flex_container_html_list += """
+    </div>
+    """
+
     return gr.HTML(flex_container_html_list)
 
 
