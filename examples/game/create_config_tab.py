@@ -653,7 +653,6 @@ def config_role_tab(role_tab, uuid):
             model_name: "",
             food_preference: "",
             background: "",
-            hidden_plot: None,
             plugin_background: None,
             plot_clues: None,
         }
@@ -682,7 +681,6 @@ def config_role_tab(role_tab, uuid):
         model_name,
         food_preference,
         background,
-        hidden_plot,
         plugin_background,
         clues,
         uuid,
@@ -709,11 +707,9 @@ def config_role_tab(role_tab, uuid):
             for clue in clues
             if all(clue)
         ] or None
-        hidden_plot = {int(it[0]): it[1] for it in hidden_plot if all(it)} or None
         character_setting = new_role.get("character_setting", dict())
         character_setting["food_preference"] = food_preference
         character_setting["background"] = background
-        character_setting["hidden_plot"] = hidden_plot
         character_setting["plugin_background"] = [it[0] for it in plugin_background if it[0]] or None
         new_role["character_setting"] = character_setting
         if len(roles) > MAX_ROLE_NUM:
