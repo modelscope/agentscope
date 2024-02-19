@@ -141,8 +141,8 @@ class DictDialogAgent(AgentBase):
         else:
             msg = Msg(self.name, response)
 
-        # logging the message
-        logger.chat(msg)
+        # Print/speak the message in this agent's voice
+        self.speak(msg)
 
         # record to memory
         self.memory.add(msg)

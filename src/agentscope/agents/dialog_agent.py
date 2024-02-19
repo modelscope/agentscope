@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """A general dialog agent."""
 from typing import Optional
-from loguru import logger
 
 from ..message import Msg
 from .agent import AgentBase
@@ -27,10 +26,6 @@ class DialogAgent(AgentBase):
         Arguments:
             name (`str`):
                 The name of the agent.
-            config (`Optional[dict]`):
-                The configuration of the agent, if provided, the agent will
-                be initialized from the config rather than the other
-                parameters.
             sys_prompt (`Optional[str]`):
                 The system prompt of the agent, which can be passed by args
                 or hard-coded in the agent.
@@ -86,8 +81,10 @@ class DialogAgent(AgentBase):
         response = self.model(prompt).text
         msg = Msg(self.name, response)
 
-        # logging and record the message in memory
-        logger.chat(msg)
+        # Print/speak the message in this agent's voice
+        self.speak(msg)
+
+        # Record the message in memory
         self.memory.add(msg)
 
         return msg
