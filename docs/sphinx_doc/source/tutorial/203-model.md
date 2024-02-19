@@ -29,7 +29,7 @@ where the model configs could be a list of dict:
         "model_type": "openai_dall_e",
         "model": "dall-e-3",
         "api_key": "xxx",
-        "organization_id": "xxx",
+        "organization": "xxx",
         "generate_args": {
             "size": "1024x1024"
         }
