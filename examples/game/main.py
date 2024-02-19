@@ -46,7 +46,7 @@ def invited_group_chat(
     send_chat_msg(f"现在有{invited_names}在店里了。。。", uid=uid)
     announcement = {"role": "user", "content": "今天老板邀请大家一起来谈事情。"}
     with msghub(invited_customer + [player], announcement=announcement):
-        for _ in range(10):
+        for i in range(10):
             questions = [
                 inquirer.List(
                     "ans",
@@ -57,11 +57,11 @@ def invited_group_chat(
 
             choose_during_chatting = f"""{SYS_MSG_PREFIX}你要发言吗？ <select-box shape="card"
                                 type="checkbox" item-width="auto" options=
-                               '
-                               {json.dumps(["是", "否", "结束邀请对话"])}'
+                               '{json.dumps(["是", "否", "结束邀请对话"])}'
                                select-once></select-box>"""
 
-            send_chat_msg(choose_during_chatting, flushing=False, uid=uid)
+            send_chat_msg(choose_during_chatting, flushing=False, uid=uid,
+                          id=str(i))
             end_flag = False
             while True:
                 answer = query_answer(questions, "ans", uid=uid)

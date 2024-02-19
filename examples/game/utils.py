@@ -110,6 +110,7 @@ def send_chat_msg(
     uid=None,
     flushing=False,
     avatar="./assets/bot.jpg",
+    id=None,
 ):
     print("send_chat_msg:", msg)
     if get_use_web_ui():
@@ -123,6 +124,7 @@ def send_chat_msg(
                     "name": role,
                     "flushing": flushing,
                     "avatar": avatar,
+                    "id": id,
                 },
             ],
         )
