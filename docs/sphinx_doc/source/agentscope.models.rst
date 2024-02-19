@@ -37,6 +37,6 @@ Module contents
 ---------------
 
 .. automodule:: agentscope.models
-   :members: load_model_by_id, clear_model_configs, read_model_configs
+   :members: load_model_by_config_name, clear_model_configs, read_model_configs
    :undoc-members:
    :show-inheritance:

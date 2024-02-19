@@ -359,6 +359,8 @@ class BasicRpcAgentTest(unittest.TestCase):
             self.assertEqual(msg["content"]["msg_num"], j + 2)
             j += 2
         msg = agent_a(msg)
+        logger.chat(msg)
         self.assertTrue(msg["content"]["quota_exceeded"])
         msg = agent_b(msg)
+        logger.chat(msg)
         self.assertTrue(msg["content"]["quota_exceeded"])
