@@ -83,7 +83,7 @@ class Customer(StateAgent, DialogAgent):
         self.hidden_plot = {}
         for item in self.unexposed_clues:
             if item["plot"] in self.hidden_plot.keys():
-                self.hidden_plot[item["plot"]] += item["content"]
+                self.hidden_plot[item["plot"]] += "\n" + item["content"]
             else:
                 self.hidden_plot[item["plot"]] = item["content"]
 
