@@ -73,9 +73,19 @@ class Customer(StateAgent, DialogAgent):
 
         # Clues: `unexposed_clues` & `exposed_clues`
         self.unexposed_clues = self.config.get("clue", None)
-        if self.unexposed_clues is None:
-            self.unexposed_clues = self.build_clues()
-            self.config['clue'] = copy.deepcopy(self.unexposed_clues)
+        # if self.unexposed_clues is None:
+        #     self.unexposed_clues = self.build_clues()
+        #     self.config['clue'] = copy.deepcopy(self.unexposed_clues)
+
+        # print(self.unexposed_clues)
+
+        self.hidden_plot = {}
+        for item in self.unexposed_clues:
+            if item["plot"] in self.hidden_plot.keys():
+                self.hidden_plot[item["plot"]] += item["content"]
+            else:
+                self.hidden_plot[item["plot"]] = item["content"]
+
         # For initialization
         send_clue_msg(
             None,
@@ -102,11 +112,11 @@ class Customer(StateAgent, DialogAgent):
         for p in active_plots:
             logger.debug(f"plot {p}, {active_plots}")
             if (
-                p in self.config["character_setting"]["hidden_plot"]
+                p in self.hidden_plot
                 and len(self.active_plots) == 0
             ):
                 self.active_plots = [p]
-            elif p in self.config["character_setting"]["hidden_plot"]:
+            elif p in self.hidden_plot:
                 raise ValueError(
                     "A customer can be in at most one plot in the current "
                     "version",
@@ -216,7 +226,7 @@ class Customer(StateAgent, DialogAgent):
                             "hidden_main_plot_prompt"
                         ].format_map(
             {
-                "hidden_plot": self.config["character_setting"]["hidden_plot"][self.active_plots[0]],
+                "hidden_plot": self.hidden_plot[self.active_plots[0]],
             },
         )
         if x is not None:
@@ -386,7 +396,7 @@ class Customer(StateAgent, DialogAgent):
                 conversation += "背景" + ": " + mem["content"]
         background = self.background
         if self.plot_stage == CustomerPlot.ACTIVE:
-            background += self.config["character_setting"]["hidden_plot"][self.active_plots[0]]
+            background += self.hidden_plot[self.active_plots[0]]
 
         pov_prompt = self.game_config["pov_story"].format_map(
             {
@@ -487,7 +497,7 @@ class Customer(StateAgent, DialogAgent):
                       f"（这可能需要一些时间）", uid=self.uid)
 
         clues = []
-        for i, plot in self.config["character_setting"]["hidden_plot"].items():
+        for i, plot in self.hidden_plot.items():
             clue_parse_prompt = self.game_config["clue_parse_prompt"] + plot
             message = Msg(name="system", role="user", content=clue_parse_prompt)
 
