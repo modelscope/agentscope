@@ -73,6 +73,8 @@ class Customer(StateAgent, DialogAgent):
 
         # Clues: `unexposed_clues` & `exposed_clues`
         self.unexposed_clues = self.config.get("clue", None)
+        if self.unexposed_clues is None:
+            raise ValueError("No clue is provided for this customer.")
 
         # if self.unexposed_clues is None:
         #     self.unexposed_clues = self.build_clues()
