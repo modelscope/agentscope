@@ -15,6 +15,7 @@ class MonitorFactoryTest(unittest.TestCase):
     "Test class for MonitorFactory"
 
     def setUp(self) -> None:
+        MonitorFactory._instance = None  # pylint: disable=W0212
         self.db_path = f"test-{uuid.uuid4()}.db"
         _ = MonitorFactory.get_monitor(db_path=self.db_path)
 
