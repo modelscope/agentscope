@@ -13,7 +13,7 @@ from agentscope.models import (
     PostAPIModelWrapperBase,
     _get_model_wrapper,
     read_model_configs,
-    load_model_by_id,
+    load_model_by_config_name,
     clear_model_configs,
 )
 
@@ -22,7 +22,7 @@ class TestModelWrapperSimple(ModelWrapperBase):
     """A simple model wrapper class for test usage"""
 
     def __call__(self, *args: Any, **kwargs: Any) -> ModelResponse:
-        return ModelResponse(text=self.model_id)
+        return ModelResponse(text=self.config_name)
 
 
 class BasicModelTest(unittest.TestCase):
@@ -51,7 +51,7 @@ class BasicModelTest(unittest.TestCase):
         configs = [
             {
                 "model_type": "openai",
-                "model_id": "gpt-4",
+                "config_name": "gpt-4",
                 "model": "gpt-4",
                 "api_key": "xxx",
                 "organization": "xxx",
@@ -59,7 +59,7 @@ class BasicModelTest(unittest.TestCase):
             },
             {
                 "model_type": "post_api",
-                "model_id": "my_post_api",
+                "config_name": "my_post_api",
                 "api_url": "https://xxx",
                 "headers": {},
                 "json_args": {},
@@ -67,29 +67,33 @@ class BasicModelTest(unittest.TestCase):
         ]
         # load a list of configs
         read_model_configs(configs=configs, clear_existing=True)
-        model = load_model_by_id("gpt-4")
-        self.assertEqual(model.model_id, "gpt-4")
-        model = load_model_by_id("my_post_api")
-        self.assertEqual(model.model_id, "my_post_api")
-        self.assertRaises(ValueError, load_model_by_id, "non_existent_id")
+        model = load_model_by_config_name("gpt-4")
+        self.assertEqual(model.config_name, "gpt-4")
+        model = load_model_by_config_name("my_post_api")
+        self.assertEqual(model.config_name, "my_post_api")
+        self.assertRaises(
+            ValueError, load_model_by_config_name, "non_existent_id"
+        )
 
         # load a single config
         read_model_configs(configs=configs[0], clear_existing=True)
-        model = load_model_by_id("gpt-4")
-        self.assertEqual(model.model_id, "gpt-4")
-        self.assertRaises(ValueError, load_model_by_id, "my_post_api")
+        model = load_model_by_config_name("gpt-4")
+        self.assertEqual(model.config_name, "gpt-4")
+        self.assertRaises(ValueError, load_model_by_config_name, "my_post_api")
 
         # automatically detect model with the same id
         self.assertRaises(ValueError, read_model_configs, configs[0])
         read_model_configs(
             configs={
                 "model_type": "TestModelWrapperSimple",
-                "model_id": "test_model_wrapper",
+                "config_name": "test_model_wrapper",
                 "args": {},
             },
         )
-        test_model = load_model_by_id("test_model_wrapper")
+        test_model = load_model_by_config_name("test_model_wrapper")
         response = test_model()
         self.assertEqual(response.text, "test_model_wrapper")
         clear_model_configs()
-        self.assertRaises(ValueError, load_model_by_id, "test_model_wrapper")
+        self.assertRaises(
+            ValueError, load_model_by_config_name, "test_model_wrapper"
+        )

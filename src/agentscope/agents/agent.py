@@ -10,7 +10,7 @@ from typing import Any
 from loguru import logger
 
 from agentscope.agents.operator import Operator
-from agentscope.models import load_model_by_id
+from agentscope.models import load_model_by_config_name
 from agentscope.memory import TemporaryMemory
 
 
@@ -35,9 +35,8 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
     def __init__(
         self,
         name: str,
-        config: Optional[dict] = None,
         sys_prompt: Optional[str] = None,
-        model_id: str = None,
+        model_config_name: str = None,
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
     ) -> None:
@@ -46,15 +45,12 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
         Args:
             name (`str`):
                 The name of the agent.
-            config (`Optional[dict]`):
-                The configuration of the agent, if provided, the agent will
-                be initialized from the config rather than the other
-                parameters.
             sys_prompt (`Optional[str]`):
                 The system prompt of the agent, which can be passed by args
                 or hard-coded in the agent.
-            model_id (`str`, defaults to None):
-                The model id, which is used to load model from configuration.
+            model_config_name (`str`, defaults to None):
+                The name of the model config, which is used to load model from
+                configuration.
             use_memory (`bool`, defaults to `True`):
                 Whether the agent has memory.
             memory_config (`Optional[dict]`):
@@ -62,15 +58,14 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
         """
 
         self.name = name
-        self.config = config
         self.memory_config = memory_config
 
         if sys_prompt is not None:
             self.sys_prompt = sys_prompt
 
         # TODO: support to receive a ModelWrapper instance
-        if model_id is not None:
-            self.model = load_model_by_id(model_id)
+        if model_config_name is not None:
+            self.model = load_model_by_config_name(model_config_name)
 
         if use_memory:
             self.memory = TemporaryMemory(memory_config)

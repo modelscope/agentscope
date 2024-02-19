@@ -4,7 +4,7 @@ import unittest
 from typing import Any
 
 from agentscope.models import read_model_configs
-from agentscope.models import load_model_by_id
+from agentscope.models import load_model_by_config_name
 from agentscope.models import ModelResponse, OpenAIWrapper
 from agentscope.prompt import PromptEngine
 
@@ -30,7 +30,7 @@ class PromptEngineTest(unittest.TestCase):
             [
                 {
                     "model_type": "post_api",
-                    "model_id": "open-source",
+                    "config_name": "open-source",
                     "api_url": "http://xxx",
                     "headers": {"Autherization": "Bearer {API_TOKEN}"},
                     "parameters": {
@@ -39,8 +39,8 @@ class PromptEngineTest(unittest.TestCase):
                 },
                 {
                     "model_type": "openai",
-                    "model_id": "gpt-4",
-                    "model": "gpt-4",
+                    "config_name": "gpt-4",
+                    "model_name": "gpt-4",
                     "api_key": "xxx",
                     "organization": "xxx",
                 },
@@ -109,7 +109,7 @@ class PromptEngineTest(unittest.TestCase):
 
     def test_str_prompt(self) -> None:
         """Test for string prompt."""
-        model = load_model_by_id("open-source")
+        model = load_model_by_config_name("open-source")
         engine = PromptEngine(model)
 
         prompt = engine.join(

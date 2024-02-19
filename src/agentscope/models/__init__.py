@@ -28,7 +28,7 @@ __all__ = [
     "OpenAIChatWrapper",
     "OpenAIDALLEWrapper",
     "OpenAIEmbeddingWrapper",
-    "load_model_by_id",
+    "load_model_by_config_name",
     "read_model_configs",
     "clear_model_configs",
 ]
@@ -61,8 +61,8 @@ def _get_model_wrapper(model_type: str) -> Type[ModelWrapperBase]:
         return PostAPIModelWrapperBase
 
 
-def load_model_by_id(model_id: str) -> ModelWrapperBase:
-    """Load the model by name."""
+def load_model_by_config_name(config_name: str) -> ModelWrapperBase:
+    """Load the model by config name."""
     if len(_MODEL_CONFIGS) == 0:
         raise ValueError(
             "No model configs loaded, please call "
@@ -70,15 +70,15 @@ def load_model_by_id(model_id: str) -> ModelWrapperBase:
         )
 
     # Find model config by name
-    if model_id not in _MODEL_CONFIGS:
+    if config_name not in _MODEL_CONFIGS:
         raise ValueError(
-            f"Cannot find [{model_id}] in loaded configurations.",
+            f"Cannot find [{config_name}] in loaded configurations.",
         )
-    config = _MODEL_CONFIGS[model_id]
+    config = _MODEL_CONFIGS[config_name]
 
     if config is None:
         raise ValueError(
-            f"Cannot find [{model_id}] in loaded configurations.",
+            f"Cannot find [{config_name}] in loaded configurations.",
         )
 
     model_type = config.model_type
@@ -128,9 +128,11 @@ def read_model_configs(
 
     # check if name is unique
     for cfg in format_configs:
-        if cfg.model_id in _MODEL_CONFIGS:
-            raise ValueError(f"model_id [{cfg.model_id}] already exists.")
-        _MODEL_CONFIGS[cfg.model_id] = cfg
+        if cfg.config_name in _MODEL_CONFIGS:
+            raise ValueError(
+                f"config_name [{cfg.config_name}] already exists."
+            )
+        _MODEL_CONFIGS[cfg.config_name] = cfg
 
     # print the loaded model configs
     logger.info(

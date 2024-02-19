@@ -1,8 +1,8 @@
 [
     {
-        "model_id": "gpt-3.5-turbo",
+        "config_name": "gpt-3.5-turbo",
         "model_type": "openai",
-        "model": "gpt-3.5-turbo",
+        "model_name": "gpt-3.5-turbo",
         "api_key": "xxx",
         "organization": "xxx",
         "generate_args": {
@@ -10,9 +10,9 @@
         }
     },
     {
-        "model_id": "gpt-4",
+        "config_name": "gpt-4",
         "model_type": "openai",
-        "model": "gpt-4",
+        "model_name": "gpt-4",
         "api_key": "xxx",
         "organization": "xxx",
         "generate_args": {

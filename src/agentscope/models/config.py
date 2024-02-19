@@ -13,7 +13,7 @@ class ModelConfig(dict):
 
     def __init__(
         self,
-        model_id: str,
+        config_name: str,
         model_type: str = None,
         **kwargs: Any,
     ):
@@ -21,22 +21,22 @@ class ModelConfig(dict):
         type of the arguments.
 
         Args:
-            model_id (`str`): The id of the generated model wrapper.
+            config_name (`str`): A unique name of the model config.
             model_type (`str`, optional): The class name (or its model type) of
                 the generated model wrapper. Defaults to None.
 
         Raises:
-            `ValueError`: If `model_id` is not provided.
+            `ValueError`: If `config_name` is not provided.
         """
-        if model_id is None:
-            raise ValueError("The `model_id` field is required for Cfg")
+        if config_name is None:
+            raise ValueError("The `config_name` field is required for Cfg")
         if model_type is None:
             logger.warning(
-                f"`model_type` is not provided in config [{model_id}],"
+                f"`model_type` is not provided in config [{config_name}],"
                 " use `PostAPIModelWrapperBase` by default.",
             )
         super().__init__(
-            model_id=model_id,
+            config_name=config_name,
             model_type=model_type,
             **kwargs,
         )

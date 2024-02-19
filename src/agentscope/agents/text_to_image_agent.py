@@ -14,9 +14,8 @@ class TextToImageAgent(AgentBase):
     def __init__(
         self,
         name: str,
-        config: Optional[dict] = None,
         sys_prompt: Optional[str] = None,
-        model_id: str = None,
+        model_config_name: str = None,
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
     ) -> None:
@@ -25,15 +24,12 @@ class TextToImageAgent(AgentBase):
         Arguments:
             name (`str`):
                 The name of the agent.
-            config (`Optional[dict]`):
-                The configuration of the agent, if provided, the agent will
-                be initialized from the config rather than the other
-                parameters.
             sys_prompt (`Optional[str]`):
                 The system prompt of the agent, which can be passed by args
                 or hard-coded in the agent.
-            model_id (`str`, defaults to None):
-                The model id, which is used to load model from configuration.
+            model_config_name (`str`, defaults to None):
+                The name of the model config, which is used to load model from
+                configuration.
             use_memory (`bool`, defaults to `True`):
                 Whether the agent has memory.
             memory_config (`Optional[dict]`):
@@ -41,9 +37,8 @@ class TextToImageAgent(AgentBase):
         """
         super().__init__(
             name=name,
-            config=config,
             sys_prompt=sys_prompt,
-            model_id=model_id,
+            model_config_name=model_config_name,
             use_memory=use_memory,
             memory_config=memory_config,
         )

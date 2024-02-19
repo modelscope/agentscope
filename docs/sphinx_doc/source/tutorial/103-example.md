@@ -19,9 +19,9 @@ Each API has its specific configuration requirements. For example, to configure 
 
 ```python
 model_config = {
-    "model_id": "{your_model_id}",  # A unique identifier for the model instance
-    "model_type": "openai",         # Choose from "openai", "openai_dall_e", or "openai_embedding"
-    "model": "{model_name}",        # The model identifier used in the OpenAI API, such as "gpt-3.5-turbo", "gpt-4", or "text-embedding-ada-002"
+    "config_name": "{config_name}", # A unique name for the model config.
+    "model_type": "openai",         # Choose from "openai", "openai_dall_e", or "openai_embedding".
+    "model_name": "{model_name}",   # The model identifier used in the OpenAI API, such as "gpt-3.5-turbo", "gpt-4", or "text-embedding-ada-002".
     "api_key": "xxx",               # Your OpenAI API key. If unset, the environment variable OPENAI_API_KEY is used.
     "organization": "xxx",          # Your OpenAI organization ID. If unset, the environment variable OPENAI_ORGANIZATION is used.
 }
@@ -52,7 +52,7 @@ from agentscope.agents import DialogAgent, UserAgent
 agentscope.init(model_configs="./openai_model_configs.json")
 
 # Create a dialog agent and a user agent
-dialogAgent = DialogAgent(name="assistant", model_id="gpt-4")
+dialogAgent = DialogAgent(name="assistant", model_config_name="gpt-4")
 userAgent = UserAgent()
 ```
 

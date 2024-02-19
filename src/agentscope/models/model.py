@@ -5,12 +5,12 @@ and each model config should follow the following format.
 .. code-block:: python
 
     {
-        "model_id": "{model_id}",
+        "config_name": "{config_name}",
         "model_type": "openai" | "post_api" | ...,
         ...
     }
 
-After that, you can specify model by {model_id}.
+After that, you can specify model by {config_name}.
 
 Note:
     The parameters for different types of models are different. For OpenAI API,
@@ -19,9 +19,9 @@ Note:
         .. code-block:: python
 
             {
-                "model_id": "{id of your model}",
+                "config_name": "{id of your model}",
                 "model_type": "openai",
-                "model": "{model_name_for_openai, e.g. gpt-3.5-turbo}",
+                "model_name": "{model_name_for_openai, e.g. gpt-3.5-turbo}",
                 "api_key": "{your_api_key}",
                 "organization": "{your_organization, if needed}",
                 "client_args": {
@@ -39,7 +39,7 @@ Note:
         .. code-block:: python
 
             {
-                "model_id": "{model_id}",
+                "config_name": "{config_name}",
                 "model_type": "post_api",
                 "api_url": "{api_url}",
                 "headers": {"Authorization": "Bearer {API_TOKEN}"},
@@ -201,20 +201,20 @@ class _ModelWrapperMeta(ABCMeta):
 class ModelWrapperBase(metaclass=_ModelWrapperMeta):
     """The base class for model wrapper."""
 
-    def __init__(self, model_id: str, **kwargs: Any) -> None:
+    def __init__(self, config_name: str, **kwargs: Any) -> None:
         """Base class for model wrapper.
 
         All model wrappers should inherit this class and implement the
         `__call__` function.
 
         Args:
-            model_id (`str`):
+            config_name (`str`):
                 The id of the model, which is used to extract configuration
                 from the config file.
         """
-        self.model_id = model_id
+        self.config_name = config_name
         logger.info(
-            f"Initialize model [{model_id}] with config:\n"
+            f"Initialize model [{config_name}] with config:\n"
             f"{json.dumps(kwargs, indent=2)}",
         )
 

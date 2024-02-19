@@ -69,7 +69,7 @@ In AgentScope, you can load the model with the following model configs: `./flask
 ```json
 {
     "model_type": "post_api",
-    "model_id": "flask_llama2-7b-chat",
+    "config_name": "flask_llama2-7b-chat",
     "api_url": "http://127.0.0.1:8000/llm/",
     "json_args": {
         "max_length": 4096,
@@ -115,7 +115,7 @@ In AgentScope, you can load the model with the following model configs:
 ```json
 {
     "model_type": "post_api",
-    "model_id": "flask_llama2-7b-ms",
+    "config_name": "flask_llama2-7b-ms",
     "api_url": "http://127.0.0.1:8000/llm/",
     "json_args": {
         "max_length": 4096,
@@ -162,7 +162,7 @@ Now you can load the model in AgentScope by the following model config: `fastcha
 ```json
 {
     "model_type": "openai",
-    "model_id": "meta-llama/Llama-2-7b-chat-hf",
+    "config_name": "meta-llama/Llama-2-7b-chat-hf",
     "api_key": "EMPTY",
     "client_args": {
         "base_url": "http://127.0.0.1:8000/v1/"
@@ -206,7 +206,7 @@ Now you can load the model in AgentScope by the following model config: `vllm_sc
 ```json
 {
     "model_type": "openai",
-    "model_id": "meta-llama/Llama-2-7b-chat-hf",
+    "config_name": "meta-llama/Llama-2-7b-chat-hf",
     "api_key": "EMPTY",
     "client_args": {
         "base_url": "http://127.0.0.1:8000/v1/"
@@ -228,7 +228,7 @@ following model config in AgentScope.
 ```json
 {
     "model_type": "post_api",
-    "model_id": "gpt2",
+    "config_name": "gpt2",
     "headers": {
         "Authorization": "Bearer {YOUR_API_TOKEN}"
     },

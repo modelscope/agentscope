@@ -9,7 +9,7 @@ agentscope.init(
     model_configs=[
         {
             "model_type": "openai",
-            "model_id": "gpt-3.5-turbo",
+            "config_name": "gpt-3.5-turbo",
             "model": "gpt-3.5-turbo",
             "api_key": "xxx",  # Load from env if not provided
             "organization": "xxx",  # Load from env if not provided
@@ -19,7 +19,7 @@ agentscope.init(
         },
         {
             "model_type": "post_api_chat",
-            "model_id": "my_post_api",
+            "config_name": "my_post_api",
             "api_url": "https://xxx",
             "headers": {},
         },
@@ -30,7 +30,7 @@ agentscope.init(
 dialog_agent = DialogAgent(
     name="Assistant",
     sys_prompt="You're a helpful assistant.",
-    model_id="gpt-3.5-turbo",  # replace by your model config name
+    model_config_name="gpt-3.5-turbo",  # replace by your model config name
 )
 user_agent = UserAgent()
 

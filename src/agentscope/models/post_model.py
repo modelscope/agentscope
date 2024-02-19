@@ -20,7 +20,7 @@ class PostAPIModelWrapperBase(ModelWrapperBase):
 
     def __init__(
         self,
-        model_id: str,
+        config_name: str,
         api_url: str,
         headers: dict = None,
         max_length: int = 2048,
@@ -35,7 +35,7 @@ class PostAPIModelWrapperBase(ModelWrapperBase):
         """Initialize the model wrapper.
 
         Args:
-            model_id (`str`):
+            config_name (`str`):
                 The id of the model.
             api_url (`str`):
                 The url of the post request api.
@@ -74,7 +74,7 @@ class PostAPIModelWrapperBase(ModelWrapperBase):
                 )
         """
         super().__init__(
-            model_id=model_id,
+            config_name=config_name,
             api_url=api_url,
             headers=headers,
             max_length=max_length,

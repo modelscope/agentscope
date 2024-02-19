@@ -1,8 +1,8 @@
 [
     {
         "model_type": "openai",
-        "model_id": "gpt-4",
-        "model": "gpt-4",
+        "config_name": "gpt-4",
+        "model_name": "gpt-4",
         "api_key": "xxx",
         "organization": "xxx",
         "generate_args": {
@@ -11,7 +11,7 @@
     },
     {
         "model_type": "post_api_chat",
-        "model_id": "my_post_api",
+        "config_name": "my_post_api",
         "api_url": "https://xxx",
         "headers": {},
         "json_args": {}

@@ -24,8 +24,8 @@ class OpenAIWrapper(ModelWrapperBase):
 
     def __init__(
         self,
-        model_id: str,
-        model: str = None,
+        config_name: str,
+        model_name: str = None,
         api_key: str = None,
         organization: str = None,
         client_args: dict = None,
@@ -36,10 +36,9 @@ class OpenAIWrapper(ModelWrapperBase):
         """Initialize the openai client.
 
         Args:
-            model_id (`str`):
-                The id of the model wrapper, which is used to identify
-                model configs.
-            model (`str`, default `None`):
+            config_name (`str`):
+                The name of the model config.
+            model_name (`str`, default `None`):
                 The name of the model to use in OpenAI API.
             api_key (`str`, default `None`):
                 The API key for OpenAI API. If not specified, it will
@@ -56,11 +55,11 @@ class OpenAIWrapper(ModelWrapperBase):
                 The total budget using this model. Set to `None` means no
                 limit.
         """
-        if model is None:
-            model = model_id
+        if model_name is None:
+            model_name = config_name
         super().__init__(
-            model_id=model_id,
-            model=model,
+            config_name=config_name,
+            model_name=model_name,
             client_args=client_args,
             generate_args=generate_args,
             budget=budget,
@@ -72,7 +71,7 @@ class OpenAIWrapper(ModelWrapperBase):
                 "Cannot find openai package in current python environment.",
             )
 
-        self.model = model
+        self.model = model_name
         self.generate_args = generate_args or {}
 
         self.client = openai.OpenAI(

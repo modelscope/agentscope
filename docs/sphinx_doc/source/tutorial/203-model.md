@@ -15,7 +15,7 @@ where the model configs could be a list of dict:
 ```json
 [
     {
-        "model_id": "gpt-4-temperature-0.0",
+        "config_name": "gpt-4-temperature-0.0",
         "model_type": "openai",
         "model": "gpt-4",
         "api_key": "xxx",
@@ -25,7 +25,7 @@ where the model configs could be a list of dict:
         }
     },
     {
-        "model_id": "dall-e-3-size-1024x1024",
+        "config_name": "dall-e-3-size-1024x1024",
         "model_type": "openai_dall_e",
         "model": "dall-e-3",
         "api_key": "xxx",
@@ -89,7 +89,7 @@ In AgentScope, you can load the model with the following model configs: `./flask
 ```json
 {
     "model_type": "post_api",
-    "model_id": "flask_llama2-7b-chat",
+    "config_name": "flask_llama2-7b-chat",
     "api_url": "http://127.0.0.1:8000/llm/",
     "json_args": {
         "max_length": 4096,
@@ -130,7 +130,7 @@ In AgentScope, you can load the model with the following model configs: `flask_m
 ```json
 {
     "model_type": "post_api",
-    "model_id": "flask_llama2-7b-ms",
+    "config_name": "flask_llama2-7b-ms",
     "api_url": "http://127.0.0.1:8000/llm/",
     "json_args": {
         "max_length": 4096,
@@ -171,7 +171,7 @@ Now you can load the model in AgentScope by the following model config: `fastcha
 
 ```json
 {
-    "model_id": "meta-llama/Llama-2-7b-chat-hf",
+    "config_name": "meta-llama/Llama-2-7b-chat-hf",
     "model_type": "openai",
     "api_key": "EMPTY",
     "client_args": {
@@ -211,7 +211,7 @@ Now you can load the model in AgentScope by the following model config: `vllm_sc
 
 ```json
 {
-    "model_id": "meta-llama/Llama-2-7b-chat-hf",
+    "config_name": "meta-llama/Llama-2-7b-chat-hf",
     "model_type": "openai",
     "api_key": "EMPTY",
     "client_args": {
@@ -230,7 +230,7 @@ Taking `gpt2` in HuggingFace inference API as an example, you can use the follow
 
 ```json
 {
-    "model_id": "gpt2",
+    "config_name": "gpt2",
     "model_type": "post_api",
     "headers": {
         "Authorization": "Bearer {YOUR_API_TOKEN}"
@@ -250,7 +250,7 @@ model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 model.eval()
 # Do remember to re-implement the `reply` method to tokenize *message*!
-agent = YourAgent(name='agent', model_id=model_id, tokenizer=tokenizer)
+agent = YourAgent(name='agent', model_config_name=config_name, tokenizer=tokenizer)
 ```
 
 [[Return to the top]](#using-different-model-sources-with-model-api)

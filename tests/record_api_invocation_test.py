@@ -43,7 +43,7 @@ class RecordApiInvocation(unittest.TestCase):
         # test
         agentscope.init(save_api_invoke=True)
         model = OpenAIChatWrapper(
-            model_id="gpt-4",
+            config_name="gpt-4",
             api_key="xxx",
             organization="xxx",
         )

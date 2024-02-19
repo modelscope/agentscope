@@ -110,9 +110,9 @@ For OpenAI APIs, you need to prepare a dict of model config with the following f
 
 ```
 {
-    "model_id": "{model id}",                   # To identify the model instance
+    "config_name": "{config name}",             # The name to identify the config
     "model_type": "openai" | "openai_dall_e" | "openai_embedding",
-    "model": "{model name, e.g. gpt-4}",        # The used model in openai API
+    "model_name": "{model name, e.g. gpt-4}",   # The model in openai API
 
     # Optional
     "api_key": "xxx",                           # The API key for OpenAI API. If not set, env
@@ -128,7 +128,7 @@ For post requests APIs, the config contains the following fields.
 
 ```
 {
-    "model_id": "{model id}",         # To identify the model instance
+    "config_name": "{config name}",   # The name to identify the config
     "model_type": "post_api",
     "api_url": "https://xxx",         # The target url
     "headers": {                      # Required headers
@@ -152,7 +152,7 @@ import agentscope
 agentscope.init(model_configs="./model_configs.json")
 
 # Create a dialog agent and a user agent
-dialog_agent = DialogAgent(name="assistant", model="gpt-4")
+dialog_agent = DialogAgent(name="assistant", model_config_name="your_config_name")
 user_agent = UserAgent()
 ```
 
