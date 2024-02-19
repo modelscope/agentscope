@@ -73,11 +73,10 @@ class Customer(StateAgent, DialogAgent):
 
         # Clues: `unexposed_clues` & `exposed_clues`
         self.unexposed_clues = self.config.get("clue", None)
+
         # if self.unexposed_clues is None:
         #     self.unexposed_clues = self.build_clues()
         #     self.config['clue'] = copy.deepcopy(self.unexposed_clues)
-
-        # print(self.unexposed_clues)
 
         self.hidden_plot = {}
         for item in self.unexposed_clues:
@@ -112,8 +111,7 @@ class Customer(StateAgent, DialogAgent):
         for p in active_plots:
             logger.debug(f"plot {p}, {active_plots}")
             if (
-                p in self.hidden_plot
-                and len(self.active_plots) == 0
+                p in self.hidden_plot and len(self.active_plots) == 0
             ):
                 self.active_plots = [p]
             elif p in self.hidden_plot:
