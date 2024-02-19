@@ -64,8 +64,8 @@ logger.error("The agent encountered an unexpected error while processing a reque
 
 ## Integrating logging with WebUI
 
-To visualize these logs and running details, AgentScope provides a simple 
-web interface. 
+To visualize these logs and running details, AgentScope provides a simple
+web interface.
 
 ### Quick Running
 
@@ -84,12 +84,12 @@ By this way, you can see all the running instances and projects in `http://127.
 
 ![webui](https://img.alicdn.com/imgextra/i3/O1CN01kpHFkn1HpeYEkn60I_!!6000000000807-0-tps-3104-1849.jpg)
 
-By clicking a running instance, we can observe more details. 
+By clicking a running instance, we can observe more details.
 
 ![The running details](https://img.alicdn.com/imgextra/i2/O1CN01AZtsf31MIHm4FmjjO_!!6000000001411-0-tps-3104-1849.jpg)
 
 ### Note
-The WebUI is still under development. We will provide more features and 
+The WebUI is still under development. We will provide more features and
 better user experience in the future.
 
 [[Return to the top]](#logging-and-webui)
