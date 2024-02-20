@@ -60,7 +60,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#integrating-logging-with-webui">Integrating logging with WebUI</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#quick-running">Quick Running</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#for-other-customization">For Other Customization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#note">Note</a></li>
 </ul>
 </li>
 </ul>
@@ -79,7 +79,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.service.html">Service package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.rpc.html">RPC package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.utils.html">Utils package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../agentscope.web_ui.html">Web UI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.web.html">Web UI package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.html">Module contents</a></li>
 </ul>
 
@@ -169,39 +169,27 @@
 </section>
 <section id="integrating-logging-with-webui">
 <h2>Integrating logging with WebUI<a class="headerlink" href="#integrating-logging-with-webui" title="Link to this heading"></a></h2>
-<p>To visualize these logs, we provide a customized gradio component in <code class="docutils literal notranslate"><span class="pre">src/agentscope/web_ui</span></code>.</p>
+<p>To visualize these logs and running details, AgentScope provides a simple
+web interface.</p>
 <section id="quick-running">
 <h3>Quick Running<a class="headerlink" href="#quick-running" title="Link to this heading"></a></h3>
-<p>For convince, we provide the pre-built app in a wheel file, you can run the WebUI in the following command:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>gradio_groupchat-0.0.1-py3-none-any.whl
-python<span class="w"> </span>app.py
+<p>You can run the WebUI in the following python code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">agentscope</span>
+
+<span class="n">agentscope</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="n">path_save</span><span class="o">=</span><span class="s2">&quot;YOUR_SAVE_PATH&quot;</span>
+<span class="p">)</span>
 </pre></div>
 </div>
-<p>After the init and entering the UI port printed by <code class="docutils literal notranslate"><span class="pre">app.py</span></code>, e.g., <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:7860/</span></code>, you can choose <code class="docutils literal notranslate"><span class="pre">run.log.demo</span></code> in the top-middle <code class="docutils literal notranslate"><span class="pre">FileSelector</span></code> window (it’s a demo log file provided by us). Then, the dialog and system log should be shown correctly in the bottom windows.</p>
-<p><img alt="webui" src="https://img.alicdn.com/imgextra/i2/O1CN01hSaFue1EdL2yCEznc_!!6000000000374-2-tps-3066-1808.png" /></p>
+<p>By this way, you can see all the running instances and projects in <code class="docutils literal notranslate"><span class="pre">http://127.</span> <span class="pre">0.0.1:5000</span></code> as follows:</p>
+<p><img alt="webui" src="https://img.alicdn.com/imgextra/i3/O1CN01kpHFkn1HpeYEkn60I_!!6000000000807-0-tps-3104-1849.jpg" /></p>
+<p>By clicking a running instance, we can observe more details.</p>
+<p><img alt="The running details" src="https://img.alicdn.com/imgextra/i2/O1CN01AZtsf31MIHm4FmjjO_!!6000000001411-0-tps-3104-1849.jpg" /></p>
 </section>
-<section id="for-other-customization">
-<h3>For Other Customization<a class="headerlink" href="#for-other-customization" title="Link to this heading"></a></h3>
-<p>To customize the backend, or the frontend of the provided WebUI, you can</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># generate the template codes</span>
-<span class="c1"># for network connectivity problem, try to run</span>
-<span class="c1"># `npm config rm proxy &amp;&amp; npm config rm https-proxy` first</span>
-gradio<span class="w"> </span>cc<span class="w"> </span>create<span class="w"> </span>GroupChat<span class="w"> </span>--template<span class="w"> </span>Chatbot
-<span class="c1"># replace the generated app.py into our built-in app.py</span>
-cp<span class="w"> </span>-f<span class="w"> </span>app.py<span class="w"> </span>groupchat/demo
-<span class="c1"># debug and develop your web_ui</span>
-<span class="nb">cd</span><span class="w"> </span>groupchat
-<span class="c1"># edit the app.py, or other parts you want, reference link:</span>
-<span class="c1"># https://www.gradio.app/guides/custom-components-in-five-minutes</span>
-gradio<span class="w"> </span>cc<span class="w"> </span>dev
-</pre></div>
-</div>
-<p>If you want to release the modification, you can do</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>gradio<span class="w"> </span>cc<span class="w"> </span>build
-pip<span class="w"> </span>install<span class="w"> </span>&lt;path-to-whl&gt;
-python<span class="w"> </span>app.py
-</pre></div>
-</div>
+<section id="note">
+<h3>Note<a class="headerlink" href="#note" title="Link to this heading"></a></h3>
+<p>The WebUI is still under development. We will provide more features and
+better user experience in the future.</p>
 <p><a class="reference internal" href="#logging-and-webui"><span class="xref myst">[Return to the top]</span></a></p>
 </section>
 </section>

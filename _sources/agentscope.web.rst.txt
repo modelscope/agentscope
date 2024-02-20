@@ -4,7 +4,7 @@ Web UI package
 app module
 -----------------------------
 
-.. automodule:: agentscope.web_ui.app
+.. automodule:: agentscope.web.app
    :members:
    :undoc-members: gradio_groupchat
    :show-inheritance:

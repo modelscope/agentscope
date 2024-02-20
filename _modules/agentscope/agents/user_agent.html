@@ -58,7 +58,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">Service package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">RPC package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">Utils package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web_ui.html">Web UI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">Web UI package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">Module contents</a></li>
 </ul>
 
@@ -177,6 +177,8 @@
             <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>  <span class="c1"># type: ignore[arg-type]</span>
         <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="c1"># Add to memory</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
