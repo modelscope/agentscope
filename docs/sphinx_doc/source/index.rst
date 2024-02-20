@@ -35,7 +35,7 @@ AgentScope Documentation
    agentscope.service
    agentscope.rpc
    agentscope.utils
-   agentscope.web_ui
+   agentscope.web
    agentscope
 
 Indices and tables
