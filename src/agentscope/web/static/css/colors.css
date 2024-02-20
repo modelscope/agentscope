@@ -1,0 +1,30 @@
+:root {
+    /* Basic colors */
+    --light-color: #c5dbea;
+    --media-color: #69b4d1;
+    --main-color: #94a1ea;
+    --dark-color: #2b5677;
+
+    /* Main background colors */
+    --body-bg: #ffffff;
+    --sidebar-bg: var(--dark-color);
+
+
+    /* General component colors */
+    --border-color: var(--dark-color);
+
+
+    /* Table */
+    --table-header-bg: var(--dark-color);
+
+
+    /* Sidebar */
+    --sidebar-title-color: #ffffff;
+    --sidebar-subtitle-color: #ffffff;
+    --sidebar-text-color: #ffffff;
+    --sidebar-icon-color: #ffffff;
+    --sidebar-hover-bg: #d1d5e3;
+
+    --btn-fill-color: var(--dark-color);
+
+}

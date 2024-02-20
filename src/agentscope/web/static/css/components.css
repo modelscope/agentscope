@@ -1,0 +1,132 @@
+body {
+    height: 100vh; /* Fill the entire screen height */
+    width: 100vw; /* Fill the entire screen width */
+    margin: 0; /* Eliminate default body margin */
+    display: flex; /* Allows body to be a flex container */
+    flex-direction: row;
+    padding: 0;
+    background: var(--body-bg);
+    font-family: oswald, sans-serif;
+}
+
+#sidebar-title {
+    font-family: 'krypton', sans-serif;
+    height: var(--sidebar-title-height);
+    width: 100%;
+    font-size: 30px;
+    text-align: center;
+    margin-bottom: var(--sidebar-title-margin-bottom);
+}
+
+.sidebar-subtitle {
+    display: flex;
+    align-items: center;
+    height: var(--sidebar-subtitle-height);
+    width: 100%;
+    margin-left: 30px;
+    color: var(--sidebar-subtitle-color);
+    font-size: var(--sidebar-font-size);
+    font-weight: bold;
+}
+
+.project-list-item {
+    display: flex;
+    align-items: center;
+    width: calc(100% - 10px);
+    height: 50px;
+    text-align: left;
+    line-height: 50px; /* Make the text vertically centered */
+    background: transparent;
+    font-size: var(--sidebar-font-size);
+    color: var(--sidebar-text-color);
+    margin-left: 10px;
+    padding-left: 5px;
+    border-radius: 5px 0 0 5px; /* left-top right-top left-bottom right-bottom */
+}
+
+.proj-icon {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    width: 24px;
+    height: 24px;
+    margin-right: 15px;
+    margin-left: 15px;
+    fill: var(--sidebar-icon-color);
+    color: var(--sidebar-icon-color);
+    background-color: transparent;
+}
+
+.project-list-item.selected {
+    background-color: var(--body-bg);
+    color: var(--sidebar-bg);
+}
+
+/* When mouse is hovering */
+.project-list-item:hover {
+    background-color: var(--sidebar-hover-bg);
+}
+
+.project-list-item.selected .proj-icon {
+    fill: var(--sidebar-bg);
+    color: var(--sidebar-bg);
+}
+
+/* Set text to be unselectable */
+.text-cannot-selected {
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+}
+
+/* Contact btn */
+
+.share-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    width: var(--sidebar-share-btn-length);
+    height: var(--sidebar-share-btn-length);
+    background-color: transparent;
+    fill: #fff;
+}
+
+#ding-btn:hover {
+    fill: #1296db;
+}
+
+#discord-btn:hover {
+    fill: #5865F1;
+}
+
+#wechat-btn:hover {
+    fill: #69BB64;
+}
+
+.share-btn:focus {
+    outline: none;
+}
+
+#sidebar-contact {
+    border: var(--sidebar-contact-border) solid #ffffff;
+    margin: 0 var(--sidebar-contact-margin);
+    border-radius: 5px;
+    padding: var(--sidebar-contact-padding);
+}
+
+.sidebar-row {
+    display: flex;
+    height: var(--sidebar-row-height);
+    justify-content: center;
+    width: 100%;
+    color: var(--sidebar-text-color);
+}
+
+.share-img {
+    width: 25px;
+    height: 25px;
+    object-fit: fill;
+    object-position: center;
+}

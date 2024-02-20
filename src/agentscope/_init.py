@@ -23,9 +23,9 @@ def init(
     project: Optional[str] = None,
     name: Optional[str] = None,
     save_dir: str = _DEFAULT_DIR,
-    save_log: bool = False,
-    save_code: bool = False,
-    save_api_invoke: bool = False,
+    save_log: bool = True,
+    save_code: bool = True,
+    save_api_invoke: bool = True,
     logger_level: LOG_LEVEL = _DEFAULT_LOG_LEVEL,
     agent_configs: Optional[Union[str, list, dict]] = None,
 ) -> Sequence[AgentBase]:
@@ -142,9 +142,19 @@ def init_process(
         logger_level (`LOG_LEVEL`, defaults to `"INFO"`):
             The logging level of logger.
     """
+    # Init logger
+    dir_log = str(file_manager.dir_log) if save_log else None
+    setup_logger(dir_log, logger_level)
+
+    # Load model configs if needed
+    if model_configs is not None:
+        read_model_configs(model_configs)
+
     # Init the runtime
-    _runtime.project = project
-    _runtime.name = name
+    if project is not None:
+        _runtime.project = project
+    if name is not None:
+        _runtime.name = name
     if runtime_id is not None:
         _runtime.runtime_id = runtime_id
 
@@ -153,11 +163,3 @@ def init_process(
 
     # Init monitor
     _ = MonitorFactory.get_monitor(db_path=file_manager.path_db)
-
-    # Init logger
-    dir_log = str(file_manager.dir_log) if save_log else None
-    setup_logger(dir_log, logger_level)
-
-    # Load model configs if needed
-    if model_configs is not None:
-        read_model_configs(model_configs)
