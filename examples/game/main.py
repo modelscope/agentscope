@@ -148,11 +148,14 @@ def invited_group_chat(
                         select-once></select-box>"""
             send_chat_msg(choose_restart, flushing=False, uid=uid)
 
-            answer = query_answer(restart_plot, "ans", uid=uid)
-            if isinstance(answer, str):
-                send_chat_msg(f"{SYS_MSG_PREFIX}请在列表中选择。", uid=uid)
-                continue
-            elif answer == ["继续游戏"]:
+            while True:
+                answer = query_answer(restart_plot, "ans", uid=uid)
+                if isinstance(answer, str):
+                    send_chat_msg(f"{SYS_MSG_PREFIX}请在列表中选择。", uid=uid)
+                    continue
+                break
+            send_chat_msg("**end_choosing**", uid=uid)
+            if answer == ["继续游戏"]:
                 send_chat_msg(f"{SYS_MSG_PREFIX}十分抱歉，你没有帮助到"
                               f"{all_plots[idx].main_roles[0].name}，任务失败，你触发了坏结局😟",
                               uid=uid)
