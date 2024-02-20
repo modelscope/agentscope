@@ -234,10 +234,12 @@ def one_on_one_loop(customers, player, uid, checkpoint):
     #     )
     for customer in visit_customers:
         send_chat_msg(
-            f"{SYS_MSG_PREFIX}顾客{customer.name} 进入餐馆 (当前熟悉程度为:{customer.relationship.to_string()}）", #", 好感度为: {round(customer.friendship, 2)})",
+            f"{SYS_MSG_PREFIX}顾客{customer.name} 进入餐馆 (当前熟悉程度为:"
+            f"{customer.relationship.to_string()}）\n\n"
+            f"通过提供令顾客满意的菜品来增加熟悉度，从而在对话中更容易获得有线索！",
+            #", 好感度为: {round(# customer.friendship,2)})",
             uid=uid,
         )
-
 
         # cook for customer 
         customer({'content': ingredient_today})
@@ -399,14 +401,50 @@ def confirm_with_main_role(uid, player, checkpoint):
 def invite_customers(customers, uid, checkpoint):
     available_customers = [c.name for c in customers]
 
-    remain_chance = ""
-    prompt = f"{SYS_MSG_PREFIX} "
-    for p_idx in checkpoint.cur_plots:
-        if "done_hint" in checkpoint.all_plots[p_idx].plot_description:
-            prompt += checkpoint.all_plots[p_idx].plot_description['done_hint']
-        remain_chance += checkpoint.all_plots[p_idx].plot_description['task'] \
-                         + ": " + str(checkpoint.all_plots[p_idx].max_attempts)
-        available_customers.insert(0, checkpoint.all_plots[p_idx].main_roles[0].name)
+    p_idx = checkpoint.cur_plots[0]
+
+    if len(checkpoint.cur_plots) > 1:
+        tasks = [checkpoint.all_plots[i].plot_description['task'] for i in
+                 checkpoint.cur_plots]
+
+        task_prompt = f"{SYS_MSG_PREFIX} 当前有多个任务在进行中，请选择你想要完成的任务。"
+        select_task = [
+            inquirer.List(
+                "task",
+                message=task_prompt,
+                choices=tasks,
+            ),
+        ]
+
+        choose_task = task_prompt + f"""
+            \n\n
+            <select-box shape="card"  type="checkbox" item-width="auto" options=
+                        '{json.dumps(tasks)}' select-once></select-box>
+            """
+
+        send_chat_msg(choose_task, flushing=False, uid=uid)
+
+        while True:
+            answer = query_answer(select_task, "task", uid=uid)
+            if isinstance(answer, str):
+                send_chat_msg(f"{SYS_MSG_PREFIX}请在列表中选择。", uid=uid)
+                continue
+            else:
+                try:
+                    p_idx = checkpoint.cur_plots[tasks.index(answer[0])]
+                except ValueError:
+                    pass
+                send_chat_msg("**end_choosing**", uid=uid)
+                break
+
+    prompt = f"{SYS_MSG_PREFIX} " \
+             f"《{checkpoint.all_plots[p_idx].plot_description['task'].rstrip()}》 "
+    main_role = checkpoint.all_plots[p_idx].main_roles[0].name
+    if "done_hint" in checkpoint.all_plots[p_idx].plot_description:
+        prompt += checkpoint.all_plots[p_idx].plot_description['done_hint']
+
+    # available_customers.insert(0, main_role)
+    available_customers.insert(0, "只与主角对话")
 
     select_customer = [
         inquirer.List(
@@ -417,8 +455,8 @@ def invite_customers(customers, uid, checkpoint):
     ]
 
     choose_available_customers = prompt + f"""
-    \n\n选择你想要对话的角色，选择主角以完成任务，选择其他角色以收集更多线索。
-    （当前任务剩余机会：{remain_chance}）
+    \n\n{main_role}已经在餐厅等您了，您可以继续询问细节寻找线索，也可以直接告诉TA任务的答案。
+    \n\n 你还可以选择其他角色与{main_role}一起共同收集更多线索（当前任务剩余机会 {checkpoint.all_plots[p_idx].max_attempts}）
     <select-box shape="card"  type="checkbox" item-width="auto" options=
                 '{json.dumps(available_customers)}' select-once
                 submit-text="确定"></select-box>
@@ -432,7 +470,8 @@ def invite_customers(customers, uid, checkpoint):
             send_chat_msg(f"{SYS_MSG_PREFIX}请在列表中选择。", uid=uid)
             continue
         else:
-            invited_customers = answer
+            invited_customers = [main_role] + \
+                                [item for item in answer if item != '只与主角对话']
             send_chat_msg("**end_choosing**", uid=uid)
             return invited_customers
 
