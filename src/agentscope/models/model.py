@@ -107,6 +107,15 @@ class ModelResponse:
         """Raw dictionary field."""
         return self._raw
 
+    def __str__(self) -> str:
+        serialized_fields = {
+            "text": self.text,
+            "embedding": self.embedding,
+            "image_urls": self.image_urls,
+            "raw": self.raw,
+        }
+        return json.dumps(serialized_fields, indent=4)
+
 
 def _response_parse_decorator(
     model_call: Callable,
