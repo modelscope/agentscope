@@ -71,11 +71,13 @@ class DictDialogAgent(AgentBase):
                 Whether the agent has memory.
             memory_config (`Optional[dict]`, defaults to `None`):
                 The config of memory.
-            parse_func (`Optional[Callable[..., Any]]`, defaults to `None`):
+            parse_func (`Optional[Callable[..., Any]]`,
+            defaults to `parse_dict`):
                 The function used to parse the model output,
                 e.g. `json.loads`, which is used to extract json from the
                 output.
-            fault_handler (`Optional[Callable[..., Any]]`, defaults to `None`):
+            fault_handler (`Optional[Callable[..., Any]]`,
+            defaults to `default_response`):
                 The function used to handle the fault when parse_func fails
                 to parse the model output.
             max_retries (`Optional[int]`, defaults to `None`):
