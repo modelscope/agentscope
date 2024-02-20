@@ -27,7 +27,7 @@ from utils import (
 from create_config_tab import create_config_tab, create_config_accord, get_role_names
 
 import gradio as gr
-import modelscope_gradio_components as mgr
+import modelscope_studio as mgr
 import re
 
 enable_web_ui()

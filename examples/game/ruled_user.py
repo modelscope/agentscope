@@ -176,11 +176,10 @@ class RuledUser(AgentBase):
             return True
         else:
             send_chat_msg(
-                f" {SYS_MSG_PREFIX}未达成游戏完成条件"
-                f" {success_res.get('reason', '未知原因')}\n"
-                f"请继续加油！",
+                f" {SYS_MSG_PREFIX}未达成任务完成条件，请继续加油！",
                 uid=self.uid,
             )
+            logger.debug(f"未达成任务完成条件，{success_res.get('reason', '未知原因')}")
             return False
 
     def set_ingredients(self, ingredients_dict):
