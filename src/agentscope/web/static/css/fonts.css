@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'krypton';
+    src: url('/static/fonts/KRYPTON.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'oswald';
+    src: url('/static/fonts/OSWALD.ttf') format('truetype');
+}
