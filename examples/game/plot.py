@@ -134,16 +134,17 @@ class GamePlot:
         # this plot is considered done
         correct_names = set([r.name for r in self.main_roles])
         input_names = set([r.name for r in roles])
+        force_plot_done = (self.max_attempts == 1)
 
         if correct_names <= input_names:
             logger.debug(f"Start detect Plot {self.id} is done")
-            send_chat_msg(f"{SYS_MSG_PREFIX}判断是否达成剧情完成条件中，请稍等。",
-                          uid=player.uid)
+            # send_chat_msg(f"{SYS_MSG_PREFIX}判断是否达成剧情完成条件中，请稍等。",
+            #               uid=player.uid)
             is_plot_done = player.success_detector(
                 self.plot_description["done_condition"],
                 announcement,
             )
-            if is_plot_done:
+            if is_plot_done or force_plot_done:
                 self.state = self.PlotState.DONE
             else:
                 return False, []
@@ -165,7 +166,7 @@ class GamePlot:
                 logger.debug(f"unblock plot {unblock_plot.id}")
         self.deactivate_roles()
         self.state = self.PlotState.DONE
-        return True, unblock_ids
+        return is_plot_done, unblock_ids
 
     def _begin_task(self, player):
         openings = self.plot_description
@@ -173,6 +174,7 @@ class GamePlot:
         main_role = self.main_roles[0]
         uid = player.uid
         send_chat_msg(f"{SYS_MSG_PREFIX}开启主线任务： {openings['task']} "
+                      f"\n\n 任务描述：{openings['done_hint']}"
                       f"\n\n{openings['openings']}", uid=uid)
         # send_chat_msg(f"{SYS_MSG_PREFIX}{openings['openings']}", uid=uid)
         opening_prompt = openings["npc_openings"]
