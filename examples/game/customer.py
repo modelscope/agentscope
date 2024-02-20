@@ -76,10 +76,6 @@ class Customer(StateAgent, DialogAgent):
         if self.unexposed_clues is None:
             raise ValueError("No clue is provided for this customer.")
 
-        # if self.unexposed_clues is None:
-        #     self.unexposed_clues = self.build_clues()
-        #     self.config['clue'] = copy.deepcopy(self.unexposed_clues)
-
         self.hidden_plot = {}
         for item in self.unexposed_clues:
             if item["plot"] in self.hidden_plot.keys():
@@ -490,28 +486,6 @@ class Customer(StateAgent, DialogAgent):
                     flushing=flushing,
                 )
             return msg
-
-    def build_clues(self):
-        # Get all hidden plot
-        send_chat_msg(f"{SYS_MSG_PREFIX}初始化NPC {self.name}..."
-                      f"（这可能需要一些时间）", uid=self.uid)
-
-        clues = []
-        for i, plot in self.hidden_plot.items():
-            clue_parse_prompt = self.game_config["clue_parse_prompt"] + plot
-            message = Msg(name="system", role="user", content=clue_parse_prompt)
-
-            curr_clues = self.model(
-                [extract_keys_from_dict(message, MESSAGE_KEYS)],
-                parse_func=json.loads,
-                max_retries=self.retry_time,
-            )
-            for c in curr_clues:
-                c["plot"] = i
-                clues.append(c)
-        logger.debug(clues)
-        send_chat_msg(f"{SYS_MSG_PREFIX}初始化NPC {self.name}完成！", uid=self.uid)
-        return clues
 
     def update_clues(self, content):
 
