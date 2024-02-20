@@ -157,17 +157,17 @@ def _response_parse_decorator(
 
             # Parse the response if needed
             try:
-                return parse_func(response)
+                return parse_func(response.text)
             except Exception as e:
                 logger.warning(
                     f"Fail to parsing response: "
-                    f"{response}.\n Exception: {e}, "
+                    f"{response.text}.\n Exception: {e}, "
                     f"\t Attempt {itr} / {max_retries}",
                 )
                 time.sleep(_DEFAULT_RETRY_INTERVAL * itr)
 
         if fault_handler is not None and callable(fault_handler):
-            return fault_handler(response)
+            return fault_handler(response.text)
         else:
             raise ValueError(
                 f"fail to parsing response with: "
