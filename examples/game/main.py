@@ -99,8 +99,8 @@ def invited_group_chat(
             involved_roles = all_plots[idx].main_roles + all_plots[idx].supporting_roles
 
             send_chat_msg(f"{SYS_MSG_PREFIX}恭喜你，剧情解锁成功！", uid=uid)
-            for c in involved_roles:
-                c.expose_all_clues(plot=idx)
+            # for c in involved_roles:
+            #     c.expose_all_clues(plot=idx)
             questions = [
                 inquirer.List(
                     "ans",
@@ -137,8 +137,8 @@ def invited_group_chat(
                 if c.name == answer[0]:
                     player.talk(f"我想听听{c.name}的故事", is_display=True)
                     c.generate_pov_story()
-            for c in involved_roles:
-                c.refine_background()
+            # for c in involved_roles:
+            #     c.refine_background()
             return idx
 
     send_chat_msg(f"{SYS_MSG_PREFIX} 剧情解锁失败，未满足剧情解锁条件。", uid=uid)
@@ -513,8 +513,8 @@ def riddle_success_detect(uid, player, checkpoint):
             involved_roles_names = [c.name for c in involved_roles]
             send_chat_msg(f"{SYS_MSG_PREFIX}恭喜你，剧情解锁成功！", uid=uid)
 
-            for c in involved_roles:
-                c.expose_all_clues(plot=idx)
+            # for c in involved_roles:
+            #     c.expose_all_clues(plot=idx)
 
             # Update inner state
             checkpoint.all_plots[idx].check_plot_condition_done(
@@ -560,8 +560,8 @@ def riddle_success_detect(uid, player, checkpoint):
                     player.talk(f"我想听听{c.name}的故事", is_display=True)
                     c.generate_pov_story()
 
-            for c in involved_roles:
-                c.refine_background()
+            # for c in involved_roles:
+            #     c.refine_background()
 
             # New openings, update cur_plots
             checkpoint.cur_plots = check_active_plot(
@@ -581,7 +581,10 @@ def riddle_success_detect(uid, player, checkpoint):
                 tmp_stage = []
                 for plot_id in checkpoint.cur_plots:
                     tmp_stage += checkpoint.all_plots[plot_id].plot_stages
-                checkpoint.stage_per_night = min(tmp_stage)
+                if tmp_stage:
+                    checkpoint.stage_per_night = min(tmp_stage)
+                else:
+                    checkpoint.stage_per_night = StagePerNight.CASUAL_CHAT_FOR_MEAL
         else:
             send_chat_msg(f"{SYS_MSG_PREFIX}玩家的最终答案：“{riddle_input}”，"
                           f"解谜失败，请继续加油！\n\n",
@@ -665,7 +668,7 @@ def main(args) -> None:
         daily_plot_stages = []
         if len(checkpoint.cur_plots) == 1:
             daily_plot_stages = checkpoint.all_plots[checkpoint.cur_plots[0]].plot_stages
-        else:
+        elif len(checkpoint.cur_plots) > 1:
             # multi-plot will act by order
             for plot_id in checkpoint.cur_plots:
                 plot_stages = checkpoint.all_plots[plot_id].plot_stages
@@ -673,9 +676,12 @@ def main(args) -> None:
                     if stage not in daily_plot_stages:
                         daily_plot_stages.append(stage)
             daily_plot_stages.sort()
+        else:
+            daily_plot_stages = [StagePerNight.CASUAL_CHAT_FOR_MEAL]
 
         logger.debug(f"daily_plot_stages: {daily_plot_stages}")
         logger.debug(f"checkpoint.stage_per_night: {checkpoint.stage_per_night}")
+        check_explore_all(checkpoint, uid)
 
         # if checkpoint.stage_per_night == StagePerNight.INVITED_CHAT:
         #     # ============ invited multi-agent loop ===============
@@ -757,4 +763,12 @@ def main(args) -> None:
         for c in customers:
             # reset all customer cur_state to pre-meal
             c.transition(CustomerConv.WARMING_UP)
+        check_explore_all(checkpoint, uid)
         save_game_checkpoint(checkpoint, args.save_checkpoint)
+
+
+def check_explore_all(checkpoint: GameCheckpoint, uid: int = None):
+    if len(checkpoint.cur_plots) == 0:
+        checkpoint.stage_per_night = StagePerNight.CASUAL_CHAT_FOR_MEAL
+        send_chat_msg(f"{SYS_MSG_PREFIX}恭喜你，你已经完成全部剧情！可以重新开始游戏，否则接下来进入饭店日常",
+                      uid=uid)

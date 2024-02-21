@@ -118,6 +118,8 @@ class GamePlot:
                 role.activate_plot([self.id])
                 logger.debug(f"activate role {role.name} for "
                              f"plot {role.active_plots}")
+            for role in self.main_roles:
+                role.relationship.to_max()
             quest = (
                 self.plot_description["task"],
                 {
@@ -137,7 +139,7 @@ class GamePlot:
         all_plots: dict[int, GamePlot],
         player: RuledUser,
         announcement: dict,
-        force_done: False,
+        force_done: bool = False,
         **kwargs: Any
     ) -> tuple[bool, list[int]]:
         # when the invited roles are the same as the main roles of the plot,

@@ -92,3 +92,6 @@ class Relationship:
 
     def is_max(self):
         return self.level == Familiarity.MAX_LEVEL
+
+    def to_max(self):
+        self._level = Familiarity.MAX_LEVEL

@@ -468,19 +468,8 @@ class Customer(StateAgent, DialogAgent):
             self.plot_stage == CustomerPlot.ACTIVE
         ):
             # get the clues related to the current plot
-            curr_clues = []
-            for c in self.config["clue"]:
-                if c["plot"] == self.active_plots[0]:
-                    curr_clues.append(c)
-            # compose the clues according the relationship level
-            if not self.relationship.is_max():
-                end_idx = len(curr_clues) // 3 * \
-                          self.relationship.level.value
-                hidden_plot = "\n".join(
-                    [c["content"] for c in curr_clues[:end_idx]])
-            else:
-                hidden_plot = "\n".join(
-                    [c["content"] for c in curr_clues])
+            hidden_plot_list = self._relation_to_clues()
+            hidden_plot = "/n".join([c["content"] for c in hidden_plot_list])
             # -> prompt for the main role in the current plot
             prompt += self.game_config["hidden_main_plot_prompt"].format_map(
                 {
@@ -501,6 +490,22 @@ class Customer(StateAgent, DialogAgent):
         prompt += self.game_config[self.relationship.prompt]
         logger.debug(prompt)
         return prompt
+
+    def _relation_to_clues(self):
+        curr_clues = []
+        for c in self.config["clue"]:
+            if c["plot"] == self.active_plots[0]:
+                curr_clues.append(c)
+        if self.relationship.is_max():
+            logger.debug(f"reveal clue to: all")
+            hidden_plots = [c for c in curr_clues]
+        else:
+            end_idx = len(curr_clues) // 3 * \
+                      self.relationship.level.value
+            logger.debug(f"reveal clue to: {end_idx}")
+            hidden_plots = [c for c in curr_clues[:end_idx]]
+
+        return hidden_plots
 
     def talk(self, content, is_display=True, flushing=True):
         if content is not None:
@@ -533,12 +538,21 @@ class Customer(StateAgent, DialogAgent):
             }
         )
         message = Msg(name="system", content=prompt, role="user")
-        exposed_clues = self.model(
+        exposed_clues_raw = self.model(
             [extract_keys_from_dict(message, MESSAGE_KEYS)],
             parse_func=json.loads,
             fault_handler=lambda response: [],
             max_retries=self.retry_time,
         )
+
+        # only reveal active clues
+        curr_plots = self._relation_to_clues()
+        curr_plots_name = [c['name'] for c in curr_plots]
+        exposed_clues = []
+        for idx, x in enumerate(exposed_clues_raw):
+            if self.unexposed_clues[x['index']]['name'] in curr_plots_name:
+                exposed_clues.append(exposed_clues_raw[idx])
+
         logger.debug(exposed_clues)
         logger.debug(self.unexposed_clues)
         indices_to_pop = []
