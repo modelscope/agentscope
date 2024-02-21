@@ -7,6 +7,7 @@ import time
 from collections import defaultdict
 from typing import List
 from multiprocessing import Event
+import traceback
 import agentscope
 from config_utils import load_user_cfg, load_configs
 from utils import (
@@ -358,8 +359,10 @@ if __name__ == "__main__":
             except ResetException:
                 print(f"重置成功：{uid} ")
             except Exception as e:
+                trace_info = ''.join(
+                    traceback.TracebackException.from_exception(e).format())
                 for i in range(FAIL_COUNT_DOWN, 0, -1):
-                    send_chat_msg(f"{SYS_MSG_PREFIX}发生错误 {e}, 即将在{i}秒后重启",
+                    send_chat_msg(f"{SYS_MSG_PREFIX}发生错误 {trace_info}, 即将在{i}秒后重启",
                                   uid=uid)
                     time.sleep(1)
             reset_glb_var(uid)
