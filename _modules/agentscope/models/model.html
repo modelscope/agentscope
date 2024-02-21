@@ -197,7 +197,16 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">raw</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Raw dictionary field.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">serialized_fields</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+            <span class="s2">&quot;embedding&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding</span><span class="p">,</span>
+            <span class="s2">&quot;image_urls&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_urls</span><span class="p">,</span>
+            <span class="s2">&quot;raw&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">serialized_fields</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
 
 
 

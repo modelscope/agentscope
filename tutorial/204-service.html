@@ -275,12 +275,12 @@
         <span class="n">prompt</span> <span class="o">+=</span> <span class="n">params_prompt</span>
 
         <span class="c1"># Get the model response</span>
-        <span class="n">model_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+        <span class="n">model_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
 
         <span class="c1"># Parse the model response and call the create_file function</span>
         <span class="c1"># Additional extraction functions might be necessary</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">kwargs</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">model_response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">model_response</span><span class="p">)</span>
             <span class="n">create_file</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="c1"># Error handling</span>
