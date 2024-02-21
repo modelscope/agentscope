@@ -143,7 +143,7 @@ def get_chat(uid) -> List[List]:
             line[1]['text'] = "思考中"
             glb_doing_signal_dict[uid] = line
         elif line[1] and line[1]['text'] == "**end_choosing**":
-            for idx in range(len(glb_history_dict[uid]) - 1,
+            for idx in range(len(glb_history_dict[uid])-1,
                              glb_end_choosing_index_dict[uid], -1):
 
                 if (glb_history_dict[uid][idx][1] and "select-box" in
@@ -285,8 +285,7 @@ def get_clue(uid):
         role_name_ = clue_item['name']
         if clue_item["clue"] is not None:
             glb_clue_dict[uid][role_name_]['clue_list'].append(clue_item['clue'])
-            glb_clue_dict[uid][role_name_]['unexposed_num'] = clue_item[
-                'unexposed_num']
+            glb_clue_dict[uid][role_name_]['unexposed_num'] = clue_item['unexposed_num']
 
     flex_container_html_list = """<div class="mytabs">
     """
@@ -393,7 +392,6 @@ if __name__ == "__main__":
                             logger_level="DEBUG")
             is_init.set()
 
-
     def check_for_new_session(uid):
         uid = check_uuid(uid)
         if uid not in glb_signed_user:
@@ -402,7 +400,6 @@ if __name__ == "__main__":
             print(f"Total number of users: {len(glb_signed_user)}")
             game_thread = threading.Thread(target=start_game, args=(uid,))
             game_thread.start()
-
 
     def start_game(uid):
         is_init.wait()
