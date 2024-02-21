@@ -435,6 +435,7 @@ if __name__ == "__main__":
 
             if ver in [RuntimeVer.ToD, RuntimeVer.Root]:
                 config_tab = gr.Tab('游戏配置', id=1)
+                dev_tab = gr.Tab('开发者说明')
             with welcome_tab:
                 user_chat_bot_cover = gr.HTML(format_cover_html())
                 with gr.Row():
@@ -454,6 +455,9 @@ if __name__ == "__main__":
         if ver in [RuntimeVer.ToD, RuntimeVer.Root]:
             with config_tab:
                 create_config_tab(config_tab, uuid)
+            with dev_tab:
+                # TODO: Zitao, write README here.
+                dev_container = gr.HTML()
 
         game_tabs = gr.Tabs(visible=False)
 
