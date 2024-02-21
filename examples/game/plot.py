@@ -118,6 +118,14 @@ class GamePlot:
                 role.activate_plot([self.id])
                 logger.debug(f"activate role {role.name} for "
                              f"plot {role.active_plots}")
+            quest = (
+                self.plot_description["task"],
+                {
+                    "done_hint": self.plot_description["done_hint"],
+                    "status": False,
+                },
+            )
+            send_quest_msg(quest, uid=player.uid)
             self._begin_task(player)
             return True
         else:
@@ -171,6 +179,16 @@ class GamePlot:
                 logger.debug(f"unblock plot {unblock_plot.id}")
         self.deactivate_roles()
         self.state = self.PlotState.DONE
+        # Finish this quest
+        quest = (
+            self.plot_description["task"],
+            {
+                "done_hint": self.plot_description["done_hint"],
+                "status": True,
+            },
+        )
+        send_quest_msg(quest, uid=player.uid)
+
         return True, unblock_ids
 
     def _begin_task(self, player):
@@ -320,14 +338,5 @@ def check_active_plot(
             logger.debug(f"{p_id}, {unlock}, {all_plots[curr_done].is_done()}")
             if unlock and all_plots[p_id].activate(player):
                 active_plots.append(p_id)
-    # update quest webui
-    quests = []
-    for p_idx in active_plots:
-        game_plot = all_plots[p_idx]
-        quests.append((
-            game_plot.plot_description["task"],
-            game_plot.plot_description["done_hint"],
-        ))
-    send_quest_msg(quests, uid=player.uid)
 
     return active_plots

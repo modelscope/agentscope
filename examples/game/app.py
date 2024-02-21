@@ -187,11 +187,10 @@ def get_quest(uid):
     uid = check_uuid(uid)
     quest_msg = get_quest_msg(uid)
     if quest_msg:
-        glb_quest_dict[uid] = {}
-        for quest in quest_msg[0]:
-            glb_quest_dict[uid][quest[0]] = quest[1]
+        quest = quest_msg[0]
+        glb_quest_dict[uid][quest[0]] = quest[1]
 
-    if not len(glb_quest_dict[uid].keys()):
+    if not len(glb_quest_dict[uid]):
         return """
             <div class="quest-list">
                 <div class="quest">
@@ -204,13 +203,23 @@ def get_quest(uid):
     quest_html_code = """
             <div class="quest-list">
     """
+    done_quest_html_code, wip_quest_html_code = "", ""
     for quest_name, quest_content in glb_quest_dict[uid].items():
-        quest_html_code += f"""
-            <div class="quest">
-                <p class="quest-name">任务名称：{quest_name}</p>
-                <div class="quest-content">任务内容：{quest_content}</div>
-            </div>
-            """
+        if quest_content["status"]:
+            done_quest_html_code += f"""
+                            <div class="quest">
+                                <p class="quest-name">✅任务名称：<del>{quest_name}</p>
+                                <div class="quest-content">任务内容：<del>{quest_content["done_hint"]}</del></div>
+                            </div>
+                            """
+        else:
+            wip_quest_html_code += f"""
+                <div class="quest">
+                    <p class="quest-name">⏳任务名称：{quest_name}</p>
+                    <div class="quest-content">任务内容：{quest_content["done_hint"]}</div>
+                </div>
+                """
+    quest_html_code = quest_html_code + wip_quest_html_code + done_quest_html_code
     quest_html_code += """
         </div>
     """
