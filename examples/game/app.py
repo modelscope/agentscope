@@ -554,13 +554,11 @@ if __name__ == "__main__":
             gr.HTML(story_html)
             story_container = gr.HTML()
 
-
         def send_message(msg, uid):
             uid = check_uuid(uid)
             send_player_input(msg, uid=uid)
             send_player_msg(msg, "我", uid=uid)
             return ""
-
 
         def send_riddle_message(msg, uid):
             uid = check_uuid(uid)
@@ -571,16 +569,13 @@ if __name__ == "__main__":
                           uid=uid)
             return ""
 
-
         def send_reset_message(uid):
             uid = check_uuid(uid)
             send_player_input("**Reset**", uid=uid)
             return ""
 
-
         def game_ui():
             return gr.update(visible=False), gr.update(visible=True)
-
 
         def welcome_ui():
             return gr.update(visible=True), gr.update(visible=False)
