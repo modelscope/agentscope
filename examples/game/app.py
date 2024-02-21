@@ -286,7 +286,7 @@ def get_clue(uid):
         role_name_ = clue_item['name']
         if clue_item["clue"] is not None:
             glb_clue_dict[uid][role_name_]['clue_list'].append(clue_item['clue'])
-            glb_clue_dict[uid][role_name_]['unexposed_num'] = clue_item['unexposed_num']
+        glb_clue_dict[uid][role_name_]['unexposed_num'] = clue_item['unexposed_num']
 
     flex_container_html_list = """<div class="mytabs">
     """
