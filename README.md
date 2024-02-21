@@ -253,8 +253,8 @@ from agentscope.agents import AgentBase
 
 class MyAgent(AgentBase):
     def reply(self, x):
-        # Do something here, e.g. calling your model
-        response = self.model(x)
+        # Do something here, e.g. calling your model and get the raw field as your agent's response
+        response = self.model(x).raw
         return response
 ```
 

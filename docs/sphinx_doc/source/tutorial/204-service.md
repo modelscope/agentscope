@@ -118,12 +118,12 @@ class YourAgent(AgentBase):
         prompt += params_prompt
 
         # Get the model response
-        model_response = self.model(prompt)
+        model_response = self.model(prompt).text
 
         # Parse the model response and call the create_file function
         # Additional extraction functions might be necessary
         try:
-            kwargs = json.loads(model_response.content)
+            kwargs = json.loads(model_response)
             create_file(**kwargs)
         except:
             # Error handling

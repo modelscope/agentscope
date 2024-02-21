@@ -7,8 +7,19 @@ from loguru import logger
 
 from ..message import Msg
 from .agent import AgentBase
+from ..models.model import ModelResponse
 from ..prompt import PromptEngine
 from ..prompt import PromptType
+
+
+def parse_dict(response: ModelResponse) -> ModelResponse:
+    """Parse function for DictDialogAgent"""
+    return ModelResponse(raw=json.loads(response.text))
+
+
+def default_response(response: ModelResponse) -> ModelResponse:
+    """The default response of fault_handler"""
+    return ModelResponse(raw={"speak": response.text})
 
 
 class DictDialogAgent(AgentBase):
@@ -40,8 +51,8 @@ class DictDialogAgent(AgentBase):
         model_config_name: str = None,
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
-        parse_func: Optional[Callable[..., Any]] = json.loads,
-        fault_handler: Optional[Callable[..., Any]] = lambda x: {"speak": x},
+        parse_func: Optional[Callable[..., Any]] = parse_dict,
+        fault_handler: Optional[Callable[..., Any]] = default_response,
         max_retries: Optional[int] = 3,
         prompt_type: Optional[PromptType] = PromptType.LIST,
     ) -> None:
@@ -60,11 +71,13 @@ class DictDialogAgent(AgentBase):
                 Whether the agent has memory.
             memory_config (`Optional[dict]`, defaults to `None`):
                 The config of memory.
-            parse_func (`Optional[Callable[..., Any]]`, defaults to `None`):
+            parse_func (`Optional[Callable[..., Any]]`,
+            defaults to `parse_dict`):
                 The function used to parse the model output,
                 e.g. `json.loads`, which is used to extract json from the
                 output.
-            fault_handler (`Optional[Callable[..., Any]]`, defaults to `None`):
+            fault_handler (`Optional[Callable[..., Any]]`,
+            defaults to `default_response`):
                 The function used to handle the fault when parse_func fails
                 to parse the model output.
             max_retries (`Optional[int]`, defaults to `None`):
@@ -129,7 +142,7 @@ class DictDialogAgent(AgentBase):
             parse_func=self.parse_func,
             fault_handler=self.fault_handler,
             max_retries=self.max_retries,
-        ).text
+        ).raw
 
         # logging raw messages in debug mode
         logger.debug(json.dumps(response, indent=4))
