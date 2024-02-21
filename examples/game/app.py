@@ -10,7 +10,7 @@ from typing import List
 from multiprocessing import Event
 import traceback
 import agentscope
-from config_utils import load_configs
+from config_utils import load_user_cfg, load_configs
 from runtime import RuntimeVer
 from utils import (
     CheckpointArgs,
@@ -25,6 +25,7 @@ from utils import (
     cycle_dots,
     check_uuid,
     send_chat_msg,
+    MAX_ROLE_NUM,
     send_riddle_input,
     get_quest_msg,
 )
