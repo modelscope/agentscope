@@ -99,8 +99,8 @@ def invited_group_chat(
             involved_roles = all_plots[idx].main_roles + all_plots[idx].supporting_roles
 
             send_chat_msg(f"{SYS_MSG_PREFIX}恭喜你，剧情解锁成功！", uid=uid)
-            # for c in involved_roles:
-            #     c.expose_all_clues(plot=idx)
+            for c in involved_roles:
+                c.expose_all_clues(plot=idx)
             questions = [
                 inquirer.List(
                     "ans",
@@ -137,8 +137,8 @@ def invited_group_chat(
                 if c.name == answer[0]:
                     player.talk(f"我想听听{c.name}的故事", is_display=True)
                     c.generate_pov_story()
-            # for c in involved_roles:
-            #     c.refine_background()
+            for c in involved_roles:
+                c.refine_background()
             return idx
 
     send_chat_msg(f"{SYS_MSG_PREFIX} 剧情解锁失败，未满足剧情解锁条件。", uid=uid)
@@ -470,7 +470,8 @@ def invite_customers(customers, uid, checkpoint):
         prompt += checkpoint.all_plots[p_idx].plot_description['done_hint']
 
     # available_customers.insert(0, main_role)
-    available_customers.insert(0, "只与主角对话")
+    available_customers.insert(0, "跳过")
+    available_customers.insert(1, "只与主角对话")
 
     select_customer = [
         inquirer.List(
@@ -495,6 +496,9 @@ def invite_customers(customers, uid, checkpoint):
         if isinstance(answer, str):
             send_chat_msg(f"{SYS_MSG_PREFIX}请在列表中选择。", uid=uid)
             continue
+        elif answer[0] == "跳过":
+            send_chat_msg("**end_choosing**", uid=uid)
+            return []
         else:
             invited_customers = [main_role] + \
                                 [item for item in answer if item != '只与主角对话']
@@ -513,8 +517,8 @@ def riddle_success_detect(uid, player, checkpoint):
             involved_roles_names = [c.name for c in involved_roles]
             send_chat_msg(f"{SYS_MSG_PREFIX}恭喜你，剧情解锁成功！", uid=uid)
 
-            # for c in involved_roles:
-            #     c.expose_all_clues(plot=idx)
+            for c in involved_roles:
+                c.expose_all_clues(plot=idx)
 
             # Update inner state
             checkpoint.all_plots[idx].check_plot_condition_done(
@@ -560,8 +564,8 @@ def riddle_success_detect(uid, player, checkpoint):
                     player.talk(f"我想听听{c.name}的故事", is_display=True)
                     c.generate_pov_story()
 
-            # for c in involved_roles:
-            #     c.refine_background()
+            for c in involved_roles:
+                c.refine_background()
 
             # New openings, update cur_plots
             checkpoint.cur_plots = check_active_plot(
