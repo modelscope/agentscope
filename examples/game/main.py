@@ -482,7 +482,7 @@ def invite_customers(customers, uid, checkpoint):
     ]
 
     choose_available_customers = prompt + f"""
-    \n\n 你可以选择与{main_role}和其他角色一起讨论，收集更多线索（当前任务剩余机会 
+    \n\n 你可以选择与主角{main_role}和其他角色一起讨论，收集更多线索（当前任务剩余机会 
     {checkpoint.all_plots[p_idx].max_attempts}）
     <select-box shape="card"  type="checkbox" item-width="auto" options=
                 '{json.dumps(available_customers)}' select-once
