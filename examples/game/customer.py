@@ -333,9 +333,7 @@ class Customer(StateAgent, DialogAgent):
             "hidden_main_plot_prompt"
         ].format_map(
             {
-                "hidden_plot": self.config["character_setting"][
-                    "hidden_plot"
-                ][self.prev_active_plots[0]],
+                "hidden_plot": self.hidden_plot[self.prev_active_plots[0]],
             },
         )
         analysis_prompt = background_prompt + self.game_config["analysis_conv"]
