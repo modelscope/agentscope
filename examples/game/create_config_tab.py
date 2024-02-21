@@ -6,6 +6,7 @@ import subprocess
 
 import gradio as gr
 import tempfile
+from runtime import RuntimeVer
 from config_utils import (
     PLOT_CFG_NAME,
     compress,
@@ -150,7 +151,7 @@ def run_shell_file(cmd, msg):
         gr.Warning("命令不正确，请检查。")
     return msg
 
-def create_config_accord(accord, uuid):
+def create_config_accord(accord, uuid, ver):
     uuid = check_uuid(uuid)
     with gr.Row():
         signature = gr.Textbox(
@@ -173,7 +174,7 @@ def create_config_accord(accord, uuid):
             value="🧹清除缓存",
         )
 
-    with gr.Accordion("超级管理员", open=False):
+    with gr.Accordion("超级管理员", open=False, visible=(ver==RuntimeVer.Root)):
         passwd_group = gr.Group()
         with passwd_group:
             with gr.Row():

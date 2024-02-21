@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import argparse
 import base64
 import os
 import datetime
@@ -9,7 +10,8 @@ from typing import List
 from multiprocessing import Event
 import traceback
 import agentscope
-from config_utils import load_user_cfg, load_configs
+from config_utils import load_configs
+from runtime import RuntimeVer
 from utils import (
     CheckpointArgs,
     enable_web_ui,
@@ -23,11 +25,11 @@ from utils import (
     cycle_dots,
     check_uuid,
     send_chat_msg,
-    MAX_ROLE_NUM,
     send_riddle_input,
     get_quest_msg,
 )
-from create_config_tab import create_config_tab, create_config_accord, get_role_names
+from create_config_tab import create_config_tab, create_config_accord, \
+    get_role_names
 
 import gradio as gr
 import modelscope_studio as mgr
@@ -56,6 +58,7 @@ glb_end_choosing_index_dict = defaultdict(lambda: -1)
 
 glb_signed_user = []
 is_init = Event()
+
 
 def reset_glb_var(uid):
     global glb_history_dict, glb_clue_dict, glb_story_dict, \
@@ -141,14 +144,16 @@ def get_chat(uid) -> List[List]:
             line[1]['text'] = "思考中"
             glb_doing_signal_dict[uid] = line
         elif line[1] and line[1]['text'] == "**end_choosing**":
-            for idx in range(len(glb_history_dict[uid])-1,
+            for idx in range(len(glb_history_dict[uid]) - 1,
                              glb_end_choosing_index_dict[uid], -1):
 
                 if (glb_history_dict[uid][idx][1] and "select-box" in
                         glb_history_dict[uid][idx][1]['text']):
                     pattern = re.compile(r'(<select-box[^>]*?)>')
                     replacement_text = r'\1 disabled="True">'
-                    glb_history_dict[uid][idx][1]['text'] = pattern.sub(replacement_text, glb_history_dict[uid][idx][1]['text'])
+                    glb_history_dict[uid][idx][1]['text'] = pattern.sub(
+                        replacement_text,
+                        glb_history_dict[uid][idx][1]['text'])
             glb_end_choosing_index_dict[uid] = len(glb_history_dict[uid]) - 1
 
         else:
@@ -282,12 +287,14 @@ def get_clue(uid):
     if clue_item:
         role_name_ = clue_item['name']
         if clue_item["clue"] is not None:
-            glb_clue_dict[uid][role_name_]['clue_list'].append(clue_item['clue'])
-        glb_clue_dict[uid][role_name_]['unexposed_num'] = clue_item['unexposed_num']
+            glb_clue_dict[uid][role_name_]['clue_list'].append(
+                clue_item['clue'])
+        glb_clue_dict[uid][role_name_]['unexposed_num'] = clue_item[
+            'unexposed_num']
 
     flex_container_html_list = """<div class="mytabs">
     """
- 
+
     for i, role_name_ in enumerate(glb_clue_dict[uid].keys()):
         if i == 0:
             check_sign = """
@@ -327,7 +334,7 @@ def get_clue(uid):
                                     </div>
                                     </div>
                             """
-                            
+
         flex_container_html_list += flex_container_html
     flex_container_html_list += """
     </div>
@@ -342,6 +349,20 @@ def fn_choice(data: gr.EventData, uid):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="AgentScope应用")
+
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('-toc', action='store_true', help='执行ToC版本')
+    group.add_argument('-tod', action='store_true', help='执行ToD版本')
+    args = parser.parse_args()
+
+    if args.toc:
+        ver = RuntimeVer.ToC
+    elif args.tod:
+        ver = RuntimeVer.ToD
+    else:
+        ver = RuntimeVer.Root
+
 
     def init_game():
         if not is_init.is_set():
@@ -376,6 +397,7 @@ if __name__ == "__main__":
                             logger_level="DEBUG")
             is_init.set()
 
+
     def check_for_new_session(uid):
         uid = check_uuid(uid)
         if uid not in glb_signed_user:
@@ -384,6 +406,7 @@ if __name__ == "__main__":
             print(f"Total number of users: {len(glb_signed_user)}")
             game_thread = threading.Thread(target=start_game, args=(uid,))
             game_thread.start()
+
 
     def start_game(uid):
         is_init.wait()
@@ -403,17 +426,21 @@ if __name__ == "__main__":
                 trace_info = ''.join(
                     traceback.TracebackException.from_exception(e).format())
                 for i in range(FAIL_COUNT_DOWN, 0, -1):
-                    send_chat_msg(f"{SYS_MSG_PREFIX}发生错误 {trace_info}, 即将在{i}秒后重启",
-                                  uid=uid)
+                    send_chat_msg(
+                        f"{SYS_MSG_PREFIX}发生错误 {trace_info}, 即将在{i}秒后重启",
+                        uid=uid)
                     time.sleep(1)
             reset_glb_var(uid)
+
 
     with gr.Blocks(css="assets/app.css") as demo:
         uuid = gr.Textbox(label='modelscope_uuid', visible=False)
         tabs = gr.Tabs(visible=True)
         with tabs:
             welcome_tab = gr.Tab('游戏界面', id=0)
-            config_tab = gr.Tab('游戏配置', id=1)
+
+            if ver in [RuntimeVer.ToD, RuntimeVer.Root]:
+                config_tab = gr.Tab('游戏配置', id=1)
             with welcome_tab:
                 user_chat_bot_cover = gr.HTML(format_cover_html())
                 with gr.Row():
@@ -421,13 +448,18 @@ if __name__ == "__main__":
                         new_button = gr.Button(value='🚀新的探险', )
                     with gr.Column():
                         resume_button = gr.Button(value='🔥续写情缘', )
-            
-                config_accordion =  gr.Accordion('导入导出配置', open=False)
-                with config_accordion:
-                    create_config_accord(config_accordion, uuid)
 
-        with config_tab:
-            create_config_tab(config_tab, uuid)
+                config_accordion = gr.Accordion(
+                    '导入导出配置',
+                    open=False,
+                    visible=(ver in [RuntimeVer.ToD, RuntimeVer.Root]),
+                )
+                with config_accordion:
+                    create_config_accord(config_accordion, uuid, ver)
+
+        if ver in [RuntimeVer.ToD, RuntimeVer.Root]:
+            with config_tab:
+                create_config_tab(config_tab, uuid)
 
         game_tabs = gr.Tabs(visible=False)
 
@@ -526,11 +558,13 @@ if __name__ == "__main__":
             gr.HTML(story_html)
             story_container = gr.HTML()
 
+
         def send_message(msg, uid):
             uid = check_uuid(uid)
             send_player_input(msg, uid=uid)
             send_player_msg(msg, "我", uid=uid)
             return ""
+
 
         def send_riddle_message(msg, uid):
             uid = check_uuid(uid)
@@ -541,13 +575,16 @@ if __name__ == "__main__":
                           uid=uid)
             return ""
 
+
         def send_reset_message(uid):
             uid = check_uuid(uid)
             send_player_input("**Reset**", uid=uid)
             return ""
 
+
         def game_ui():
             return gr.update(visible=False), gr.update(visible=True)
+
 
         def welcome_ui():
             return gr.update(visible=True), gr.update(visible=False)
@@ -585,9 +622,9 @@ if __name__ == "__main__":
         return_welcome_button.click(welcome_ui, outputs=[tabs, game_tabs])
 
         # start game
-        new_button.click(send_reset_message, inputs=[uuid]).then(check_for_new_session, inputs=[uuid])
+        new_button.click(send_reset_message, inputs=[uuid]).then(
+            check_for_new_session, inputs=[uuid])
         resume_button.click(check_for_new_session, inputs=[uuid])
-        
 
         # export
         export_button.click(export_chat_history, [uuid], export_output)

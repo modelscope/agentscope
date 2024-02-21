@@ -229,7 +229,7 @@ if __name__ == "__main__":
             )
         with gr.Row():
             chatbot = GroupChat(label="Dialog", show_label=True)
-            output_area_sys_log = gr.Textbox(label="Full System Log")
+            output_area_sys_log = gr.Textbox(label="Root System Log")
 
         file_selector.change(
             put_file_name,
