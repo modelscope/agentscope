@@ -382,10 +382,19 @@ class Customer(StateAgent, DialogAgent):
             hist_mem[0]["role"], hist_mem[-1]["role"] = "user", "user"
         return hist_mem
 
-    def generate_pov_story(self, recent_n: int = 20, force_done_condition="") -> None:
+    def generate_pov_story(
+            self,
+            recent_n: int = 20,
+            force_done_condition="",
+            is_player_done=False,
+    ) -> None:
         if force_done_condition:
-            content = f"我是{self.name}，餐馆老板没有帮助到我，我自己经过努力，调查到了结果" \
-                      f":{force_done_condition}。"
+            if not is_player_done:
+                content = f"我是{self.name}，餐馆老板没有帮助到我，但是我调查到了结果" \
+                          f":{force_done_condition}。"
+            else:
+                content = f"我是{self.name}，餐馆老板帮助我，很感谢老板的帮助，最后调查到了结果" \
+                          f":{force_done_condition}。"
             msg = Msg(
                 role="user",
                 name=self.name,

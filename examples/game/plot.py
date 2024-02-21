@@ -13,6 +13,7 @@ from utils import (
     SYS_MSG_PREFIX,
     OPENING_ROUND,
     generate_picture,
+    send_quest_msg,
 )
 from enums import CustomerConv, StagePerNight
 
@@ -123,12 +124,13 @@ class GamePlot:
             return False
 
     def check_plot_condition_done(
-            self,
-            roles: list[Customer],
-            all_plots: dict[int, GamePlot],
-            player: RuledUser,
-            announcement: dict,
-            **kwargs: Any
+        self,
+        roles: list[Customer],
+        all_plots: dict[int, GamePlot],
+        player: RuledUser,
+        announcement: dict,
+        force_done: False,
+        **kwargs: Any
     ) -> tuple[bool, list[int]]:
         # when the invited roles are the same as the main roles of the plot,
         # this plot is considered done
@@ -136,20 +138,23 @@ class GamePlot:
         input_names = set([r.name for r in roles])
         force_plot_done = (self.max_attempts == 1)
 
-        if correct_names <= input_names:
-            logger.debug(f"Start detect Plot {self.id} is done")
-            # send_chat_msg(f"{SYS_MSG_PREFIX}判断是否达成剧情完成条件中，请稍等。",
-            #               uid=player.uid)
-            is_plot_done = player.success_detector(
-                self.plot_description["done_condition"],
-                announcement,
-            )
-            if is_plot_done or force_plot_done:
-                self.state = self.PlotState.DONE
+        if force_done or force_plot_done:
+            self.state = self.PlotState.DONE
+        else:
+            if correct_names <= input_names:
+                logger.debug(f"Start detect Plot {self.id} is done")
+                # send_chat_msg(f"{SYS_MSG_PREFIX}判断是否达成剧情完成条件中，请稍等。",
+                #               uid=player.uid)
+                is_plot_done = player.success_detector(
+                    self.plot_description["done_condition"],
+                    announcement,
+                )
+                if is_plot_done:
+                    self.state = self.PlotState.DONE
+                else:
+                    return False, []
             else:
                 return False, []
-        else:
-            return False, []
 
         unblock_ids = []
         for i in range(len(self.support_following_plots)):
@@ -166,7 +171,7 @@ class GamePlot:
                 logger.debug(f"unblock plot {unblock_plot.id}")
         self.deactivate_roles()
         self.state = self.PlotState.DONE
-        return is_plot_done, unblock_ids
+        return True, unblock_ids
 
     def _begin_task(self, player):
         openings = self.plot_description
@@ -315,4 +320,14 @@ def check_active_plot(
             logger.debug(f"{p_id}, {unlock}, {all_plots[curr_done].is_done()}")
             if unlock and all_plots[p_id].activate(player):
                 active_plots.append(p_id)
+    # update quest webui
+    quests = []
+    for p_idx in active_plots:
+        game_plot = all_plots[p_idx]
+        quests.append((
+            game_plot.plot_description["task"],
+            game_plot.plot_description["done_hint"],
+        ))
+    send_quest_msg(quests, uid=player.uid)
+
     return active_plots

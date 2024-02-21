@@ -98,6 +98,8 @@ def init_uid_queues():
         "glb_queue_chat_input": Queue(),
         "glb_queue_clue": Queue(),
         "glb_queue_story": Queue(),
+        "glb_queue_riddle_input": Queue(),
+        "glb_queue_quest": Queue(),
     }
 
 
@@ -190,6 +192,29 @@ def get_story_msg(
     return None
 
 
+def send_quest_msg(
+    quests,
+    uid=None,
+):
+    print("send_quest_msg:", quests)
+    if get_use_web_ui():
+        global glb_uid_dict
+        glb_queue_quest = glb_uid_dict[uid]["glb_queue_quest"]
+        glb_queue_quest.put([quests])
+
+
+def get_quest_msg(
+    uid=None,
+):
+    global glb_uid_dict
+    glb_queue_quest = glb_uid_dict[uid]["glb_queue_quest"]
+    if not glb_queue_quest.empty():
+        line = glb_queue_quest.get(block=False)
+        if line is not None:
+            return line
+    return None
+
+
 def send_player_msg(
     msg,
     role="我",
@@ -229,6 +254,24 @@ def send_player_input(msg, role="餐厅老板", uid=None):
         global glb_uid_dict
         glb_queue_chat_input = glb_uid_dict[uid]["glb_queue_chat_input"]
         glb_queue_chat_input.put([None, msg])
+
+
+def send_riddle_input(msg, uid=None):
+    if get_use_web_ui():
+        global glb_uid_dict
+        glb_queue_riddle_input = glb_uid_dict[uid]["glb_queue_riddle_input"]
+        glb_queue_riddle_input.put([msg])
+
+
+def get_riddle_input(uid=None):
+    global glb_uid_dict
+    glb_queue_riddle_input = glb_uid_dict[uid]["glb_queue_riddle_input"]
+    last_msg = None
+    while not glb_queue_riddle_input.empty():
+        msg = glb_queue_riddle_input.get(block=False)
+        if msg is not None:
+            last_msg = msg
+    return last_msg
 
 
 def send_pretty_msg(msg, uid=None, flushing=True, avatar="./assets/bot.jpg"):

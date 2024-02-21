@@ -28,6 +28,7 @@ from utils import (
     CheckpointArgs,
     REVISION_ROUND,
     get_next_element,
+    get_riddle_input,
 )
 
 
@@ -479,6 +480,86 @@ def invite_customers(customers, uid, checkpoint):
             return invited_customers
 
 
+def riddle_success_detect(uid, player, checkpoint):
+    riddle_input = get_riddle_input(uid=uid)
+    if riddle_input:
+        riddle_input = riddle_input[0]
+        is_done, idx = player.riddle_success_detector(riddle_input, checkpoint)
+        if is_done:
+            involved_roles = checkpoint.all_plots[idx].main_roles + \
+                             checkpoint.all_plots[idx].supporting_roles
+            involved_roles_names = [c.name for c in involved_roles]
+            send_chat_msg(f"{SYS_MSG_PREFIX}恭喜你，剧情解锁成功！", uid=uid)
+
+            # Update inner state
+            checkpoint.all_plots[idx].check_plot_condition_done(
+                involved_roles, checkpoint.all_plots, player, {},
+                force_done=True,
+            )
+
+            questions = [
+                inquirer.List(
+                    "ans",
+                    message=f"{SYS_MSG_PREFIX}：需要以哪位角色的视角生成一段完整故事吗？",
+                    choices=involved_roles_names + ["跳过"],
+                ),
+            ]
+
+            choose_role_story = f"""{SYS_MSG_PREFIX}：需要以哪位角色的视角生成一段完整故事吗？: <select-box
+            shape="card"
+                        item-width="auto" type="checkbox" options=
+                        '{json.dumps(involved_roles_names + ["跳过"])}'
+                        select-once></select-box>"""
+
+            send_chat_msg(choose_role_story, flushing=False, uid=uid)
+
+            while True:
+                answer = query_answer(questions, "ans", uid=uid)
+                if isinstance(answer, str):
+                    send_chat_msg(f"{SYS_MSG_PREFIX}请在列表中选择。", uid=uid)
+                    continue
+                break
+            send_chat_msg("**end_choosing**", uid=uid)
+
+            for c in involved_roles:
+                if c.name == answer[0]:
+                    player.talk(f"我想听听{c.name}的故事", is_display=True)
+                    c.generate_pov_story(
+                        force_done_condition=
+                        checkpoint.all_plots[idx].plot_description[
+                            "done_condition"],
+                        is_player_done=True,
+                    )
+
+            # TODO: update all involved_roles' background?
+            for c in involved_roles:
+                c.refine_background()
+
+            # New openings, update cur_plots
+            checkpoint.cur_plots = check_active_plot(
+                player,
+                checkpoint.all_plots,
+                checkpoint.cur_plots,
+                idx,
+            )
+            logger.debug(f"---active_plots:{checkpoint.cur_plots}")
+
+            # Reset stages
+            if len(checkpoint.cur_plots) == 1:
+                checkpoint.stage_per_night = checkpoint.all_plots[
+                    checkpoint.cur_plots[0]].plot_stages[0]
+            else:
+                # Use min index of plot as start
+                tmp_stage = []
+                for plot_id in checkpoint.cur_plots:
+                    tmp_stage += checkpoint.all_plots[plot_id].plot_stages
+                checkpoint.stage_per_night = min(tmp_stage)
+        else:
+            send_chat_msg(f"{SYS_MSG_PREFIX}玩家的最终答案：“{riddle_input}”，"
+                          f"解谜失败，请继续加油！\n\n",
+                          uid=args.uid)
+
+
 def main(args) -> None:
     # game_description = f"""
     # {SYS_MSG_PREFIX}
@@ -549,7 +630,9 @@ def main(args) -> None:
 
     logger.debug("initially active plots: " + str(checkpoint.cur_plots))
 
+    uid = player.uid
     while True:
+        riddle_success_detect(uid=uid, player=player, checkpoint=checkpoint)
         # daily loop
         daily_plot_stages = []
         if len(checkpoint.cur_plots) == 1:

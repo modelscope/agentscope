@@ -56,6 +56,7 @@ class RuledUser(AgentBase):
         ingredients_dict: Optional[dict] = None,
         cook_prompt: Optional[str] = None,
         success_detector_prompt: Optional[str] = None,
+        riddle_detector_prompt: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         """Initialize a RuledUser object."""
@@ -64,6 +65,7 @@ class RuledUser(AgentBase):
         self.ingredients_dict = ingredients_dict
         self.cook_prompt = cook_prompt
         self.success_detector_prompt = success_detector_prompt
+        self.riddle_detector_prompt = riddle_detector_prompt
         self.uid = kwargs.get("uid", None)
 
     def reply(
@@ -154,6 +156,29 @@ class RuledUser(AgentBase):
             chat_log.append(self.memory._content[i])
         chat_log.reverse()
         return chat_log
+
+    def riddle_success_detector(self, riddle_input, checkpoint):
+        is_success = False
+        for p_idx in checkpoint.cur_plots:
+            prompt = self.riddle_detector_prompt.format_map(
+                {
+                    "condition": checkpoint.all_plots[p_idx].plot_description["done_condition"],
+                    "riddle_input": riddle_input,
+                }
+            )
+            message = Msg(name="user", content=prompt, role="user")
+            success_res = self.model(
+                [extract_keys_from_dict(message, MESSAGE_KEYS)],
+                parse_func=json.loads,
+                fault_handler=lambda *_: {"finish": "false"},
+                max_retries=self.retry_time,
+            )
+            if success_res.get("finish") == "true":
+                is_success = True
+                break
+            else:
+                logger.debug(f"未达成任务{checkpoint.all_plots[p_idx].plot_description['task'].rstrip()}完成条件，{success_res.get('reason', '未知原因')}")
+        return is_success, p_idx
 
     def success_detector(self, condition, announcement):
         chat_log = self.collect_mem_until_announcement(announcement)

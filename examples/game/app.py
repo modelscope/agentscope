@@ -22,7 +22,9 @@ from utils import (
     cycle_dots,
     check_uuid,
     send_chat_msg,
-    MAX_ROLE_NUM
+    MAX_ROLE_NUM,
+    send_riddle_input,
+    get_quest_msg,
 )
 from create_config_tab import create_config_tab, create_config_accord, get_role_names
 
@@ -45,6 +47,7 @@ def init_uid_dict():
 
 
 glb_history_dict = defaultdict(init_uid_list)
+glb_quest_dict = defaultdict(init_uid_dict)
 glb_clue_dict = defaultdict(init_uid_dict)
 glb_story_dict = defaultdict(init_uid_dict)
 glb_doing_signal_dict = defaultdict(init_uid_dict)
@@ -55,8 +58,9 @@ is_init = Event()
 
 def reset_glb_var(uid):
     global glb_history_dict, glb_clue_dict, glb_story_dict, \
-        glb_doing_signal_dict, glb_end_choosing_index_dict
+        glb_doing_signal_dict, glb_end_choosing_index_dict, glb_quest_dict
     glb_history_dict[uid] = init_uid_list()
+    glb_quest_dict[uid] = init_uid_dict()
     glb_clue_dict[uid] = init_uid_dict()
     glb_story_dict[uid] = init_uid_dict()
     glb_doing_signal_dict[uid] = init_uid_dict()
@@ -171,6 +175,43 @@ def get_chat(uid) -> List[List]:
         dial_msg.append(glb_doing_signal_dict[uid])
 
     return dial_msg[-MAX_NUM_DISPLAY_MSG:], sys_msg[-MAX_NUM_DISPLAY_MSG:]
+
+
+def get_quest(uid):
+    global glb_quest_dict
+
+    uid = check_uuid(uid)
+    quest_msg = get_quest_msg(uid)
+    if quest_msg:
+        glb_quest_dict[uid] = {}
+        for quest in quest_msg[0]:
+            glb_quest_dict[uid][quest[0]] = quest[1]
+
+    if not len(glb_quest_dict[uid].keys()):
+        return """
+            <div class="quest-list">
+                <div class="quest">
+                <p class="quest-name">暂无任务</p>
+                <div class="quest-content">注意：任务列表会在每个阶段结束后更新。</div>
+                </div>
+            </div>
+        """
+
+    quest_html_code = """
+            <div class="quest-list">
+    """
+    for quest_name, quest_content in glb_quest_dict[uid].items():
+        quest_html_code += f"""
+            <div class="quest">
+                <p class="quest-name">任务名称：{quest_name}</p>
+                <div class="quest-content">任务内容：{quest_content}</div>
+            </div>
+            """
+    quest_html_code += """
+        </div>
+    """
+    return quest_html_code
+
 
 def get_story(uid):
     global glb_story_dict
@@ -389,8 +430,9 @@ if __name__ == "__main__":
 
         with game_tabs:
             main_tab = gr.Tab('主界面', id=0)
-            clue_tab = gr.Tab('线索', id=1)
-            story_tab = gr.Tab('故事', id=2)
+            riddle_tab = gr.Tab('任务', id=1)
+            clue_tab = gr.Tab('线索', id=2)
+            story_tab = gr.Tab('故事', id=3)
             with main_tab:
                 with gr.Row():
                     with gr.Column(min_width=270):
@@ -409,28 +451,49 @@ if __name__ == "__main__":
                             layout="panel",
                         )
 
-            with gr.Row():
-                with gr.Column():
-                    user_chat_input = gr.Textbox(
-                        label="user_chat_input",
-                        placeholder="想说点什么",
-                        show_label=False,
-                    )
+                with gr.Row():
+                    with gr.Column():
+                        user_chat_input = gr.Textbox(
+                            label="user_chat_input",
+                            placeholder="想说点什么",
+                            show_label=False,
+                        )
 
-            with gr.Column():
-                send_button = gr.Button(value="📣发送")
-
-            export = gr.Accordion("导出选项", open=False)
-            with export:
                 with gr.Column():
-                    export_button = gr.Button("导出完整游戏记录")
-                    export_output = gr.File(
-                        label="下载完整游戏记录",
-                        elem_classes=["signature-file-uploader"],
-                        visible=False
-                    )
+                    with gr.Row():
+                        send_button = gr.Button(value="📣发送")
+
+                export = gr.Accordion("导出选项", open=False)
+                with export:
+                    with gr.Column():
+                        export_button = gr.Button("导出完整游戏记录")
+                        export_output = gr.File(
+                            label="下载完整游戏记录",
+                            elem_classes=["signature-file-uploader"],
+                            visible=False,
+                        )
             with gr.Row():
                 return_welcome_button = gr.Button(value="↩️返回首页")
+
+        with riddle_tab:
+            riddle_html = """
+            <div style='text-align: center; margin-top: 20px; margin-bottom: 40px; padding: 20px; background: linear-gradient(to right, #f7f7f7, #ffffff); border-left: 5px solid #c9a678; border-right: 5px solid #c9a678;'>
+                <p style='font-size: 18px; color: #333; max-width: 600px; margin: auto; line-height: 1.6; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;'>
+                    <strong>任务提示：</strong><br>
+                    在这里，您的智慧是开启新篇章的钥匙。应对角色们的挑战，准确解答他们的谜题或完成任务，正确的答案将在故事的下一站为您揭开新的剧情。请切记，仅最终提交的答案决定着故事如何展开。
+                </p>
+            </div>
+            """
+            gr.HTML(riddle_html)
+            quest_container = gr.HTML()
+
+            user_riddle_input = gr.Textbox(
+                label="user_riddle_input",
+                placeholder="若心中已有答案，便勇敢地呈上吧。",
+                show_label=False,
+            )
+            riddle_button = gr.Button(value="🔍解谜")
+
         with clue_tab:
             guild_html = """
             <div style='text-align: center; margin-top: 20px; margin-bottom: 40px; padding: 20px; background: linear-gradient(to right, #f7f7f7, #ffffff); border-left: 5px solid #007bff; border-right: 5px solid #007bff;'>
@@ -466,6 +529,13 @@ if __name__ == "__main__":
             send_player_msg(msg, "我", uid=uid)
             return ""
 
+        def send_riddle_message(msg, uid):
+            uid = check_uuid(uid)
+            send_riddle_input(msg, uid=uid)
+            send_chat_msg(f"{SYS_MSG_PREFIX}玩家的答案：“{msg}”，"
+                          f"解谜中...",
+                          uid=uid)
+            return ""
 
         def send_reset_message(uid):
             uid = check_uuid(uid)
@@ -489,6 +559,17 @@ if __name__ == "__main__":
             send_message,
             [user_chat_input, uuid],
             user_chat_input,
+        )
+        # submit riddle message
+        riddle_button.click(
+            send_riddle_message,
+            [user_riddle_input, uuid],
+            user_riddle_input,
+        )
+        user_riddle_input.submit(
+            send_message,
+            [user_riddle_input, uuid],
+            user_riddle_input,
         )
 
         chatbot.custom(fn=fn_choice, inputs=[uuid])
@@ -521,6 +602,10 @@ if __name__ == "__main__":
         demo.load(get_story,
                   inputs=[uuid],
                   outputs=[story_container],
+                  every=0.5)
+        demo.load(get_quest,
+                  inputs=[uuid],
+                  outputs=[quest_container],
                   every=0.5)
 
     demo.queue()
