@@ -28,8 +28,7 @@ from utils import (
     send_riddle_input,
     get_quest_msg,
 )
-from create_config_tab import create_config_tab, create_config_accord, \
-    get_role_names
+from create_config_tab import create_config_tab, create_config_accord, get_role_names
 
 import gradio as gr
 import modelscope_studio as mgr
@@ -151,9 +150,7 @@ def get_chat(uid) -> List[List]:
                         glb_history_dict[uid][idx][1]['text']):
                     pattern = re.compile(r'(<select-box[^>]*?)>')
                     replacement_text = r'\1 disabled="True">'
-                    glb_history_dict[uid][idx][1]['text'] = pattern.sub(
-                        replacement_text,
-                        glb_history_dict[uid][idx][1]['text'])
+                    glb_history_dict[uid][idx][1]['text'] = pattern.sub(replacement_text, glb_history_dict[uid][idx][1]['text'])
             glb_end_choosing_index_dict[uid] = len(glb_history_dict[uid]) - 1
 
         else:
@@ -287,10 +284,9 @@ def get_clue(uid):
     if clue_item:
         role_name_ = clue_item['name']
         if clue_item["clue"] is not None:
-            glb_clue_dict[uid][role_name_]['clue_list'].append(
-                clue_item['clue'])
-        glb_clue_dict[uid][role_name_]['unexposed_num'] = clue_item[
-            'unexposed_num']
+            glb_clue_dict[uid][role_name_]['clue_list'].append(clue_item['clue'])
+            glb_clue_dict[uid][role_name_]['unexposed_num'] = clue_item[
+                'unexposed_num']
 
     flex_container_html_list = """<div class="mytabs">
     """
@@ -622,8 +618,7 @@ if __name__ == "__main__":
         return_welcome_button.click(welcome_ui, outputs=[tabs, game_tabs])
 
         # start game
-        new_button.click(send_reset_message, inputs=[uuid]).then(
-            check_for_new_session, inputs=[uuid])
+        new_button.click(send_reset_message, inputs=[uuid]).then(check_for_new_session, inputs=[uuid])
         resume_button.click(check_for_new_session, inputs=[uuid])
 
         # export
