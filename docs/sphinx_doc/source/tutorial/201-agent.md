@@ -90,10 +90,10 @@ def reply(self, x: dict = None) -> dict:
     prompt = self.engine.join(self.sys_prompt, self.memory.get_memory())
 
     # Invoke the language model with the prepared prompt
-    response = self.model(prompt, parse_func=json.loads, fault_handler=lambda x: {"speak": x})
+    response = self.model(prompt).text
 
     # Format the response and create a message object
-    msg = Msg(self.name, response.get("speak", None) or response, **response)
+    msg = Msg(self.name, response)
 
     # Record the message to memory and return it
     self.memory.add(msg)
