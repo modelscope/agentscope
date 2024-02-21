@@ -587,6 +587,10 @@ class Customer(StateAgent, DialogAgent):
             )
 
     def expose_all_clues(self, plot):
+        send_chat_msg(
+            f"{SYS_MSG_PREFIX}成功解锁 {self.name} "
+            f"的所有线索，请查看线索栏（画面生成可能存在延迟，请耐心等待）。",
+            uid=self.uid)
         indices_to_pop = []
         for i, item in enumerate(self.unexposed_clues):
             if item["plot"] == plot:
