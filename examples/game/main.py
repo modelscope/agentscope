@@ -99,6 +99,8 @@ def invited_group_chat(
             involved_roles = all_plots[idx].main_roles + all_plots[idx].supporting_roles
 
             send_chat_msg(f"{SYS_MSG_PREFIX}恭喜你，剧情解锁成功！", uid=uid)
+            for c in involved_roles:
+                c.expose_all_clues(plot=idx)
             questions = [
                 inquirer.List(
                     "ans",
@@ -137,7 +139,6 @@ def invited_group_chat(
                     c.generate_pov_story()
             for c in involved_roles:
                 c.refine_background()
-                c.expose_all_clues(plot=idx)
             return idx
 
     send_chat_msg(f"{SYS_MSG_PREFIX} 剧情解锁失败，未满足剧情解锁条件。", uid=uid)
@@ -179,6 +180,8 @@ def invited_group_chat(
                         choices=invited_names + ["跳过"],
                     ),
                 ]
+                for c in involved_roles:
+                    c.expose_all_clues(plot=idx)
 
                 choose_role_story = f"""{SYS_MSG_PREFIX}：需要以哪位角色的视角生成一段完整故事吗？: <select-box
                             shape="card"
@@ -210,7 +213,6 @@ def invited_group_chat(
                         c.generate_pov_story()
                 for c in involved_roles:
                     c.refine_background()
-                    c.expose_all_clues(plot=idx)
                 return idx
             else:
                 # send_chat_msg("**end_choosing**", uid=uid)
@@ -511,6 +513,9 @@ def riddle_success_detect(uid, player, checkpoint):
             involved_roles_names = [c.name for c in involved_roles]
             send_chat_msg(f"{SYS_MSG_PREFIX}恭喜你，剧情解锁成功！", uid=uid)
 
+            for c in involved_roles:
+                c.expose_all_clues(plot=idx)
+
             # Update inner state
             checkpoint.all_plots[idx].check_plot_condition_done(
                 involved_roles, checkpoint.all_plots, player, {},
@@ -557,7 +562,6 @@ def riddle_success_detect(uid, player, checkpoint):
 
             for c in involved_roles:
                 c.refine_background()
-                c.expose_all_clues(plot=idx)
 
             # New openings, update cur_plots
             checkpoint.cur_plots = check_active_plot(

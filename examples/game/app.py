@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import argparse
 import base64
 import os
 import datetime
@@ -10,6 +11,7 @@ from multiprocessing import Event
 import traceback
 import agentscope
 from config_utils import load_user_cfg, load_configs
+from runtime import RuntimeVer
 from utils import (
     CheckpointArgs,
     enable_web_ui,
@@ -56,6 +58,7 @@ glb_end_choosing_index_dict = defaultdict(lambda: -1)
 
 glb_signed_user = []
 is_init = Event()
+
 
 def reset_glb_var(uid):
     global glb_history_dict, glb_clue_dict, glb_story_dict, \
@@ -184,11 +187,10 @@ def get_quest(uid):
     uid = check_uuid(uid)
     quest_msg = get_quest_msg(uid)
     if quest_msg:
-        glb_quest_dict[uid] = {}
-        for quest in quest_msg[0]:
-            glb_quest_dict[uid][quest[0]] = quest[1]
+        quest = quest_msg[0]
+        glb_quest_dict[uid][quest[0]] = quest[1]
 
-    if not len(glb_quest_dict[uid].keys()):
+    if not len(glb_quest_dict[uid]):
         return """
             <div class="quest-list">
                 <div class="quest">
@@ -201,13 +203,23 @@ def get_quest(uid):
     quest_html_code = """
             <div class="quest-list">
     """
+    done_quest_html_code, wip_quest_html_code = "", ""
     for quest_name, quest_content in glb_quest_dict[uid].items():
-        quest_html_code += f"""
-            <div class="quest">
-                <p class="quest-name">任务名称：{quest_name}</p>
-                <div class="quest-content">任务内容：{quest_content}</div>
-            </div>
-            """
+        if quest_content["status"]:
+            done_quest_html_code += f"""
+                            <div class="quest">
+                                <p class="quest-name">✅任务名称：<del>{quest_name}</p>
+                                <div class="quest-content">任务内容：<del>{quest_content["done_hint"]}</del></div>
+                            </div>
+                            """
+        else:
+            wip_quest_html_code += f"""
+                <div class="quest">
+                    <p class="quest-name">⏳任务名称：{quest_name}</p>
+                    <div class="quest-content">任务内容：{quest_content["done_hint"]}</div>
+                </div>
+                """
+    quest_html_code = quest_html_code + wip_quest_html_code + done_quest_html_code
     quest_html_code += """
         </div>
     """
@@ -287,7 +299,7 @@ def get_clue(uid):
 
     flex_container_html_list = """<div class="mytabs">
     """
- 
+
     for i, role_name_ in enumerate(glb_clue_dict[uid].keys()):
         if i == 0:
             check_sign = """
@@ -327,7 +339,7 @@ def get_clue(uid):
                                     </div>
                                     </div>
                             """
-                            
+
         flex_container_html_list += flex_container_html
     flex_container_html_list += """
     </div>
@@ -342,6 +354,20 @@ def fn_choice(data: gr.EventData, uid):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="AgentScope应用")
+
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('-toc', action='store_true', help='执行ToC版本')
+    group.add_argument('-tod', action='store_true', help='执行ToD版本')
+    args = parser.parse_args()
+
+    if args.toc:
+        ver = RuntimeVer.ToC
+    elif args.tod:
+        ver = RuntimeVer.ToD
+    else:
+        ver = RuntimeVer.Root
+
 
     def init_game():
         if not is_init.is_set():
@@ -403,17 +429,22 @@ if __name__ == "__main__":
                 trace_info = ''.join(
                     traceback.TracebackException.from_exception(e).format())
                 for i in range(FAIL_COUNT_DOWN, 0, -1):
-                    send_chat_msg(f"{SYS_MSG_PREFIX}发生错误 {trace_info}, 即将在{i}秒后重启",
-                                  uid=uid)
+                    send_chat_msg(
+                        f"{SYS_MSG_PREFIX}发生错误 {trace_info}, 即将在{i}秒后重启",
+                        uid=uid)
                     time.sleep(1)
             reset_glb_var(uid)
+
 
     with gr.Blocks(css="assets/app.css") as demo:
         uuid = gr.Textbox(label='modelscope_uuid', visible=False)
         tabs = gr.Tabs(visible=True)
         with tabs:
             welcome_tab = gr.Tab('游戏界面', id=0)
-            config_tab = gr.Tab('游戏配置', id=1)
+
+            if ver in [RuntimeVer.ToD, RuntimeVer.Root]:
+                config_tab = gr.Tab('游戏配置', id=1)
+                dev_tab = gr.Tab('开发者说明')
             with welcome_tab:
                 user_chat_bot_cover = gr.HTML(format_cover_html())
                 with gr.Row():
@@ -421,13 +452,21 @@ if __name__ == "__main__":
                         new_button = gr.Button(value='🚀新的探险', )
                     with gr.Column():
                         resume_button = gr.Button(value='🔥续写情缘', )
-            
-                config_accordion =  gr.Accordion('导入导出配置', open=False)
-                with config_accordion:
-                    create_config_accord(config_accordion, uuid)
 
-        with config_tab:
-            create_config_tab(config_tab, uuid)
+                config_accordion = gr.Accordion(
+                    '导入导出配置',
+                    open=False,
+                    visible=(ver in [RuntimeVer.ToD, RuntimeVer.Root]),
+                )
+                with config_accordion:
+                    create_config_accord(config_accordion, uuid, ver)
+
+        if ver in [RuntimeVer.ToD, RuntimeVer.Root]:
+            with config_tab:
+                create_config_tab(config_tab, uuid)
+            with dev_tab:
+                # TODO: Zitao, write README here.
+                dev_container = gr.HTML()
 
         game_tabs = gr.Tabs(visible=False)
 
@@ -537,7 +576,7 @@ if __name__ == "__main__":
             gr.Info("答案已提交，任务判定会在每个阶段结束后进行。")
             send_riddle_input(msg, uid=uid)
             send_chat_msg(f"{SYS_MSG_PREFIX}玩家的答案：“{msg}”，"
-                          f"解谜中...",
+                          f"解谜中... （任务判定会在每个阶段结束后进行）",
                           uid=uid)
             return ""
 
@@ -587,7 +626,6 @@ if __name__ == "__main__":
         # start game
         new_button.click(send_reset_message, inputs=[uuid]).then(check_for_new_session, inputs=[uuid])
         resume_button.click(check_for_new_session, inputs=[uuid])
-        
 
         # export
         export_button.click(export_chat_history, [uuid], export_output)
