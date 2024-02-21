@@ -576,7 +576,7 @@ if __name__ == "__main__":
             gr.Info("答案已提交，任务判定会在每个阶段结束后进行。")
             send_riddle_input(msg, uid=uid)
             send_chat_msg(f"{SYS_MSG_PREFIX}玩家的答案：“{msg}”，"
-                          f"解谜中...",
+                          f"解谜中... （任务判定会在每个阶段结束后进行）",
                           uid=uid)
             return ""
 
