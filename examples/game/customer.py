@@ -380,25 +380,39 @@ class Customer(StateAgent, DialogAgent):
             hist_mem[0]["role"], hist_mem[-1]["role"] = "user", "user"
         return hist_mem
 
+    def add_plot_done_memory(
+            self,
+            done_condition=None,
+            main_role_names=[],
+            is_player_done=False,
+    ):
+        if self.name in main_role_names:
+            if not is_player_done:
+                content = f"我是{self.name}，很遗憾餐馆老板没有帮助到我，但是我调查到了结果:" \
+                          f" {done_condition}。"
+            else:
+                content = f"我是{self.name}，很高兴餐馆老板帮助我，很感谢老板的帮助，最后调查到了结果" \
+                          f":{done_condition}。"
+        else:
+            if not is_player_done:
+                content = f"我是{self.name}，很遗憾餐馆老板没有帮助到" \
+                          f"{'、'.join(main_role_names)}解决问题，" \
+                          f"但是在{'、'.join(main_role_names)}的努力下，事件得到揭露" \
+                          f":{done_condition}。"
+            else:
+                content = f"我是{self.name}，很高兴在餐馆老板的努力下，事件得到揭露:{done_condition}。"
+
+        msg = Msg(
+            role="user",
+            name=self.name,
+            content=content,
+        )
+        self.memory.add(msg)
+
     def generate_pov_story(
             self,
             recent_n: int = 20,
-            force_done_condition="",
-            is_player_done=False,
     ) -> None:
-        if force_done_condition:
-            if not is_player_done:
-                content = f"我是{self.name}，餐馆老板没有帮助到我，但是我调查到了结果" \
-                          f":{force_done_condition}。"
-            else:
-                content = f"我是{self.name}，餐馆老板帮助我，很感谢老板的帮助，最后调查到了结果" \
-                          f":{force_done_condition}。"
-            msg = Msg(
-                role="user",
-                name=self.name,
-                content=content,
-            )
-            self.memory.add(msg)
         related_mem = self._validated_history_messages(recent_n)
         conversation = ""
         for mem in related_mem:
@@ -565,6 +579,33 @@ class Customer(StateAgent, DialogAgent):
                 f"\n\n剩余未发现线索数量:"
                 f"{len(self.unexposed_clues) + len(found_clue) - i - 1}",
                 uid=self.uid)
+            send_clue_msg(
+                clue,
+                unexposed_num=len(self.unexposed_clues),
+                uid=self.uid,
+                role=self.name,
+            )
+
+    def expose_all_clues(self, plot):
+        indices_to_pop = []
+        for i, item in enumerate(self.unexposed_clues):
+            if item["plot"] == plot:
+                indices_to_pop.append(i)
+
+        indices_to_pop.sort(reverse=True)
+        for index in indices_to_pop:
+            element = self.unexposed_clues.pop(index)
+            self.exposed_clues.append(element)
+            clue = {
+                "name": element["name"],
+                "summary": element["content"],  # Use new summary
+                "image": get_clue_image_b64_url(
+                    customer=self.name,
+                    clue_name=element["name"],
+                    uid=self.uid,
+                    content=element["content"],
+                )
+            }
             send_clue_msg(
                 clue,
                 unexposed_num=len(self.unexposed_clues),

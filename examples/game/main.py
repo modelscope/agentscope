@@ -96,6 +96,8 @@ def invited_group_chat(
         )
 
         if is_done:
+            involved_roles = all_plots[idx].main_roles + all_plots[idx].supporting_roles
+
             send_chat_msg(f"{SYS_MSG_PREFIX}恭喜你，剧情解锁成功！", uid=uid)
             questions = [
                 inquirer.List(
@@ -121,17 +123,27 @@ def invited_group_chat(
                 break
             send_chat_msg("**end_choosing**", uid=uid)
 
+            for c in involved_roles:
+                c.add_plot_done_memory(
+                    done_condition=all_plots[idx].plot_description[
+                        "done_condition"],
+                    main_role_names=[c.name for c in all_plots[idx].main_roles],
+                    is_player_done=True,
+                )
+
             for c in invited_customer:
                 if c.name == answer[0]:
                     player.talk(f"我想听听{c.name}的故事", is_display=True)
                     c.generate_pov_story()
-            for c in invited_customer:
+            for c in involved_roles:
                 c.refine_background()
+                c.expose_all_clues(plot=idx)
             return idx
 
     send_chat_msg(f"{SYS_MSG_PREFIX} 剧情解锁失败，未满足剧情解锁条件。", uid=uid)
     for idx in cur_plots_indices:
         all_plots[idx].max_attempts -= 1
+        involved_roles = all_plots[idx].main_roles + all_plots[idx].supporting_roles
         if all_plots[idx].max_attempts <= 0:
             restart_plot_choice=['继续游戏', '再次挑战']
             restart_plot = [
@@ -184,13 +196,21 @@ def invited_group_chat(
                     break
                 send_chat_msg("**end_choosing**", uid=uid)
 
+                for c in involved_roles:
+                    c.add_plot_done_memory(
+                        done_condition=all_plots[idx].plot_description[
+                            "done_condition"],
+                        main_role_names=[c.name for c in all_plots[idx].main_roles],
+                        is_player_done=False,
+                    )
+
                 for c in invited_customer:
                     if c.name == answer[0]:
                         player.talk(f"我想听听{c.name}的故事", is_display=True)
-                        c.generate_pov_story(force_done_condition=all_plots[
-                            idx].plot_description["done_condition"])
-                for c in invited_customer:
+                        c.generate_pov_story()
+                for c in involved_roles:
                     c.refine_background()
+                    c.expose_all_clues(plot=idx)
                 return idx
             else:
                 # send_chat_msg("**end_choosing**", uid=uid)
@@ -459,8 +479,8 @@ def invite_customers(customers, uid, checkpoint):
     ]
 
     choose_available_customers = prompt + f"""
-    \n\n{main_role}已经在餐厅等您了，您可以继续询问细节寻找线索，也可以直接告诉TA任务的答案。
-    \n\n 你还可以选择其他角色与{main_role}一起共同收集更多线索（当前任务剩余机会 {checkpoint.all_plots[p_idx].max_attempts}）
+    \n\n 你可以选择与{main_role}和其他角色一起讨论，收集更多线索（当前任务剩余机会 
+    {checkpoint.all_plots[p_idx].max_attempts}）
     <select-box shape="card"  type="checkbox" item-width="auto" options=
                 '{json.dumps(available_customers)}' select-once
                 submit-text="确定"></select-box>
@@ -522,18 +542,22 @@ def riddle_success_detect(uid, player, checkpoint):
             send_chat_msg("**end_choosing**", uid=uid)
 
             for c in involved_roles:
+                c.add_plot_done_memory(
+                    done_condition=checkpoint.all_plots[idx].plot_description[
+                        "done_condition"],
+                    main_role_names=[c.name for c in
+                                     checkpoint.all_plots[idx].main_roles],
+                    is_player_done=True,
+                )
+
+            for c in involved_roles:
                 if c.name == answer[0]:
                     player.talk(f"我想听听{c.name}的故事", is_display=True)
-                    c.generate_pov_story(
-                        force_done_condition=
-                        checkpoint.all_plots[idx].plot_description[
-                            "done_condition"],
-                        is_player_done=True,
-                    )
+                    c.generate_pov_story()
 
-            # TODO: update all involved_roles' background?
             for c in involved_roles:
                 c.refine_background()
+                c.expose_all_clues(plot=idx)
 
             # New openings, update cur_plots
             checkpoint.cur_plots = check_active_plot(
@@ -557,7 +581,7 @@ def riddle_success_detect(uid, player, checkpoint):
         else:
             send_chat_msg(f"{SYS_MSG_PREFIX}玩家的最终答案：“{riddle_input}”，"
                           f"解谜失败，请继续加油！\n\n",
-                          uid=args.uid)
+                          uid=uid)
 
 
 def main(args) -> None:
@@ -730,44 +754,3 @@ def main(args) -> None:
             # reset all customer cur_state to pre-meal
             c.transition(CustomerConv.WARMING_UP)
         save_game_checkpoint(checkpoint, args.save_checkpoint)
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(prog="Game init", description="")
-    parser.add_argument("--load_checkpoint", type=str, default=None)
-    parser.add_argument(
-        "--save_checkpoint",
-        type=str,
-        default="./checkpoints/cp-",
-    )
-    args = parser.parse_args()
-    GAME_CONFIG = load_configs("config/game_config.yaml")
-    TONGYI_CONFIG = {
-        "type": "tongyi",
-        "name": "tongyi_model",
-        "model_name": "qwen-max-1201",
-        "api_key": os.environ.get("TONGYI_API_KEY"),
-    }
-
-    HTTP_LLM_CONFIG = {
-        "type": "post_api",
-        "name": os.environ.get("HTTP_LLM_MODEL"),
-        "headers": {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {os.environ.get('HTTP_LLM_API_KEY')}"
-        },
-        "api_url": os.environ.get("HTTP_LLM_URL"),
-        "messages_key": "messages",
-        "json_args": {
-            "model": os.environ.get("HTTP_LLM_MODEL"),
-            "n": 1,
-            "temperature": 0.7,
-        }
-
-    }
-
-    agentscope.init(model_configs=[TONGYI_CONFIG, HTTP_LLM_CONFIG], logger_level="DEBUG")
-    args = CheckpointArgs()
-    args.game_config = GAME_CONFIG
-    args.uid = None
-    main(args)
