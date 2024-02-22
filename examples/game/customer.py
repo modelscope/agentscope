@@ -111,7 +111,7 @@ class Customer(StateAgent, DialogAgent):
         for p in active_plots:
             logger.debug(f"plot {p}, {active_plots}")
             if (
-                p in self.hidden_plot and len(self.active_plots) == 0
+                    p in self.hidden_plot and len(self.active_plots) == 0
             ):
                 self.active_plots = [p]
             elif p in self.hidden_plot:
@@ -129,7 +129,6 @@ class Customer(StateAgent, DialogAgent):
         self.plot_stage = CustomerPlot.NOT_ACTIVE
         self.prev_active_plots = [self.active_plots[0]]
         self.active_plots = []
-
 
     def reply(self, x: dict = None) -> Union[dict, tuple]:
         # TODO:
@@ -198,10 +197,10 @@ class Customer(StateAgent, DialogAgent):
         )
 
         if is_satisfied or (
-            score >= MIN_BAR_RECEIVED_CONST
-            # and self.friendship >= MIN_BAR_FRIENDSHIP_CONST
+                score >= MIN_BAR_RECEIVED_CONST
+                # and self.friendship >= MIN_BAR_FRIENDSHIP_CONST
         ):
-            self.expose_random_clue(self.active_plots[0])
+            # self.expose_random_clue(self.active_plots[0])
             self.transition(CustomerConv.AFTER_MEAL_CHAT)
             print("---", self.cur_state)
         self.preorder_itr_count = 0
@@ -248,7 +247,7 @@ class Customer(StateAgent, DialogAgent):
 
         return reply_msg
 
-    def _preferred_food(self, x:dict) -> dict:
+    def _preferred_food(self, x: dict) -> dict:
         walkin_msg = Msg(
             role="user",
             name=self.name,
@@ -278,7 +277,8 @@ class Customer(StateAgent, DialogAgent):
         system_prompt = self.game_config["preferred_food_prompt"].format_map(
             {
                 "name": self.config["name"],
-                "food_preference": self.config["character_setting"]["food_preference"],
+                "food_preference": self.config["character_setting"][
+                    "food_preference"],
                 "ingredients": ingredients,
             },
         )
@@ -457,7 +457,7 @@ class Customer(StateAgent, DialogAgent):
             "**speak**",
             role=self.name,
             uid=self.uid,
-            avatar=self.avatar,)
+            avatar=self.avatar, )
         pov_story = self.model(
             [extract_keys_from_dict(msg, MESSAGE_KEYS)]
         )
@@ -471,7 +471,8 @@ class Customer(StateAgent, DialogAgent):
         )
         print("*" * 20)
         send_chat_msg(
-            f"{SYS_MSG_PREFIX}发现{self.name}的新故事（请查看故事栏）。", uid=self.uid)
+            f"{SYS_MSG_PREFIX}发现{self.name}的新故事（请查看故事栏）。",
+            uid=self.uid)
 
     def _gen_plot_related_prompt(self) -> str:
         """
@@ -485,7 +486,7 @@ class Customer(StateAgent, DialogAgent):
         )
 
         if (
-            self.plot_stage == CustomerPlot.ACTIVE
+                self.plot_stage == CustomerPlot.ACTIVE
         ):
             # get the clues related to the current plot
             hidden_plot_list = self._relation_to_clues()
@@ -655,16 +656,19 @@ class Customer(StateAgent, DialogAgent):
                 role=self.name,
             )
 
-    def expose_random_clue(self, plot):
-        # TODO: Zitao add proper prompt (做菜做得好 吐露线索——不然太难)
-        # TODO: 请注意该位置是否合适
-        send_chat_msg(
-            f"{SYS_MSG_PREFIX}💡成功解锁 {self.name} 的一条随机线索，请查看线索栏。",
-            uid=self.uid)
+    def expose_random_clue(self):
+        if len(self.active_plots) > 0:
+            plot = self.active_plots[0]
+        else:
+            return
         indices_to_pop = []
+        curr_clues = self._relation_to_clues()
+        curr_clue_names = set([c["name"] for c in curr_clues])
         for i, item in enumerate(self.unexposed_clues):
-            if item["plot"] == plot:
+            if item["plot"] == plot and item["name"] in curr_clue_names:
                 indices_to_pop.append(i)
+        logger.debug(f"clues can be random exposed"
+                     f"{[self.unexposed_clues[i]['name'] for i in indices_to_pop]}")
 
         random_index = random.choice(indices_to_pop)
 
@@ -682,6 +686,40 @@ class Customer(StateAgent, DialogAgent):
                 content=element["content"],
             )
         }
+        # generate prompt to adjust for random plot reveal
+        expose_clue_prompt = self.game_config[
+            "random_clue_expose_prompt"].format_map({
+            "name": self.name,
+            "background": self.background,
+            "clue": element["content"],
+        })
+        msg = Msg(
+            role="user",
+            name="user",
+            content=expose_clue_prompt,
+        )
+        logger.debug([extract_keys_from_dict(msg, MESSAGE_KEYS)])
+        expose_talk = self.model(
+            [extract_keys_from_dict(msg, MESSAGE_KEYS)],
+            # parse_func=json.loads,
+            # fault_handler=lambda _: {"talk": ""},
+            # max_retries=self.retry_time,
+        )
+
+        send_chat_msg(
+            expose_talk,
+            role=self.name,
+            uid=self.uid,
+            avatar=self.avatar
+        )
+
+        msg = Msg(role="user", name=self.name, content=expose_clue_prompt,)
+        self.memory.add(msg)
+
+        # system notification
+        send_chat_msg(
+            f"{SYS_MSG_PREFIX}💡成功解锁 {self.name} 的一条随机线索，请查看线索栏。",
+            uid=self.uid)
         send_clue_msg(
             clue,
             unexposed_num=len(self.unexposed_clues),
