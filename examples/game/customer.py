@@ -73,6 +73,7 @@ class Customer(StateAgent, DialogAgent):
 
         # Clues: `unexposed_clues` & `exposed_clues`
         self.unexposed_clues = self.config.get("clue", None)
+        self.all_clues = copy.deepcopy(self.config.get("clue", None))
         if self.unexposed_clues is None:
             raise ValueError("No clue is provided for this customer.")
 
@@ -493,7 +494,7 @@ class Customer(StateAgent, DialogAgent):
 
     def _relation_to_clues(self):
         curr_clues = []
-        for c in self.config["clue"]:
+        for c in self.all_clues:
             if c["plot"] == self.active_plots[0]:
                 curr_clues.append(c)
         if self.relationship.is_max():
@@ -504,6 +505,7 @@ class Customer(StateAgent, DialogAgent):
                       self.relationship.level.value
             logger.debug(f"reveal clue to: {end_idx}")
             hidden_plots = [c for c in curr_clues[:end_idx]]
+            logger.debug(f"reveal clues: {[c['name'] for c in hidden_plots]}")
 
         return hidden_plots
 
@@ -530,28 +532,31 @@ class Customer(StateAgent, DialogAgent):
         if len(self.unexposed_clues) == 0:
             return
 
+        # only reveal active clues
+        curr_plots = self._relation_to_clues()
+        curr_plots_name = [c['name'] for c in curr_plots]
+        curr_unexposed_clues = []
+        curr_to_unexpo_idx = {}
+        for idx, x in enumerate(self.unexposed_clues):
+            if x['name'] in curr_plots_name:
+                curr_unexposed_clues.append(x)
+                curr_to_unexpo_idx[len(curr_unexposed_clues) - 1] = idx
+
         prompt = self.game_config["clue_detect_prompt"].format_map(
             {
                 "content": content,
-                "clue": self.unexposed_clues,
+                "clue": curr_unexposed_clues,
                 "name": self.name,
             }
         )
+
         message = Msg(name="system", content=prompt, role="user")
-        exposed_clues_raw = self.model(
+        exposed_clues = self.model(
             [extract_keys_from_dict(message, MESSAGE_KEYS)],
             parse_func=json.loads,
             fault_handler=lambda response: [],
             max_retries=self.retry_time,
         )
-
-        # only reveal active clues
-        curr_plots = self._relation_to_clues()
-        curr_plots_name = [c['name'] for c in curr_plots]
-        exposed_clues = []
-        for idx, x in enumerate(exposed_clues_raw):
-            if self.unexposed_clues[x['index']]['name'] in curr_plots_name:
-                exposed_clues.append(exposed_clues_raw[idx])
 
         logger.debug(exposed_clues)
         logger.debug(self.unexposed_clues)
@@ -563,7 +568,7 @@ class Customer(StateAgent, DialogAgent):
         for clue in exposed_clues:
             if not isinstance(clue, dict):
                 continue
-            index = clue.get("index", -1)
+            index = curr_to_unexpo_idx[clue.get("index", -1)]
             summary = clue.get("summary", -1)
             if len(self.unexposed_clues) > index >= 0:
                 indices_to_pop.append(index)
