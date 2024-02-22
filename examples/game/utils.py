@@ -363,7 +363,7 @@ def generate_picture(prompt, model="wanx-lite"):
         else:
             print('Failed, status_code: %s, code: %s, message: %s' %
                   (rsp.status_code, rsp.code, rsp.message))
-    except InvalidTask as e:
+    except (InvalidTask, IndexError) as e:
         print(e)
 
 

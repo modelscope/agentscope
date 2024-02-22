@@ -73,6 +73,7 @@ class Customer(StateAgent, DialogAgent):
 
         # Clues: `unexposed_clues` & `exposed_clues`
         self.unexposed_clues = self.config.get("clue", None)
+        self.all_clues = copy.deepcopy(self.config.get("clue", None))
         if self.unexposed_clues is None:
             raise ValueError("No clue is provided for this customer.")
 
@@ -468,19 +469,8 @@ class Customer(StateAgent, DialogAgent):
             self.plot_stage == CustomerPlot.ACTIVE
         ):
             # get the clues related to the current plot
-            curr_clues = []
-            for c in self.config["clue"]:
-                if c["plot"] == self.active_plots[0]:
-                    curr_clues.append(c)
-            # compose the clues according the relationship level
-            if not self.relationship.is_max():
-                end_idx = len(curr_clues) // 3 * \
-                          self.relationship.level.value
-                hidden_plot = "\n".join(
-                    [c["content"] for c in curr_clues[:end_idx]])
-            else:
-                hidden_plot = "\n".join(
-                    [c["content"] for c in curr_clues])
+            hidden_plot_list = self._relation_to_clues()
+            hidden_plot = "/n".join([c["content"] for c in hidden_plot_list])
             # -> prompt for the main role in the current plot
             prompt += self.game_config["hidden_main_plot_prompt"].format_map(
                 {
@@ -501,6 +491,23 @@ class Customer(StateAgent, DialogAgent):
         prompt += self.game_config[self.relationship.prompt]
         logger.debug(prompt)
         return prompt
+
+    def _relation_to_clues(self):
+        curr_clues = []
+        for c in self.all_clues:
+            if c["plot"] == self.active_plots[0]:
+                curr_clues.append(c)
+        if self.relationship.is_max():
+            logger.debug(f"reveal clue to: all")
+            clues = [c for c in curr_clues]
+        else:
+            end_idx = len(curr_clues) // 3 * \
+                      self.relationship.level.value
+            logger.debug(f"reveal clue to: {end_idx}")
+            clues = [c for c in curr_clues[:end_idx]]
+            logger.debug(f"reveal clues: {[c['name'] for c in hidden_clues]}")
+
+        return clues
 
     def talk(self, content, is_display=True, flushing=True):
         if content is not None:
@@ -525,13 +532,24 @@ class Customer(StateAgent, DialogAgent):
         if len(self.unexposed_clues) == 0:
             return
 
+        # only reveal active clues
+        curr_clues = self._relation_to_clues()
+        curr_clues_name = [c['name'] for c in curr_clues]
+        curr_unexposed_clues = []
+        curr_to_unexpo_idx = {}
+        for idx, x in enumerate(self.unexposed_clues):
+            if x['name'] in curr_clues_name:
+                curr_unexposed_clues.append(x)
+                curr_to_unexpo_idx[len(curr_unexposed_clues) - 1] = idx
+
         prompt = self.game_config["clue_detect_prompt"].format_map(
             {
                 "content": content,
-                "clue": self.unexposed_clues,
+                "clue": curr_unexposed_clues,
                 "name": self.name,
             }
         )
+
         message = Msg(name="system", content=prompt, role="user")
         exposed_clues = self.model(
             [extract_keys_from_dict(message, MESSAGE_KEYS)],
@@ -539,6 +557,7 @@ class Customer(StateAgent, DialogAgent):
             fault_handler=lambda response: [],
             max_retries=self.retry_time,
         )
+
         logger.debug(exposed_clues)
         logger.debug(self.unexposed_clues)
         indices_to_pop = []
@@ -549,7 +568,7 @@ class Customer(StateAgent, DialogAgent):
         for clue in exposed_clues:
             if not isinstance(clue, dict):
                 continue
-            index = clue.get("index", -1)
+            index = curr_to_unexpo_idx[clue.get("index", -1)]
             summary = clue.get("summary", -1)
             if len(self.unexposed_clues) > index >= 0:
                 indices_to_pop.append(index)

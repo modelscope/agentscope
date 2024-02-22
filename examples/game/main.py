@@ -470,7 +470,8 @@ def invite_customers(customers, uid, checkpoint):
         prompt += checkpoint.all_plots[p_idx].plot_description['done_hint']
 
     # available_customers.insert(0, main_role)
-    available_customers.insert(0, "只与主角对话")
+    available_customers.insert(0, "跳过")
+    available_customers.insert(1, "只与主角对话")
 
     select_customer = [
         inquirer.List(
@@ -481,7 +482,7 @@ def invite_customers(customers, uid, checkpoint):
     ]
 
     choose_available_customers = prompt + f"""
-    \n\n 你可以选择与{main_role}和其他角色一起讨论，收集更多线索（当前任务剩余机会 
+    \n\n 你可以选择与主角{main_role}和其他角色一起讨论，收集更多线索（当前任务剩余机会 
     {checkpoint.all_plots[p_idx].max_attempts}）
     <select-box shape="card"  type="checkbox" item-width="auto" options=
                 '{json.dumps(available_customers)}' select-once
@@ -495,6 +496,9 @@ def invite_customers(customers, uid, checkpoint):
         if isinstance(answer, str):
             send_chat_msg(f"{SYS_MSG_PREFIX}请在列表中选择。", uid=uid)
             continue
+        elif answer[0] == "跳过":
+            send_chat_msg("**end_choosing**", uid=uid)
+            return []
         else:
             invited_customers = [main_role] + \
                                 [item for item in answer if item != '只与主角对话']
@@ -581,7 +585,10 @@ def riddle_success_detect(uid, player, checkpoint):
                 tmp_stage = []
                 for plot_id in checkpoint.cur_plots:
                     tmp_stage += checkpoint.all_plots[plot_id].plot_stages
-                checkpoint.stage_per_night = min(tmp_stage)
+                if tmp_stage:
+                    checkpoint.stage_per_night = min(tmp_stage)
+                else:
+                    checkpoint.stage_per_night = StagePerNight.CASUAL_CHAT_FOR_MEAL
         else:
             send_chat_msg(f"{SYS_MSG_PREFIX}玩家的最终答案：“{riddle_input}”，"
                           f"解谜失败，请继续加油！\n\n",
@@ -665,7 +672,7 @@ def main(args) -> None:
         daily_plot_stages = []
         if len(checkpoint.cur_plots) == 1:
             daily_plot_stages = checkpoint.all_plots[checkpoint.cur_plots[0]].plot_stages
-        else:
+        elif len(checkpoint.cur_plots) > 1:
             # multi-plot will act by order
             for plot_id in checkpoint.cur_plots:
                 plot_stages = checkpoint.all_plots[plot_id].plot_stages
@@ -673,9 +680,12 @@ def main(args) -> None:
                     if stage not in daily_plot_stages:
                         daily_plot_stages.append(stage)
             daily_plot_stages.sort()
+        else:
+            daily_plot_stages = [StagePerNight.CASUAL_CHAT_FOR_MEAL]
 
         logger.debug(f"daily_plot_stages: {daily_plot_stages}")
         logger.debug(f"checkpoint.stage_per_night: {checkpoint.stage_per_night}")
+        check_explore_all(checkpoint, uid)
 
         # if checkpoint.stage_per_night == StagePerNight.INVITED_CHAT:
         #     # ============ invited multi-agent loop ===============
@@ -757,4 +767,12 @@ def main(args) -> None:
         for c in customers:
             # reset all customer cur_state to pre-meal
             c.transition(CustomerConv.WARMING_UP)
+        check_explore_all(checkpoint, uid)
         save_game_checkpoint(checkpoint, args.save_checkpoint)
+
+
+def check_explore_all(checkpoint: GameCheckpoint, uid: int = None):
+    if len(checkpoint.cur_plots) == 0:
+        checkpoint.stage_per_night = StagePerNight.CASUAL_CHAT_FOR_MEAL
+        send_chat_msg(f"{SYS_MSG_PREFIX}恭喜你，你已经完成全部剧情！可以重新开始游戏，否则接下来进入饭店日常",
+                      uid=uid)
