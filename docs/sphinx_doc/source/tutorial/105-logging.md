@@ -79,8 +79,7 @@ agentscope.web.init(
 )
 ```
 
-By this way, you can see all the running instances and projects in `http://127.
-0.0.1:5000` as follows:
+By this way, you can see all the running instances and projects in `http://127.0.0.1:5000` as follows:
 
 ![webui](https://img.alicdn.com/imgextra/i3/O1CN01kpHFkn1HpeYEkn60I_!!6000000000807-0-tps-3104-1849.jpg)
 
