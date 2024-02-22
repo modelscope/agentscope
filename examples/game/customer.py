@@ -247,6 +247,23 @@ class Customer(StateAgent, DialogAgent):
         return reply_msg
 
     def _preferred_food(self, x:dict) -> dict:
+        walkin_msg = Msg(
+            role="user",
+            name=self.name,
+            content=f"{self.name}走进餐厅...",
+        )
+        send_pretty_msg(
+            walkin_msg,
+            uid=self.uid,
+            avatar=self.avatar,
+        )
+        send_chat_msg(
+            "**speak**",
+            role=self.name,
+            uid=self.uid,
+            avatar=self.avatar,
+        )
+
         ingredients_dict = x['content']
         # breakpoint()
         ingredients_list = [
