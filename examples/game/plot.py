@@ -198,9 +198,8 @@ class GamePlot:
         # by default, the first main role will trigger the task
         main_role = self.main_roles[0]
         uid = player.uid
-        send_chat_msg(f"{SYS_MSG_PREFIX}开启主线任务： {openings['task']} "
-                      f"\n\n 任务描述：{openings['done_hint']}"
-                      f"\n\n{openings['openings']}", uid=uid)
+        send_chat_msg(f"{SYS_MSG_PREFIX}{openings['openings']}", uid=uid)
+
         # send_chat_msg(f"{SYS_MSG_PREFIX}{openings['openings']}", uid=uid)
         opening_prompt = openings["npc_openings"]
         if "opening_image" in openings and len(openings["opening_image"]) > 0:
@@ -211,6 +210,8 @@ class GamePlot:
             main_role.talk(opening_prompt, is_display=True, flushing=False)
         else:
             main_role.talk(opening_prompt, is_display=True)
+        send_chat_msg(f"{SYS_MSG_PREFIX}开启主线任务： {openings['task']} "
+                      f"\n\n 任务描述：{openings['done_hint']}", uid=uid)
         msg = {"content": "开场"}
         main_role.transition(CustomerConv.OPENING)
         if openings.get("user_openings_option", None):
@@ -225,12 +226,12 @@ class GamePlot:
                 questions = [
                     inquirer.List(
                         "ans",
-                        message=f"{SYS_MSG_PREFIX}：你想要问什么？(剩余询问次数{OPENING_ROUND - i}，空输入主角将直接离开) ",
+                        message=f"{SYS_MSG_PREFIX}：你想要问什么？(剩余询问次数{OPENING_ROUND - i}，若不输入任何内容直接按回车键，当前对话人物将直接离开) ",
                         choices=choices,
                     ),
                 ]
 
-                choose_during_chatting = f"""{SYS_MSG_PREFIX}你想要问什么？(剩余询问次数{OPENING_ROUND - i}，空输入主角将直接离开) 
+                choose_during_chatting = f"""{SYS_MSG_PREFIX}你想要问什么？(剩余询问次数{OPENING_ROUND - i}，若不输入任何内容直接按回车键，当前对话人物将直接离开) 
                 <select-box shape="card"
                                                 type="checkbox" item-width="auto" options=
                                                '
