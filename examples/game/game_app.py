@@ -297,7 +297,9 @@ def get_clue(uid):
             glb_clue_dict[uid][role_name_]['clue_list'].append(clue_item['clue'])
         glb_clue_dict[uid][role_name_]['unexposed_num'] = clue_item['unexposed_num']
 
-    flex_container_html_list = """<div class="mytabs">
+    flex_container_html_list = """
+    <div class="hint">🔔下滑查看更多线索（线索卡内也可以下滑哦～）</div>
+    <div class="mytabs">
     """
 
     for i, role_name_ in enumerate(glb_clue_dict[uid].keys()):

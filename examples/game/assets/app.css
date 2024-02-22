@@ -482,8 +482,15 @@
     z-index: -1;
 }
 
-.highlight {
-    background-color: #ffff00; /* 明亮的黄色 */
-    /*padding: 5px; !* 添加一些内边距使文本不会紧贴边缘 *!*/
-    /*border-radius: 5px; !* 可选的，为背景添加圆角 *!*/
-}
+.hint {
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(128, 128, 128, 0.05); /* 灰色背景，半透明 */
+    text-align: center;
+    padding: 10px 0;
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.7); /* 文本颜色半透明 */
+    z-index: 1000; /* 确保提示条位于页面元素上方 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* 可选：为提示条添加阴影，增加立体感 */
+  }
