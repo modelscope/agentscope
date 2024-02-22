@@ -89,9 +89,9 @@ def covert_image_to_base64(image_path):
         return base64_url
 
 
-def format_cover_html(bot_avatar_path="assets/bg.png"):
+def format_cover_html(name="", bot_avatar_path="assets/bg.png"):
     config = {
-        'name': '谜馔',
+        'name': f"谜馔：{name}" if name else "谜馔",
         'description': '这是一款模拟餐馆经营的解密推理游戏, 快来开始吧😊',
         'introduction_label': "<br>玩法介绍",
         'introduction_context': "在一个热闹的小镇上<br>"
@@ -296,7 +296,9 @@ def get_clue(uid):
             glb_clue_dict[uid][role_name_]['clue_list'].append(clue_item['clue'])
         glb_clue_dict[uid][role_name_]['unexposed_num'] = clue_item['unexposed_num']
 
-    flex_container_html_list = """<div class="mytabs">
+    flex_container_html_list = """
+    <div class="hint">🔔下滑查看更多线索（线索卡内也可以下滑哦～）</div>
+    <div class="mytabs">
     """
 
     for i, role_name_ in enumerate(glb_clue_dict[uid].keys()):
@@ -358,6 +360,9 @@ if __name__ == "__main__":
     group = parser.add_mutually_exclusive_group()
     group.add_argument('-toc', action='store_true', help='执行ToC版本')
     group.add_argument('-tod', action='store_true', help='执行ToD版本')
+
+    parser.add_argument('--name', default='', type=str, help='游戏名称')
+
     args = parser.parse_args()
 
     if args.toc:
@@ -445,7 +450,7 @@ if __name__ == "__main__":
                 config_tab = gr.Tab('游戏配置', id=1)
                 dev_tab = gr.Tab('开发者说明')
             with welcome_tab:
-                user_chat_bot_cover = gr.HTML(format_cover_html())
+                user_chat_bot_cover = gr.HTML(format_cover_html(name=args.name))
                 with gr.Row():
                     with gr.Column():
                         new_button = gr.Button(value='🚀新的探险', )
@@ -572,10 +577,10 @@ if __name__ == "__main__":
 
         def send_riddle_message(msg, uid):
             uid = check_uuid(uid)
-            gr.Info("答案已提交，任务判定会在每个阶段结束后进行。")
+            gr.Info("🎉您的答案已提交！请返回 主界面 继续游戏，任务判定会当天营业结束后进行哦～")
             send_riddle_input(msg, uid=uid)
             send_chat_msg(f"{SYS_MSG_PREFIX}玩家的答案：“{msg}”，"
-                          f"解谜中... （任务判定会在每个阶段结束后进行）",
+                          f"解谜中... （任务判定会当天营业结束后进行哦～）",
                           uid=uid)
             return ""
 
