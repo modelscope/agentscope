@@ -505,7 +505,7 @@ class Customer(StateAgent, DialogAgent):
                       self.relationship.level.value
             logger.debug(f"reveal clue to: {end_idx}")
             clues = [c for c in curr_clues[:end_idx]]
-            logger.debug(f"reveal clues: {[c['name'] for c in hidden_clues]}")
+            logger.debug(f"reveal clues: {[c['name'] for c in clues]}")
 
         return clues
 
