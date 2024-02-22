@@ -5,6 +5,9 @@ import shutil
 import subprocess
 
 import gradio as gr
+from numpy import False_
+import modelscope_studio as mgr
+
 import tempfile
 from runtime import RuntimeVer
 from config_utils import (
@@ -21,7 +24,8 @@ from config_utils import (
 from enums import StagePerNight
 from generate_image import generate_user_logo_file
 from relationship import Familiarity
-from utils import check_uuid, MAX_ROLE_NUM
+from utils import check_uuid
+from game_builder import GameBuilder
 
 
 def convert_to_ds(samples):
@@ -220,19 +224,191 @@ def create_config_accord(accord, uuid, ver):
 
 
 def create_config_tab(config_tab, uuid):
-    uuid = check_uuid(uuid)
     tabs = gr.Tabs(visible=True)
     with tabs:
         plot_tab = gr.Tab("剧情配置", id=0)
         role_tab = gr.Tab("角色配置", id=1)
+        builder_tab = gr.Tab("编剧助手", id=2)
     with plot_tab:
         plot_selector, on_plot_tab_select = config_plot_tab(plot_tab, uuid=uuid)
     with role_tab:
         role_selector, on_role_tab_select = config_role_tab(role_tab, uuid=uuid)
+    with builder_tab:
+        config_builder_tab(builder_tab, uuid=uuid)
 
     config_tab.select(on_role_tab_select, inputs=[uuid], outputs=role_selector)
     config_tab.select(on_plot_tab_select, inputs=[uuid], outputs=plot_selector)
 
+
+def get_agent_id(uuid):
+    return "builder_agent_" + uuid
+
+def init_builder(uuid, state, force=False):
+    try:
+        agent_id = get_agent_id(uuid)
+        if force or agent_id not in state:
+            builder_agent = GameBuilder()
+            state[agent_id] = builder_agent
+    except Exception as e:
+        gr.Error("初始化编剧助手失败：${e}")
+    return state
+
+def config_builder_tab(builder_tab, uuid):
+    import random
+    draw_seed = random.randint(0, 1000000000)
+    state = gr.State({'session_seed': draw_seed}) 
+    with gr.Row():
+        with gr.Column():
+            start_text = '欢迎使用AI编剧小助手，我可以协助您生成充满惊奇与挑战的文字探险解密故事剧情。' \
+                '告诉我一些你脑海中的点子，或者创建全新的故事。'
+            builder_chatbot = mgr.Chatbot(
+                show_label=False,
+                value=[[None, start_text]],
+                flushing=False,
+                show_copy_button=True,
+                )
+            builder_chat_input = mgr.MultimodalInput(
+                label="输入",
+                placeholder="请输入您的消息",
+                interactive=True,
+                upload_button_props=dict(visible=False),
+                submit_button_props=dict(
+                    label="发送"))
+            with gr.Row():
+                builder_clear_btn = gr.Button('重新配置')
+                builder_save_btn = gr.Button('发布配置')
+            
+        with gr.Column():
+            builder_plot_config = gr.Json(label="剧情配置预览",value={})
+            builder_role_config = gr.Json(label="角色配置预览",value=[])
+
+    def create_send_message(chatbot, input, _state, uuid):
+        uuid = check_uuid(uuid)
+        agent_id = get_agent_id(uuid)
+        builder_agent = _state[agent_id]
+        chatbot.append([{'text': input.text, 'files': input.files}, None])
+        yield {
+            builder_chatbot: chatbot,
+            builder_chat_input: None,
+        }
+        
+        answer, plot_config, role_config = builder_agent.build(input.text)
+        chatbot[-1][1] = answer
+        yield {
+            builder_chatbot: chatbot,
+            builder_plot_config: plot_config,
+            builder_role_config: role_config
+        }
+
+    builder_chat_input.submit(
+        create_send_message,
+        inputs=[builder_chatbot, builder_chat_input, state, uuid],
+        outputs=[
+            builder_chatbot, builder_chat_input, builder_plot_config, builder_role_config])
+
+    def save_builder_config(uuid, plot_config, role_config):
+        uuid = check_uuid(uuid)
+
+        # 
+        new_plot = {}
+
+        if not plot_config:
+            gr.Error('剧情配置为空')
+
+        plot_id = int(plot_config.get("plot_id", 1))
+        max_attempts = int(plot_config.get("max_attempts", 2))
+        max_unblock_plots = int(plot_config.get("max_unblock_plots", 1))
+        main_roles = plot_config.get("main_roles", [])
+        supporting_roles = plot_config.get("supporting_roles", [])
+        if isinstance(main_roles, str):
+            main_roles = [main_roles]
+
+        new_plot["plot_id"] = plot_id
+        new_plot["plot_stages"] = [0,1]
+        new_plot["max_attempts"] = max_attempts
+        new_plot["main_roles"] = main_roles
+        new_plot["supporting_roles"] = supporting_roles
+        new_plot["max_unblock_plots"] = max_unblock_plots
+        unblock_following_plots = plot_config.get("unblock_following_plots", [[0, 1]])
+        unblock_following_plots = [{"unblock_chk_func": "always", "unblock_plot": int(p[1])} for p in unblock_following_plots if p[1]]
+
+        if len(unblock_following_plots) > max_unblock_plots:
+            gr.Warning(f"解锁剧情数量超过最大的解锁限制[{max_unblock_plots}]")
+            unblock_following_plots = unblock_following_plots[:max_unblock_plots]
+
+        predecessor_plots = plot_config.get("predecessor_plots", [[None]])
+        new_plot["unblock_following_plots"] = unblock_following_plots or None
+        new_plot["predecessor_plots"] = [int(p[0]) for p in predecessor_plots if p[0]] or None
+        
+        plot_descriptions = plot_config.get("plot_descriptions", dict()) or dict()
+        task_name = plot_config.get("task", '')
+        plot_descriptions["task"] = task_name
+
+        plot_descriptions["openings"] = plot_config.get("openings", '')
+        plot_descriptions["npc_openings"] = plot_config.get("npc_openings", '')
+        plot_descriptions["npc_quit_openings"] = plot_config.get("npc_quit_openings", '')
+        plot_descriptions["opening_image"] = plot_config.get("opening_image", '')
+
+        user_openings_option = plot_config.get("user_openings_option", [])
+        plot_descriptions["user_openings_option"] = {
+            idx: it for idx, it in enumerate(user_openings_option)
+        } or None
+        plot_descriptions["done_hint"] = plot_config.get("done_hint", '')
+        plot_descriptions["done_condition"] = plot_config.get("done_condition", '')
+        new_plot["plot_descriptions"] = plot_descriptions
+
+        if not role_config:
+            gr.Error('角色配置为空')
+        roles = []
+        for role in role_config:
+            new_role = dict()
+            new_role["avatar"] = None
+            new_role["avatar_desc"] = role.get('avatar_desc', '')
+            new_role["name"] = role.get('name', '角色')
+            new_role["relationship"] = role.get('relationship', '陌生')
+            new_role["use_memory"] = True
+            new_role["model"] = "post_api"
+            new_role["clue"] = role.get('clues', []) or None
+            character_setting = dict()
+            character_setting["food_preference"] = role.get('food_preference', '')
+            character_setting["background"] = role.get('background', '')
+            character_setting["hidden_plot"] = None
+            character_setting["plugin_background"] = None
+            new_role["character_setting"] = character_setting
+            roles.append(new_role)
+
+        role_names = get_role_names(uuid=uuid, roles=roles)
+        plot_role_names = new_plot["main_roles"] + new_plot["supporting_roles"]
+        incomplete_role_name = []
+        for name in plot_role_names:
+            if name not in role_names:
+                incomplete_role_name.append(name)
+        
+        if incomplete_role_name:
+            gr.Warning(f'角色配置不完整，请补充{incomplete_role_name}')
+            return 
+
+        save_user_cfg([new_plot], cfg_name=PLOT_CFG_NAME, uuid=uuid)
+        save_user_cfg(roles, uuid=uuid)
+        gr.Info('发布成功，可查看剧情配置页面')
+    
+    
+    def clear_builder(uuid, _state):
+        uuid = check_uuid(uuid)
+        init_builder(uuid, _state,force=True)
+        return {
+            builder_chatbot: [[None, start_text]],
+            builder_plot_config: {},
+            builder_role_config: []
+        }
+
+    def on_configure_tab_select(uuid, _state):
+        uuid = check_uuid(uuid)
+        init_builder(uuid, _state, force=False)
+
+    builder_save_btn.click(save_builder_config, inputs=[uuid, builder_plot_config, builder_role_config])
+    builder_clear_btn.click(clear_builder, inputs=[uuid, state], outputs=[builder_chatbot, builder_plot_config, builder_role_config])
+    builder_tab.select(on_configure_tab_select, inputs=[uuid, state])
 
 def config_plot_tab(plot_tab, uuid):
     cfg_name = PLOT_CFG_NAME
@@ -510,15 +686,15 @@ def config_plot_tab(plot_tab, uuid):
     )
 
     create_plot_button.click(create_plot, outputs=plot_config_options)
-    plot_tab.select(on_plot_tab_select, inputs=[uuid], outputs=plot_selector)
-
+    plot_tab.select(on_plot_tab_select, inputs=[uuid], outputs=plot_selector).then(configure_plot, inputs=[plot_selector, uuid], outputs=plot_config_options
+    )
     return plot_selector, on_plot_tab_select
 
 
 def config_role_tab(role_tab, uuid):
     relationship_list = Familiarity.to_list()
     with gr.Row():
-        role_selector = gr.Dropdown(label="选择角色查看或者编辑", info=f"当前最多支持{MAX_ROLE_NUM}个角色")
+        role_selector = gr.Dropdown(label="选择角色查看或者编辑")
         create_role_button = gr.Button("🆕创建角色")
         del_role_button = gr.Button("🧹删除角色")
         save_role_button = gr.Button("🛄保存角色")
@@ -672,9 +848,6 @@ def config_role_tab(role_tab, uuid):
         character_setting["food_preference"] = food_preference
         character_setting["background"] = background
         new_role["character_setting"] = character_setting
-        if len(roles) > MAX_ROLE_NUM:
-            gr.Warning(f"当前最多支持{MAX_ROLE_NUM}个角色")
-            roles = roles[:MAX_ROLE_NUM]
         save_user_cfg(roles, uuid=uuid)
         role_names = [role["name"] for role in roles]
         if name not in role_names:
@@ -720,5 +893,5 @@ def config_role_tab(role_tab, uuid):
     )
 
     create_role_button.click(create_role, outputs=role_config_options)
-    role_tab.select(on_role_tab_select, inputs=[uuid], outputs=role_selector)
+    role_tab.select(on_role_tab_select, inputs=[uuid], outputs=role_selector).then(configure_role, inputs=[role_selector, uuid], outputs=role_config_options)
     return role_selector, on_role_tab_select

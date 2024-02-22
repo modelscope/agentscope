@@ -3,6 +3,7 @@ import copy
 from typing import Any, Union, Tuple
 import re
 import json
+import random
 import numpy as np
 from loguru import logger
 
@@ -200,6 +201,7 @@ class Customer(StateAgent, DialogAgent):
             score >= MIN_BAR_RECEIVED_CONST
             # and self.friendship >= MIN_BAR_FRIENDSHIP_CONST
         ):
+            self.expose_random_clue(self.active_plots[0])
             self.transition(CustomerConv.AFTER_MEAL_CHAT)
             print("---", self.cur_state)
         self.preorder_itr_count = 0
@@ -247,6 +249,23 @@ class Customer(StateAgent, DialogAgent):
         return reply_msg
 
     def _preferred_food(self, x:dict) -> dict:
+        walkin_msg = Msg(
+            role="user",
+            name=self.name,
+            content=f"{self.name}走进餐厅...",
+        )
+        send_pretty_msg(
+            walkin_msg,
+            uid=self.uid,
+            avatar=self.avatar,
+        )
+        send_chat_msg(
+            "**speak**",
+            role=self.name,
+            uid=self.uid,
+            avatar=self.avatar,
+        )
+
         ingredients_dict = x['content']
         # breakpoint()
         ingredients_list = [
@@ -593,7 +612,7 @@ class Customer(StateAgent, DialogAgent):
 
         for i, clue in enumerate(found_clue):
             send_chat_msg(
-                f"{SYS_MSG_PREFIX}发现{self.name}的新线索（请查看线索栏）："
+                f"{SYS_MSG_PREFIX}💡发现{self.name}的新线索（请查看线索栏）："
                 f"《{clue['name']}》{clue['summary']} "
                 f"\n\n剩余未发现线索数量:"
                 f"{len(self.unexposed_clues) + len(found_clue) - i - 1}",
@@ -607,7 +626,7 @@ class Customer(StateAgent, DialogAgent):
 
     def expose_all_clues(self, plot):
         send_chat_msg(
-            f"{SYS_MSG_PREFIX}成功解锁 {self.name} "
+            f"{SYS_MSG_PREFIX}💡成功解锁 {self.name} "
             f"的所有线索，请查看线索栏（画面生成可能存在延迟，请耐心等待）。",
             uid=self.uid)
         indices_to_pop = []
@@ -635,3 +654,37 @@ class Customer(StateAgent, DialogAgent):
                 uid=self.uid,
                 role=self.name,
             )
+
+    def expose_random_clue(self, plot):
+        # TODO: Zitao add proper prompt (做菜做得好 吐露线索——不然太难)
+        # TODO: 请注意该位置是否合适
+        send_chat_msg(
+            f"{SYS_MSG_PREFIX}💡成功解锁 {self.name} 的一条随机线索，请查看线索栏。",
+            uid=self.uid)
+        indices_to_pop = []
+        for i, item in enumerate(self.unexposed_clues):
+            if item["plot"] == plot:
+                indices_to_pop.append(i)
+
+        random_index = random.choice(indices_to_pop)
+
+        indices_to_pop.sort(reverse=True)
+
+        element = self.unexposed_clues.pop(random_index)
+        self.exposed_clues.append(element)
+        clue = {
+            "name": element["name"],
+            "summary": element["content"],  # Use new summary
+            "image": get_clue_image_b64_url(
+                customer=self.name,
+                clue_name=element["name"],
+                uid=self.uid,
+                content=element["content"],
+            )
+        }
+        send_clue_msg(
+            clue,
+            unexposed_num=len(self.unexposed_clues),
+            uid=self.uid,
+            role=self.name,
+        )

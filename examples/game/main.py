@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 import json
 import os
+import re
+import time
+
 import yaml
 import inquirer
 import random
@@ -44,21 +47,24 @@ def invited_group_chat(
         return None
     invited_names = [c.name for c in invited_customer]
     # send_chat_msg(f"{SYS_MSG_PREFIX}群聊开始", uid=uid)
-    send_chat_msg(f"现在有{'、'.join(invited_names)}在店里了。。。", uid=uid)
+    send_chat_msg(f"现在有{'、'.join(invited_names)}在店里了...", uid=uid)
     announcement = {"role": "user", "content": "今天老板邀请大家一起来谈事情。"}
     with msghub(invited_customer + [player], announcement=announcement):
         for i in range(10):
             questions = [
                 inquirer.List(
                     "ans",
-                    message=f"{SYS_MSG_PREFIX}：你要发言吗？",
-                    choices=["是", "否", "结束邀请对话"],
+                    message=f"{SYS_MSG_PREFIX}：你想要说些什么吗？（"
+                            f"请直接输入想要说的话，若不输入任何内容直接按回车键将跳过该轮发言）",
+                    choices=["结束对话"],
                 ),
             ]
 
-            choose_during_chatting = f"""{SYS_MSG_PREFIX}你要发言吗？ <select-box shape="card"
+            choose_during_chatting = f"""
+            {SYS_MSG_PREFIX}你想要说些什么吗？（请直接输入想要说的话，若不输入任何内容直接按回车键将跳过该轮发言） 
+            <select-box shape="card"
                                 type="checkbox" item-width="auto" options=
-                               '{json.dumps(["是", "否", "结束邀请对话"])}'
+                               '{json.dumps(["结束对话"])}'
                                select-once></select-box>"""
 
             send_chat_msg(choose_during_chatting, flushing=False, uid=uid,
@@ -67,13 +73,10 @@ def invited_group_chat(
             while True:
                 answer = query_answer(questions, "ans", uid=uid)
                 if isinstance(answer, str):
-                    send_chat_msg(f"{SYS_MSG_PREFIX}请在列表中选择。", uid=uid)
-                    continue
-                elif answer == ["是"]:
-                    msg = player(announcement)
-                elif answer == ["否"]:
+                    msg = player.talk(answer)
+                elif answer == "\n":
                     msg = None
-                elif answer == ["结束邀请对话"]:
+                elif answer == ["结束对话"]:
                     player.talk("今天谢谢大家🙏", is_display=True)
                     end_flag = True
                 break
@@ -139,6 +142,13 @@ def invited_group_chat(
                     c.generate_pov_story()
             for c in involved_roles:
                 c.refine_background()
+
+            send_chat_msg(
+                f" {SYS_MSG_PREFIX}剧情 {all_plots[idx].plot_description['task']} "
+                f"已完成，请不输入任何内容，即将进入下一个剧情...",
+                uid=uid,
+            )
+
             return idx
 
     send_chat_msg(f"{SYS_MSG_PREFIX} 剧情解锁失败，未满足剧情解锁条件。", uid=uid)
@@ -213,6 +223,13 @@ def invited_group_chat(
                         c.generate_pov_story()
                 for c in involved_roles:
                     c.refine_background()
+
+                send_chat_msg(
+                    f" {SYS_MSG_PREFIX}剧情 {all_plots[idx].plot_description['task']} "
+                    f"已完成，请不输入任何内容，即将进入下一个剧情...",
+                    uid=uid,
+                )
+
                 return idx
             else:
                 # send_chat_msg("**end_choosing**", uid=uid)
@@ -510,7 +527,15 @@ def riddle_success_detect(uid, player, checkpoint):
     riddle_input = get_riddle_input(uid=uid)
     if riddle_input:
         riddle_input = riddle_input[0]
-        is_done, idx = player.riddle_success_detector(riddle_input, checkpoint)
+
+        # Sent from opening stage
+        pattern = r'\*\*plot_(\d+)_riddle_success\*\*'
+        match = re.match(pattern, riddle_input)
+        if match:
+            is_done, idx = True, int(match.group(1))
+        else:
+            is_done, idx = player.riddle_success_detector(riddle_input, checkpoint)
+
         if is_done:
             involved_roles = checkpoint.all_plots[idx].main_roles + \
                              checkpoint.all_plots[idx].supporting_roles
@@ -566,6 +591,12 @@ def riddle_success_detect(uid, player, checkpoint):
 
             for c in involved_roles:
                 c.refine_background()
+
+            send_chat_msg(
+                f" {SYS_MSG_PREFIX}剧情 {checkpoint.all_plots[idx].plot_description['task']} "
+                f"已完成，请不输入任何内容，即将进入下一个剧情...",
+                uid=uid,
+            )
 
             # New openings, update cur_plots
             checkpoint.cur_plots = check_active_plot(
@@ -774,5 +805,8 @@ def main(args) -> None:
 def check_explore_all(checkpoint: GameCheckpoint, uid: int = None):
     if len(checkpoint.cur_plots) == 0:
         checkpoint.stage_per_night = StagePerNight.CASUAL_CHAT_FOR_MEAL
-        send_chat_msg(f"{SYS_MSG_PREFIX}恭喜你，你已经完成全部剧情！可以重新开始游戏，否则接下来进入饭店日常",
-                      uid=uid)
+        for i in range(10, 0, -1):
+            send_chat_msg(f"{SYS_MSG_PREFIX}恭喜你，你已经完成全部剧情！"
+                          f"可以重新开始游戏，否则{i}秒后进入饭店日常。",
+                          uid=uid)
+        time.sleep(1)
