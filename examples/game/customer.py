@@ -499,15 +499,15 @@ class Customer(StateAgent, DialogAgent):
                 curr_clues.append(c)
         if self.relationship.is_max():
             logger.debug(f"reveal clue to: all")
-            hidden_plots = [c for c in curr_clues]
+            clues = [c for c in curr_clues]
         else:
             end_idx = len(curr_clues) // 3 * \
                       self.relationship.level.value
             logger.debug(f"reveal clue to: {end_idx}")
-            hidden_plots = [c for c in curr_clues[:end_idx]]
-            logger.debug(f"reveal clues: {[c['name'] for c in hidden_plots]}")
+            clues = [c for c in curr_clues[:end_idx]]
+            logger.debug(f"reveal clues: {[c['name'] for c in hidden_clues]}")
 
-        return hidden_plots
+        return clues
 
     def talk(self, content, is_display=True, flushing=True):
         if content is not None:
@@ -533,12 +533,12 @@ class Customer(StateAgent, DialogAgent):
             return
 
         # only reveal active clues
-        curr_plots = self._relation_to_clues()
-        curr_plots_name = [c['name'] for c in curr_plots]
+        curr_clues = self._relation_to_clues()
+        curr_clues_name = [c['name'] for c in curr_clues]
         curr_unexposed_clues = []
         curr_to_unexpo_idx = {}
         for idx, x in enumerate(self.unexposed_clues):
-            if x['name'] in curr_plots_name:
+            if x['name'] in curr_clues_name:
                 curr_unexposed_clues.append(x)
                 curr_to_unexpo_idx[len(curr_unexposed_clues) - 1] = idx
 
