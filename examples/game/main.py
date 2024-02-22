@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import os
+import re
 import yaml
 import inquirer
 import random
@@ -510,7 +511,15 @@ def riddle_success_detect(uid, player, checkpoint):
     riddle_input = get_riddle_input(uid=uid)
     if riddle_input:
         riddle_input = riddle_input[0]
-        is_done, idx = player.riddle_success_detector(riddle_input, checkpoint)
+
+        # Sent from opening stage
+        pattern = r'\*\*plot_(\d+)_riddle_success\*\*'
+        match = re.match(pattern, riddle_input)
+        if match:
+            is_done, idx = True, int(match.group(1))
+        else:
+            is_done, idx = player.riddle_success_detector(riddle_input, checkpoint)
+
         if is_done:
             involved_roles = checkpoint.all_plots[idx].main_roles + \
                              checkpoint.all_plots[idx].supporting_roles

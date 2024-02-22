@@ -268,6 +268,11 @@ class GamePlot:
             else:
                 msg = player(msg)
             i += 1
+            player.plot_riddle_success_detector(
+                msg.get("content", "无"),
+                self.plot_description["done_condition"],
+                p_idx=self.id,
+            )
             msg = main_role(msg)
         main_role.talk(openings["npc_quit_openings"], is_display=True)
         main_role.transition(CustomerConv.WARMING_UP)

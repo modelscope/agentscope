@@ -20,6 +20,7 @@ from utils import (
     send_player_msg,
     SYS_MSG_PREFIX,
     extract_keys_from_dict,
+    send_riddle_input,
 )
 
 
@@ -179,6 +180,30 @@ class RuledUser(AgentBase):
             else:
                 logger.debug(f"未达成任务{checkpoint.all_plots[p_idx].plot_description['task'].rstrip()}完成条件，{success_res.get('reason', '未知原因')}")
         return is_success, p_idx
+
+    def plot_riddle_success_detector(self,
+                                     riddle_input,
+                                     done_condition,
+                                     p_idx):
+        prompt = self.riddle_detector_prompt.format_map(
+            {
+                "condition": done_condition,
+                "riddle_input": riddle_input,
+            }
+        )
+        message = Msg(name="user", content=prompt, role="user")
+        success_res = self.model(
+            [extract_keys_from_dict(message, MESSAGE_KEYS)],
+            parse_func=json.loads,
+            fault_handler=lambda *_: {"finish": "false"},
+            max_retries=self.retry_time,
+        )
+        if success_res.get("finish") == "true":
+            send_riddle_input(f"**plot_{p_idx}_riddle_success**", uid=self.uid)
+            send_chat_msg(
+                f" {SYS_MSG_PREFIX}恭喜你，剧情解锁成功！请不输入任何内容，直接按回车键进入下一阶段。",
+                uid=self.uid,
+            )
 
     def success_detector(self, condition, announcement):
         chat_log = self.collect_mem_until_announcement(announcement)
