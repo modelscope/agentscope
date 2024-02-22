@@ -210,7 +210,7 @@ class GamePlot:
             main_role.talk(opening_prompt, is_display=True, flushing=False)
         else:
             main_role.talk(opening_prompt, is_display=True)
-        send_chat_msg(f"{SYS_MSG_PREFIX}开启主线任务： {openings['task']} "
+        send_chat_msg(f"{SYS_MSG_PREFIX}📜开启主线任务： {openings['task']} "
                       f"\n\n 任务描述：{openings['done_hint']}", uid=uid)
         msg = {"content": "开场"}
         main_role.transition(CustomerConv.OPENING)
