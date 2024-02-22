@@ -28,7 +28,6 @@ REVISION_ROUND = 3
 
 USE_WEB_UI = False
 
-MAX_ROLE_NUM = 20
 
 class GameCheckpoint:
     def __init__(

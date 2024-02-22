@@ -25,7 +25,6 @@ from utils import (
     cycle_dots,
     check_uuid,
     send_chat_msg,
-    MAX_ROLE_NUM,
     send_riddle_input,
     get_quest_msg,
 )
