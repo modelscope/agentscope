@@ -6,6 +6,7 @@ import subprocess
 
 import gradio as gr
 import tempfile
+from runtime import RuntimeVer
 from config_utils import (
     PLOT_CFG_NAME,
     compress,
@@ -150,7 +151,7 @@ def run_shell_file(cmd, msg):
         gr.Warning("命令不正确，请检查。")
     return msg
 
-def create_config_accord(accord, uuid):
+def create_config_accord(accord, uuid, ver):
     uuid = check_uuid(uuid)
     with gr.Row():
         signature = gr.Textbox(
@@ -173,7 +174,7 @@ def create_config_accord(accord, uuid):
             value="🧹清除缓存",
         )
 
-    with gr.Accordion("超级管理员", open=False):
+    with gr.Accordion("超级管理员", open=False, visible=(ver==RuntimeVer.Root)):
         passwd_group = gr.Group()
         with passwd_group:
             with gr.Row():
@@ -553,27 +554,6 @@ def config_role_tab(role_tab, uuid):
     with gr.Accordion(label="角色特征", open=True):
         food_preference = gr.Textbox(label="食物偏好", placeholder="请输入喜欢的食物")
         background = gr.Textbox(label="背景介绍", placeholder="请输入角色背景")
-        hidden_plot = gr.Dataframe(
-            label="设置隐藏剧情",
-            show_label=True,
-            datatype=["str", "str"],
-            column_widths=["10%", "95%"],
-            headers=["剧情ID", "剧情描述"],
-            type="array",
-            wrap=True,
-            col_count=(2, "fixed"),
-            visible=False,
-        )
-        plugin_background = gr.Dataframe(
-            label="设置角色插件隐藏背景",
-            show_label=True,
-            datatype=["str"],
-            headers=["角色背景"],
-            type="array",
-            wrap=True,
-            col_count=(1, "fixed"),
-            visible=False,
-        )
 
         plot_clues = gr.Dataframe(
             label="线索卡",
@@ -591,10 +571,6 @@ def config_role_tab(role_tab, uuid):
         role = get_role_by_name(name=name, uuid=uuid)
 
         character_setting = role["character_setting"]
-        hidden_plots = character_setting.get("hidden_plot", dict()) or dict()
-        hidden_plots =[[str(k), v.strip()] for k, v in hidden_plots.items()] or None
-        plugin_backgrounds = character_setting.get("plugin_background", []) or []
-        plugin_backgrounds = [[string.strip()] for string in plugin_backgrounds if string] or None
         clues = role.get("clue", []) or []
         clues = [[str(clue["plot"]), clue["name"], clue["content"].strip()]for clue in clues] or None
 
@@ -607,8 +583,6 @@ def config_role_tab(role_tab, uuid):
             model_name: role["model"],
             food_preference: character_setting["food_preference"].strip(),
             background: character_setting["background"].strip(),
-            hidden_plot: hidden_plots,
-            plugin_background: plugin_backgrounds,
             plot_clues: clues,
         }
 
@@ -621,8 +595,6 @@ def config_role_tab(role_tab, uuid):
         model_name,
         food_preference,
         background,
-        hidden_plot,
-        plugin_background,
         plot_clues,
     ]
 
@@ -644,8 +616,6 @@ def config_role_tab(role_tab, uuid):
             model_name: "",
             food_preference: "",
             background: "",
-            hidden_plot: None,
-            plugin_background: None,
             plot_clues: None,
         }
 
@@ -673,8 +643,6 @@ def config_role_tab(role_tab, uuid):
         model_name,
         food_preference,
         background,
-        hidden_plot,
-        plugin_background,
         clues,
         uuid,
     ):
@@ -700,12 +668,9 @@ def config_role_tab(role_tab, uuid):
             for clue in clues
             if all(clue)
         ] or None
-        hidden_plot = {int(it[0]): it[1] for it in hidden_plot if all(it)} or None
         character_setting = new_role.get("character_setting", dict())
         character_setting["food_preference"] = food_preference
         character_setting["background"] = background
-        character_setting["hidden_plot"] = hidden_plot
-        character_setting["plugin_background"] = [it[0] for it in plugin_background if it[0]] or None
         new_role["character_setting"] = character_setting
         if len(roles) > MAX_ROLE_NUM:
             gr.Warning(f"当前最多支持{MAX_ROLE_NUM}个角色")

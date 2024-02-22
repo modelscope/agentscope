@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import argparse
 import base64
 import os
 import datetime
@@ -7,8 +8,10 @@ import time
 from collections import defaultdict
 from typing import List
 from multiprocessing import Event
+import traceback
 import agentscope
 from config_utils import load_user_cfg, load_configs
+from runtime import RuntimeVer
 from utils import (
     CheckpointArgs,
     enable_web_ui,
@@ -22,7 +25,9 @@ from utils import (
     cycle_dots,
     check_uuid,
     send_chat_msg,
-    MAX_ROLE_NUM
+    MAX_ROLE_NUM,
+    send_riddle_input,
+    get_quest_msg,
 )
 from create_config_tab import create_config_tab, create_config_accord, get_role_names
 
@@ -45,6 +50,7 @@ def init_uid_dict():
 
 
 glb_history_dict = defaultdict(init_uid_list)
+glb_quest_dict = defaultdict(init_uid_dict)
 glb_clue_dict = defaultdict(init_uid_dict)
 glb_story_dict = defaultdict(init_uid_dict)
 glb_doing_signal_dict = defaultdict(init_uid_dict)
@@ -53,10 +59,12 @@ glb_end_choosing_index_dict = defaultdict(lambda: -1)
 glb_signed_user = []
 is_init = Event()
 
+
 def reset_glb_var(uid):
     global glb_history_dict, glb_clue_dict, glb_story_dict, \
-        glb_doing_signal_dict, glb_end_choosing_index_dict
+        glb_doing_signal_dict, glb_end_choosing_index_dict, glb_quest_dict
     glb_history_dict[uid] = init_uid_list()
+    glb_quest_dict[uid] = init_uid_dict()
     glb_clue_dict[uid] = init_uid_dict()
     glb_story_dict[uid] = init_uid_dict()
     glb_doing_signal_dict[uid] = init_uid_dict()
@@ -172,6 +180,52 @@ def get_chat(uid) -> List[List]:
 
     return dial_msg[-MAX_NUM_DISPLAY_MSG:], sys_msg[-MAX_NUM_DISPLAY_MSG:]
 
+
+def get_quest(uid):
+    global glb_quest_dict
+
+    uid = check_uuid(uid)
+    quest_msg = get_quest_msg(uid)
+    if quest_msg:
+        quest = quest_msg[0]
+        glb_quest_dict[uid][quest[0]] = quest[1]
+
+    if not len(glb_quest_dict[uid]):
+        return """
+            <div class="quest-list">
+                <div class="quest">
+                <p class="quest-name">暂无任务</p>
+                <div class="quest-content">注意：任务列表会在每个阶段结束后更新。</div>
+                </div>
+            </div>
+        """
+
+    quest_html_code = """
+            <div class="quest-list">
+    """
+    done_quest_html_code, wip_quest_html_code = "", ""
+    for quest_name, quest_content in glb_quest_dict[uid].items():
+        if quest_content["status"]:
+            done_quest_html_code += f"""
+                            <div class="quest">
+                                <p class="quest-name">✅任务名称：<del>{quest_name}</p>
+                                <div class="quest-content">任务内容：<del>{quest_content["done_hint"]}</del></div>
+                            </div>
+                            """
+        else:
+            wip_quest_html_code += f"""
+                <div class="quest">
+                    <p class="quest-name">⏳任务名称：{quest_name}</p>
+                    <div class="quest-content">任务内容：{quest_content["done_hint"]}</div>
+                </div>
+                """
+    quest_html_code = quest_html_code + wip_quest_html_code + done_quest_html_code
+    quest_html_code += """
+        </div>
+    """
+    return quest_html_code
+
+
 def get_story(uid):
     global glb_story_dict
     uid = check_uuid(uid)
@@ -245,7 +299,7 @@ def get_clue(uid):
 
     flex_container_html_list = """<div class="mytabs">
     """
- 
+
     for i, role_name_ in enumerate(glb_clue_dict[uid].keys()):
         if i == 0:
             check_sign = """
@@ -285,7 +339,7 @@ def get_clue(uid):
                                     </div>
                                     </div>
                             """
-                            
+
         flex_container_html_list += flex_container_html
     flex_container_html_list += """
     </div>
@@ -300,6 +354,20 @@ def fn_choice(data: gr.EventData, uid):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="AgentScope应用")
+
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('-toc', action='store_true', help='执行ToC版本')
+    group.add_argument('-tod', action='store_true', help='执行ToD版本')
+    args = parser.parse_args()
+
+    if args.toc:
+        ver = RuntimeVer.ToC
+    elif args.tod:
+        ver = RuntimeVer.ToD
+    else:
+        ver = RuntimeVer.Root
+
 
     def init_game():
         if not is_init.is_set():
@@ -358,18 +426,25 @@ if __name__ == "__main__":
             except ResetException:
                 print(f"重置成功：{uid} ")
             except Exception as e:
+                trace_info = ''.join(
+                    traceback.TracebackException.from_exception(e).format())
                 for i in range(FAIL_COUNT_DOWN, 0, -1):
-                    send_chat_msg(f"{SYS_MSG_PREFIX}发生错误 {e}, 即将在{i}秒后重启",
-                                  uid=uid)
+                    send_chat_msg(
+                        f"{SYS_MSG_PREFIX}发生错误 {trace_info}, 即将在{i}秒后重启",
+                        uid=uid)
                     time.sleep(1)
             reset_glb_var(uid)
+
 
     with gr.Blocks(css="assets/app.css") as demo:
         uuid = gr.Textbox(label='modelscope_uuid', visible=False)
         tabs = gr.Tabs(visible=True)
         with tabs:
             welcome_tab = gr.Tab('游戏界面', id=0)
-            config_tab = gr.Tab('游戏配置', id=1)
+
+            if ver in [RuntimeVer.ToD, RuntimeVer.Root]:
+                config_tab = gr.Tab('游戏配置', id=1)
+                dev_tab = gr.Tab('开发者说明')
             with welcome_tab:
                 user_chat_bot_cover = gr.HTML(format_cover_html())
                 with gr.Row():
@@ -377,20 +452,29 @@ if __name__ == "__main__":
                         new_button = gr.Button(value='🚀新的探险', )
                     with gr.Column():
                         resume_button = gr.Button(value='🔥续写情缘', )
-            
-                config_accordion =  gr.Accordion('导入导出配置', open=False)
-                with config_accordion:
-                    create_config_accord(config_accordion, uuid)
 
-        with config_tab:
-            create_config_tab(config_tab, uuid)
+                config_accordion = gr.Accordion(
+                    '导入导出配置',
+                    open=False,
+                    visible=(ver in [RuntimeVer.ToD, RuntimeVer.Root]),
+                )
+                with config_accordion:
+                    create_config_accord(config_accordion, uuid, ver)
+
+        if ver in [RuntimeVer.ToD, RuntimeVer.Root]:
+            with config_tab:
+                create_config_tab(config_tab, uuid)
+            with dev_tab:
+                # TODO: Zitao, write README here.
+                dev_container = gr.HTML()
 
         game_tabs = gr.Tabs(visible=False)
 
         with game_tabs:
             main_tab = gr.Tab('主界面', id=0)
-            clue_tab = gr.Tab('线索', id=1)
-            story_tab = gr.Tab('故事', id=2)
+            riddle_tab = gr.Tab('任务', id=1)
+            clue_tab = gr.Tab('线索', id=2)
+            story_tab = gr.Tab('故事', id=3)
             with main_tab:
                 with gr.Row():
                     with gr.Column(min_width=270):
@@ -409,34 +493,55 @@ if __name__ == "__main__":
                             layout="panel",
                         )
 
-            with gr.Row():
-                with gr.Column():
-                    user_chat_input = gr.Textbox(
-                        label="user_chat_input",
-                        placeholder="想说点什么",
-                        show_label=False,
-                    )
+                with gr.Row():
+                    with gr.Column():
+                        user_chat_input = gr.Textbox(
+                            label="user_chat_input",
+                            placeholder="想说点什么",
+                            show_label=False,
+                        )
 
-            with gr.Column():
-                send_button = gr.Button(value="📣发送")
-
-            export = gr.Accordion("导出选项", open=False)
-            with export:
                 with gr.Column():
-                    export_button = gr.Button("导出完整游戏记录")
-                    export_output = gr.File(
-                        label="下载完整游戏记录",
-                        elem_classes=["signature-file-uploader"],
-                        visible=False
-                    )
+                    with gr.Row():
+                        send_button = gr.Button(value="📣发送")
+
+                export = gr.Accordion("导出选项", open=False)
+                with export:
+                    with gr.Column():
+                        export_button = gr.Button("导出完整游戏记录")
+                        export_output = gr.File(
+                            label="下载完整游戏记录",
+                            elem_classes=["signature-file-uploader"],
+                            visible=False,
+                        )
             with gr.Row():
                 return_welcome_button = gr.Button(value="↩️返回首页")
+
+        with riddle_tab:
+            riddle_html = """
+            <div style='text-align: center; margin-top: 20px; margin-bottom: 40px; padding: 20px; background: linear-gradient(to right, #f7f7f7, #ffffff); border-left: 5px solid #c9a678; border-right: 5px solid #c9a678;'>
+                <p style='font-size: 18px; color: #333; max-width: 600px; margin: auto; line-height: 1.6; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;'>
+                    <strong>任务提示：</strong><br>
+                    在这里，您的智慧是开启新篇章的钥匙。应对角色们的挑战，准确解答他们的谜题或完成任务，正确的答案将在故事的下一站为您揭开新的剧情。请切记，仅最终提交的答案决定着故事如何展开。
+                </p>
+            </div>
+            """
+            gr.HTML(riddle_html)
+            quest_container = gr.HTML()
+
+            user_riddle_input = gr.Textbox(
+                label="user_riddle_input",
+                placeholder="若心中已有答案，便勇敢地呈上吧。",
+                show_label=False,
+            )
+            riddle_button = gr.Button(value="🔍解谜")
+
         with clue_tab:
             guild_html = """
             <div style='text-align: center; margin-top: 20px; margin-bottom: 40px; padding: 20px; background: linear-gradient(to right, #f7f7f7, #ffffff); border-left: 5px solid #007bff; border-right: 5px solid #007bff;'>
                 <p style='font-size: 18px; color: #333; max-width: 600px; margin: auto; line-height: 1.6; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;'>
                     <strong>探索提示：</strong><br>
-                    这些是您在调查过程中已经搜集到的线索卡。随着您与各位角色互动的增加，您对他们的了解将会提升，从而有可能获得更多线索卡。请继续与角色进行对话，探索他们的背景故事，并通过观察和推理揭开隐藏的秘密。
+                    这些是您在调查过程中已经搜集到的线索卡。随着您与各位角色熟悉度的增加，将有可能获得更多线索卡。请继续与角色进行对话，探索他们的背景故事，并通过观察和推理揭开隐藏的秘密。
                 </p>
             </div>
             """
@@ -466,6 +571,14 @@ if __name__ == "__main__":
             send_player_msg(msg, "我", uid=uid)
             return ""
 
+        def send_riddle_message(msg, uid):
+            uid = check_uuid(uid)
+            gr.Info("答案已提交，任务判定会在每个阶段结束后进行。")
+            send_riddle_input(msg, uid=uid)
+            send_chat_msg(f"{SYS_MSG_PREFIX}玩家的答案：“{msg}”，"
+                          f"解谜中... （任务判定会在每个阶段结束后进行）",
+                          uid=uid)
+            return ""
 
         def send_reset_message(uid):
             uid = check_uuid(uid)
@@ -490,6 +603,17 @@ if __name__ == "__main__":
             [user_chat_input, uuid],
             user_chat_input,
         )
+        # submit riddle message
+        riddle_button.click(
+            send_riddle_message,
+            [user_riddle_input, uuid],
+            user_riddle_input,
+        )
+        user_riddle_input.submit(
+            send_riddle_message,
+            [user_riddle_input, uuid],
+            user_riddle_input,
+        )
 
         chatbot.custom(fn=fn_choice, inputs=[uuid])
         chatsys.custom(fn=fn_choice, inputs=[uuid])
@@ -502,7 +626,6 @@ if __name__ == "__main__":
         # start game
         new_button.click(send_reset_message, inputs=[uuid]).then(check_for_new_session, inputs=[uuid])
         resume_button.click(check_for_new_session, inputs=[uuid])
-        
 
         # export
         export_button.click(export_chat_history, [uuid], export_output)
@@ -521,6 +644,10 @@ if __name__ == "__main__":
         demo.load(get_story,
                   inputs=[uuid],
                   outputs=[story_container],
+                  every=0.5)
+        demo.load(get_quest,
+                  inputs=[uuid],
+                  outputs=[quest_container],
                   every=0.5)
 
     demo.queue()
