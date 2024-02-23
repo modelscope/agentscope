@@ -255,7 +255,7 @@ class RuledUser(AgentBase):
 
         choose_ingredient = f""" {SYS_MSG_PREFIX}请选择需要的食材: <select-box shape="card"
                      type="checkbox" item-width="auto"
-                    options='{json.dumps(ingredients_list, ensure_ascii=False)}' select-once
+                    options='{json.dumps(ingredients_list)}' select-once
                     submit-text="确定"></select-box>"""
 
         send_chat_msg(
