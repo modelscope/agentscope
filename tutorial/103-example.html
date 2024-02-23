@@ -163,7 +163,7 @@
 <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">model_configs</span><span class="o">=</span><span class="s2">&quot;./openai_model_configs.json&quot;</span><span class="p">)</span>
 
 <span class="c1"># Create a dialog agent and a user agent</span>
-<span class="n">dialogAgent</span> <span class="o">=</span> <span class="n">DialogAgent</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span> <span class="n">model_config_name</span><span class="o">=</span><span class="s2">&quot;gpt-4&quot;</span><span class="p">)</span>
+<span class="n">dialogAgent</span> <span class="o">=</span> <span class="n">DialogAgent</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span> <span class="n">model_config_name</span><span class="o">=</span><span class="s2">&quot;gpt-4&quot;</span><span class="p">,</span> <span class="n">sys_prompt</span><span class="o">=</span><span class="s2">&quot;You are a helpful ai assistant&quot;</span><span class="p">)</span>
 <span class="n">userAgent</span> <span class="o">=</span> <span class="n">UserAgent</span><span class="p">()</span>
 </pre></div>
 </div>
