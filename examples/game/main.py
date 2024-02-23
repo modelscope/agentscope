@@ -104,29 +104,6 @@ def invited_group_chat(
             send_chat_msg(f"{SYS_MSG_PREFIX}恭喜你，剧情解锁成功！", uid=uid)
             for c in involved_roles:
                 c.expose_all_clues(plot=idx)
-            questions = [
-                inquirer.List(
-                    "ans",
-                    message=f"{SYS_MSG_PREFIX}：需要以哪位角色的视角生成一段完整故事吗？",
-                    choices=invited_names + ["跳过"],
-                ),
-            ]
-
-            choose_role_story = f"""{SYS_MSG_PREFIX}：需要以哪位角色的视角生成一段完整故事吗？: <select-box
-            shape="card"
-                        item-width="auto" type="checkbox" options=
-                        '{json.dumps(invited_names + ["跳过"])}'
-                        select-once></select-box>"""
-
-            send_chat_msg(choose_role_story, flushing=False, uid=uid)
-
-            while True:
-                answer = query_answer(questions, "ans", uid=uid)
-                if isinstance(answer, str):
-                    send_chat_msg(f"{SYS_MSG_PREFIX}请在列表中选择。", uid=uid)
-                    continue
-                break
-            send_chat_msg("**end_choosing**", uid=uid)
 
             for c in involved_roles:
                 c.add_plot_done_memory(
@@ -137,9 +114,8 @@ def invited_group_chat(
                 )
 
             for c in invited_customer:
-                if c.name == answer[0]:
-                    player.talk(f"我想听听{c.name}的故事", is_display=True)
-                    c.generate_pov_story()
+                player.talk(f"我想听听{c.name}的故事", is_display=True)
+                c.generate_pov_story()
             for c in involved_roles:
                 c.refine_background()
 
@@ -183,31 +159,9 @@ def invited_group_chat(
                 send_chat_msg(f"{SYS_MSG_PREFIX}十分抱歉，你没有帮助到"
                               f"{all_plots[idx].main_roles[0].name}，任务失败，你触发了坏结局😟",
                               uid=uid)
-                questions = [
-                    inquirer.List(
-                        "ans",
-                        message=f"{SYS_MSG_PREFIX}：需要以哪位角色的视角生成一段完整故事吗？",
-                        choices=invited_names + ["跳过"],
-                    ),
-                ]
+
                 for c in involved_roles:
                     c.expose_all_clues(plot=idx)
-
-                choose_role_story = f"""{SYS_MSG_PREFIX}：需要以哪位角色的视角生成一段完整故事吗？: <select-box
-                            shape="card"
-                                        item-width="auto" type="checkbox" options=
-                                        '{json.dumps(invited_names + ["跳过"])}'
-                                        select-once></select-box>"""
-
-                send_chat_msg(choose_role_story, flushing=False, uid=uid)
-
-                while True:
-                    answer = query_answer(questions, "ans", uid=uid)
-                    if isinstance(answer, str):
-                        send_chat_msg(f"{SYS_MSG_PREFIX}请在列表中选择。", uid=uid)
-                        continue
-                    break
-                send_chat_msg("**end_choosing**", uid=uid)
 
                 for c in involved_roles:
                     c.add_plot_done_memory(
@@ -218,9 +172,8 @@ def invited_group_chat(
                     )
 
                 for c in invited_customer:
-                    if c.name == answer[0]:
-                        player.talk(f"我想听听{c.name}的故事", is_display=True)
-                        c.generate_pov_story()
+                    player.talk(f"我想听听{c.name}的故事", is_display=True)
+                    c.generate_pov_story()
                 for c in involved_roles:
                     c.refine_background()
 
@@ -312,6 +265,8 @@ def one_on_one_loop(customers, player, uid, checkpoint):
             send_chat_msg(f"{SYS_MSG_PREFIX}顾客{customer.name} 离开餐馆", uid=uid)
             continue
 
+        # randomly expose a clue
+        customer.expose_random_clue()
         #  继续挖掘线索
         questions = [
             inquirer.List(
@@ -365,7 +320,9 @@ def one_on_one_loop(customers, player, uid, checkpoint):
                 send_chat_msg(f"{SYS_MSG_PREFIX}顾客{customer.name} 离开餐馆", uid=uid)
                 break
 
-        confirm_with_main_role(uid, player, checkpoint)
+        # Disable confirm_with_main_role for the current version.
+        # Because group chat somehow provide the similar functionality.
+        # confirm_with_main_role(uid, player, checkpoint)
     return visit_customers
 
 
@@ -487,40 +444,54 @@ def invite_customers(customers, uid, checkpoint):
         prompt += checkpoint.all_plots[p_idx].plot_description['done_hint']
 
     # available_customers.insert(0, main_role)
-    available_customers.insert(0, "跳过")
-    available_customers.insert(1, "只与主角对话")
+    if len(checkpoint.all_plots[p_idx].plot_stages) > 1:
+        available_customers.insert(0, "跳过")
+        available_customers.insert(1, "只与主角对话")
+    else:
+        # not allow to skip
+        available_customers.insert(0, "只与主角对话")
 
-    select_customer = [
-        inquirer.List(
-            "invited",
-            message= prompt + "今天就没有更多顾客了，您明天有什么邀请计划吗？",
-            choices=available_customers,
-        ),
-    ]
+    if len(available_customers) > 1:
+        select_customer = [
+            inquirer.List(
+                "invited",
+                message=prompt + "今天就没有更多顾客了，您明天有什么邀请计划吗？",
+                choices=available_customers,
+            ),
+        ]
+        choose_available_customers = prompt + f"""
+        \n\n 你可以选择与主角{main_role}和其他角色一起讨论，收集更多线索（当前任务剩余机会 
+        {checkpoint.all_plots[p_idx].max_attempts}）
+        <select-box shape="card"  type="checkbox" item-width="auto" options=
+                    '{json.dumps(available_customers)}' select-once
+                    submit-text="确定"></select-box>
+        """
 
-    choose_available_customers = prompt + f"""
-    \n\n 你可以选择与主角{main_role}和其他角色一起讨论，收集更多线索（当前任务剩余机会 
-    {checkpoint.all_plots[p_idx].max_attempts}）
-    <select-box shape="card"  type="checkbox" item-width="auto" options=
-                '{json.dumps(available_customers)}' select-once
-                submit-text="确定"></select-box>
-    """
+        send_chat_msg(choose_available_customers, flushing=False, uid=uid)
 
-    send_chat_msg(choose_available_customers, flushing=False, uid=uid)
-
-    while True:
-        answer = query_answer(select_customer, "invited", uid=uid)
-        if isinstance(answer, str):
-            send_chat_msg(f"{SYS_MSG_PREFIX}请在列表中选择。", uid=uid)
-            continue
-        elif answer[0] == "跳过":
-            send_chat_msg("**end_choosing**", uid=uid)
-            return []
-        else:
-            invited_customers = [main_role] + \
-                                [item for item in answer if item != '只与主角对话']
-            send_chat_msg("**end_choosing**", uid=uid)
-            return invited_customers
+        while True:
+            answer = query_answer(select_customer, "invited", uid=uid)
+            logger.debug(answer)
+            if isinstance(answer, str):
+                send_chat_msg(f"{SYS_MSG_PREFIX}请在列表中选择。", uid=uid)
+                continue
+            elif answer[0] == "跳过":
+                send_chat_msg(f"{SYS_MSG_PREFIX}==== 跳过此环节，进入下一天。"
+                              f" ====", uid=uid)
+                send_chat_msg("**end_choosing**", uid=uid)
+                return []
+            else:
+                invited_customers = [main_role] + \
+                                    [item for item in answer if item != '只与主角对话']
+                send_chat_msg("**end_choosing**", uid=uid)
+                return invited_customers
+    else:
+        # for special case, only has a main role in the plot
+        send_chat_msg(f"{SYS_MSG_PREFIX} {prompt}（"
+                      f"当前任务剩余机会{checkpoint.all_plots[p_idx].max_attempts}天）。", uid=uid)
+        invited_customers = [main_role]
+        send_chat_msg("**end_choosing**", uid=uid)
+        return invited_customers
 
 
 def riddle_success_detect(uid, player, checkpoint):
@@ -551,30 +522,6 @@ def riddle_success_detect(uid, player, checkpoint):
                 force_done=True,
             )
 
-            questions = [
-                inquirer.List(
-                    "ans",
-                    message=f"{SYS_MSG_PREFIX}：需要以哪位角色的视角生成一段完整故事吗？",
-                    choices=involved_roles_names + ["跳过"],
-                ),
-            ]
-
-            choose_role_story = f"""{SYS_MSG_PREFIX}：需要以哪位角色的视角生成一段完整故事吗？: <select-box
-            shape="card"
-                        item-width="auto" type="checkbox" options=
-                        '{json.dumps(involved_roles_names + ["跳过"])}'
-                        select-once></select-box>"""
-
-            send_chat_msg(choose_role_story, flushing=False, uid=uid)
-
-            while True:
-                answer = query_answer(questions, "ans", uid=uid)
-                if isinstance(answer, str):
-                    send_chat_msg(f"{SYS_MSG_PREFIX}请在列表中选择。", uid=uid)
-                    continue
-                break
-            send_chat_msg("**end_choosing**", uid=uid)
-
             for c in involved_roles:
                 c.add_plot_done_memory(
                     done_condition=checkpoint.all_plots[idx].plot_description[
@@ -585,9 +532,8 @@ def riddle_success_detect(uid, player, checkpoint):
                 )
 
             for c in involved_roles:
-                if c.name == answer[0]:
-                    player.talk(f"我想听听{c.name}的故事", is_display=True)
-                    c.generate_pov_story()
+                player.talk(f"我想听听{c.name}的故事", is_display=True)
+                c.generate_pov_story()
 
             for c in involved_roles:
                 c.refine_background()
@@ -718,31 +664,6 @@ def main(args) -> None:
         logger.debug(f"checkpoint.stage_per_night: {checkpoint.stage_per_night}")
         check_explore_all(checkpoint, uid)
 
-        # if checkpoint.stage_per_night == StagePerNight.INVITED_CHAT:
-        #     # ============ invited multi-agent loop ===============
-        #     # invitation loop, 1) chat in msghub 2) plot unlock success check
-        #     for c in checkpoint.invited_customers:
-        #         # set customer to invited discussion cur_state
-        #         c.transition(CustomerConv.INVITED_GROUP_PLOT)
-        #     # initial cur_state of the
-        #     done_plot_idx = invited_group_chat(
-        #         checkpoint.invited_customers,
-        #         player,
-        #         checkpoint.cur_plots,
-        #         checkpoint.all_plots,
-        #         args.uid,
-        #     )
-        #     logger.debug(f"done plot: {done_plot_idx}")
-        #     if done_plot_idx is not None:
-        #         # find the roles and plot to be activated
-        #         # Opening happen in this stage
-        #         checkpoint.cur_plots = check_active_plot(
-        #             player,
-        #             checkpoint.all_plots,
-        #             checkpoint.cur_plots,
-        #             done_plot_idx,
-        #         )
-        #         logger.debug(f"---active_plots:{checkpoint.cur_plots}")
         if checkpoint.stage_per_night == StagePerNight.CASUAL_CHAT_FOR_MEAL:
             # ==========  one-on-one loop =================
             # the remaining not invited customers show up with probability
