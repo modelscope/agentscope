@@ -341,46 +341,15 @@ class Customer(StateAgent, DialogAgent):
         return reply_msg
 
     def refine_background(self) -> None:
-        background_prompt = self.game_config[
-            "basic_background_prompt"
-        ].format_map(
-            {
-                "name": self.config["name"],
-                "character_description": self.background,
-            },
-        )
-        background_prompt += self.game_config[
-            "hidden_main_plot_prompt"
-        ].format_map(
-            {
-                "hidden_plot": self.hidden_plot[self.prev_active_plots[0]],
-            },
-        )
-        analysis_prompt = background_prompt + self.game_config["analysis_conv"]
-
-        system_msg = Msg(role="user", name="system", content=analysis_prompt)
-
-        prompt = self.engine.join(
-            self._validated_history_messages(recent_n=HISTORY_WINDOW * 2),
-            system_msg,
-        )
-
-        analysis = self.model(replace_names_in_messages(prompt))
-        analysis_msg = Msg(
-            role="user",
-            name=self.name,
-            content=f"聊完之后，{self.name}在想:" + analysis,
-        )
-        send_pretty_msg(
-            analysis_msg,
-            uid=self.uid,
-            avatar=self.avatar,
-        )
+        if self.prev_active_plots:
+            plot = self.hidden_plot[self.prev_active_plots[0]]
+        else:
+            plot = "无"
 
         update_prompt = self.game_config["update_background"].format_map(
             {
-                "analysis": analysis,
                 "background": self.background,
+                "plot": plot,
                 "name": self.name,
             },
         )
@@ -389,7 +358,7 @@ class Customer(StateAgent, DialogAgent):
             [extract_keys_from_dict(update_msg, MESSAGE_KEYS)]
         )
 
-        bg_msg = f" {SYS_MSG_PREFIX}根据对话，{self.name}的背景更新为：" + new_background
+        bg_msg = f" {SYS_MSG_PREFIX}根据剧情，{self.name}的背景更新为：" + new_background
         send_chat_msg(bg_msg, uid=self.uid, flushing=True)
 
         self.background = new_background
