@@ -235,7 +235,7 @@ class GamePlot:
                 <select-box shape="card"
                                                 type="checkbox" item-width="auto" options=
                                                '
-                                               {json.dumps(choices)}'
+                                               {json.dumps(choices, ensure_ascii=False)}'
                                                select-once></select-box>"""
 
                 send_chat_msg(
