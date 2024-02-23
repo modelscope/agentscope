@@ -123,6 +123,10 @@ def send_chat_msg(
             msg = f"<div style='background-color: rgba(255, 255, 0, 0.1);'" \
                   f">{msg}</div>"
 
+        if "🚫" in msg:
+            msg = f"<div style='background-color: rgba(255, 0, 0, 0.1);'" \
+                  f">{msg}</div>"
+
         glb_queue_chat_msg.put(
             [
                 None,

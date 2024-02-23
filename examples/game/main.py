@@ -102,7 +102,9 @@ def invited_group_chat(
         if is_done:
             involved_roles = all_plots[idx].main_roles + all_plots[idx].supporting_roles
 
-            send_chat_msg(f"{SYS_MSG_PREFIX}恭喜你，剧情解锁成功！", uid=uid)
+            send_chat_msg(f"{SYS_MSG_PREFIX}💡恭喜你，剧情解锁成功！\n\n正确的答案是: "
+                          f"{all_plots[idx].plot_description['done_condition']}",
+                          uid=uid)
             for c in involved_roles:
                 c.expose_all_clues(plot=idx)
 
@@ -266,8 +268,8 @@ def one_on_one_loop(customers, player, uid, checkpoint):
             send_chat_msg(f"{SYS_MSG_PREFIX}顾客{customer.name} 离开餐馆", uid=uid)
             continue
 
-        # randomly expose a clue
-        customer.expose_random_clue()
+        # expose a clue by order
+        customer.expose_one_clue()
         #  继续挖掘线索
         questions = [
             inquirer.List(
@@ -507,7 +509,9 @@ def riddle_success_detect(uid, player, checkpoint):
             involved_roles = checkpoint.all_plots[idx].main_roles + \
                              checkpoint.all_plots[idx].supporting_roles
             involved_roles_names = [c.name for c in involved_roles]
-            send_chat_msg(f"{SYS_MSG_PREFIX}恭喜你，剧情解锁成功！", uid=uid)
+            send_chat_msg(f"{SYS_MSG_PREFIX}💡恭喜你，剧情解锁成功！\n\n正确的答案是: "
+                          f"{checkpoint.all_plots[idx].plot_description['done_condition']}",
+                          uid=uid)
 
             for c in involved_roles:
                 c.expose_all_clues(plot=idx)
@@ -600,6 +604,7 @@ def main(args) -> None:
 
     user_configs["uid"] = args.uid
     user_configs["model"] = os.environ.get("HTTP_LLM_MODEL") if user_configs["model"] == "post_api" else user_configs["model"]
+    user_configs["all_plots"] = all_plots
     player = RuledUser(**user_configs)
 
     if args.load_checkpoint is not None:
