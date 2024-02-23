@@ -297,7 +297,7 @@ def get_clue(uid):
         glb_clue_dict[uid][role_name_]['unexposed_num'] = clue_item['unexposed_num']
 
     flex_container_html_list = """
-    <div class="hint">🔔下滑查看更多线索（线索卡内也可以下滑哦～）</div>
+    <div class="hint">🔔下滑查看更多线索（已解锁的线索卡内也可以下滑哦～）</div>
     <div class="mytabs">
     """
 
@@ -535,7 +535,7 @@ if __name__ == "__main__":
 
             user_riddle_input = gr.Textbox(
                 label="user_riddle_input",
-                placeholder="若心中已有答案，便勇敢地呈上吧。",
+                placeholder="若心中已有答案，便勇敢地呈上吧！完整而清晰的回答是通往成功的关键，若回答含糊或不完整，可能会导致失败哦～（请确保您的回答包含明确的主体、动作和对象）",
                 show_label=False,
             )
             riddle_button = gr.Button(value="🔍解谜")
