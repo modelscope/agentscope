@@ -471,7 +471,7 @@ class Customer(StateAgent, DialogAgent):
         )
         print("*" * 20)
         send_chat_msg(
-            f"{SYS_MSG_PREFIX}发现{self.name}的新故事（请查看故事栏）。",
+            f"{SYS_MSG_PREFIX}💡发现{self.name}的新故事（请查看故事栏）。",
             uid=self.uid)
 
     def _gen_plot_related_prompt(self) -> str:

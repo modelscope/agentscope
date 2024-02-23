@@ -579,10 +579,6 @@ a:hover {
     color: black; /* 指定访问过的链接颜色 */
 }
 
-.lg.secondary .disabled-gradio-btn a:hover {
-    color: gray; /* 指定鼠标悬停时链接颜色 */
-}
-
 .lg.secondary .disabled-gradio-btn a:active {
     color: black; /* 指定被激活时链接颜色 */
 }
