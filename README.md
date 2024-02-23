@@ -312,4 +312,27 @@ Please refer to our [Contribution Guide](https://modelscope.github.io/agentscope
 
 ## References
 
-Our paper is coming soon!
+If you find our work helpful, please consider citing [our paper](https://arxiv.org/abs/2402.14034):
+
+```
+@article{agentscope,
+  author  = {Dawei Gao and 
+             Zitao Li and 
+             Weirui Kuang and 
+             Xuchen Pan and 
+             Daoyuan Chen and 
+             Zhijian Ma and 
+             Bingchen Qian and 
+             Liuyi Yao and  
+             Lin Zhu and 
+             Chen Cheng and 
+             Hongzhu Shi and 
+             Yaliang Li and 
+             Bolin Ding and 
+             Jingren Zhou},
+  title   = {AgentScope: A Flexible yet Robust Multi-Agent Platform},
+  journal = {CoRR},
+  volume  = {abs/2402.14034},
+  year    = {2024},
+}
+```
