@@ -12,6 +12,7 @@ from multiprocessing import Event
 import traceback
 from urllib import parse
 import agentscope
+import shutil
 from config_utils import load_configs
 from runtime import RuntimeVer
 from utils import (
@@ -387,7 +388,17 @@ def get_clue(uid):
 
 def build_game_zip(uid):
     uid = check_uuid(uid)
-    ...
+
+    directory_path = f'/tmp/as_game/{uid}/config'
+    file_path = f'/tmp/as_game/{uid}/config.zip'
+    file_url = ""
+
+    if not os.path.exists(directory_path):
+        os.makedirs(directory_path)
+
+    shutil.make_archive(file_path[:-4], 'zip', directory_path)
+
+    # TODO: upload to oss with file_url
 
 
 def update_publish_button(uid):
