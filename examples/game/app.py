@@ -15,4 +15,4 @@ if config_url:
         print(f"下载失败，HTTP 状态码: {response.status_code}")
 
 # 运行游戏应用程序
-os.system("python game_app.py -tod --name 寻找招财猫")
+os.system("python game_app.py -toc --name 寻找招财猫")

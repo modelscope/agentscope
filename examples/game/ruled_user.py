@@ -160,6 +160,7 @@ class RuledUser(AgentBase):
 
     def riddle_success_detector(self, riddle_input, checkpoint):
         is_success = False
+        p_idx = -1
         for p_idx in checkpoint.cur_plots:
             prompt = self.riddle_detector_prompt.format_map(
                 {

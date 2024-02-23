@@ -119,7 +119,7 @@ def send_chat_msg(
         global glb_uid_dict
         glb_queue_chat_msg = glb_uid_dict[uid]["glb_queue_chat_msg"]
 
-        if "💡" in msg:
+        if "💡" in msg or "📜" in msg:
             msg = f"<div style='background-color: rgba(255, 255, 0, 0.1);'" \
                   f">{msg}</div>"
 

@@ -588,6 +588,9 @@ class Customer(StateAgent, DialogAgent):
         for clue in exposed_clues:
             if not isinstance(clue, dict):
                 continue
+            clue_index = clue.get("index", -1)
+            if clue_index not in curr_to_unexpo_idx:
+                continue
             index = curr_to_unexpo_idx[clue.get("index", -1)]
             summary = clue.get("summary", -1)
             if len(self.unexposed_clues) > index >= 0:
