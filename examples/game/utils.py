@@ -378,7 +378,7 @@ def get_clue_image_b64_url(customer, clue_name, uid, content, use_assets=False):
         file_path = None
         if use_assets:
             file_dir = os.path.join(DEFAULT_AGENT_IMG_DIR, customer)
-            if os.path.exists(file_dir):
+            if not os.path.exists(file_dir):
                 os.makedirs(file_dir, exist_ok=True)
 
             for ext in extensions:
