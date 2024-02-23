@@ -444,40 +444,54 @@ def invite_customers(customers, uid, checkpoint):
         prompt += checkpoint.all_plots[p_idx].plot_description['done_hint']
 
     # available_customers.insert(0, main_role)
-    available_customers.insert(0, "跳过")
-    available_customers.insert(1, "只与主角对话")
+    if len(checkpoint.all_plots[p_idx].plot_stages) > 1:
+        available_customers.insert(0, "跳过")
+        available_customers.insert(1, "只与主角对话")
+    else:
+        # not allow to skip
+        available_customers.insert(0, "只与主角对话")
 
-    select_customer = [
-        inquirer.List(
-            "invited",
-            message= prompt + "今天就没有更多顾客了，您明天有什么邀请计划吗？",
-            choices=available_customers,
-        ),
-    ]
+    if len(available_customers) > 1:
+        select_customer = [
+            inquirer.List(
+                "invited",
+                message=prompt + "今天就没有更多顾客了，您明天有什么邀请计划吗？",
+                choices=available_customers,
+            ),
+        ]
+        choose_available_customers = prompt + f"""
+        \n\n 你可以选择与主角{main_role}和其他角色一起讨论，收集更多线索（当前任务剩余机会 
+        {checkpoint.all_plots[p_idx].max_attempts}）
+        <select-box shape="card"  type="checkbox" item-width="auto" options=
+                    '{json.dumps(available_customers)}' select-once
+                    submit-text="确定"></select-box>
+        """
 
-    choose_available_customers = prompt + f"""
-    \n\n 你可以选择与主角{main_role}和其他角色一起讨论，收集更多线索（当前任务剩余机会 
-    {checkpoint.all_plots[p_idx].max_attempts}）
-    <select-box shape="card"  type="checkbox" item-width="auto" options=
-                '{json.dumps(available_customers)}' select-once
-                submit-text="确定"></select-box>
-    """
+        send_chat_msg(choose_available_customers, flushing=False, uid=uid)
 
-    send_chat_msg(choose_available_customers, flushing=False, uid=uid)
-
-    while True:
-        answer = query_answer(select_customer, "invited", uid=uid)
-        if isinstance(answer, str):
-            send_chat_msg(f"{SYS_MSG_PREFIX}请在列表中选择。", uid=uid)
-            continue
-        elif answer[0] == "跳过":
-            send_chat_msg("**end_choosing**", uid=uid)
-            return []
-        else:
-            invited_customers = [main_role] + \
-                                [item for item in answer if item != '只与主角对话']
-            send_chat_msg("**end_choosing**", uid=uid)
-            return invited_customers
+        while True:
+            answer = query_answer(select_customer, "invited", uid=uid)
+            logger.debug(answer)
+            if isinstance(answer, str):
+                send_chat_msg(f"{SYS_MSG_PREFIX}请在列表中选择。", uid=uid)
+                continue
+            elif answer[0] == "跳过":
+                send_chat_msg(f"{SYS_MSG_PREFIX}==== 跳过此环节，进入下一天。"
+                              f" ====", uid=uid)
+                send_chat_msg("**end_choosing**", uid=uid)
+                return []
+            else:
+                invited_customers = [main_role] + \
+                                    [item for item in answer if item != '只与主角对话']
+                send_chat_msg("**end_choosing**", uid=uid)
+                return invited_customers
+    else:
+        # for special case, only has a main role in the plot
+        send_chat_msg(f"{SYS_MSG_PREFIX} {prompt}（"
+                      f"当前任务剩余机会{checkpoint.all_plots[p_idx].max_attempts}天）。", uid=uid)
+        invited_customers = [main_role]
+        send_chat_msg("**end_choosing**", uid=uid)
+        return invited_customers
 
 
 def riddle_success_detect(uid, player, checkpoint):
