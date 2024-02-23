@@ -121,7 +121,7 @@ def invited_group_chat(
 
             send_chat_msg(
                 f" {SYS_MSG_PREFIX}剧情 {all_plots[idx].plot_description['task']} "
-                f"已完成，请不输入任何内容，即将进入下一个剧情...",
+                f"已完成，请不要输入任何内容，即将进入下一个剧情...",
                 uid=uid,
             )
 
@@ -179,7 +179,7 @@ def invited_group_chat(
 
                 send_chat_msg(
                     f" {SYS_MSG_PREFIX}剧情 {all_plots[idx].plot_description['task']} "
-                    f"已完成，请不输入任何内容，即将进入下一个剧情...",
+                    f"已完成，请不要输入任何内容，即将进入下一个剧情...",
                     uid=uid,
                 )
 
@@ -540,7 +540,7 @@ def riddle_success_detect(uid, player, checkpoint):
 
             send_chat_msg(
                 f" {SYS_MSG_PREFIX}剧情 {checkpoint.all_plots[idx].plot_description['task']} "
-                f"已完成，请不输入任何内容，即将进入下一个剧情...",
+                f"已完成，请不要输入任何内容，即将进入下一个剧情...",
                 uid=uid,
             )
 
@@ -726,8 +726,10 @@ def main(args) -> None:
 def check_explore_all(checkpoint: GameCheckpoint, uid: int = None):
     if len(checkpoint.cur_plots) == 0:
         checkpoint.stage_per_night = StagePerNight.CASUAL_CHAT_FOR_MEAL
+        send_chat_msg(f"{SYS_MSG_PREFIX}恭喜你，你已经完成全部剧情！"
+                      f"可以重新开始游戏，否则将进入饭店日常。",
+                      uid=uid)
         for i in range(10, 0, -1):
-            send_chat_msg(f"{SYS_MSG_PREFIX}恭喜你，你已经完成全部剧情！"
-                          f"可以重新开始游戏，否则{i}秒后进入饭店日常。",
+            time.sleep(1)
+            send_chat_msg(f"{SYS_MSG_PREFIX}{i}秒后进入饭店日常。",
                           uid=uid)
-        time.sleep(1)

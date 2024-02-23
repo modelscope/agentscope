@@ -647,6 +647,7 @@ class Customer(StateAgent, DialogAgent):
                     clue_name=element["name"],
                     uid=self.uid,
                     content=element["content"],
+                    use_assets=True,
                 )
             }
             send_clue_msg(
