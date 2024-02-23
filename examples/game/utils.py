@@ -22,7 +22,8 @@ from pathlib import Path
 from pypinyin import lazy_pinyin, Style
 
 SYS_MSG_PREFIX = '【系统】'
-DEFAULT_AGENT_IMG_DIR = "/tmp/as_game/config/"
+DEFAULT_AGENT_IMG_DIR = "./assets/"
+DEFAULT_CACHE_AGENT_IMG_DIR = "/tmp/as_game/config/"
 OPENING_ROUND = 3
 REVISION_ROUND = 3
 
@@ -366,7 +367,7 @@ def generate_picture(prompt, model="wanx-lite"):
         print(e)
 
 
-def get_clue_image_b64_url(customer, clue_name, uid, content):
+def get_clue_image_b64_url(customer, clue_name, uid, content, use_assets=False):
     prompt = """
     Design a simple, flat-style clue card for {clue_name} that abstractly 
     conveys {content}. Use minimalistic shapes and a limited color palette 
@@ -374,16 +375,27 @@ def get_clue_image_b64_url(customer, clue_name, uid, content):
     """
     extensions = ["gif", "jpeg", "png", "jpg"]
     try:
-        file_dir = os.path.join(DEFAULT_AGENT_IMG_DIR, uid, customer)
-        if not os.path.exists(file_dir):
-            os.makedirs(file_dir, exist_ok=True)
-
         file_path = None
-        for ext in extensions:
-            tmp_file_path = os.path.join(file_dir, f"{clue_name}.{ext}")
-            if os.path.exists(tmp_file_path):
-                file_path = tmp_file_path
-                break
+        if use_assets:
+            file_dir = os.path.join(DEFAULT_AGENT_IMG_DIR, customer)
+            if os.path.exists(file_dir):
+                os.makedirs(file_dir, exist_ok=True)
+
+            for ext in extensions:
+                tmp_file_path = os.path.join(file_dir, f"{clue_name}.{ext}")
+                if os.path.exists(tmp_file_path):
+                    file_path = tmp_file_path
+                    break
+        else:
+            file_dir = os.path.join(DEFAULT_CACHE_AGENT_IMG_DIR, uid, customer)
+            if not os.path.exists(file_dir):
+                os.makedirs(file_dir, exist_ok=True)
+
+            for ext in extensions:
+                tmp_file_path = os.path.join(file_dir, f"{clue_name}.{ext}")
+                if os.path.exists(tmp_file_path):
+                    file_path = tmp_file_path
+                    break
         if file_path is None:
             url = generate_picture(prompt.format_map({
                 "clue_name": clue_name,
