@@ -64,7 +64,7 @@ def invited_group_chat(
             {SYS_MSG_PREFIX}你想要说些什么吗？（请直接输入想要说的话，若不输入任何内容直接按回车键将跳过该轮发言） 
             <select-box shape="card"
                                 type="checkbox" item-width="auto" options=
-                               '{json.dumps(["结束对话"])}'
+                               '{json.dumps(["结束对话"], ensure_ascii=False)}'
                                select-once></select-box>"""
 
             send_chat_msg(choose_during_chatting, flushing=False, uid=uid,
@@ -144,7 +144,7 @@ def invited_group_chat(
             choose_restart = f"""{SYS_MSG_PREFIX} 剧情解锁失败，剧情已结束，可以先复盘一下, 再次挑战。 <select-box
             shape="card"
                         item-width="auto" type="checkbox" options=
-                        '{json.dumps(restart_plot_choice)}'
+                        '{json.dumps(restart_plot_choice, ensure_ascii=False)}'
                         select-once></select-box>"""
             send_chat_msg(choose_restart, flushing=False, uid=uid)
 
@@ -282,7 +282,7 @@ def one_on_one_loop(customers, player, uid, checkpoint):
         choose_after_meal = f"""{SYS_MSG_PREFIX} 接下来你会说些什么吗？(客人熟悉程度提升了，你可以通过与他对话继续挖掘线索)
             <select-box shape="card" item-width="auto" type="checkbox" options=
             '{json.dumps(["很高兴今天能让您满意！我能向您打听点事情吗？",
-                                 "感谢您的光顾。(结束与该顾客的当天对话)", "自定义输入"])}'
+                                 "感谢您的光顾。(结束与该顾客的当天对话)", "自定义输入"], ensure_ascii=False)}'
                                  select-once></select-box>"""
 
         send_chat_msg(choose_after_meal, flushing=False, uid=uid)
@@ -349,7 +349,7 @@ def confirm_with_main_role(uid, player, checkpoint):
         '{json.dumps(
         [
                 f"{k} （剩余机会{v[1]}）" for k, v in contact_chances.items()
-        ] + [f"不需要",])}'
+        ] + [f"不需要",], ensure_ascii=False)}'
         select-once></select-box>"""
 
     send_chat_msg(contect_main_role, flushing=False, uid=uid)
@@ -419,7 +419,7 @@ def invite_customers(customers, uid, checkpoint):
         choose_task = task_prompt + f"""
             \n\n
             <select-box shape="card"  type="checkbox" item-width="auto" options=
-                        '{json.dumps(tasks)}' select-once></select-box>
+                        '{json.dumps(tasks, ensure_ascii=False)}' select-once></select-box>
             """
 
         send_chat_msg(choose_task, flushing=False, uid=uid)
@@ -463,7 +463,7 @@ def invite_customers(customers, uid, checkpoint):
         \n\n 你可以选择与主角{main_role}和其他角色一起讨论，收集更多线索（当前任务剩余机会 
         {checkpoint.all_plots[p_idx].max_attempts}）
         <select-box shape="card"  type="checkbox" item-width="auto" options=
-                    '{json.dumps(available_customers)}' select-once
+                    '{json.dumps(available_customers, ensure_ascii=False)}' select-once
                     submit-text="确定"></select-box>
         """
 
