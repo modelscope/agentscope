@@ -527,6 +527,13 @@ if __name__ == "__main__":
 
 
     with gr.Blocks(css="assets/app.css") as demo:
+        warning_html_code = """
+        <div class="hint" style="background-color: rgba(255, 255, 0, 0.15); padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ffcc00;">
+            <p>网络有可能不稳定造成界面错误，请刷新浏览器并点击 <strong>🔥 续写情缘</strong> 继续游戏。</p>
+            <p>如果游戏内报错，请尝试返回首页点击 <strong>🚀 新的冒险</strong>重新开始。</p>
+        </div>
+        """
+        gr.HTML(warning_html_code)
         uuid = gr.Textbox(label='modelscope_uuid', visible=False)
         tabs = gr.Tabs(visible=True)
         with tabs:
