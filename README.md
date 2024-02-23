@@ -8,6 +8,8 @@ AgentScope is an innovative multi-agent platform designed to empower developers 
 
 - **Actor-Based Distribution**: Enabling developers to build distributed multi-agent applications in a centralized programming manner for streamlined development.
 
+If you find our work helpful, please kindly cite [our paper](#references).
+
 Welcome to join our community on
 
 | [Discord](https://discord.gg/eYMpfnkG8h) | DingTalk | WeChat |
@@ -312,7 +314,7 @@ Please refer to our [Contribution Guide](https://modelscope.github.io/agentscope
 
 ## References
 
-If you find our work helpful, please consider citing [our paper](https://arxiv.org/abs/2402.14034):
+If you find our work helpful for your research or application, please cite [our paper](https://arxiv.org/abs/2402.14034):
 
 ```
 @article{agentscope,
