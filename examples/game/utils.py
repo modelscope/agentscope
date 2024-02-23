@@ -380,22 +380,17 @@ def get_clue_image_b64_url(customer, clue_name, uid, content, use_assets=False):
             file_dir = os.path.join(DEFAULT_AGENT_IMG_DIR, customer)
             if not os.path.exists(file_dir):
                 os.makedirs(file_dir, exist_ok=True)
-
-            for ext in extensions:
-                tmp_file_path = os.path.join(file_dir, f"{clue_name}.{ext}")
-                if os.path.exists(tmp_file_path):
-                    file_path = tmp_file_path
-                    break
         else:
             file_dir = os.path.join(DEFAULT_CACHE_AGENT_IMG_DIR, uid, customer)
             if not os.path.exists(file_dir):
                 os.makedirs(file_dir, exist_ok=True)
 
-            for ext in extensions:
-                tmp_file_path = os.path.join(file_dir, f"{clue_name}.{ext}")
-                if os.path.exists(tmp_file_path):
-                    file_path = tmp_file_path
-                    break
+        for ext in extensions:
+            tmp_file_path = os.path.join(file_dir, f"{clue_name}.{ext}")
+            if os.path.exists(tmp_file_path):
+                file_path = tmp_file_path
+                break
+
         if file_path is None:
             url = generate_picture(prompt.format_map({
                 "clue_name": clue_name,
