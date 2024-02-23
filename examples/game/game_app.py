@@ -129,6 +129,7 @@ def export_chat_history(uid):
 
 
 def get_chat(uid) -> List[List]:
+    
     uid = check_uuid(uid)
     global glb_history_dict
     global glb_doing_signal_dict
@@ -162,8 +163,12 @@ def get_chat(uid) -> List[List]:
         if isinstance(msg, dict):
             if SYS_MSG_PREFIX not in msg.get("text", ""):
                 dial_msg.append(line)
-            else:
-                sys_msg.append(line)
+            elif line:
+                pattern = re.compile(r'^【系统】(?:\d+秒后进入饭店日常。|发生错误 .+?, 即将在\d+秒后重启)$', re.DOTALL)
+                if pattern.match(msg.get("text", "")) and len(sys_msg)>=1 :
+                    sys_msg[-1] = line
+                else:
+                    sys_msg.append(line)
         else:
             # User chat, format: (msg, None)
             dial_msg.append(line)
