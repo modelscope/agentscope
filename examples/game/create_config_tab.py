@@ -474,14 +474,18 @@ def config_plot_tab(plot_tab, uuid):
             col_count=(2, "fixed"),
         )
     with gr.Row():
-        openings = gr.Textbox(label="系统开场白")
-        done_hint = gr.Textbox(label="剧情完成的提示词")
-        done_condition = gr.Textbox(label="剧情完成条件")
+        with gr.Column():
+            done_hint = gr.Textbox(label="剧情完成的提示词")
+        with gr.Column():
+            done_condition = gr.Textbox(label="剧情完成条件")
 
     with gr.Row():
-        npc_openings = gr.Textbox(label="NPC进场台词")
-        opening_image = gr.Textbox(label="NPC进场配图描述")
-        npc_quit_openings = gr.Textbox(label="NPC退场台词")
+        with gr.Column():
+            openings = gr.Textbox(label="系统开场白")
+            opening_image = gr.Textbox(label="NPC进场配图描述")
+        with gr.Column():
+            npc_openings = gr.Textbox(label="NPC进场台词")
+            npc_quit_openings = gr.Textbox(label="NPC退场台词")
 
     with gr.Row():
         user_openings_option = gr.Dataframe(
