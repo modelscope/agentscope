@@ -5,12 +5,15 @@ import os
 import datetime
 import threading
 import time
+import json
 from collections import defaultdict
 from typing import List
 from multiprocessing import Event
 import traceback
+from urllib import parse
 import agentscope
-from config_utils import load_user_cfg, load_configs
+import shutil
+from config_utils import load_configs
 from runtime import RuntimeVer
 from utils import (
     CheckpointArgs,
@@ -28,7 +31,12 @@ from utils import (
     send_riddle_input,
     get_quest_msg,
 )
-from create_config_tab import create_config_tab, create_config_accord, get_role_names
+from create_config_tab import (
+    create_config_tab,
+    create_config_accord,
+    get_role_names,
+    clean_config_dir,
+)
 
 import gradio as gr
 import modelscope_studio as mgr
@@ -114,6 +122,35 @@ def format_cover_html(name="", bot_avatar_path="assets/bg.png"):
     {config.get("introduction_context", "玩法介绍")}</div>
 </div>
 """
+
+
+def format_publish_readme_html():
+    publish_readme_html_code = """
+        <div class="step-container">
+            <div class="step">
+                <h5 class="step-header">第一步：配置剧情和角色</h2>
+                <p>在 游戏配置页 自定义您的剧情以及角色并保存</p>
+            </div>
+
+            <div class="step">
+                <h5 class="step-header">第二步：配置打包</h2>
+                <p>点击📦配置打包按钮，进行配置打包上传</p>
+            </div>
+
+            <div class="step">
+                <h5 class="step-header">第三步：获取DashScope API密钥</h2>
+                <a href="https://help.aliyun.com/zh/dashscope/developer
+                -reference/activate-dashscope-and-create-an-api-key" 
+                target="_blank">获取DashScope API密钥以访问千问（Qwen）。</a>
+            </div>
+
+            <div class="step">
+                <h5 class="step-header">第四步：发布您的游戏</h2>
+                <p>点击🎮发布游戏按钮，跳转到创空间完成自定义游戏的发布</p>
+            </div>
+        </div>
+        """
+    return publish_readme_html_code
 
 
 def export_chat_history(uid):
@@ -354,6 +391,55 @@ def get_clue(uid):
     return gr.HTML(flex_container_html_list)
 
 
+def build_game_zip(uid):
+    uid = check_uuid(uid)
+
+    directory_path = f'/tmp/as_game/{uid}/config'
+    file_path = f'/tmp/as_game/{uid}/config.zip'
+    file_url = ""
+
+    if not os.path.exists(directory_path):
+        os.makedirs(directory_path)
+
+    shutil.make_archive(file_path[:-4], 'zip', directory_path)
+
+    # TODO: upload to oss with file_url
+
+
+def update_publish_button(uid):
+    uid = check_uuid(uid)
+
+    # TODO: get url of oss
+    file_path = f'/tmp/as_game/{uid}/config.zip'
+    file_url = ""
+
+    # 检查文件是否存在本地，否则禁用按钮
+    if not (os.path.exists(file_path) and os.path.isfile(file_path)):
+        publish_btn_code = """
+        <div class="lg secondary  svelte-cmf5ev">
+            <div class="disabled-gradio-btn">
+            <a>🎮发布游戏</a>
+            </div>
+        </div>
+        """
+        return gr.HTML(publish_btn_code)
+
+    params = {'CONFIG_URL': file_url}
+    params_str = json.dumps(params)
+    repo = "agentscope"
+    name = "version_tod"
+    url = f"https://www.modelscope.cn/studios/fork?target=" \
+          f"{repo}/{name}&overwriteEnv={parse.quote(params_str)}"
+    publish_btn_code = f"""
+            <div class="lg secondary  svelte-cmf5ev">
+                <div class="gradio-btn">
+                <a href="{url}" target="_blank">🎮发布游戏</a>
+                </div>
+            </div>
+            """
+    return gr.HTML(publish_btn_code)
+
+
 def fn_choice(data: gr.EventData, uid):
     uid = check_uuid(uid)
     send_player_input(data._data["value"], uid=uid)
@@ -446,6 +532,13 @@ if __name__ == "__main__":
 
 
     with gr.Blocks(css="assets/app.css") as demo:
+        warning_html_code = """
+        <div class="hint" style="background-color: rgba(255, 255, 0, 0.15); padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ffcc00;">
+            <p>网络有可能不稳定造成界面错误，请刷新浏览器并点击 <strong>🔥 续写情缘</strong> 继续游戏。</p>
+            <p>如果游戏内报错，请尝试返回首页点击 <strong>🚀 新的冒险</strong>重新开始。</p>
+        </div>
+        """
+        gr.HTML(warning_html_code)
         uuid = gr.Textbox(label='modelscope_uuid', visible=False)
         tabs = gr.Tabs(visible=True)
         with tabs:
@@ -462,13 +555,27 @@ if __name__ == "__main__":
                     with gr.Column():
                         resume_button = gr.Button(value='🔥续写情缘', )
 
+                publish_accordion = gr.Accordion(
+                    '发布自定义游戏',
+                    open=True,
+                    visible=(ver in [RuntimeVer.ToD, RuntimeVer.Root]),
+                )
+                with publish_accordion:
+                    gr.HTML(format_publish_readme_html())
+                    with gr.Column():
+                        build_button = gr.Button(
+                            value="📦配置打包",
+                        )
+                        publish_button = gr.HTML()
+                    build_button.click(build_game_zip, inputs=[uuid])
+
                 config_accordion = gr.Accordion(
                     '导入导出配置',
                     open=False,
-                    visible=(ver in [RuntimeVer.ToD, RuntimeVer.Root]),
+                    visible=(ver == RuntimeVer.Root),
                 )
                 with config_accordion:
-                    create_config_accord(config_accordion, uuid, ver)
+                    create_config_accord(ver, uuid)
 
         if ver in [RuntimeVer.ToD, RuntimeVer.Root]:
             with config_tab:
@@ -584,8 +691,8 @@ if __name__ == "__main__":
             uid = check_uuid(uid)
             gr.Info("🎉您的答案已提交！请返回 主界面 继续游戏，任务判定会当天营业结束后进行哦～")
             send_riddle_input(msg, uid=uid)
-            send_chat_msg(f"{SYS_MSG_PREFIX}玩家的答案：“{msg}”，"
-                          f"解谜中... （任务判定会当天营业结束后进行哦～）",
+            send_chat_msg(f"{SYS_MSG_PREFIX}💡玩家的答案：“{msg}”，"
+                          f"解谜中... （请继续游戏，任务判定会当天营业结束后进行哦～）",
                           uid=uid)
             return ""
 
@@ -657,6 +764,10 @@ if __name__ == "__main__":
         demo.load(get_quest,
                   inputs=[uuid],
                   outputs=[quest_container],
+                  every=0.5)
+        demo.load(update_publish_button,
+                  inputs=[uuid],
+                  outputs=[publish_button],
                   every=0.5)
 
     demo.queue()

@@ -58,6 +58,7 @@ class RuledUser(AgentBase):
         cook_prompt: Optional[str] = None,
         success_detector_prompt: Optional[str] = None,
         riddle_detector_prompt: Optional[str] = None,
+        all_plots: dict = {},
         **kwargs: Any,
     ) -> None:
         """Initialize a RuledUser object."""
@@ -68,6 +69,11 @@ class RuledUser(AgentBase):
         self.success_detector_prompt = success_detector_prompt
         self.riddle_detector_prompt = riddle_detector_prompt
         self.uid = kwargs.get("uid", None)
+        self.plot_descriptions = ""
+        for p_idx, plot in all_plots.items():
+            self.plot_descriptions += f"""
+            剧情{p_idx}的任务名是：{plot.plot_description['task']}，完成提示是：{plot.plot_description['done_hint']}\n
+            """
 
     def reply(
         self,
@@ -104,7 +110,7 @@ class RuledUser(AgentBase):
                     break
 
                 send_chat_msg(
-                    f" {SYS_MSG_PREFIX}输入被规则禁止"
+                    f" {SYS_MSG_PREFIX}🚫输入被规则禁止"
                     f" {ruler_res.get('reason', '未知原因')}\n"
                     f"请重试",
                     uid=self.uid,
@@ -137,7 +143,9 @@ class RuledUser(AgentBase):
         return msg
 
     def is_content_valid(self, content):
-        prompt = self.sys_prompt.format_map({"content": content})
+        prompt = self.sys_prompt.format_map(
+            {"content": content, "plot_descriptions": self.plot_descriptions}
+        )
         message = Msg(name="user", content=prompt, role="user")
         ruler_res = self.model(
             [extract_keys_from_dict(message, MESSAGE_KEYS)],
@@ -160,6 +168,7 @@ class RuledUser(AgentBase):
 
     def riddle_success_detector(self, riddle_input, checkpoint):
         is_success = False
+        p_idx = -1
         for p_idx in checkpoint.cur_plots:
             prompt = self.riddle_detector_prompt.format_map(
                 {
@@ -200,10 +209,10 @@ class RuledUser(AgentBase):
         )
         if success_res.get("finish") == "true":
             send_riddle_input(f"**plot_{p_idx}_riddle_success**", uid=self.uid)
-            send_chat_msg(
-                f" {SYS_MSG_PREFIX}恭喜你，剧情解锁成功！请不输入任何内容，直接按回车键进入下一阶段。",
-                uid=self.uid,
-            )
+            send_chat_msg(f"{SYS_MSG_PREFIX}💡恭喜你，剧情解锁成功！\n\n正确的答案是: "
+                          f"{done_condition}",
+                          uid=self.uid)
+
 
     def success_detector(self, condition, announcement):
         chat_log = self.collect_mem_until_announcement(announcement)
@@ -304,7 +313,7 @@ class RuledUser(AgentBase):
             ruler_res = self.is_content_valid(content)
             if ruler_res.get("allowed") != "true":
                 send_chat_msg(
-                    f"{SYS_MSG_PREFIX}输入被规则禁止"
+                    f"{SYS_MSG_PREFIX}🚫输入被规则禁止"
                     f"{ruler_res.get('reason', '未知原因')}\n"
                     "请重试",
                     uid=self.uid,

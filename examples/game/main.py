@@ -55,13 +55,14 @@ def invited_group_chat(
                 inquirer.List(
                     "ans",
                     message=f"{SYS_MSG_PREFIX}：你想要说些什么吗？（"
-                            f"请直接输入想要说的话，若不输入任何内容直接按回车键将跳过该轮发言）",
+                            f"请直接输入想要说的话，若不输入任何内容直接按回车键将跳过该轮发言，"
+                            f"如果你认为任务已经完成或想终止对话，请点击'结束对话'。）",
                     choices=["结束对话"],
                 ),
             ]
 
             choose_during_chatting = f"""
-            {SYS_MSG_PREFIX}你想要说些什么吗？（请直接输入想要说的话，若不输入任何内容直接按回车键将跳过该轮发言） 
+            {SYS_MSG_PREFIX}你想要说些什么吗？（请直接输入想要说的话，若不输入任何内容直接按回车键将跳过该轮发言，如果你认为任务已经完成或想终止对话，请点击'结束对话'。） 
             <select-box shape="card"
                                 type="checkbox" item-width="auto" options=
                                '{json.dumps(["结束对话"], ensure_ascii=False)}'
@@ -101,7 +102,9 @@ def invited_group_chat(
         if is_done:
             involved_roles = all_plots[idx].main_roles + all_plots[idx].supporting_roles
 
-            send_chat_msg(f"{SYS_MSG_PREFIX}恭喜你，剧情解锁成功！", uid=uid)
+            send_chat_msg(f"{SYS_MSG_PREFIX}💡恭喜你，剧情解锁成功！\n\n正确的答案是: "
+                          f"{all_plots[idx].plot_description['done_condition']}",
+                          uid=uid)
             for c in involved_roles:
                 c.expose_all_clues(plot=idx)
 
@@ -120,7 +123,7 @@ def invited_group_chat(
                 c.refine_background()
 
             send_chat_msg(
-                f" {SYS_MSG_PREFIX}剧情 {all_plots[idx].plot_description['task']} "
+                f" 💡剧情 {all_plots[idx].plot_description['task']} "
                 f"已完成，请不要输入任何内容，即将进入下一个剧情...",
                 uid=uid,
             )
@@ -178,7 +181,7 @@ def invited_group_chat(
                     c.refine_background()
 
                 send_chat_msg(
-                    f" {SYS_MSG_PREFIX}剧情 {all_plots[idx].plot_description['task']} "
+                    f" 💡剧情 {all_plots[idx].plot_description['task']} "
                     f"已完成，请不要输入任何内容，即将进入下一个剧情...",
                     uid=uid,
                 )
@@ -191,7 +194,7 @@ def invited_group_chat(
                 raise ResetException
 
     send_chat_msg(
-        f"{SYS_MSG_PREFIX} ======= 进入新的一天的营业时间 ==========",
+        f"进入新的一天的营业时间",
         uid=uid)
     return None
 
@@ -265,8 +268,8 @@ def one_on_one_loop(customers, player, uid, checkpoint):
             send_chat_msg(f"{SYS_MSG_PREFIX}顾客{customer.name} 离开餐馆", uid=uid)
             continue
 
-        # randomly expose a clue
-        customer.expose_random_clue()
+        # expose a clue by order
+        customer.expose_one_clue()
         #  继续挖掘线索
         questions = [
             inquirer.List(
@@ -287,27 +290,22 @@ def one_on_one_loop(customers, player, uid, checkpoint):
 
         send_chat_msg(choose_after_meal, flushing=False, uid=uid)
 
-        while True:
-            answer = query_answer(questions, "ans", uid=uid)
-            if isinstance(answer, str):
-                send_chat_msg(
-                    f"{SYS_MSG_PREFIX}请在列表中选择。",
-                    uid=uid,
-                )
-                continue
-            break
+        answer = query_answer(questions, "ans", uid=uid)
         send_chat_msg("**end_choosing**", uid=uid)
 
-        answer = answer[0]
-
-        if answer == "感谢您的光顾。(结束与该顾客的当天对话)":
-            player.talk("感谢您的光顾，再见👋", is_display=True)
-            continue
-        elif answer == "自定义输入":
-            answer = player({"content": answer})["content"]
+        if isinstance(answer, str):
+            answer = player.talk(answer, ruled=True)
         else:
-            player.talk("很高兴今天能让您满意！我能向您打听点事情吗？",
-                        is_display=True)
+            answer = answer[0]
+
+            if answer == "感谢您的光顾。(结束与该顾客的当天对话)":
+                player.talk("感谢您的光顾，再见👋", is_display=True)
+                continue
+            elif answer == "自定义输入":
+                answer = player({"content": answer})["content"]
+            else:
+                player.talk("很高兴今天能让您满意！我能向您打听点事情吗？",
+                            is_display=True)
         msg = Msg(role="user", name="餐馆老板", content=answer)
         player.observe(msg)
         while True:
@@ -511,7 +509,9 @@ def riddle_success_detect(uid, player, checkpoint):
             involved_roles = checkpoint.all_plots[idx].main_roles + \
                              checkpoint.all_plots[idx].supporting_roles
             involved_roles_names = [c.name for c in involved_roles]
-            send_chat_msg(f"{SYS_MSG_PREFIX}恭喜你，剧情解锁成功！", uid=uid)
+            send_chat_msg(f"{SYS_MSG_PREFIX}💡恭喜你，剧情解锁成功！\n\n正确的答案是: "
+                          f"{checkpoint.all_plots[idx].plot_description['done_condition']}",
+                          uid=uid)
 
             for c in involved_roles:
                 c.expose_all_clues(plot=idx)
@@ -539,7 +539,7 @@ def riddle_success_detect(uid, player, checkpoint):
                 c.refine_background()
 
             send_chat_msg(
-                f" {SYS_MSG_PREFIX}剧情 {checkpoint.all_plots[idx].plot_description['task']} "
+                f" 💡剧情 {checkpoint.all_plots[idx].plot_description['task']} "
                 f"已完成，请不要输入任何内容，即将进入下一个剧情...",
                 uid=uid,
             )
@@ -604,6 +604,7 @@ def main(args) -> None:
 
     user_configs["uid"] = args.uid
     user_configs["model"] = os.environ.get("HTTP_LLM_MODEL") if user_configs["model"] == "post_api" else user_configs["model"]
+    user_configs["all_plots"] = all_plots
     player = RuledUser(**user_configs)
 
     if args.load_checkpoint is not None:

@@ -1,0 +1,67 @@
+- "plot_id": 1
+  "plot_stages":
+    - 1
+  "predecessor_plots": null
+  "main_roles":
+    - "美食家"
+  "supporting_roles": null
+  "max_unblock_plots": 1
+  "unblock_following_plots":
+    - "unblock_chk_func": "always"
+      "unblock_plot": 2
+  max_attempts: 3
+  "plot_descriptions":
+    "task": >
+      猜猜美食家想吃什么？
+    "openings": >
+      这天早上，我刚准备开门营业，一位衣着考究的中年男人拿着一卷画就向我走来...
+    "opening_image": > 
+      生成一张图片，图片内容是“竹外桃花三两枝，春江水暖鸭先知。蒌蒿满地芦芽短，正是河豚欲上时“。
+    "user_openings_option":
+      "0": >
+        这幅画感觉是配着一首诗？
+      "1": >
+        这菜是鸭子肉吗？
+      "2": >
+        这菜有搭配什么蔬菜吗？
+    "npc_openings": >
+      老板，听说你既烧的一手好菜，也非常擅长猜谜。咱们今天交个朋友，让你猜猜我今晚想吃什么吧！第一个提示，我今晚想吃的，和这幅画有关。
+    "npc_quit_openings": >
+      老板，你有想法了吗？
+    "done_hint": >
+      根据各种提示，猜猜看美食家今晚想吃什么？
+    "done_condition": >
+      回答包含“河豚”和“蒌蒿”或者“芦蒿”。
+- "plot_id": 2
+  "plot_stages":
+    - 1
+  "predecessor_plots":
+    - 1
+  "main_roles":
+    - "A先生"
+  "supporting_roles": null
+  "max_unblock_plots": 1
+  "unblock_following_plots": null
+  max_attempts: 3
+  "plot_descriptions":
+    "task": >
+      帮A先生找出食谱上丢失的信息
+    "openings": >
+      这天早上，我刚准备开门营业，发现一位和美食家年龄相仿的生面孔在我店门等着我...
+    "opening_image": > 
+      生成一张图片，图片内容是是一本有破破烂烂的书。
+    "user_openings_option":
+      "0": >
+        这大概是哪个地方的菜肴？
+      "1": >
+        这种食材功效是什么？
+      "2": >
+        会有很多人都喜欢吃吗？
+    "npc_openings": >
+      老板，美食家是我的一位朋友。他觉得你不光菜做的好，也很博学多才！今天我有个不情之请。这本食谱的一道菜有些页面残缺、信息丢失了。请你帮我看看，这里缺了一个关键的原料是什么？
+    "npc_quit_openings": >
+      老板，你有想法了吗？
+    "done_hint": >
+      根据各种提示，猜猜看A先生食谱中缺失的原料是什么？
+    "done_condition": >
+      回答包含“鱼腥草”。

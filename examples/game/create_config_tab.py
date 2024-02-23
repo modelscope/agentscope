@@ -5,7 +5,6 @@ import shutil
 import subprocess
 
 import gradio as gr
-from numpy import False_
 import modelscope_studio as mgr
 
 import tempfile
@@ -155,7 +154,8 @@ def run_shell_file(cmd, msg):
         gr.Warning("命令不正确，请检查。")
     return msg
 
-def create_config_accord(accord, uuid, ver):
+
+def create_config_accord(ver, uuid):
     uuid = check_uuid(uuid)
     with gr.Row():
         signature = gr.Textbox(

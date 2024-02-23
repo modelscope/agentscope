@@ -200,7 +200,6 @@ class Customer(StateAgent, DialogAgent):
                 score >= MIN_BAR_RECEIVED_CONST
                 # and self.friendship >= MIN_BAR_FRIENDSHIP_CONST
         ):
-            # self.expose_random_clue(self.active_plots[0])
             self.transition(CustomerConv.AFTER_MEAL_CHAT)
             print("---", self.cur_state)
         self.preorder_itr_count = 0
@@ -440,7 +439,7 @@ class Customer(StateAgent, DialogAgent):
         )
         print("*" * 20)
         send_chat_msg(
-            f"{SYS_MSG_PREFIX}发现{self.name}的新故事（请查看故事栏）。",
+            f"{SYS_MSG_PREFIX}💡发现{self.name}的新故事（请查看故事栏）。",
             uid=self.uid)
 
     def _gen_plot_related_prompt(self) -> str:
@@ -557,6 +556,9 @@ class Customer(StateAgent, DialogAgent):
         for clue in exposed_clues:
             if not isinstance(clue, dict):
                 continue
+            clue_index = clue.get("index", -1)
+            if clue_index not in curr_to_unexpo_idx:
+                continue
             index = curr_to_unexpo_idx[clue.get("index", -1)]
             summary = clue.get("summary", -1)
             if len(self.unexposed_clues) > index >= 0:
@@ -626,7 +628,7 @@ class Customer(StateAgent, DialogAgent):
                 role=self.name,
             )
 
-    def expose_random_clue(self):
+    def expose_one_clue(self):
         if len(self.active_plots) > 0:
             plot = self.active_plots[0]
         else:
@@ -640,11 +642,9 @@ class Customer(StateAgent, DialogAgent):
         logger.debug(f"clues can be random exposed"
                      f"{[self.unexposed_clues[i]['name'] for i in indices_to_pop]}")
 
-        random_index = random.choice(indices_to_pop)
-
         indices_to_pop.sort(reverse=True)
 
-        element = self.unexposed_clues.pop(random_index)
+        element = self.unexposed_clues.pop(indices_to_pop[-1])
         self.exposed_clues.append(element)
         clue = {
             "name": element["name"],
