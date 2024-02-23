@@ -493,4 +493,103 @@
     color: rgba(0, 0, 0, 0.7); /* 文本颜色半透明 */
     z-index: 1000; /* 确保提示条位于页面元素上方 */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* 可选：为提示条添加阴影，增加立体感 */
-  }
+}
+
+.step-container {
+    display: flex; /* 设置为flex容器 */
+    flex-direction: column; /* 设置步骤在竖直方向上排列 */
+    justify-content: space-between; /* 步骤之间的空间平均分布 */
+    flex-wrap: nowrap; /* 防止步骤换行 */
+    margin: 5px;
+    height: 100%; /* 设置一个高度，否则space-between可能无效 */
+}
+
+.step {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 10px; /* 步骤之间的竖直间隔 */
+    flex: 1; /* 所有步骤元素平均分配空间 */
+}
+
+.step:last-child {
+    margin-bottom: 0; /* 最后一个步骤不需要底部边距 */
+}
+
+.step-header {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+a {
+    color: #06c;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.lg.secondary .gradio-btn {
+    text-align: center; /* 水平居中文本 */
+}
+
+.lg.secondary .gradio-btn a {
+    color: black; /* 指定链接颜色 */
+    text-decoration: none; /* 移除下划线 */
+}
+
+.lg.secondary .gradio-btn a:visited {
+    color: black; /* 指定访问过的链接颜色 */
+}
+
+.lg.secondary .gradio-btn a:hover {
+    color: gray; /* 指定鼠标悬停时链接颜色 */
+}
+
+.lg.secondary .gradio-btn a:active {
+    color: black; /* 指定被激活时链接颜色 */
+}
+
+.lg.secondary .gradio-btn {
+    display: flex;
+    justify-content: center; /* 水平居中 */
+    align-items: center; /* 垂直居中 */
+    height: 100%; /* 确定div高度，可能需要根据实际情况调整 */
+}
+
+.lg.secondary .disabled-gradio-btn {
+  cursor: not-allowed;
+  opacity: .5;
+  filter: grayscale(30%);
+  text-align: center; /* 水平居中文本 */
+}
+
+.lg.secondary .disabled-gradio-btn {
+    text-align: center; /* 水平居中文本 */
+}
+
+.lg.secondary .disabled-gradio-btn a {
+    color: black; /* 指定链接颜色 */
+    text-decoration: none; /* 移除下划线 */
+}
+
+.lg.secondary .disabled-gradio-btn a:visited {
+    color: black; /* 指定访问过的链接颜色 */
+}
+
+.lg.secondary .disabled-gradio-btn a:hover {
+    color: gray; /* 指定鼠标悬停时链接颜色 */
+}
+
+.lg.secondary .disabled-gradio-btn a:active {
+    color: black; /* 指定被激活时链接颜色 */
+}
+
+.lg.secondary .disabled-gradio-btn {
+    display: flex;
+    justify-content: center; /* 水平居中 */
+    align-items: center; /* 垂直居中 */
+    height: 100%; /* 确定div高度，可能需要根据实际情况调整 */
+}

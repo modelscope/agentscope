@@ -5,12 +5,14 @@ import os
 import datetime
 import threading
 import time
+import json
 from collections import defaultdict
 from typing import List
 from multiprocessing import Event
 import traceback
+from urllib import parse
 import agentscope
-from config_utils import load_user_cfg, load_configs
+from config_utils import load_configs
 from runtime import RuntimeVer
 from utils import (
     CheckpointArgs,
@@ -28,7 +30,12 @@ from utils import (
     send_riddle_input,
     get_quest_msg,
 )
-from create_config_tab import create_config_tab, create_config_accord, get_role_names
+from create_config_tab import (
+    create_config_tab,
+    create_config_accord,
+    get_role_names,
+    clean_config_dir,
+)
 
 import gradio as gr
 import modelscope_studio as mgr
@@ -114,6 +121,35 @@ def format_cover_html(name="", bot_avatar_path="assets/bg.png"):
     {config.get("introduction_context", "玩法介绍")}</div>
 </div>
 """
+
+
+def format_publish_readme_html():
+    publish_readme_html_code = """
+        <div class="step-container">
+            <div class="step">
+                <h5 class="step-header">第一步：配置剧情和角色</h2>
+                <p>在 游戏配置页 自定义您的剧情以及角色并保存</p>
+            </div>
+
+            <div class="step">
+                <h5 class="step-header">第二步：配置打包</h2>
+                <p>点击📦配置打包按钮，进行配置打包上传</p>
+            </div>
+
+            <div class="step">
+                <h5 class="step-header">第三步：获取DashScope API密钥</h2>
+                <a href="https://help.aliyun.com/zh/dashscope/developer
+                -reference/activate-dashscope-and-create-an-api-key" 
+                target="_blank">获取DashScope API密钥以访问千问（Qwen）。</a>
+            </div>
+
+            <div class="step">
+                <h5 class="step-header">第四步：发布您的游戏</h2>
+                <p>点击🎮发布游戏按钮，跳转到创空间完成自定义游戏的发布</p>
+            </div>
+        </div>
+        """
+    return publish_readme_html_code
 
 
 def export_chat_history(uid):
@@ -349,6 +385,45 @@ def get_clue(uid):
     return gr.HTML(flex_container_html_list)
 
 
+def build_game_zip(uid):
+    uid = check_uuid(uid)
+    ...
+
+
+def update_publish_button(uid):
+    uid = check_uuid(uid)
+
+    # TODO: get url of oss
+    file_path = f'/tmp/as_game/{uid}/config.zip'
+    file_url = ""
+
+    # 检查文件是否存在本地，否则禁用按钮
+    if not (os.path.exists(file_path) and os.path.isfile(file_path)):
+        publish_btn_code = """
+        <div class="lg secondary  svelte-cmf5ev">
+            <div class="disabled-gradio-btn">
+            <a>🎮发布游戏</a>
+            </div>
+        </div>
+        """
+        return gr.HTML(publish_btn_code)
+
+    params = {'CONFIG_URL': file_url}
+    params_str = json.dumps(params)
+    repo = "agentscope"
+    name = "version_tod"
+    url = f"https://www.modelscope.cn/studios/fork?target=" \
+          f"{repo}/{name}&overwriteEnv={parse.quote(params_str)}"
+    publish_btn_code = f"""
+            <div class="lg secondary  svelte-cmf5ev">
+                <div class="gradio-btn">
+                <a href="{url}" target="_blank">🎮发布游戏</a>
+                </div>
+            </div>
+            """
+    return gr.HTML(publish_btn_code)
+
+
 def fn_choice(data: gr.EventData, uid):
     uid = check_uuid(uid)
     send_player_input(data._data["value"], uid=uid)
@@ -457,13 +532,27 @@ if __name__ == "__main__":
                     with gr.Column():
                         resume_button = gr.Button(value='🔥续写情缘', )
 
+                publish_accordion = gr.Accordion(
+                    '发布自定义游戏',
+                    open=True,
+                    visible=(ver in [RuntimeVer.ToD, RuntimeVer.Root]),
+                )
+                with publish_accordion:
+                    gr.HTML(format_publish_readme_html())
+                    with gr.Column():
+                        build_button = gr.Button(
+                            value="📦配置打包",
+                        )
+                        publish_button = gr.HTML()
+                    build_button.click(build_game_zip, inputs=[uuid])
+
                 config_accordion = gr.Accordion(
                     '导入导出配置',
                     open=False,
-                    visible=(ver in [RuntimeVer.ToD, RuntimeVer.Root]),
+                    visible=(ver == RuntimeVer.Root),
                 )
                 with config_accordion:
-                    create_config_accord(config_accordion, uuid, ver)
+                    create_config_accord(ver, uuid)
 
         if ver in [RuntimeVer.ToD, RuntimeVer.Root]:
             with config_tab:
@@ -652,6 +741,10 @@ if __name__ == "__main__":
         demo.load(get_quest,
                   inputs=[uuid],
                   outputs=[quest_container],
+                  every=0.5)
+        demo.load(update_publish_button,
+                  inputs=[uuid],
+                  outputs=[publish_button],
                   every=0.5)
 
     demo.queue()
