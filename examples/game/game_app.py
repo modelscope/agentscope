@@ -31,6 +31,7 @@ from utils import (
     send_riddle_input,
     get_quest_msg,
 )
+from oss_utils import upload_config_to_oss
 from create_config_tab import (
     create_config_tab,
     create_config_accord,
@@ -389,24 +390,19 @@ def get_clue(uid):
 def build_game_zip(uid):
     uid = check_uuid(uid)
 
-    directory_path = f'/tmp/as_game/{uid}/config'
-    file_path = f'/tmp/as_game/{uid}/config.zip'
-    file_url = ""
+    directory_path = f'/tmp/as_game/config/{uid}'
+    file_path = f"/tmp/as_game/config/{uid}.zip"
 
     if not os.path.exists(directory_path):
         os.makedirs(directory_path)
 
     shutil.make_archive(file_path[:-4], 'zip', directory_path)
 
-    # TODO: upload to oss with file_url
-
 
 def update_publish_button(uid):
     uid = check_uuid(uid)
 
-    # TODO: get url of oss
-    file_path = f'/tmp/as_game/{uid}/config.zip'
-    file_url = ""
+    file_path = f'/tmp/as_game/config/{uid}.zip'
 
     # 检查文件是否存在本地，否则禁用按钮
     if not (os.path.exists(file_path) and os.path.isfile(file_path)):
@@ -419,12 +415,14 @@ def update_publish_button(uid):
         """
         return gr.HTML(publish_btn_code)
 
+    file_url = upload_config_to_oss(uid)
     params = {'CONFIG_URL': file_url}
     params_str = json.dumps(params)
-    repo = "agentscope"
-    name = "version_tod"
+    # TODO: decide the final name
+    org = "agentscope_private"
+    fork_repo = "game"
     url = f"https://www.modelscope.cn/studios/fork?target=" \
-          f"{repo}/{name}&overwriteEnv={parse.quote(params_str)}"
+          f"{org}/{fork_repo}&overwriteEnv={parse.quote(params_str)}"
     publish_btn_code = f"""
             <div class="lg secondary  svelte-cmf5ev">
                 <div class="gradio-btn">
