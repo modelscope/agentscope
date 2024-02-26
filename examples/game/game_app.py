@@ -135,7 +135,7 @@ def format_publish_readme_html():
 
             <div class="step">
                 <h5 class="step-header">第二步：配置打包</h2>
-                <p>点击📦配置打包按钮，进行配置打包上传</p>
+                <p>点击下方📦配置打包按钮，进行配置打包上传</p>
             </div>
 
             <div class="step">
@@ -147,7 +147,7 @@ def format_publish_readme_html():
 
             <div class="step">
                 <h5 class="step-header">第四步：发布您的游戏</h2>
-                <p>点击🎮发布游戏按钮，跳转到创空间完成自定义游戏的发布</p>
+                <p>点击下方🎮发布游戏按钮，跳转到创空间完成自定义游戏的发布</p>
             </div>
         </div>
         """
@@ -397,6 +397,7 @@ def build_game_zip(uid):
         os.makedirs(directory_path)
 
     shutil.make_archive(file_path[:-4], 'zip', directory_path)
+    gr.Info("🎉打包成功！")
 
 
 def update_publish_button(uid):
