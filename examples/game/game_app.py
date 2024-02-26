@@ -600,7 +600,34 @@ if __name__ == "__main__":
                 create_config_tab(config_tab, ver, uuid)
             with dev_tab:
                 # TODO: Zitao, write README here.
-                dev_container = gr.HTML()
+                with open("./assets/instruction/instruction.html") as f:
+                    html_content = f.read()
+                instruction = html_content.format_map({
+                    "role_1": covert_image_to_base64("./assets/instruction/role_1.png"),
+                    "role_2": covert_image_to_base64(
+                        "./assets/instruction/role_2.png"),
+                    "role_3": covert_image_to_base64(
+                        "./assets/instruction/role_3.png"),
+                    "plot_1": covert_image_to_base64(
+                        "./assets/instruction/plot_1.png"),
+                    "plot_2": covert_image_to_base64(
+                        "./assets/instruction/plot_2.png"),
+                    "plot_3": covert_image_to_base64(
+                        "./assets/instruction/plot_3.png"),
+                    "plot_3": covert_image_to_base64(
+                        "./assets/instruction/plot_3.png"),
+                    "plot_4": covert_image_to_base64(
+                        "./assets/instruction/plot_4.png"),
+                    "plot_5": covert_image_to_base64(
+                        "./assets/instruction/plot_5.png"),
+                    "plot_6": covert_image_to_base64(
+                        "./assets/instruction/plot_6.png"),
+                    "plot_7": covert_image_to_base64(
+                        "./assets/instruction/plot_7.png"),
+                    "builder": covert_image_to_base64(
+                        "./assets/instruction/builder.png"),
+                })
+                dev_container = gr.HTML(instruction)
 
         game_tabs = gr.Tabs(visible=False)
 
