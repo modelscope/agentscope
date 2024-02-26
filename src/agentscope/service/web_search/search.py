@@ -48,6 +48,7 @@ def bing_search(
         It returns the following dict.
 
         .. code-block:: python
+
             {
                 'status': <ServiceExecStatus.SUCCESS: 1>,
                 'content': [
@@ -74,7 +75,6 @@ def bing_search(
                     }
                 ]
             }
-        ```
     """
 
     # Bing Search API endpoint
