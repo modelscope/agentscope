@@ -589,3 +589,10 @@ a:hover {
     align-items: center; /* 垂直居中 */
     height: 100%; /* 确定div高度，可能需要根据实际情况调整 */
 }
+
+.full-width-anchor {
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
