@@ -111,7 +111,7 @@
     <span class="n">maxcount_results</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Searches the MongoDB database for documents matching the query.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute query within MongoDB database.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        database (`str`):</span>
@@ -119,7 +119,7 @@
 <span class="sd">        collection (`str`):</span>
 <span class="sd">            The name of the collection to use in mongodb.</span>
 <span class="sd">        query (`dict`):</span>
-<span class="sd">            The mongodb query to execute. Note that the query is a dictionary.</span>
+<span class="sd">            The mongodb query to execute.</span>
 <span class="sd">        host (`str`):</span>
 <span class="sd">            The hostname or IP address of the MongoDB server.</span>
 <span class="sd">        port (`int`):</span>

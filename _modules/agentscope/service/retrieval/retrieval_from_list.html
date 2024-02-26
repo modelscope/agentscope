@@ -107,7 +107,10 @@
     <span class="n">embedding_model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ModelWrapperBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">preserve_order</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Memory retrieval with user-defined score function. The score function is</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve data in a list.</span>
+
+<span class="sd">    Memory retrieval with user-defined score function. The score function is</span>
 <span class="sd">    expected to take the `query` and one of the element in &#39;knowledge&#39; (a</span>
 <span class="sd">    list). This function retrieves top-k elements in &#39;knowledge&#39; with</span>
 <span class="sd">    HIGHEST scores. If the &#39;query&#39; is a dict but has no embedding,</span>
@@ -115,7 +118,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        query (`Any`):</span>
-<span class="sd">            A provided message, based on which we retrieve.</span>
+<span class="sd">            A message to be retrieved.</span>
 <span class="sd">        knowledge (`Sequence`):</span>
 <span class="sd">            Data/knowledge to be retrieved from.</span>
 <span class="sd">        score_func (`Callable[[Any, Any], float]`):</span>

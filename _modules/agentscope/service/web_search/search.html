@@ -89,91 +89,32 @@
   <h1>Source code for agentscope.service.web_search.search</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Search question in the web&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
 
 <span class="kn">from</span> <span class="nn">agentscope.service.service_response</span> <span class="kn">import</span> <span class="n">ServiceResponse</span>
 <span class="kn">from</span> <span class="nn">agentscope.utils.common</span> <span class="kn">import</span> <span class="n">requests_get</span>
 <span class="kn">from</span> <span class="nn">agentscope.service.service_status</span> <span class="kn">import</span> <span class="n">ServiceExecStatus</span>
 
 
-<div class="viewcode-block" id="web_search">
-<a class="viewcode-back" href="../../../../agentscope.service.web_search.html#agentscope.service.web_search.search.web_search">[docs]</a>
-<span class="k">def</span> <span class="nf">web_search</span><span class="p">(</span>
-    <span class="n">engine</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<div class="viewcode-block" id="bing_search">
+<a class="viewcode-back" href="../../../../agentscope.service.web_search.html#agentscope.service.web_search.search.bing_search">[docs]</a>
+<span class="k">def</span> <span class="nf">bing_search</span><span class="p">(</span>
     <span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">cse_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">num_results</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
-    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Perform a web search using a specified search engine (currently supports</span>
-<span class="sd">    Google and Bing).</span>
-
-<span class="sd">    This function abstracts the details of using the Google Custom Search JSON</span>
-<span class="sd">    API and the Bing Search API. It formulates the correct query based on the</span>
-<span class="sd">    search engine, handles the API request, and returns the results in a</span>
-<span class="sd">    uniform format.</span>
+<span class="sd">    Search question in Bing Search API and return the searching results</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        engine (`str`):</span>
-<span class="sd">            The search engine to use. Supported values are &#39;google&#39; and &#39;bing&#39;.</span>
 <span class="sd">        question (`str`):</span>
 <span class="sd">            The search query string.</span>
 <span class="sd">        api_key (`str`):</span>
-<span class="sd">            The API key for authenticating with the chosen search engine&#39;s API.</span>
-<span class="sd">        cse_id (`Optional[str]`, defaults to `None`):</span>
-<span class="sd">            The unique identifier for a specific Google Custom Search</span>
-<span class="sd">            Engine. Required only when using Google search.</span>
-<span class="sd">        num_results (`int`, defaults to `10`):</span>
-<span class="sd">            The maximum number of search results to return.</span>
-<span class="sd">        **kwargs (`Optional[dict]`):</span>
-<span class="sd">            Additional keyword arguments to pass to the search engine API.</span>
-<span class="sd">            These can include search-specific parameters such as language,</span>
-<span class="sd">            region, and safe search settings.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        `ServiceResponse`: A dictionary containing the status of the search (</span>
-<span class="sd">        &#39;success&#39; or &#39;fail&#39;) and the search results. The &#39;content&#39; key</span>
-<span class="sd">        within the dictionary contains a list of search results, each result</span>
-<span class="sd">        is a dictionary with &#39;title&#39;, &#39;link&#39;, and &#39;snippet&#39;, or the error</span>
-<span class="sd">        information.</span>
-
-<span class="sd">    Raises:</span>
-<span class="sd">        `ValueError`: If an unsupported search engine is specified.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">engine</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;google&quot;</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">cse_id</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Google Custom Search Engine ID (cse_id) must be &quot;</span>
-                <span class="s2">&quot;provided for Google search.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="k">return</span> <span class="n">_search_google</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">api_key</span><span class="p">,</span> <span class="n">cse_id</span><span class="p">,</span> <span class="n">num_results</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">engine</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;bing&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">_search_bing</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">api_key</span><span class="p">,</span> <span class="n">num_results</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported search engine: </span><span class="si">{</span><span class="n">engine</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
-
-
-
-<span class="k">def</span> <span class="nf">_search_bing</span><span class="p">(</span>
-    <span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">bing_api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">num_results</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
-    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Performs a query search using the Bing Search API and returns searching</span>
-<span class="sd">    results.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        question (`str`):</span>
-<span class="sd">            The search query string.</span>
-<span class="sd">        bing_api_key (`str`):</span>
 <span class="sd">            The API key provided for authenticating with the Bing Search API.</span>
 <span class="sd">        num_results (`int`, defaults to `10`):</span>
 <span class="sd">            The number of search results to return.</span>
-<span class="sd">        **kwargs (`Optional[dict]`):</span>
+<span class="sd">        **kwargs (`Any`):</span>
 <span class="sd">            Additional keyword arguments to be included in the search query.</span>
 <span class="sd">            For more details, please refer to</span>
 <span class="sd">            https://learn.microsoft.com/en-us/bing/search-apis/bing-web-search/reference/query-parameters</span>
@@ -198,6 +139,7 @@
 <span class="sd">        It returns the following dict.</span>
 
 <span class="sd">        .. code-block:: python</span>
+
 <span class="sd">            {</span>
 <span class="sd">                &#39;status&#39;: &lt;ServiceExecStatus.SUCCESS: 1&gt;,</span>
 <span class="sd">                &#39;content&#39;: [</span>
@@ -224,7 +166,6 @@
 <span class="sd">                    }</span>
 <span class="sd">                ]</span>
 <span class="sd">            }</span>
-<span class="sd">        ```</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Bing Search API endpoint</span>
@@ -234,7 +175,7 @@
     <span class="k">if</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Ocp-Apim-Subscription-Key&quot;</span><span class="p">:</span> <span class="n">bing_api_key</span><span class="p">}</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Ocp-Apim-Subscription-Key&quot;</span><span class="p">:</span> <span class="n">api_key</span><span class="p">}</span>
 
     <span class="n">search_results</span> <span class="o">=</span> <span class="n">requests_get</span><span class="p">(</span>
         <span class="n">bing_search_url</span><span class="p">,</span>
@@ -261,31 +202,33 @@
             <span class="p">}</span>
             <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span>
         <span class="p">],</span>
-    <span class="p">)</span>
+    <span class="p">)</span></div>
 
 
-<span class="k">def</span> <span class="nf">_search_google</span><span class="p">(</span>
+
+<div class="viewcode-block" id="google_search">
+<a class="viewcode-back" href="../../../../agentscope.service.web_search.html#agentscope.service.web_search.search.google_search">[docs]</a>
+<span class="k">def</span> <span class="nf">google_search</span><span class="p">(</span>
     <span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">google_api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">google_cse_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">cse_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">num_results</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
-    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Performs a query search using the Google Custom Search JSON API and</span>
-<span class="sd">    returns searching results.</span>
+<span class="sd">    Search question in Google Search API and return the searching results</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        question (`str`):</span>
 <span class="sd">            The search query string.</span>
-<span class="sd">        google_api_key (`str`):</span>
+<span class="sd">        api_key (`str`):</span>
 <span class="sd">            The API key provided for authenticating with the Google Custom</span>
 <span class="sd">            Search JSON API.</span>
-<span class="sd">        google_cse_id (`str`):</span>
+<span class="sd">        cse_id (`str`):</span>
 <span class="sd">            The unique identifier of a programmable search engine to use.</span>
 <span class="sd">        num_results (`int`, defaults to `10`):</span>
 <span class="sd">            The number of search results to return.</span>
-<span class="sd">        **kwargs (`Optional[dict]`):</span>
+<span class="sd">        **kwargs (`Any`):</span>
 <span class="sd">            Additional keyword arguments to be included in the search query.</span>
 <span class="sd">            For more details, please refer to</span>
 <span class="sd">            https://developers.google.com/custom-search/v1/reference/rest/v1/cse/list</span>
@@ -318,8 +261,8 @@
     <span class="c1"># Define the query parameters</span>
     <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;q&quot;</span><span class="p">:</span> <span class="n">question</span><span class="p">,</span>
-        <span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">google_api_key</span><span class="p">,</span>
-        <span class="s2">&quot;cx&quot;</span><span class="p">:</span> <span class="n">google_cse_id</span><span class="p">,</span>
+        <span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">api_key</span><span class="p">,</span>
+        <span class="s2">&quot;cx&quot;</span><span class="p">:</span> <span class="n">cse_id</span><span class="p">,</span>
         <span class="s2">&quot;num&quot;</span><span class="p">:</span> <span class="n">num_results</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="k">if</span> <span class="n">kwargs</span><span class="p">:</span>
@@ -344,7 +287,8 @@
             <span class="p">}</span>
             <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span>
         <span class="p">],</span>
-    <span class="p">)</span>
+    <span class="p">)</span></div>
+
 </pre></div>
 
            </div>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>agentscope.service.code.exec_python &mdash; AgentScope  documentation</title>
+  <title>agentscope.service.execute_code.exec_python &mdash; AgentScope  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
 
@@ -77,7 +77,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
-      <li class="breadcrumb-item active">agentscope.service.code.exec_python</li>
+      <li class="breadcrumb-item active">agentscope.service.execute_code.exec_python</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -86,9 +86,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for agentscope.service.code.exec_python</h1><div class="highlight"><pre>
+  <h1>Source code for agentscope.service.execute_code.exec_python</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot; Execute python code functions. &quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;Service to execute python code.&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">builtins</span>
 <span class="kn">import</span> <span class="nn">contextlib</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
@@ -123,30 +123,29 @@
 
 
 <div class="viewcode-block" id="execute_python_code">
-<a class="viewcode-back" href="../../../../agentscope.service.code.html#agentscope.service.code.exec_python.execute_python_code">[docs]</a>
+<a class="viewcode-back" href="../../../../agentscope.service.execute_code.html#agentscope.service.execute_code.exec_python.execute_python_code">[docs]</a>
 <span class="k">def</span> <span class="nf">execute_python_code</span><span class="p">(</span>
-    <span class="n">code</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span>
     <span class="n">use_docker</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">maximum_memory_bytes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Execute a string of Python code, optionally inside a Docker container.</span>
+<span class="sd">    Execute a piece of python code.</span>
 
 <span class="sd">    This function can run Python code provided in string format. It has the</span>
 <span class="sd">    option to execute the code within a Docker container to provide an</span>
 <span class="sd">    additional layer of security, especially important when running</span>
 <span class="sd">    untrusted code.</span>
 
-<span class="sd">    WARNING: If `use_docker` is set to `False`, the code will be run</span>
+<span class="sd">    WARNING: If `use_docker` is set to `False`, the `code` will be run</span>
 <span class="sd">    directly in the host system&#39;s environment. This poses a potential</span>
 <span class="sd">    security risk if the code is untrusted. Only disable Docker if you are</span>
 <span class="sd">    confident in the safety of the code being executed.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        code (`str`, optional):</span>
-<span class="sd">            The Python code to execute, provided as a string. Default is an</span>
-<span class="sd">            empty string.</span>
+<span class="sd">            The Python code to be executed.</span>
 
 <span class="sd">        timeout (`Optional[Union[int, float]]`, defaults to `300`):</span>
 <span class="sd">            The maximum time (in seconds) allowed for the code to run. If</span>
@@ -416,7 +415,7 @@
 
 
 <div class="viewcode-block" id="sys_python_guard">
-<a class="viewcode-back" href="../../../../agentscope.service.code.html#agentscope.service.code.exec_python.sys_python_guard">[docs]</a>
+<a class="viewcode-back" href="../../../../agentscope.service.execute_code.html#agentscope.service.execute_code.exec_python.sys_python_guard">[docs]</a>
 <span class="k">def</span> <span class="nf">sys_python_guard</span><span class="p">(</span><span class="n">maximum_memory_bytes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This disables various destructive functions and prevents the generated code</span>
