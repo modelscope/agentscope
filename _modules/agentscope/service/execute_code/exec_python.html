@@ -97,7 +97,6 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">platform</span>
 <span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">resource</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">sys</span>
@@ -112,6 +111,10 @@
     <span class="kn">from</span> <span class="nn">docker.errors</span> <span class="kn">import</span> <span class="n">APIError</span><span class="p">,</span> <span class="n">ImageNotFound</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">docker</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">resource</span>
+<span class="k">except</span> <span class="p">(</span><span class="ne">ModuleNotFoundError</span><span class="p">,</span> <span class="ne">ImportError</span><span class="p">):</span>
+    <span class="n">resource</span> <span class="o">=</span> <span class="kc">None</span>
 
 <span class="kn">from</span> <span class="nn">agentscope.utils.common</span> <span class="kn">import</span> <span class="n">create_tempdir</span><span class="p">,</span> <span class="n">timer</span>
 <span class="kn">from</span> <span class="nn">agentscope.service.service_status</span> <span class="kn">import</span> <span class="n">ServiceExecStatus</span>
@@ -426,20 +429,21 @@
 <span class="sd">    https://github.com/openai/human-eval/blob/master/human_eval/execution.py</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">if</span> <span class="n">maximum_memory_bytes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">resource</span><span class="o">.</span><span class="n">setrlimit</span><span class="p">(</span>
-            <span class="n">resource</span><span class="o">.</span><span class="n">RLIMIT_AS</span><span class="p">,</span>
-            <span class="p">(</span><span class="n">maximum_memory_bytes</span><span class="p">,</span> <span class="n">maximum_memory_bytes</span><span class="p">),</span>
-        <span class="p">)</span>
-        <span class="n">resource</span><span class="o">.</span><span class="n">setrlimit</span><span class="p">(</span>
-            <span class="n">resource</span><span class="o">.</span><span class="n">RLIMIT_DATA</span><span class="p">,</span>
-            <span class="p">(</span><span class="n">maximum_memory_bytes</span><span class="p">,</span> <span class="n">maximum_memory_bytes</span><span class="p">),</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">platform</span><span class="o">.</span><span class="n">uname</span><span class="p">()</span><span class="o">.</span><span class="n">system</span> <span class="o">==</span> <span class="s2">&quot;Darwin&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">resource</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">maximum_memory_bytes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">resource</span><span class="o">.</span><span class="n">setrlimit</span><span class="p">(</span>
-                <span class="n">resource</span><span class="o">.</span><span class="n">RLIMIT_STACK</span><span class="p">,</span>
+                <span class="n">resource</span><span class="o">.</span><span class="n">RLIMIT_AS</span><span class="p">,</span>
                 <span class="p">(</span><span class="n">maximum_memory_bytes</span><span class="p">,</span> <span class="n">maximum_memory_bytes</span><span class="p">),</span>
             <span class="p">)</span>
+            <span class="n">resource</span><span class="o">.</span><span class="n">setrlimit</span><span class="p">(</span>
+                <span class="n">resource</span><span class="o">.</span><span class="n">RLIMIT_DATA</span><span class="p">,</span>
+                <span class="p">(</span><span class="n">maximum_memory_bytes</span><span class="p">,</span> <span class="n">maximum_memory_bytes</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">platform</span><span class="o">.</span><span class="n">uname</span><span class="p">()</span><span class="o">.</span><span class="n">system</span> <span class="o">==</span> <span class="s2">&quot;Darwin&quot;</span><span class="p">:</span>
+                <span class="n">resource</span><span class="o">.</span><span class="n">setrlimit</span><span class="p">(</span>
+                    <span class="n">resource</span><span class="o">.</span><span class="n">RLIMIT_STACK</span><span class="p">,</span>
+                    <span class="p">(</span><span class="n">maximum_memory_bytes</span><span class="p">,</span> <span class="n">maximum_memory_bytes</span><span class="p">),</span>
+                <span class="p">)</span>
 
     <span class="c1"># Disable builtins functions</span>
     <span class="n">builtins_funcs_to_disable</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;exit&quot;</span><span class="p">,</span> <span class="s2">&quot;quit&quot;</span><span class="p">]</span>
