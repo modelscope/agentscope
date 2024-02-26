@@ -409,7 +409,7 @@ def update_publish_button(uid):
         publish_btn_code = """
         <div class="lg secondary  svelte-cmf5ev">
             <div class="disabled-gradio-btn">
-            <a>🎮发布游戏</a>
+            <a class="full-width-anchor">🎮发布游戏</a>
             </div>
         </div>
         """
@@ -426,7 +426,7 @@ def update_publish_button(uid):
     publish_btn_code = f"""
             <div class="lg secondary  svelte-cmf5ev">
                 <div class="gradio-btn">
-                <a href="{url}" target="_blank">🎮发布游戏</a>
+                <a href="{url}" target="_blank" class="full-width-anchor">🎮发布游戏</a>
                 </div>
             </div>
             """
