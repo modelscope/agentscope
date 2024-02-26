@@ -20,7 +20,7 @@ def query_sqlite(
     maxcount_results: Optional[int] = None,
     **kwargs: Any,
 ) -> ServiceResponse:
-    """Executes a query on a sqlite database and returns the results.
+    """Executes query within sqlite database.
 
     Args:
         database (`str`):
