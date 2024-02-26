@@ -79,26 +79,3 @@ def extract_scenario_and_participants(content: str) -> dict:
     result["Participants"] = participants_dict
 
     return result
-
-
-if __name__ == "__main__":
-    text = """
-    #scenario#: Astronomy club meeting
-    #participants#:
-    * Club Leader: Act as the club leader who is knowledgeable about\
-     astronomy and optics. You are leading a discussion about the \
-     capabilities of telescopes versus the human eye. Please provide \
-     accurate information and guide the discussion.
-    * Curious Member: Act as a curious club member who is interested \
-    in astronomy but may not know all the technical details. You are \
-    eager to learn and ask questions.
-    * Experienced Astronomer: Act as an experienced astronomer who has \
-    practical experience using telescopes for stargazing. You can \
-    provide real-world examples and insights into the topic.
-
-    """
-    data = extract_scenario_and_participants(text)
-    print(data)
-
-
-# agent_builder_sys_prompt = load_txt('agent_builder_instruct.txt')

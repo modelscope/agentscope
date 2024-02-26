@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """A simple example for auto discussion: the agent builder automatically\
  set up the agents participating the discussion ."""
-from auto_diss_prompt import load_txt, extract_scenario_and_participants
+from utils import load_txt, extract_scenario_and_participants
 import agentscope
 from agentscope.agents import DialogAgent
 from agentscope.pipelines.functional import sequentialpipeline
@@ -42,7 +42,7 @@ discussion_agent = DialogAgent(
 )
 
 
-max_round = 1
+max_round = 2
 query = "Say the pupil of your eye has a diameter of 5 mm and you have a \
 telescope with an aperture of 50 cm. How much more light can the \
 telescope gather than your eye?"
