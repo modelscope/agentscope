@@ -47,7 +47,8 @@ def invited_group_chat(
         return None
     invited_names = [c.name for c in invited_customer]
     # send_chat_msg(f"{SYS_MSG_PREFIX}群聊开始", uid=uid)
-    send_chat_msg(f"现在有{'、'.join(invited_names)}在店里了...", uid=uid)
+    if len(invited_names) > 1:
+        send_chat_msg(f"现在有{'、'.join(invited_names)}在店里了...", uid=uid)
     announcement = {"role": "user", "content": "今天老板邀请大家一起来谈事情。"}
     with msghub(invited_customer + [player], announcement=announcement):
         for i in range(10):
@@ -566,10 +567,13 @@ def riddle_success_detect(uid, player, checkpoint):
                     checkpoint.stage_per_night = min(tmp_stage)
                 else:
                     checkpoint.stage_per_night = StagePerNight.CASUAL_CHAT_FOR_MEAL
+            return True
         else:
             send_chat_msg(f"{SYS_MSG_PREFIX}玩家的最终答案：“{riddle_input}”，"
                           f"解谜失败，请继续加油！\n\n",
                           uid=uid)
+
+        return False
 
 
 def main(args) -> None:
@@ -645,7 +649,11 @@ def main(args) -> None:
 
     uid = player.uid
     while True:
-        riddle_success_detect(uid=uid, player=player, checkpoint=checkpoint)
+        done = riddle_success_detect(uid=uid, player=player, checkpoint=checkpoint)
+        if done:
+            continue
+        logger.debug(f"active plots: {checkpoint.cur_plots}")
+        logger.debug(f"current stage: {checkpoint.stage_per_night}")
         # daily loop
         daily_plot_stages = []
         if len(checkpoint.cur_plots) == 1:

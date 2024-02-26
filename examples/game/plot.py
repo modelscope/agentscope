@@ -331,6 +331,7 @@ def check_active_plot(
     return
     active_plots: list of active plots
     """
+    logger.debug(f"curr_done:{curr_done} prev_active: {prev_active}")
     if curr_done is None:
         active_plots = []
         for id, plot in all_plots.items():
