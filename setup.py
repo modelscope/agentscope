@@ -69,7 +69,7 @@ setuptools.setup(
     version=VERSION,
     author="SysML team of Alibaba Tongyi Lab ",
     author_email="gaodawei.gdw@alibaba-inc.com",
-    description="An easy-to-use multi-agent platforms.",
+    description="AgentScope: A Flexible yet Robust Multi-Agent Platform.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url=URL,
