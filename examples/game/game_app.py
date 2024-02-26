@@ -11,6 +11,7 @@ from typing import List
 from multiprocessing import Event
 import traceback
 from urllib import parse
+from tempfile import TemporaryDirectory
 import agentscope
 import shutil
 from config_utils import load_configs
@@ -31,7 +32,7 @@ from utils import (
     send_riddle_input,
     get_quest_msg,
 )
-from oss_utils import upload_config_to_oss
+from oss_utils import upload_config_to_oss, replace_model_in_yaml
 from create_config_tab import (
     create_config_tab,
     create_config_accord,
@@ -397,13 +398,30 @@ def build_game_zip(uid):
     uid = check_uuid(uid)
 
     directory_path = f'/tmp/as_game/config/{uid}'
-    file_path = f"/tmp/as_game/config/{uid}.zip"
 
-    if not os.path.exists(directory_path):
-        os.makedirs(directory_path)
+    # 创建临时目录
+    with TemporaryDirectory() as temp_directory:
+        # 遍历目录中的所有.yaml文件
+        for root, dirs, files in os.walk(directory_path):
+            for file_name in files:
+                if file_name.endswith('.yaml'):
+                    original_file_path = os.path.join(root, file_name)
+                    # 在临时目录中创建修改后的文件
+                    replace_model_in_yaml(original_file_path, temp_directory)
 
-    shutil.make_archive(file_path[:-4], 'zip', directory_path)
-    gr.Info("🎉打包成功！")
+        # 拷贝非YAML文件到临时目录
+        for root, dirs, files in os.walk(directory_path):
+            for file_name in files:
+                if not file_name.endswith('.yaml'):
+                    original_file_path = os.path.join(root, file_name)
+                    temp_file_path = os.path.join(temp_directory, file_name)
+                    shutil.copy2(original_file_path, temp_file_path)
+
+        # 创建zip文件
+        shutil.make_archive(f'/tmp/as_game/config/{uid}', 'zip',
+                            temp_directory)
+
+    print("🎉打包成功！")
 
 
 def update_publish_button(uid):

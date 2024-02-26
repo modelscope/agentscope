@@ -1,5 +1,6 @@
 import os
 import oss2
+import yaml
 
 
 def upload_to_oss(bucket, local_file_path, oss_file_path):
@@ -33,6 +34,28 @@ def get_oss_config():
     bucket_name = os.getenv('OSS_BUCKET_NAME')
 
     return access_key_id, access_key_secret, endpoint, bucket_name
+
+
+def replace_model_in_yaml(original_file_path, temp_directory,
+                          old_str="post_api", new_str="tongyi_model"):
+    with open(original_file_path, 'r', encoding='utf-8') as file:
+        data = yaml.safe_load(file)
+
+    # 修改数据
+    if isinstance(data, list):
+        for item in data:
+            if 'model' in item and item['model'] == old_str:
+                item['model'] = new_str
+    elif isinstance(data, dict):
+        if 'model' in data and data['model'] == old_str:
+            data['model'] = new_str
+
+    # 写入临时文件
+    temp_file_path = os.path.join(temp_directory,
+                                  os.path.basename(original_file_path))
+    with open(temp_file_path, 'w', encoding='utf-8') as temp_file:
+        yaml.safe_dump(data, temp_file, default_flow_style=False,
+                       allow_unicode=True)
 
 
 if __name__ == '__main__':
