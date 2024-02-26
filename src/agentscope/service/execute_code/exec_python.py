@@ -336,7 +336,7 @@ def sys_python_guard(maximum_memory_bytes: Optional[int] = None) -> None:
     https://github.com/openai/human-eval/blob/master/human_eval/execution.py
     """
 
-    if resource:
+    if resource is not None:
         if maximum_memory_bytes is not None:
             resource.setrlimit(
                 resource.RLIMIT_AS,
