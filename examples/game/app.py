@@ -38,4 +38,4 @@ if config_url:
 
 os.system("rm -rf /tmp/as_game")
 # 运行游戏应用程序
-os.system(f"python game_app.py -tod --name {game_name}")
+os.system(f"python game_app.py -toc --name {game_name}")

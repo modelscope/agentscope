@@ -426,8 +426,8 @@ def update_publish_button(uid):
     params = {'CONFIG_URL': file_url}
     params_str = json.dumps(params)
     # TODO: decide the final name
-    org = "agentscope_private"
-    fork_repo = "game"
+    org = "agentscope"
+    fork_repo = "game_qwen"
     url = f"https://www.modelscope.cn/studios/fork?target=" \
           f"{org}/{fork_repo}&overwriteEnv={parse.quote(params_str)}"
     publish_btn_code = f"""
