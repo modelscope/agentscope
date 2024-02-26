@@ -223,7 +223,7 @@ def create_config_accord(ver, uuid):
     )
 
 
-def create_config_tab(config_tab, uuid):
+def create_config_tab(config_tab, ver, uuid):
     tabs = gr.Tabs(visible=True)
     with tabs:
         plot_tab = gr.Tab("剧情配置", id=0)
@@ -232,7 +232,7 @@ def create_config_tab(config_tab, uuid):
     with plot_tab:
         plot_selector, on_plot_tab_select = config_plot_tab(plot_tab, uuid=uuid)
     with role_tab:
-        role_selector, on_role_tab_select = config_role_tab(role_tab, uuid=uuid)
+        role_selector, on_role_tab_select = config_role_tab(role_tab, ver, uuid=uuid)
     with builder_tab:
         config_builder_tab(builder_tab, uuid=uuid)
 
@@ -695,7 +695,7 @@ def config_plot_tab(plot_tab, uuid):
     return plot_selector, on_plot_tab_select
 
 
-def config_role_tab(role_tab, uuid):
+def config_role_tab(role_tab, ver, uuid):
     relationship_list = Familiarity.to_list()
     with gr.Row():
         role_selector = gr.Dropdown(label="选择角色查看或者编辑")
@@ -721,13 +721,13 @@ def config_role_tab(role_tab, uuid):
             )
             gen_avatar_button = gr.Button(value="生成头像")
         with gr.Column(scale=2):
-            with gr.Row():
+            with gr.Column():
                 role_name = gr.Textbox(
                     label="角色名称",
                     placeholder="请输入角色名称",
                 )
-                relationship = gr.Dropdown(label="熟悉程度", choices=relationship_list)
-            with gr.Row():
+                relationship = gr.Dropdown(label="初始熟悉程度", choices=relationship_list)
+            with gr.Row(visible=(ver in [RuntimeVer.Root])):
                 use_memory = gr.Checkbox(label="记忆功能", info="是否开启角色记忆功能")
                 model_name = gr.Textbox(label="模型设置")
 

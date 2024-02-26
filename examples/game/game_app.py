@@ -135,7 +135,8 @@ def format_publish_readme_html():
 
             <div class="step">
                 <h5 class="step-header">第二步：配置打包</h2>
-                <p>点击下方📦配置打包按钮，进行配置打包上传</p>
+                <p>点击下方📦配置打包按钮，进行配置打包上传。</p>
+                <p style="background-color: rgba(255, 255, 0, 0.1);">重要提示：请注意，进行此操作意味着您同意将游戏内容共享到公共平台。一旦打包并且游戏配置上传完成，您的游戏可能会被他人访问和下载。</p>
             </div>
 
             <div class="step">
@@ -578,7 +579,7 @@ if __name__ == "__main__":
 
         if ver in [RuntimeVer.ToD, RuntimeVer.Root]:
             with config_tab:
-                create_config_tab(config_tab, uuid)
+                create_config_tab(config_tab, ver, uuid)
             with dev_tab:
                 # TODO: Zitao, write README here.
                 dev_container = gr.HTML()
