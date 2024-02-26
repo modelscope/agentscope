@@ -121,7 +121,9 @@ class ServiceFactory:
             ),
         )
 
-        args_required = list(set(args_agent) - set(args_defaults.keys()))
+        args_required = sorted(
+            list(set(args_agent) - set(args_defaults.keys())),
+        )
 
         # Prepare types of the arguments, remove the return type
         args_types = {

@@ -126,7 +126,7 @@ class ServiceFactoryTest(unittest.TestCase):
                             "b": {},
                             "a": {"type": "string"},
                         },
-                        "required": ["b", "a"],
+                        "required": ["a", "b"],
                     },
                 },
             },
