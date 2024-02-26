@@ -5,7 +5,7 @@ Service package
 .. toctree::
    :maxdepth: 4
 
-   agentscope.service.code
+   agentscope.service.execute_code
    agentscope.service.file
    agentscope.service.retrieval
    agentscope.service.sql_query
