@@ -8,11 +8,6 @@ import multiprocessing
 import os
 import platform
 import re
-
-try:
-    import resource
-except (ModuleNotFoundError, ImportError):
-    resource = None
 import shutil
 import subprocess
 import sys
@@ -27,6 +22,10 @@ try:
     from docker.errors import APIError, ImageNotFound
 except ImportError:
     docker = None
+try:
+    import resource
+except (ModuleNotFoundError, ImportError):
+    resource = None
 
 from agentscope.utils.common import create_tempdir, timer
 from agentscope.service.service_status import ServiceExecStatus
