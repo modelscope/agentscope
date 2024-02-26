@@ -8,7 +8,6 @@ import multiprocessing
 import os
 import platform
 import re
-import resource
 import shutil
 import subprocess
 import sys
@@ -23,6 +22,10 @@ try:
     from docker.errors import APIError, ImageNotFound
 except ImportError:
     docker = None
+try:
+    import resource
+except (ModuleNotFoundError, ImportError):
+    resource = None
 
 from agentscope.utils.common import create_tempdir, timer
 from agentscope.service.service_status import ServiceExecStatus
@@ -332,20 +335,21 @@ def sys_python_guard(maximum_memory_bytes: Optional[int] = None) -> None:
     https://github.com/openai/human-eval/blob/master/human_eval/execution.py
     """
 
-    if maximum_memory_bytes is not None:
-        resource.setrlimit(
-            resource.RLIMIT_AS,
-            (maximum_memory_bytes, maximum_memory_bytes),
-        )
-        resource.setrlimit(
-            resource.RLIMIT_DATA,
-            (maximum_memory_bytes, maximum_memory_bytes),
-        )
-        if not platform.uname().system == "Darwin":
+    if resource is not None:
+        if maximum_memory_bytes is not None:
             resource.setrlimit(
-                resource.RLIMIT_STACK,
+                resource.RLIMIT_AS,
                 (maximum_memory_bytes, maximum_memory_bytes),
             )
+            resource.setrlimit(
+                resource.RLIMIT_DATA,
+                (maximum_memory_bytes, maximum_memory_bytes),
+            )
+            if not platform.uname().system == "Darwin":
+                resource.setrlimit(
+                    resource.RLIMIT_STACK,
+                    (maximum_memory_bytes, maximum_memory_bytes),
+                )
 
     # Disable builtins functions
     builtins_funcs_to_disable = ["exit", "quit"]
