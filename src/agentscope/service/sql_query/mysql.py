@@ -24,7 +24,8 @@ def query_mysql(
     maxcount_results: Optional[int] = None,
     **kwargs: Any,
 ) -> ServiceResponse:
-    """Executes a query on a MySQL database and returns the results.
+    """
+    Execute query within MySQL database.
 
     Args:
         database (`str`):

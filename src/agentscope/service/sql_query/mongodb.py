@@ -20,7 +20,7 @@ def query_mongodb(
     maxcount_results: Optional[int] = None,
     **kwargs: Any,
 ) -> ServiceResponse:
-    """Searches the MongoDB database for documents matching the query.
+    """Execute query within MongoDB database.
 
     Args:
         database (`str`):
@@ -28,7 +28,7 @@ def query_mongodb(
         collection (`str`):
             The name of the collection to use in mongodb.
         query (`dict`):
-            The mongodb query to execute. Note that the query is a dictionary.
+            The mongodb query to execute.
         host (`str`):
             The hostname or IP address of the MongoDB server.
         port (`int`):
