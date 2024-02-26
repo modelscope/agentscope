@@ -20,7 +20,7 @@ Welcome to join our community on
 ----
 
 ## News
- 
+
 - ![new](https://img.alicdn.com/imgextra/i4/O1CN01kUiDtl1HVxN6G56vN_!!6000000000764-2-tps-43-19.png) [2024-02-27] We release **AgentScope v0.0.1** now, which is also available in [PyPI](https://pypi.org/project/agentscope/)!
 - ![new](https://img.alicdn.com/imgextra/i4/O1CN01kUiDtl1HVxN6G56vN_!!6000000000764-2-tps-43-19.png) [2024-02-14] We release our paper "AgentScope: A Flexible yet Robust Multi-Agent Platform" in [arXiv](https://arxiv.org/abs/2402.14034) now!
 
