@@ -16,6 +16,14 @@ Welcome to join our community on
 |---------|----------|--------|
 | <img src="https://gw.alicdn.com/imgextra/i1/O1CN01hhD1mu1Dd3BWVUvxN_!!6000000000238-2-tps-400-400.png" width="100" height="100"> | <img src="https://img.alicdn.com/imgextra/i2/O1CN01tuJ5971OmAqNg9cOw_!!6000000001747-0-tps-444-460.jpg" width="100" height="100"> | <img src="https://img.alicdn.com/imgextra/i3/O1CN01UyfWfx1CYBM3WqlBy_!!6000000000092-2-tps-400-400.png" width="100" height="100"> |
 
+
+----
+
+## News
+
+- ![new](https://img.alicdn.com/imgextra/i4/O1CN01kUiDtl1HVxN6G56vN_!!6000000000764-2-tps-43-19.png) [2024-02-27] We release **AgentScope v0.0.1** now, which is also available in [PyPI](https://pypi.org/project/agentscope/)!
+- ![new](https://img.alicdn.com/imgextra/i4/O1CN01kUiDtl1HVxN6G56vN_!!6000000000764-2-tps-43-19.png) [2024-02-14] We release our paper "AgentScope: A Flexible yet Robust Multi-Agent Platform" in [arXiv](https://arxiv.org/abs/2402.14034) now!
+
 Table of Contents
 =================
 
