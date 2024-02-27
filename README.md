@@ -1,3 +1,5 @@
+English | [**中文**](README_ZH.md)
+
 # AgentScope
 
 AgentScope is an innovative multi-agent platform designed to empower developers to build multi-agent applications with ease, reliability, and high performance. It features three high-level capabilities:
