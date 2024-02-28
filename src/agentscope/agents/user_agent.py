@@ -85,6 +85,8 @@ class UserAgent(AgentBase):
             **kwargs,  # type: ignore[arg-type]
         )
 
+        self.speak(msg)
+
         # Add to memory
         self.memory.add(msg)
 

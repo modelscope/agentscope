@@ -24,7 +24,7 @@ rpc_requires = [
     "expiringdict",
 ]
 
-service_requires = ["docker", "pymongo", "pymysql"]
+service_requires = ["docstring_parser", "docker", "pymongo", "pymysql"]
 
 doc_requires = [
     "sphinx",
@@ -44,6 +44,9 @@ minimal_requires = [
     "requests",
     "openai>=1.3.0",
     "numpy",
+    "Flask==3.0.0",
+    "Flask-Cors==4.0.0",
+    "Flask-SocketIO==5.3.6",
 ]
 
 distribute_requires = minimal_requires + rpc_requires
@@ -66,11 +69,11 @@ setuptools.setup(
     version=VERSION,
     author="SysML team of Alibaba Tongyi Lab ",
     author_email="gaodawei.gdw@alibaba-inc.com",
-    description="An easy-to-use multi-agent platforms.",
+    description="AgentScope: A Flexible yet Robust Multi-Agent Platform.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url=URL,
-    download_url=f"{URL}/archive/{VERSION}.tar.gz",
+    download_url=f"{URL}/archive/v{VERSION}.tar.gz",
     keywords=["deep-learning", "multi agents", "agents"],
     package_dir={"": "src"},
     packages=setuptools.find_packages("src"),

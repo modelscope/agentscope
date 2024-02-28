@@ -64,45 +64,31 @@ logger.error("The agent encountered an unexpected error while processing a reque
 
 ## Integrating logging with WebUI
 
-To visualize these logs, we provide a customized gradio component in `src/agentscope/web_ui`.
+To visualize these logs and running details, AgentScope provides a simple
+web interface.
 
 ### Quick Running
 
-For convince, we provide the pre-built app in a wheel file, you can run the WebUI in the following command:
+You can run the WebUI in the following python code:
 
-```shell
-pip install gradio_groupchat-0.0.1-py3-none-any.whl
-python app.py
+```python
+import agentscope
+
+agentscope.web.init(
+    path_save="YOUR_SAVE_PATH"
+)
 ```
 
-After the init and entering the UI port printed by `app.py`, e.g., `http://127.0.0.1:7860/`, you can choose `run.log.demo` in the top-middle `FileSelector` window (it's a demo log file provided by us). Then, the dialog and system log should be shown correctly in the bottom windows.
+By this way, you can see all the running instances and projects in `http://127.0.0.1:5000` as follows:
 
-![webui](https://img.alicdn.com/imgextra/i2/O1CN01hSaFue1EdL2yCEznc_!!6000000000374-2-tps-3066-1808.png)
+![webui](https://img.alicdn.com/imgextra/i3/O1CN01kpHFkn1HpeYEkn60I_!!6000000000807-0-tps-3104-1849.jpg)
 
-### For Other Customization
+By clicking a running instance, we can observe more details.
 
-To customize the backend, or the frontend of the provided WebUI, you can
+![The running details](https://img.alicdn.com/imgextra/i2/O1CN01AZtsf31MIHm4FmjjO_!!6000000001411-0-tps-3104-1849.jpg)
 
-```shell
-# generate the template codes
-# for network connectivity problem, try to run
-# `npm config rm proxy && npm config rm https-proxy` first
-gradio cc create GroupChat --template Chatbot
-# replace the generated app.py into our built-in app.py
-cp -f app.py groupchat/demo
-# debug and develop your web_ui
-cd groupchat
-# edit the app.py, or other parts you want, reference link:
-# https://www.gradio.app/guides/custom-components-in-five-minutes
-gradio cc dev
-```
-
-If you want to release the modification, you can do
-
-```shell
-gradio cc build
-pip install <path-to-whl>
-python app.py
-```
+### Note
+The WebUI is still under development. We will provide more features and
+better user experience in the future.
 
 [[Return to the top]](#logging-and-webui)

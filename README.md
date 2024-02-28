@@ -8,11 +8,21 @@ AgentScope is an innovative multi-agent platform designed to empower developers 
 
 - **Actor-Based Distribution**: Enabling developers to build distributed multi-agent applications in a centralized programming manner for streamlined development.
 
+If you find our work helpful, please kindly cite [our paper](#references).
+
 Welcome to join our community on
 
 | [Discord](https://discord.gg/eYMpfnkG8h) | DingTalk | WeChat |
 |---------|----------|--------|
 | <img src="https://gw.alicdn.com/imgextra/i1/O1CN01hhD1mu1Dd3BWVUvxN_!!6000000000238-2-tps-400-400.png" width="100" height="100"> | <img src="https://img.alicdn.com/imgextra/i2/O1CN01tuJ5971OmAqNg9cOw_!!6000000001747-0-tps-444-460.jpg" width="100" height="100"> | <img src="https://img.alicdn.com/imgextra/i3/O1CN01UyfWfx1CYBM3WqlBy_!!6000000000092-2-tps-400-400.png" width="100" height="100"> |
+
+
+----
+
+## News
+
+- ![new](https://img.alicdn.com/imgextra/i4/O1CN01kUiDtl1HVxN6G56vN_!!6000000000764-2-tps-43-19.png) [2024-02-27] We release **AgentScope v0.0.1** now, which is also available in [PyPI](https://pypi.org/project/agentscope/)!
+- ![new](https://img.alicdn.com/imgextra/i4/O1CN01kUiDtl1HVxN6G56vN_!!6000000000764-2-tps-43-19.png) [2024-02-14] We release our paper "AgentScope: A Flexible yet Robust Multi-Agent Platform" in [arXiv](https://arxiv.org/abs/2402.14034) now!
 
 Table of Contents
 =================
@@ -51,7 +61,7 @@ To install AgentScope, you need to have Python 3.9 or higher installed.
 - Run the following commands to install AgentScope in editable mode.
 
 ```bash
-# Pull the source code from github
+# Pull the source code from GitHub
 git clone https://github.com/modelscope/agentscope.git
 
 # Install the package in editable mode
@@ -97,12 +107,12 @@ AgentScope supports the following model API services:
   - [HuggingFace](https://huggingface.co/docs/api-inference/index) and [ModelScope](https://www.modelscope.cn/docs/%E9%AD%94%E6%90%ADv1.5%E7%89%88%E6%9C%AC%20Release%20Note%20(20230428)) inference APIs
   - Customized model APIs
 
-|                      | Type Argument      | Support APIs                                                  |
-|----------------------|--------------------|---------------------------------------------------------------|
-| OpenAI Chat API      | `openai`           | Standard OpenAI Chat API, FastChat and vllm                   |
-| OpenAI DALL-E API    | `openai_dall_e`    | Standard DALL-E API                                           |
-| OpenAI Embedding API | `openai_embedding` | OpenAI embedding API                                          |
-| Post API             | `post_api`         | Huggingface/ModelScope inference API, and customized post API |
+|                      | Model Type Argument | Support APIs                                                   |
+|----------------------|---------------------|----------------------------------------------------------------|
+| OpenAI Chat API      | `openai`            | Standard OpenAI Chat API, FastChat and vllm                    |
+| OpenAI DALL-E API    | `openai_dall_e`     | Standard DALL-E API                                            |
+| OpenAI Embedding API | `openai_embedding`  | OpenAI embedding API                                           |
+| Post API             | `post_api`          | Huggingface/ModelScope inference API, and customized post API  |
 
 ##### OpenAI API Config
 
@@ -110,9 +120,9 @@ For OpenAI APIs, you need to prepare a dict of model config with the following f
 
 ```
 {
-    "type": "openai" | "openai_dall_e" | "openai_embedding",
-    "name": "{your_config_name}",               # The name used to identify your config
-    "model_name": "{model_name, e.g. gpt-4}",   # The used model in openai API
+    "config_name": "{config name}",             # The name to identify the config
+    "model_type": "openai" | "openai_dall_e" | "openai_embedding",
+    "model_name": "{model name, e.g. gpt-4}",   # The model in openai API
 
     # Optional
     "api_key": "xxx",                           # The API key for OpenAI API. If not set, env
@@ -128,8 +138,8 @@ For post requests APIs, the config contains the following fields.
 
 ```
 {
-    "type": "post_api",
-    "name": "{your_config_name}",     # The name used to identify config
+    "config_name": "{config name}",   # The name to identify the config
+    "model_type": "post_api",
     "api_url": "https://xxx",         # The target url
     "headers": {                      # Required headers
       ...
@@ -152,7 +162,7 @@ import agentscope
 agentscope.init(model_configs="./model_configs.json")
 
 # Create a dialog agent and a user agent
-dialog_agent = DialogAgent(name="assistant", model="gpt-4")
+dialog_agent = DialogAgent(name="assistant", model_config_name="your_config_name")
 user_agent = UserAgent()
 ```
 
@@ -253,8 +263,8 @@ from agentscope.agents import AgentBase
 
 class MyAgent(AgentBase):
     def reply(self, x):
-        # Do something here, e.g. calling your model
-        response = self.model(x)
+        # Do something here, e.g. calling your model and get the raw field as your agent's response
+        response = self.model(x).raw
         return response
 ```
 
@@ -312,4 +322,27 @@ Please refer to our [Contribution Guide](https://modelscope.github.io/agentscope
 
 ## References
 
-Our paper is coming soon!
+If you find our work helpful for your research or application, please cite [our paper](https://arxiv.org/abs/2402.14034):
+
+```
+@article{agentscope,
+  author  = {Dawei Gao and
+             Zitao Li and
+             Weirui Kuang and
+             Xuchen Pan and
+             Daoyuan Chen and
+             Zhijian Ma and
+             Bingchen Qian and
+             Liuyi Yao and
+             Lin Zhu and
+             Chen Cheng and
+             Hongzhu Shi and
+             Yaliang Li and
+             Bolin Ding and
+             Jingren Zhou},
+  title   = {AgentScope: A Flexible yet Robust Multi-Agent Platform},
+  journal = {CoRR},
+  volume  = {abs/2402.14034},
+  year    = {2024},
+}
+```

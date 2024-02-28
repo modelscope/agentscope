@@ -2,7 +2,7 @@
 
 # Customizing Your Own Agent
 
-This tutorial helps you to understand the `Agent` in mode depth and navigate through the process of crafting your own custom agent with AgentScope. We start by introducing the fundamental abstraction called `AgentBase`, which serves as the base class to maintain the general behaviors of all agents. Then, we will go through the *AgentPool*, an ensemble of pre-built, specialized agents, each designed with a specific purpose in mind. Finally, we will demonstrate how to customize your own agent, ensuring it fits the needs of your project.
+This tutorial helps you to understand the `Agent` in more depth and navigate through the process of crafting your own custom agent with AgentScope. We start by introducing the fundamental abstraction called `AgentBase`, which serves as the base class to maintain the general behaviors of all agents. Then, we will go through the *AgentPool*, an ensemble of pre-built, specialized agents, each designed with a specific purpose in mind. Finally, we will demonstrate how to customize your own agent, ensuring it fits the needs of your project.
 
 ## Understanding `AgentBase`
 
@@ -30,15 +30,14 @@ class AgentBase(Operator):
     def __init__(
             self,
             name: str,
-            config: Optional[dict] = None,
             sys_prompt: Optional[str] = None,
-            model: Optional[Union[Callable[..., Any], str]] = None,
+            model_config_name: str = None,
             use_memory: bool = True,
             memory_config: Optional[dict] = None,
     ) -> None:
 
     # ... [code omitted for brevity]
- def observe(self, x: Union[dict, Sequence[dict]]) -> None:
+    def observe(self, x: Union[dict, Sequence[dict]]) -> None:
         # An optional method for updating the agent's internal state based on
         # messages it has observed. This method can be used to enrich the
         # agent's understanding and memory without producing an immediate
@@ -91,10 +90,10 @@ def reply(self, x: dict = None) -> dict:
     prompt = self.engine.join(self.sys_prompt, self.memory.get_memory())
 
     # Invoke the language model with the prepared prompt
-    response = self.model(prompt, parse_func=json.loads, fault_handler=lambda x: {"speak": x})
+    response = self.model(prompt).text
 
     # Format the response and create a message object
-    msg = Msg(self.name, response.get("speak", None) or response, **response)
+    msg = Msg(self.name, response)
 
     # Record the message to memory and return it
     self.memory.add(msg)
@@ -109,7 +108,7 @@ from agentscope.agents import DialogAgent
 # Configuration for the DialogAgent
 dialog_agent_config = {
     "name": "ServiceBot",
-    "model": "gpt-3.5",  # Specify the model used for dialogue generation
+    "model_config_name": "gpt-3.5",  # Specify the model used for dialogue generation
     "sys_prompt": "Act as AI assistant to interact with the others. Try to "
     "reponse on one line.\n",  # Custom prompt for the agent
     # Other configurations specific to the DialogAgent

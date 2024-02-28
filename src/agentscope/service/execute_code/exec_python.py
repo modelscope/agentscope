@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""" Execute python code functions. """
+"""Service to execute python code."""
 import builtins
 import contextlib
 import inspect
@@ -8,7 +8,6 @@ import multiprocessing
 import os
 import platform
 import re
-import resource
 import shutil
 import subprocess
 import sys
@@ -23,6 +22,10 @@ try:
     from docker.errors import APIError, ImageNotFound
 except ImportError:
     docker = None
+try:
+    import resource
+except (ModuleNotFoundError, ImportError):
+    resource = None
 
 from agentscope.utils.common import create_tempdir, timer
 from agentscope.service.service_status import ServiceExecStatus
@@ -34,28 +37,27 @@ from agentscope.constants import (
 
 
 def execute_python_code(
-    code: str = "",
+    code: str,
     timeout: Optional[Union[int, float]] = 300,
     use_docker: Optional[Union[bool, str]] = None,
     maximum_memory_bytes: Optional[int] = None,
 ) -> ServiceResponse:
     """
-    Execute a string of Python code, optionally inside a Docker container.
+    Execute a piece of python code.
 
     This function can run Python code provided in string format. It has the
     option to execute the code within a Docker container to provide an
     additional layer of security, especially important when running
     untrusted code.
 
-    WARNING: If `use_docker` is set to `False`, the code will be run
+    WARNING: If `use_docker` is set to `False`, the `code` will be run
     directly in the host system's environment. This poses a potential
     security risk if the code is untrusted. Only disable Docker if you are
     confident in the safety of the code being executed.
 
     Args:
         code (`str`, optional):
-            The Python code to execute, provided as a string. Default is an
-            empty string.
+            The Python code to be executed.
 
         timeout (`Optional[Union[int, float]]`, defaults to `300`):
             The maximum time (in seconds) allowed for the code to run. If
@@ -333,20 +335,21 @@ def sys_python_guard(maximum_memory_bytes: Optional[int] = None) -> None:
     https://github.com/openai/human-eval/blob/master/human_eval/execution.py
     """
 
-    if maximum_memory_bytes is not None:
-        resource.setrlimit(
-            resource.RLIMIT_AS,
-            (maximum_memory_bytes, maximum_memory_bytes),
-        )
-        resource.setrlimit(
-            resource.RLIMIT_DATA,
-            (maximum_memory_bytes, maximum_memory_bytes),
-        )
-        if not platform.uname().system == "Darwin":
+    if resource is not None:
+        if maximum_memory_bytes is not None:
             resource.setrlimit(
-                resource.RLIMIT_STACK,
+                resource.RLIMIT_AS,
                 (maximum_memory_bytes, maximum_memory_bytes),
             )
+            resource.setrlimit(
+                resource.RLIMIT_DATA,
+                (maximum_memory_bytes, maximum_memory_bytes),
+            )
+            if not platform.uname().system == "Darwin":
+                resource.setrlimit(
+                    resource.RLIMIT_STACK,
+                    (maximum_memory_bytes, maximum_memory_bytes),
+                )
 
     # Disable builtins functions
     builtins_funcs_to_disable = ["exit", "quit"]

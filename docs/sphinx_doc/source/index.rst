@@ -29,14 +29,13 @@ AgentScope Documentation
    :caption: AgentScope API Reference
 
    agentscope.agents
-   agentscope.configs
    agentscope.memory
    agentscope.models
    agentscope.pipelines
    agentscope.service
    agentscope.rpc
    agentscope.utils
-   agentscope.web_ui
+   agentscope.web
    agentscope
 
 Indices and tables

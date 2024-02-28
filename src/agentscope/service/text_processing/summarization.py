@@ -20,7 +20,9 @@ def summarization(
     max_return_token: int = -1,
     token_limit_prompt: str = _DEFAULT_TOKEN_LIMIT_PROMPT,
 ) -> ServiceResponse:
-    """Summarization function (Notice: curent version of token limitation is
+    """Summarize the input text.
+
+    Summarization function (Notice: curent version of token limitation is
     built with Open AI API)
 
     Args:
@@ -98,7 +100,7 @@ def summarization(
         except ValueError:
             return ServiceResponse(
                 ServiceExecStatus.ERROR,
-                content=f"Summarization by model {model.model_name} fail",
+                content=f"Summarization by model {model.model} fail",
             )
     else:
         try:

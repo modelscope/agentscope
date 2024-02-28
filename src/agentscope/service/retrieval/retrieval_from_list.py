@@ -16,7 +16,10 @@ def retrieve_from_list(
     embedding_model: Optional[ModelWrapperBase] = None,
     preserve_order: bool = True,
 ) -> ServiceResponse:
-    """Memory retrieval with user-defined score function. The score function is
+    """
+    Retrieve data in a list.
+
+    Memory retrieval with user-defined score function. The score function is
     expected to take the `query` and one of the element in 'knowledge' (a
     list). This function retrieves top-k elements in 'knowledge' with
     HIGHEST scores. If the 'query' is a dict but has no embedding,
@@ -24,7 +27,7 @@ def retrieve_from_list(
 
     Args:
         query (`Any`):
-            A provided message, based on which we retrieve.
+            A message to be retrieved.
         knowledge (`Sequence`):
             Data/knowledge to be retrieved from.
         score_func (`Callable[[Any, Any], float]`):

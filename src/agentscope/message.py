@@ -240,7 +240,6 @@ class PlaceholderMessage(MessageBase):
         self._is_placeholder = True
         self._host = host
         self._port = port
-        self._client = RpcAgentClient(host, port)
         self._task_id = task_id
 
     def __is_local(self, key: Any) -> bool:
@@ -279,7 +278,8 @@ class PlaceholderMessage(MessageBase):
         """Get attribute values from rpc agent server immediately"""
         if self._is_placeholder:
             # retrieve real message from rpc agent server
-            result = self._client.call_func(
+            client = RpcAgentClient(self._host, self._port)
+            result = client.call_func(
                 func_name="_get",
                 value=json.dumps({"task_id": self._task_id}),
             )

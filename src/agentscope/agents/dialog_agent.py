@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """A general dialog agent."""
-from typing import Any, Optional, Union, Callable
-from loguru import logger
+from typing import Optional
 
 from ..message import Msg
 from .agent import AgentBase
@@ -16,9 +15,8 @@ class DialogAgent(AgentBase):
     def __init__(
         self,
         name: str,
-        config: Optional[dict] = None,
         sys_prompt: Optional[str] = None,
-        model: Optional[Union[Callable[..., Any], str]] = None,
+        model_config_name: str = None,
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
         prompt_type: Optional[PromptType] = PromptType.LIST,
@@ -28,17 +26,12 @@ class DialogAgent(AgentBase):
         Arguments:
             name (`str`):
                 The name of the agent.
-            config (`Optional[dict]`):
-                The configuration of the agent, if provided, the agent will
-                be initialized from the config rather than the other
-                parameters.
             sys_prompt (`Optional[str]`):
                 The system prompt of the agent, which can be passed by args
                 or hard-coded in the agent.
-            model (`Optional[Union[Callable[..., Any], str]]`, defaults to
-            None):
-                The callable model object or the model name, which is used to
-                load model from configuration.
+            model_config_name (`str`, defaults to None):
+                The name of the model config, which is used to load model from
+                configuration.
             use_memory (`bool`, defaults to `True`):
                 Whether the agent has memory.
             memory_config (`Optional[dict]`):
@@ -49,12 +42,11 @@ class DialogAgent(AgentBase):
                 `PromptType.LIST` or `PromptType.STRING`.
         """
         super().__init__(
-            name,
-            config,
-            sys_prompt,
-            model,
-            use_memory,
-            memory_config,
+            name=name,
+            sys_prompt=sys_prompt,
+            model_config_name=model_config_name,
+            use_memory=use_memory,
+            memory_config=memory_config,
         )
 
         # init prompt engine
@@ -86,11 +78,13 @@ class DialogAgent(AgentBase):
         )
 
         # call llm and generate response
-        response = self.model(prompt)
+        response = self.model(prompt).text
         msg = Msg(self.name, response)
 
-        # logging and record the message in memory
-        logger.chat(msg)
+        # Print/speak the message in this agent's voice
+        self.speak(msg)
+
+        # Record the message in memory
         self.memory.add(msg)
 
         return msg
