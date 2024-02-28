@@ -61,7 +61,7 @@ To install AgentScope, you need to have Python 3.9 or higher installed.
 - Run the following commands to install AgentScope in editable mode.
 
 ```bash
-# Pull the source code from github
+# Pull the source code from GitHub
 git clone https://github.com/modelscope/agentscope.git
 
 # Install the package in editable mode
