@@ -1,0 +1,388 @@
+/* code highlight: https://python-markdown.github.io/extensions/code_hilite/ */
+.codehilite .hll { background-color: #ffffcc }
+.codehilite  { background: #f8f8f8; }
+.codehilite .c { color: #408080; font-style: italic } /* Comment */
+.codehilite .err { border: 1px solid #FF0000 } /* Error */
+.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
+.codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+.codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+.codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
+.codehilite .gd { color: #A00000 } /* Generic.Deleted */
+.codehilite .ge { font-style: italic } /* Generic.Emph */
+.codehilite .gr { color: #FF0000 } /* Generic.Error */
+.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.codehilite .gi { color: #00A000 } /* Generic.Inserted */
+.codehilite .go { color: #888888 } /* Generic.Output */
+.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.codehilite .gs { font-weight: bold } /* Generic.Strong */
+.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.codehilite .gt { color: #0044DD } /* Generic.Traceback */
+.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
+.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.codehilite .kt { color: #B00040 } /* Keyword.Type */
+.codehilite .m { color: #666666 } /* Literal.Number */
+.codehilite .s { color: #BA2121 } /* Literal.String */
+.codehilite .na { color: #7D9029 } /* Name.Attribute */
+.codehilite .nb { color: #008000 } /* Name.Builtin */
+.codehilite .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.codehilite .no { color: #880000 } /* Name.Constant */
+.codehilite .nd { color: #AA22FF } /* Name.Decorator */
+.codehilite .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.codehilite .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.codehilite .nf { color: #0000FF } /* Name.Function */
+.codehilite .nl { color: #A0A000 } /* Name.Label */
+.codehilite .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.codehilite .nv { color: #19177C } /* Name.Variable */
+.codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
+.codehilite .mf { color: #666666 } /* Literal.Number.Float */
+.codehilite .mh { color: #666666 } /* Literal.Number.Hex */
+.codehilite .mi { color: #666666 } /* Literal.Number.Integer */
+.codehilite .mo { color: #666666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
+.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
+.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
+.codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.codehilite .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.codehilite .sx { color: #008000 } /* Literal.String.Other */
+.codehilite .sr { color: #BB6688 } /* Literal.String.Regex */
+.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
+.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
+.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #0000FF } /* Name.Function.Magic */
+.codehilite .vc { color: #19177C } /* Name.Variable.Class */
+.codehilite .vg { color: #19177C } /* Name.Variable.Global */
+.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
+.codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
+
+.preview_header {
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: -12px;
+}
+
+.bot_cover {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 650px;
+  border: 1px solid rgba(229, 231, 235, 0.6); /* 在边框中添加一点透明度 */
+  border-radius: 16px; /* 增加边框圆角 */
+  padding: 40px; /* 增加内部间距 */
+  background-color: #ffffff; /* 添加背景颜色 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 添加轻微的阴影效果 */
+}
+
+.bot_avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15), 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+.bot_avatar img {
+  width: auto;
+  height: 100%;
+}
+
+.bot_name {
+  font-size: 30px; /* 调整字体大小 */
+  color: #333333; /* 字体颜色更深，增加对比度 */
+  margin-top: 20px; /* 调整名称顶部的间距 */
+  font-weight: bold; /* 字体加粗 */
+  text-transform: uppercase; /* 文字大写 */
+  letter-spacing: 1.5px; /* 增加字母间距 */
+  transition: all 0.3s ease; /* 平滑过渡动画 */
+}
+
+.bot_desc {
+  color: #444444; /* 字体颜色更深 */
+  font-size: 18px; /* 增加字体大小 */
+  margin: 20px 0; /* 增加上下间距 */
+  text-align: center; /* 文字居中 */
+  line-height: 1.5; /* 增加行高，提升可读性 */
+  transition: all 0.3s ease; /* 平滑过渡动画 */
+}
+
+
+.publish_link_container > a {
+  display: block;
+  border-radius: var(--button-large-radius);
+  padding: var(--button-large-padding);
+  font-weight: var(--button-large-text-weight);
+  font-size: var(--button-large-text-size);
+  border: var(--button-border-width) solid var(--button-secondary-border-color);
+  background: var(--button-secondary-background-fill);
+  color: var(--button-secondary-text-color) !important;
+  cursor: pointer;
+  text-decoration: none !important;
+  text-align: center;
+}
+
+.publish_link_container > .disabled {
+  cursor: not-allowed;
+  opacity: .5;
+  filter: grayscale(30%);
+}
+
+.markdown-body .message {
+  white-space: pre-wrap;
+}
+
+.markdown-body details {
+  white-space: nowrap;
+}
+.markdown-body .bot details:not(:last-child) {
+  margin-bottom: 1px;
+}
+.markdown-body summary {
+  background-color: #4b5563;
+  color: #eee;
+  padding: 0 4px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.bot_intro_label {
+  font-size: 18px; /* 标题字体大小 */
+  color: #333; /* 字体颜色，这里使用深灰色 */
+  font-weight: bold; /* 字体加粗 */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* 文字阴影 */
+  transition: all 0.3s ease; /* 平滑过渡动画 */
+  padding: 10px; /* 内填充 */
+  margin-bottom: 20px; /* 底部外边距 */
+  border-bottom: 2px solid #ddd; /* 底部边框样式 */
+}
+
+.bot_intro_ctx {
+  display: grid;
+  place-items: center; /* 完美居中 */
+  height: 100px; /* 高度 */
+  font-size: 15px; /* 正文字体大小 */
+  text-align: center; /* 文字居中 */
+  color: #555; /* 正文字体颜色，这里使用较浅的灰色 */
+  border-radius: 8px; /* 边框圆角 */
+  transition: transform 0.3s ease; /* 平滑过渡动画 */
+}
+
+/* 鼠标悬停时的动画效果 */
+.bot_desc:hover,
+.bot_name:hover,
+.bot_intro_label:hover,
+.bot_intro_ctx:hover {
+  transform: translateY(-5px); /* 向上移动 */
+}
+
+
+.story-container {
+    margin-bottom: 40px;
+}
+
+.story-row {
+    position: relative;
+    padding: 20px;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    transition: box-shadow 0.3s;
+}
+
+.story-row:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+}
+
+
+.story-row.locked {
+    background: repeating-linear-gradient(45deg, #ccc, #ccc 10px, #ddd 10px, #ddd 20px);
+}
+
+.story-title {
+    color: #333;
+    margin: 0;
+    font-weight: bold;
+}
+
+.story-content {
+    color: #333;
+    margin-top: 10px;
+}
+
+.lock-icon {
+    color: #9e9e9e;
+    font-size: 24px;
+}
+
+.locked .story-title,
+.locked .lock-icon {
+    color: #9e9e9e;
+}
+
+/* 线索卡片样式 */
+.clue-card {
+    cursor: pointer;
+    max-width: 200px;
+    min-width: 110px;
+    width: calc(50% - 10px);
+    align-items: center;
+    aspect-ratio: 2 / 3;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    padding: 20px;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    transition: box-shadow 0.3s;
+}
+
+/* 鼠标悬停时的阴影效果 */
+.clue-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+}
+
+/* 未发现线索的样式 */
+.clue-card-locked {
+    background: repeating-linear-gradient(45deg, #ccc, #ccc 10px, #ddd 10px, #ddd 20px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    opacity: 0.8;
+}
+
+.signature-file-uploader {
+  max-height: 100px;
+  align-items: flex-start;
+}
+
+/* style fix */
+.app-chatbot > .generating {
+  border: none !important;
+}
+
+.app-chatbot {
+  height: 500px !important;
+}
+
+.app-chatbot .message-row > .avatar-container {
+  white-space: normal !important;
+}
+
+@media (max-width: 620px) {
+  .app-chatbot {
+    height: 300px !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .app-chatbot {
+    height: 230px !important;
+  }
+
+  .app-chatbot .message-row > .message {
+    font-size: 14px !important;
+  }
+}
+
+/* tab基本样式 */
+.mytabs {
+  /*margin: 10px;*/
+  margin-bottom: 40px; /* 添加底部外边距 */
+  white-space: nowrap; /* 确保所有tab都在一行显示 */
+  overflow-x: auto; /* 允许横向滚动 */
+  min-height: 330px; /* 请根据实际内容高度调整此值 */
+}
+
+/* 隐藏radio按钮 */
+.mytabs input[type="radio"] {
+  display: none;
+}
+
+/* 设计样式 */
+.mytabs label {
+  display: inline-block;
+  padding: 10px 20px; /* 增加左右padding */
+  margin-right: 1px;
+  border: 1px solid transparent; /* 灰色边框 */
+  border-bottom: none;
+  cursor: pointer;
+  background-color: #fff; /* 标签默认背景颜色 */
+  transition: background-color 0.3s ease, border-color 0.3s ease; /* 过渡效果 */
+  /*font-size: 16px; !* 字体大小 *!*/
+  color: #333; /* 字体颜色 */
+  border-radius: 5px 5px 0 0; /* 圆角边框，上左和上右设为5px，下左和下右保持为0 */
+  position: relative; /* 使内容区域不影响标签的布局 */
+}
+
+.mytab {
+  display: inline-block; /* 使得tab容器并排显示 */
+  vertical-align: top; /* 对齐标签 */
+  padding-top: 10px;
+  /*display: flex; */
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+/* 隐藏所有.tab-content元素 */
+.mytab-content {
+  display: none;
+  flex-wrap: wrap;
+  border: 1px solid #ccc;
+  padding: 10px 20px; /* 增加左右padding */
+  white-space: normal; /* 允许内容正常换行 */
+  position: absolute; /* 使内容区域不影响标签的布局 */
+  border-top: none; /* 标签已有边框 */
+  left: 0;
+  background: #fff; /* 内容区域的背景颜色 */
+  width: 100%;
+  box-sizing: border-box; /* 保证边框和内边距不会增加宽度 */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* 添加阴影效果 */
+  border-radius: 0 0 5px 5px; /* 圆角边框，下左和下右设为5px，上左和上右保持为0 */
+  justify-content: center;
+  gap: 20px;
+  max-height: 320px; /* 设置最大高度，根据需要调整这个值 */
+  overflow-y: auto; /* 允许超出最大高度时垂直滚动 */
+}
+
+/* 当radio按钮被选中时，改变紧随其后的label的样式 */
+.mytabs input[type="radio"]:checked + label {
+  background-color: #fff; /* 选中标签的背景颜色 */
+  border-color: #ccc; /* 选中标签的边框颜色 */
+  border-bottom: 1px solid #fff; /* 使选中标签与内容区域融合 */
+  border-top: 2px solid #ccc; /* 选中标签的顶部边框，可以设置为你喜欢的颜色 */
+  border-radius: 5px 5px 0 0; /* 调整圆角以覆盖内容区域的顶部边框 */
+}
+
+/* 当radio按钮被选中时，显示对应的.tab-content元素 */
+.mytabs input[type="radio"]:checked ~ .mytab-content {
+  display: flex;
+  border-top: none; /* 移除内容区域的顶部边框以融合选中标签 */
+}

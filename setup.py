@@ -36,6 +36,8 @@ doc_requires = [
 
 test_requires = ["pytest", "pytest-cov", "pre-commit"]
 
+gradio_requires = ["gradio", "modelscope_studio"]
+
 # released requires
 minimal_requires = [
     "loguru",
@@ -59,6 +61,7 @@ full_requires = (
     + service_requires
     + doc_requires
     + test_requires
+    + gradio_requires
 )
 
 with open("README.md", "r", encoding="UTF-8") as fh:

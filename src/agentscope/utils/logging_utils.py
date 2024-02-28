@@ -3,9 +3,16 @@
 import json
 import os
 import sys
+import threading
 from typing import Optional, Literal, Union, Any
 
 from loguru import logger
+
+from agentscope.web_ui.utils import (
+    generate_image_from_name,
+    send_chat_msg,
+    get_reset_msg,
+)
 
 LOG_LEVEL = Literal[
     "TRACE",
@@ -115,10 +122,57 @@ def _chat(message: Union[str, dict], *args: Any, **kwargs: Any) -> None:
                     "\n".join(print_str).replace("{", "{{").replace("}", "}}")
                 )
                 logger.log(LEVEL_CHAT_LOG, print_str, *args, **kwargs)
+
+                thread_name = threading.current_thread().name
+                if thread_name != "MainThread":
+                    log_gradio(message, thread_name, **kwargs)
                 return
 
     message = str(message).replace("{", "{{").replace("}", "}}")
     logger.log(LEVEL_CHAT_LOG, message, *args, **kwargs)
+
+
+def log_gradio(message: dict, thread_name: str, **kwargs: Any) -> None:
+    """Send chat message to gradio.
+
+    Args:
+        message (`dict`):
+            The message to be logged. It should have "name"(or "role") and
+            "content" keys, and the message will be logged as "<name/role>:
+            <content>".
+        thread_name (`str`):
+            The name of the thread.
+    """
+    if thread_name != "MainThread":
+        get_reset_msg(uid=thread_name)
+        name = message.get("name", "default") or message.get("role", "default")
+        avatar = kwargs.get("avatar", None) or generate_image_from_name(
+            message["name"],
+            os.getcwd(),
+        )
+
+        msg = message["content"]
+        if "url" in message:
+            msg += "\n" + f"""<img src={message['url']}/>"""
+        if "audio_path" in message:
+            msg += (
+                "\n"
+                + f"""<audio src={message['audio_path']}
+            controls/></audio>"""
+            )
+        if "video_path" in message:
+            msg += (
+                "\n"
+                + f"""<video src={message['video_path']}
+            controls/></video>"""
+            )
+        send_chat_msg(
+            msg,
+            role=name,
+            uid=thread_name,
+            flushing=True,
+            avatar=avatar,
+        )
 
 
 def _level_format(record: dict) -> str:
