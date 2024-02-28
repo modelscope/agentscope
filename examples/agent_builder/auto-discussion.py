@@ -5,11 +5,13 @@ from utils import load_txt, extract_scenario_and_participants
 import agentscope
 from agentscope.agents import DialogAgent
 from agentscope.pipelines.functional import sequentialpipeline
+from agentscope.message import Msg
 
 model_configs = [
     {
-        "type": "openai",
-        "name": "gpt-3.5-turbo",
+        "model_type": "openai",
+        "config_name": "gpt-3.5-turbo",
+        "model": "gpt-3.5-turbo",
         "api_key": "xxx",  # Load from env if not provided
         "organization": "xxx",  # Load from env if not provided
         "generate_args": {
@@ -17,10 +19,11 @@ model_configs = [
         },
     },
     {
-        "type": "post_api",
-        "name": "my_post_api",
+        "model_type": "post_api_chat",
+        "config_name": "my_post_api",
         "api_url": "https://xxx",
         "headers": {},
+        "json_args": {},
     },
 ]
 agentscope.init(model_configs=model_configs)
@@ -30,15 +33,7 @@ agentscope.init(model_configs=model_configs)
 agent_builder = DialogAgent(
     name="agent_builder",
     sys_prompt="You're a helpful assistant.",
-    model="my_post_api",
-    # model="gpt-3.5-turbo",  # replace by your model config name
-)
-
-discussion_agent = DialogAgent(
-    name="agent_builder",
-    sys_prompt="You're a helpful assistant.",
-    model="my_post_api",
-    # model="gpt-3.5-turbo",  # replace by your model config name
+    model_config_name="my_post_api",
 )
 
 
@@ -48,9 +43,11 @@ telescope with an aperture of 50 cm. How much more light can the \
 telescope gather than your eye?"
 
 # get the discussion scenario and participant agents
-x = load_txt("examples/auto-agent/agent_builder_instruct.txt").format(
+x = load_txt("examples/agent_builder/agent_builder_instruct.txt").format(
     question=query,
 )
+
+x = Msg("user", x)
 settings = agent_builder(x)
 scenario_participants = extract_scenario_and_participants(settings["content"])
 
@@ -59,13 +56,12 @@ agents = [
     DialogAgent(
         name=key,
         sys_prompt=val,
-        model="my_post_api",
-        # model="gpt-3.5-turbo",  # replace by your model config name
+        model_config_name="my_post_api",
     )
     for key, val in scenario_participants["Participants"].items()
 ]
 
 # begin discussion
-x = f"let's discuss to solve the question: {query}"
+x = Msg("user", f"let's discuss to solve the question: {query}")
 for i in range(max_round):
     x = sequentialpipeline(agents, x)
