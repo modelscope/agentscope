@@ -129,7 +129,7 @@ def send_image(image_term, uid):
     send_player_input(image_term, uid=uid)
 
     msg = f"""<img src="{image_term}"></img>"""
-    avatar = generate_image_from_name("Me", os.getcwd())
+    avatar = generate_image_from_name("Me")
     send_player_msg(msg, "Me", uid=uid, avatar=avatar)
 
 
@@ -242,8 +242,8 @@ def run_app():
                         bubble_full_width=False,
                         visible=True,
                     )
-            with gr.Column():
-                start_button = gr.Button(value="Start")
+            # with gr.Column():
+            #     start_button = gr.Button(value="Start")
 
             with gr.Column():
                 user_chat_input = gr.Textbox(
@@ -251,9 +251,8 @@ def run_app():
                     placeholder="Say something here",
                     show_label=False,
                 )
-
                 send_button = gr.Button(value="📣Send")
-
+            with gr.Row():
                 audio = gr.Accordion("Audio input", open=False)
                 with audio:
                     audio_term = gr.Audio(
@@ -276,7 +275,7 @@ def run_app():
             uid = check_uuid(uid)
             print("uid=", uid)
             send_player_input(msg, uid=uid)
-            avatar = generate_image_from_name("Me", os.getcwd())
+            avatar = generate_image_from_name("Me")
             send_player_msg(msg, "Me", uid=uid, avatar=avatar)
             return ""
 
@@ -285,10 +284,10 @@ def run_app():
             send_reset_msg("**Reset**", uid=uid)
             return ""
 
-        start_button.click(send_reset_message, inputs=[uuid]).then(
-            check_for_new_session,
-            inputs=[uuid],
-        )
+        # start_button.click(send_reset_message, inputs=[uuid]).then(
+        #     check_for_new_session,
+        #     inputs=[uuid],
+        # )
 
         # submit message
         send_button.click(
@@ -307,6 +306,12 @@ def run_app():
         submit_image_button.click(send_image, inputs=[image_term, uuid])
 
         chatbot.custom(fn=fn_choice, inputs=[uuid])
+
+        demo.load(
+            check_for_new_session,
+            inputs=[uuid],
+            every=0.5,
+        )
 
         demo.load(
             get_chat,

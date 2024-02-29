@@ -147,8 +147,7 @@ def log_gradio(message: dict, thread_name: str, **kwargs: Any) -> None:
         get_reset_msg(uid=thread_name)
         name = message.get("name", "default") or message.get("role", "default")
         avatar = kwargs.get("avatar", None) or generate_image_from_name(
-            message["name"],
-            os.getcwd(),
+            message["name"]
         )
 
         msg = message["content"]

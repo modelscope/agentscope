@@ -187,7 +187,10 @@ def check_uuid(uid):
     return uid
 
 
-def generate_image_from_name(name, current_path):
+def generate_image_from_name(name):
+    from agentscope.file_manager import file_manager
+
+
     # Using hashlib to generate a hash of the name
     hash_func = hashlib.md5()
     hash_func.update(name.encode("utf-8"))
@@ -199,15 +202,7 @@ def generate_image_from_name(name, current_path):
     color_hex = "#" + hash_value[:6]
     color_rgb = Image.new("RGB", (1, 1), color_hex).getpixel((0, 0))
 
-    parts = current_path.split("/")
-    agent_index = parts.index("AgentScope")
-    # reconstruct path until "AgentScope"
-    new_path = "/".join(parts[: agent_index + 1])
-    # print("new_path", new_path)
-    # save image
-    image_filepath = (
-        new_path + "/src/agentscope/web_ui/assets/" + f"{name}_image.png"
-    )
+    image_filepath = file_manager.path_db + f"{name}_image.png"
 
     # Check if the image already exists
     if os.path.exists(image_filepath):
