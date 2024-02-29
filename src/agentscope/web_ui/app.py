@@ -138,7 +138,7 @@ def fn_choice(data: gr.EventData, uid):
     send_player_input(data._data["value"], uid=uid)
 
 
-def run_app():
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--script", type=str, help="Script file to run")
     args = parser.parse_args()
@@ -324,4 +324,4 @@ def run_app():
 
 
 if __name__ == "__main__":
-    run_app()
+    main()
