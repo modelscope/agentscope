@@ -3,9 +3,9 @@
 [![](https://img.shields.io/badge/cs.MA-2402.14034-B31C1C?logo=arxiv&logoColor=B31C1C)](https://arxiv.org/abs/2402.14034)
 [![](https://img.shields.io/badge/python-3.9+-blue)](https://pypi.org/project/agentscope/)
 [![](https://img.shields.io/badge/pypi-v0.0.1-blue?logo=pypi)](https://pypi.org/project/agentscope/)
-[![](https://img.shields.io/badge/Docs-English%7C%E4%B8%AD%E6%96%87-blue?logo=markdown)](https://modelscope.github.io/agentscope/)
+[![](https://img.shields.io/badge/Docs-English%7C%E4%B8%AD%E6%96%87-blue?logo=markdown)](https://modelscope.github.io/agentscope/#welcome-to-agentscope-tutorial-hub)
 [![](https://img.shields.io/badge/Docs-API_Reference-blue?logo=markdown)](https://modelscope.github.io/agentscope/)
-[![](https://img.shields.io/badge/ModelScope-Demos-4e29ff.svg?logo=data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjI0IDEyMS4zMyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KCTxwYXRoIGQ9Im0wIDQ3Ljg0aDI1LjY1djI1LjY1aC0yNS42NXoiIGZpbGw9IiM2MjRhZmYiIC8+Cgk8cGF0aCBkPSJtOTkuMTQgNzMuNDloMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzYyNGFmZiIgLz4KCTxwYXRoIGQ9Im0xNzYuMDkgOTkuMTRoLTI1LjY1djIyLjE5aDQ3Ljg0di00Ny44NGgtMjIuMTl6IiBmaWxsPSIjNjI0YWZmIiAvPgoJPHBhdGggZD0ibTEyNC43OSA0Ny44NGgyNS42NXYyNS42NWgtMjUuNjV6IiBmaWxsPSIjMzZjZmQxIiAvPgoJPHBhdGggZD0ibTAgMjIuMTloMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzM2Y2ZkMSIgLz4KCTxwYXRoIGQ9Im0xOTguMjggNDcuODRoMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzYyNGFmZiIgLz4KCTxwYXRoIGQ9Im0xOTguMjggMjIuMTloMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzM2Y2ZkMSIgLz4KCTxwYXRoIGQ9Im0xNTAuNDQgMHYyMi4xOWgyNS42NXYyNS42NWgyMi4xOXYtNDcuODR6IiBmaWxsPSIjNjI0YWZmIiAvPgoJPHBhdGggZD0ibTczLjQ5IDQ3Ljg0aDI1LjY1djI1LjY1aC0yNS42NXoiIGZpbGw9IiMzNmNmZDEiIC8+Cgk8cGF0aCBkPSJtNDcuODQgMjIuMTloMjUuNjV2LTIyLjE5aC00Ny44NHY0Ny44NGgyMi4xOXoiIGZpbGw9IiM2MjRhZmYiIC8+Cgk8cGF0aCBkPSJtNDcuODQgNzMuNDloLTIyLjE5djQ3Ljg0aDQ3Ljg0di0yMi4xOWgtMjUuNjV6IiBmaWxsPSIjNjI0YWZmIiAvPgo8L3N2Zz4K)](https://modelscope.cn/studios?name=Data-Jiucer&page=1&sort=latest&type=1)
+[![](https://img.shields.io/badge/ModelScope-Demos-4e29ff.svg?logo=data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjI0IDEyMS4zMyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KCTxwYXRoIGQ9Im0wIDQ3Ljg0aDI1LjY1djI1LjY1aC0yNS42NXoiIGZpbGw9IiM2MjRhZmYiIC8+Cgk8cGF0aCBkPSJtOTkuMTQgNzMuNDloMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzYyNGFmZiIgLz4KCTxwYXRoIGQ9Im0xNzYuMDkgOTkuMTRoLTI1LjY1djIyLjE5aDQ3Ljg0di00Ny44NGgtMjIuMTl6IiBmaWxsPSIjNjI0YWZmIiAvPgoJPHBhdGggZD0ibTEyNC43OSA0Ny44NGgyNS42NXYyNS42NWgtMjUuNjV6IiBmaWxsPSIjMzZjZmQxIiAvPgoJPHBhdGggZD0ibTAgMjIuMTloMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzM2Y2ZkMSIgLz4KCTxwYXRoIGQ9Im0xOTguMjggNDcuODRoMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzYyNGFmZiIgLz4KCTxwYXRoIGQ9Im0xOTguMjggMjIuMTloMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzM2Y2ZkMSIgLz4KCTxwYXRoIGQ9Im0xNTAuNDQgMHYyMi4xOWgyNS42NXYyNS42NWgyMi4xOXYtNDcuODR6IiBmaWxsPSIjNjI0YWZmIiAvPgoJPHBhdGggZD0ibTczLjQ5IDQ3Ljg0aDI1LjY1djI1LjY1aC0yNS42NXoiIGZpbGw9IiMzNmNmZDEiIC8+Cgk8cGF0aCBkPSJtNDcuODQgMjIuMTloMjUuNjV2LTIyLjE5aC00Ny44NHY0Ny44NGgyMi4xOXoiIGZpbGw9IiM2MjRhZmYiIC8+Cgk8cGF0aCBkPSJtNDcuODQgNzMuNDloLTIyLjE5djQ3Ljg0aDQ3Ljg0di0yMi4xOWgtMjUuNjV6IiBmaWxsPSIjNjI0YWZmIiAvPgo8L3N2Zz4K)](https://modelscope.cn/studios?name=agentscope&page=1&sort=latest)
 
 [![](https://img.shields.io/badge/license-Apache--2.0-black)](./LICENSE)
 [![](https://img.shields.io/badge/Contribute-Welcome-green)](https://modelscope.github.io/agentscope/tutorial/contribute.html)
@@ -18,7 +18,6 @@ AgentScope是一款全新的Multi-Agent框架，专为应用开发者打造，�
 
 - **基于Actor的分布式机制**：AgentScope设计了一种新的基于Actor的分布式机制，实现了复杂分布式工作流的集中式编程和自动并行优化，即用户可以使用中心化编程的方式完成分布式应用的流程编排，同时能够零代价将本地应用迁移到分布式的运行环境中。
 
-
 如果您觉得我们的工作对您有帮助，请引用[我们的论文](https://arxiv.org/abs/2402.14034)。
 
 欢迎加入我们的社区
@@ -29,6 +28,7 @@ AgentScope是一款全新的Multi-Agent框架，专为应用开发者打造，�
 
 目录
 =================
+
 - [AgentScope](#agentscope)
 - [目录](#目录)
   - [安装](#安装)
@@ -37,7 +37,7 @@ AgentScope是一款全新的Multi-Agent框架，专为应用开发者打造，�
   - [快速开始](#快速开始)
     - [基础使用](#基础使用)
       - [第1步：准备Model Configs](#第1步准备model-configs)
-        - [OpenAI API Config](#openai-api-configs)
+        - [OpenAI API Configs](#openai-api-configs)
         - [Post Request API Config](#post-request-api-config)
       - [第2步：创建Agent](#第2步创建agent)
       - [第3步：构造对话](#第3步构造对话)
@@ -51,7 +51,6 @@ AgentScope是一款全新的Multi-Agent框架，专为应用开发者打造，�
   - [License](#license)
   - [贡献](#贡献)
   - [引用](#引用)
-
 
 ## 安装
 
@@ -85,7 +84,7 @@ pip install -e .\[distribute\]
 - 使用以下命令安装最新发布的AgentScope。
 
 ```bash
-pip install AgentScope
+pip install agentscope
 ```
 
 ## 快速开始
@@ -116,14 +115,12 @@ AgentScope支持以下模型API服务：
 
   - 自定义模型API
 
-
 |                      | 模型类型参数 | 支持的API                                                   |
 |----------------------|---------------------|----------------------------------------------------------------|
 | OpenAI Chat API      | `openai`            | 标准OpenAI Chat API, FastChat和vllm                    |
 | OpenAI DALL-E API    | `openai_dall_e`     | 标准DALL-E API                                            |
 | OpenAI Embedding API | `openai_embedding`  | OpenAI 嵌入式API                                           |
 | Post API             | `post_api`          | Huggingface/ModelScope 推理API, 以及定制化的post API  |
-
 
 ##### OpenAI API Configs
 
@@ -155,9 +152,8 @@ AgentScope支持以下模型API服务：
 }
 ```
 
-为了方便开发和调试，AgentScope在[Scripts](./scripts/README.md)目录下提供了丰富的脚本以快速部署模型服务。
+为了方便开发和调试，AgentScope在[scripts](./scripts/README.md)目录下提供了丰富的脚本以快速部署模型服务。
 有关模型服务的详细使用，请参阅我们的[教程](https://modelscope.github.io/agentscope/index.html#welcome-to-agentscope-tutorial-hub)和[API文档](https://modelscope.github.io/agentscope/index.html#indices-and-tables)。
-
 
 #### 第2步：创建Agent
 
@@ -205,13 +201,15 @@ while True:
 
 - **Pipeline**：它允许用户轻松编写Agent间的通信。以Sequential Pipeline为例，以下两种代码等效，但是pipeline的实现方式更加简洁和优雅。
 
-  - **Without** pipeline的情况下，agent1、agent2和agent3顺序传递消息：
+  - **不使用** pipeline的情况下，agent1、agent2和agent3顺序传递消息：
+
     ```python
     x1 = agent1(input_msg)
     x2 = agent2(x1)
     x3 = agent3(x2)
     ```
-  - **With** pipeline对象的情况下：
+
+  - **使用** pipeline对象的情况下：
 
     ```python
     from agentscope.pipelines import SequentialPipeline
@@ -219,7 +217,8 @@ while True:
     pipe = SequentialPipeline([agent1, agent2, agent3])
     x3 = pipe(input_msg)
     ```
-  - **With** functional pipeline的情况下：
+
+  - **使用** functional pipeline的情况下：
 
     ```python
     from agentscope.pipelines.functional import sequentialpipeline
@@ -229,7 +228,8 @@ while True:
 
 - **MsgHub**：为了方便地实现多人对话，AgentScope提供了Message Hub。
 
-  - **Without** `msghub`：实现多人对话：
+  - **不使用** `msghub`：实现多人对话：
+
     ```python
     x1 = agent1(x)
     agent2.observe(x1)  # 消息x1应该广播给其他agent
@@ -240,7 +240,7 @@ while True:
     agent3.observe(x2)
     ```
 
-  - **With** `msghub`：在Message Hub中，来自参与者的消息将自动广播给所有其他参与者，因此在这种情况下，Agent的调用甚至不需要明确输入和输出消息，我们需要做的就是决定发言的顺序。此外，`msghub`还支持动态控制参与者，如下所示。
+  - **使用** `msghub`：在Message Hub中，来自参与者的消息将自动广播给所有其他参与者，因此在这种情况下，Agent的调用甚至不需要明确输入和输出消息，我们需要做的就是决定发言的顺序。此外，`msghub`还支持动态控制参与者，如下所示。
 
     ```python
     from agentscope import msghub
@@ -282,7 +282,6 @@ AgentScope提供丰富的内置资源以便开发人员轻松构建自己的应�
 - UserAgent
 - DialogAgent
 - DictDialogAgent
-- RpcDialogAgent
 - ...
 
 ##### Services
@@ -296,9 +295,9 @@ AgentScope提供丰富的内置资源以便开发人员轻松构建自己的应�
 
 ##### Example Applications
 
-- 对话示例：[examples/Conversation](examples/conversation/README.md)
-- 狼人杀示例：[examples/Werewolf](examples/werewolf/README.md)
-- 分布式Agent示例：[examples/Distributed Agents](examples/distributed/README.md)
+- 对话示例：[examples/conversation](examples/conversation/README.md)
+- 狼人杀示例：[examples/werewolf](examples/werewolf/README.md)
+- 分布式Agent示例：[examples/distributed](examples/distributed/README.md)
 - ...
 
 更多内置资源即将推出！
@@ -311,7 +310,7 @@ AgentScope根据Apache License 2.0发布。
 
 欢迎参与到AgentScope的构建中！
 
-我们提供了一个带有额外pre-commit钩子以执行检查的开发者版本，与官方版本相比：
+我们提供了一个带有额外 pre-commit 钩子以执行检查的开发者版本，与官方版本相比：
 
 ```bash
 # 对于windows
