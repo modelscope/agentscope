@@ -202,7 +202,7 @@ def generate_image_from_name(name):
     color_hex = "#" + hash_value[:6]
     color_rgb = Image.new("RGB", (1, 1), color_hex).getpixel((0, 0))
 
-    image_filepath = file_manager.path_db + f"{name}_image.png"
+    image_filepath = os.path.join(file_manager.dir_root, f"{name}_image.png")
 
     # Check if the image already exists
     if os.path.exists(image_filepath):
