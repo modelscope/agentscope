@@ -96,8 +96,8 @@ setuptools.setup(
     ],
     python_requires=">=3.9",
     entry_points={
-        'console_scripts': [
-            'agentscope_ui=agentscope.web_ui.app:main',
+        "console_scripts": [
+            "agentscope_ui=agentscope.web_ui.app:main",
         ],
     },
 )

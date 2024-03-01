@@ -1,13 +1,18 @@
 # -*- coding: utf-8 -*-
+"""run web ui"""
 import argparse
 import os
 import sys
 import threading
 import time
 from collections import defaultdict
-from typing import List
+from typing import Optional, Callable
 import traceback
+import re
 from multiprocessing import Event
+import gradio as gr
+import modelscope_studio as mgr
+
 from agentscope.web_ui.utils import (
     enable_web_ui,
     send_player_msg,
@@ -19,13 +24,8 @@ from agentscope.web_ui.utils import (
     check_uuid,
     send_chat_msg,
     generate_image_from_name,
-    send_reset_msg,
     audio2text,
 )
-
-import gradio as gr
-import modelscope_studio as mgr
-import re
 
 enable_web_ui()
 
@@ -33,11 +33,13 @@ MAX_NUM_DISPLAY_MSG = 20
 FAIL_COUNT_DOWN = 30
 
 
-def init_uid_list():
+def init_uid_list() -> list:
+    """Initialize an empty list for storing user IDs."""
     return []
 
 
-def init_uid_dict():
+def init_uid_dict() -> dict:
+    """Initialize an empty dictionary for user-related signals."""
     return {}
 
 
@@ -50,14 +52,16 @@ glb_signed_user = []
 is_init = Event()
 
 
-def reset_glb_var(uid):
+def reset_glb_var(uid: str) -> None:
+    """Reset global variables for a given user ID."""
     global glb_history_dict, glb_doing_signal_dict, glb_end_choosing_index_dict
     glb_history_dict[uid] = init_uid_list()
     glb_doing_signal_dict[uid] = init_uid_dict()
     glb_end_choosing_index_dict[uid] = -1
 
 
-def get_chat(uid) -> List[List]:
+def get_chat(uid: str) -> list[list]:
+    """Retrieve chat messages for a given user ID."""
     uid = check_uuid(uid)
     global glb_history_dict
     global glb_doing_signal_dict
@@ -65,7 +69,7 @@ def get_chat(uid) -> List[List]:
     line = get_chat_msg(uid=uid)
     # TODO: Optimize the display effect, currently there is a problem of
     #  output display jumping
-    if line is not None:
+    if line:
         if line[1] and line[1]["text"] == "**speak**":
             line[1]["text"] = "I am thinking"
             glb_doing_signal_dict[uid] = line
@@ -114,17 +118,18 @@ def get_chat(uid) -> List[List]:
     return dial_msg[-MAX_NUM_DISPLAY_MSG:]
 
 
-def transcribe(audio_term, uid):
+def send_audio(audio_term: str, uid: str) -> None:
+    """Convert audio input to text and send as a chat message."""
     uid = check_uuid(uid)
     content = audio2text(audio_path=audio_term)
     send_player_input(content, uid=uid)
     msg = f"""{content}
     <audio src="{audio_term}"></audio>"""
     send_player_msg(msg, "Me", uid=uid, avatar=None)
-    return content
 
 
-def send_image(image_term, uid):
+def send_image(image_term: str, uid: str) -> None:
+    """Send an image as a chat message."""
     uid = check_uuid(uid)
     send_player_input(image_term, uid=uid)
 
@@ -133,12 +138,32 @@ def send_image(image_term, uid):
     send_player_msg(msg, "Me", uid=uid, avatar=avatar)
 
 
-def fn_choice(data: gr.EventData, uid):
+def send_message(msg: str, uid: str) -> str:
+    """Send a generic message to the player."""
     uid = check_uuid(uid)
+    print("uid=", uid)
+    send_player_input(msg, uid=uid)
+    avatar = generate_image_from_name("Me")
+    send_player_msg(msg, "Me", uid=uid, avatar=avatar)
+    return ""
+
+
+def send_player_reset_message(uid: str) -> str:
+    """Send a reset command to the player's interface."""
+    uid = check_uuid(uid)
+    send_player_input("**Reset**", uid=uid)
+    return ""
+
+
+def fn_choice(data: gr.EventData, uid: str) -> None:
+    """Handle a selection event from the chatbot interface."""
+    uid = check_uuid(uid)
+    # pylint: disable=protected-access
     send_player_input(data._data["value"], uid=uid)
 
 
-def main():
+def main() -> None:
+    """Entry point for the web UI application."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--script", type=str, help="Script file to run")
     args = parser.parse_args()
@@ -149,16 +174,15 @@ def main():
     # Get the directory where the script is located
     script_dir = os.path.dirname(script_path)
     # Save the current working directory
-    old_cwd = os.getcwd()
     # Change the current working directory to the directory where
-    # script_path is located.
     os.chdir(script_dir)
 
     def import_function_from_path(
-        module_path,
-        function_name,
-        module_name=None,
-    ):
+        module_path: str,
+        function_name: str,
+        module_name: Optional[str] = None,
+    ) -> Callable:
+        """Import a function from the given module path."""
         import importlib.util
 
         script_dir = os.path.dirname(os.path.abspath(module_path))
@@ -179,17 +203,26 @@ def main():
                 module_name,
                 module_path,
             )
-            module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(module)
-            # Getting a function from a module
-            function = getattr(module, function_name)
+            if spec is not None:
+                module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(module)
+                # Getting a function from a module
+                function = getattr(module, function_name)
+            else:
+                raise ImportError(
+                    f"Could not find module spec for {module_name} at"
+                    f" {module_path}",
+                )
         finally:
             # Restore the original sys.path
             sys.path = original_sys_path
 
         return function
 
-    def check_for_new_session(uid):
+    def check_for_new_session(uid: str) -> None:
+        """
+        Check for a new user session and start a game thread if necessary.
+        """
         uid = check_uuid(uid)
         if uid not in glb_signed_user:
             glb_signed_user.append(uid)
@@ -201,7 +234,8 @@ def main():
             )
             game_thread.start()
 
-    def start_game():
+    def start_game() -> None:
+        """Start the main game loop."""
         # is_init.wait()
         uid = threading.currentThread().name
         main = import_function_from_path(script_path, "main")
@@ -225,69 +259,56 @@ def main():
             reset_glb_var(uid)
 
     with gr.Blocks(css="assets/app.css") as demo:
+        warning_html_code = """
+                        <div class="hint" style="text-align:
+                        center;background-color: rgba(255, 255, 0, 0.15);
+                        padding: 10px; margin: 10px; border-radius: 5px;
+                        border: 1px solid #ffcc00;">
+                            <p>After clicking the <strong>Reset</strong>
+                            button please remember to <strong>Refresh</strong>
+                            the
+                            page</p>
+                        </div>
+                        """
+        gr.HTML(warning_html_code)
         uuid = gr.Textbox(label="modelscope_uuid", visible=False)
-        # uid = None
-        # start_game(args, uuid)
 
-        game_tabs = gr.Tabs(visible=True)
+        with gr.Row():
+            chatbot = mgr.Chatbot(
+                elem_classes="app-chatbot",
+                label="Dialog",
+                show_label=False,
+                bubble_full_width=False,
+                visible=True,
+            )
 
-        with game_tabs:
-            main_tab = gr.Tab("Main", id=0)
-            with main_tab:
-                with gr.Row():
-                    chatbot = mgr.Chatbot(
-                        elem_classes="app-chatbot",
-                        label="Dialog",
-                        show_label=False,
-                        bubble_full_width=False,
-                        visible=True,
-                    )
-            # with gr.Column():
-            #     start_button = gr.Button(value="Start")
-
-            with gr.Column():
-                user_chat_input = gr.Textbox(
-                    label="user_chat_input",
-                    placeholder="Say something here",
-                    show_label=False,
+        with gr.Column():
+            user_chat_input = gr.Textbox(
+                label="user_chat_input",
+                placeholder="Say something here",
+                show_label=False,
+            )
+            send_button = gr.Button(value="📣Send")
+        with gr.Row():
+            audio = gr.Accordion("Audio input", open=False)
+            with audio:
+                audio_term = gr.Audio(
+                    visible=True,
+                    type="filepath",
+                    format="wav",
                 )
-                send_button = gr.Button(value="📣Send")
-            with gr.Row():
-                audio = gr.Accordion("Audio input", open=False)
-                with audio:
-                    audio_term = gr.Audio(
-                        visible=True,
-                        type="filepath",
-                        format="wav",
-                    )
-                    submit_audio_button = gr.Button(value="Send Audio")
-                image = gr.Accordion("Image input", open=False)
-                with image:
-                    image_term = gr.Image(
-                        visible=True,
-                        height=300,
-                        interactive=True,
-                        type="filepath",
-                    )
-                    submit_image_button = gr.Button(value="Send Image")
-
-        def send_message(msg, uid):
-            uid = check_uuid(uid)
-            print("uid=", uid)
-            send_player_input(msg, uid=uid)
-            avatar = generate_image_from_name("Me")
-            send_player_msg(msg, "Me", uid=uid, avatar=avatar)
-            return ""
-
-        def send_reset_message(uid):
-            uid = check_uuid(uid)
-            send_reset_msg("**Reset**", uid=uid)
-            return ""
-
-        # start_button.click(send_reset_message, inputs=[uuid]).then(
-        #     check_for_new_session,
-        #     inputs=[uuid],
-        # )
+                submit_audio_button = gr.Button(value="Send Audio")
+            image = gr.Accordion("Image input", open=False)
+            with image:
+                image_term = gr.Image(
+                    visible=True,
+                    height=300,
+                    interactive=True,
+                    type="filepath",
+                )
+                submit_image_button = gr.Button(value="Send Image")
+        with gr.Column():
+            reset_button = gr.Button(value="Reset")
 
         # submit message
         send_button.click(
@@ -301,9 +322,19 @@ def main():
             user_chat_input,
         )
 
-        submit_audio_button.click(transcribe, inputs=[audio_term, uuid])
+        submit_audio_button.click(
+            send_audio,
+            inputs=[audio_term, uuid],
+            outputs=[audio_term],
+        )
 
-        submit_image_button.click(send_image, inputs=[image_term, uuid])
+        submit_image_button.click(
+            send_image,
+            inputs=[image_term, uuid],
+            outputs=[image_term],
+        )
+
+        reset_button.click(send_player_reset_message, inputs=[uuid])
 
         chatbot.custom(fn=fn_choice, inputs=[uuid])
 
