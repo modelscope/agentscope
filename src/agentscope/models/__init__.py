@@ -10,12 +10,18 @@ from .model import ModelWrapperBase, ModelResponse
 from .post_model import (
     PostAPIModelWrapperBase,
     PostAPIChatWrapper,
+    PostAPITongyiWrapper,
+    PostAPITongyiChatWrapper,
 )
 from .openai_model import (
     OpenAIWrapper,
     OpenAIChatWrapper,
     OpenAIDALLEWrapper,
     OpenAIEmbeddingWrapper,
+)
+from .tongyi_model import (
+    TongyiWrapper,
+    TongyiChatWrapper,
 )
 
 
@@ -31,6 +37,10 @@ __all__ = [
     "load_model_by_config_name",
     "read_model_configs",
     "clear_model_configs",
+    "TongyiWrapper",
+    "TongyiChatWrapper",
+    "PostAPITongyiWrapper",
+    "PostAPITongyiChatWrapper",
 ]
 
 _MODEL_CONFIGS: dict[str, dict] = {}

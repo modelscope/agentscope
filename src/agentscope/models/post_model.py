@@ -143,7 +143,6 @@ class PostAPIModelWrapperBase(ModelWrapperBase):
                 break
 
             if i < self.max_retries:
-                # av
                 logger.warning(
                     f"Failed to call the model with "
                     f"requests.codes == {response.status_code}, retry "
@@ -309,8 +308,12 @@ class PostAPITongyiWrapper(ModelWrapperBase):
         # step1: prepare keyword arguments
         post_args = {**self.post_args, **kwargs}
 
-        input_[0]["role"] = "user"
-        input_[-1]["role"] = "user"
+        # For Tongyi model, the "role" value of the first and the last message
+        # must be "user"
+        if len(input_) > 0:
+            input_[0]["role"] = "user"
+            input_[-1]["role"] = "user"
+
         input_ = {"messages": input_}
 
         request_kwargs = {
@@ -328,7 +331,6 @@ class PostAPITongyiWrapper(ModelWrapperBase):
                 break
 
             if i < self.max_retries:
-                # av
                 logger.warning(
                     f"Failed to call the model with "
                     f"requests.codes == {response.status_code}, retry "
