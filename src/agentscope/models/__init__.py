@@ -17,6 +17,10 @@ from .openai_model import (
     OpenAIDALLEWrapper,
     OpenAIEmbeddingWrapper,
 )
+from .tongyi_model import (
+    TongyiWrapper,
+    TongyiChatWrapper,
+)
 
 
 __all__ = [
@@ -31,6 +35,8 @@ __all__ = [
     "load_model_by_config_name",
     "read_model_configs",
     "clear_model_configs",
+    "TongyiWrapper",
+    "TongyiChatWrapper",
 ]
 
 _MODEL_CONFIGS: dict[str, dict] = {}

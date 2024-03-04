@@ -17,7 +17,7 @@ where the model configs could be a list of dict:
     {
         "config_name": "gpt-4-temperature-0.0",
         "model_type": "openai",
-        "model": "gpt-4",
+        "model_name": "gpt-4",
         "api_key": "xxx",
         "organization": "xxx",
         "generate_args": {
@@ -27,7 +27,7 @@ where the model configs could be a list of dict:
     {
         "config_name": "dall-e-3-size-1024x1024",
         "model_type": "openai_dall_e",
-        "model": "dall-e-3",
+        "model_name": "dall-e-3",
         "api_key": "xxx",
         "organization": "xxx",
         "generate_args": {
