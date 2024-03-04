@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
-"""Model wrapper for OpenAI models"""
+"""Model wrapper for Tongyi models"""
 from typing import Any
 
-import dashscope
+try:
+    import dashscope
+except ImportError:
+    dashscope = None
+
 from loguru import logger
 
 from .model import ModelWrapperBase, ModelResponse
@@ -14,32 +18,28 @@ from ..constants import _DEFAULT_API_BUDGET
 
 
 class TongyiWrapper(ModelWrapperBase):
-    """The model wrapper for OpenAI API."""
+    """The model wrapper for Tongyi API."""
 
     def __init__(
         self,
         config_name: str,
         model_name: str = None,
         api_key: str = None,
-        client_args: dict = None,
         generate_args: dict = None,
         budget: float = _DEFAULT_API_BUDGET,
         **kwargs: Any,
     ) -> None:
-        """Initialize the openai client.
+        """Initialize the Tongyi wrapper.
 
         Args:
             config_name (`str`):
                 The name of the model config.
             model_name (`str`, default `None`):
-                The name of the model to use in OpenAI API.
+                The name of the model to use in Tongyi API.
             api_key (`str`, default `None`):
-                The API key for OpenAI API. If not specified, it will
-                be read from the environment variable `OPENAI_API_KEY`.
-            client_args (`dict`, default `None`):
-                The extra keyword arguments to initialize the OpenAI client.
+                The API key for Tongyi API.
             generate_args (`dict`, default `None`):
-                The extra keyword arguments used in openai api generation,
+                The extra keyword arguments used in Tongyi api generation,
                 e.g. `temperature`, `seed`.
             budget (`float`, default `None`):
                 The total budget using this model. Set to `None` means no
@@ -50,7 +50,6 @@ class TongyiWrapper(ModelWrapperBase):
         super().__init__(
             config_name=config_name,
             model_name=model_name,
-            client_args=client_args,
             generate_args=generate_args,
             budget=budget,
             **kwargs,
@@ -60,7 +59,7 @@ class TongyiWrapper(ModelWrapperBase):
                 "Cannot find dashscope package in current python environment.",
             )
 
-        self.model = model_name or config_name
+        self.model = model_name
         self.generate_args = generate_args or {}
 
         self.api_key = api_key
@@ -101,7 +100,7 @@ class TongyiWrapper(ModelWrapperBase):
 
 
 class TongyiChatWrapper(TongyiWrapper):
-    """The model wrapper for OpenAI's chat API."""
+    """The model wrapper for Tongyi's chat API."""
 
     model_type: str = "tongyi_chat"
 
@@ -127,24 +126,24 @@ class TongyiChatWrapper(TongyiWrapper):
         messages: list,
         **kwargs: Any,
     ) -> ModelResponse:
-        """Processes a list of messages to construct a payload for the OpenAI
-        API call. It then makes a request to the OpenAI API and returns the
+        """Processes a list of messages to construct a payload for the Tongyi
+        API call. It then makes a request to the Tongyi API and returns the
         response. This method also updates monitoring metrics based on the
         API response.
 
         Each message in the 'messages' list can contain text content and
         optionally an 'image_urls' key. If 'image_urls' is provided,
         it is expected to be a list of strings representing URLs to images.
-        These URLs will be transformed to a suitable format for the OpenAI
+        These URLs will be transformed to a suitable format for the Tongyi
         API, which might involve converting local file paths to data URIs.
 
         Args:
             messages (`list`):
                 A list of messages to process.
             **kwargs (`Any`):
-                The keyword arguments to OpenAI chat completions API,
+                The keyword arguments to Tongyi chat completions API,
                 e.g. `temperature`, `max_tokens`, `top_p`, etc. Please refer to
-                https://platform.openai.com/docs/api-reference/chat/create
+
                 for more detailed arguments.
 
         Returns:
@@ -173,7 +172,7 @@ class TongyiChatWrapper(TongyiWrapper):
         if not all("role" in msg and "content" in msg for msg in messages):
             raise ValueError(
                 "Each message in the 'messages' list must contain a 'role' "
-                "and 'content' key for OpenAI API.",
+                "and 'content' key for Tongyi API.",
             )
 
         # For Tongyi model, the "role" value of the first and the last message
