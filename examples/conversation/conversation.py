@@ -10,7 +10,7 @@ agentscope.init(
         {
             "model_type": "openai",
             "config_name": "gpt-3.5-turbo",
-            "model": "gpt-3.5-turbo",
+            "model_name": "gpt-3.5-turbo",
             "api_key": "xxx",  # Load from env if not provided
             "organization": "xxx",  # Load from env if not provided
             "generate_args": {

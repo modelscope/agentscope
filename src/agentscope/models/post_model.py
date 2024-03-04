@@ -143,7 +143,6 @@ class PostAPIModelWrapperBase(ModelWrapperBase):
                 break
 
             if i < self.max_retries:
-                # av
                 logger.warning(
                     f"Failed to call the model with "
                     f"requests.codes == {response.status_code}, retry "
