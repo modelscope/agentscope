@@ -106,6 +106,10 @@
     <span class="n">OpenAIDALLEWrapper</span><span class="p">,</span>
     <span class="n">OpenAIEmbeddingWrapper</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.tongyi_model</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">TongyiWrapper</span><span class="p">,</span>
+    <span class="n">TongyiChatWrapper</span><span class="p">,</span>
+<span class="p">)</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
@@ -120,6 +124,8 @@
     <span class="s2">&quot;load_model_by_config_name&quot;</span><span class="p">,</span>
     <span class="s2">&quot;read_model_configs&quot;</span><span class="p">,</span>
     <span class="s2">&quot;clear_model_configs&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TongyiWrapper&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TongyiChatWrapper&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="n">_MODEL_CONFIGS</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
