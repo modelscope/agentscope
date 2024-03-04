@@ -57,6 +57,7 @@ class OpenAIWrapper(ModelWrapperBase):
         """
         if model_name is None:
             model_name = config_name
+            logger.warning("model_name is not set, use config_name instead.")
         super().__init__(
             config_name=config_name,
             model_name=model_name,
