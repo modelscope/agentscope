@@ -61,7 +61,7 @@ def send_chat_msg(
     uid: Optional[str] = None,
     flushing: bool = False,
     avatar: Optional[str] = None,
-    id: Optional[str] = None,
+    msg_id: Optional[str] = None,
 ) -> None:
     """Sends a chat message to the web UI."""
     print("send_chat_msg:", msg)
@@ -76,7 +76,7 @@ def send_chat_msg(
                     "name": role,
                     "flushing": flushing,
                     "avatar": avatar,
-                    "id": id,
+                    "id": msg_id,
                 },
             ],
         )

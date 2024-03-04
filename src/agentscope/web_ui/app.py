@@ -60,6 +60,7 @@ def reset_glb_var(uid: str) -> None:
     glb_end_choosing_index_dict[uid] = -1
 
 
+# pylint: disable=too-many-branches
 def get_chat(uid: str) -> list[list]:
     """Retrieve chat messages for a given user ID."""
     uid = check_uuid(uid)
@@ -113,7 +114,7 @@ def get_chat(uid: str) -> list[list]:
             text = cycle_dots(glb_doing_signal_dict[uid][1]["text"])
             glb_doing_signal_dict[uid][1]["text"] = text
 
-        dial_msg.append(glb_doing_signal_dict[uid])
+        dial_msg.append(glb_doing_signal_dict[uid])  # type: ignore
 
     return dial_msg[-MAX_NUM_DISPLAY_MSG:]
 
@@ -162,7 +163,49 @@ def fn_choice(data: gr.EventData, uid: str) -> None:
     send_player_input(data._data["value"], uid=uid)
 
 
-def main() -> None:
+def import_function_from_path(
+    module_path: str,
+    function_name: str,
+    module_name: Optional[str] = None,
+) -> Callable:
+    """Import a function from the given module path."""
+    import importlib.util
+
+    script_dir = os.path.dirname(os.path.abspath(module_path))
+
+    # Temporarily add a script directory to sys.path
+    original_sys_path = sys.path[:]
+    sys.path.insert(0, script_dir)
+
+    try:
+        # If a module name is not provided, you can use the filename (
+        # without extension) as the module name
+        if module_name is None:
+            module_name = os.path.splitext(os.path.basename(module_path))[0]
+        # Creating module specifications and loading modules
+        spec = importlib.util.spec_from_file_location(
+            module_name,
+            module_path,
+        )
+        if spec is not None:
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            # Getting a function from a module
+            function = getattr(module, function_name)
+        else:
+            raise ImportError(
+                f"Could not find module spec for {module_name} at"
+                f" {module_path}",
+            )
+    finally:
+        # Restore the original sys.path
+        sys.path = original_sys_path
+
+    return function
+
+
+# pylint: disable=too-many-statements
+def run_app() -> None:
     """Entry point for the web UI application."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--script", type=str, help="Script file to run")
@@ -176,63 +219,6 @@ def main() -> None:
     # Save the current working directory
     # Change the current working directory to the directory where
     os.chdir(script_dir)
-
-    def import_function_from_path(
-        module_path: str,
-        function_name: str,
-        module_name: Optional[str] = None,
-    ) -> Callable:
-        """Import a function from the given module path."""
-        import importlib.util
-
-        script_dir = os.path.dirname(os.path.abspath(module_path))
-
-        # Temporarily add a script directory to sys.path
-        original_sys_path = sys.path[:]
-        sys.path.insert(0, script_dir)
-
-        try:
-            # If a module name is not provided, you can use the filename (
-            # without extension) as the module name
-            if module_name is None:
-                module_name = os.path.splitext(os.path.basename(module_path))[
-                    0
-                ]
-            # Creating module specifications and loading modules
-            spec = importlib.util.spec_from_file_location(
-                module_name,
-                module_path,
-            )
-            if spec is not None:
-                module = importlib.util.module_from_spec(spec)
-                spec.loader.exec_module(module)
-                # Getting a function from a module
-                function = getattr(module, function_name)
-            else:
-                raise ImportError(
-                    f"Could not find module spec for {module_name} at"
-                    f" {module_path}",
-                )
-        finally:
-            # Restore the original sys.path
-            sys.path = original_sys_path
-
-        return function
-
-    def check_for_new_session(uid: str) -> None:
-        """
-        Check for a new user session and start a game thread if necessary.
-        """
-        uid = check_uuid(uid)
-        if uid not in glb_signed_user:
-            glb_signed_user.append(uid)
-            print("==========Signed User==========")
-            print(f"Total number of users: {len(glb_signed_user)}")
-            game_thread = threading.Thread(
-                target=start_game,
-                name=uid,
-            )
-            game_thread.start()
 
     def start_game() -> None:
         """Start the main game loop."""
@@ -257,6 +243,21 @@ def main() -> None:
                     )
                     time.sleep(1)
             reset_glb_var(uid)
+
+    def check_for_new_session(uid: str) -> None:
+        """
+        Check for a new user session and start a game thread if necessary.
+        """
+        uid = check_uuid(uid)
+        if uid not in glb_signed_user:
+            glb_signed_user.append(uid)
+            print("==========Signed User==========")
+            print(f"Total number of users: {len(glb_signed_user)}")
+            game_thread = threading.Thread(
+                target=start_game,
+                name=uid,
+            )
+            game_thread.start()
 
     with gr.Blocks(css="assets/app.css") as demo:
         warning_html_code = """
@@ -355,4 +356,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    run_app()

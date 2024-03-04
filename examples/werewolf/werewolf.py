@@ -16,6 +16,7 @@ from agentscope.pipelines.functional import sequentialpipeline
 import agentscope
 
 
+# pylint: disable=too-many-statements
 def main() -> None:
     """werewolf game"""
     # default settings
