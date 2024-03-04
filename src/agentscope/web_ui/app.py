@@ -265,8 +265,8 @@ def run_app() -> None:
                         center;background-color: rgba(255, 255, 0, 0.15);
                         padding: 10px; margin: 10px; border-radius: 5px;
                         border: 1px solid #ffcc00;">
-                        <p>If you want to start over, please click the 
-                        <strong>reset</strong> 
+                        <p>If you want to start over, please click the
+                        <strong>reset</strong>
                         button and <strong>refresh</strong> the page</p>
                         </div>
                         """
