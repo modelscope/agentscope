@@ -46,8 +46,6 @@ def init_uid_queues() -> dict:
     return {
         "glb_queue_chat_msg": Queue(),
         "glb_queue_chat_input": Queue(),
-        "glb_queue_clue": Queue(),
-        "glb_queue_story": Queue(),
         "glb_queue_reset_msg": Queue(),
     }
 
