@@ -52,7 +52,7 @@ from agentscope.agents import DialogAgent, UserAgent
 agentscope.init(model_configs="./openai_model_configs.json")
 
 # Create a dialog agent and a user agent
-dialogAgent = DialogAgent(name="assistant", model_config_name="gpt-4")
+dialogAgent = DialogAgent(name="assistant", model_config_name="gpt-4", sys_prompt="You are a helpful ai assistant")
 userAgent = UserAgent()
 ```
 

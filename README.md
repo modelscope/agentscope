@@ -1,18 +1,40 @@
+English | [**中文**](README_ZH.md)
+
 # AgentScope
+
+[![](https://img.shields.io/badge/cs.MA-2402.14034-B31C1C?logo=arxiv&logoColor=B31C1C)](https://arxiv.org/abs/2402.14034)
+[![](https://img.shields.io/badge/python-3.9+-blue)](https://pypi.org/project/agentscope/)
+[![](https://img.shields.io/badge/pypi-v0.0.1-blue?logo=pypi)](https://pypi.org/project/agentscope/)
+[![](https://img.shields.io/badge/Docs-English%7C%E4%B8%AD%E6%96%87-blue?logo=markdown)](https://modelscope.github.io/agentscope/#welcome-to-agentscope-tutorial-hub)
+[![](https://img.shields.io/badge/Docs-API_Reference-blue?logo=markdown)](https://modelscope.github.io/agentscope/)
+[![](https://img.shields.io/badge/ModelScope-Demos-4e29ff.svg?logo=data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjI0IDEyMS4zMyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KCTxwYXRoIGQ9Im0wIDQ3Ljg0aDI1LjY1djI1LjY1aC0yNS42NXoiIGZpbGw9IiM2MjRhZmYiIC8+Cgk8cGF0aCBkPSJtOTkuMTQgNzMuNDloMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzYyNGFmZiIgLz4KCTxwYXRoIGQ9Im0xNzYuMDkgOTkuMTRoLTI1LjY1djIyLjE5aDQ3Ljg0di00Ny44NGgtMjIuMTl6IiBmaWxsPSIjNjI0YWZmIiAvPgoJPHBhdGggZD0ibTEyNC43OSA0Ny44NGgyNS42NXYyNS42NWgtMjUuNjV6IiBmaWxsPSIjMzZjZmQxIiAvPgoJPHBhdGggZD0ibTAgMjIuMTloMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzM2Y2ZkMSIgLz4KCTxwYXRoIGQ9Im0xOTguMjggNDcuODRoMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzYyNGFmZiIgLz4KCTxwYXRoIGQ9Im0xOTguMjggMjIuMTloMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzM2Y2ZkMSIgLz4KCTxwYXRoIGQ9Im0xNTAuNDQgMHYyMi4xOWgyNS42NXYyNS42NWgyMi4xOXYtNDcuODR6IiBmaWxsPSIjNjI0YWZmIiAvPgoJPHBhdGggZD0ibTczLjQ5IDQ3Ljg0aDI1LjY1djI1LjY1aC0yNS42NXoiIGZpbGw9IiMzNmNmZDEiIC8+Cgk8cGF0aCBkPSJtNDcuODQgMjIuMTloMjUuNjV2LTIyLjE5aC00Ny44NHY0Ny44NGgyMi4xOXoiIGZpbGw9IiM2MjRhZmYiIC8+Cgk8cGF0aCBkPSJtNDcuODQgNzMuNDloLTIyLjE5djQ3Ljg0aDQ3Ljg0di0yMi4xOWgtMjUuNjV6IiBmaWxsPSIjNjI0YWZmIiAvPgo8L3N2Zz4K)](https://modelscope.cn/studios?name=agentscope&page=1&sort=latest)
+
+[![](https://img.shields.io/badge/license-Apache--2.0-black)](./LICENSE)
+[![](https://img.shields.io/badge/Contribute-Welcome-green)](https://modelscope.github.io/agentscope/tutorial/contribute.html)
 
 AgentScope is an innovative multi-agent platform designed to empower developers to build multi-agent applications with ease, reliability, and high performance. It features three high-level capabilities:
 
-- **Easy-to-Use**: Programming in pure Python with various pre-built components for immediate use, suitable for developers or users with varying levels of customization requirements. Detailed documentation and examples are provided to help you get started, see our [Tutorial](https://modelscope.github.io/agentscope/).
+- **Easy-to-Use**: Programming in pure Python with various pre-built components for immediate use, suitable for developers or users with varying levels of customization requirements. Detailed documentation and examples are provided to help you get started, see our [Tutorial](https://modelscope.github.io/agentscope/#welcome-to-agentscope-tutorial-hub).
 
 - **High Robustness**: Supporting customized fault-tolerance controls and retry mechanisms to enhance application stability.
 
 - **Actor-Based Distribution**: Enabling developers to build distributed multi-agent applications in a centralized programming manner for streamlined development.
+
+If you find our work helpful, please kindly cite [our paper](https://arxiv.org/abs/2402.14034).
 
 Welcome to join our community on
 
 | [Discord](https://discord.gg/eYMpfnkG8h) | DingTalk | WeChat |
 |---------|----------|--------|
 | <img src="https://gw.alicdn.com/imgextra/i1/O1CN01hhD1mu1Dd3BWVUvxN_!!6000000000238-2-tps-400-400.png" width="100" height="100"> | <img src="https://img.alicdn.com/imgextra/i2/O1CN01tuJ5971OmAqNg9cOw_!!6000000001747-0-tps-444-460.jpg" width="100" height="100"> | <img src="https://img.alicdn.com/imgextra/i3/O1CN01UyfWfx1CYBM3WqlBy_!!6000000000092-2-tps-400-400.png" width="100" height="100"> |
+
+
+----
+
+## News
+
+- ![new](https://img.alicdn.com/imgextra/i4/O1CN01kUiDtl1HVxN6G56vN_!!6000000000764-2-tps-43-19.png) [2024-02-27] We release **AgentScope v0.0.1** now, which is also available in [PyPI](https://pypi.org/project/agentscope/)!
+- ![new](https://img.alicdn.com/imgextra/i4/O1CN01kUiDtl1HVxN6G56vN_!!6000000000764-2-tps-43-19.png) [2024-02-14] We release our paper "AgentScope: A Flexible yet Robust Multi-Agent Platform" in [arXiv](https://arxiv.org/abs/2402.14034) now!
 
 Table of Contents
 =================
@@ -51,7 +73,7 @@ To install AgentScope, you need to have Python 3.9 or higher installed.
 - Run the following commands to install AgentScope in editable mode.
 
 ```bash
-# Pull the source code from github
+# Pull the source code from GitHub
 git clone https://github.com/modelscope/agentscope.git
 
 # Install the package in editable mode
@@ -73,7 +95,7 @@ pip install -e .\[distribute\]
 - Use the following command to install the latest released AgentScope.
 
 ```bash
-pip install AgentScope
+pip install agentscope
 ```
 
 ## Quick Start
@@ -267,7 +289,6 @@ AgentScope provides built-in resources for developers to build their own applica
 - UserAgent
 - DialogAgent
 - DictDialogAgent
-- RpcDialogAgent
 - ...
 
 ##### Services
@@ -281,9 +302,9 @@ AgentScope provides built-in resources for developers to build their own applica
 
 ##### Example Applications
 
-- Example of Conversation: [examples/Conversation](examples/conversation/README.md)
-- Example of Werewolf: [examples/Werewolf](examples/werewolf/README.md)
-- Example of Distributed Agents: [examples/Distributed Agents](examples/distributed/README.md)
+- Example of Conversation: [examples/conversation](examples/conversation/README.md)
+- Example of Werewolf: [examples/werewolf](examples/werewolf/README.md)
+- Example of Distributed Agents: [examples/distributed](examples/distributed/README.md)
 - ...
 
 More built-in resources are coming soon!
@@ -312,4 +333,27 @@ Please refer to our [Contribution Guide](https://modelscope.github.io/agentscope
 
 ## References
 
-Our paper is coming soon!
+If you find our work helpful for your research or application, please cite [our paper](https://arxiv.org/abs/2402.14034):
+
+```
+@article{agentscope,
+  author  = {Dawei Gao and
+             Zitao Li and
+             Weirui Kuang and
+             Xuchen Pan and
+             Daoyuan Chen and
+             Zhijian Ma and
+             Bingchen Qian and
+             Liuyi Yao and
+             Lin Zhu and
+             Chen Cheng and
+             Hongzhu Shi and
+             Yaliang Li and
+             Bolin Ding and
+             Jingren Zhou},
+  title   = {AgentScope: A Flexible yet Robust Multi-Agent Platform},
+  journal = {CoRR},
+  volume  = {abs/2402.14034},
+  year    = {2024},
+}
+```

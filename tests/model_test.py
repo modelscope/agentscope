@@ -52,7 +52,7 @@ class BasicModelTest(unittest.TestCase):
             {
                 "model_type": "openai",
                 "config_name": "gpt-4",
-                "model": "gpt-4",
+                "model_name": "gpt-4",
                 "api_key": "xxx",
                 "organization": "xxx",
                 "generate_args": {"temperature": 0.5},
