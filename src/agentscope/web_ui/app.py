@@ -12,19 +12,15 @@ import gradio as gr
 import modelscope_studio as mgr
 
 from agentscope.web_ui.utils import (
-    enable_web_ui,
-    send_player_msg,
     send_player_input,
     get_chat_msg,
     SYS_MSG_PREFIX,
     ResetException,
     check_uuid,
-    send_chat_msg,
+    send_msg,
     generate_image_from_name,
     audio2text,
 )
-
-enable_web_ui()
 
 MAX_NUM_DISPLAY_MSG = 20
 FAIL_COUNT_DOWN = 30
@@ -77,7 +73,7 @@ def send_audio(audio_term: str, uid: str) -> None:
     send_player_input(content, uid=uid)
     msg = f"""{content}
     <audio src="{audio_term}"></audio>"""
-    send_player_msg(msg, "Me", uid=uid, avatar=None)
+    send_msg(msg, is_player=True, role="Me", uid=uid, avatar=None)
 
 
 def send_image(image_term: str, uid: str) -> None:
@@ -87,7 +83,7 @@ def send_image(image_term: str, uid: str) -> None:
 
     msg = f"""<img src="{image_term}"></img>"""
     avatar = generate_image_from_name("Me")
-    send_player_msg(msg, "Me", uid=uid, avatar=avatar)
+    send_msg(msg, is_player=True, role="Me", uid=uid, avatar=avatar)
 
 
 def send_message(msg: str, uid: str) -> str:
@@ -95,7 +91,7 @@ def send_message(msg: str, uid: str) -> str:
     uid = check_uuid(uid)
     send_player_input(msg, uid=uid)
     avatar = generate_image_from_name("Me")
-    send_player_msg(msg, "Me", uid=uid, avatar=avatar)
+    send_msg(msg, is_player=True, role="Me", uid=uid, avatar=avatar)
     return ""
 
 
@@ -158,7 +154,7 @@ def import_function_from_path(
 def run_app() -> None:
     """Entry point for the web UI application."""
     parser = argparse.ArgumentParser()
-    parser.add_argument("--script", type=str, help="Script file to run")
+    parser.add_argument("script", type=str, help="Script file to run")
     args = parser.parse_args()
 
     # Make sure script_path is an absolute path
@@ -177,7 +173,6 @@ def run_app() -> None:
 
         while True:
             try:
-                print("-----")
                 main()
             except ResetException:
                 print(f"Reset Successfully：{uid} ")
@@ -186,7 +181,7 @@ def run_app() -> None:
                     traceback.TracebackException.from_exception(e).format(),
                 )
                 for i in range(FAIL_COUNT_DOWN, 0, -1):
-                    send_chat_msg(
+                    send_msg(
                         f"{SYS_MSG_PREFIX}发生错误 {trace_info}, 即将在{i}秒后重启",
                         uid=uid,
                     )
@@ -202,11 +197,11 @@ def run_app() -> None:
             glb_signed_user.append(uid)
             print("==========Signed User==========")
             print(f"Total number of users: {len(glb_signed_user)}")
-            game_thread = threading.Thread(
+            run_thread = threading.Thread(
                 target=start_game,
                 name=uid,
             )
-            game_thread.start()
+            run_thread.start()
 
     with gr.Blocks() as demo:
         warning_html_code = """
@@ -224,7 +219,6 @@ def run_app() -> None:
 
         with gr.Row():
             chatbot = mgr.Chatbot(
-                elem_classes="app-chatbot",
                 label="Dialog",
                 show_label=False,
                 bubble_full_width=False,

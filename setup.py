@@ -49,7 +49,7 @@ minimal_requires = [
     "Flask==3.0.0",
     "Flask-Cors==4.0.0",
     "Flask-SocketIO==5.3.6",
-    "dashscope",
+    "dashscope==1.14.1",
 ]
 
 distribute_requires = minimal_requires + rpc_requires

@@ -13,22 +13,12 @@ from dashscope.audio.asr import RecognitionCallback, Recognition
 
 SYS_MSG_PREFIX = "【系统】"
 
-USE_WEB_UI = False
-
-MAX_ROLE_NUM = 20
-
-
-def enable_web_ui() -> None:
-    """Enables the web UI functionality."""
-    global USE_WEB_UI
-    USE_WEB_UI = True
-
 
 def init_uid_queues() -> dict:
     """Initializes and returns a dictionary of user-specific queues."""
     return {
         "glb_queue_chat_msg": Queue(),
-        "glb_queue_chat_input": Queue(),
+        "glb_queue_user_input": Queue(),
         "glb_queue_reset_msg": Queue(),
     }
 
@@ -36,52 +26,43 @@ def init_uid_queues() -> dict:
 glb_uid_dict = defaultdict(init_uid_queues)
 
 
-def send_chat_msg(
+def send_msg(
     msg: str,
+    is_player: bool = False,
     role: Optional[str] = None,
     uid: Optional[str] = None,
     flushing: bool = False,
     avatar: Optional[str] = None,
     msg_id: Optional[str] = None,
 ) -> None:
-    """Sends a chat message to the web UI."""
+    """Sends a message to the web UI."""
     global glb_uid_dict
     glb_queue_chat_msg = glb_uid_dict[uid]["glb_queue_chat_msg"]
-    glb_queue_chat_msg.put(
-        [
-            None,
-            {
-                "text": msg,
-                "name": role,
-                "flushing": flushing,
-                "avatar": avatar,
-                "id": msg_id,
-            },
-        ],
-    )
-
-
-def send_player_msg(
-    msg: str,
-    role: str = "Me",
-    uid: Optional[str] = None,
-    flushing: bool = False,
-    avatar: Optional[str] = None,
-) -> None:
-    """Sends a player message to the web UI."""
-    global glb_uid_dict
-    glb_queue_chat_msg = glb_uid_dict[uid]["glb_queue_chat_msg"]
-    glb_queue_chat_msg.put(
-        [
-            {
-                "text": msg,
-                "name": role,
-                "flushing": flushing,
-                "avatar": avatar,
-            },
-            None,
-        ],
-    )
+    if is_player:
+        glb_queue_chat_msg.put(
+            [
+                {
+                    "text": msg,
+                    "name": role,
+                    "flushing": flushing,
+                    "avatar": avatar,
+                },
+                None,
+            ],
+        )
+    else:
+        glb_queue_chat_msg.put(
+            [
+                None,
+                {
+                    "text": msg,
+                    "name": role,
+                    "flushing": flushing,
+                    "avatar": avatar,
+                    "id": msg_id,
+                },
+            ],
+        )
 
 
 def get_chat_msg(uid: Optional[str] = None) -> list:
@@ -98,8 +79,8 @@ def get_chat_msg(uid: Optional[str] = None) -> list:
 def send_player_input(msg: str, uid: Optional[str] = None) -> None:
     """Sends player input to the web UI."""
     global glb_uid_dict
-    glb_queue_chat_input = glb_uid_dict[uid]["glb_queue_chat_input"]
-    glb_queue_chat_input.put([None, msg])
+    glb_queue_user_input = glb_uid_dict[uid]["glb_queue_user_input"]
+    glb_queue_user_input.put([None, msg])
 
 
 def get_player_input(
@@ -107,8 +88,8 @@ def get_player_input(
 ) -> list[str]:
     """Gets player input from the web UI or command line."""
     global glb_uid_dict
-    glb_queue_chat_input = glb_uid_dict[uid]["glb_queue_chat_input"]
-    content = glb_queue_chat_input.get(block=True)[1]
+    glb_queue_user_input = glb_uid_dict[uid]["glb_queue_user_input"]
+    content = glb_queue_user_input.get(block=True)[1]
     if content == "**Reset**":
         glb_uid_dict[uid] = init_uid_queues()
         raise ResetException

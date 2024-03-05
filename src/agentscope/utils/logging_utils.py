@@ -10,7 +10,7 @@ from loguru import logger
 
 from agentscope.web_ui.utils import (
     generate_image_from_name,
-    send_chat_msg,
+    send_msg,
     get_reset_msg,
 )
 
@@ -173,7 +173,7 @@ def log_gradio(message: dict, thread_name: str, **kwargs: Any) -> None:
                 controls/></video>"""
                 )
 
-        send_chat_msg(
+        send_msg(
             msg,
             role=name,
             uid=thread_name,
