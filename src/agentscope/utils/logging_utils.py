@@ -151,25 +151,32 @@ def log_gradio(message: dict, thread_name: str, **kwargs: Any) -> None:
         )
 
         msg = message["content"]
+        flushing = True
         if "url" in message:
-            msg += "\n" + f"""<img src={message['url']}/>"""
+            flushing = False
+            for i in range(len(message["url"])):
+                msg += "\n" + f"""<img src="{message['url'][i]}"/>"""
         if "audio_path" in message:
-            msg += (
-                "\n"
-                + f"""<audio src={message['audio_path']}
-            controls/></audio>"""
-            )
+            flushing = False
+            for i in range(len(message["audio_path"])):
+                msg += (
+                    "\n"
+                    + f"""<audio src="{message['audio_path'][i]}"
+                controls/></audio>"""
+                )
         if "video_path" in message:
-            msg += (
-                "\n"
-                + f"""<video src={message['video_path']}
-            controls/></video>"""
-            )
+            flushing = False
+            for i in range(len(message["video_path"])):
+                msg += (
+                    "\n"
+                    + f"""<video src="{message['video_path'][i]}"
+                controls/></video>"""
+                )
         send_chat_msg(
             msg,
             role=name,
             uid=thread_name,
-            flushing=True,
+            flushing=flushing,
             avatar=avatar,
         )
 
