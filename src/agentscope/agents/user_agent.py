@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 """User Agent class"""
-import threading
 import time
 from typing import Union
 from typing import Optional
 
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
-from agentscope.web_ui.utils import get_player_input
+from agentscope.web_ui.utils import user_input
 
 
 class UserAgent(AgentBase):
@@ -64,7 +63,7 @@ class UserAgent(AgentBase):
         # TODO: To avoid order confusion, because `input` print much quicker
         #  than logger.chat
         time.sleep(0.5)
-        content = self.user_input()
+        content = user_input()
 
         kwargs = {}
         if required_keys is not None:
@@ -91,14 +90,3 @@ class UserAgent(AgentBase):
         self.memory.add(msg)
 
         return msg
-
-    def user_input(self) -> str:
-        """get user input"""
-        thread_name = threading.current_thread().name
-        if thread_name == "MainThread":
-            content = input(f"{self.name}: ")
-        else:
-            content = get_player_input(
-                uid=threading.current_thread().name,
-            )
-        return content

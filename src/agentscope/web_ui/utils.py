@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """web ui utils"""
 import os
+import threading
 from typing import Optional
 import hashlib
 from multiprocessing import Queue
@@ -171,3 +172,15 @@ def audio2text(audio_path: str) -> str:
 
     result = rec.call(audio_path)
     return " ".join([s["text"] for s in result["output"]["sentence"]])
+
+
+def user_input() -> str:
+    """get user input"""
+    thread_name = threading.current_thread().name
+    if thread_name == "MainThread":
+        content = input("User input: ")
+    else:
+        content = get_player_input(
+            uid=threading.current_thread().name,
+        )
+    return content
