@@ -8,7 +8,6 @@ import time
 from collections import defaultdict
 from typing import Optional, Callable
 import traceback
-import re
 from multiprocessing import Event
 import gradio as gr
 import modelscope_studio as mgr
@@ -20,7 +19,6 @@ from agentscope.web_ui.utils import (
     get_chat_msg,
     SYS_MSG_PREFIX,
     ResetException,
-    cycle_dots,
     check_uuid,
     send_chat_msg,
     generate_image_from_name,
@@ -44,8 +42,6 @@ def init_uid_dict() -> dict:
 
 
 glb_history_dict = defaultdict(init_uid_list)
-glb_doing_signal_dict = defaultdict(init_uid_dict)
-glb_end_choosing_index_dict = defaultdict(lambda: -1)
 
 
 glb_signed_user = []
@@ -54,68 +50,27 @@ is_init = Event()
 
 def reset_glb_var(uid: str) -> None:
     """Reset global variables for a given user ID."""
-    global glb_history_dict, glb_doing_signal_dict, glb_end_choosing_index_dict
+    global glb_history_dict
     glb_history_dict[uid] = init_uid_list()
-    glb_doing_signal_dict[uid] = init_uid_dict()
-    glb_end_choosing_index_dict[uid] = -1
 
 
-# pylint: disable=too-many-branches
 def get_chat(uid: str) -> list[list]:
     """Retrieve chat messages for a given user ID."""
     uid = check_uuid(uid)
     global glb_history_dict
-    global glb_doing_signal_dict
-    global glb_end_choosing_index_dict
     line = get_chat_msg(uid=uid)
     # TODO: Optimize the display effect, currently there is a problem of
     #  output display jumping
     if line:
-        if line[1] and line[1]["text"] == "**speak**":
-            line[1]["text"] = "I am thinking"
-            glb_doing_signal_dict[uid] = line
-        elif line[1] and line[1]["text"] == "**end_choosing**":
-            for idx in range(
-                len(glb_history_dict[uid]) - 1,
-                glb_end_choosing_index_dict[uid],
-                -1,
-            ):
-                if (
-                    glb_history_dict[uid][idx][1]
-                    and "select-box" in glb_history_dict[uid][idx][1]["text"]
-                ):
-                    pattern = re.compile(r"(<select-box[^>]*?)>")
-                    replacement_text = r'\1 disabled="True">'
-                    glb_history_dict[uid][idx][1]["text"] = pattern.sub(
-                        replacement_text,
-                        glb_history_dict[uid][idx][1]["text"],
-                    )
-            glb_end_choosing_index_dict[uid] = len(glb_history_dict[uid]) - 1
-
-        else:
-            glb_history_dict[uid] += [line]
-            glb_doing_signal_dict[uid] = []
-    dial_msg, sys_msg = [], []
+        glb_history_dict[uid] += [line]
+    dial_msg = []
     for line in glb_history_dict[uid]:
         _, msg = line
         if isinstance(msg, dict):
-            if SYS_MSG_PREFIX not in msg.get("text", ""):
-                dial_msg.append(line)
-            else:
-                sys_msg.append(line)
+            dial_msg.append(line)
         else:
             # User chat, format: (msg, None)
             dial_msg.append(line)
-    if glb_doing_signal_dict[uid]:
-        if glb_doing_signal_dict[uid][0]:
-            text = cycle_dots(glb_doing_signal_dict[uid][0]["text"])
-            glb_doing_signal_dict[uid][0]["text"] = text
-        elif glb_doing_signal_dict[uid][1]:
-            text = cycle_dots(glb_doing_signal_dict[uid][1]["text"])
-            glb_doing_signal_dict[uid][1]["text"] = text
-
-        dial_msg.append(glb_doing_signal_dict[uid])  # type: ignore
-
     return dial_msg[-MAX_NUM_DISPLAY_MSG:]
 
 
@@ -142,7 +97,6 @@ def send_image(image_term: str, uid: str) -> None:
 def send_message(msg: str, uid: str) -> str:
     """Send a generic message to the player."""
     uid = check_uuid(uid)
-    print("uid=", uid)
     send_player_input(msg, uid=uid)
     avatar = generate_image_from_name("Me")
     send_player_msg(msg, "Me", uid=uid, avatar=avatar)

@@ -36,7 +36,7 @@ doc_requires = [
 
 test_requires = ["pytest", "pytest-cov", "pre-commit"]
 
-gradio_requires = ["gradio", "modelscope_studio", "inquirer"]
+gradio_requires = ["gradio==1.60.0", "modelscope_studio==0.0.5"]
 
 # released requires
 minimal_requires = [

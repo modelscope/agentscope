@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """web ui utils"""
 import os
-from typing import List, Optional
+from typing import Optional
 import hashlib
 from multiprocessing import Queue
 from collections import defaultdict
@@ -9,30 +9,13 @@ from collections import defaultdict
 from PIL import Image
 import gradio as gr
 
-import inquirer
 from dashscope.audio.asr import RecognitionCallback, Recognition
 
-
 SYS_MSG_PREFIX = "【系统】"
-DEFAULT_AGENT_IMG_DIR = "/tmp/as_game/config/"
-OPENING_ROUND = 3
-REVISION_ROUND = 3
 
 USE_WEB_UI = False
 
 MAX_ROLE_NUM = 20
-
-
-def get_use_web_ui() -> bool:
-    """Returns the status of the web UI usage flag."""
-    global USE_WEB_UI
-    return USE_WEB_UI
-
-
-def disable_web_ui() -> None:
-    """Disables the web UI functionality."""
-    global USE_WEB_UI
-    USE_WEB_UI = False
 
 
 def enable_web_ui() -> None:
@@ -62,22 +45,20 @@ def send_chat_msg(
     msg_id: Optional[str] = None,
 ) -> None:
     """Sends a chat message to the web UI."""
-    print("send_chat_msg:", msg)
-    if get_use_web_ui():
-        global glb_uid_dict
-        glb_queue_chat_msg = glb_uid_dict[uid]["glb_queue_chat_msg"]
-        glb_queue_chat_msg.put(
-            [
-                None,
-                {
-                    "text": msg,
-                    "name": role,
-                    "flushing": flushing,
-                    "avatar": avatar,
-                    "id": msg_id,
-                },
-            ],
-        )
+    global glb_uid_dict
+    glb_queue_chat_msg = glb_uid_dict[uid]["glb_queue_chat_msg"]
+    glb_queue_chat_msg.put(
+        [
+            None,
+            {
+                "text": msg,
+                "name": role,
+                "flushing": flushing,
+                "avatar": avatar,
+                "id": msg_id,
+            },
+        ],
+    )
 
 
 def send_player_msg(
@@ -88,21 +69,19 @@ def send_player_msg(
     avatar: Optional[str] = None,
 ) -> None:
     """Sends a player message to the web UI."""
-    print("send_player_msg:", msg)
-    if get_use_web_ui():
-        global glb_uid_dict
-        glb_queue_chat_msg = glb_uid_dict[uid]["glb_queue_chat_msg"]
-        glb_queue_chat_msg.put(
-            [
-                {
-                    "text": msg,
-                    "name": role,
-                    "flushing": flushing,
-                    "avatar": avatar,
-                },
-                None,
-            ],
-        )
+    global glb_uid_dict
+    glb_queue_chat_msg = glb_uid_dict[uid]["glb_queue_chat_msg"]
+    glb_queue_chat_msg.put(
+        [
+            {
+                "text": msg,
+                "name": role,
+                "flushing": flushing,
+                "avatar": avatar,
+            },
+            None,
+        ],
+    )
 
 
 def get_chat_msg(uid: Optional[str] = None) -> list:
@@ -118,84 +97,44 @@ def get_chat_msg(uid: Optional[str] = None) -> list:
 
 def send_player_input(msg: str, uid: Optional[str] = None) -> None:
     """Sends player input to the web UI."""
-    if get_use_web_ui():
-        global glb_uid_dict
-        glb_queue_chat_input = glb_uid_dict[uid]["glb_queue_chat_input"]
-        glb_queue_chat_input.put([None, msg])
+    global glb_uid_dict
+    glb_queue_chat_input = glb_uid_dict[uid]["glb_queue_chat_input"]
+    glb_queue_chat_input.put([None, msg])
 
 
 def get_player_input(
-    name: Optional[str] = None,
     uid: Optional[str] = None,
 ) -> list[str]:
     """Gets player input from the web UI or command line."""
     global glb_uid_dict
-    if get_use_web_ui():
-        print("wait queue input")
-        glb_queue_chat_input = glb_uid_dict[uid]["glb_queue_chat_input"]
-        content = glb_queue_chat_input.get(block=True)[1]
-        print(content)
-        if content == "**Reset**":
-            glb_uid_dict[uid] = init_uid_queues()
-            raise ResetException
-    else:
-        content = input(f"{name}: ")
+    glb_queue_chat_input = glb_uid_dict[uid]["glb_queue_chat_input"]
+    content = glb_queue_chat_input.get(block=True)[1]
+    if content == "**Reset**":
+        glb_uid_dict[uid] = init_uid_queues()
+        raise ResetException
     return content
 
 
 def send_reset_msg(msg: str, uid: Optional[str] = None) -> None:
     """Sends a reset message to the web UI."""
-    if get_use_web_ui():
-        global glb_uid_dict
-        glb_queue_reset_msg = glb_uid_dict[uid]["glb_queue_reset_msg"]
-        glb_queue_reset_msg.put([None, msg])
+    global glb_uid_dict
+    glb_queue_reset_msg = glb_uid_dict[uid]["glb_queue_reset_msg"]
+    glb_queue_reset_msg.put([None, msg])
 
 
 def get_reset_msg(uid: Optional[str] = None) -> None:
     """Retrieves a reset message from the queue, if available."""
     global glb_uid_dict
-    if get_use_web_ui():
-        print("wait queue input")
-        glb_queue_reset_msg = glb_uid_dict[uid]["glb_queue_reset_msg"]
-        if not glb_queue_reset_msg.empty():
-            content = glb_queue_reset_msg.get(block=True)[1]
-            print(content)
-            if content == "**Reset**":
-                glb_uid_dict[uid] = init_uid_queues()
-                raise ResetException
-
-
-def query_answer(
-    questions: list[str],
-    key: str = "ans",
-    uid: Optional[str] = None,
-) -> List[str]:
-    """
-    Queries the player for an answer either via the web UI or command line.
-    """
-    if get_use_web_ui():
-        return get_player_input(uid=uid)
-    else:
-        answer = [inquirer.prompt(questions)[key]]  # return list
-    return answer
+    glb_queue_reset_msg = glb_uid_dict[uid]["glb_queue_reset_msg"]
+    if not glb_queue_reset_msg.empty():
+        content = glb_queue_reset_msg.get(block=True)[1]
+        if content == "**Reset**":
+            glb_uid_dict[uid] = init_uid_queues()
+            raise ResetException
 
 
 class ResetException(Exception):
     """Custom exception to signal a reset action in the application."""
-
-
-def cycle_dots(text: str, num_dots: int = 3) -> str:
-    """Cycles the number of dots at the end of the text for a typing effect."""
-    # Count the number of points at the end of the current sentence
-    current_dots = len(text) - len(text.rstrip("."))
-    # Calculate the number of points in the next state
-    next_dots = (current_dots + 1) % (num_dots + 1)
-    if next_dots == 0:
-        # avoid '...0', should be '.'
-        next_dots = 1
-    # Remove the point at the end of the current sentence and add the point
-    # of the next state
-    return text.rstrip(".") + "." * next_dots
 
 
 def check_uuid(uid: Optional[str]) -> str:
@@ -226,7 +165,6 @@ def generate_image_from_name(name: str) -> str:
 
     # Check if the image already exists
     if os.path.exists(image_filepath):
-        print(f"Image already exists at {image_filepath}")
         return image_filepath
 
     # If the image does not exist, generate and save it
