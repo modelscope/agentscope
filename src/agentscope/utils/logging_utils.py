@@ -145,6 +145,7 @@ def log_gradio(message: dict, thread_name: str, **kwargs: Any) -> None:
     """
     if thread_name != "MainThread":
         get_reset_msg(uid=thread_name)
+        print("logger chat")
         name = message.get("name", "default") or message.get("role", "default")
         avatar = kwargs.get("avatar", None) or generate_image_from_name(
             message["name"],

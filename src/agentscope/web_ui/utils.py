@@ -96,11 +96,12 @@ def get_player_input(
     return content
 
 
-def send_reset_msg(msg: str, uid: Optional[str] = None) -> None:
+def send_reset_msg(uid: Optional[str] = None) -> None:
     """Sends a reset message to the web UI."""
+    uid = check_uuid(uid)
     global glb_uid_dict
     glb_queue_reset_msg = glb_uid_dict[uid]["glb_queue_reset_msg"]
-    glb_queue_reset_msg.put([None, msg])
+    glb_queue_reset_msg.put([None, "**Reset**"])
 
 
 def get_reset_msg(uid: Optional[str] = None) -> None:

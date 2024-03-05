@@ -20,6 +20,7 @@ from agentscope.web_ui.utils import (
     send_msg,
     generate_image_from_name,
     audio2text,
+    send_reset_msg,
 )
 
 MAX_NUM_DISPLAY_MSG = 20
@@ -92,13 +93,6 @@ def send_message(msg: str, uid: str) -> str:
     send_player_input(msg, uid=uid)
     avatar = generate_image_from_name("Me")
     send_msg(msg, is_player=True, role="Me", uid=uid, avatar=avatar)
-    return ""
-
-
-def send_player_reset_message(uid: str) -> str:
-    """Send a reset command to the player's interface."""
-    uid = check_uuid(uid)
-    send_player_input("**Reset**", uid=uid)
     return ""
 
 
@@ -277,7 +271,7 @@ def run_app() -> None:
             outputs=[image_term],
         )
 
-        reset_button.click(send_player_reset_message, inputs=[uuid])
+        reset_button.click(send_reset_msg, inputs=[uuid])
 
         chatbot.custom(fn=fn_choice, inputs=[uuid])
 
