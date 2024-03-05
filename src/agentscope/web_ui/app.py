@@ -8,7 +8,6 @@ import time
 from collections import defaultdict
 from typing import Optional, Callable
 import traceback
-from multiprocessing import Event
 import gradio as gr
 import modelscope_studio as mgr
 
@@ -42,10 +41,7 @@ def init_uid_dict() -> dict:
 
 
 glb_history_dict = defaultdict(init_uid_list)
-
-
 glb_signed_user = []
-is_init = Event()
 
 
 def reset_glb_var(uid: str) -> None:
@@ -176,7 +172,6 @@ def run_app() -> None:
 
     def start_game() -> None:
         """Start the main game loop."""
-        # is_init.wait()
         uid = threading.currentThread().name
         main = import_function_from_path(script_path, "main")
 
