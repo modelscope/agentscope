@@ -3,7 +3,7 @@
 from functools import partial
 
 from prompt import Prompts
-from utils import (
+from werewolf_utils import (
     check_winning,
     update_alive_players,
     majority_vote,
