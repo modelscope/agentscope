@@ -172,6 +172,7 @@ def log_gradio(message: dict, thread_name: str, **kwargs: Any) -> None:
                     + f"""<video src="{message['video_path'][i]}"
                 controls/></video>"""
                 )
+
         send_chat_msg(
             msg,
             role=name,
