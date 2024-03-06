@@ -117,6 +117,57 @@ def execute_python_code(
     return response
 
 
+def _sys_execute(
+    code: str,
+    shared_list: list,
+    maximum_memory_bytes: int,
+    timeout: int,
+) -> None:
+    """
+    Executes the given Python code in a controlled environment, capturing
+    the output and errors.
+
+    Parameters:
+        code (str): The Python code to be executed.
+        shared_list (ListProxy): A list proxy managed by a
+            multiprocessing.Manager to which the output and error messages
+            will be appended, along with a success flag.
+        maximum_memory_bytes (int): The maximum amount of memory in bytes
+            that the execution is allowed to use.
+        timeout (int): The maximum amount of time in seconds that the code
+            is allowed to run.
+
+    Returns:
+        None: This function does not return anything. It appends the results
+            to the shared_list.
+    """
+    is_success = False
+    with create_tempdir():
+        # These system calls are needed when cleaning up tempdir.
+        rmtree = shutil.rmtree
+        rmdir = os.rmdir
+        chdir = os.chdir
+
+        sys_python_guard(maximum_memory_bytes)
+        output_buffer, error_buffer = io.StringIO(), io.StringIO()
+        with timer(timeout), contextlib.redirect_stdout(
+            output_buffer,
+        ), contextlib.redirect_stderr(error_buffer):
+            try:
+                exec(code)
+                is_success = True
+            except Exception:
+                error_buffer.write(traceback.format_exc())
+
+        # Needed for cleaning up.
+        shutil.rmtree = rmtree
+        os.rmdir = rmdir
+        os.chdir = chdir
+    shared_list.extend(
+        [output_buffer.getvalue(), error_buffer.getvalue(), is_success],
+    )
+
+
 def _execute_python_code_sys(
     code: str = "",
     timeout: Optional[Union[int, float]] = None,
@@ -136,38 +187,18 @@ def _execute_python_code_sys(
         "containerized environment.",
     )
 
-    @timer(timeout)
-    def sys_execute() -> None:
-        is_success = False
-        with create_tempdir():
-            # These system calls are needed when cleaning up tempdir.
-            rmtree = shutil.rmtree
-            rmdir = os.rmdir
-            chdir = os.chdir
-
-            sys_python_guard(maximum_memory_bytes)
-            output_buffer, error_buffer = io.StringIO(), io.StringIO()
-            with contextlib.redirect_stdout(
-                output_buffer,
-            ), contextlib.redirect_stderr(error_buffer):
-                try:
-                    exec(code)
-                    is_success = True
-                except Exception:
-                    error_buffer.write(traceback.format_exc())
-
-            # Needed for cleaning up.
-            shutil.rmtree = rmtree
-            os.rmdir = rmdir
-            os.chdir = chdir
-        shared_list.extend(
-            [output_buffer.getvalue(), error_buffer.getvalue(), is_success],
-        )
-
     manager = multiprocessing.Manager()
     shared_list = manager.list()
 
-    p = multiprocessing.Process(target=sys_execute)
+    p = multiprocessing.Process(
+        target=_sys_execute,
+        args=(
+            code,
+            shared_list,
+            maximum_memory_bytes,
+            timeout,
+        ),
+    )
     p.start()
     p.join()
     if p.is_alive():
