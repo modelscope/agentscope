@@ -8,7 +8,7 @@
 
 ### `MessageBase`
 
-`MessageBase ` 旨在组织信息的属性，如智能体名字、内容和相关媒体 URL，它提供了一种可扩展的结构，用于创建特定类型的信息。
+`MessageBase` 旨在组织信息的属性，如智能体名字、内容和相关媒体 URL，它提供了一种可扩展的结构，用于创建特定类型的信息。
 
 ```python
 class MessageBase(dict):
