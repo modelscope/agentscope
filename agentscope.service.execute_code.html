@@ -154,6 +154,8 @@ execution, respectively.</p>
 <p>IPython-specific operations such as <cite>plt.show()</cite> for displaying
 matplotlib plots are currently not supported. This limitation stems
 from the non-interactive nature of the execution environment.</p>
+<p>The argument <cite>timeout</cite> is not available in Windows OS, since the
+since <cite>signal.setitimer</cite> is only available in Unix.</p>
 </div>
 </dd></dl>
 

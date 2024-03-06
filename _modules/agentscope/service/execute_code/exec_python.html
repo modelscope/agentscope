@@ -178,6 +178,9 @@
 <span class="sd">        matplotlib plots are currently not supported. This limitation stems</span>
 <span class="sd">        from the non-interactive nature of the execution environment.</span>
 
+<span class="sd">        The argument `timeout` is not available in Windows OS, since the</span>
+<span class="sd">        since `signal.setitimer` is only available in Unix.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Check if the `use_docker` flag has been explicitly set by the user.</span>
     <span class="k">if</span> <span class="n">use_docker</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -209,6 +212,57 @@
 
 
 
+<span class="k">def</span> <span class="nf">_sys_execute</span><span class="p">(</span>
+    <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">shared_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="n">maximum_memory_bytes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Executes the given Python code in a controlled environment, capturing</span>
+<span class="sd">    the output and errors.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        code (str): The Python code to be executed.</span>
+<span class="sd">        shared_list (ListProxy): A list proxy managed by a</span>
+<span class="sd">            multiprocessing.Manager to which the output and error messages</span>
+<span class="sd">            will be appended, along with a success flag.</span>
+<span class="sd">        maximum_memory_bytes (int): The maximum amount of memory in bytes</span>
+<span class="sd">            that the execution is allowed to use.</span>
+<span class="sd">        timeout (int): The maximum amount of time in seconds that the code</span>
+<span class="sd">            is allowed to run.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None: This function does not return anything. It appends the results</span>
+<span class="sd">            to the shared_list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">is_success</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">with</span> <span class="n">create_tempdir</span><span class="p">():</span>
+        <span class="c1"># These system calls are needed when cleaning up tempdir.</span>
+        <span class="n">rmtree</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span>
+        <span class="n">rmdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">rmdir</span>
+        <span class="n">chdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">chdir</span>
+
+        <span class="n">sys_python_guard</span><span class="p">(</span><span class="n">maximum_memory_bytes</span><span class="p">)</span>
+        <span class="n">output_buffer</span><span class="p">,</span> <span class="n">error_buffer</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(),</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">timer</span><span class="p">(</span><span class="n">timeout</span><span class="p">),</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">redirect_stdout</span><span class="p">(</span>
+            <span class="n">output_buffer</span><span class="p">,</span>
+        <span class="p">),</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">redirect_stderr</span><span class="p">(</span><span class="n">error_buffer</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">exec</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+                <span class="n">is_success</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">error_buffer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+
+        <span class="c1"># Needed for cleaning up.</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span> <span class="o">=</span> <span class="n">rmtree</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">rmdir</span> <span class="o">=</span> <span class="n">rmdir</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span> <span class="o">=</span> <span class="n">chdir</span>
+    <span class="n">shared_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">output_buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">(),</span> <span class="n">error_buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">(),</span> <span class="n">is_success</span><span class="p">],</span>
+    <span class="p">)</span>
+
+
 <span class="k">def</span> <span class="nf">_execute_python_code_sys</span><span class="p">(</span>
     <span class="n">code</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -228,38 +282,18 @@
         <span class="s2">&quot;containerized environment.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="nd">@timer</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">sys_execute</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">is_success</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">with</span> <span class="n">create_tempdir</span><span class="p">():</span>
-            <span class="c1"># These system calls are needed when cleaning up tempdir.</span>
-            <span class="n">rmtree</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span>
-            <span class="n">rmdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">rmdir</span>
-            <span class="n">chdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">chdir</span>
-
-            <span class="n">sys_python_guard</span><span class="p">(</span><span class="n">maximum_memory_bytes</span><span class="p">)</span>
-            <span class="n">output_buffer</span><span class="p">,</span> <span class="n">error_buffer</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(),</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
-            <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">redirect_stdout</span><span class="p">(</span>
-                <span class="n">output_buffer</span><span class="p">,</span>
-            <span class="p">),</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">redirect_stderr</span><span class="p">(</span><span class="n">error_buffer</span><span class="p">):</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">exec</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
-                    <span class="n">is_success</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                    <span class="n">error_buffer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
-
-            <span class="c1"># Needed for cleaning up.</span>
-            <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span> <span class="o">=</span> <span class="n">rmtree</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">rmdir</span> <span class="o">=</span> <span class="n">rmdir</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span> <span class="o">=</span> <span class="n">chdir</span>
-        <span class="n">shared_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">output_buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">(),</span> <span class="n">error_buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">(),</span> <span class="n">is_success</span><span class="p">],</span>
-        <span class="p">)</span>
-
     <span class="n">manager</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Manager</span><span class="p">()</span>
     <span class="n">shared_list</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
 
-    <span class="n">p</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">sys_execute</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span>
+        <span class="n">target</span><span class="o">=</span><span class="n">_sys_execute</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">=</span><span class="p">(</span>
+            <span class="n">code</span><span class="p">,</span>
+            <span class="n">shared_list</span><span class="p">,</span>
+            <span class="n">maximum_memory_bytes</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
     <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
     <span class="n">p</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
