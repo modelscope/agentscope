@@ -12,7 +12,7 @@ Let the adventure begin to unlock the potential of multi-agent applications with
 
 ## Getting Started
 
-Firstly, ensure that you have installed and configured AgentScope properly. Besides, we will involve the basic concepts of `Model API`,  `Agent`, `Msg`, and `Pipeline,` as described in [Tutorial-Concept](102-concepts). The overview of this tutorial is shown below:
+Firstly, ensure that you have installed and configured AgentScope properly. Besides, we will involve the basic concepts of `Model API`,  `Agent`, `Msg`, and `Pipeline,` as described in [Tutorial-Concept](101-agentscope). The overview of this tutorial is shown below:
 
 - [Crafting Your First Application](#crafting-your-first-application)
   - [Getting Started](#getting-started)

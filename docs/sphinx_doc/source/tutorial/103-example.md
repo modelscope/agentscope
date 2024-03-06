@@ -1,19 +1,35 @@
-(103-example)=
+(103-start)=
 
-# Getting Started with a Simple Example
+# Quick Start
 
-AgentScope is a versatile platform for building and running multi-agent applications. We provide various pre-built examples that will help you quickly understand how to create and use multi-agent for various applications. In this tutorial, you will learn how to set up a **simple agent-based interaction**.
+AgentScope is designed with a flexible communication mechanism. 
+In this tutorial, we will introduce the basic usage of AgentScope via a 
+simple standalone conversation between two agents (e.g. user and assistant 
+agents).
 
-## Step1: Prepare Model Configs
+## Step1: Prepare Model
 
-Agent is the basic composition and communication unit in AgentScope. To initialize a model-based agent, you need to prepare your configs for avaliable models. AgentScope supports a variety of APIs for pre-trained models. Here is a table outlining the supported APIs and the type of arguments required for each:
+AgentScope decouples the deployment and invocation of models to better build multi-agent applications.
 
-|   Model Usage               | Model Type Argument in AgentScope | Supported APIs                                                              |
-| --------------------------- | --------------------------------- |-----------------------------------------------------------------------------|
-| Text generation             | `openai`                          | Standard *OpenAI* chat API, FastChat and vllm                               |
-| Image generation            | `openai_dall_e`                   | *DALL-E* API for generating images                                          |
-| Embedding                   | `openai_embedding`                | API for text embeddings                                                     |
-| General usages in POST      | `post_api`                        | *Huggingface* and *ModelScope* Inference API, and other customized post API |
+In terms of model deployment, users can use third-party model services such 
+as OpenAI API, HuggingFace/ModelScope Inference API, and can also quickly 
+deploy local open-source model services through the [scripts]
+(https://github.com/modelscope/agentscope/blob/main/scripts/README.md) in 
+the repository. Currently, we support building basic model services quickly 
+using Flask with Transformers (or ModelScope), and also support deploying 
+local model services through FastChat and vllm inference engines.
+
+While in terms of model invocation, AgentScope provides a `ModelWrapper` class to encapsulate OpenAI API and RESTful Post Request calls.
+Currently, the supported OpenAI APIs include Chat, Image generation, and Embedding.
+Users can specify the model service by setting different model configs.
+
+
+|   Model Usage               | Supported APIs                                                              |
+| --------------------------- |-----------------------------------------------------------------------------|
+| Text generation             | Standard *OpenAI* chat API, FastChat and vllm                               |
+| Image generation            | *DALL-E* API for generating images                                          |
+| Embedding                   | API for text embeddings                                                     |
+| General usages in POST      | *Huggingface* and *ModelScope* Inference API, and other customized post API |
 
 Each API has its specific configuration requirements. For example, to configure an OpenAI API, you would need to fill out the following fields in the model config in a dict, a yaml file or a json file:
 
@@ -29,7 +45,7 @@ model_config = {
 
 For open-source models, we support integration with various model interfaces such as HuggingFace, ModelScope, FastChat, and vllm. You can find scripts on deploying these services in the `scripts` directory, and we defer the detailed instructions to [[Using Different Model Sources with Model API]](203-model).
 
-You can register your configuration by calling AgentScope's initilization method as follow. Besides, you can also load more than one config by calling init mutliple times.
+You can register your configuration by calling AgentScope's initialization method as follow. Besides, you can also load more than one config by calling init multiple times.
 
 ```python
 import agentscope

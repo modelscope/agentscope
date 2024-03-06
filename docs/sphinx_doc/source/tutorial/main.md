@@ -12,8 +12,8 @@ AgentScope is an innovative multi-agent platform designed to empower developers 
 
 ### Getting Started
 
-- [Installation Guide](101-installation)
-- [Fundamental Concepts](102-concepts)
+- [Installation Guide](102-installation)
+- [Fundamental Concepts](101-agentscope)
 - [Getting Started with a Simple Example](103-example)
 - [Crafting Your First Application](104-usecase)
 - [Logging and WebUI](105-logging)
