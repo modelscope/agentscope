@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """A simple example for auto discussion: the agent builder automatically\
  set up the agents participating the discussion ."""
-from utils import load_txt, extract_scenario_and_participants
+from tools import load_txt, extract_scenario_and_participants
 import agentscope
 from agentscope.agents import DialogAgent
 from agentscope.pipelines.functional import sequentialpipeline
