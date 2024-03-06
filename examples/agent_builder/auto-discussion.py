@@ -62,6 +62,6 @@ agents = [
 ]
 
 # begin discussion
-x = Msg("user", f"let's discuss to solve the question: {query}")
+msg = Msg("user", f"let's discuss to solve the question: {query}")
 for i in range(max_round):
-    x = sequentialpipeline(agents, x)
+    msg = sequentialpipeline(agents, msg)
