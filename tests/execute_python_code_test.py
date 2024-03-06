@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """ Python code execution test."""
 import unittest
+import sys
 
 from agentscope.service import execute_python_code
 
@@ -75,7 +76,9 @@ class ExecutePythonCodeTest(unittest.TestCase):
         self.run_test(self.arg2, "4.0\n", "")
 
     def test_timeout(self) -> None:
-        """Execute timeout test."""
+        """Execute timeout test (NOT available in WinOS.)"""
+        if sys.platform == "win32":
+            return
         self.run_test(self.arg3, "Hello World\n", "timed out\n")
 
     def test_no_input_code(self) -> None:
