@@ -13,8 +13,7 @@ Remark: in `path/to/your/script.py`, there should be a `main` function.
 
 ## An Example
 
-Run the following code in the root directory of this project after you
-setup configs in `exampels/conversation/conversation.py`:
+Run the following code in the root directory of this project after you setup the configs in `examples/conversation/conversation.py`:
 ```python
 as_studio exampels/conversation/conversation.py
 ```
