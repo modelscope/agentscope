@@ -11,7 +11,7 @@ import traceback
 import gradio as gr
 import modelscope_studio as mgr
 
-from agentscope.web_ui.utils import (
+from agentscope.web.studio.utils import (
     send_player_input,
     get_chat_msg,
     SYS_MSG_PREFIX,
@@ -30,11 +30,6 @@ FAIL_COUNT_DOWN = 30
 def init_uid_list() -> list:
     """Initialize an empty list for storing user IDs."""
     return []
-
-
-def init_uid_dict() -> dict:
-    """Initialize an empty dictionary for user-related signals."""
-    return {}
 
 
 glb_history_dict = defaultdict(init_uid_list)
@@ -137,6 +132,12 @@ def import_function_from_path(
                 f"Could not find module spec for {module_name} at"
                 f" {module_path}",
             )
+    except AttributeError as exc:
+        raise AttributeError(
+            f"The module '{module_name}' does not have a function named '"
+            f"{function_name}'. Please put your code in the main function, "
+            f"read README.md for details.",
+        ) from exc
     finally:
         # Restore the original sys.path
         sys.path = original_sys_path
@@ -176,7 +177,8 @@ def run_app() -> None:
                 )
                 for i in range(FAIL_COUNT_DOWN, 0, -1):
                     send_msg(
-                        f"{SYS_MSG_PREFIX}发生错误 {trace_info}, 即将在{i}秒后重启",
+                        f"{SYS_MSG_PREFIX} error {trace_info}, reboot "
+                        f"in {i} seconds",
                         uid=uid,
                     )
                     time.sleep(1)

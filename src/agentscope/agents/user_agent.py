@@ -6,7 +6,7 @@ from typing import Optional
 
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
-from agentscope.web_ui.utils import user_input
+from agentscope.web.studio.utils import user_input
 
 
 class UserAgent(AgentBase):

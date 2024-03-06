@@ -8,7 +8,7 @@ from typing import Optional, Literal, Union, Any
 
 from loguru import logger
 
-from agentscope.web_ui.utils import (
+from agentscope.web.studio.utils import (
     generate_image_from_name,
     send_msg,
     get_reset_msg,

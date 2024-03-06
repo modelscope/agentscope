@@ -98,7 +98,7 @@ setuptools.setup(
     python_requires=">=3.9",
     entry_points={
         "console_scripts": [
-            "as_studio=agentscope.web_ui.app:run_app",
+            "as_studio=agentscope.web.studio.studio:run_app",
         ],
     },
 )

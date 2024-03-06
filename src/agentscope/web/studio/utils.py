@@ -12,7 +12,7 @@ import gradio as gr
 
 from dashscope.audio.asr import RecognitionCallback, Recognition
 
-SYS_MSG_PREFIX = "【系统】"
+SYS_MSG_PREFIX = "【SYSTEM】"
 
 
 def init_uid_queues() -> dict:
