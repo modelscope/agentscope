@@ -15,7 +15,7 @@ Remark: in `path/to/your/script.py`, there should be a `main` function.
 
 Run the following code in the root directory of this project after you setup the configs in `examples/conversation/conversation.py`:
 ```python
-as_studio exampels/conversation/conversation.py
+as_studio examples/conversation/conversation.py
 ```
 The following interface will be launched at `localhost:7860`.
 
