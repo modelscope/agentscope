@@ -87,6 +87,9 @@ def execute_python_code(
         matplotlib plots are currently not supported. This limitation stems
         from the non-interactive nature of the execution environment.
 
+        The argument `timeout` is not available in Windows OS, since the
+        since `signal.setitimer` is only available in Unix.
+
     """
     # Check if the `use_docker` flag has been explicitly set by the user.
     if use_docker is None:
