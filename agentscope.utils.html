@@ -69,6 +69,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-agentscope.utils.logging_utils">logging_utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.utils.logging_utils.log_gradio"><code class="docutils literal notranslate"><span class="pre">log_gradio()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.utils.logging_utils.setup_logger"><code class="docutils literal notranslate"><span class="pre">setup_logger()</span></code></a></li>
 </ul>
 </li>
@@ -264,6 +265,22 @@ exception and return <cite>False</cite> along with the error message.</p>
 <section id="module-agentscope.utils.logging_utils">
 <span id="logging-utils-module"></span><h2>logging_utils module<a class="headerlink" href="#module-agentscope.utils.logging_utils" title="Link to this heading"></a></h2>
 <p>Logging utilities.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.utils.logging_utils.log_gradio">
+<span class="sig-prename descclassname"><span class="pre">agentscope.utils.logging_utils.</span></span><span class="sig-name descname"><span class="pre">log_gradio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/utils/logging_utils.html#log_gradio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.utils.logging_utils.log_gradio" title="Link to this definition"></a></dt>
+<dd><p>Send chat message to gradio.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<cite>dict</cite>) – The message to be logged. It should have “name”(or “role”) and
+“content” keys, and the message will be logged as “&lt;name/role&gt;:
+&lt;content&gt;”.</p></li>
+<li><p><strong>thread_name</strong> (<cite>str</cite>) – The name of the thread.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="agentscope.utils.logging_utils.setup_logger">
 <span class="sig-prename descclassname"><span class="pre">agentscope.utils.logging_utils.</span></span><span class="sig-name descname"><span class="pre">setup_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_log</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'TRACE'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'DEBUG'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'INFO'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'SUCCESS'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'WARNING'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'ERROR'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'CRITICAL'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'INFO'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/utils/logging_utils.html#setup_logger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.utils.logging_utils.setup_logger" title="Link to this definition"></a></dt>

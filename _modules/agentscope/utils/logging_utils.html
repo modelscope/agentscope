@@ -92,9 +92,16 @@
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">threading</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span>
 
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+
+<span class="kn">from</span> <span class="nn">agentscope.web.studio.utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">generate_image_from_name</span><span class="p">,</span>
+    <span class="n">send_msg</span><span class="p">,</span>
+    <span class="n">get_reset_msg</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="n">LOG_LEVEL</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span>
     <span class="s2">&quot;TRACE&quot;</span><span class="p">,</span>
@@ -204,10 +211,67 @@
                     <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">print_str</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="s2">&quot;{{&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;}}&quot;</span><span class="p">)</span>
                 <span class="p">)</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">LEVEL_CHAT_LOG</span><span class="p">,</span> <span class="n">print_str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+                <span class="n">thread_name</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">current_thread</span><span class="p">()</span><span class="o">.</span><span class="n">name</span>
+                <span class="k">if</span> <span class="n">thread_name</span> <span class="o">!=</span> <span class="s2">&quot;MainThread&quot;</span><span class="p">:</span>
+                    <span class="n">log_gradio</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">thread_name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
                 <span class="k">return</span>
 
     <span class="n">message</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">message</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="s2">&quot;{{&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;}}&quot;</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">LEVEL_CHAT_LOG</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="log_gradio">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.logging_utils.log_gradio">[docs]</a>
+<span class="k">def</span> <span class="nf">log_gradio</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">thread_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Send chat message to gradio.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        message (`dict`):</span>
+<span class="sd">            The message to be logged. It should have &quot;name&quot;(or &quot;role&quot;) and</span>
+<span class="sd">            &quot;content&quot; keys, and the message will be logged as &quot;&lt;name/role&gt;:</span>
+<span class="sd">            &lt;content&gt;&quot;.</span>
+<span class="sd">        thread_name (`str`):</span>
+<span class="sd">            The name of the thread.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">thread_name</span> <span class="o">!=</span> <span class="s2">&quot;MainThread&quot;</span><span class="p">:</span>
+        <span class="n">get_reset_msg</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="n">thread_name</span><span class="p">)</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">message</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;role&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">)</span>
+        <span class="n">avatar</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;avatar&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">generate_image_from_name</span><span class="p">(</span>
+            <span class="n">message</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">message</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">]</span>
+        <span class="n">flushing</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="s2">&quot;url&quot;</span> <span class="ow">in</span> <span class="n">message</span><span class="p">:</span>
+            <span class="n">flushing</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">])):</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;&lt;img src=&quot;</span><span class="si">{</span><span class="n">message</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;/&gt;&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;audio_path&quot;</span> <span class="ow">in</span> <span class="n">message</span><span class="p">:</span>
+            <span class="n">flushing</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">[</span><span class="s2">&quot;audio_path&quot;</span><span class="p">])):</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="p">(</span>
+                    <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;&lt;audio src=&quot;</span><span class="si">{</span><span class="n">message</span><span class="p">[</span><span class="s1">&#39;audio_path&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">                controls/&gt;&lt;/audio&gt;&quot;&quot;&quot;</span>
+                <span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;video_path&quot;</span> <span class="ow">in</span> <span class="n">message</span><span class="p">:</span>
+            <span class="n">flushing</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">[</span><span class="s2">&quot;video_path&quot;</span><span class="p">])):</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="p">(</span>
+                    <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;&lt;video src=&quot;</span><span class="si">{</span><span class="n">message</span><span class="p">[</span><span class="s1">&#39;video_path&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">                controls/&gt;&lt;/video&gt;&quot;&quot;&quot;</span>
+                <span class="p">)</span>
+
+        <span class="n">send_msg</span><span class="p">(</span>
+            <span class="n">msg</span><span class="p">,</span>
+            <span class="n">role</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">uid</span><span class="o">=</span><span class="n">thread_name</span><span class="p">,</span>
+            <span class="n">flushing</span><span class="o">=</span><span class="n">flushing</span><span class="p">,</span>
+            <span class="n">avatar</span><span class="o">=</span><span class="n">avatar</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
 
 
 <span class="k">def</span> <span class="nf">_level_format</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>

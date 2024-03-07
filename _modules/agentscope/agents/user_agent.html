@@ -95,6 +95,7 @@
 
 <span class="kn">from</span> <span class="nn">agentscope.agents</span> <span class="kn">import</span> <span class="n">AgentBase</span>
 <span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">from</span> <span class="nn">agentscope.web.studio.utils</span> <span class="kn">import</span> <span class="n">user_input</span>
 
 
 <div class="viewcode-block" id="UserAgent">
@@ -155,7 +156,7 @@
         <span class="c1"># TODO: To avoid order confusion, because `input` print much quicker</span>
         <span class="c1">#  than logger.chat</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
-        <span class="n">content</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: &quot;</span><span class="p">)</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">user_input</span><span class="p">()</span>
 
         <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="n">required_keys</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -177,8 +178,6 @@
             <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>  <span class="c1"># type: ignore[arg-type]</span>
         <span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="c1"># Add to memory</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>

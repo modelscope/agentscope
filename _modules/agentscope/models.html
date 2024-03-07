@@ -232,9 +232,10 @@
     <span class="c1"># check if name is unique</span>
     <span class="k">for</span> <span class="n">cfg</span> <span class="ow">in</span> <span class="n">format_configs</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">config_name</span> <span class="ow">in</span> <span class="n">_MODEL_CONFIGS</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;config_name [</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">config_name</span><span class="si">}</span><span class="s2">] already exists.&quot;</span><span class="p">,</span>
             <span class="p">)</span>
+            <span class="k">continue</span>
         <span class="n">_MODEL_CONFIGS</span><span class="p">[</span><span class="n">cfg</span><span class="o">.</span><span class="n">config_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">cfg</span>
 
     <span class="c1"># print the loaded model configs</span>
