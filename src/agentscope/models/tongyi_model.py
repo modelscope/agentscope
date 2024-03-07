@@ -16,6 +16,11 @@ from ..utils.monitor import get_full_name
 from ..utils import QuotaExceededError
 from ..constants import _DEFAULT_API_BUDGET
 
+# The models in this list require that the roles of messages must alternate
+# between "user" and "assistant".
+# TODO: add more models
+SPECIAL_MODEL_LIST = ["qwen-turbo", "qwen-plus", "qwen1.5-72b-chat"]
+
 
 class TongyiWrapper(ModelWrapperBase):
     """The model wrapper for Tongyi API."""
@@ -176,12 +181,10 @@ class TongyiChatWrapper(TongyiWrapper):
                 "and 'content' key for Tongyi API.",
             )
 
-        # For Tongyi model, the "role" value of the first and the last message
-        # must be "user"
-        if len(messages) > 0:
-            messages[0]["role"] = "user"
-            messages[-1]["role"] = "user"
+        messages = self._preprocess_role(messages)
+        print("messages after", messages)
 
+        # TODO: if user input nothing, will be an error
         # step3: forward to generate response
         response = dashscope.Generation.call(
             model=self.model,
@@ -189,6 +192,7 @@ class TongyiChatWrapper(TongyiWrapper):
             result_format="message",  # set the result to be "message" format.
             **kwargs,
         )
+        print("response", response)
 
         # step4: record the api invocation if needed
         self._save_model_invocation(
@@ -215,3 +219,36 @@ class TongyiChatWrapper(TongyiWrapper):
             text=response.output["choices"][0]["message"]["content"],
             raw=response,
         )
+
+    def _preprocess_role(self, messages: list) -> list:
+        """preprocess role rules for Tongyi"""
+        if self.model in SPECIAL_MODEL_LIST:
+            # The models in this list require that the roles of messages must
+            # alternate between "user" and "assistant".
+            message_length = len(messages)
+            if message_length % 2 == 1:
+                # messages roles will be
+                # ["user", "assistant", "user", "assistant", ..., "user"]
+                for i in range(message_length):
+                    if i % 2 == 0:
+                        messages[i]["role"] = "user"
+                    else:
+                        messages[i]["role"] = "assistant"
+            else:
+                # messages roles will be
+                # ["system", "user", "assistant", "user", "assistant", ... ,
+                # "user"]
+                messages[0]["role"] = "system"
+                for i in range(1, message_length):
+                    if i % 2 == 0:
+                        messages[i]["role"] = "user"
+                    else:
+                        messages[i]["role"] = "assistant"
+        else:
+            # For other Tongyi models, the "role" value of the first and the
+            # last messages must be "user"
+            if len(messages) > 0:
+                messages[0]["role"] = "user"
+                messages[-1]["role"] = "user"
+
+        return messages
