@@ -36,6 +36,8 @@ doc_requires = [
 
 test_requires = ["pytest", "pytest-cov", "pre-commit"]
 
+gradio_requires = ["gradio==4.19.1", "modelscope_studio==0.0.5"]
+
 # released requires
 minimal_requires = [
     "loguru",
@@ -47,7 +49,7 @@ minimal_requires = [
     "Flask==3.0.0",
     "Flask-Cors==4.0.0",
     "Flask-SocketIO==5.3.6",
-    "dashscope",
+    "dashscope==1.14.1",
 ]
 
 distribute_requires = minimal_requires + rpc_requires
@@ -60,6 +62,7 @@ full_requires = (
     + service_requires
     + doc_requires
     + test_requires
+    + gradio_requires
 )
 
 with open("README.md", "r", encoding="UTF-8") as fh:
@@ -93,4 +96,9 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.9",
+    entry_points={
+        "console_scripts": [
+            "as_studio=agentscope.web.studio.studio:run_app",
+        ],
+    },
 )

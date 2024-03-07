@@ -6,6 +6,7 @@ from typing import Optional
 
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
+from agentscope.web.studio.utils import user_input
 
 
 class UserAgent(AgentBase):
@@ -62,7 +63,7 @@ class UserAgent(AgentBase):
         # TODO: To avoid order confusion, because `input` print much quicker
         #  than logger.chat
         time.sleep(0.5)
-        content = input(f"{self.name}: ")
+        content = user_input()
 
         kwargs = {}
         if required_keys is not None:
@@ -84,8 +85,6 @@ class UserAgent(AgentBase):
             url=url,
             **kwargs,  # type: ignore[arg-type]
         )
-
-        self.speak(msg)
 
         # Add to memory
         self.memory.add(msg)
