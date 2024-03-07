@@ -3,7 +3,6 @@
 import json
 import os
 import sys
-import threading
 from typing import Optional, Literal, Union, Any
 
 from loguru import logger
@@ -12,6 +11,7 @@ from agentscope.web.studio.utils import (
     generate_image_from_name,
     send_msg,
     get_reset_msg,
+    thread_local_data,
 )
 
 LOG_LEVEL = Literal[
@@ -123,16 +123,15 @@ def _chat(message: Union[str, dict], *args: Any, **kwargs: Any) -> None:
                 )
                 logger.log(LEVEL_CHAT_LOG, print_str, *args, **kwargs)
 
-                thread_name = threading.current_thread().name
-                if thread_name != "MainThread":
-                    log_gradio(message, thread_name, **kwargs)
+                if hasattr(thread_local_data, "uid"):
+                    log_gradio(message, thread_local_data.uid, **kwargs)
                 return
 
     message = str(message).replace("{", "{{").replace("}", "}}")
     logger.log(LEVEL_CHAT_LOG, message, *args, **kwargs)
 
 
-def log_gradio(message: dict, thread_name: str, **kwargs: Any) -> None:
+def log_gradio(message: dict, uid: str, **kwargs: Any) -> None:
     """Send chat message to gradio.
 
     Args:
@@ -140,11 +139,11 @@ def log_gradio(message: dict, thread_name: str, **kwargs: Any) -> None:
             The message to be logged. It should have "name"(or "role") and
             "content" keys, and the message will be logged as "<name/role>:
             <content>".
-        thread_name (`str`):
-            The name of the thread.
+        uid (`str`):
+            The local value 'uid' of the thread.
     """
-    if thread_name != "MainThread":
-        get_reset_msg(uid=thread_name)
+    if uid:
+        get_reset_msg(uid=uid)
         name = message.get("name", "default") or message.get("role", "default")
         avatar = kwargs.get("avatar", None) or generate_image_from_name(
             message["name"],
@@ -176,7 +175,7 @@ def log_gradio(message: dict, thread_name: str, **kwargs: Any) -> None:
         send_msg(
             msg,
             role=name,
-            uid=thread_name,
+            uid=uid,
             flushing=flushing,
             avatar=avatar,
         )
