@@ -8,11 +8,17 @@ from multiprocessing import Queue
 from collections import defaultdict
 
 from PIL import Image
-import gradio as gr
+
+try:
+    import gradio as gr
+except ImportError:
+    gr = None
 
 from dashscope.audio.asr import RecognitionCallback, Recognition
 
 SYS_MSG_PREFIX = "【SYSTEM】"
+
+thread_local_data = threading.local()
 
 
 def init_uid_queues() -> dict:
@@ -86,7 +92,7 @@ def send_player_input(msg: str, uid: Optional[str] = None) -> None:
 
 def get_player_input(
     uid: Optional[str] = None,
-) -> list[str]:
+) -> str:
     """Gets player input from the web UI or command line."""
     global glb_uid_dict
     glb_queue_user_input = glb_uid_dict[uid]["glb_queue_user_input"]
@@ -176,11 +182,10 @@ def audio2text(audio_path: str) -> str:
 
 def user_input() -> str:
     """get user input"""
-    thread_name = threading.current_thread().name
-    if thread_name == "MainThread":
-        content = input("User input: ")
-    else:
+    if hasattr(thread_local_data, "uid"):
         content = get_player_input(
-            uid=threading.current_thread().name,
+            uid=thread_local_data.uid,
         )
+    else:
+        content = input("User input: ")
     return content
