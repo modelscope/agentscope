@@ -338,7 +338,7 @@ class RpcAgentServerLauncher:
         self.port = check_port(port)
         self.max_pool_size = max_pool_size
         self.max_timeout_seconds = max_timeout_seconds
-        self.local_model = local_mode
+        self.local_mode = local_mode
         self.server = None
         self.stop_event = None
         self.parent_con = None
@@ -355,7 +355,7 @@ class RpcAgentServerLauncher:
                 "port": self.port,
                 "max_pool_size": self.max_pool_size,
                 "max_timeout_seconds": self.max_timeout_seconds,
-                "local_mode": self.local_model,
+                "local_mode": self.local_mode,
             },
         )
         server_thread.start()
@@ -384,7 +384,7 @@ class RpcAgentServerLauncher:
                 "pipe": child_con,
                 "max_pool_size": self.max_pool_size,
                 "max_timeout_seconds": self.max_timeout_seconds,
-                "local_mode": self.local_model,
+                "local_mode": self.local_mode,
             },
         )
         server_process.start()

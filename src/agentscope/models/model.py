@@ -222,10 +222,8 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
                 from the config file.
         """
         self.config_name = config_name
-        logger.info(
-            f"Initialize model [{config_name}] with config:\n"
-            f"{json.dumps(kwargs, indent=2)}",
-        )
+        logger.info(f"Initialize model [{config_name}]")
+        logger.debug(f"[{config_name}]:\n {json.dumps(kwargs, indent=2)}")
 
     def __call__(self, *args: Any, **kwargs: Any) -> ModelResponse:
         """Processing input with the model."""
