@@ -97,7 +97,6 @@ def get_player_input(
     global glb_uid_dict
     glb_queue_user_input = glb_uid_dict[uid]["glb_queue_user_input"]
     content = glb_queue_user_input.get(block=True)[1]
-    print("content", content)
     if content == "**Reset**":
         glb_uid_dict[uid] = init_uid_queues()
         raise ResetException
