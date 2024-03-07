@@ -5,6 +5,8 @@ Unit tests for model wrapper classes and functions
 
 from typing import Any
 import unittest
+from unittest.mock import patch, MagicMock
+
 
 from agentscope.models import (
     ModelResponse,
@@ -46,7 +48,8 @@ class BasicModelTest(unittest.TestCase):
             PostAPIModelWrapperBase,
         )
 
-    def test_load_model_configs(self) -> None:
+    @patch("loguru.logger.warning")
+    def test_load_model_configs(self, mock_logging: MagicMock) -> None:
         """Test to load model configs"""
         configs = [
             {
@@ -83,8 +86,12 @@ class BasicModelTest(unittest.TestCase):
         self.assertEqual(model.config_name, "gpt-4")
         self.assertRaises(ValueError, load_model_by_config_name, "my_post_api")
 
-        # automatically detect model with the same id
-        self.assertRaises(ValueError, read_model_configs, configs[0])
+        # load model with the same id
+        read_model_configs(configs=configs[0], clear_existing=False)
+        mock_logging.assert_called_once_with(
+            "config_name [gpt-4] already exists.",
+        )
+
         read_model_configs(
             configs={
                 "model_type": "TestModelWrapperSimple",
