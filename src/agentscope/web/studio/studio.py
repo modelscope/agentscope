@@ -8,8 +8,16 @@ import time
 from collections import defaultdict
 from typing import Optional, Callable
 import traceback
-import gradio as gr
-import modelscope_studio as mgr
+
+try:
+    import gradio as gr
+except ImportError:
+    gr = None
+
+try:
+    import modelscope_studio as mgr
+except ImportError:
+    mgr = None
 
 from agentscope.web.studio.utils import (
     send_player_input,
@@ -21,6 +29,7 @@ from agentscope.web.studio.utils import (
     generate_image_from_name,
     audio2text,
     send_reset_msg,
+    thread_local_data,
 )
 
 MAX_NUM_DISPLAY_MSG = 20
@@ -161,9 +170,9 @@ def run_app() -> None:
     # Change the current working directory to the directory where
     os.chdir(script_dir)
 
-    def start_game() -> None:
+    def start_game(uid: str) -> None:
         """Start the main game loop."""
-        uid = threading.currentThread().name
+        thread_local_data.uid = uid
         main = import_function_from_path(script_path, "main")
 
         while True:
@@ -195,7 +204,7 @@ def run_app() -> None:
             print(f"Total number of users: {len(glb_signed_user)}")
             run_thread = threading.Thread(
                 target=start_game,
-                name=uid,
+                args=(uid,),
             )
             run_thread.start()
 
