@@ -1,19 +1,37 @@
 (203-model)=
 
-# Using Different Model Sources with Model API
+# Model Service
 
-AgentScope allows for the integration of multi-modal models from various sources. The core step is the initialization process, where once initialized with a certain config, all agent instances globally select the appropriate model APIs based on the model name specified (e.g., `model='gpt-4'`):
+In AgentScope, the model deployment and invocation are decoupled by `ModelWrapper`.
+Developers can specify their own model by providing model configurations, 
+and AgentScope also provides scripts to support developers to customize 
+model services. 
+
+## Supported Models
+
+Currently, AgentScope supports the following model service APIs:
+- OpenAI API, including Chat, image generation (DALL-E), and Embedding.
+- Post Request API, model inference services based on Post 
+  requests, including Huggingface/ModelScope Inference API and various 
+  post request based model APIs.
+
+## Configuration
+
+In AgentScope, users specify the model configuration through the 
+`model_configs` parameter in the `agentscope.init` interface. 
+`model_configs` can be a **dictionary**, **a list of dictionaries**, or a 
+**path** to model configuration file.
 
 ```python
 import agentscope
 
-agentscope.init(model_configs=PATH_TO_MODEL_CONFIG)
+agentscope.init(model_configs=MODEL_CONFIG_OR_PATH)
 ```
 
-where the model configs could be a list of dict:
+An example of `model_configs` is as follows:
 
-```json
-[
+```python
+model_configs = [
     {
         "config_name": "gpt-4-temperature-0.0",
         "model_type": "openai",
@@ -34,44 +52,140 @@ where the model configs could be a list of dict:
             "size": "1024x1024"
         }
     },
-    // Additional models can be configured here
+    # Additional models can be configured here
 ]
 ```
 
-This allows users to configure the model once, enabling shared use across all agents within the multi-agent application. Here is a table outlining the supported APIs and the type of arguments required for each:
+### Configuration Format
 
-|   Model Usage               | Type Argument in AgentScope     | Supported APIs                                                         |
-| -------------------- | ------------------ | ------------------------------------------------------------ |
-| Text generation     | `openai`           | Standard OpenAI chat API, FastChat and vllm                     |
-| Image generation   | `openai_dall_e`    | DALL-E API for generating images                             |
-| Embedding | `openai_embedding` | API for text embeddings                                      |
-| General usages in POST       | `post_api`         | Huggingface/ModelScope Inference API, and customized post API |
+In AgentScope the model configuration is a dictionary used to specify the type of model and set the call parameters.
+We divide the fields in the model configuration into two categories: _basic parameters_ and _detailed parameters_.
+Among them, the basic parameters include `config_name` and `model_type`, which are used to distinguish different model configurations and specific `ModelWrapper` types.
 
-## Standard OpenAI API
+```python
+{
+    # Basic parameters
+    "config_name": "gpt-4-temperature-0.0",     # Model configuration name
+    "model_type": "openai",                     # Correspond to `ModelWrapper` type
+    
+    # Detailed parameters
+    # ...
+}
+```
 
-Our configuration is fully compatible with the Standard OpenAI API. For specific parameter configuration and usage guides, we recommend visiting their official website: [https://platform.openai.com/docs/api-reference/introduction](https://platform.openai.com/docs/api-reference/introduction).
+#### Basic Parameters
 
-## Self-host Model API
+In basic parameters, `config_name` is the identifier of the model configuration,
+which we will use to specify the model service when initializing an agent.
 
-In AgentScope, in addition to OpenAI API, we also support open-source models with post-request API. In this document, we will introduce how to fast set up local model API serving with different inference engines.
+`model_type` corresponds to the type of `ModelWrapper` and is used to specify the type of model service.
+It corresponds to the `model_type` field in the `ModelWrapper` class in the source code.
+
+```python
+class OpenAIChatWrapper(OpenAIWrapper):
+    """The model wrapper for OpenAI's chat API."""
+
+    model_type: str = "openai"
+    # ...
+```
+
+In the current AgentScope, the supported `model_type` types, the corresponding 
+`ModelWrapper` classes, and the supported APIs are as follows:
+
+| Task             | model_type         | ModelWrapper             | Supported APIs                                                |
+|------------------|--------------------|--------------------------|------------------------------------------------------------|
+| Text generation  | `openai`           | `OpenAIChatWrapper`      | Standard OpenAI chat API, FastChat and vllm                     |
+| Image generation | `openai_dall_e`    | `OpenAIDALLEWrapper`     | DALL-E API for generating images                             |
+| Embedding        | `openai_embedding` | `OpenAIEmbeddingWrapper` | API for text embeddings                                      |
+| Post Request     | `post_api`         | `PostAPIModelWrapperBase` | Huggingface/ModelScope Inference API, and customized post API |
+
+
+#### Detailed Parameters
+
+According to the different `ModelWrapper`, the parameters contained in the 
+detailed parameters are different. However, all detailed parameters will be 
+used to initialize the instance of the `ModelWrapper` class. Therefore, more 
+detailed parameter descriptions can be viewed according to the constructor of
+their `ModelWrapper` classes.
+
+- For OpenAI APIs including text generation, image generation, and text embedding, the model configuration parameters are as follows:
+
+```python
+{
+    # basic parameters
+    "config_name": "gpt-4_temperature-0.0",
+    "model_type": "openai",
+  
+    # detailed parameters
+    # required parameters
+    "model_name": "gpt-4",          # OpenAI model name
+    
+    # optional
+    "api_key": "xxx",               # OpenAI API Key, if not provided, it will be read from the environment variable
+    "organization": "xxx",          # Organization name, if not provided, it will be read from the environment variable
+    "client_args": {                # Parameters for initializing the OpenAI API Client
+        # e.g. "max_retries": 3, 
+    },
+    "generate_args": {              # Parameters passed to the model when calling
+        # e.g. "temperature": 0.0
+    },
+    "budget": 100.0                 # API budget
+}
+```
+
+- For post request API, the model configuration parameters are as follows:
+
+```python
+{
+    # Basic parameters
+    "config_name": "gpt-4_temperature-0.0",
+    "model_type": "post_api",
+  
+    # Detailed parameters
+    "api_url": "http://xxx.png",
+    "headers": { 
+        # e.g. "Authorization": "Bearer xxx",
+    },
+  
+    # Optional parameters, need to be configured according to the requirements of the Post request API
+    "json_args": {
+        # e.g. "temperature": 0.0
+    }
+    # ...
+}
+```
+
+## Build Model Service from Scratch
+
+For developers who need to build their own model services, AgentScope 
+provides some scripts to help developers quickly build model services. 
+You can find these scripts and instructions in the [scripts](https://github.com/modelscope/agentscope/tree/main/scripts)
+directory.
+
+Specifically, AgentScope provides the following model service scripts:
+- Model service based on **Flask + HuggingFace**
+- Model service based on **Flask + ModelScope**
+- **FastChat** inference engine
+- **vllm** inference engine
+
+Taking the Flask + Huggingface model service as an example, we will introduce how to use the model service script of AgentScope.
+More model service scripts can be found in [scripts](https://github.com/modelscope/agentscope/blob/main/scripts/) directory.
 
 ### Flask-based Model API Serving
 
-[Flask](https://github.com/pallets/flask) is a lightweight web application framework. It is easy to build a local model API serving with Flask.
+[Flask](https://github.com/pallets/flask) is a lightweight web application framework. It is easy to build a local model API service with Flask.
 
-Here we provide two Flask examples with Transformers and ModelScope libraries, respectively. You can build your own model API serving with a few modifications.
-
-#### With Transformers Library
+#### Using transformers library
 
 ##### Install Libraries and Set up Serving
 
 Install Flask and Transformers by following the command.
 
 ```bash
-pip install Flask, transformers
+pip install Flask transformers
 ```
 
-Taking model `meta-llama/Llama-2-7b-chat-hf` and port `8000` as an example, set up the model API serving by running the following command.
+Taking model `meta-llama/Llama-2-7b-chat-hf` and port `8000` as an example, set up the model API service by running the following command.
 
 ```bash
 python flask_transformers/setup_hf_service.py
@@ -82,9 +196,9 @@ python flask_transformers/setup_hf_service.py
 
 You can replace `meta-llama/Llama-2-7b-chat-hf` with any model card in the huggingface model hub.
 
-##### How to use in AgentScope
+##### Use in AgentScope
 
-In AgentScope, you can load the model with the following model configs: `./flask_transformers/model_config.json`.
+In AgentScope, you can load the model with the following model configs: [./flask_transformers/model_config.json](https://github.com/modelscope/agentscope/blob/main/scripts/flask_transformers/model_config.json).
 
 ```json
 {
@@ -100,157 +214,6 @@ In AgentScope, you can load the model with the following model configs: `./flask
 
 ##### Note
 
-In this model serving, the messages from post requests should be in **STRING** format. You can use [templates for chat model](https://huggingface.co/docs/transformers/main/chat_templating) from *transformers* with a little modification based on `./flask_transformers/setup_hf_service.py`.
+In this model serving, the messages from post requests should be in **STRING** format. You can use [templates for chat model](https://huggingface.co/docs/transformers/main/chat_templating) from *transformers* with a little modification based on [`./flask_transformers/setup_hf_service.py`](https://github.com/modelscope/agentscope/blob/main/scripts/flask_transformers/setup_hf_service.py).
 
-#### With ModelScope Library
-
-##### Install Libraries and Set up Serving
-
-Install Flask and modelscope by following the command.
-
-```bash
-pip install Flask, modelscope
-```
-
-Taking model `modelscope/Llama-2-7b-ms` and port `8000` as an example, to set up the model API serving, run the following command.
-
-```bash
-python flask_modelscope/setup_ms_service.py
-    --model_name_or_path modelscope/Llama-2-7b-ms
-    --device "cuda:0" # or "cpu"
-    --port 8000
-```
-
-You can replace `modelscope/Llama-2-7b-ms` with any model card in modelscope model hub.
-
-##### How to use AgentScope
-
-In AgentScope, you can load the model with the following model configs: `flask_modelscope/model_config.json`.
-
-```json
-{
-    "model_type": "post_api",
-    "config_name": "flask_llama2-7b-ms",
-    "api_url": "http://127.0.0.1:8000/llm/",
-    "json_args": {
-        "max_length": 4096,
-        "temperature": 0.5
-    }
-}
-```
-
-##### Note
-
-Similar to the example of transformers, the messages from post requests should be in **STRING format**.
-
-### FastChat
-
-[FastChat](https://github.com/lm-sys/FastChat) is an open platform that provides a quick setup for model serving with OpenAI-compatible RESTful APIs.
-
-#### Install Libraries and Set up Serving
-
-To install FastChat, run
-
-```bash
-pip install "fastchat[model_worker,webui]"
-```
-
-Taking model `meta-llama/Llama-2-7b-chat-hf` and port `8000` as an example, to set up model API serving, run the following command to set up model serving.
-
-```bash
-bash fastchat_script/fastchat_setup.sh -m meta-llama/Llama-2-7b-chat-hf -p 8000
-```
-
-#### Supported Models
-
-Refer to [supported model list](https://github.com/lm-sys/FastChat/blob/main/docs/model_support.md#supported-models) of FastChat.
-
-#### How to use in AgentScope
-
-Now you can load the model in AgentScope by the following model config: `fastchat_script/model_config.json`.
-
-```json
-{
-    "config_name": "meta-llama/Llama-2-7b-chat-hf",
-    "model_type": "openai",
-    "api_key": "EMPTY",
-    "client_args": {
-        "base_url": "http://127.0.0.1:8000/v1/"
-    },
-    "generate_args": {
-        "temperature": 0.5
-    }
-}
-```
-
-### vllm
-
-[vllm](https://github.com/vllm-project/vllm) is a high-throughput inference and serving engine for LLMs.
-
-#### Install Libraries and Set up Serving
-
-To install vllm, run
-
-```bash
-pip install vllm
-```
-
-Taking model `meta-llama/Llama-2-7b-chat-hf` and port `8000` as an example, to set up model API serving, run
-
-```bash
-bash vllm_script/vllm_setup.sh -m meta-llama/Llama-2-7b-chat-hf -p 8000
-```
-
-#### Supported models
-
-Please refer to the [supported models list](https://docs.vllm.ai/en/latest/models/supported_models.html) of vllm.
-
-#### How to use in AgentScope
-
-Now you can load the model in AgentScope by the following model config: `vllm_script/model_config.json`.
-
-```json
-{
-    "config_name": "meta-llama/Llama-2-7b-chat-hf",
-    "model_type": "openai",
-    "api_key": "EMPTY",
-    "client_args": {
-        "base_url": "http://127.0.0.1:8000/v1/"
-    },
-    "generate_args": {
-        "temperature": 0.5
-    }
-}
-```
-
-## Model Inference API
-
-Both [Huggingface](https://huggingface.co/docs/api-inference/index) and [ModelScope](https://www.modelscope.cn) provide model inference API, which can be used with AgentScope post API model wrapper.
-Taking `gpt2` in HuggingFace inference API as an example, you can use the following model config in AgentScope.
-
-```json
-{
-    "config_name": "gpt2",
-    "model_type": "post_api",
-    "headers": {
-        "Authorization": "Bearer {YOUR_API_TOKEN}"
-    }
-    "api_url": "https://api-inference.huggingface.co/models/gpt2"
-}
-```
-
-## In-memory Models without API
-
-It is entirely possible to use models without setting up an API service. Here's an example of how to initialize an agent with a local model instance:
-
-```python
-from transformers import AutoModelForCausalLM, AutoTokenizer
-
-model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
-tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-model.eval()
-# Do remember to re-implement the `reply` method to tokenize *message*!
-agent = YourAgent(name='agent', model_config_name=config_name, tokenizer=tokenizer)
-```
-
-[[Return to the top]](#using-different-model-sources-with-model-api)
+[[Return to Top]](#model-service)

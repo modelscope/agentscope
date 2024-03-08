@@ -1,73 +1,198 @@
 (204-service)=
 
-# Enhancing Agent Capabilities with Service Functions
+# About Service
 
-**Service functions**, often referred to simply as **Service**, constitute a versatile suite of utility tools that can be used to enhance the functionality of agents. A service is designed to perform a specific task like web search, code interpretation, or file processing. Services can be invoked by agents and other components for reuse across different scenarios.
+Service function is a set of multi-functional utility tools that can be 
+used to enhance the capabilities of agents, such as executing Python code, 
+web search, file operations, and more. 
+This tutorial provides an overview of the service functions available in
+AgentScope and how to use them to enhance the capabilities of your agents.
 
-## ServiceResponse
+## Built-in Service Functions
 
-The design behind `Service` distinguishes them from typical Python functions. In scenarios where execution is failed, service functions do not raise exceptions within the program. Instead, they return a `ServiceResponse` (a sub-class of dict).
+The following table outlines the various Service functions by type. These functions can be called using `agentscope.service.{function_name}`.
+
+| Service Scene | Service Function Name | Description                                                |
+| -------------- | --------------------- | ------------------------------------------------------------ |
+| Code           | `execute_python_code` | Execute a piece of Python code, optionally inside a Docker container. |
+| Retrieval      | `retrieve_from_list`  | Retrieve a specific item from a list based on given criteria. |
+| SQL Query      | `query_mysql`         | Execute SQL queries on a MySQL database and return results. |
+|                | `query_sqlite`        | Execute SQL queries on a SQLite database and return results. |
+|                | `query_mongodb`       | Perform queries or operations on a MongoDB collection. |
+| Text Processing | `summarization`       | Summarize a piece of text using a large language model to highlight its main points. |
+| Web Search      | `web_search`          | Perform a web search using a specified search engine (currently supports Google and Bing). |
+| File           | `create_file`         | Create a new file at a specified path, optionally with initial content. |
+|                | `delete_file`         | Delete a file specified by a file path.       |
+|                | `move_file`           | Move or rename a file from one path to another. |
+|                | `create_directory`    | Create a new directory at a specified path. |
+|                | `delete_directory`    | Delete a directory and all its contents.     |
+|                | `move_directory`      | Move or rename a directory from one path to another. |
+|                | `read_text_file`      | Read and return the content of a text file.    |
+|                | `write_text_file`     | Write text content to a file at a specified path. |
+|                | `read_json_file`      | Read and parse the content of a JSON file. |
+|                | `write_json_file`     | Serialize a Python object to JSON and write to a file. |
+| *More services coming soon* |                       | More service functions are in development and will be added to AgentScope to further enhance its capabilities. |
+
+About each service function, you can find detailed information in the 
+[API document](https://modelscope.github.io/agentscope/).
+
+## How to use Service Functions
+
+AgentScope provides two service classes for Service functions, 
+`ServiceFactory` and `ServiceResponse`.
+- `ServiceFactory` is mainly used to convert general Python functions into 
+  a form that can be directly used by large-scale models, and automatically 
+  generate function descriptions in JSON schema format.
+- `ServiceResponse` is a subclass of a dictionary, providing a unified call 
+  result interface for all Service functions.
+
+### About Service Factory
+
+The tools used by agents are generally of the function type. Developers 
+need to prepare functions that can be called directly by large models, and 
+provide descriptions of the functions. However, general functions often 
+require developers to provide some parameters (such as keys, usernames, 
+specific URLs, etc.), and then the large model can use them. At the same 
+time, it is also a tedious task to generate specific format descriptions 
+for multiple functions.
+
+To tackle the above problems, AgentScope introduces `ServiceFactory`. For a 
+given Service function, it allows developers to specify some parameters, 
+generate a function that can be called directly by large models, and 
+automatically generate function descriptions based on the Docstring. Take 
+the Bing web search function as an example.
 
 ```python
-def demo_service() -> ServiceResponse:
-    #do some specifc actions
-    # ......
-    res = ServiceResponse({status=status, content=content})
-    return res
+def bing_search(
+    question: str,
+    api_key: str,
+    num_results: int = 10,
+    **kwargs: Any,
+) -> ServiceResponse:
+    """
+    Search question in Bing Search API and return the searching results
 
+    Args:
+        question (`str`):
+            The search query string.
+        api_key (`str`):
+            The API key provided for authenticating with the Bing Search API.
+        num_results (`int`, defaults to `10`):
+            The number of search results to return.
+        **kwargs (`Any`):
+            Additional keyword arguments to be included in the search query.
+            For more details, please refer to
+            https://learn.microsoft.com/en-us/bing/search-apis/bing-web-search/reference/query-parameters
 
+    [omitted for brevity]
+    """
+```
+
+In the above function, `question` is the field filled in by the large model,
+while `api_key` and `num_results` are the parameters that the developer needs to provide.
+We use the `get` function of `ServiceFactory` to process it:
+
+```python
+from agentscope.service import ServiceFactory
+
+func, func_intro = ServiceFactory.get(
+    bing_search, 
+    api_key="xxx", 
+    num_results=3)
+```
+
+In the above code, the `func` generated by ServiceFactory is equivalent to the following function:
+
+```python
+def bing_search(question: str) -> ServiceResponse:
+    """
+    Search question in Bing Search API and return the searching results
+
+    Args:
+        question (`str`):
+            The search query string.
+    """
+    return bing_search(question, api_key="xxx", num_results=3)
+```
+
+The generated JSON schema format is as follows, which can be directly used 
+in the `tools` field of the OpenAI API.
+
+```python
+# print(func_intro)
+{
+    "type": "function",
+    "function": {
+        "name": "bing_search",
+        "description": "Search question in Bing Search API and return the searching results",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "question": {
+                    "type": "string",
+                    "description": "The search query string."
+                }
+            },
+            "required": [
+                "question"
+            ]
+        }
+    }
+}
+```
+
+**Note**:
+The description of the function and arguments are extracted from
+its docstring automatically, which should be well-formatted in
+**Google style**. Otherwise, their descriptions in the returned
+dictionary will be empty.
+
+**Suggestions**:
+1. The name of the service function should be self-explanatory,
+so that the agent can understand the function and use it properly.
+2. The typing of the arguments should be provided when defining
+the function (e.g. `def func(a: int, b: str, c: bool)`), so that
+the agent can specify the arguments properly.
+
+### About ServiceResponse
+
+`ServiceResponse` is a wrapper for the execution results of the services, 
+containing two fields, `status` and `content`. When the Service function 
+runs to completion normally, `status` is `ServiceExecStatus.SUCCESS`, and 
+`content` is the return value of the function. When an error occurs during 
+execution, `status` is `ServiceExecStatus.Error`, and `content` contains 
+the error message.
+
+```python
 class ServiceResponse(dict):
     """Used to wrap the execution results of the services"""
-    # ... [code omitted for brevity]
+
+    __setattr__ = dict.__setitem__
+    __getattr__ = dict.__getitem__
 
     def __init__(
         self,
         status: ServiceExecStatus,
         content: Any,
     ):
+        """Constructor of ServiceResponse
+
+        Args:
+            status (`ServiceExeStatus`):
+                The execution status of the service.
+            content (`Any`)
+                If the argument`status` is `SUCCESS`, `content` is the
+                response. We use `object` here to support various objects,
+                e.g. str, dict, image, video, etc.
+                Otherwise, `content` is the error message.
+        """
         self.status = status
         self.content = content
+        
+    # [omitted for brevity]
 ```
 
-This object encapsulates `status` of the execution (`SUCCESS` or `ERROR`), which can indicate success or failure, and the `content`, which can either be the output of a successful execution or the error stack from a failure.
-
-Here's why this design is beneficial:
-
-- **Error Handling**: `Service` and `ServiceResponse` allows agents to flexibly handle errors. An agent can check the status of the response and decide on the next steps, whether to retry the operation, use fallback logic, or analyze the error stack and choose an appropriate strategy to make improvements.
-- **Consistency**: Service functions provide a consistent interface for both successful outcomes and errors. This consistency simplifies the interaction model for agents that use these services.
-
-## Overview of Service Functions
-
-Below is a table outlining various service functions categorized by their primary domain. These services offer a range of capabilities to agents.
-
-| Service Scenario  | Service Function Name | Description                                                  |
-| --------------- | --------------------- | ------------------------------------------------------------ |
-| Code            | `execute_python_code` | Execute a string of Python code, optionally inside a Docker container. |
-| Retrieval       | `retrieve_from_list`  | Retrieve specific items from a list based on given criteria. |
-| SQL Query       | `query_mysql`         | Execute a SQL query against a MySQL database and return results. |
-|                 | `query_sqlite`        | Execute a SQL query against a SQLite database and return results. |
-|                 | `query_mongodb`       | Perform a query or operation against a MongoDB collection.   |
-| Text Processing | `summarization`       | Summarize a block of text to highlight the main points with LLM. |
-| Web Search      | `web_search`          | Perform a web search using a specified search engine (currently supports Google and Bing). |
-| File            | `create_file`         | Create a new file at a specified path with optional initial content. |
-|                 | `delete_file`         | Delete a file specified by the file path.                    |
-|                 | `move_file`           | Move or rename a file from one path to another.              |
-|                 | `create_directory`    | Create a new directory at a specified path.                  |
-|                 | `delete_directory`    | Delete a directory and all of its contents.                  |
-|                 | `move_directory`      | Move or rename a directory from one path to another.         |
-|                 | `read_text_file`      | Read and return the contents of a text file.                 |
-|                 | `write_text_file`     | Write text content to a file at a specified path.            |
-|                 | `read_json_file`      | Read and parse the contents of a JSON file.                  |
-|                 | `write_json_file`     | Serialize a Python object to JSON and write it to a file.    |
-| *More to Come*  |                       | Additional service functions are being developed and will be added to enhance the capabilities of AgentScope further. |
-
-For details about each Service Function, please consult the API references, where the docstrings provide comprehensive information about the parameters, expected input formats, return types, and any additional options that can modify the behavior of the Service Function.
-
-## Usage
-
-In AgentScope, each Service Function comes with a meticulously crafted docstring and demonstrative test functions that provide detailed instructions on how to utilize it. To enhance the capabilities of your agents with these services, you can craft prompts for LLM to generate parameters for Service:
-
-By composing appropriate prompts that align with the information detailed in the Service Functions' docstrings, you can guide an LLM to generate responses that match the required parameters of a `Service`.
+## Example
 
 ```python
 import json
@@ -76,29 +201,28 @@ from agentscope.service import ServiceResponse
 from agentscope.agents import AgentBase
 
 
-def create_file(file_path: str, content: str = "") -> ServiceResponse:
+def create_file(file_path: str, content: str = "") -> ServiceResponse:    
     """
     Create a file and write content to it.
-
+    
     Args:
-        file_path (str): The path where the file will be created.
-        content (str): Content to write into the file.
-
+        file_path (str): The path to the file to be created.
+        content (str): The content to be written to the file.
+        
     Returns:
-        ServiceResponse: where the boolean indicates success, and the
-        str contains an error message if any, including the error type.
+        ServiceResponse: A boolean indicating success or failure, and a 
+        string containing any error message (if any), including the error type.
     """
-    # ... [code omitted for brevity]
+    # ... [omitted for brevity]
 
 
 class YourAgent(AgentBase):
-    # ... [code omitted for brevity]
+    # ... [omitted for brevity]
 
     def reply(self, x: dict = None) -> dict:
-        # ... [code omitted for brevity]
+        # ... [omitted for brevity]
 
-        # Construct the prompt for the agent to provide parameters in JSON
-        # format
+        # construct a prompt to ask the agent to provide the parameters in JSON format
         prompt = (
             f"To complete the user request\n```{x['content']}```\n"
             "Please provide the necessary parameters in JSON format for the "
@@ -107,7 +231,7 @@ class YourAgent(AgentBase):
             "Description: Create a file and write content to it.\n"
         )
 
-        # Add details about the function parameters
+        # add detailed information about the function parameters
         sig = inspect.signature(create_file)
         parameters = sig.parameters.items()
         params_prompt = "\n".join(
@@ -117,11 +241,10 @@ class YourAgent(AgentBase):
         )
         prompt += params_prompt
 
-        # Get the model response
+        # get the model response
         model_response = self.model(prompt).text
 
-        # Parse the model response and call the create_file function
-        # Additional extraction functions might be necessary
+        # parse the model response and call the create_file function
         try:
             kwargs = json.loads(model_response)
             create_file(**kwargs)
@@ -129,7 +252,7 @@ class YourAgent(AgentBase):
             # Error handling
             pass
 
-        # ... [code omitted for brevity]
+        # ... [omitted for brevity]
 ```
 
-[[Return to the top]](#enhancing-agent-capabilities-with-service-functions)
+[[Return to Top]](#about-service)
