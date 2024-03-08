@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for Tongyi models"""
+from http import HTTPStatus
 from typing import Any
 
 try:
@@ -181,7 +182,6 @@ class TongyiChatWrapper(TongyiWrapper):
             )
 
         messages = self._preprocess_role(messages)
-        print("messages after", messages)
 
         # TODO: if user input nothing, will be an error
         # step3: forward to generate response
@@ -202,7 +202,8 @@ class TongyiChatWrapper(TongyiWrapper):
             json_response=response,
         )
 
-        # TODO: Add monitor for Tongyi? step5: update monitor accordingly
+        # TODO: Add monitor for Tongyi?
+        # step5: update monitor accordingly
         # try:
         #     self.monitor.update(
         #         response.usage,
@@ -212,10 +213,20 @@ class TongyiChatWrapper(TongyiWrapper):
         #     logger.error(e.message)
 
         # step6: return response
-        return ModelResponse(
-            text=response.output["choices"][0]["message"]["content"],
-            raw=response,
-        )
+        if response.status_code == HTTPStatus.OK:
+            return ModelResponse(
+                text=response.output["choices"][0]["message"]["content"],
+                raw=response,
+            )
+        else:
+            error_msg = (
+                f"Request id: {response.request_id},"
+                f" Status code: {response.status_code},"
+                f" error code: {response.code},"
+                f" error message: {response.message}."
+            )
+
+            raise RuntimeError(error_msg)
 
     def _preprocess_role(self, messages: list) -> list:
         """preprocess role rules for Tongyi"""
@@ -224,23 +235,25 @@ class TongyiChatWrapper(TongyiWrapper):
             # alternate between "user" and "assistant".
             message_length = len(messages)
             if message_length % 2 == 1:
-                # messages roles will be
-                # ["user", "assistant", "user", "assistant", ..., "user"]
-                for i in range(message_length):
-                    if i % 2 == 0:
-                        messages[i]["role"] = "user"
-                    else:
-                        messages[i]["role"] = "assistant"
+                # If the length of the message list is odd, roles will
+                # alternate, starting with "user"
+                roles = [
+                    "user" if i % 2 == 0 else "assistant"
+                    for i in range(message_length)
+                ]
             else:
-                # messages roles will be
-                # ["system", "user", "assistant", "user", "assistant", ... ,
-                # "user"]
-                messages[0]["role"] = "system"
-                for i in range(1, message_length):
-                    if i % 2 == 0:
-                        messages[i]["role"] = "user"
-                    else:
-                        messages[i]["role"] = "assistant"
+                # If the length of the message list is even, the first role
+                # will be "system", followed by alternating "user" and
+                # "assistant"
+                roles = ["system"] + [
+                    "user" if i % 2 == 1 else "assistant"
+                    for i in range(1, message_length)
+                ]
+
+            # Assign the roles list to the "role" key for each message in
+            # the messages list
+            for message, role in zip(messages, roles):
+                message["role"] = role
         else:
             # For other Tongyi models, the "role" value of the first and the
             # last messages must be "user"
