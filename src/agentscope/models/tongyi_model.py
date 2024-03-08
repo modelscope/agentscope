@@ -13,7 +13,6 @@ from .model import ModelWrapperBase, ModelResponse
 
 from ..utils.monitor import MonitorFactory
 from ..utils.monitor import get_full_name
-from ..utils import QuotaExceededError
 from ..constants import _DEFAULT_API_BUDGET
 
 # The models in this list require that the roles of messages must alternate
@@ -192,7 +191,6 @@ class TongyiChatWrapper(TongyiWrapper):
             result_format="message",  # set the result to be "message" format.
             **kwargs,
         )
-        print("response", response)
 
         # step4: record the api invocation if needed
         self._save_model_invocation(
@@ -204,15 +202,14 @@ class TongyiChatWrapper(TongyiWrapper):
             json_response=response,
         )
 
-        # step5: update monitor accordingly
-        try:
-            self.monitor.update(
-                response.usage,
-                prefix=self.model,
-            )
-        except QuotaExceededError as e:
-            # TODO: optimize quota exceeded error handling process
-            logger.error(e.message)
+        # TODO: Add monitor for Tongyi? step5: update monitor accordingly
+        # try:
+        #     self.monitor.update(
+        #         response.usage,
+        #         prefix=self.model,
+        #     )
+        # except QuotaExceededError as e:
+        #     logger.error(e.message)
 
         # step6: return response
         return ModelResponse(
