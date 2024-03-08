@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Model wrapper for Tongyi models"""
+"""Model wrapper for Qwen chat models"""
 from http import HTTPStatus
 from typing import Any
 
@@ -105,10 +105,10 @@ class TongyiWrapper(ModelWrapperBase):
         return get_full_name(name=metric_name, prefix=self.model)
 
 
-class TongyiChatWrapper(TongyiWrapper):
-    """The model wrapper for Tongyi's chat API."""
+class QwenChatWrapper(TongyiWrapper):
+    """The model wrapper for Qwen's chat API."""
 
-    model_type: str = "tongyi_chat"
+    model_type: str = "qwen_chat"
 
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
@@ -132,22 +132,22 @@ class TongyiChatWrapper(TongyiWrapper):
         messages: list,
         **kwargs: Any,
     ) -> ModelResponse:
-        """Processes a list of messages to construct a payload for the Tongyi
-        API call. It then makes a request to the Tongyi API and returns the
+        """Processes a list of messages to construct a payload for the Qwen
+        API call. It then makes a request to the Qwen API and returns the
         response. This method also updates monitoring metrics based on the
         API response.
 
         Each message in the 'messages' list can contain text content and
         optionally an 'image_urls' key. If 'image_urls' is provided,
         it is expected to be a list of strings representing URLs to images.
-        These URLs will be transformed to a suitable format for the Tongyi
+        These URLs will be transformed to a suitable format for the Qwen
         API, which might involve converting local file paths to data URIs.
 
         Args:
             messages (`list`):
                 A list of messages to process.
             **kwargs (`Any`):
-                The keyword arguments to Tongyi chat completions API,
+                The keyword arguments to Qwen chat completions API,
                 e.g. `temperature`, `max_tokens`, `top_p`, etc. Please refer to
 
                 for more detailed arguments.
@@ -178,12 +178,9 @@ class TongyiChatWrapper(TongyiWrapper):
         if not all("role" in msg and "content" in msg for msg in messages):
             raise ValueError(
                 "Each message in the 'messages' list must contain a 'role' "
-                "and 'content' key for Tongyi API.",
+                "and 'content' key for Qwen API.",
             )
 
-        messages = self._preprocess_role(messages)
-
-        # TODO: if user input nothing, will be an error
         # step3: forward to generate response
         response = dashscope.Generation.call(
             model=self.model,
@@ -191,6 +188,23 @@ class TongyiChatWrapper(TongyiWrapper):
             result_format="message",  # set the result to be "message" format.
             **kwargs,
         )
+
+        if response.status_code == 400:
+            logger.warning(
+                "Initial API call failed with status 400. Attempting role "
+                "preprocessing and retrying. You'd better do it yourself in "
+                "the prompt engineering to satisfy the model call rule.",
+            )
+            # TODO: remove this and leave prompt engineering to user
+            messages = self._preprocess_role(messages)
+            # Retry the API call
+            response = dashscope.Generation.call(
+                model=self.model,
+                messages=messages,
+                result_format="message",
+                # set the result to be "message" format.
+                **kwargs,
+            )
 
         # step4: record the api invocation if needed
         self._save_model_invocation(
@@ -202,7 +216,7 @@ class TongyiChatWrapper(TongyiWrapper):
             json_response=response,
         )
 
-        # TODO: Add monitor for Tongyi?
+        # TODO: Add monitor for Qwen?
         # step5: update monitor accordingly
         # try:
         #     self.monitor.update(
@@ -229,7 +243,7 @@ class TongyiChatWrapper(TongyiWrapper):
             raise RuntimeError(error_msg)
 
     def _preprocess_role(self, messages: list) -> list:
-        """preprocess role rules for Tongyi"""
+        """preprocess role rules for Qwen"""
         if self.model in SPECIAL_MODEL_LIST:
             # The models in this list require that the roles of messages must
             # alternate between "user" and "assistant".
@@ -255,7 +269,7 @@ class TongyiChatWrapper(TongyiWrapper):
             for message, role in zip(messages, roles):
                 message["role"] = role
         else:
-            # For other Tongyi models, the "role" value of the first and the
+            # For other Qwen models, the "role" value of the first and the
             # last messages must be "user"
             if len(messages) > 0:
                 messages[0]["role"] = "user"

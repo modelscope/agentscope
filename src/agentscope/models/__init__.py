@@ -19,7 +19,7 @@ from .openai_model import (
 )
 from .tongyi_model import (
     TongyiWrapper,
-    TongyiChatWrapper,
+    QwenChatWrapper,
 )
 
 
@@ -36,7 +36,7 @@ __all__ = [
     "read_model_configs",
     "clear_model_configs",
     "TongyiWrapper",
-    "TongyiChatWrapper",
+    "QwenChatWrapper",
 ]
 
 _MODEL_CONFIGS: dict[str, dict] = {}
