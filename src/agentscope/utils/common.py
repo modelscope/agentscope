@@ -26,6 +26,9 @@ def timer(seconds: Optional[Union[int, float]] = None) -> Generator:
     Note:
         This function only works in Unix,
         since `signal.setitimer` is only available in Unix.
+
+        This function may cause error when not used in main thread,
+        need to fix.
     """
     if seconds is None or sys.platform == "win32":
         yield
