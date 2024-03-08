@@ -250,7 +250,7 @@ model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 model.eval()
 # Do remember to re-implement the `reply` method to tokenize *message*!
-agent = YourAgent(name='agent', model_config_name=config_name, tokenizer=tokenizer)
+agent = YourAgent(name='agent', model_or_config_name=config_name, tokenizer=tokenizer)
 ```
 
 [[Return to the top]](#using-different-model-sources-with-model-api)
