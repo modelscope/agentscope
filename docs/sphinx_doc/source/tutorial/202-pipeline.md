@@ -216,10 +216,10 @@ This section illustrates how pipelines can simplify the implementation of logic 
 It's worth noting that AgentScope supports the combination of pipelines to create complex interactions. For example, we can create a pipeline that executes a sequence of agents in order, and then executes another pipeline that executes a sequence of agents in condition.
 
 ```python
-from agentscope.pipelines import SequentialPipeline, ParallelPipeline
+from agentscope.pipelines import SequentialPipeline, IfElsePipeline
 # Create a pipeline that executes agents in order
 pipe1 = SequentialPipeline([agent1, agent2, agent3])
-# Create a pipeline that executes agents in parallel
+# Create a pipeline that executes agents in ifElsePipeline
 pipe2 = IfElsePipeline(condition, agent4, agent5)
 # Create a pipeline that executes pipe1 and pipe2 in order
 pipe3 = SequentialPipeline([pipe1, pipe2])
