@@ -8,13 +8,9 @@
 
 日志功能的首先包含的是一个基于Python内置 `logging`的根绝多智体场景可客制化的`loguru.logger`模块。其包含下面的一些特性：
 
-- **Colored Output**: Assigns different colors to different speakers in a chat to enhance readability.
 - **调整输出字体颜色**：为了增加日志的可读性，该模块为不同的在对话中发言智能体提供不同颜色的字体高亮。
-- **Redirecting Standard Error (stderr)**: Captures error messages and logs them with the `ERROR` level.
 - **重定向错误输出(stderr)**： 该模块自动抓取报错信息，在日志中用`ERROR`层级记录。
-- **Custom Log Levels**: Adds a custom level called `CHAT` that is specifically designed for logging dialogue interactions.
 - **客制化日志记录等级**： 该模块增加了一个日志记录等级`CHAT`，用来记录智能体之间的对话和互动。
-- **Special Formatting**: Format logs with timestamps, levels, function names, and line numbers. Chat messages are formatted differently to stand out.
 - **定制格式**：格式化日志包含了时间戳、记录等级、function名字和行号。智能体之间的对话会用不同的格式显示。
 
 
