@@ -1,17 +1,48 @@
 (205-memory)=
 
-# Memory and Message Management
+# About Memory
 
-**Message** represents individual pieces of information or interactions flowing between/within agents. **Memory** refers to the storage and retrieval of historical information and serves as the storage and management system for the messages. This allows the agent to remember past interactions, maintain context, and provide more coherent and relevant responses.
+In AgentScope, memory is used to store historical information, allowing the 
+agent to provide more coherent and natural responses based on context.
+This tutorial will first introduce the carrier of information in memory, 
+message, and then introduce the functions and usage of the memory module in 
+AgentScope.
 
-## Understanding `MessageBase` and its subclasses
+## About Message
 
-### `MessageBase`
+### `MessageBase` Class
 
-`MessageBase` is designed to organize attributes of a message, like the agent's name, the content, and associated media URLs. It provides a structure that can be extended to create specific types of messages.
+In AgentScope, the message base class is a subclass of Python dictionary, 
+consisting of two required fields (`name` and `content`) and an optional 
+field (`url`). 
+Specifically, the `name` field represents the originator of the message, 
+the `content` field represents the content of the message, and the `url` 
+field represents the data link attached to the message, which can be a 
+local link to multi-modal data or a web link.
+As a dictionary type, developers can also add other fields 
+as needed. When a message is created, a unique ID is automatically 
+generated to identify the message. The creation time of the message is also 
+automatically recorded in the form of a timestamp.
+
+In the specific implementation, AgentScope first provides a `MessageBase`
+base class to define the basic properties and usage of messages.
+Unlike general dictionary types, the instantiated objects of `MessageBase`
+can access attribute values through `object_name.{attribute_name}` or
+`object_name['attribute_name']`.
+The key attributes of the `MessageBase` class are as follows:
+
+- **`name`**: This attribute denotes the originator of the message. It's a critical piece of metadata, useful in scenarios where distinguishing between different speakers is necessary.
+- **`content`**: The substance of the message itself. It can include text, structured data, or any other form of content that is relevant to the interaction and requires processing by the agent.
+- **`url`**: An optional attribute that allows the message to be linked to external resources. These can be direct links to files, multi-modal data, or web pages.
+- **`timestamp`**: A timestamp indicating when the message was created.
+- **`id`**: Each message is assigned a unique identifier (ID) upon creation.
 
 ```python
 class MessageBase(dict):
+    """Base Message class, which is used to maintain information for dialog,
+    memory and used to construct prompt.
+    """
+
     def __init__(
         self,
         name: str,
@@ -20,68 +51,114 @@ class MessageBase(dict):
         timestamp: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
+        """Initialize the message object
+
+        Args:
+            name (`str`):
+                The name of who send the message. It's often used in
+                role-playing scenario to tell the name of the sender.
+                However, you can also only use `role` when calling openai api.
+                The usage of `name` refers to
+                https://cookbook.openai.com/examples/how_to_format_inputs_to_chatgpt_models.
+            content (`Any`):
+                The content of the message.
+            url (`Optional[Union[list[str], str]]`, defaults to None):
+                A url to file, image, video, audio or website.
+            timestamp (`Optional[str]`, defaults to None):
+                The timestamp of the message, if None, it will be set to
+                current time.
+            **kwargs (`Any`):
+                Other attributes of the message. For OpenAI API, you should
+                add "role" from `["system", "user", "assistant", "function"]`.
+                When calling OpenAI API, `"role": "assistant"` will be added
+                to the messages that don't have "role" attribute.
+
+        """
+        # id and timestamp will be added to the object as its attributes
+        # rather than items in dict
         self.id = uuid4().hex
-        self.timestamp = timestamp or _get_timestamp()
+        if timestamp is None:
+            self.timestamp = _get_timestamp()
+        else:
+            self.timestamp = timestamp
+
         self.name = name
         self.content = content
-        self.url = url
+
+        if url:
+            self.url = url
+
         self.update(kwargs)
 
+    def __getattr__(self, key: Any) -> Any:
+        try:
+            return self[key]
+        except KeyError as e:
+            raise AttributeError(f"no attribute '{key}'") from e
+
+    def __setattr__(self, key: Any, value: Any) -> None:
+        self[key] = value
+
+    def __delattr__(self, key: Any) -> None:
+        try:
+            del self[key]
+        except KeyError as e:
+            raise AttributeError(f"no attribute '{key}'") from e
+
     def to_str(self) -> str:
+        """Return the string representation of the message"""
         raise NotImplementedError
 
     def serialize(self) -> str:
+        """Return the serialized message."""
         raise NotImplementedError
 
-    # ... [code omitted for brevity]
+    # ... [省略代码以简化]
 ```
 
-Here are the key attributes managed by the `MessageBase` class:
+### `Msg` Class
 
-- **`name`**: This attribute denotes the originator of the message. It's a critical piece of metadata, useful in scenarios where distinguishing between different speakers is necessary.
-- **`content`**: The substance of the message itself. It can include text, structured data, or any other form of content that is relevant to the interaction and requires processing by the agent.
-- **`url`**: An optional attribute that allows the message to be linked to external resources. These can be direct links to files, multi-modal data, or web pages.
-- **`timestamp`**: A timestamp indicating when the message was created.
-- **`id`**: Each message is assigned a unique identifier (ID) upon creation.
-
-### `Msg`
-
-The `Msg` ("Message") subclass extends `MessageBase` and represents a standard *message*.  `Msg` provides concrete definitions for the `to_str` and `serialize` methods to enable string representation and serialization suitable for the agent's operational context.
+`Msg` class extends `MessageBase` and represents a standard *message*.  
+`Msg` provides concrete definitions for the `to_str` and `serialize` 
+methods to enable string representation and serialization suitable for the 
+agent's operational context.
+Within an `Agent` class, its `reply` function typically returns an instance of 
+`Msg` to facilitate message passing within AgentScope.
 
 ```python
 class Msg(MessageBase):
-    # ... [code omitted for brevity]
+    """The Message class."""
+
+    def __init__(
+        self,
+        name: str,
+        content: Any,
+        url: Optional[Union[Sequence[str], str]] = None,
+        timestamp: Optional[str] = None,
+        echo: bool = False,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(
+            name=name,
+            content=content,
+            url=url,
+            timestamp=timestamp,
+            **kwargs,
+        )
+        if echo:
+            logger.chat(self)
 
     def to_str(self) -> str:
+        """Return the string representation of the message"""
         return f"{self.name}: {self.content}"
 
     def serialize(self) -> str:
         return json.dumps({"__type": "Msg", **self})
-
-# `Msg` logs
->> Someone: I should ...
 ```
 
-### `Tht`
+## About Memory
 
-The `Tht` ("Thought") subclass is a specialized form of `MessageBase` used for encapsulating processes of an agent's internal thought. The thought is not sent outwardly but is instead used internally by the agent. As with `Msg`, specific implementations of `Tht` will define `to_str` and `serialize` methods to handle the unique requirements of representing and serializing an agent's thoughts.
-
-```python
-class Tht(MessageBase):
-    # ... [code omitted for brevity]
-
-    def to_str(self) -> str:
-        return f"{self.name} thought: {self.content}"
-
-    def serialize(self) -> str:
-        return json.dumps({"__type": "Tht", **self})
-
->> Someone thought: I should ...
-```
-
-## Understanding `MemoryBase` and its subclasses
-
-### `MemoryBase`
+### `MemoryBase` Class
 
 `MemoryBase` is an abstract class that handles an agent's memory in a structured way. It defines operations for storing, retrieving, deleting, and manipulating *message*'s content.
 
@@ -143,4 +220,4 @@ The `TemporaryMemory` class is a concrete implementation of `MemoryBase`, provid
 
 For more details about the usage of `Memory` and `Msg`, please refer to the API references.
 
-[[Return to the top]](#memory-and-message-management)
+[[Return to the top]](#about-memory)

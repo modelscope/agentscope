@@ -37,7 +37,7 @@ model_config = {
 ```
 
 对于开源模型，我们支持与HuggingFace、ModelScope、FastChat和vllm等各种模型接口的集成。您可以在`scripts
-`目录中找到部署这些服务的脚本，详细说明请见[[Using Different Model Sources with Model API]](203-model).
+`目录中找到部署这些服务的脚本，详细说明请见[[模型服务]](203-model).
 
 您可以通过调用AgentScope的初始化方法来注册您的配置。此外，您还可以一次性加载多个模型配置。
 
@@ -45,8 +45,12 @@ model_config = {
 import agentscope
 
 # 一次性初始化多个模型配置
-openai_cfg_dict = {...dict_filling...}
-modelscope_cfg_dict = {...dict_filling...}
+openai_cfg_dict = {
+    # ...
+}
+modelscope_cfg_dict = {
+    # ...
+}
 agentscope.init(model_configs=[openai_cfg_dict, modelscope_cfg_dict])
 ```
 
