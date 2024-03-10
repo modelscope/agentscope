@@ -3,23 +3,23 @@
 # Model Service
 
 In AgentScope, the model deployment and invocation are decoupled by `ModelWrapper`.
-Developers can specify their own model by providing model configurations, 
-and AgentScope also provides scripts to support developers to customize 
-model services. 
+Developers can specify their own model by providing model configurations,
+and AgentScope also provides scripts to support developers to customize
+model services.
 
 ## Supported Models
 
 Currently, AgentScope supports the following model service APIs:
 - OpenAI API, including Chat, image generation (DALL-E), and Embedding.
-- Post Request API, model inference services based on Post 
-  requests, including Huggingface/ModelScope Inference API and various 
+- Post Request API, model inference services based on Post
+  requests, including Huggingface/ModelScope Inference API and various
   post request based model APIs.
 
 ## Configuration
 
-In AgentScope, users specify the model configuration through the 
-`model_configs` parameter in the `agentscope.init` interface. 
-`model_configs` can be a **dictionary**, **a list of dictionaries**, or a 
+In AgentScope, users specify the model configuration through the
+`model_configs` parameter in the `agentscope.init` interface.
+`model_configs` can be a **dictionary**, **a list of dictionaries**, or a
 **path** to model configuration file.
 
 ```python
@@ -67,7 +67,7 @@ Among them, the basic parameters include `config_name` and `model_type`, which a
     # Basic parameters
     "config_name": "gpt-4-temperature-0.0",     # Model configuration name
     "model_type": "openai",                     # Correspond to `ModelWrapper` type
-    
+
     # Detailed parameters
     # ...
 }
@@ -89,7 +89,7 @@ class OpenAIChatWrapper(OpenAIWrapper):
     # ...
 ```
 
-In the current AgentScope, the supported `model_type` types, the corresponding 
+In the current AgentScope, the supported `model_type` types, the corresponding
 `ModelWrapper` classes, and the supported APIs are as follows:
 
 | Task             | model_type         | ModelWrapper             | Supported APIs                                                |
@@ -102,9 +102,9 @@ In the current AgentScope, the supported `model_type` types, the corresponding
 
 #### Detailed Parameters
 
-According to the different `ModelWrapper`, the parameters contained in the 
-detailed parameters are different. However, all detailed parameters will be 
-used to initialize the instance of the `ModelWrapper` class. Therefore, more 
+According to the different `ModelWrapper`, the parameters contained in the
+detailed parameters are different. However, all detailed parameters will be
+used to initialize the instance of the `ModelWrapper` class. Therefore, more
 detailed parameter descriptions can be viewed according to the constructor of
 their `ModelWrapper` classes.
 
@@ -115,16 +115,16 @@ their `ModelWrapper` classes.
     # basic parameters
     "config_name": "gpt-4_temperature-0.0",
     "model_type": "openai",
-  
+
     # detailed parameters
     # required parameters
     "model_name": "gpt-4",          # OpenAI model name
-    
+
     # optional
     "api_key": "xxx",               # OpenAI API Key, if not provided, it will be read from the environment variable
     "organization": "xxx",          # Organization name, if not provided, it will be read from the environment variable
     "client_args": {                # Parameters for initializing the OpenAI API Client
-        # e.g. "max_retries": 3, 
+        # e.g. "max_retries": 3,
     },
     "generate_args": {              # Parameters passed to the model when calling
         # e.g. "temperature": 0.0
@@ -140,13 +140,13 @@ their `ModelWrapper` classes.
     # Basic parameters
     "config_name": "gpt-4_temperature-0.0",
     "model_type": "post_api",
-  
+
     # Detailed parameters
     "api_url": "http://xxx.png",
-    "headers": { 
+    "headers": {
         # e.g. "Authorization": "Bearer xxx",
     },
-  
+
     # Optional parameters, need to be configured according to the requirements of the Post request API
     "json_args": {
         # e.g. "temperature": 0.0
@@ -157,8 +157,8 @@ their `ModelWrapper` classes.
 
 ## Build Model Service from Scratch
 
-For developers who need to build their own model services, AgentScope 
-provides some scripts to help developers quickly build model services. 
+For developers who need to build their own model services, AgentScope
+provides some scripts to help developers quickly build model services.
 You can find these scripts and instructions in the [scripts](https://github.com/modelscope/agentscope/tree/main/scripts)
 directory.
 

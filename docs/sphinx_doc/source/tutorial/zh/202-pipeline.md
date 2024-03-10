@@ -36,7 +36,7 @@ class PipelineBase(Operator):
 
 * **对象类型Pipeline**
 
-  * 这些Pipeline是面向对象的，继承自 
+  * 这些Pipeline是面向对象的，继承自
     `PipelineBase`。它们本身是`Operator`，可以与其他运算符组合以创建复杂的交互模式，并且可以复用。
 
     ```python

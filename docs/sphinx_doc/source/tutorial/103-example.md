@@ -2,21 +2,21 @@
 
 # Quick Start
 
-AgentScope is designed with a flexible communication mechanism. 
-In this tutorial, we will introduce the basic usage of AgentScope via a 
-simple standalone conversation between two agents (e.g. user and assistant 
+AgentScope is designed with a flexible communication mechanism.
+In this tutorial, we will introduce the basic usage of AgentScope via a
+simple standalone conversation between two agents (e.g. user and assistant
 agents).
 
 ## Step1: Prepare Model
 
 AgentScope decouples the deployment and invocation of models to better build multi-agent applications.
 
-In terms of model deployment, users can use third-party model services such 
-as OpenAI API, HuggingFace/ModelScope Inference API, and can also quickly 
+In terms of model deployment, users can use third-party model services such
+as OpenAI API, HuggingFace/ModelScope Inference API, and can also quickly
 deploy local open-source model services through the [scripts]
-(https://github.com/modelscope/agentscope/blob/main/scripts/README.md) in 
-the repository. Currently, we support building basic model services quickly 
-using Flask with Transformers (or ModelScope), and also support deploying 
+(https://github.com/modelscope/agentscope/blob/main/scripts/README.md) in
+the repository. Currently, we support building basic model services quickly
+using Flask with Transformers (or ModelScope), and also support deploying
 local model services through FastChat and vllm inference engines.
 
 While in terms of model invocation, AgentScope provides a `ModelWrapper` class to encapsulate OpenAI API and RESTful Post Request calls.

@@ -2,9 +2,9 @@
 
 # About Service
 
-Service function is a set of multi-functional utility tools that can be 
-used to enhance the capabilities of agents, such as executing Python code, 
-web search, file operations, and more. 
+Service function is a set of multi-functional utility tools that can be
+used to enhance the capabilities of agents, such as executing Python code,
+web search, file operations, and more.
 This tutorial provides an overview of the service functions available in
 AgentScope and how to use them to enhance the capabilities of your agents.
 
@@ -33,33 +33,33 @@ The following table outlines the various Service functions by type. These functi
 |                | `write_json_file`     | Serialize a Python object to JSON and write to a file. |
 | *More services coming soon* |                       | More service functions are in development and will be added to AgentScope to further enhance its capabilities. |
 
-About each service function, you can find detailed information in the 
+About each service function, you can find detailed information in the
 [API document](https://modelscope.github.io/agentscope/).
 
 ## How to use Service Functions
 
-AgentScope provides two service classes for Service functions, 
+AgentScope provides two service classes for Service functions,
 `ServiceFactory` and `ServiceResponse`.
-- `ServiceFactory` is mainly used to convert general Python functions into 
-  a form that can be directly used by large-scale models, and automatically 
+- `ServiceFactory` is mainly used to convert general Python functions into
+  a form that can be directly used by large-scale models, and automatically
   generate function descriptions in JSON schema format.
-- `ServiceResponse` is a subclass of a dictionary, providing a unified call 
+- `ServiceResponse` is a subclass of a dictionary, providing a unified call
   result interface for all Service functions.
 
 ### About Service Factory
 
-The tools used by agents are generally of the function type. Developers 
-need to prepare functions that can be called directly by large models, and 
-provide descriptions of the functions. However, general functions often 
-require developers to provide some parameters (such as keys, usernames, 
-specific URLs, etc.), and then the large model can use them. At the same 
-time, it is also a tedious task to generate specific format descriptions 
+The tools used by agents are generally of the function type. Developers
+need to prepare functions that can be called directly by large models, and
+provide descriptions of the functions. However, general functions often
+require developers to provide some parameters (such as keys, usernames,
+specific URLs, etc.), and then the large model can use them. At the same
+time, it is also a tedious task to generate specific format descriptions
 for multiple functions.
 
-To tackle the above problems, AgentScope introduces `ServiceFactory`. For a 
-given Service function, it allows developers to specify some parameters, 
-generate a function that can be called directly by large models, and 
-automatically generate function descriptions based on the Docstring. Take 
+To tackle the above problems, AgentScope introduces `ServiceFactory`. For a
+given Service function, it allows developers to specify some parameters,
+generate a function that can be called directly by large models, and
+automatically generate function descriptions based on the Docstring. Take
 the Bing web search function as an example.
 
 ```python
@@ -96,8 +96,8 @@ We use the `get` function of `ServiceFactory` to process it:
 from agentscope.service import ServiceFactory
 
 func, func_intro = ServiceFactory.get(
-    bing_search, 
-    api_key="xxx", 
+    bing_search,
+    api_key="xxx",
     num_results=3)
 ```
 
@@ -115,7 +115,7 @@ def bing_search(question: str) -> ServiceResponse:
     return bing_search(question, api_key="xxx", num_results=3)
 ```
 
-The generated JSON schema format is as follows, which can be directly used 
+The generated JSON schema format is as follows, which can be directly used
 in the `tools` field of the OpenAI API.
 
 ```python
@@ -156,11 +156,11 @@ the agent can specify the arguments properly.
 
 ### About ServiceResponse
 
-`ServiceResponse` is a wrapper for the execution results of the services, 
-containing two fields, `status` and `content`. When the Service function 
-runs to completion normally, `status` is `ServiceExecStatus.SUCCESS`, and 
-`content` is the return value of the function. When an error occurs during 
-execution, `status` is `ServiceExecStatus.Error`, and `content` contains 
+`ServiceResponse` is a wrapper for the execution results of the services,
+containing two fields, `status` and `content`. When the Service function
+runs to completion normally, `status` is `ServiceExecStatus.SUCCESS`, and
+`content` is the return value of the function. When an error occurs during
+execution, `status` is `ServiceExecStatus.Error`, and `content` contains
 the error message.
 
 ```python
@@ -188,7 +188,7 @@ class ServiceResponse(dict):
         """
         self.status = status
         self.content = content
-        
+
     # [omitted for brevity]
 ```
 
@@ -201,16 +201,16 @@ from agentscope.service import ServiceResponse
 from agentscope.agents import AgentBase
 
 
-def create_file(file_path: str, content: str = "") -> ServiceResponse:    
+def create_file(file_path: str, content: str = "") -> ServiceResponse:
     """
     Create a file and write content to it.
-    
+
     Args:
         file_path (str): The path to the file to be created.
         content (str): The content to be written to the file.
-        
+
     Returns:
-        ServiceResponse: A boolean indicating success or failure, and a 
+        ServiceResponse: A boolean indicating success or failure, and a
         string containing any error message (if any), including the error type.
     """
     # ... [omitted for brevity]

@@ -8,7 +8,7 @@ AgentScope内置了灵活的通信机制。在本教程中，我们将通过一�
 
 为了更好的构建多智能体应用，AgentScope将模型的部署与调用解耦开，以API服务调用的方式支持各种不同的模型。
 
-在模型部署方面，用户可以使用第三方模型服务，例如OpenAI API，HuggingFace Inference 
+在模型部署方面，用户可以使用第三方模型服务，例如OpenAI API，HuggingFace Inference
 API，同时也可以通过仓库中的[脚本](https://github.com/modelscope/agentscope/blob/main/scripts/README.md)快速部署本地开源模型服务，
 目前已支持通过Flask配合Transformers（或ModelScope）快速建立基础的模型服务，同时也已经支持通过FastChat和vllm等推理引擎部署本地模型服务。
 

@@ -2,26 +2,26 @@
 
 # About Memory
 
-In AgentScope, memory is used to store historical information, allowing the 
+In AgentScope, memory is used to store historical information, allowing the
 agent to provide more coherent and natural responses based on context.
-This tutorial will first introduce the carrier of information in memory, 
-message, and then introduce the functions and usage of the memory module in 
+This tutorial will first introduce the carrier of information in memory,
+message, and then introduce the functions and usage of the memory module in
 AgentScope.
 
 ## About Message
 
 ### `MessageBase` Class
 
-In AgentScope, the message base class is a subclass of Python dictionary, 
-consisting of two required fields (`name` and `content`) and an optional 
-field (`url`). 
-Specifically, the `name` field represents the originator of the message, 
-the `content` field represents the content of the message, and the `url` 
-field represents the data link attached to the message, which can be a 
+In AgentScope, the message base class is a subclass of Python dictionary,
+consisting of two required fields (`name` and `content`) and an optional
+field (`url`).
+Specifically, the `name` field represents the originator of the message,
+the `content` field represents the content of the message, and the `url`
+field represents the data link attached to the message, which can be a
 local link to multi-modal data or a web link.
-As a dictionary type, developers can also add other fields 
-as needed. When a message is created, a unique ID is automatically 
-generated to identify the message. The creation time of the message is also 
+As a dictionary type, developers can also add other fields
+as needed. When a message is created, a unique ID is automatically
+generated to identify the message. The creation time of the message is also
 automatically recorded in the form of a timestamp.
 
 In the specific implementation, AgentScope first provides a `MessageBase`
@@ -118,11 +118,11 @@ class MessageBase(dict):
 
 ### `Msg` Class
 
-`Msg` class extends `MessageBase` and represents a standard *message*.  
-`Msg` provides concrete definitions for the `to_str` and `serialize` 
-methods to enable string representation and serialization suitable for the 
+`Msg` class extends `MessageBase` and represents a standard *message*.
+`Msg` provides concrete definitions for the `to_str` and `serialize`
+methods to enable string representation and serialization suitable for the
 agent's operational context.
-Within an `Agent` class, its `reply` function typically returns an instance of 
+Within an `Agent` class, its `reply` function typically returns an instance of
 `Msg` to facilitate message passing within AgentScope.
 
 ```python

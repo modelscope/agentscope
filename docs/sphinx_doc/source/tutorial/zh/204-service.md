@@ -81,8 +81,8 @@ def bing_search(
 from agentscope.service import ServiceFactory
 
 func, func_intro = ServiceFactory.get(
-    bing_search, 
-    api_key="xxx", 
+    bing_search,
+    api_key="xxx",
     num_results=3)
 ```
 
@@ -165,7 +165,7 @@ class ServiceResponse(dict):
         """
         self.status = status
         self.content = content
-        
+
     # ... [为简洁起见省略代码]
 
 ```

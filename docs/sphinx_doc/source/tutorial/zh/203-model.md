@@ -9,7 +9,7 @@ AgentScope中，模型的部署和调用是通过`ModelWrapper`来解耦开的�
 
 目前，AgentScope内置以下模型服务API的支持：
 - OpenAI API，包括对话（Chat），图片生成（DALL-E)和文本嵌入（Embedding）。
-- Post请求API，基于Post请求实现的模型推理服务，包括Huggingface/ModelScope 
+- Post请求API，基于Post请求实现的模型推理服务，包括Huggingface/ModelScope
   Inference API和各种符合Post请求格式的API。
 
 ## 配置方式
@@ -63,7 +63,7 @@ AgentScope中，模型配置是一个字典，用于指定模型的类型以及�
     # 基础参数
     "config_name": "gpt-4-temperature-0.0",     # 模型配置名称
     "model_type": "openai",                     # 对应`ModelWrapper`类型
-    
+
     # 详细参数
     # ...
 }
@@ -107,16 +107,16 @@ API如下：
     # 基础参数
     "config_name": "gpt-4_temperature-0.0",
     "model_type": "openai",
-  
+
     # 详细参数
     # 必要参数
     "model_name": "gpt-4",          # OpenAI模型名称
-    
+
     # 可选参数
     "api_key": "xxx",               # OpenAI API Key，如果没有提供则会从环境变量中读取
     "organization": "xxx",          # 组织名称，如果没有提供则会从环境变量中读取
     "client_args": {                # 初始化OpenAI API Client的参数
-        "max_retries": 3, 
+        "max_retries": 3,
     },
     "generate_args": {              # 调用模型时传入的参数
         "temperature": 0.0
@@ -132,13 +132,13 @@ API如下：
     # 基础参数
     "config_name": "gpt-4_temperature-0.0",
     "model_type": "post_api",
-  
+
     # 详细参数
     "api_url": "http://xxx.png",
-    "headers": { 
+    "headers": {
         # e.g. "Authorization": "Bearer xxx",
     },
-  
+
     # 可选参数，需要根据Post请求API的要求进行配置
     "json_args": {
         # e.g. "temperature": 0.0
