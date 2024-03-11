@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 """ Group chat utils."""
 import re
+from typing import Sequence
 
 
-def select_next_one(agents: list, rnd: int) -> list:
+def select_next_one(agents: Sequence, rnd: int) -> Sequence:
     """
     Select next agent.
     """
     return agents[rnd % len(agents)]
 
 
-def filter_names(string: str, agents: list) -> list:
+def filter_names(string: str, agents: Sequence) -> Sequence:
     """
     This function filters the input string for occurrences of the given names
     prefixed with '@' and returns a list of the found names.

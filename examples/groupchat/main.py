@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """ A group chat where user can talk any time implemented by agentscope. """
-from prompt import Prompts
 from groupchat_utils import (
     select_next_one,
     filter_names,
@@ -24,9 +23,12 @@ def main() -> None:
 
     user = UserAgent()
 
-    agents = npc_agents + [user]
+    agents = list(npc_agents) + [user]
 
-    hint = Msg(name="Host", content=Prompts.opening)
+    hint = Msg(
+        name="Host",
+        content="This is a chat room and you can speak freely.",
+    )
 
     rnd = 0
     speak_list = []
