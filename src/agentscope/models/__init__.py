@@ -21,6 +21,10 @@ from .tongyi_model import (
     TongyiWrapper,
     TongyiChatWrapper,
 )
+from .google_model import (
+    GeminiChatWrapper,
+    GeminiEmbeddingWrapper
+)
 
 
 __all__ = [
@@ -37,6 +41,8 @@ __all__ = [
     "clear_model_configs",
     "TongyiWrapper",
     "TongyiChatWrapper",
+    "GeminiChatWrapper",
+    "GeminiEmbeddingWrapper",
 ]
 
 _MODEL_CONFIGS: dict[str, dict] = {}
