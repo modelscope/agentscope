@@ -350,9 +350,12 @@
         <span class="sa">f</span><span class="s2">&quot;rpc server [</span><span class="si">{</span><span class="n">agent_class</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">] at port [</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">] started &quot;</span>
         <span class="s2">&quot;successfully&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
-    <span class="n">start_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
-    <span class="n">stop_event</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">start_event</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
+        <span class="n">start_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+        <span class="n">stop_event</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">server</span><span class="o">.</span><span class="n">wait_for_termination</span><span class="p">()</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;Stopping rpc server [</span><span class="si">{</span><span class="n">agent_class</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">] at port [</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span>
     <span class="p">)</span>
@@ -450,15 +453,35 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">check_port</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_pool_size</span> <span class="o">=</span> <span class="n">max_pool_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_timeout_seconds</span> <span class="o">=</span> <span class="n">max_timeout_seconds</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">local_model</span> <span class="o">=</span> <span class="n">local_mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">local_mode</span> <span class="o">=</span> <span class="n">local_mode</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parent_con</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="RpcAgentServerLauncher.launch">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgentServerLauncher.launch">[docs]</a>
-    <span class="k">def</span> <span class="nf">launch</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;launch a local rpc agent server.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_launch_in_main</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Launch gRPC server in main-process&quot;&quot;&quot;</span>
+        <span class="n">server_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span>
+            <span class="n">target</span><span class="o">=</span><span class="n">setup_rcp_agent_server</span><span class="p">,</span>
+            <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;agent_class&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_class</span><span class="p">,</span>
+                <span class="s2">&quot;agent_args&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_args</span><span class="p">,</span>
+                <span class="s2">&quot;agent_kwargs&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_kwargs</span><span class="p">,</span>
+                <span class="s2">&quot;host&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
+                <span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
+                <span class="s2">&quot;max_pool_size&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_pool_size</span><span class="p">,</span>
+                <span class="s2">&quot;max_timeout_seconds&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_timeout_seconds</span><span class="p">,</span>
+                <span class="s2">&quot;local_mode&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_mode</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+        <span class="n">server_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Launch [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_class</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">] server at &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">] success&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">server_thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_launch_in_sub</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Launch gRPC server in sub-process.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parent_con</span><span class="p">,</span> <span class="n">child_con</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">()</span>
         <span class="n">start_event</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>
@@ -476,7 +499,7 @@
                 <span class="s2">&quot;pipe&quot;</span><span class="p">:</span> <span class="n">child_con</span><span class="p">,</span>
                 <span class="s2">&quot;max_pool_size&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_pool_size</span><span class="p">,</span>
                 <span class="s2">&quot;max_timeout_seconds&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_timeout_seconds</span><span class="p">,</span>
-                <span class="s2">&quot;local_mode&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_model</span><span class="p">,</span>
+                <span class="s2">&quot;local_mode&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_mode</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">)</span>
         <span class="n">server_process</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
@@ -486,7 +509,16 @@
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Launch [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_class</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">] server at &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">] success&quot;</span><span class="p">,</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="RpcAgentServerLauncher.launch">
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgentServerLauncher.launch">[docs]</a>
+    <span class="k">def</span> <span class="nf">launch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_subprocess</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;launch a local rpc agent server.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">in_subprocess</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_launch_in_sub</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_launch_in_main</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="RpcAgentServerLauncher.wait_until_terminate">
@@ -505,8 +537,8 @@
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
