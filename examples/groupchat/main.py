@@ -37,6 +37,8 @@ def main() -> None:
             try:
                 with timer(USER_TIME_TO_SPEAK):
                     x = user()
+                    if x.content == "exit":
+                        break
             except TimeoutError:
                 x = {"content": ""}
                 print("\n")
