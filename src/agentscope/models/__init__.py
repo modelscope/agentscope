@@ -21,7 +21,7 @@ from .tongyi_model import (
     TongyiWrapper,
     TongyiChatWrapper,
 )
-from .google_model import (
+from .gemini_model import (
     GeminiChatWrapper,
     GeminiEmbeddingWrapper
 )

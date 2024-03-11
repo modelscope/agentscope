@@ -20,7 +20,7 @@ except ImportError:
 class GeminiWrapperBase(ModelWrapperBase):
     """The base class for Google Gemini model wrapper."""
 
-    generation_method = None
+    __generation_method = None
     """The generation method used in `__call__` function."""
 
     def __init__(
@@ -68,7 +68,7 @@ class GeminiWrapperBase(ModelWrapperBase):
             return [
                 _
                 for _ in support_models
-                if self.generation_method in _.supported_generation_methods
+                if self.__generation_method in _.supported_generation_methods
             ]
 
     def __call__(self, *args: Any, **kwargs: Any) -> ModelResponse:
@@ -169,13 +169,13 @@ class GeminiEmbeddingWrapper(GeminiWrapperBase):
     model_type: str = "gemini_embedding"
     """The type of the model, which is used in model configuration."""
 
-    generation_method = "embedContent"
+    __generation_method = "embedContent"
     """The generation method used in `__call__` function."""
 
     def __call__(
         self,
         content: Union[Sequence[Msg], str],
-        task_type: str,
+        task_type: str = None,
         title: str = None,
         **kwargs: Any,
     ) -> ModelResponse:
@@ -186,7 +186,7 @@ class GeminiEmbeddingWrapper(GeminiWrapperBase):
         Args:
             content (`Union[Sequence[Msg], str]`):
                 The content to generate embedding.
-            task_type (`str`):
+            task_type (`str`, defaults to `None`):
                 The type of the task.
             title (`str`, defaults to `None`):
                 The title of the content.
@@ -219,17 +219,8 @@ class GeminiEmbeddingWrapper(GeminiWrapperBase):
             response=response,
         )
 
-        # step3: update monitor accordingly
-        token_prompt = genai.count_text_tokens(content)
-        try:
-            self.monitor.update(
-                {
-                    "prompt_tokens": token_prompt,
-                },
-                prefix=self.model.model_name,
-            )
-        except QuotaExceededError as e:
-            logger.error(e.message)
+        # TODO: Up to 2023/03/11, the embedding model doesn't support to
+        #  count tokens.
 
         return ModelResponse(
             raw=response,

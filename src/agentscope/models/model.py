@@ -65,7 +65,7 @@ from loguru import logger
 from ..file_manager import file_manager
 from ..utils import MonitorFactory
 from ..utils.monitor import get_full_name
-from ..utils.tools import _get_timestamp
+from ..utils.tools import _get_timestamp, _is_json_serializable
 from ..constants import _DEFAULT_MAX_RETRIES
 from ..constants import _DEFAULT_RETRY_INTERVAL
 
@@ -110,11 +110,16 @@ class ModelResponse:
         return self._raw
 
     def __str__(self) -> str:
+        if _is_json_serializable(self._raw):
+            raw = self._raw
+        else:
+            raw = str(self._raw)
+
         serialized_fields = {
             "text": self.text,
             "embedding": self.embedding,
             "image_urls": self.image_urls,
-            "raw": self.raw,
+            "raw": raw,
         }
         return json.dumps(serialized_fields, indent=4)
 
