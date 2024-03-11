@@ -17,9 +17,9 @@ from .openai_model import (
     OpenAIDALLEWrapper,
     OpenAIEmbeddingWrapper,
 )
-from .tongyi_model import (
-    TongyiWrapper,
-    QwenChatWrapper,
+from .dashscope_model import (
+    DashScopeWrapper,
+    DashScopeChatWrapper,
 )
 
 
@@ -35,8 +35,8 @@ __all__ = [
     "load_model_by_config_name",
     "read_model_configs",
     "clear_model_configs",
-    "TongyiWrapper",
-    "QwenChatWrapper",
+    "DashScopeWrapper",
+    "DashScopeChatWrapper",
 ]
 
 _MODEL_CONFIGS: dict[str, dict] = {}

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Model wrapper for Qwen chat models"""
+"""Model wrapper for DashScope models"""
 from http import HTTPStatus
 from typing import Any
 
@@ -22,8 +22,8 @@ from ..constants import _DEFAULT_API_BUDGET
 SPECIAL_MODEL_LIST = ["qwen-turbo", "qwen-plus", "qwen1.5-72b-chat"]
 
 
-class TongyiWrapper(ModelWrapperBase):
-    """The model wrapper for Tongyi API."""
+class DashScopeWrapper(ModelWrapperBase):
+    """The model wrapper for DashScope API."""
 
     def __init__(
         self,
@@ -34,17 +34,17 @@ class TongyiWrapper(ModelWrapperBase):
         budget: float = _DEFAULT_API_BUDGET,
         **kwargs: Any,
     ) -> None:
-        """Initialize the Tongyi wrapper.
+        """Initialize the DashScope wrapper.
 
         Args:
             config_name (`str`):
                 The name of the model config.
             model_name (`str`, default `None`):
-                The name of the model to use in Tongyi API.
+                The name of the model to use in DashScope API.
             api_key (`str`, default `None`):
-                The API key for Tongyi API.
+                The API key for DashScope API.
             generate_args (`dict`, default `None`):
-                The extra keyword arguments used in Tongyi api generation,
+                The extra keyword arguments used in DashScope api generation,
                 e.g. `temperature`, `seed`.
             budget (`float`, default `None`):
                 The total budget using this model. Set to `None` means no
@@ -105,21 +105,21 @@ class TongyiWrapper(ModelWrapperBase):
         return get_full_name(name=metric_name, prefix=self.model)
 
 
-class QwenChatWrapper(TongyiWrapper):
-    """The model wrapper for Qwen's chat API."""
+class DashScopeChatWrapper(DashScopeWrapper):
+    """The model wrapper for DashScope's chat API."""
 
-    model_type: str = "qwen_chat"
+    model_type: str = "dashscope_chat"
 
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
         # TODO: set quota to the following metrics
         self.monitor = MonitorFactory.get_monitor()
         self.monitor.register(
-            self._metric("prompt_tokens"),
+            self._metric("input_tokens"),
             metric_unit="token",
         )
         self.monitor.register(
-            self._metric("completion_tokens"),
+            self._metric("output_tokens"),
             metric_unit="token",
         )
         self.monitor.register(
@@ -132,23 +132,24 @@ class QwenChatWrapper(TongyiWrapper):
         messages: list,
         **kwargs: Any,
     ) -> ModelResponse:
-        """Processes a list of messages to construct a payload for the Qwen
-        API call. It then makes a request to the Qwen API and returns the
-        response. This method also updates monitoring metrics based on the
-        API response.
+        """Processes a list of messages to construct a payload for the
+        DashScope API call. It then makes a request to the DashScope API
+        and returns the response. This method also updates monitoring
+        metrics based on the API response.
 
         Each message in the 'messages' list can contain text content and
         optionally an 'image_urls' key. If 'image_urls' is provided,
         it is expected to be a list of strings representing URLs to images.
-        These URLs will be transformed to a suitable format for the Qwen
+        These URLs will be transformed to a suitable format for the DashScope
         API, which might involve converting local file paths to data URIs.
 
         Args:
             messages (`list`):
                 A list of messages to process.
             **kwargs (`Any`):
-                The keyword arguments to Qwen chat completions API,
-                e.g. `temperature`, `max_tokens`, `top_p`, etc. Please refer to
+                The keyword arguments to DashScope chat completions API,
+                e.g. `temperature`, `max_tokens`, `top_p`, etc. Please
+                refer to
 
                 for more detailed arguments.
 
@@ -178,7 +179,7 @@ class QwenChatWrapper(TongyiWrapper):
         if not all("role" in msg and "content" in msg for msg in messages):
             raise ValueError(
                 "Each message in the 'messages' list must contain a 'role' "
-                "and 'content' key for Qwen API.",
+                "and 'content' key for DashScope API.",
             )
 
         # step3: forward to generate response
@@ -216,7 +217,7 @@ class QwenChatWrapper(TongyiWrapper):
             json_response=response,
         )
 
-        # TODO: Add monitor for Qwen?
+        # TODO: Add monitor for DashScope?
         # step5: update monitor accordingly
         # try:
         #     self.monitor.update(
@@ -241,38 +242,3 @@ class QwenChatWrapper(TongyiWrapper):
             )
 
             raise RuntimeError(error_msg)
-
-    def _preprocess_role(self, messages: list) -> list:
-        """preprocess role rules for Qwen"""
-        if self.model in SPECIAL_MODEL_LIST:
-            # The models in this list require that the roles of messages must
-            # alternate between "user" and "assistant".
-            message_length = len(messages)
-            if message_length % 2 == 1:
-                # If the length of the message list is odd, roles will
-                # alternate, starting with "user"
-                roles = [
-                    "user" if i % 2 == 0 else "assistant"
-                    for i in range(message_length)
-                ]
-            else:
-                # If the length of the message list is even, the first role
-                # will be "system", followed by alternating "user" and
-                # "assistant"
-                roles = ["system"] + [
-                    "user" if i % 2 == 1 else "assistant"
-                    for i in range(1, message_length)
-                ]
-
-            # Assign the roles list to the "role" key for each message in
-            # the messages list
-            for message, role in zip(messages, roles):
-                message["role"] = role
-        else:
-            # For other Qwen models, the "role" value of the first and the
-            # last messages must be "user"
-            if len(messages) > 0:
-                messages[0]["role"] = "user"
-                messages[-1]["role"] = "user"
-
-        return messages
