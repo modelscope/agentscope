@@ -50,7 +50,7 @@ class GeminiWrapperBase(ModelWrapperBase):
                 "environment variable.",
             )
 
-        genai.configure(api_key)
+        genai.configure(api_key=api_key)
 
         self.model_name = model_name
         self.model = genai.GenerativeModel(model_name, **kwargs)
@@ -141,8 +141,8 @@ class GeminiChatWrapper(GeminiWrapperBase):
         # TODO: Up to 2024/03/11, the response from Gemini doesn't contain
         #  the detailed information about token usage. Here we simply count
         #  the tokens manually.
-        token_prompt = self.model.count_tokens(contents)
-        token_response = self.model.count_tokens(response.text)
+        token_prompt = self.model.count_tokens(contents).total_tokens
+        token_response = self.model.count_tokens(response.text).total_tokens
         try:
             self.monitor.update(
                 {
