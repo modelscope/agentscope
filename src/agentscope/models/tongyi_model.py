@@ -12,7 +12,6 @@ from loguru import logger
 from .model import ModelWrapperBase, ModelResponse
 
 from ..utils.monitor import MonitorFactory
-from ..utils.monitor import get_full_name
 from ..utils import QuotaExceededError
 from ..constants import _DEFAULT_API_BUDGET
 
@@ -69,35 +68,14 @@ class TongyiWrapper(ModelWrapperBase):
 
         # Set monitor accordingly
         self.monitor = None
-        self.budget = budget
-        self._register_budget()
+        self._register_budget(model_name, budget)
         self._register_default_metrics()
-
-    def _register_budget(self) -> None:
-        self.monitor = MonitorFactory.get_monitor()
-        self.monitor.register_budget(
-            model_name=self.model,
-            value=self.budget,
-            prefix=self.model,
-        )
 
     def _register_default_metrics(self) -> None:
         """Register metrics to the monitor."""
         raise NotImplementedError(
             "The _register_default_metrics function is not Implemented.",
         )
-
-    def _metric(self, metric_name: str) -> str:
-        """Add the class name and model name as prefix to the metric name.
-
-        Args:
-            metric_name (`str`):
-                The metric name.
-
-        Returns:
-            `str`: Metric name of this wrapper.
-        """
-        return get_full_name(name=metric_name, prefix=self.model)
 
 
 class TongyiChatWrapper(TongyiWrapper):
@@ -110,15 +88,15 @@ class TongyiChatWrapper(TongyiWrapper):
         # TODO: set quota to the following metrics
         self.monitor = MonitorFactory.get_monitor()
         self.monitor.register(
-            self._metric("prompt_tokens"),
+            self._metric("prompt_tokens", self.model),
             metric_unit="token",
         )
         self.monitor.register(
-            self._metric("completion_tokens"),
+            self._metric("completion_tokens", self.model),
             metric_unit="token",
         )
         self.monitor.register(
-            self._metric("total_tokens"),
+            self._metric("total_tokens", self.model),
             metric_unit="token",
         )
 
@@ -197,7 +175,7 @@ class TongyiChatWrapper(TongyiWrapper):
                 "messages": messages,
                 **kwargs,
             },
-            json_response=response,
+            response=response,
         )
 
         # step5: update monitor accordingly
