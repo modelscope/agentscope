@@ -1,20 +1,28 @@
-# Minimal makefile for Sphinx documentation
-#
+# Makefile
 
-# You can set these variables from the command line, and also
-# from the environment for the first two.
-SPHINXOPTS    ?=
-SPHINXBUILD   ?= sphinx-build
-SOURCEDIR     = source
-BUILDDIR      = build
+SPHINXBUILD   = sphinx-build
+SPHINXPROJ    = AgentScope-Doc
+SOURCEDIR_EN  = en/source
+BUILDDIR_EN   = build/html/en
+SOURCEDIR_ZH  = zh_CN/source
+BUILDDIR_ZH   = build/html/zh_CN
 
-# Put it first so that "make" without argument is like "make help".
-help:
-	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+# English document
+en:
+	@$(SPHINXBUILD) -b html "$(SOURCEDIR_EN)" "$(BUILDDIR_EN)"
+	@echo
+	@echo "Build finished. The HTML pages are in $(BUILDDIR_EN)"
 
-.PHONY: help Makefile
+# Chinese document
+zh_CN:
+	@$(SPHINXBUILD) -b html "$(SOURCEDIR_ZH)" "$(BUILDDIR_ZH)"
+	@echo
+	@echo "Build finished. The HTML pages are in $(BUILDDIR_ZH)"
 
-# Catch-all target: route all unknown targets to Sphinx using the new
-# "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
+
 %: Makefile
-	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR_EN)" "$(BUILDDIR_EN)" $(O)
+
+all: en zh_CN
+
+.PHONY: all en zh_CN
