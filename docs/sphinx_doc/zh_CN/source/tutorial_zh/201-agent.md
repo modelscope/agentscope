@@ -63,14 +63,14 @@ class AgentBase(Operator):
 
 以下是一个总结了 AgentPool 中一些关键agent的功能的表格：
 
-| Agent 种类     | 描述                                                | Typical Use Cases |
-|--------------|---------------------------------------------------|-------------------|
-| `AgentBase`  | 作为所有agent的超类，提供了必要的属性和方法。                         | 构建任何自定义agent的基础。  |
-| `DialogAgent` | 通过理解上下文和生成连贯的响应来管理对话。                             | 客户服务机器人，虚拟助手。     |
-| `UserAgent`  | 与用户互动以收集输入，生成可能包括URL或基于所需键的额外具体信息的消息。             | 为agent收集用户输入      |
-| *更多agent*    | AgentScope 正在不断扩大agent池子，加入更多专门化的agent，以适应多样化的应用。 |                   |
+| Agent 种类     | 描述                                               | Typical Use Cases |
+|--------------|--------------------------------------------------|-------------------|
+| `AgentBase`  | 作为所有agent的超类，提供了必要的属性和方法。                        | 构建任何自定义agent的基础。  |
+| `DialogAgent` | 通过理解上下文和生成连贯的响应来管理对话。                            | 客户服务机器人，虚拟助手。     |
+| `UserAgent`  | 与用户互动以收集输入，生成可能包括URL或基于所需键的额外具体信息的消息。            | 为agent收集用户输入      |
+| *更多agent*    | AgentScope 正在不断扩大agent池，加入更多专门化的agent，以适应多样化的应用。 |                   |
 
-## Customizing Agents from the AgentPool
+## 从Agent池中定制Agent
 
 从 AgentPool 中定制一个agent，使您能够根据您的多agent应用的独特需求来调整其功能。您可以通过调整配置和提示来轻松修改现有agent，或者，对于更广泛的定制，您可以进行二次开发
 

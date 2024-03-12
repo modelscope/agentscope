@@ -16,12 +16,12 @@ API，同时也可以通过仓库中的[脚本](https://github.com/modelscope/ag
 目前支持的OpenAI API包括了对话（Chat），图片生成（Image generation）和嵌入式（Embedding）。
 用户可以通过设定不同的model config来指定模型服务。
 
-| 模型使用         | APIs                                                                    |
-|--------------|-------------------------------------------------------------------------|
-| 文本生成         | *OpenAI* chat API，FastChat和vllm                                         |
-| 图片生成         | *DALL-E* API                                                            |
-| Embedding    | 文本Embedding                                                             |
-| 基于Post请求的API | *Huggingface*/*ModelScope* Inference <br/><br/>API，以及用户自定应的基于Post请求的API |
+| 模型使用         | APIs                                                                   |
+|--------------|------------------------------------------------------------------------|
+| 文本生成         | *OpenAI* chat API，FastChat和vllm                                        |
+| 图片生成         | *DALL-E* API                                                           |
+| 文本嵌入         | 文本Embedding                                                            |
+| 基于Post请求的API | *Huggingface*/*ModelScope* Inference API，以及用户自定应的基于Post请求的API |
 
 每种API都有其特定的配置要求。例如，要配置OpenAI API，您需要在模型配置中填写以下字段：
 
@@ -62,7 +62,7 @@ import agentscope
 from agentscope.agents import DialogAgent, UserAgent
 
 # 读取模型配置
-agentscope.init(model_configs="./openai_model_configs.json")
+agentscope.init(model_configs="./model_configs.json")
 
 # 创建一个对话智能体和一个用户智能体
 dialogAgent = DialogAgent(name="assistant", model_config_name="gpt-4", sys_prompt="You are a helpful ai assistant")

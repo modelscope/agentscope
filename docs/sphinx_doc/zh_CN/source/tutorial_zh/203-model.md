@@ -2,8 +2,7 @@
 
 # 关于模型
 
-AgentScope中，模型的部署和调用是通过`ModelWrapper`来解耦开的，开发者可以通过提供模型
-配置（Model config）的方式指定模型，同时AgentScope也提供脚本支持开发者自定义模型服务。
+AgentScope中，模型的部署和调用是通过`ModelWrapper`来解耦开的，开发者可以通过提供模型配置（Model config）的方式指定模型，同时AgentScope也提供脚本支持开发者自定义模型服务。
 
 ## 支持模型
 
