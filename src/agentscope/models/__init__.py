@@ -21,7 +21,7 @@ from .tongyi_model import (
     TongyiWrapper,
     TongyiChatWrapper,
 )
-from ollama_model import (
+from .ollama_model import (
     OllamaChatWrapper,
     OllamaEmbeddingWrapper,
     OllamaGenerationWrapper,
