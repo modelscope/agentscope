@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """Unit test for Ollama model APIs."""
 import os
-import shutil
 import unittest
 import uuid
 from unittest.mock import patch, MagicMock
@@ -84,7 +83,7 @@ class OllamaModelWrapperTest(unittest.TestCase):
             "eval_count": 9,
             "eval_duration": 223689000,
         }
-
+        self.tmp = MonitorFactory._instance
         MonitorFactory._instance = None  # pylint: disable=W0212
         self.db_path = f"test-{uuid.uuid4()}.db"
         _ = MonitorFactory.get_monitor(db_path=self.db_path)
@@ -161,6 +160,7 @@ class OllamaModelWrapperTest(unittest.TestCase):
 
     def tearDown(self) -> None:
         """Clean up after each test."""
+        MonitorFactory._instance = self.tmp
         os.remove(self.db_path)
 
 
