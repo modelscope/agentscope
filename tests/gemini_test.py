@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 """Unit test for gemini model wrapper."""
+import os
 import unittest
+import uuid
 from unittest.mock import MagicMock, patch
 
 import agentscope
 from agentscope.models import load_model_by_config_name
+from agentscope.utils import MonitorFactory
 
 
 class DummyResponse:
@@ -19,6 +22,14 @@ class DummyResponse:
 
 class GeminiModelWrapperTest(unittest.TestCase):
     """Unit test for gemini model wrapper."""
+
+    def setUp(self) -> None:
+        """Set up for GeminiModelWrapperTest."""
+        self.tmp = MonitorFactory._instance  # pylint: disable=W0212
+
+        MonitorFactory._instance = None  # pylint: disable=W0212
+        self.db_path = f"test-{uuid.uuid4()}.db"
+        _ = MonitorFactory.get_monitor(db_path=self.db_path)
 
     @patch("google.generativeai.GenerativeModel")
     def test_gemini_chat(self, mock_model: MagicMock) -> None:
@@ -71,6 +82,11 @@ class GeminiModelWrapperTest(unittest.TestCase):
                 "embedding": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0],
             },
         )
+
+    def tearDown(self) -> None:
+        """Clean up after each test."""
+        MonitorFactory._instance = self.tmp  # pylint: disable=W0212
+        os.remove(self.db_path)
 
 
 if __name__ == "__main__":
