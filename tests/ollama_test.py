@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """Unit test for Ollama model APIs."""
+import os
+import shutil
 import unittest
 from unittest.mock import patch, MagicMock
 
@@ -81,6 +83,9 @@ class OllamaModelWrapperTest(unittest.TestCase):
             "eval_duration": 223689000,
         }
 
+        if os.path.exists("./runs"):
+            shutil.rmtree("./runs")
+
     @patch("ollama.chat")
     def test_ollama_chat(self, mock_chat: MagicMock) -> None:
         """Unit test for ollama chat API."""
@@ -150,6 +155,11 @@ class OllamaModelWrapperTest(unittest.TestCase):
         response = model(prompt="1+1=")
 
         self.assertEqual(response.raw, self.dummy_generate)
+
+    def tearDown(self):
+        """Clean up after each test."""
+        if os.path.exists("./runs"):
+            shutil.rmtree("./runs")
 
 
 if __name__ == "__main__":
