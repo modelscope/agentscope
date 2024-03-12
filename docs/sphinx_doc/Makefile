@@ -22,7 +22,7 @@ zh_CN:
 	@echo "Build finished. The HTML pages are in $(BUILDDIR_ZH)"
 
 index:
-	@cp "$(ASSETSDIR)/redirect.html" "$(BUILDDIR)"
+	@cp "$(ASSETSDIR)/redirect.html" "$(BUILDDIR)/index.html"
 
 %: Makefile
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR_EN)" "$(BUILDDIR_EN)" $(O)
