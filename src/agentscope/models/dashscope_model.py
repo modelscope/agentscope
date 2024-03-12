@@ -305,7 +305,16 @@ class DashScopeWanxWrapper(DashScopeWrapper):
             json_response=response,
         )
 
-        # step4: return response
+        # step4: update monitor accordingly
+        try:
+            self.monitor.update(
+                response.usage,
+                prefix=self.model,
+            )
+        except Exception as e:
+            logger.error(e)
+
+        # step5: return response
         images = response["output"]["results"]
         # Get image urls as a list
         urls = [_["url"] for _ in images]
@@ -376,6 +385,7 @@ class DashScopeEmbeddingWrapper(DashScopeWrapper):
 
         if response.status_code != HTTPStatus.OK:
             raise RuntimeError(response)
+
         # step3: record the model api invocation if needed
         self._save_model_invocation(
             arguments={
@@ -386,7 +396,16 @@ class DashScopeEmbeddingWrapper(DashScopeWrapper):
             json_response=response,
         )
 
-        # step4: return response
+        # step4: update monitor accordingly
+        try:
+            self.monitor.update(
+                response.usage,
+                prefix=self.model,
+            )
+        except Exception as e:
+            logger.error(e)
+
+        # step5: return response
         if len(response["output"]["embeddings"]) == 0:
             return ModelResponse(
                 embedding=response["output"]["embedding"][0],
