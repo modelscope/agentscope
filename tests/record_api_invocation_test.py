@@ -90,7 +90,7 @@ class RecordApiInvocation(unittest.TestCase):
                         "model": "gpt-4",
                         "messages": [],
                     },
-                    "json_response": {
+                    "response": {
                         "content": "dummy_response",
                     },
                 },
