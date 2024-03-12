@@ -1,0 +1,210 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installation &mdash; AgentScope  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="About AgentScope" href="101-agentscope.html" />
+    <link rel="prev" title="Getting Started" href="quick_start.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../en/index.html">English</a></li> |
+    <a href="../../zh_CN/index.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="quick_start.html">Getting Started</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#create-a-virtual-environment">Create a Virtual Environment</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#using-conda">Using Conda</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#using-virtualenv">Using Virtualenv</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#installing-agentscope">Installing AgentScope</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#install-with-pip">Install with Pip</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#install-from-source">Install from Source</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="101-agentscope.html">About AgentScope</a></li>
+<li class="toctree-l2"><a class="reference internal" href="103-example.html">Quick Start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="104-usecase.html">Crafting Your First Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="105-logging.html">Logging and WebUI</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="advance.html">Advanced Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">Get Involved</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.agents.html">Agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.memory.html">Memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.models.html">Models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.pipelines.html">Pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.service.html">Service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.rpc.html">RPC package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.utils.html">Utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.web.html">Web UI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.html">Module contents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="quick_start.html">Getting Started</a></li>
+      <li class="breadcrumb-item active">Installation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorial/102-installation.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="installation">
+<span id="installation-en"></span><h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
+<p>To install AgentScope, you need to have Python 3.9 or higher installed. We recommend setting up a new virtual environment specifically for AgentScope:</p>
+<section id="create-a-virtual-environment">
+<h2>Create a Virtual Environment<a class="headerlink" href="#create-a-virtual-environment" title="Link to this heading"></a></h2>
+<section id="using-conda">
+<h3>Using Conda<a class="headerlink" href="#using-conda" title="Link to this heading"></a></h3>
+<p>If you’re using Conda as your package and environment management tool, you can create a new virtual environment with Python 3.9 using the following commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a new virtual environment named &#39;agentscope&#39; with Python 3.9</span>
+conda<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>agentscope<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.9
+
+<span class="c1"># Activate the virtual environment</span>
+conda<span class="w"> </span>activate<span class="w"> </span>agentscope
+</pre></div>
+</div>
+</section>
+<section id="using-virtualenv">
+<h3>Using Virtualenv<a class="headerlink" href="#using-virtualenv" title="Link to this heading"></a></h3>
+<p>Alternatively, if you prefer <code class="docutils literal notranslate"><span class="pre">virtualenv</span></code>, you can install it first (if it’s not already installed) and then create a new virtual environment as shown:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install virtualenv if it is not already installed</span>
+pip<span class="w"> </span>install<span class="w"> </span>virtualenv
+
+<span class="c1"># Create a new virtual environment named &#39;agentscope&#39; with Python 3.9</span>
+virtualenv<span class="w"> </span>agentscope<span class="w"> </span>--python<span class="o">=</span>python3.9
+
+<span class="c1"># Activate the virtual environment</span>
+<span class="nb">source</span><span class="w"> </span>agentscope/bin/activate<span class="w">  </span><span class="c1"># On Windows use `agentscope\Scripts\activate`</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="installing-agentscope">
+<h2>Installing AgentScope<a class="headerlink" href="#installing-agentscope" title="Link to this heading"></a></h2>
+<section id="install-with-pip">
+<h3>Install with Pip<a class="headerlink" href="#install-with-pip" title="Link to this heading"></a></h3>
+<p>If you prefer to install AgentScope from Pypi, you can do so easily using <code class="docutils literal notranslate"><span class="pre">pip</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># For centralized multi-agent applications</span>
+pip<span class="w"> </span>install<span class="w"> </span>agentscope
+<span class="c1"># For distributed multi-agent applications</span>
+pip<span class="w"> </span>install<span class="w"> </span>agentscope<span class="o">[</span>distribute<span class="o">]</span><span class="w">  </span><span class="c1"># On Mac use `pip install agentscope\[distribute\]`</span>
+</pre></div>
+</div>
+</section>
+<section id="install-from-source">
+<h3>Install from Source<a class="headerlink" href="#install-from-source" title="Link to this heading"></a></h3>
+<p>For users who prefer to install AgentScope directly from the source code, follow these steps to clone the repository and install the platform in editable mode:</p>
+<p><strong><em>Note: This project is under active development, it’s recommended to install AgentScope from source.</em></strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Pull the source code from Github</span>
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/modelscope/agentscope.git
+<span class="nb">cd</span><span class="w"> </span>AgentScope
+
+<span class="c1"># For centralized multi-agent applications</span>
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+<span class="c1"># For distributed multi-agent applications</span>
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>distribute<span class="o">]</span><span class="w">  </span><span class="c1"># On Mac use `pip install -e .\[distribute\]`</span>
+</pre></div>
+</div>
+<p><strong>Note</strong>: The <code class="docutils literal notranslate"><span class="pre">[distribute]</span></code> option installs additional dependencies required for distributed applications. Remember to activate your virtual environment before running these commands.</p>
+<p><a class="reference internal" href="#installation-en">[Return to the top]</a></p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="quick_start.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="101-agentscope.html" class="btn btn-neutral float-right" title="About AgentScope" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Alibaba Tongyi Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

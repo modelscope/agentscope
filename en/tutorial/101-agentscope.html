@@ -1,0 +1,261 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About AgentScope &mdash; AgentScope  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Quick Start" href="103-example.html" />
+    <link rel="prev" title="Installation" href="102-installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../en/index.html">English</a></li> |
+    <a href="../../zh_CN/index.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="quick_start.html">Getting Started</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="102-installation.html">Installation</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">About AgentScope</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#what-is-agentscope">What is AgentScope?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#key-concepts">Key Concepts</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#message">Message</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agent">Agent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#service">Service</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#workflow">Workflow</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#why-agentscope">Why AgentScope?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#how-is-agentscope-designed">How is AgentScope designed?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope-code-structure">AgentScope Code Structure</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="103-example.html">Quick Start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="104-usecase.html">Crafting Your First Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="105-logging.html">Logging and WebUI</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="advance.html">Advanced Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">Get Involved</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.agents.html">Agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.memory.html">Memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.models.html">Models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.pipelines.html">Pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.service.html">Service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.rpc.html">RPC package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.utils.html">Utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.web.html">Web UI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.html">Module contents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="quick_start.html">Getting Started</a></li>
+      <li class="breadcrumb-item active">About AgentScope</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorial/101-agentscope.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="about-agentscope">
+<span id="agentscope-en"></span><h1>About AgentScope<a class="headerlink" href="#about-agentscope" title="Link to this heading"></a></h1>
+<p>In this tutorial, we will provide an overview of AgentScope by answering
+several questions, including what’s AgentScope, what can AgentScope provide,
+and why we should choose AgentScope. Let’s get started!</p>
+<section id="what-is-agentscope">
+<h2>What is AgentScope?<a class="headerlink" href="#what-is-agentscope" title="Link to this heading"></a></h2>
+<p>AgentScope is a developer-centric multi-agent platform, which enables
+developers to build their LLM-empowered multi-agent applications with less
+effort.</p>
+<p>With the advance of large language models, developers are able to build
+diverse applications.
+In order to connect LLMs to data and services and solve complex tasks,
+AgentScope provides a series of development tools and components for ease of
+development.
+It features</p>
+<ul class="simple">
+<li><p><strong>usability</strong>,</p></li>
+<li><p><strong>robustness</strong>, and</p></li>
+<li><p><strong>the support of multi-modal data</strong> and</p></li>
+<li><p><strong>distributed deployment</strong>.</p></li>
+</ul>
+</section>
+<section id="key-concepts">
+<h2>Key Concepts<a class="headerlink" href="#key-concepts" title="Link to this heading"></a></h2>
+<section id="message">
+<h3>Message<a class="headerlink" href="#message" title="Link to this heading"></a></h3>
+<p>Message is a carrier of information (e.g. instructions, multi-modal
+data, and dialogue). In AgentScope, message is a Python dict subclass
+with <code class="docutils literal notranslate"><span class="pre">name</span></code> and <code class="docutils literal notranslate"><span class="pre">content</span></code> as necessary fields, and <code class="docutils literal notranslate"><span class="pre">url</span></code> as an optional
+field referring to additional resources.</p>
+</section>
+<section id="agent">
+<h3>Agent<a class="headerlink" href="#agent" title="Link to this heading"></a></h3>
+<p>Agent is an autonomous entity capable of interacting with environment and
+agents, and taking actions to change the environment. In AgentScope, an
+agent takes message as input and generates corresponding response message.</p>
+</section>
+<section id="service">
+<h3>Service<a class="headerlink" href="#service" title="Link to this heading"></a></h3>
+<p>Service refers to the functional APIs that enable agents to perform
+specific tasks. In AgentScope, services are categorized into model API
+services, which are channels to use the LLMs, and general API services,
+which provide a variety of tool functions.</p>
+</section>
+<section id="workflow">
+<h3>Workflow<a class="headerlink" href="#workflow" title="Link to this heading"></a></h3>
+<p>Workflow represents ordered sequences of agent executions and message
+exchanges between agents, analogous to computational graphs in TensorFlow,
+but with the flexibility to accommodate non-DAG structures.</p>
+</section>
+</section>
+<section id="why-agentscope">
+<h2>Why AgentScope?<a class="headerlink" href="#why-agentscope" title="Link to this heading"></a></h2>
+<p><strong>Exceptional usability for developers.</strong>
+AgentScope provides high usability for developers with flexible syntactic
+sugars, ready-to-use components, and pre-built examples.</p>
+<p><strong>Robust fault tolerance for diverse models and APIs.</strong>
+AgentScope ensures robust fault tolerance for diverse models, APIs, and
+allows developers to build customized fault-tolerant strategies.</p>
+<p><strong>Extensive compatibility for multi-modal application.</strong>
+AgentScope supports multi-modal data (e.g., files, images, audio and videos)
+in both dialog presentation, message transmission and data storage.</p>
+<p><strong>Optimized efficiency for distributed multi-agent operations.</strong> AgentScope
+introduces an actor-based distributed mechanism that enables centralized
+programming of complex distributed workflows, and automatic parallel
+optimization.</p>
+</section>
+<section id="how-is-agentscope-designed">
+<h2>How is AgentScope designed?<a class="headerlink" href="#how-is-agentscope-designed" title="Link to this heading"></a></h2>
+<p>The architecture of AgentScope comprises three hierarchical layers. The
+layers provide supports for multi-agent applications from different levels,
+including elementary and advanced functionalities of a single agent
+(<strong>utility layer</strong>), resources and runtime management (<strong>manager and wrapper
+layer</strong>), and agent-level to workflow-level programming interfaces (<strong>agent
+layer</strong>). AgentScope introduces intuitive abstractions designed to fulfill
+the diverse functionalities inherent to each layer and simplify the
+complicated interlayer dependencies when building multi-agent systems.
+Furthermore, we offer programming interfaces and default mechanisms to
+strengthen the resilience of multi-agent systems against faults within
+different layers.</p>
+</section>
+<section id="agentscope-code-structure">
+<h2>AgentScope Code Structure<a class="headerlink" href="#agentscope-code-structure" title="Link to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>AgentScope
+├──<span class="w"> </span>src
+│<span class="w">   </span>├──<span class="w"> </span>agentscope
+│<span class="w">   </span><span class="p">|</span><span class="w">   </span>├──<span class="w"> </span>agents<span class="w">               </span><span class="c1"># Core components and implementations pertaining to agents.</span>
+│<span class="w">   </span><span class="p">|</span><span class="w">   </span>├──<span class="w"> </span>memory<span class="w">               </span><span class="c1"># Structures for agent memory.</span>
+│<span class="w">   </span><span class="p">|</span><span class="w">   </span>├──<span class="w"> </span>models<span class="w">               </span><span class="c1"># Interfaces for integrating diverse model APIs.</span>
+│<span class="w">   </span><span class="p">|</span><span class="w">   </span>├──<span class="w"> </span>pipeline<span class="w">             </span><span class="c1"># Fundamental components and implementations for running pipelines.</span>
+│<span class="w">   </span><span class="p">|</span><span class="w">   </span>├──<span class="w"> </span>rpc<span class="w">                  </span><span class="c1"># Rpc module for agent distributed deployment.</span>
+│<span class="w">   </span><span class="p">|</span><span class="w">   </span>├──<span class="w"> </span>service<span class="w">              </span><span class="c1"># Services offering functions independent of memory and state.</span>
+<span class="p">|</span><span class="w">   </span><span class="p">|</span><span class="w">   </span>├──<span class="w"> </span>web<span class="w">                  </span><span class="c1"># WebUI used to show dialogs.</span>
+│<span class="w">   </span><span class="p">|</span><span class="w">   </span>├──<span class="w"> </span>utils<span class="w">                </span><span class="c1"># Auxiliary utilities and helper functions.</span>
+│<span class="w">   </span><span class="p">|</span><span class="w">   </span>├──<span class="w"> </span>message.py<span class="w">           </span><span class="c1"># Definitions and implementations of messaging between agents.</span>
+│<span class="w">   </span><span class="p">|</span><span class="w">   </span>├──<span class="w"> </span>prompt.py<span class="w">            </span><span class="c1"># Prompt engineering module for model input.</span>
+│<span class="w">   </span><span class="p">|</span><span class="w">   </span>├──<span class="w"> </span>...<span class="w"> </span>..
+│<span class="w">   </span><span class="p">|</span><span class="w">   </span>├──<span class="w"> </span>...<span class="w"> </span>..
+├──<span class="w"> </span>scripts<span class="w">                      </span><span class="c1"># Scripts for launching local Model API</span>
+├──<span class="w"> </span>examples<span class="w">                     </span><span class="c1"># Pre-built examples of different applications.</span>
+├──<span class="w"> </span>docs<span class="w">                         </span><span class="c1"># Documentation tool for API reference.</span>
+├──<span class="w"> </span>tests<span class="w">                        </span><span class="c1"># Unittest modules for continuous integration.</span>
+├──<span class="w"> </span>LICENSE<span class="w">                      </span><span class="c1"># The official licensing agreement for AgentScope usage.</span>
+└──<span class="w"> </span>setup.py<span class="w">                     </span><span class="c1"># Setup script for installing.</span>
+├──<span class="w"> </span>...<span class="w"> </span>..
+└──<span class="w"> </span>...<span class="w"> </span>..
+</pre></div>
+</div>
+<p><a class="reference internal" href="#"><span class="doc std std-doc">[Return to the top]</span></a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="102-installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="103-example.html" class="btn btn-neutral float-right" title="Quick Start" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Alibaba Tongyi Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

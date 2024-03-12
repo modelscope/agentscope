@@ -1,0 +1,203 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Text processing package &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=7d86a446"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/translations.js?v=beaddf03"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Web search package" href="agentscope.service.web_search.html" />
+    <link rel="prev" title="SQL query package" href="agentscope.service.sql_query.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../en/index.html">English</a></li> |
+    <a href="../zh_CN/index.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_zh/quick_start.html">快速上手</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_zh/advance.html">进阶使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_zh/contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">Agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">Memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">Models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">Pipelines package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="agentscope.service.html">Service package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="agentscope.service.execute_code.html">Code package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.service.file.html">File package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.service.retrieval.html">Retrieval package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.service.sql_query.html">SQL query package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Text processing package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-agentscope.service.text_processing.summarization">summarization module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.service.text_processing.summarization.summarization"><code class="docutils literal notranslate"><span class="pre">summarization()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.service.web_search.html">Web search package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.service.html#service-status-module">service_status module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.service.html#service-response-module">service_response module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">RPC package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">Utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">Web UI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">Module contents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="agentscope.service.html">Service package</a></li>
+      <li class="breadcrumb-item active">Text processing package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/agentscope.service.text_processing.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="text-processing-package">
+<h1>Text processing package<a class="headerlink" href="#text-processing-package" title="Link to this heading"></a></h1>
+<section id="module-agentscope.service.text_processing.summarization">
+<span id="summarization-module"></span><h2>summarization module<a class="headerlink" href="#module-agentscope.service.text_processing.summarization" title="Link to this heading"></a></h2>
+<p>Service for text processing</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.text_processing.summarization.summarization">
+<span class="sig-prename descclassname"><span class="pre">agentscope.service.text_processing.summarization.</span></span><span class="sig-name descname"><span class="pre">summarization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.models.html#agentscope.models.model.ModelWrapperBase" title="agentscope.models.model.ModelWrapperBase"><span class="pre">ModelWrapperBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">system_prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\nYou</span> <span class="pre">are</span> <span class="pre">a</span> <span class="pre">helpful</span> <span class="pre">agent</span> <span class="pre">to</span> <span class="pre">summarize</span> <span class="pre">the</span> <span class="pre">text.\nYou</span> <span class="pre">need</span> <span class="pre">to</span> <span class="pre">keep</span> <span class="pre">all</span> <span class="pre">the</span> <span class="pre">key</span> <span class="pre">information</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">text</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">summary.\n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">summarization_prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\nTEXT:</span> <span class="pre">{}\n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_return_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token_limit_prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\nSummarize</span> <span class="pre">the</span> <span class="pre">text</span> <span class="pre">after</span> <span class="pre">TEXT</span> <span class="pre">in</span> <span class="pre">less</span> <span class="pre">than</span> <span class="pre">{}</span> <span class="pre">tokens:\n'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ServiceResponse</span></span></span><a class="reference internal" href="_modules/agentscope/service/text_processing/summarization.html#summarization"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.text_processing.summarization.summarization" title="Link to this definition"></a></dt>
+<dd><p>Summarize the input text.</p>
+<p>Summarization function (Notice: curent version of token limitation is
+built with Open AI API)</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<cite>ModelWrapperBase</cite>) – Model used to summarize provided text.</p></li>
+<li><p><strong>text</strong> (<cite>str</cite>) – Text to be summarized by the model.</p></li>
+<li><p><strong>system_prompt</strong> (<cite>str</cite>, defaults to <cite>_DEFAULT_SYSTEM_PROMPT</cite>) – Prompts as instruction for the system, typically used in Open AI
+API. See the following example for more details.</p></li>
+<li><p><strong>summarization_prompt</strong> (<cite>str</cite>, defaults to             <cite>_DEFAULT_SUMMARIZATION_PROMPT</cite>) – Prompts for the beginning of the user provided text to be
+summarized. See the following example for more details.</p></li>
+<li><p><strong>max_return_token</strong> (<cite>int</cite>, defaults to <cite>-1</cite>) – Whether provide additional prompting instruction to limit the
+number of tokens in summarization returned by the model.</p></li>
+<li><p><strong>token_limit_prompt</strong> (<cite>str</cite>, defaults to <cite>_DEFAULT_TOKEN_LIMIT_PROMPT</cite>) – Prompt to instruct the model follow token limitation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>If the model successfully summarized the text, and
+the summarization satisfies the provided token limitation, return
+<cite>ServiceResponse</cite> with <cite>ServiceExecStatus.SUCCESS</cite>; otherwise return
+<cite>ServiceResponse</cite> with <cite>ServiceExecStatus.ERROR</cite> (if the summary is
+return successfully but exceed the token limits, the content
+contains the summary as well).</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
+</dd>
+</dl>
+<p>Example:</p>
+<p>With Open AI models, the default message with a $STR_TEXT and Open AI API:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;You are a helpful agent to summarizethe text.</span><span class="se">\</span>
+<span class="s2">        You need to keep all the key information of the text in the</span><span class="se">\</span>
+<span class="s2">        summary.&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;TEXT: {$STR_TEXT} </span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="p">},</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="agentscope.service.sql_query.html" class="btn btn-neutral float-left" title="SQL query package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="agentscope.service.web_search.html" class="btn btn-neutral float-right" title="Web search package" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

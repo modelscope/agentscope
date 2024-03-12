@@ -1,0 +1,434 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>关于服务 &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=7d86a446"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/translations.js?v=beaddf03"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="关于记忆" href="205-memory.html" />
+    <link rel="prev" title="关于模型" href="203-model.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../en/index.html">English</a></li> |
+    <a href="../../zh_CN/index.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">快速上手</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="advance.html">进阶使用</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="201-agent.html">定制你自己的Agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="202-pipeline.html">智能体间交互</a></li>
+<li class="toctree-l2"><a class="reference internal" href="203-model.html">关于模型</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">关于服务</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#service">Service函数概览</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">使用Service函数</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#servicefactory">关于ServiceFactory</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#serviceresponse">关于ServiceResponse</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">示例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="205-memory.html">关于记忆</a></li>
+<li class="toctree-l2"><a class="reference internal" href="206-prompt.html">提示工程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="207-monitor.html">监控器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="208-distribute.html">关于分布式</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.agents.html">Agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.memory.html">Memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.models.html">Models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.pipelines.html">Pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.service.html">Service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.rpc.html">RPC package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.utils.html">Utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.web.html">Web UI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.html">Module contents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="advance.html">进阶使用</a></li>
+      <li class="breadcrumb-item active">关于服务</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorial_zh/204-service.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="service-zh">
+<span id="id1"></span><h1>关于服务<a class="headerlink" href="#service-zh" title="Link to this heading"></a></h1>
+<p>服务函数（Service function）是可以增强智能体能力工具，例如执行Python代码、网络搜索、
+文件操作等。本教程概述了AgentScope中可用的服务功能，同时介绍如何使用它们来增强智能体的能力。</p>
+<section id="service">
+<h2>Service函数概览<a class="headerlink" href="#service" title="Link to this heading"></a></h2>
+<p>下面的表格按照类型概述了各种Service函数。以下函数可以通过<code class="docutils literal notranslate"><span class="pre">agentscope.service.{函数名}</span></code>进行调用。</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Service场景</p></th>
+<th class="head"><p>Service函数名称</p></th>
+<th class="head"><p>描述</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>代码</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">execute_python_code</span></code></p></td>
+<td><p>执行一段 Python 代码，可选择在 Docker <br/>容器内部执行。</p></td>
+</tr>
+<tr class="row-odd"><td><p>检索</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">retrieve_from_list</span></code></p></td>
+<td><p>根据给定的标准从列表中检索特定项目。</p></td>
+</tr>
+<tr class="row-even"><td><p>SQL查询</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">query_mysql</span></code></p></td>
+<td><p>在 MySQL 数据库上执行 SQL 查询并返回结果。</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">query_sqlite</span></code></p></td>
+<td><p>在 SQLite 数据库上执行 SQL 查询并返回结果。</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">query_mongodb</span></code></p></td>
+<td><p>对 MongoDB 集合执行查询或操作。</p></td>
+</tr>
+<tr class="row-odd"><td><p>文本处理</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">summarization</span></code></p></td>
+<td><p>使用大型语言模型总结一段文字以突出其主要要点。</p></td>
+</tr>
+<tr class="row-even"><td><p>网络搜索</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">web_search</span></code></p></td>
+<td><p>使用指定的搜索引擎（当前支持 Google 和 Bing）执行网络搜索。</p></td>
+</tr>
+<tr class="row-odd"><td><p>文件处理</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">create_file</span></code></p></td>
+<td><p>在指定路径创建一个新文件，并可选择添加初始内容。</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">delete_file</span></code></p></td>
+<td><p>删除由文件路径指定的文件。</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">move_file</span></code></p></td>
+<td><p>将文件从一个路径移动或重命名到另一个路径。</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">create_directory</span></code></p></td>
+<td><p>在指定路径创建一个新的目录。</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">delete_directory</span></code></p></td>
+<td><p>删除一个目录及其所有内容。</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">move_directory</span></code></p></td>
+<td><p>将目录从一个路径移动或重命名到另一个路径。</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">read_text_file</span></code></p></td>
+<td><p>读取并返回文本文件的内容。</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">write_text_file</span></code></p></td>
+<td><p>向指定路径的文件写入文本内容。</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">read_json_file</span></code></p></td>
+<td><p>读取并解析 JSON 文件的内容。</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">write_json_file</span></code></p></td>
+<td><p>将 Python 对象序列化为 JSON 并写入到文件。</p></td>
+</tr>
+<tr class="row-odd"><td><p><em>更多服务即将推出</em></p></td>
+<td><p></p></td>
+<td><p>正在开发更多服务功能，并将添加到 AgentScope 以进一步增强其能力。</p></td>
+</tr>
+</tbody>
+</table>
+<p>关于详细的参数、预期输入格式、返回类型，请参阅<a class="reference external" href="https://modelscope.github.io/agentscope/">API文档</a>。</p>
+</section>
+<section id="id2">
+<h2>使用Service函数<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<p>AgentScope为Service函数提供了两个服务类，分别是<code class="docutils literal notranslate"><span class="pre">ServiceFactory</span></code>和<code class="docutils literal notranslate"><span class="pre">ServiceResponse</span></code>。</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ServiceFactory</span></code>的主要作用是将一般的Python函数编程大模型可以直接使用的形式，同时自动生成函数说明。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ServiceResponse</span></code>是一个字典的子类，为所有Service函数提供了统一的调用结果接口。</p></li>
+</ul>
+<section id="servicefactory">
+<h3>关于ServiceFactory<a class="headerlink" href="#servicefactory" title="Link to this heading"></a></h3>
+<p>智能体使用的工具一般是函数类型，开发者需要准备大模型能够直接调用的函数，并且需要提供函数的说明。
+但是一般的函数往往需要开发者提供部分参数（例如秘钥，用户名，特定的网址等），然后大模型才能够
+使用。同时为多个函数生成特定格式的说明也是一件繁琐的事情。</p>
+<p>为了解决上述问题，AgentScope提出了<code class="docutils literal notranslate"><span class="pre">ServiceFactory</span></code>，对于给定的Service
+函数，它允许开发者指定部分参数，生成一个大模型可以直接调用的函数，并且自动根据Docstring生成函数说明。
+以Bing网络搜索函数为例。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">bing_search</span><span class="p">(</span>
+    <span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">num_results</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search question in Bing Search API and return the searching results</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        question (`str`):</span>
+<span class="sd">            The search query string.</span>
+<span class="sd">        api_key (`str`):</span>
+<span class="sd">            The API key provided for authenticating with the Bing Search API.</span>
+<span class="sd">        num_results (`int`, defaults to `10`):</span>
+<span class="sd">            The number of search results to return.</span>
+<span class="sd">        **kwargs (`Any`):</span>
+<span class="sd">            Additional keyword arguments to be included in the search query.</span>
+<span class="sd">            For more details, please refer to</span>
+<span class="sd">            https://learn.microsoft.com/en-us/bing/search-apis/bing-web-search/reference/query-parameters</span>
+
+<span class="sd">    [omitted for brevity]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>上述函数中，<code class="docutils literal notranslate"><span class="pre">question</span></code>是大模型填写的字段，而<code class="docutils literal notranslate"><span class="pre">api_key</span></code>，<code class="docutils literal notranslate"><span class="pre">num_results</span></code>是开发者需要提供的参数。
+我们利用<code class="docutils literal notranslate"><span class="pre">ServiceFactory</span></code>的<code class="docutils literal notranslate"><span class="pre">get</span></code>函数进行处理：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.service</span> <span class="kn">import</span> <span class="n">ServiceFactory</span>
+
+<span class="n">func</span><span class="p">,</span> <span class="n">func_intro</span> <span class="o">=</span> <span class="n">ServiceFactory</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+    <span class="n">bing_search</span><span class="p">,</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;xxx&quot;</span><span class="p">,</span>
+    <span class="n">num_results</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>上述代码中，ServiceFactory生成的func和下面的函数是等价的：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">bing_search</span><span class="p">(</span><span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search question in Bing Search API and return the searching results</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        question (`str`):</span>
+<span class="sd">            The search query string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">bing_search</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;xxx&quot;</span><span class="p">,</span> <span class="n">num_results</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>生成的JSON Schema格式说明如下，该格式的函数说明可以直接用于OpenAI API中的tools字段。
+用户也可以根据自己的需求进行二次修改。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># print(func_intro)</span>
+<span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;function&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;bing_search&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Search question in Bing Search API and return the searching results&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;question&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;The search query string.&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;question&quot;</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>注意</strong>：<code class="docutils literal notranslate"><span class="pre">ServiceFactory</span></code>生成的函数和参数说明（包括描述，类型，默认值）是从函数的docstring
+中自动提取的，因此建议原函数的docstring应该按照Google风格进行书写，以便更好的提取函数说明。</p>
+<p><strong>建议</strong>：</p>
+<ul class="simple">
+<li><p>Service函数的名称应该是自解释的，这样智能体可以理解函数并正确使用它。</p></li>
+<li><p>在定义函数时应提供参数的类型（例如<code class="docutils literal notranslate"><span class="pre">def</span> <span class="pre">func(a:</span> <span class="pre">int,</span> <span class="pre">b:</span> <span class="pre">str,</span> <span class="pre">c:</span> <span class="pre">bool)</span></code>），以便智能体正确指定参数。</p></li>
+</ul>
+</section>
+<section id="serviceresponse">
+<h3>关于ServiceResponse<a class="headerlink" href="#serviceresponse" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">ServiceResponse</span></code>是对调用的结果的封装，包含了<code class="docutils literal notranslate"><span class="pre">status</span></code>和<code class="docutils literal notranslate"><span class="pre">content</span></code>两个字段。
+当Service函数正常运行结束时，<code class="docutils literal notranslate"><span class="pre">status</span></code>为<code class="docutils literal notranslate"><span class="pre">ServiceExecStatus.</span> <span class="pre">SUCCESS</span></code>，<code class="docutils literal notranslate"><span class="pre">content</span></code>为函数的返回值。而当运行出现错误时，<code class="docutils literal notranslate"><span class="pre">status</span></code>为<code class="docutils literal notranslate"><span class="pre">ServiceExecStatus.</span> <span class="pre">Error</span></code>，<code class="docutils literal notranslate"><span class="pre">content</span></code>内为错误信息。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ServiceResponse</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Used to wrap the execution results of the services&quot;&quot;&quot;</span>
+
+    <span class="fm">__setattr__</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="fm">__setitem__</span>
+    <span class="fm">__getattr__</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="fm">__getitem__</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">status</span><span class="p">:</span> <span class="n">ServiceExecStatus</span><span class="p">,</span>
+        <span class="n">content</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor of ServiceResponse</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            status (`ServiceExeStatus`):</span>
+<span class="sd">                The execution status of the service.</span>
+<span class="sd">            content (`Any`)</span>
+<span class="sd">                If the argument`status` is `SUCCESS`, `content` is the</span>
+<span class="sd">                response. We use `object` here to support various objects,</span>
+<span class="sd">                e.g. str, dict, image, video, etc.</span>
+<span class="sd">                Otherwise, `content` is the error message.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">status</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">content</span>
+
+    <span class="c1"># ... [为简洁起见省略代码]</span>
+
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id3">
+<h2>示例<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">from</span> <span class="nn">agentscope.service</span> <span class="kn">import</span> <span class="n">ServiceResponse</span>
+<span class="kn">from</span> <span class="nn">agentscope.agents</span> <span class="kn">import</span> <span class="n">AgentBase</span>
+
+
+<span class="k">def</span> <span class="nf">create_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    创建文件并向其中写入内容。</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        file_path (str): 将要创建文件的路径。</span>
+<span class="sd">        content (str): 要写入文件的内容。</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ServiceResponse: 其中布尔值指示成功与否，字符串包含任何错误消息（如果有），包括错误类型。</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># ... [为简洁起见省略代码]</span>
+
+
+<span class="k">class</span> <span class="nc">YourAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
+    <span class="c1"># ... [为简洁起见省略代码]</span>
+
+    <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="c1"># ... [为简洁起见省略代码]</span>
+
+        <span class="c1"># 构造提示，让代理提供 JSON 格式的参数</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;To complete the user request</span><span class="se">\n</span><span class="s2">```</span><span class="si">{</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">```</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;Please provide the necessary parameters in JSON format for the &quot;</span>
+            <span class="s2">&quot;function:</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Function: </span><span class="si">{</span><span class="n">create_file</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;Description: Create a file and write content to it.</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># 添加关于函数参数的详细信息</span>
+        <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">create_file</span><span class="p">)</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="n">params_prompt</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;- </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">param</span><span class="o">.</span><span class="n">annotation</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">): &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;(default: &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">default</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39;)&#39;</span><span class="k">if</span><span class="w"> </span><span class="n">param</span><span class="o">.</span><span class="n">default</span><span class="w"> </span><span class="ow">is</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">parameters</span>
+        <span class="p">)</span>
+        <span class="n">prompt</span> <span class="o">+=</span> <span class="n">params_prompt</span>
+
+        <span class="c1"># 获取模型响应</span>
+        <span class="n">model_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+
+        <span class="c1"># 解析模型响应并调用 create_file 函数</span>
+        <span class="c1"># 可能需要额外的提取函数</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">model_response</span><span class="p">)</span>
+            <span class="n">create_file</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="c1"># 错误处理</span>
+            <span class="k">pass</span>
+
+        <span class="c1"># ... [为简洁起见省略代码]</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="#service-zh">[返回顶部]</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="203-model.html" class="btn btn-neutral float-left" title="关于模型" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="205-memory.html" class="btn btn-neutral float-right" title="关于记忆" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

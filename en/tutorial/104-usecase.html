@@ -1,0 +1,440 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crafting Your First Application &mdash; AgentScope  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Logging and WebUI" href="105-logging.html" />
+    <link rel="prev" title="Quick Start" href="103-example.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../en/index.html">English</a></li> |
+    <a href="../../zh_CN/index.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="quick_start.html">Getting Started</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="102-installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="101-agentscope.html">About AgentScope</a></li>
+<li class="toctree-l2"><a class="reference internal" href="103-example.html">Quick Start</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Crafting Your First Application</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#getting-started">Getting Started</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#step-1-prepare-model-api-and-set-model-configs">Step 1: Prepare Model API and Set Model Configs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#step-2-define-the-roles-of-each-agent">Step 2: Define the Roles of Each Agent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#step-3-initialize-agentscope-and-the-agents">Step 3: Initialize AgentScope and the Agents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#step-4-set-up-the-game-logic">Step 4: Set Up the Game Logic</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#step-5-run-the-application">Step 5: Run the Application</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#next-step">Next step</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#other-example-applications">Other Example Applications</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="105-logging.html">Logging and WebUI</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="advance.html">Advanced Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">Get Involved</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.agents.html">Agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.memory.html">Memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.models.html">Models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.pipelines.html">Pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.service.html">Service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.rpc.html">RPC package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.utils.html">Utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.web.html">Web UI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.html">Module contents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="quick_start.html">Getting Started</a></li>
+      <li class="breadcrumb-item active">Crafting Your First Application</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorial/104-usecase.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="crafting-your-first-application">
+<span id="usecase-en"></span><h1>Crafting Your First Application<a class="headerlink" href="#crafting-your-first-application" title="Link to this heading"></a></h1>
+<img src="https://img.alicdn.com/imgextra/i3/O1CN01dFpOh82643mygUh2Z_!!6000000007607-2-tps-1024-1024.png" alt="img" style="zoom:25%;" />
+<p>Before diving into the advanced topics of AgentScope, in this tutorial, we will give you a glance at building a Werewolf application with out-of-the-box components of AgentScope.</p>
+<p><strong>Werewolf</strong> is a well-known social-deduction game, that involves an imaginary village where a few villagers are secretly werewolves, and the objective is to identify who they are before they eliminate all other players. It’s a good use case to demonstrate the interaction between multiple autonomous agents, each with its own objectives and the need for communication.</p>
+<p>Let the adventure begin to unlock the potential of multi-agent applications with AgentScope!</p>
+<section id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h2>
+<p>Firstly, ensure that you have installed and configured AgentScope properly. Besides, we will involve the basic concepts of <code class="docutils literal notranslate"><span class="pre">Model</span> <span class="pre">API</span></code>,  <code class="docutils literal notranslate"><span class="pre">Agent</span></code>, <code class="docutils literal notranslate"><span class="pre">Msg</span></code>, and <code class="docutils literal notranslate"><span class="pre">Pipeline,</span></code> as described in <a class="reference internal" href="101-agentscope.html"><span class="doc std std-doc">Tutorial-Concept</span></a>.</p>
+<p><strong>Note</strong>: all the configurations and code for this tutorial can be found in <code class="docutils literal notranslate"><span class="pre">examples/werewolf</span></code>.</p>
+<section id="step-1-prepare-model-api-and-set-model-configs">
+<h3>Step 1: Prepare Model API and Set Model Configs<a class="headerlink" href="#step-1-prepare-model-api-and-set-model-configs" title="Link to this heading"></a></h3>
+<p>As we discussed in the last tutorial, you need to prepare your model configurations into a JSON file for standard OpenAI chat API, FastChat, and vllm. More details and advanced usages such as configuring local models with POST API are presented in <a class="reference internal" href="203-model.html"><span class="doc std std-doc">Tutorial-Model-API</span></a>.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;config_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gpt-4-temperature-0.0&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;model_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;openai&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;model_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gpt-4&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;api_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;xxx&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;organization&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;xxx&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;generate_args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;temperature&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="step-2-define-the-roles-of-each-agent">
+<h3>Step 2: Define the Roles of Each Agent<a class="headerlink" href="#step-2-define-the-roles-of-each-agent" title="Link to this heading"></a></h3>
+<p>In the Werewolf game, agents assume a variety of roles, each endowed with distinctive abilities and objectives. Below, we will outline the agent classes corresponding to each role:</p>
+<ul class="simple">
+<li><p>Villager: Ordinary townsfolk trying to survive.</p></li>
+<li><p>Werewolf: Predators in disguise, aiming to outlast the villagers.</p></li>
+<li><p>Seer: A villager with the power to see the true nature of one player each night.</p></li>
+<li><p>Witch: A villager who can save or poison a player each night.</p></li>
+</ul>
+<p>To implement your own agent, you need to inherit <code class="docutils literal notranslate"><span class="pre">AgentBase</span></code> and implement the <code class="docutils literal notranslate"><span class="pre">reply</span></code> function, which is executed when an agent instance is called via <code class="docutils literal notranslate"><span class="pre">agent1(x)</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.agents</span> <span class="kn">import</span> <span class="n">AgentBase</span>
+
+<span class="k">class</span> <span class="nc">MyAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1"># Do something here</span>
+        <span class="o">...</span>
+        <span class="k">return</span> <span class="n">x</span>
+</pre></div>
+</div>
+<p>AgentScope provides several out-of-the-box Agents implements and organizes them as an <em>Agent Pool</em>. In this application, we use a built-in agent, <code class="docutils literal notranslate"><span class="pre">DictDialogAgent</span></code>. Here we give an example configuration of <code class="docutils literal notranslate"><span class="pre">DictDialogAgent</span></code> for a player assigned as the role of a werewolf:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;class&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DictDialogAgent&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Player1&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;sys_prompt&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Act as a player in a werewolf game. You are Player1 and\nthere are totally 6 players, named Player1, Player2, Player3, Player4, Player5 and Player6.\n\nPLAYER ROLES:\nIn werewolf game, players are divided into two werewolves, two villagers, one seer, and one witch. Note only werewolves know who are their teammates.\nWerewolves: They know their teammates&#39; identities and attempt to eliminate a villager each night while trying to remain undetected.\nVillagers: They do not know who the werewolves are and must work together during the day to deduce who the werewolves might be and vote to eliminate them.\nSeer: A villager with the ability to learn the true identity of one player each night. This role is crucial for the villagers to gain information.\nWitch: A character who has a one-time ability to save a player from being eliminated at night (sometimes this is a potion of life) and a one-time ability to eliminate a player at night (a potion of death).\n\nGAME RULE:\nThe game consists of two phases: night phase and day phase. The two phases are repeated until werewolf or villager wins the game.\n1. Night Phase: During the night, the werewolves discuss and vote for a player to eliminate. Special roles also perform their actions at this time (e.g., the Seer chooses a player to learn their role, the witch chooses a decide if save the player).\n2. Day Phase: During the day, all surviving players discuss who they suspect might be a werewolf. No one reveals their role unless it serves a strategic purpose. After the discussion, a vote is taken, and the player with the most votes is \&quot;lynched\&quot; or eliminated from the game.\n\nVICTORY CONDITION:\nFor werewolves, they win the game if the number of werewolves is equal to or greater than the number of remaining villagers.\nFor villagers, they win if they identify and eliminate all of the werewolves in the group.\n\nCONSTRAINTS:\n1. Your response should be in the first person.\n2. This is a conversational game. You should respond only based on the conversation history and your strategy.\n\nYou are playing werewolf in this game.\n&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;model_config_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gpt-3.5-turbo&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;use_memory&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>In this configuration, <code class="docutils literal notranslate"><span class="pre">Player1</span></code> is designated as a <code class="docutils literal notranslate"><span class="pre">DictDialogAgent</span></code>. The parameters include a system prompt (<code class="docutils literal notranslate"><span class="pre">sys_prompt</span></code>) that can guide the agent’s behavior, a model config name (<code class="docutils literal notranslate"><span class="pre">model_config_name</span></code>) that determines the name of the model configuration, and a flag (<code class="docutils literal notranslate"><span class="pre">use_memory</span></code>) indicating whether the agent should remember past interactions.</p>
+<p>For other players, configurations can be customized based on their roles. Each role may have different prompts, models, or memory settings. You can refer to the JSON file located at <code class="docutils literal notranslate"><span class="pre">examples/werewolf/configs/agent_configs.json</span></code> within the AgentScope examples directory.</p>
+</section>
+<section id="step-3-initialize-agentscope-and-the-agents">
+<h3>Step 3: Initialize AgentScope and the Agents<a class="headerlink" href="#step-3-initialize-agentscope-and-the-agents" title="Link to this heading"></a></h3>
+<p>Now we have defined the roles in the application and we can initialize the AgentScope environment and all agents. This process is simplified by AgentScope via a few lines, based on the configuration files we’ve prepared (assuming there are <strong>2</strong> werewolves, <strong>2</strong> villagers, <strong>1</strong> witch, and <strong>1</strong> seer):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">agentscope</span>
+
+<span class="c1"># read model and agent configs, and initialize agents automatically</span>
+<span class="n">survivors</span> <span class="o">=</span> <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="n">model_configs</span><span class="o">=</span><span class="s2">&quot;./configs/model_configs.json&quot;</span><span class="p">,</span>
+    <span class="n">agent_configs</span><span class="o">=</span><span class="s2">&quot;./configs/agent_configs.json&quot;</span><span class="p">,</span>
+    <span class="n">logger_level</span><span class="o">=</span><span class="s2">&quot;DEBUG&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Define the roles within the game. This list should match the order and number</span>
+<span class="c1"># of agents specified in the &#39;agent_configs.json&#39; file.</span>
+<span class="n">roles</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;werewolf&quot;</span><span class="p">,</span> <span class="s2">&quot;werewolf&quot;</span><span class="p">,</span> <span class="s2">&quot;villager&quot;</span><span class="p">,</span> <span class="s2">&quot;villager&quot;</span><span class="p">,</span> <span class="s2">&quot;seer&quot;</span><span class="p">,</span> <span class="s2">&quot;witch&quot;</span><span class="p">]</span>
+
+<span class="c1"># Based on their roles, assign the initialized agents to variables.</span>
+<span class="c1"># This helps us reference them easily in the game logic.</span>
+<span class="n">wolves</span><span class="p">,</span> <span class="n">villagers</span><span class="p">,</span> <span class="n">witch</span><span class="p">,</span> <span class="n">seer</span> <span class="o">=</span> <span class="n">survivors</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="n">survivors</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">survivors</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">survivors</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Through this snippet of code, we’ve allocated roles to our agents and associated them with the configurations that dictate their behavior in the application.</p>
+</section>
+<section id="step-4-set-up-the-game-logic">
+<h3>Step 4: Set Up the Game Logic<a class="headerlink" href="#step-4-set-up-the-game-logic" title="Link to this heading"></a></h3>
+<p>In this step, you will set up the game logic and orchestrate the flow of the Werewolf game using AgentScope’s helper utilities.</p>
+<section id="leverage-pipeline-and-msghub">
+<h4>Leverage Pipeline and MsgHub<a class="headerlink" href="#leverage-pipeline-and-msghub" title="Link to this heading"></a></h4>
+<p>To simplify the construction of agent communication, AgentScope provides two helpful concepts: <strong>Pipeline</strong> and <strong>MsgHub</strong>.</p>
+<ul>
+<li><p><strong>Pipeline</strong>: It allows users to program communication among agents easily.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.pipelines</span> <span class="kn">import</span> <span class="n">SequentialPipeline</span>
+
+<span class="n">pipe</span> <span class="o">=</span> <span class="n">SequentialPipeline</span><span class="p">(</span><span class="n">agent1</span><span class="p">,</span> <span class="n">agent2</span><span class="p">,</span> <span class="n">agent3</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">pipe</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="c1"># the message x will be passed and replied by agent 1,2,3 in order</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>MsgHub</strong>: You may have noticed that all the above examples are one-to-one communication. To achieve a group chat, we provide another communication helper utility <code class="docutils literal notranslate"><span class="pre">msghub</span></code>. With it, the messages from participants will be broadcast to all other participants automatically. In such cases, participating agents even don’t need input and output messages. All we need to do is to decide the order of speaking. Besides, <code class="docutils literal notranslate"><span class="pre">msghub</span></code> also supports dynamic control of participants.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">msghub</span><span class="p">(</span><span class="n">participants</span><span class="o">=</span><span class="p">[</span><span class="n">agent1</span><span class="p">,</span> <span class="n">agent2</span><span class="p">,</span> <span class="n">agent3</span><span class="p">])</span> <span class="k">as</span> <span class="n">hub</span><span class="p">:</span>
+    <span class="n">agent1</span><span class="p">()</span>
+    <span class="n">agent2</span><span class="p">()</span>
+
+    <span class="c1"># Broadcast a message to all participants</span>
+    <span class="n">hub</span><span class="o">.</span><span class="n">broadcast</span><span class="p">(</span><span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;Host&quot;</span><span class="p">,</span> <span class="s2">&quot;Welcome to join the group chat!&quot;</span><span class="p">))</span>
+
+    <span class="c1"># Add or delete participants dynamically</span>
+    <span class="n">hub</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">agent1</span><span class="p">)</span>
+    <span class="n">hub</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">agent4</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="implement-werewolf-pipeline">
+<h4>Implement Werewolf Pipeline<a class="headerlink" href="#implement-werewolf-pipeline" title="Link to this heading"></a></h4>
+<p>The game logic is divided into two major phases: (1) night when werewolves act, and (2) daytime when all players discuss and vote. Each phase will be handled by a section of code using pipelines to manage multi-agent communications.</p>
+<ul class="simple">
+<li><p><strong>1.1 Night Phase: Werewolves Discuss and Vote</strong></p></li>
+</ul>
+<p>During the night phase, werewolves must discuss among themselves to decide on a target. The <code class="docutils literal notranslate"><span class="pre">msghub</span></code> function creates a message hub for the werewolves to communicate in, where every message sent by an agent is observable by all other agents within the <code class="docutils literal notranslate"><span class="pre">msghub</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># start the game</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">MAX_GAME_ROUND</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="c1"># Night phase: werewolves discuss</span>
+    <span class="n">hint</span> <span class="o">=</span> <span class="n">HostMsg</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">Prompts</span><span class="o">.</span><span class="n">to_wolves</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n2s</span><span class="p">(</span><span class="n">wolves</span><span class="p">)))</span>
+    <span class="k">with</span> <span class="n">msghub</span><span class="p">(</span><span class="n">wolves</span><span class="p">,</span> <span class="n">announcement</span><span class="o">=</span><span class="n">hint</span><span class="p">)</span> <span class="k">as</span> <span class="n">hub</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">MAX_WEREWOLF_DISCUSSION_ROUND</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">sequentialpipeline</span><span class="p">(</span><span class="n">wolves</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">agreement</span><span class="p">:</span>
+                <span class="k">break</span>
+</pre></div>
+</div>
+<p>After the discussion, werewolves proceed to vote for their target, and the majority’s choice is determined.  The result of the vote is then broadcast to all werewolves.</p>
+<p><strong>Note</strong>: the detailed prompts and utility functions can be found in <code class="docutils literal notranslate"><span class="pre">examples/werewolf</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>        <span class="c1"># werewolves vote</span>
+        <span class="n">hint</span> <span class="o">=</span> <span class="n">HostMsg</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">Prompts</span><span class="o">.</span><span class="n">to_wolves_vote</span><span class="p">)</span>
+        <span class="n">votes</span> <span class="o">=</span> <span class="p">[</span><span class="n">extract_name_and_id</span><span class="p">(</span><span class="n">wolf</span><span class="p">(</span><span class="n">hint</span><span class="p">)</span><span class="o">.</span><span class="n">content</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">wolf</span> <span class="ow">in</span> <span class="n">wolves</span><span class="p">]</span>
+        <span class="c1"># broadcast the result to werewolves</span>
+        <span class="n">dead_player</span> <span class="o">=</span> <span class="p">[</span><span class="n">majority_vote</span><span class="p">(</span><span class="n">votes</span><span class="p">)]</span>
+        <span class="n">hub</span><span class="o">.</span><span class="n">broadcast</span><span class="p">(</span>
+            <span class="n">HostMsg</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">Prompts</span><span class="o">.</span><span class="n">to_wolves_res</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dead_player</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>1.2 Witch’s Turn</strong></p></li>
+</ul>
+<p>If the witch is still alive, she gets the opportunity to use her powers to either save the player chosen by the werewolves or use her poison.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># Witch&#39;s turn</span>
+    <span class="n">healing_used_tonight</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">witch</span> <span class="ow">in</span> <span class="n">survivors</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">healing</span><span class="p">:</span>
+            <span class="c1"># Witch decides whether to use the healing potion</span>
+            <span class="n">hint</span> <span class="o">=</span> <span class="n">HostMsg</span><span class="p">(</span>
+                <span class="n">content</span><span class="o">=</span><span class="n">Prompts</span><span class="o">.</span><span class="n">to_witch_resurrect</span><span class="o">.</span><span class="n">format_map</span><span class="p">(</span>
+                    <span class="p">{</span><span class="s2">&quot;witch_name&quot;</span><span class="p">:</span> <span class="n">witch</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;dead_name&quot;</span><span class="p">:</span> <span class="n">dead_player</span><span class="p">[</span><span class="mi">0</span><span class="p">]},</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+            <span class="c1"># Witch decides whether to use the poison</span>
+            <span class="k">if</span> <span class="n">witch</span><span class="p">(</span><span class="n">hint</span><span class="p">)</span><span class="o">.</span><span class="n">resurrect</span><span class="p">:</span>
+                <span class="n">healing_used_tonight</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">dead_player</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+                <span class="n">healing</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>1.3 Seer’s Turn</strong></p></li>
+</ul>
+<p>The seer has a chance to reveal the true identity of a player. This information can be crucial for the villagers. The <code class="docutils literal notranslate"><span class="pre">observe()</span></code> function allows each agent to take note of a message without immediately replying to it.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># Seer&#39;s turn</span>
+    <span class="k">if</span> <span class="n">seer</span> <span class="ow">in</span> <span class="n">survivors</span><span class="p">:</span>
+        <span class="c1"># Seer chooses a player to reveal their identity</span>
+        <span class="n">hint</span> <span class="o">=</span> <span class="n">HostMsg</span><span class="p">(</span>
+            <span class="n">content</span><span class="o">=</span><span class="n">Prompts</span><span class="o">.</span><span class="n">to_seer</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">seer</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">n2s</span><span class="p">(</span><span class="n">survivors</span><span class="p">)),</span>
+        <span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">seer</span><span class="p">(</span><span class="n">hint</span><span class="p">)</span>
+
+        <span class="n">player</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">extract_name_and_id</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+        <span class="n">role</span> <span class="o">=</span> <span class="s2">&quot;werewolf&quot;</span> <span class="k">if</span> <span class="n">roles</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;werewolf&quot;</span> <span class="k">else</span> <span class="s2">&quot;villager&quot;</span>
+        <span class="n">hint</span> <span class="o">=</span> <span class="n">HostMsg</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">Prompts</span><span class="o">.</span><span class="n">to_seer_result</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">player</span><span class="p">,</span> <span class="n">role</span><span class="p">))</span>
+        <span class="n">seer</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">hint</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>1.4 Update Alive Players</strong></p></li>
+</ul>
+<p>Based on the actions taken during the night, the list of surviving players needs to be updated.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># Update the list of survivors and werewolves after the night&#39;s events</span>
+    <span class="n">survivors</span><span class="p">,</span> <span class="n">wolves</span> <span class="o">=</span> <span class="n">update_alive_players</span><span class="p">(</span><span class="n">survivors</span><span class="p">,</span> <span class="n">wolves</span><span class="p">,</span> <span class="n">dead_player</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>2.1 Daytime Phase: Discussion and Voting</strong></p></li>
+</ul>
+<p>During the day, all players will discuss and then vote to eliminate a suspected werewolf.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># Daytime discussion</span>
+    <span class="k">with</span> <span class="n">msghub</span><span class="p">(</span><span class="n">survivors</span><span class="p">,</span> <span class="n">announcement</span><span class="o">=</span><span class="n">hints</span><span class="p">)</span> <span class="k">as</span> <span class="n">hub</span><span class="p">:</span>
+        <span class="c1"># Discuss</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">sequentialpipeline</span><span class="p">(</span><span class="n">survivors</span><span class="p">)</span>
+        <span class="c1"># Vote</span>
+        <span class="n">hint</span> <span class="o">=</span> <span class="n">HostMsg</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">Prompts</span><span class="o">.</span><span class="n">to_all_vote</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n2s</span><span class="p">(</span><span class="n">survivors</span><span class="p">)))</span>
+        <span class="n">votes</span> <span class="o">=</span> <span class="p">[</span><span class="n">extract_name_and_id</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="n">hint</span><span class="p">)</span><span class="o">.</span><span class="n">content</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">survivors</span><span class="p">]</span>
+        <span class="n">vote_res</span> <span class="o">=</span> <span class="n">majority_vote</span><span class="p">(</span><span class="n">votes</span><span class="p">)</span>
+        <span class="c1"># Broadcast the voting result to all players</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">HostMsg</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">Prompts</span><span class="o">.</span><span class="n">to_all_res</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">vote_res</span><span class="p">))</span>
+        <span class="n">hub</span><span class="o">.</span><span class="n">broadcast</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="c1"># Update the list of survivors and werewolves after the vote</span>
+        <span class="n">survivors</span><span class="p">,</span> <span class="n">wolves</span> <span class="o">=</span> <span class="n">update_alive_players</span><span class="p">(</span><span class="n">survivors</span><span class="p">,</span> <span class="n">wolves</span><span class="p">,</span> <span class="n">vote_res</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>2.2 Check for Winning Conditions</strong></p></li>
+</ul>
+<p>After each phase, the game checks if the werewolves or villagers have won.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>        <span class="c1"># Check if either side has won</span>
+        <span class="k">if</span> <span class="n">check_winning</span><span class="p">(</span><span class="n">survivors</span><span class="p">,</span> <span class="n">wolves</span><span class="p">,</span> <span class="s2">&quot;Moderator&quot;</span><span class="p">):</span>
+            <span class="k">break</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>2.3 Continue to the Next Round</strong></p></li>
+</ul>
+<p>If neither werewolves nor villagers win, the game continues to the next round.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>        <span class="c1"># If the game hasn&#39;t ended, prepare for the next round</span>
+        <span class="n">hub</span><span class="o">.</span><span class="n">broadcast</span><span class="p">(</span><span class="n">HostMsg</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">Prompts</span><span class="o">.</span><span class="n">to_all_continue</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>These code blocks outline the core game loop for Werewolf using AgentScope’s <code class="docutils literal notranslate"><span class="pre">msghub</span></code> and <code class="docutils literal notranslate"><span class="pre">pipeline</span></code>, which help to easily manage the operational logic of an application.</p>
+</section>
+</section>
+<section id="step-5-run-the-application">
+<h3>Step 5: Run the Application<a class="headerlink" href="#step-5-run-the-application" title="Link to this heading"></a></h3>
+<p>With the game logic and agents set up, you’re ready to run the Werewolf game. By executing the <code class="docutils literal notranslate"><span class="pre">pipeline</span></code>, the game will proceed through the predefined phases, with agents interacting based on their roles and the strategies coded above:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>examples/werewolf
+python<span class="w"> </span>main.py<span class="w">  </span><span class="c1"># Assuming the pipeline is implemented in main.py</span>
+</pre></div>
+</div>
+<p>As the game starts, you’ll see output in the terminal, similar to the logs below, which illustrate how the game unfolds:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>Moderator:<span class="w"> </span>Player1<span class="w"> </span>and<span class="w"> </span>Player2,<span class="w"> </span>you<span class="w"> </span>are<span class="w"> </span>werewolves.<span class="w"> </span>If<span class="w"> </span>you<span class="w"> </span>are<span class="w"> </span>alone,<span class="w"> </span>eliminate<span class="w"> </span>a<span class="w"> </span>player,<span class="w"> </span><span class="k">else</span><span class="w"> </span>discuss<span class="w"> </span>with<span class="w"> </span>your<span class="w"> </span>teammates<span class="w"> </span>and<span class="w"> </span>reach<span class="w"> </span>an<span class="w"> </span>agreement.<span class="w"> </span>Response<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>following<span class="w"> </span>format<span class="w"> </span>which<span class="w"> </span>can<span class="w"> </span>be<span class="w"> </span>loaded<span class="w"> </span>by<span class="w">  </span>json.loads<span class="o">(){</span>
+<span class="w">    </span><span class="s2">&quot;thought&quot;</span>:<span class="w"> </span><span class="s2">&quot;thought&quot;</span>,
+<span class="w">    </span><span class="s2">&quot;speak&quot;</span>:<span class="w"> </span><span class="s2">&quot;thoughts summary to say to others&quot;</span>,
+<span class="w">    </span><span class="s2">&quot;agreement&quot;</span>:<span class="w"> </span><span class="s2">&quot;whether the discussion reached an agreement or not(true/false)&quot;</span>
+<span class="o">}</span>
+Player1:<span class="w"> </span>Player2,<span class="w"> </span>let<span class="s1">&#39;s discuss who we should eliminate tonight.</span>
+<span class="s1">Player2: I think we should eliminate Player4 tonight. They seem suspicious to me.</span>
+<span class="s1">Player1: I think we should eliminate Player4 tonight. They seem suspicious to me.</span>
+<span class="s1">Player2: I agree with Player2, let&#39;</span>s<span class="w"> </span>eliminate<span class="w"> </span>Player4<span class="w"> </span>tonight.<span class="w"> </span>They<span class="w"> </span>seem<span class="w"> </span>suspicious.
+Moderator:<span class="w"> </span>Which<span class="w"> </span>player<span class="w"> </span><span class="k">do</span><span class="w"> </span>you<span class="w"> </span>vote<span class="w"> </span>to<span class="w"> </span>kill?<span class="w"> </span>Response<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>following<span class="w"> </span>format<span class="w"> </span>which<span class="w"> </span>can<span class="w"> </span>be<span class="w"> </span>loaded<span class="w"> </span>by<span class="w"> </span>python<span class="w"> </span>json.loads<span class="o">()</span>
+<span class="o">{{</span>
+<span class="w">   </span><span class="s2">&quot;thought&quot;</span>:<span class="w"> </span><span class="s2">&quot;thought&quot;</span><span class="w"> </span>,
+<span class="w">   </span><span class="s2">&quot;speak&quot;</span>:<span class="w"> </span><span class="s2">&quot;player_name&quot;</span>
+<span class="o">}}</span>
+Player1:<span class="w"> </span>Player4
+Player2:<span class="w"> </span>Player4
+Moderator:<span class="w"> </span>The<span class="w"> </span>player<span class="w"> </span>with<span class="w"> </span>the<span class="w"> </span>most<span class="w"> </span>votes<span class="w"> </span>is<span class="w"> </span>Player4.
+Moderator:<span class="w"> </span>Player6,<span class="w"> </span>you<span class="s1">&#39;re witch. Tonight Player4 is eliminated. Would you like to resurrect Player4? Response in the following format which can be loaded by python json.loads()</span>
+<span class="s1">{</span>
+<span class="s1">    &quot;thought&quot;: &quot;thought&quot;,</span>
+<span class="s1">    &quot;speak&quot;: &quot;thoughts summary to say&quot;,</span>
+<span class="s1">    &quot;resurrect&quot;: &quot;true/false&quot;</span>
+<span class="s1">}</span>
+<span class="s1">Player6: I have considered the options, and I choose to resurrect Player4.</span>
+<span class="s1">Moderator: Player5, you&#39;</span>re<span class="w"> </span>seer.<span class="w"> </span>Which<span class="w"> </span>player<span class="w"> </span><span class="k">in</span><span class="w"> </span>Player1,<span class="w"> </span>Player2,<span class="w"> </span>Player3,<span class="w"> </span>Player4,<span class="w"> </span>Player5<span class="w"> </span>and<span class="w"> </span>Player6<span class="w"> </span>would<span class="w"> </span>you<span class="w"> </span>like<span class="w"> </span>to<span class="w"> </span>check<span class="w"> </span>tonight?<span class="w"> </span>Response<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>following<span class="w"> </span>json<span class="w"> </span>format<span class="w"> </span>which<span class="w"> </span>can<span class="w"> </span>be<span class="w"> </span>loaded<span class="w"> </span>by<span class="w"> </span>python<span class="w"> </span>json.loads<span class="o">()</span>
+<span class="o">{</span>
+<span class="w">    </span><span class="s2">&quot;thought&quot;</span>:<span class="w"> </span><span class="s2">&quot;thought&quot;</span><span class="w"> </span>,
+<span class="w">    </span><span class="s2">&quot;speak&quot;</span>:<span class="w"> </span><span class="s2">&quot;player_name&quot;</span>
+<span class="o">}</span>
+Player5:<span class="w"> </span>Player3
+Moderator:<span class="w"> </span>Okay,<span class="w"> </span>the<span class="w"> </span>role<span class="w"> </span>of<span class="w"> </span>Player3<span class="w"> </span>is<span class="w"> </span>villager.
+Moderator:<span class="w"> </span>The<span class="w"> </span>day<span class="w"> </span>is<span class="w"> </span>coming,<span class="w"> </span>all<span class="w"> </span>the<span class="w"> </span>players<span class="w"> </span>open<span class="w"> </span>your<span class="w"> </span>eyes.<span class="w"> </span>Last<span class="w"> </span>night<span class="w"> </span>is<span class="w"> </span>peaceful,<span class="w"> </span>no<span class="w"> </span>player<span class="w"> </span>is<span class="w"> </span>eliminated.
+...
+</pre></div>
+</div>
+</section>
+</section>
+<section id="next-step">
+<h2>Next step<a class="headerlink" href="#next-step" title="Link to this heading"></a></h2>
+<p>Now you’ve grasped how to conveniently set up a multi-agent application with AgentScope. Feel free to tailor the game to include additional roles and introduce more sophisticated strategies. For more advanced tutorials that delve deeper into more capabilities of AgentScope, such as <em>memory management</em> and <em>service functions</em> utilized by agents, please refer to the tutorials in the <strong>Advanced Exploration</strong> section and look up the API references.</p>
+</section>
+<section id="other-example-applications">
+<h2>Other Example Applications<a class="headerlink" href="#other-example-applications" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Example of Simple Group Conversation: <a class="reference external" href="https://github.com/modelscope/agentscope/tree/main/examples/simple_chat/README.md">examples/Simple Conversation</a></p></li>
+<li><p>Example of Werewolves: <a class="reference external" href="https://github.com/modelscope/agentscope/tree/main/examples/werewolves/README.md">examples/Werewolves</a></p></li>
+<li><p>Example of Distributed Agents: <a class="reference external" href="https://github.com/modelscope/agentscope/tree/main/examples/distributed_agents/README.md">examples/Distributed Agents</a></p></li>
+<li><p>…</p></li>
+</ul>
+<p><a class="reference internal" href="#usecase-en">[Return to the top]</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="103-example.html" class="btn btn-neutral float-left" title="Quick Start" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="105-logging.html" class="btn btn-neutral float-right" title="Logging and WebUI" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Alibaba Tongyi Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

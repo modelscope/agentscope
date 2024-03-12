@@ -1,0 +1,186 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Advanced Exploration &mdash; AgentScope  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Customizing Your Own Agent" href="201-agent.html" />
+    <link rel="prev" title="Logging and WebUI" href="105-logging.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../en/index.html">English</a></li> |
+    <a href="../../zh_CN/index.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Advanced Exploration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="201-agent.html">Customizing Your Own Agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="202-pipeline.html">Agent Interactions: Dive deeper into Pipelines and Message Hub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="203-model.html">Model Service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="204-service.html">About Service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="205-memory.html">About Memory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="206-prompt.html">Prompt Engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="207-monitor.html">Monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="208-distribute.html">About Distribution</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">Get Involved</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.agents.html">Agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.memory.html">Memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.models.html">Models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.pipelines.html">Pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.service.html">Service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.rpc.html">RPC package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.utils.html">Utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.web.html">Web UI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.html">Module contents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Advanced Exploration</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorial/advance.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="advanced-exploration">
+<h1>Advanced Exploration<a class="headerlink" href="#advanced-exploration" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="201-agent.html">Customizing Your Own Agent</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="201-agent.html#understanding-agentbase">Understanding <code class="docutils literal notranslate"><span class="pre">AgentBase</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="201-agent.html#exploring-the-agentpool">Exploring the AgentPool</a></li>
+<li class="toctree-l2"><a class="reference internal" href="201-agent.html#customizing-agents-from-the-agentpool">Customizing Agents from the AgentPool</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="202-pipeline.html">Agent Interactions: Dive deeper into Pipelines and Message Hub</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="202-pipeline.html#pipelines">Pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="202-pipeline.html#msghub">MsgHub</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="203-model.html">Model Service</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="203-model.html#supported-models">Supported Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="203-model.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="203-model.html#build-model-service-from-scratch">Build Model Service from Scratch</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="204-service.html">About Service</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="204-service.html#built-in-service-functions">Built-in Service Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="204-service.html#how-to-use-service-functions">How to use Service Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="204-service.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="205-memory.html">About Memory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="205-memory.html#about-message">About Message</a></li>
+<li class="toctree-l2"><a class="reference internal" href="205-memory.html#id1">About Memory</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="206-prompt.html">Prompt Engine</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="206-prompt.html#about-promptengine-class">About <code class="docutils literal notranslate"><span class="pre">PromptEngine</span></code> Class</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="207-monitor.html">Monitor</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="207-monitor.html#understanding-the-monitor-in-agentscope">Understanding the Monitor in AgentScope</a></li>
+<li class="toctree-l2"><a class="reference internal" href="207-monitor.html#using-the-monitor">Using the Monitor</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="208-distribute.html">About Distribution</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="208-distribute.html#usage">Usage</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="105-logging.html" class="btn btn-neutral float-left" title="Logging and WebUI" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="201-agent.html" class="btn btn-neutral float-right" title="Customizing Your Own Agent" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Alibaba Tongyi Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

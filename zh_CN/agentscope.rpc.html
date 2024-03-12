@@ -1,0 +1,226 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RPC package &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=7d86a446"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/translations.js?v=beaddf03"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Utils package" href="agentscope.utils.html" />
+    <link rel="prev" title="Web search package" href="agentscope.service.web_search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../en/index.html">English</a></li> |
+    <a href="../zh_CN/index.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_zh/quick_start.html">快速上手</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_zh/advance.html">进阶使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_zh/contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">Agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">Memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">Models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">Pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">Service package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">RPC package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-agentscope.rpc.rpc_agent_client">rpc_agent_client module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.rpc.rpc_agent_client.RpcAgentClient"><code class="docutils literal notranslate"><span class="pre">RpcAgentClient</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.rpc.rpc_agent_client.RpcAgentClient.call_func"><code class="docutils literal notranslate"><span class="pre">RpcAgentClient.call_func()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-agentscope.rpc.rpc_agent_pb2_grpc">rpc_agent_pb2_grpc module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent"><code class="docutils literal notranslate"><span class="pre">RpcAgent</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.call_func"><code class="docutils literal notranslate"><span class="pre">RpcAgent.call_func()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer"><code class="docutils literal notranslate"><span class="pre">RpcAgentServicer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.call_func"><code class="docutils literal notranslate"><span class="pre">RpcAgentServicer.call_func()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentStub"><code class="docutils literal notranslate"><span class="pre">RpcAgentStub</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.rpc.rpc_agent_pb2_grpc.add_RpcAgentServicer_to_server"><code class="docutils literal notranslate"><span class="pre">add_RpcAgentServicer_to_server()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">Utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">Web UI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">Module contents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">RPC package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/agentscope.rpc.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="rpc-package">
+<h1>RPC package<a class="headerlink" href="#rpc-package" title="Link to this heading"></a></h1>
+<section id="module-agentscope.rpc.rpc_agent_client">
+<span id="rpc-agent-client-module"></span><h2>rpc_agent_client module<a class="headerlink" href="#module-agentscope.rpc.rpc_agent_client" title="Link to this heading"></a></h2>
+<p>Client of rpc agent server</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.rpc.rpc_agent_client.RpcAgentClient">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.rpc.rpc_agent_client.</span></span><span class="sig-name descname"><span class="pre">RpcAgentClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/rpc/rpc_agent_client.html#RpcAgentClient"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.rpc.rpc_agent_client.RpcAgentClient" title="Link to this definition"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A client of Rpc agent server</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.rpc.rpc_agent_client.RpcAgentClient.call_func">
+<span class="sig-name descname"><span class="pre">call_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/rpc/rpc_agent_client.html#RpcAgentClient.call_func"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.rpc.rpc_agent_client.RpcAgentClient.call_func" title="Link to this definition"></a></dt>
+<dd><p>Call the specific function of rpc server.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func_name</strong> (<em>str</em>) – the name of the function being called.</p></li>
+<li><p><strong>x</strong> (<em>str</em><em>, </em><em>optional</em>) – the seralized input value. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>serialized return data.</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-agentscope.rpc.rpc_agent_pb2_grpc">
+<span id="rpc-agent-pb2-grpc-module"></span><h2>rpc_agent_pb2_grpc module<a class="headerlink" href="#module-agentscope.rpc.rpc_agent_pb2_grpc" title="Link to this heading"></a></h2>
+<p>Client and server classes corresponding to protobuf-defined services.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.rpc.rpc_agent_pb2_grpc.</span></span><span class="sig-name descname"><span class="pre">RpcAgent</span></span><a class="reference internal" href="_modules/agentscope/rpc/rpc_agent_pb2_grpc.html#RpcAgent"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent" title="Link to this definition"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Servicer for rpc agent server</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.call_func">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">call_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_credentials</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">call_credentials</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">insecure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compression</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_for_ready</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/rpc/rpc_agent_pb2_grpc.html#RpcAgent.call_func"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.call_func" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.rpc.rpc_agent_pb2_grpc.</span></span><span class="sig-name descname"><span class="pre">RpcAgentServicer</span></span><a class="reference internal" href="_modules/agentscope/rpc/rpc_agent_pb2_grpc.html#RpcAgentServicer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer" title="Link to this definition"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Servicer for rpc agent server</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.call_func">
+<span class="sig-name descname"><span class="pre">call_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/rpc/rpc_agent_pb2_grpc.html#RpcAgentServicer.call_func"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.call_func" title="Link to this definition"></a></dt>
+<dd><p>Missing associated documentation comment in .proto file.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentStub">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.rpc.rpc_agent_pb2_grpc.</span></span><span class="sig-name descname"><span class="pre">RpcAgentStub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/rpc/rpc_agent_pb2_grpc.html#RpcAgentStub"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentStub" title="Link to this definition"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Rpc agent Server Stub</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.rpc.rpc_agent_pb2_grpc.add_RpcAgentServicer_to_server">
+<span class="sig-prename descclassname"><span class="pre">agentscope.rpc.rpc_agent_pb2_grpc.</span></span><span class="sig-name descname"><span class="pre">add_RpcAgentServicer_to_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">servicer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">server</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/rpc/rpc_agent_pb2_grpc.html#add_RpcAgentServicer_to_server"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.rpc.rpc_agent_pb2_grpc.add_RpcAgentServicer_to_server" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="agentscope.service.web_search.html" class="btn btn-neutral float-left" title="Web search package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="agentscope.utils.html" class="btn btn-neutral float-right" title="Utils package" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

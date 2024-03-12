@@ -1,0 +1,212 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Code package &mdash; AgentScope  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="File package" href="agentscope.service.file.html" />
+    <link rel="prev" title="Service package" href="agentscope.service.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../en/index.html">English</a></li> |
+    <a href="../zh_CN/index.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/quick_start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/advance.html">Advanced Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/contribute.html">Get Involved</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">Agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">Memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">Models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">Pipelines package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="agentscope.service.html">Service package</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Code package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-agentscope.service.execute_code.exec_python">exec_python module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.service.execute_code.exec_python.execute_python_code"><code class="docutils literal notranslate"><span class="pre">execute_python_code()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.service.execute_code.exec_python.sys_python_guard"><code class="docutils literal notranslate"><span class="pre">sys_python_guard()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.service.file.html">File package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.service.retrieval.html">Retrieval package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.service.sql_query.html">SQL query package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.service.text_processing.html">Text processing package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.service.web_search.html">Web search package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.service.html#service-status-module">service_status module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.service.html#service-response-module">service_response module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">RPC package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">Utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">Web UI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">Module contents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="agentscope.service.html">Service package</a></li>
+      <li class="breadcrumb-item active">Code package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/agentscope.service.execute_code.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="code-package">
+<h1>Code package<a class="headerlink" href="#code-package" title="Link to this heading"></a></h1>
+<section id="module-agentscope.service.execute_code.exec_python">
+<span id="exec-python-module"></span><h2>exec_python module<a class="headerlink" href="#module-agentscope.service.execute_code.exec_python" title="Link to this heading"></a></h2>
+<p>Service to execute python code.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.execute_code.exec_python.execute_python_code">
+<span class="sig-prename descclassname"><span class="pre">agentscope.service.execute_code.exec_python.</span></span><span class="sig-name descname"><span class="pre">execute_python_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_docker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maximum_memory_bytes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ServiceResponse</span></span></span><a class="reference internal" href="_modules/agentscope/service/execute_code/exec_python.html#execute_python_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.service.execute_code.exec_python.execute_python_code" title="Link to this definition"></a></dt>
+<dd><p>Execute a piece of python code.</p>
+<p>This function can run Python code provided in string format. It has the
+option to execute the code within a Docker container to provide an
+additional layer of security, especially important when running
+untrusted code.</p>
+<p>WARNING: If <cite>use_docker</cite> is set to <cite>False</cite>, the <cite>code</cite> will be run
+directly in the host system’s environment. This poses a potential
+security risk if the code is untrusted. Only disable Docker if you are
+confident in the safety of the code being executed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>code</strong> (<cite>str</cite>, optional) – The Python code to be executed.</p></li>
+<li><p><strong>timeout</strong> (<cite>Optional[Union[int, float]]</cite>, defaults to <cite>300</cite>) – The maximum time (in seconds) allowed for the code to run. If
+the code execution time exceeds this limit, it will be
+terminated. Set to <cite>None</cite> for no time limit. Default is 300.</p></li>
+<li><p><strong>use_docker</strong> (<cite>Optional[Union[bool, str]]</cite>, defaults to <cite>None</cite>) – Determines whether to execute the code within a Docker
+container. If <cite>False</cite>, the system’s native Python environment is
+used. When set to <cite>None</cite>, the function checks for Docker’s
+availability and uses it if present. When set to some string,
+will use the docker with string as the image name. Default is
+<cite>None</cite>.</p></li>
+<li><p><strong>maximum_memory_bytes</strong> (<cite>Optional[int]</cite>, defaults to <cite>None</cite>) – The memory limit in bytes for the code execution. If not
+specified, there is no memory limit imposed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A ServiceResponse containing two elements:
+<cite>output</cite> and <cite>error</cite>. Both <cite>output</cite> and <cite>error</cite> are strings that
+capture the standard output and standard error of the code
+execution, respectively.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>IPython-specific operations such as <cite>plt.show()</cite> for displaying
+matplotlib plots are currently not supported. This limitation stems
+from the non-interactive nature of the execution environment.</p>
+<p>The argument <cite>timeout</cite> is not available in Windows OS, since the
+since <cite>signal.setitimer</cite> is only available in Unix.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.execute_code.exec_python.sys_python_guard">
+<span class="sig-prename descclassname"><span class="pre">agentscope.service.execute_code.exec_python.</span></span><span class="sig-name descname"><span class="pre">sys_python_guard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">maximum_memory_bytes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/service/execute_code/exec_python.html#sys_python_guard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.service.execute_code.exec_python.sys_python_guard" title="Link to this definition"></a></dt>
+<dd><p>This disables various destructive functions and prevents the generated code
+from interfering with the test (e.g. fork bomb, killing other processes,
+removing filesystem files, etc.)</p>
+<p>The implementation of this function are modified from
+<a class="reference external" href="https://github.com/openai/human-eval/blob/master/human_eval/execution.py">https://github.com/openai/human-eval/blob/master/human_eval/execution.py</a></p>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="agentscope.service.html" class="btn btn-neutral float-left" title="Service package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="agentscope.service.file.html" class="btn btn-neutral float-right" title="File package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Alibaba Tongyi Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

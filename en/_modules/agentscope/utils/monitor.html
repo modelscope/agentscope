@@ -1,0 +1,878 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.utils.monitor &mdash; AgentScope  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../../../en/index.html">English</a></li> |
+    <a href="../../../../zh_CN/index.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/quick_start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/advance.html">Advanced Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/contribute.html">Get Involved</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">Agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">Memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">Models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">Pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">Service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">RPC package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">Utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">Web UI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">Module contents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">agentscope.utils.monitor</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for agentscope.utils.monitor</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot; Monitor for agentscope &quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">sqlite3</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Generator</span>
+<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+
+<span class="kn">from</span> <span class="nn">agentscope.constants</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_DEFAULT_MONITOR_TABLE_NAME</span><span class="p">,</span>
+    <span class="n">_DEFAULT_SQLITE_DB_PATH</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="MonitorBase">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorBase">[docs]</a>
+<span class="k">class</span> <span class="nc">MonitorBase</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Base interface of Monitor&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="MonitorBase.register">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorBase.register">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">metric_unit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">quota</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register a metric to the monitor with value initialized to 0.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            metric_name (`str`):</span>
+<span class="sd">                Name of the metric, must be unique.</span>
+<span class="sd">            metric_unit (`Optional[str]`):</span>
+<span class="sd">                Unit of the metric.</span>
+<span class="sd">            quota (`Optional[str]`):</span>
+<span class="sd">                The quota of the metric. An alert is triggered when metrics</span>
+<span class="sd">                accumulate above this value.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `bool`: whether the operation success.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="MonitorBase.exists">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorBase.exists">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine whether a metric exists in the monitor.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            metric_name (`str`):</span>
+<span class="sd">                Name of the metric.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `bool`: Whether the metric exists.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="MonitorBase.add">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorBase.add">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add value to a specific metric.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            metric_name (`str`):</span>
+<span class="sd">                Name of the metric.</span>
+<span class="sd">            value (`float`):</span>
+<span class="sd">                Increased value.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `bool`: whether the operation success.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="MonitorBase.update">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorBase.update">[docs]</a>
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update multiple metrics at once.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">get_full_name</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">k</span><span class="p">),</span> <span class="n">v</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MonitorBase.clear">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorBase.clear">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear the values of a specific metric.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            metric_name (`str`):</span>
+<span class="sd">                Name of the metric.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `bool`: whether the operation success.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="MonitorBase.remove">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorBase.remove">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove a specific metric from the monitor.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            metric_name (`str`):</span>
+<span class="sd">                Name of the metric.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `bool`: Whether the operation success.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="MonitorBase.get_value">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorBase.get_value">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the value of a specific metric.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            metric_name (`str`):</span>
+<span class="sd">                Name of the metric.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `Optional[float]`: the value of the metric.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="MonitorBase.get_unit">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorBase.get_unit">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the unit of a specific metric.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            metric_name (`str`):</span>
+<span class="sd">                Name of the metric.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `Optional[str]`: The unit of the metric.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="MonitorBase.get_quota">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorBase.get_quota">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_quota</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the quota of a specific metric.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            metric_name (`str`):</span>
+<span class="sd">                Name of the metric.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `Optional[float]`: The quota of the metric.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="MonitorBase.set_quota">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorBase.set_quota">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">set_quota</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">quota</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the quota of a specific metric</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            metric_name (`str`):</span>
+<span class="sd">                Name of the metric.</span>
+<span class="sd">            quota (`float`):</span>
+<span class="sd">                New quota of the metric.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `bool`: whether the operation success.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="MonitorBase.get_metric">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorBase.get_metric">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the specific metric</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            metric_name (`str`):</span>
+<span class="sd">                Name of the metric.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `Optional[dict]`: A dictionary of metric with following format::</span>
+
+<span class="sd">                {</span>
+<span class="sd">                    metric_value: [float],</span>
+<span class="sd">                    metric_unit: [str],</span>
+<span class="sd">                    quota: [float]</span>
+<span class="sd">                }</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="MonitorBase.get_metrics">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorBase.get_metrics">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_regex</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a dictionary of metrics.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filter_regex (`Optional[str]`):</span>
+<span class="sd">                Regular expression for filtering metric names, get all</span>
+<span class="sd">                metrics if not provided.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `dict`: a dictionary of metric with following format::</span>
+
+<span class="sd">                {</span>
+<span class="sd">                    metric_name_A: {</span>
+<span class="sd">                        metric_value: [float],</span>
+<span class="sd">                        metric_unit: [str],</span>
+<span class="sd">                        quota: [float]</span>
+<span class="sd">                    },</span>
+<span class="sd">                    metric_name_B: {</span>
+<span class="sd">                        ...</span>
+<span class="sd">                    },</span>
+<span class="sd">                    ...</span>
+<span class="sd">                }</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="MonitorBase.register_budget">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorBase.register_budget">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">register_budget</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;local&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register model call budget to the monitor, the monitor will raise</span>
+<span class="sd">        QuotaExceededError, when budget is exceeded.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model_name (`str`): model that requires budget.</span>
+<span class="sd">            value (`float`): the budget value.</span>
+<span class="sd">            prefix (`Optional[str]`, default `None`): used to distinguish</span>
+<span class="sd">                multiple budget registrations. For multiple registrations with</span>
+<span class="sd">                the same `prefix`, only the first time will take effect.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `bool`: whether the operation success.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="get_full_name">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.get_full_name">[docs]</a>
+<span class="k">def</span> <span class="nf">get_full_name</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the full name of a metric.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        metric_name (`str`): name of a metric.</span>
+<span class="sd">        prefix (` Optional[str]`, default `None`): metric prefix.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `str`: the full name of the metric</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">prefix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">name</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="QuotaExceededError">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.QuotaExceededError">[docs]</a>
+<span class="k">class</span> <span class="nc">QuotaExceededError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An Exception used to indicate that a certain metric exceeds quota&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Init a QuotaExceedError instance.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (`str`): name of the metric which exceeds quota.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Metric [</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">] exceeds quota.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="sqlite_transaction">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.sqlite_transaction">[docs]</a>
+<span class="nd">@contextmanager</span>
+<span class="k">def</span> <span class="nf">sqlite_transaction</span><span class="p">(</span><span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a sqlite transaction cursor.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        db_path (`str`): path to the sqlite db file</span>
+
+<span class="sd">    Yields:</span>
+<span class="sd">        `Generator`: a cursor with transaction</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+    <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;BEGIN&quot;</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="n">cursor</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">e</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="sqlite_cursor">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.sqlite_cursor">[docs]</a>
+<span class="nd">@contextmanager</span>
+<span class="k">def</span> <span class="nf">sqlite_cursor</span><span class="p">(</span><span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a sqlite cursor.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        db_path (`str`): path to the sqlite db file</span>
+
+<span class="sd">    Yields:</span>
+<span class="sd">        `Generator`: a cursor</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+    <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">cursor</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="SqliteMonitor">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor">[docs]</a>
+<span class="k">class</span> <span class="nc">SqliteMonitor</span><span class="p">(</span><span class="n">MonitorBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A monitor based on sqlite&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_DEFAULT_MONITOR_TABLE_NAME</span><span class="p">,</span>
+        <span class="n">drop_exists</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a SqliteMonitor.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            db_path (`str`): path to the sqlite db file.</span>
+<span class="sd">            table_name (`str`, optional): the table name used by the monitor.</span>
+<span class="sd">                Defaults to _DEFAULT_MONITOR_TABLE_NAME.</span>
+<span class="sd">            drop_exists (bool, optional): whether to delete the original table</span>
+<span class="sd">            when the table already exists. Defaults to False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_path</span> <span class="o">=</span> <span class="n">db_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table_name</span> <span class="o">=</span> <span class="n">table_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_monitor_table</span><span class="p">(</span><span class="n">drop_exists</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;SqliteMonitor initialization completed at [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_create_monitor_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">drop_exists</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Internal method to create a table in sqlite3.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">sqlite_transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">drop_exists</span><span class="p">:</span>
+                <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DROP TABLE IF EXISTS </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="si">}</span><span class="s2">;&quot;</span><span class="p">)</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                CREATE TABLE IF NOT EXISTS </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> (</span>
+<span class="s2">                    id INTEGER PRIMARY KEY AUTOINCREMENT,</span>
+<span class="s2">                    name TEXT UNIQUE NOT NULL,</span>
+<span class="s2">                    value REAL NOT NULL,</span>
+<span class="s2">                    quota REAL,</span>
+<span class="s2">                    unit TEXT</span>
+<span class="s2">                );&quot;&quot;&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                CREATE TRIGGER IF NOT EXISTS </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="si">}</span><span class="s2">_quota_exceeded</span>
+<span class="s2">                BEFORE UPDATE ON </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="si">}</span>
+<span class="s2">                FOR EACH ROW</span>
+<span class="s2">                WHEN OLD.quota is not NULL AND NEW.value &gt; OLD.quota</span>
+<span class="s2">                BEGIN</span>
+<span class="s2">                    SELECT RAISE(FAIL, &#39;QuotaExceeded&#39;);</span>
+<span class="s2">                END;</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Init [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="si">}</span><span class="s2">] as the monitor table&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Init [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="si">}</span><span class="s2">_quota_exceeded] as the monitor trigger&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="SqliteMonitor.register">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.register">[docs]</a>
+    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">metric_unit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">quota</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">sqlite_transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                INSERT INTO </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> (name, value, quota, unit)</span>
+<span class="s2">                VALUES (?, ?, ?, ?)</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="p">,</span>
+                <span class="p">(</span><span class="n">metric_name</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">quota</span><span class="p">,</span> <span class="n">metric_unit</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Register metric [</span><span class="si">{</span><span class="n">metric_name</span><span class="si">}</span><span class="s2">] to SqliteMonitor with unit &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">metric_unit</span><span class="si">}</span><span class="s2">] and quota [</span><span class="si">{</span><span class="n">quota</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_add</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">cursor</span><span class="p">:</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Cursor</span><span class="p">,</span>
+        <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                    UPDATE </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="si">}</span>
+<span class="s2">                    SET value = value + ?</span>
+<span class="s2">                    WHERE name = ?</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="p">,</span>
+                <span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">IntegrityError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QuotaExceededError</span><span class="p">(</span><span class="n">metric_name</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
+<div class="viewcode-block" id="SqliteMonitor.add">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.add">[docs]</a>
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">sqlite_transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="SqliteMonitor.clear">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.clear">[docs]</a>
+    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">sqlite_transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                UPDATE </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="si">}</span>
+<span class="s2">                SET value = value + ?</span>
+<span class="s2">                WHERE name = ?</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span>
+                <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="SqliteMonitor.remove">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.remove">[docs]</a>
+    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">sqlite_transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                DELETE FROM </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="si">}</span>
+<span class="s2">                WHERE name = ?&quot;&quot;&quot;</span><span class="p">,</span>
+                <span class="p">(</span><span class="n">metric_name</span><span class="p">,),</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_get_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cursor</span><span class="p">:</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            SELECT value, quota, unit FROM </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="si">}</span>
+<span class="s2">            WHERE name = ?&quot;&quot;&quot;</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">metric_name</span><span class="p">,),</span>
+        <span class="p">)</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">row</span><span class="p">:</span>
+            <span class="n">value</span><span class="p">,</span> <span class="n">quota</span><span class="p">,</span> <span class="n">unit</span> <span class="o">=</span> <span class="n">row</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span>
+                <span class="s2">&quot;quota&quot;</span><span class="p">:</span> <span class="n">quota</span><span class="p">,</span>
+                <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="n">unit</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fail to get metric </span><span class="si">{</span><span class="n">metric_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SqliteMonitor.get_value">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.get_value">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+        <span class="k">with</span> <span class="n">sqlite_cursor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="n">metric</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_metric</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">metric</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="SqliteMonitor.get_quota">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.get_quota">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_quota</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+        <span class="k">with</span> <span class="n">sqlite_cursor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="n">metric</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_metric</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">metric</span><span class="p">[</span><span class="s2">&quot;quota&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="SqliteMonitor.set_quota">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.set_quota">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_quota</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">quota</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">sqlite_transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                UPDATE </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="si">}</span>
+<span class="s2">                SET quota = ?</span>
+<span class="s2">                WHERE name = ?</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span>
+                <span class="p">(</span><span class="n">quota</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="SqliteMonitor.get_unit">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.get_unit">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">with</span> <span class="n">sqlite_cursor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="n">metric</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_metric</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">metric</span><span class="p">[</span><span class="s2">&quot;unit&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="SqliteMonitor.get_metric">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.get_metric">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+        <span class="k">with</span> <span class="n">sqlite_cursor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_metric</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SqliteMonitor.get_metrics">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.get_metrics">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_regex</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">sqlite_cursor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SELECT * FROM </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">rows</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+            <span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="p">{</span>
+                    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                    <span class="s2">&quot;quota&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                    <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+                <span class="p">}</span>
+                <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span>
+            <span class="p">}</span>
+        <span class="k">if</span> <span class="n">filter_regex</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">metrics</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">filter_regex</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="n">key</span><span class="p">:</span> <span class="n">value</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">metrics</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="p">}</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cursor</span><span class="p">:</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Cursor</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            SELECT 1 FROM </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="si">}</span>
+<span class="s2">            WHERE name = ? LIMIT 1</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">name</span><span class="p">,),</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="SqliteMonitor.exists">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.exists">[docs]</a>
+    <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">sqlite_cursor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SqliteMonitor.update">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.update">[docs]</a>
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">sqlite_transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">metric_name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_add</span><span class="p">(</span>
+                    <span class="n">cursor</span><span class="p">,</span>
+                    <span class="n">get_full_name</span><span class="p">(</span>
+                        <span class="n">name</span><span class="o">=</span><span class="n">metric_name</span><span class="p">,</span>
+                        <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
+                    <span class="p">),</span>
+                    <span class="n">value</span><span class="p">,</span>
+                <span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_create_update_cost_trigger</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">token_metric</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">cost_metric</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">unit_price</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">sqlite_transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                CREATE TRIGGER IF NOT EXISTS</span>
+<span class="s2">                &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">token_metric</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">cost_metric</span><span class="si">}</span><span class="s2">_price&quot;</span>
+<span class="s2">                AFTER UPDATE OF value ON &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">                FOR EACH ROW</span>
+<span class="s2">                WHEN NEW.name = &quot;</span><span class="si">{</span><span class="n">token_metric</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">                BEGIN</span>
+<span class="s2">                    UPDATE </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="si">}</span>
+<span class="s2">                    SET value = value + (NEW.value - OLD.value) * </span><span class="si">{</span><span class="n">unit_price</span><span class="si">}</span>
+<span class="s2">                    WHERE name = &quot;</span><span class="si">{</span><span class="n">cost_metric</span><span class="si">}</span><span class="s2">&quot;;</span>
+<span class="s2">                END;</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+<div class="viewcode-block" id="SqliteMonitor.register_budget">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.register_budget">[docs]</a>
+    <span class="k">def</span> <span class="nf">register_budget</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;set budget </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">pricing</span> <span class="o">=</span> <span class="n">_get_pricing</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">model_name</span> <span class="ow">in</span> <span class="n">pricing</span><span class="p">:</span>
+            <span class="n">budget_metric_name</span> <span class="o">=</span> <span class="n">get_full_name</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;cost&quot;</span><span class="p">,</span>
+                <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">ok</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+                <span class="n">metric_name</span><span class="o">=</span><span class="n">budget_metric_name</span><span class="p">,</span>
+                <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;dollor&quot;</span><span class="p">,</span>
+                <span class="n">quota</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">ok</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">metric_name</span><span class="p">,</span> <span class="n">unit_price</span> <span class="ow">in</span> <span class="n">pricing</span><span class="p">[</span><span class="n">model_name</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">token_metric_name</span> <span class="o">=</span> <span class="n">get_full_name</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="n">metric_name</span><span class="p">,</span>
+                    <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+                    <span class="n">metric_name</span><span class="o">=</span><span class="n">token_metric_name</span><span class="p">,</span>
+                    <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_create_update_cost_trigger</span><span class="p">(</span>
+                    <span class="n">token_metric_name</span><span class="p">,</span>
+                    <span class="n">budget_metric_name</span><span class="p">,</span>
+                    <span class="n">unit_price</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Calculate budgets for model [</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">] is not supported&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+</div>
+
+
+
+<span class="k">def</span> <span class="nf">_get_pricing</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get pricing as a dict</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `dict`: the dict with pricing information.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># TODO: get pricing from files</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;gpt-4-turbo&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;prompt_tokens&quot;</span><span class="p">:</span> <span class="mf">0.00001</span><span class="p">,</span>
+            <span class="s2">&quot;completion_tokens&quot;</span><span class="p">:</span> <span class="mf">0.00003</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;gpt-4&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;prompt_tokens&quot;</span><span class="p">:</span> <span class="mf">0.00003</span><span class="p">,</span>
+            <span class="s2">&quot;completion_tokens&quot;</span><span class="p">:</span> <span class="mf">0.00006</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;gpt-4-32k&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;prompt_tokens&quot;</span><span class="p">:</span> <span class="mf">0.00006</span><span class="p">,</span>
+            <span class="s2">&quot;completion_tokens&quot;</span><span class="p">:</span> <span class="mf">0.00012</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;gpt-3.5-turbo&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;prompt_tokens&quot;</span><span class="p">:</span> <span class="mf">0.000001</span><span class="p">,</span>
+            <span class="s2">&quot;completion_tokens&quot;</span><span class="p">:</span> <span class="mf">0.000002</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+
+
+<div class="viewcode-block" id="MonitorFactory">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorFactory">[docs]</a>
+<span class="k">class</span> <span class="nc">MonitorFactory</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Factory of Monitor.</span>
+
+<span class="sd">    Get the singleton monitor using::</span>
+
+<span class="sd">        from agentscope.utils import MonitorFactory</span>
+<span class="sd">        monitor = MonitorFactory.get_monitor()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_instance</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="MonitorFactory.get_monitor">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorFactory.get_monitor">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_monitor</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">impl_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_DEFAULT_SQLITE_DB_PATH</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MonitorBase</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the monitor instance.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            impl_type (`Optional[str]`, optional): the type of monitor,</span>
+<span class="sd">                currently supports `sqlite` only.</span>
+<span class="sd">            db_path (`Optional[str]`, optional): path to the sqlite db file.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `MonitorBase`: the monitor instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">impl_type</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">impl_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;sqlite&quot;</span><span class="p">:</span>
+                <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="n">SqliteMonitor</span><span class="p">(</span><span class="n">db_path</span><span class="o">=</span><span class="n">db_path</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                    <span class="s2">&quot;Monitor with type [</span><span class="si">{type}</span><span class="s2">] is not implemented.&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>  <span class="c1"># type: ignore [return-value]</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Alibaba Tongyi Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

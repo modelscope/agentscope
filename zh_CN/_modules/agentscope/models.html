@@ -1,0 +1,283 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.models &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=7d86a446"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/translations.js?v=beaddf03"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../../en/index.html">English</a></li> |
+    <a href="../../../zh_CN/index.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial_zh/quick_start.html">快速上手</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial_zh/advance.html">进阶使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial_zh/contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.agents.html">Agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.memory.html">Memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.models.html">Models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.pipelines.html">Pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.service.html">Service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.rpc.html">RPC package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.utils.html">Utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.web.html">Web UI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.html">Module contents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">模块代码</a></li>
+      <li class="breadcrumb-item active">agentscope.models</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>agentscope.models 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot; Import modules in models package.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Type</span>
+
+<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+
+<span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">ModelConfig</span>
+<span class="kn">from</span> <span class="nn">.model</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ModelResponse</span>
+<span class="kn">from</span> <span class="nn">.post_model</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">PostAPIModelWrapperBase</span><span class="p">,</span>
+    <span class="n">PostAPIChatWrapper</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.openai_model</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">OpenAIWrapper</span><span class="p">,</span>
+    <span class="n">OpenAIChatWrapper</span><span class="p">,</span>
+    <span class="n">OpenAIDALLEWrapper</span><span class="p">,</span>
+    <span class="n">OpenAIEmbeddingWrapper</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.tongyi_model</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">TongyiWrapper</span><span class="p">,</span>
+    <span class="n">TongyiChatWrapper</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;ModelWrapperBase&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ModelResponse&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PostAPIModelWrapperBase&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PostAPIChatWrapper&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;OpenAIWrapper&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;OpenAIChatWrapper&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;OpenAIDALLEWrapper&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;OpenAIEmbeddingWrapper&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;load_model_by_config_name&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;read_model_configs&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;clear_model_configs&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TongyiWrapper&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TongyiChatWrapper&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">_MODEL_CONFIGS</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+
+<span class="k">def</span> <span class="nf">_get_model_wrapper</span><span class="p">(</span><span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">ModelWrapperBase</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the specific type of model wrapper</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model_type (`str`): The model type name.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `Type[ModelWrapperBase]`: The corresponding model wrapper class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">model_type</span> <span class="ow">in</span> <span class="n">ModelWrapperBase</span><span class="o">.</span><span class="n">type_registry</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ModelWrapperBase</span><span class="o">.</span><span class="n">type_registry</span><span class="p">[</span>  <span class="c1"># type: ignore [return-value]</span>
+            <span class="n">model_type</span>
+        <span class="p">]</span>
+    <span class="k">elif</span> <span class="n">model_type</span> <span class="ow">in</span> <span class="n">ModelWrapperBase</span><span class="o">.</span><span class="n">registry</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ModelWrapperBase</span><span class="o">.</span><span class="n">registry</span><span class="p">[</span>  <span class="c1"># type: ignore [return-value]</span>
+            <span class="n">model_type</span>
+        <span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unsupported model_type [</span><span class="si">{</span><span class="n">model_type</span><span class="si">}</span><span class="s2">],&quot;</span>
+            <span class="s2">&quot;use PostApiModelWrapper instead.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">PostAPIModelWrapperBase</span>
+
+
+<div class="viewcode-block" id="load_model_by_config_name">
+<a class="viewcode-back" href="../../agentscope.models.html#agentscope.models.load_model_by_config_name">[文档]</a>
+<span class="k">def</span> <span class="nf">load_model_by_config_name</span><span class="p">(</span><span class="n">config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelWrapperBase</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the model by config name.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_MODEL_CONFIGS</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;No model configs loaded, please call &quot;</span>
+            <span class="s2">&quot;`read_model_configs` first.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Find model config by name</span>
+    <span class="k">if</span> <span class="n">config_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_MODEL_CONFIGS</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Cannot find [</span><span class="si">{</span><span class="n">config_name</span><span class="si">}</span><span class="s2">] in loaded configurations.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">_MODEL_CONFIGS</span><span class="p">[</span><span class="n">config_name</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Cannot find [</span><span class="si">{</span><span class="n">config_name</span><span class="si">}</span><span class="s2">] in loaded configurations.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="n">model_type</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">model_type</span>
+    <span class="k">return</span> <span class="n">_get_model_wrapper</span><span class="p">(</span><span class="n">model_type</span><span class="o">=</span><span class="n">model_type</span><span class="p">)(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="clear_model_configs">
+<a class="viewcode-back" href="../../agentscope.models.html#agentscope.models.clear_model_configs">[文档]</a>
+<span class="k">def</span> <span class="nf">clear_model_configs</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clear the loaded model configs.&quot;&quot;&quot;</span>
+    <span class="n">_MODEL_CONFIGS</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="read_model_configs">
+<a class="viewcode-back" href="../../agentscope.models.html#agentscope.models.read_model_configs">[文档]</a>
+<span class="k">def</span> <span class="nf">read_model_configs</span><span class="p">(</span>
+    <span class="n">configs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span>
+    <span class="n">clear_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;read model configs from a path or a list of dicts.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        configs (`Union[str, list, dict]`):</span>
+<span class="sd">            The path of the model configs | a config dict | a list of model</span>
+<span class="sd">            configs.</span>
+<span class="sd">        clear_existing (`bool`, defaults to `False`):</span>
+<span class="sd">            Whether to clear the loaded model configs before reading.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `dict`:</span>
+<span class="sd">            The model configs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">clear_existing</span><span class="p">:</span>
+        <span class="n">clear_model_configs</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">cfgs</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">cfgs</span> <span class="o">=</span> <span class="p">[</span><span class="n">configs</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">configs</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The model config unit should be a dict.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">cfgs</span> <span class="o">=</span> <span class="n">configs</span>
+
+    <span class="n">format_configs</span> <span class="o">=</span> <span class="n">ModelConfig</span><span class="o">.</span><span class="n">format_configs</span><span class="p">(</span><span class="n">configs</span><span class="o">=</span><span class="n">cfgs</span><span class="p">)</span>
+
+    <span class="c1"># check if name is unique</span>
+    <span class="k">for</span> <span class="n">cfg</span> <span class="ow">in</span> <span class="n">format_configs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">config_name</span> <span class="ow">in</span> <span class="n">_MODEL_CONFIGS</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;config_name [</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">config_name</span><span class="si">}</span><span class="s2">] already exists.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="n">_MODEL_CONFIGS</span><span class="p">[</span><span class="n">cfg</span><span class="o">.</span><span class="n">config_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">cfg</span>
+
+    <span class="c1"># print the loaded model configs</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s2">&quot;Load configs for model wrapper: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_MODEL_CONFIGS</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

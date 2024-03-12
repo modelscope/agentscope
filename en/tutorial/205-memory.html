@@ -1,0 +1,371 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Memory &mdash; AgentScope  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Prompt Engine" href="206-prompt.html" />
+    <link rel="prev" title="About Service" href="204-service.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../en/index.html">English</a></li> |
+    <a href="../../zh_CN/index.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="advance.html">Advanced Exploration</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="201-agent.html">Customizing Your Own Agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="202-pipeline.html">Agent Interactions: Dive deeper into Pipelines and Message Hub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="203-model.html">Model Service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="204-service.html">About Service</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">About Memory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#about-message">About Message</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#messagebase-class"><code class="docutils literal notranslate"><span class="pre">MessageBase</span></code> Class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#msg-class"><code class="docutils literal notranslate"><span class="pre">Msg</span></code> Class</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">About Memory</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#memorybase-class"><code class="docutils literal notranslate"><span class="pre">MemoryBase</span></code> Class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#temporarymemory"><code class="docutils literal notranslate"><span class="pre">TemporaryMemory</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="206-prompt.html">Prompt Engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="207-monitor.html">Monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="208-distribute.html">About Distribution</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">Get Involved</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.agents.html">Agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.memory.html">Memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.models.html">Models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.pipelines.html">Pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.service.html">Service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.rpc.html">RPC package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.utils.html">Utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.web.html">Web UI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.html">Module contents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="advance.html">Advanced Exploration</a></li>
+      <li class="breadcrumb-item active">About Memory</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorial/205-memory.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="about-memory">
+<span id="memory-en"></span><h1>About Memory<a class="headerlink" href="#about-memory" title="Link to this heading"></a></h1>
+<p>In AgentScope, memory is used to store historical information, allowing the
+agent to provide more coherent and natural responses based on context.
+This tutorial will first introduce the carrier of information in memory,
+message, and then introduce the functions and usage of the memory module in
+AgentScope.</p>
+<section id="about-message">
+<h2>About Message<a class="headerlink" href="#about-message" title="Link to this heading"></a></h2>
+<section id="messagebase-class">
+<h3><code class="docutils literal notranslate"><span class="pre">MessageBase</span></code> Class<a class="headerlink" href="#messagebase-class" title="Link to this heading"></a></h3>
+<p>In AgentScope, the message base class is a subclass of Python dictionary,
+consisting of two required fields (<code class="docutils literal notranslate"><span class="pre">name</span></code> and <code class="docutils literal notranslate"><span class="pre">content</span></code>) and an optional
+field (<code class="docutils literal notranslate"><span class="pre">url</span></code>).
+Specifically, the <code class="docutils literal notranslate"><span class="pre">name</span></code> field represents the originator of the message,
+the <code class="docutils literal notranslate"><span class="pre">content</span></code> field represents the content of the message, and the <code class="docutils literal notranslate"><span class="pre">url</span></code>
+field represents the data link attached to the message, which can be a
+local link to multi-modal data or a web link.
+As a dictionary type, developers can also add other fields
+as needed. When a message is created, a unique ID is automatically
+generated to identify the message. The creation time of the message is also
+automatically recorded in the form of a timestamp.</p>
+<p>In the specific implementation, AgentScope first provides a <code class="docutils literal notranslate"><span class="pre">MessageBase</span></code>
+base class to define the basic properties and usage of messages.
+Unlike general dictionary types, the instantiated objects of <code class="docutils literal notranslate"><span class="pre">MessageBase</span></code>
+can access attribute values through <code class="docutils literal notranslate"><span class="pre">object_name.{attribute_name}</span></code> or
+<code class="docutils literal notranslate"><span class="pre">object_name['attribute_name']</span></code>.
+The key attributes of the <code class="docutils literal notranslate"><span class="pre">MessageBase</span></code> class are as follows:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">name</span></code></strong>: This attribute denotes the originator of the message. It’s a critical piece of metadata, useful in scenarios where distinguishing between different speakers is necessary.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">content</span></code></strong>: The substance of the message itself. It can include text, structured data, or any other form of content that is relevant to the interaction and requires processing by the agent.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">url</span></code></strong>: An optional attribute that allows the message to be linked to external resources. These can be direct links to files, multi-modal data, or web pages.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">timestamp</span></code></strong>: A timestamp indicating when the message was created.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">id</span></code></strong>: Each message is assigned a unique identifier (ID) upon creation.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MessageBase</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base Message class, which is used to maintain information for dialog,</span>
+<span class="sd">    memory and used to construct prompt.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">content</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the message object</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (`str`):</span>
+<span class="sd">                The name of who send the message. It&#39;s often used in</span>
+<span class="sd">                role-playing scenario to tell the name of the sender.</span>
+<span class="sd">                However, you can also only use `role` when calling openai api.</span>
+<span class="sd">                The usage of `name` refers to</span>
+<span class="sd">                https://cookbook.openai.com/examples/how_to_format_inputs_to_chatgpt_models.</span>
+<span class="sd">            content (`Any`):</span>
+<span class="sd">                The content of the message.</span>
+<span class="sd">            url (`Optional[Union[list[str], str]]`, defaults to None):</span>
+<span class="sd">                A url to file, image, video, audio or website.</span>
+<span class="sd">            timestamp (`Optional[str]`, defaults to None):</span>
+<span class="sd">                The timestamp of the message, if None, it will be set to</span>
+<span class="sd">                current time.</span>
+<span class="sd">            **kwargs (`Any`):</span>
+<span class="sd">                Other attributes of the message. For OpenAI API, you should</span>
+<span class="sd">                add &quot;role&quot; from `[&quot;system&quot;, &quot;user&quot;, &quot;assistant&quot;, &quot;function&quot;]`.</span>
+<span class="sd">                When calling OpenAI API, `&quot;role&quot;: &quot;assistant&quot;` will be added</span>
+<span class="sd">                to the messages that don&#39;t have &quot;role&quot; attribute.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># id and timestamp will be added to the object as its attributes</span>
+        <span class="c1"># rather than items in dict</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span>
+        <span class="k">if</span> <span class="n">timestamp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">=</span> <span class="n">_get_timestamp</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">=</span> <span class="n">timestamp</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">content</span>
+
+        <span class="k">if</span> <span class="n">url</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">url</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;no attribute &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
+    <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="fm">__delattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;no attribute &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
+    <span class="k">def</span> <span class="nf">to_str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the string representation of the message&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the serialized message.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="c1"># ... [省略代码以简化]</span>
+</pre></div>
+</div>
+</section>
+<section id="msg-class">
+<h3><code class="docutils literal notranslate"><span class="pre">Msg</span></code> Class<a class="headerlink" href="#msg-class" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">Msg</span></code> class extends <code class="docutils literal notranslate"><span class="pre">MessageBase</span></code> and represents a standard <em>message</em>.
+<code class="docutils literal notranslate"><span class="pre">Msg</span></code> provides concrete definitions for the <code class="docutils literal notranslate"><span class="pre">to_str</span></code> and <code class="docutils literal notranslate"><span class="pre">serialize</span></code>
+methods to enable string representation and serialization suitable for the
+agent’s operational context.
+Within an <code class="docutils literal notranslate"><span class="pre">Agent</span></code> class, its <code class="docutils literal notranslate"><span class="pre">reply</span></code> function typically returns an instance of
+<code class="docutils literal notranslate"><span class="pre">Msg</span></code> to facilitate message passing within AgentScope.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Msg</span><span class="p">(</span><span class="n">MessageBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Message class.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">content</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">echo</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">,</span>
+            <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+            <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">echo</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">chat</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">to_str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the string representation of the message&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s2">&quot;__type&quot;</span><span class="p">:</span> <span class="s2">&quot;Msg&quot;</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="p">})</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id1">
+<h2>About Memory<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<section id="memorybase-class">
+<h3><code class="docutils literal notranslate"><span class="pre">MemoryBase</span></code> Class<a class="headerlink" href="#memorybase-class" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">MemoryBase</span></code> is an abstract class that handles an agent’s memory in a structured way. It defines operations for storing, retrieving, deleting, and manipulating <em>message</em>’s content.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MemoryBase</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="c1"># ... [code omitted for brevity]</span>
+
+    <span class="k">def</span> <span class="nf">get_memory</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">return_type</span><span class="p">:</span> <span class="n">PromptType</span> <span class="o">=</span> <span class="n">PromptType</span><span class="o">.</span><span class="n">LIST</span><span class="p">,</span>
+        <span class="n">recent_n</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">filter_func</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">memories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span>
+        <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span> <span class="nf">export</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">to_mem</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">file_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</pre></div>
+</div>
+<p>Here are the key methods of <code class="docutils literal notranslate"><span class="pre">MemoryBase</span></code>:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">get_memory</span></code></strong>: This method is responsible for retrieving stored messages from the agent’s memory. It can return these messages in different formats as specified by the <code class="docutils literal notranslate"><span class="pre">return_type</span></code>. The method can also retrieve a specific number of recent messages if <code class="docutils literal notranslate"><span class="pre">recent_n</span></code> is provided, and it can apply a filtering function (<code class="docutils literal notranslate"><span class="pre">filter_func</span></code>) to select messages based on custom criteria.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">add</span></code></strong>: This method is used to add a new <em>message</em> to the agent’s memory. It can accept a single message or a list of messages. Each message is typically an instance of <code class="docutils literal notranslate"><span class="pre">MessageBase</span></code> or its subclasses.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">delete</span></code></strong>: This method enables the removal of messages from memory by their index (or indices if an iterable is provided).</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">load</span></code></strong>: This method allows for the bulk loading of messages into the agent’s memory from an external source. The <code class="docutils literal notranslate"><span class="pre">overwrite</span></code> parameter determines whether to clear the existing memory before loading the new set of messages.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">export</span></code></strong>: This method facilitates exporting the stored <em>message</em> from the agent’s memory either to an external file (specified by <code class="docutils literal notranslate"><span class="pre">file_path</span></code>) or directly into the working memory of the program (if <code class="docutils literal notranslate"><span class="pre">to_mem</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>).</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">clear</span></code></strong>: This method purges all <em>message</em> from the agent’s memory, essentially resetting it.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">size</span></code></strong>: This method returns the number of messages currently stored in the agent’s memory.</p></li>
+</ul>
+</section>
+<section id="temporarymemory">
+<h3><code class="docutils literal notranslate"><span class="pre">TemporaryMemory</span></code><a class="headerlink" href="#temporarymemory" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">TemporaryMemory</span></code> class is a concrete implementation of <code class="docutils literal notranslate"><span class="pre">MemoryBase</span></code>, providing a memory store that exists during the runtime of an agent, which is used as the default memory type of agents. Besides all the behaviors from <code class="docutils literal notranslate"><span class="pre">MemoryBase</span></code>, the <code class="docutils literal notranslate"><span class="pre">TemporaryMemory</span></code> additionally provides methods for retrieval:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">retrieve_by_embedding</span></code></strong>: Retrieves <code class="docutils literal notranslate"><span class="pre">messages</span></code> that are most similar to a query, based on their embeddings. It uses a provided metric to determine the relevance and can return the top <code class="docutils literal notranslate"><span class="pre">k</span></code> most relevant messages.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">get_embeddings</span></code></strong>: Return the embeddings for all messages in memory. If a message does not have an embedding and an embedding model is provided, it will generate and store the embedding for the message.</p></li>
+</ul>
+<p>For more details about the usage of <code class="docutils literal notranslate"><span class="pre">Memory</span></code> and <code class="docutils literal notranslate"><span class="pre">Msg</span></code>, please refer to the API references.</p>
+<p><a class="reference internal" href="#memory-en">[Return to the top]</a></p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="204-service.html" class="btn btn-neutral float-left" title="About Service" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="206-prompt.html" class="btn btn-neutral float-right" title="Prompt Engine" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Alibaba Tongyi Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
