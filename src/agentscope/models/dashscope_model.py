@@ -351,7 +351,7 @@ class DashScopeEmbeddingWrapper(DashScopeWrapper):
                 The messages used to embed.
             **kwargs (`Any`):
                 The keyword arguments to DashScope embedding API,
-                e.g. `encoding_format`, `user`. Please refer to
+                e.g. `text_type`. Please refer to
                 https://help.aliyun.com/zh/dashscope/developer-reference/api-details-15?spm=a2c4g.11186623.0.0.7a962a9d0tN89b
                 for more detailed arguments.
 
