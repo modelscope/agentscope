@@ -3,10 +3,12 @@
 import os
 import shutil
 import unittest
+import uuid
 from unittest.mock import patch, MagicMock
 
 import agentscope
 from agentscope.models import load_model_by_config_name
+from agentscope.utils import MonitorFactory
 
 
 class OllamaModelWrapperTest(unittest.TestCase):
@@ -83,8 +85,9 @@ class OllamaModelWrapperTest(unittest.TestCase):
             "eval_duration": 223689000,
         }
 
-        if os.path.exists("./runs"):
-            shutil.rmtree("./runs")
+        MonitorFactory._instance = None  # pylint: disable=W0212
+        self.db_path = f"test-{uuid.uuid4()}.db"
+        _ = MonitorFactory.get_monitor(db_path=self.db_path)
 
     @patch("ollama.chat")
     def test_ollama_chat(self, mock_chat: MagicMock) -> None:
@@ -158,8 +161,7 @@ class OllamaModelWrapperTest(unittest.TestCase):
 
     def tearDown(self) -> None:
         """Clean up after each test."""
-        if os.path.exists("./runs"):
-            shutil.rmtree("./runs")
+        os.remove(self.db_path)
 
 
 if __name__ == "__main__":
