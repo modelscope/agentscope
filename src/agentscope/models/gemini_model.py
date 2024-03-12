@@ -20,7 +20,7 @@ except ImportError:
 class GeminiWrapperBase(ModelWrapperBase):
     """The base class for Google Gemini model wrapper."""
 
-    __generation_method = None
+    _generation_method = None
     """The generation method used in `__call__` function."""
 
     def __init__(
@@ -68,7 +68,7 @@ class GeminiWrapperBase(ModelWrapperBase):
             return [
                 _
                 for _ in support_models
-                if self.__generation_method in _.supported_generation_methods
+                if self._generation_method in _.supported_generation_methods
             ]
 
     def __call__(self, *args: Any, **kwargs: Any) -> ModelResponse:
@@ -169,7 +169,7 @@ class GeminiEmbeddingWrapper(GeminiWrapperBase):
     model_type: str = "gemini_embedding"
     """The type of the model, which is used in model configuration."""
 
-    __generation_method = "embedContent"
+    _generation_method = "embedContent"
     """The generation method used in `__call__` function."""
 
     def __call__(

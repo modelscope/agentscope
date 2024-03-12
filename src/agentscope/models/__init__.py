@@ -23,7 +23,7 @@ from .tongyi_model import (
 )
 from .gemini_model import (
     GeminiChatWrapper,
-    GeminiEmbeddingWrapper
+    GeminiEmbeddingWrapper,
 )
 
 
