@@ -284,7 +284,7 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
         prompt: str,
         options: Optional[dict] = None,
         keep_alive: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ModelResponse:
         """Generate response from the given prompt.
 
