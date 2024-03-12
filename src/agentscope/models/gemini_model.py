@@ -8,8 +8,7 @@ from loguru import logger
 
 from agentscope.message import Msg
 from agentscope.models import ModelWrapperBase, ModelResponse
-from agentscope.utils import QuotaExceededError
-from ..constants import _DEFAULT_API_BUDGET
+from agentscope.utils import QuotaExceededError, MonitorFactory
 
 try:
     import google.generativeai as genai
@@ -25,9 +24,9 @@ class GeminiWrapperBase(ModelWrapperBase):
 
     def __init__(
         self,
+        config_name: str,
         model_name: str,
         api_key: str = None,
-        budget: float = _DEFAULT_API_BUDGET,
         **kwargs: Any,
     ) -> None:
         """Initialize the wrapper for Google Gemini model.
@@ -38,10 +37,16 @@ class GeminiWrapperBase(ModelWrapperBase):
             api_key (`str`, defaults to `None`):
                 The api_key for the model. If it is not provided, it will be
                 loaded from environment variable.
-            budget (`float`, defaults to `_DEFAULT_API_BUDGET`):
-                The budget for the api usage.
         """
-        # Load the api_key from arguemnt or environment variable
+        # TODO: remove super().__init__()
+        super().__init__(
+            config_name,
+            model_name=model_name,
+            api_key=api_key,
+            **kwargs,
+        )
+
+        # Load the api_key from argument or environment variable
         api_key = api_key or os.environ.get("GOOGLE_API_KEY")
 
         if api_key is None:
@@ -53,10 +58,15 @@ class GeminiWrapperBase(ModelWrapperBase):
         genai.configure(api_key=api_key)
 
         self.model_name = model_name
-        self.model = genai.GenerativeModel(model_name, **kwargs)
 
         self.monitor = None
-        self._register_budget(model_name, budget)
+        self._register_default_metrics()
+
+    def _register_default_metrics(self) -> None:
+        """Register the default metrics for the model."""
+        raise NotImplementedError(
+            "The method `_register_default_metrics` must be implemented.",
+        )
 
     def list_models(self) -> Sequence:
         """List all available models for this API calling."""
@@ -88,6 +98,23 @@ class GeminiChatWrapper(GeminiWrapperBase):
 
     generation_method = "generateContent"
     """The generation method used in `__call__` function."""
+
+    def __init__(
+        self,
+        config_name: str,
+        model_name: str,
+        api_key: str = None,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(
+            config_name=config_name,
+            model_name=model_name,
+            api_key=api_key,
+            **kwargs,
+        )
+
+        # Create the generative model
+        self.model = genai.GenerativeModel(model_name, **kwargs)
 
     def __call__(
         self,
@@ -139,13 +166,14 @@ class GeminiChatWrapper(GeminiWrapperBase):
 
         # step5: update monitor accordingly
         # TODO: Up to 2024/03/11, the response from Gemini doesn't contain
-        #  the detailed information about token usage. Here we simply count
+        #  the detailed information about cost. Here we simply count
         #  the tokens manually.
         token_prompt = self.model.count_tokens(contents).total_tokens
         token_response = self.model.count_tokens(response.text).total_tokens
         try:
             self.monitor.update(
                 {
+                    "call_counter": 1,
                     "completion_tokens": token_response,
                     "prompt_tokens": token_prompt,
                     "total_tokens": token_prompt + token_response,
@@ -159,6 +187,26 @@ class GeminiChatWrapper(GeminiWrapperBase):
         return ModelResponse(
             text=response.text,
             raw=response,
+        )
+
+    def _register_default_metrics(self) -> None:
+        """Register the default metrics for the model."""
+        self.monitor = MonitorFactory.get_monitor()
+        self.monitor.register(
+            self._metric("call_counter", prefix=self.model_name),
+            metric_unit="times",
+        )
+        self.monitor.register(
+            self._metric("prompt_tokens", prefix=self.model_name),
+            metric_unit="token",
+        )
+        self.monitor.register(
+            self._metric("completion_tokens", prefix=self.model_name),
+            metric_unit="token",
+        )
+        self.monitor.register(
+            self._metric("total_tokens", prefix=self.model_name),
+            metric_unit="token",
         )
 
 
@@ -221,8 +269,25 @@ class GeminiEmbeddingWrapper(GeminiWrapperBase):
 
         # TODO: Up to 2023/03/11, the embedding model doesn't support to
         #  count tokens.
+        try:
+            self.monitor.update(
+                {
+                    "call_counter": 1,
+                },
+                prefix=self.model_name,
+            )
+        except QuotaExceededError as e:
+            logger.error(e.message)
 
         return ModelResponse(
             raw=response,
             embedding=response["embedding"],
+        )
+
+    def _register_default_metrics(self) -> None:
+        """Register the default metrics for the model."""
+        self.monitor = MonitorFactory.get_monitor()
+        self.monitor.register(
+            self._metric("call_counter", prefix=self.model_name),
+            metric_unit="times",
         )
