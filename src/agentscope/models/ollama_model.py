@@ -28,11 +28,11 @@ class OllamaWrapperBase(ModelWrapperBase):
     """The model name used in ollama API."""
 
     options: dict
-    """A dict contains the options for ollama generation API, 
+    """A dict contains the options for ollama generation API,
     e.g. {"temperature": 0, "seed": 123}"""
 
     keep_alive: str
-    """Controls how long the model will stay loaded into memory following 
+    """Controls how long the model will stay loaded into memory following
     the request."""
 
     def __init__(
@@ -40,7 +40,7 @@ class OllamaWrapperBase(ModelWrapperBase):
         config_name: str,
         model: str,
         options: dict = None,
-        keep_alive: str = "5m"
+        keep_alive: str = "5m",
     ) -> None:
         """Initialize the model wrapper for Ollama API.
 
@@ -61,7 +61,9 @@ class OllamaWrapperBase(ModelWrapperBase):
         self.options = options
         self.keep_alive = keep_alive
 
-        self._register_default_metrics(self)
+        self.monitor = None
+
+        self._register_default_metrics()
 
     def _register_default_metrics(self) -> None:
         """Register metrics to the monitor."""
@@ -89,8 +91,9 @@ class OllamaChatWrapper(OllamaWrapperBase):
     model_type: str = "ollama_chat"
 
     def __call__(
-        self, messages: Sequence[dict],
-        **kwargs: Any
+        self,
+        messages: Sequence[dict],
+        **kwargs: Any,
     ) -> ModelResponse:
         """Generate response from the given messages.
 
@@ -111,10 +114,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
         else:
             options = self.options
 
-        if "keep_alive" in kwargs:
-            keep_alive = kwargs["keep_alive"]
-        else:
-            keep_alive = self.keep_alive
+        keep_alive = kwargs.get("keep_alive", self.keep_alive)
 
         # step2: forward to generate response
         response = ollama.chat(
@@ -122,7 +122,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
             messages=messages,
             options=options,
             keep_alive=keep_alive,
-            **kwargs
+            **kwargs,
         )
 
         # step2: record the api invocation if needed
@@ -132,9 +132,9 @@ class OllamaChatWrapper(OllamaWrapperBase):
                 "messages": messages,
                 "options": options,
                 "keep_alive": keep_alive,
-                **kwargs
+                **kwargs,
             },
-            json_response=response
+            json_response=response,
         )
 
         # step3: monitor the response
@@ -147,7 +147,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
                     "prompt_tokens": prompt_tokens,
                     "completion_tokens": completion_tokens,
                     "total_tokens": prompt_tokens + completion_tokens,
-                }
+                },
             )
         except (QuotaExceededError, KeyError) as e:
             logger.error(e.message)
@@ -179,7 +179,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
         )
 
 
-class OllamaEmbeddingWrapper(ModelWrapperBase):
+class OllamaEmbeddingWrapper(OllamaWrapperBase):
     """The model wrapper for Ollama embedding API."""
 
     model_type: str = "ollama_embedding"
@@ -187,7 +187,7 @@ class OllamaEmbeddingWrapper(ModelWrapperBase):
     def __call__(
         self,
         prompt: str,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ModelResponse:
         """Generate embedding from the given prompt.
 
@@ -210,10 +210,7 @@ class OllamaEmbeddingWrapper(ModelWrapperBase):
         else:
             options = self.options
 
-        if "keep_alive" in kwargs:
-            keep_alive = kwargs["keep_alive"]
-        else:
-            keep_alive = self.keep_alive
+        keep_alive = kwargs.get("keep_alive", self.keep_alive)
 
         # step2: forward to generate response
         response = ollama.embeddings(
@@ -221,7 +218,7 @@ class OllamaEmbeddingWrapper(ModelWrapperBase):
             prompt=prompt,
             options=options,
             keep_alive=keep_alive,
-            **kwargs
+            **kwargs,
         )
 
         # step3: record the api invocation if needed
@@ -231,16 +228,16 @@ class OllamaEmbeddingWrapper(ModelWrapperBase):
                 "prompt": prompt,
                 "options": options,
                 "keep_alive": keep_alive,
-                **kwargs
+                **kwargs,
             },
-            json_response=response
+            json_response=response,
         )
 
         # step4: monitor the response
         try:
             self.monitor.update(
                 {"call_counter": 1},
-                prefix=self.model
+                prefix=self.model,
             )
         except (QuotaExceededError, KeyError) as e:
             logger.error(e.message)
@@ -260,12 +257,12 @@ class OllamaEmbeddingWrapper(ModelWrapperBase):
         )
 
 
-class OllamaGenerationWrapper(ModelWrapperBase):
+class OllamaGenerationWrapper(OllamaWrapperBase):
     """The model wrapper for Ollama generation API."""
 
     model_type: str = "ollama_generation"
 
-    def __call__(self, prompt: str, **kwargs) -> ModelResponse:
+    def __call__(self, prompt: str, **kwargs: Any) -> ModelResponse:
         """Generate response from the given prompt.
 
         Args:
@@ -285,10 +282,7 @@ class OllamaGenerationWrapper(ModelWrapperBase):
         else:
             options = self.options
 
-        if "keep_alive" in kwargs:
-            keep_alive = kwargs["keep_alive"]
-        else:
-            keep_alive = self.keep_alive
+        keep_alive = kwargs.get("keep_alive", self.keep_alive)
 
         # step2: forward to generate response
         response = ollama.generate(
@@ -305,9 +299,9 @@ class OllamaGenerationWrapper(ModelWrapperBase):
                 "prompt": prompt,
                 "options": options,
                 "keep_alive": keep_alive,
-                **kwargs
+                **kwargs,
             },
-            json_response=response
+            json_response=response,
         )
 
         # step4: monitor the response
@@ -320,7 +314,7 @@ class OllamaGenerationWrapper(ModelWrapperBase):
                     "prompt_tokens": prompt_tokens,
                     "completion_tokens": completion_tokens,
                     "total_tokens": prompt_tokens + completion_tokens,
-                }
+                },
             )
         except (QuotaExceededError, KeyError) as e:
             logger.error(e.message)
