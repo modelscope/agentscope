@@ -1,4 +1,4 @@
-(204-service)=
+(204-service-en)=
 
 # About Service
 
@@ -40,6 +40,7 @@ About each service function, you can find detailed information in the
 
 AgentScope provides two service classes for Service functions,
 `ServiceFactory` and `ServiceResponse`.
+
 - `ServiceFactory` is mainly used to convert general Python functions into
   a form that can be directly used by large-scale models, and automatically
   generate function descriptions in JSON schema format.
@@ -148,6 +149,7 @@ its docstring automatically, which should be well-formatted in
 dictionary will be empty.
 
 **Suggestions**:
+
 1. The name of the service function should be self-explanatory,
 so that the agent can understand the function and use it properly.
 2. The typing of the arguments should be provided when defining
@@ -255,4 +257,4 @@ class YourAgent(AgentBase):
         # ... [omitted for brevity]
 ```
 
-[[Return to Top]](#about-service)
+[[Return to Top]](#204-service-en)

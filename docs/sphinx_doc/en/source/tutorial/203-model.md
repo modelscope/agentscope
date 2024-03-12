@@ -1,4 +1,4 @@
-(203-model)=
+(203-model-en)=
 
 # Model Service
 
@@ -10,6 +10,7 @@ model services.
 ## Supported Models
 
 Currently, AgentScope supports the following model service APIs:
+
 - OpenAI API, including Chat, image generation (DALL-E), and Embedding.
 - Post Request API, model inference services based on Post
   requests, including Huggingface/ModelScope Inference API and various
@@ -99,7 +100,6 @@ In the current AgentScope, the supported `model_type` types, the corresponding
 | Embedding        | `openai_embedding` | `OpenAIEmbeddingWrapper` | API for text embeddings                                      |
 | Post Request     | `post_api`         | `PostAPIModelWrapperBase` | Huggingface/ModelScope Inference API, and customized post API |
 
-
 #### Detailed Parameters
 
 According to the different `ModelWrapper`, the parameters contained in the
@@ -163,6 +163,7 @@ You can find these scripts and instructions in the [scripts](https://github.com/
 directory.
 
 Specifically, AgentScope provides the following model service scripts:
+
 - Model service based on **Flask + HuggingFace**
 - Model service based on **Flask + ModelScope**
 - **FastChat** inference engine
@@ -214,6 +215,6 @@ In AgentScope, you can load the model with the following model configs: [./flask
 
 ##### Note
 
-In this model serving, the messages from post requests should be in **STRING** format. You can use [templates for chat model](https://huggingface.co/docs/transformers/main/chat_templating) from *transformers* with a little modification based on [`./flask_transformers/setup_hf_service.py`](https://github.com/modelscope/agentscope/blob/main/scripts/flask_transformers/setup_hf_service.py).
+In this model serving, the messages from post requests should be in **STRING** format. You can use [templates for chat model](https://huggingface.co/docs/transformers/main/chat_templating) from _transformers_ with a little modification based on [`./flask_transformers/setup_hf_service.py`](https://github.com/modelscope/agentscope/blob/main/scripts/flask_transformers/setup_hf_service.py).
 
-[[Return to Top]](#model-service)
+[[Return to Top]](#203-model-en)

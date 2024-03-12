@@ -2,7 +2,7 @@
 
 # 提示工程
 
-**提示（prompt）**是与语言模型互动时的关键组件，尤其是当寻求生成特定类型的输出或指导模型朝
+**提示(prompt)** 是与语言模型互动时的关键组件，尤其是当寻求生成特定类型的输出或指导模型朝
 向期望行为时。
 AgentScope中允许开发者按照自己的需求定制提示，同时提供了`PromptEngine`类用以简化为大语言
 模型（LLMs）制作提示的过程。
@@ -66,4 +66,4 @@ hint_prompt = "Find the weather in {location}."
 prompt = engine.join(system_prompt, user_input, hint_prompt, format_map=variables)
 ```
 
-[[返回顶端]](#提示工程)
+[[返回顶端]](#206-prompt-zh)

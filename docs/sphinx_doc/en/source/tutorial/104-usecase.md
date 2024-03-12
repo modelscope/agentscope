@@ -1,4 +1,4 @@
-(104-usecase)=
+(104-usecase-en)=
 
 # Crafting Your First Application
 
@@ -12,19 +12,7 @@ Let the adventure begin to unlock the potential of multi-agent applications with
 
 ## Getting Started
 
-Firstly, ensure that you have installed and configured AgentScope properly. Besides, we will involve the basic concepts of `Model API`,  `Agent`, `Msg`, and `Pipeline,` as described in [Tutorial-Concept](101-agentscope). The overview of this tutorial is shown below:
-
-- [Crafting Your First Application](#crafting-your-first-application)
-  - [Getting Started](#getting-started)
-    - [Step 1: Prepare Model API and Set Model Configs](#step-1-prepare-model-api-and-set-model-configs)
-    - [Step 2: Define the Roles of Each Agent](#step-2-define-the-roles-of-each-agent)
-    - [Step 3: Initialize AgentScope and the Agents](#step-3-initialize-agentscope-and-the-agents)
-    - [Step 4: Set Up the Game Logic](#step-4-set-up-the-game-logic)
-      - [Leverage Pipeline and MsgHub](#leverage-pipeline-and-msghub)
-      - [Implement Werewolf Pipeline](#implement-werewolf-pipeline)
-    - [Step 5: Run the Application](#step-5-run-the-application)
-  - [Next step](#next-step)
-  - [Other Example Applications](#other-example-applications)
+Firstly, ensure that you have installed and configured AgentScope properly. Besides, we will involve the basic concepts of `Model API`,  `Agent`, `Msg`, and `Pipeline,` as described in [Tutorial-Concept](101-agentscope).
 
 **Note**: all the configurations and code for this tutorial can be found in `examples/werewolf`.
 
@@ -327,4 +315,4 @@ Now you've grasped how to conveniently set up a multi-agent application with Age
 - Example of Distributed Agents: [examples/Distributed Agents](https://github.com/modelscope/agentscope/tree/main/examples/distributed_agents/README.md)
 - ...
 
-[[Return to the top]](#crafting-your-first-application)
+[[Return to the top]](#104-usecase-en)

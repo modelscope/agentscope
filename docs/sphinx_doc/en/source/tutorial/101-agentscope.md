@@ -1,4 +1,4 @@
-(101-agentscope)=
+(101-agentscope-en)=
 
 # About AgentScope
 
@@ -18,35 +18,39 @@ In order to connect LLMs to data and services and solve complex tasks,
 AgentScope provides a series of development tools and components for ease of
 development.
 It features
- - **usability**,
- - **robustness**, and
- - **the support of multi-modal data** and
- - **distributed deployment**.
+
+- **usability**,
+- **robustness**, and
+- **the support of multi-modal data** and
+- **distributed deployment**.
 
 ## Key Concepts
 
 ### Message
+
 Message is a carrier of information (e.g. instructions, multi-modal
 data, and dialogue). In AgentScope, message is a Python dict subclass
 with `name` and `content` as necessary fields, and `url` as an optional
 field referring to additional resources.
 
 ### Agent
+
 Agent is an autonomous entity capable of interacting with environment and
 agents, and taking actions to change the environment. In AgentScope, an
 agent takes message as input and generates corresponding response message.
 
 ### Service
+
 Service refers to the functional APIs that enable agents to perform
 specific tasks. In AgentScope, services are categorized into model API
 services, which are channels to use the LLMs, and general API services,
 which provide a variety of tool functions.
 
 ### Workflow
+
 Workflow represents ordered sequences of agent executions and message
 exchanges between agents, analogous to computational graphs in TensorFlow,
 but with the flexibility to accommodate non-DAG structures.
-
 
 ## Why AgentScope?
 
@@ -67,10 +71,7 @@ introduces an actor-based distributed mechanism that enables centralized
 programming of complex distributed workflows, and automatic parallel
 optimization.
 
-
 ## How is AgentScope designed?
-
-[]()
 
 The architecture of AgentScope comprises three hierarchical layers. The
 layers provide supports for multi-agent applications from different levels,
@@ -112,4 +113,4 @@ AgentScope
 └── ... ..
 ```
 
-[[Return to the top]](#fundamental-concepts)
+[[Return to the top]](#101-agentscope)

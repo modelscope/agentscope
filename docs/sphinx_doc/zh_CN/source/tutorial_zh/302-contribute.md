@@ -67,4 +67,4 @@ git commit -m "修改内容的简要描述"
 
 等待我们审核您的Pull Request。我们可能会提供一些更改或改进建议。请留意您的GitHub通知，并对反馈做出响应。
 
-[[Return to the top]](#贡献到agentscope)
+[[Return to the top]](#302-contribute-zh)

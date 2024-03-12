@@ -1,8 +1,9 @@
-(208-distribute-zh)=
+(208-distribute-en)=
 
 # About Distribution
 
 AgentScope implements an Actor-based distributed deployment and parallel optimization, providing the following features:
+
 - **Automatic Parallel Optimization**: Automatically optimize the application for parallelism at runtime without additional optimization costs;
 - **Centralized Application Writing**: Easily orchestrate distributed application flow without distributed background knowledge;
 - **Zero-Cost Automatic Migration**: Centralized Multi-Agent applications can be easily converted to distributed mode
@@ -104,6 +105,7 @@ while x is None or x.content == "exit":
 ```
 
 - Agents are deployed in a distributed manner (Master-Slave mode):
+
 ```python
 # Create agent objects
 a = AgentA(
@@ -151,4 +153,4 @@ When the input message of the Agent is ready, the Placeholder will be replaced b
 
 About more detailed technical implementation solutions, please refer to our [paper](https://arxiv.org/abs/2402.14034).
 
-[[Back to the top]](#about-distribution)
+[[Back to the top]](#208-distribute-en)

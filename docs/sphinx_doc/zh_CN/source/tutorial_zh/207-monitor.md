@@ -2,13 +2,13 @@
 
 # 监控器
 
-在多智能体应用程序中，特别是那些依赖外部模型 API 的应用程序，监控使用情况和成本以防止过度使用并确保遵守速率限制是至关重要的。`MonitorBase ` 类及其实现 `SqliteMonitor` 提供了一种追踪和调节这些 API 在您的应用中使用情况的方法。在本教程中，您将学习如何使用它们来监控 API 调用。
+在多智能体应用程序中，特别是那些依赖外部模型 API 的应用程序，监控使用情况和成本以防止过度使用并确保遵守速率限制是至关重要的。`MonitorBase` 类及其实现 `SqliteMonitor` 提供了一种追踪和调节这些 API 在您的应用中使用情况的方法。在本教程中，您将学习如何使用它们来监控 API 调用。
 
 ## 理解 AgentScope 中的监控器
 
 `MonitorBase` 类作为一个接口，用于设置一个监控系统，跟踪各种度量指标，特别是关注 API 使用情况。它定义了一些方法，使得可以注册、检查、更新和管理与 API 调用相关的度量指标。
 
-以下是 `MonitorBase ` 的关键方法：
+以下是 `MonitorBase` 的关键方法：
 
 - **`register`**：初始化用于跟踪的度量指标，例如进行的 API 调用次数，以及可选的配额用于执行限制。
 - **`exists`**：检查是否已经跟踪了某个度量指标。
@@ -35,8 +35,8 @@
 monitor = MonitorFactory.get_monitor()
 ```
 
-> 目前上述代码返回的是 `SqliteMonitor` 实例，它在 `agentscope.init ` 中初始化。
->  `SqliteMonitor`  类是基于Sqlite3的 `MonitorBase` 类的默认实现。
+> 目前上述代码返回的是 `SqliteMonitor` 实例，它在 `agentscope.init` 中初始化。
+> `SqliteMonitor`  类是基于Sqlite3的 `MonitorBase` 类的默认实现。
 
 ### 基本使用
 
@@ -156,7 +156,7 @@ monitor.register_budget(model_name=model_name, value=10, prefix=f'model_A.{model
 monitor.register_budget(model_name=model_name, value=10, prefix=f'model_B.{model_name}')
 ```
 
-`register_budget ` 将自动注册计算总成本所需的度量指标，当这些度量指标更新时计算总成本，并在超出预算时抛出 `QuotaExceededError`。
+`register_budget` 将自动注册计算总成本所需的度量指标，当这些度量指标更新时计算总成本，并在超出预算时抛出 `QuotaExceededError`。
 
 ```python
 model_name = 'gpt-4-turbo'
@@ -167,6 +167,6 @@ except QuotaExceededError as e:
     print(e.message)
 ```
 
-> **注意：**此功能仍在实验阶段，只支持一些特定的 API，这些 API 已在 `agentscope.utils.monitor._get_pricing` 中列出。
+> **注意：** 此功能仍在实验阶段，只支持一些特定的 API，这些 API 已在 `agentscope.utils.monitor._get_pricing` 中列出。
 
-[[Return to the top]](#监控器)
+[[Return to the top]](#207-monitor-zh)

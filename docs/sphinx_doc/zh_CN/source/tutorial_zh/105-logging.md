@@ -1,6 +1,6 @@
-(105-logging-zh-zh)=
+(105-logging-zh)=
 
-# 日志（Logging）和网页端UI（WebUI）
+# 日志和WebUI
 
 本节教程主要是关于AgentScope的日志记录（logging）功能。我们会介绍如何能美观地将这些日志可视化。这个模块会帮助您更方便、清晰、有组织地跟踪智能体之间的互动和各种系统消息。
 
@@ -12,7 +12,6 @@
 - **重定向错误输出(stderr)**： 该模块自动抓取报错信息，在日志中用`ERROR`层级记录。
 - **客制化日志记录等级**： 该模块增加了一个日志记录等级`CHAT`，用来记录智能体之间的对话和互动。
 - **定制格式**：格式化日志包含了时间戳、记录等级、function名字和行号。智能体之间的对话会用不同的格式显示。
-
 
 ### 设置日志记录（Logger）
 
@@ -36,6 +35,7 @@ agentscope.init(..., logger_level="INFO")
 ```
 
 ### Logging a Chat Message
+
 ### 记录对话消息
 
 开发者可以通过记录`message`来追踪智能体之间的对话。下面是一些简单的如何记录`message`的例子例子:
@@ -64,9 +64,7 @@ logger.warning("The agent is running slower than expected.")
 logger.error("The agent encountered an unexpected error while processing a request.")
 ```
 
-
 ## 将日志与WebUI集成
-
 
 为了可视化这些日志和运行细节，AgentScope提供了一个简单的网络界面。
 
@@ -82,11 +80,9 @@ agentscope.web.init(
 )
 ```
 
-
-通过这种方式，你可以在http://127.0.0.1:5000中看到所有运行中的实例和项目，如下所示：
+通过这种方式，你可以在 `http://127.0.0.1:5000` 中看到所有运行中的实例和项目，如下所示
 
 ![webui](https://img.alicdn.com/imgextra/i3/O1CN01kpHFkn1HpeYEkn60I_!!6000000000807-0-tps-3104-1849.jpg)
-
 
 通过点击一个运行中的实例，我们可以观察到更多细节。
 
@@ -96,4 +92,4 @@ agentscope.web.init(
 
 WebUI仍在开发中。我们将在未来提供更多功能和更好的用户体验。
 
-[[返回顶部]](#日志logging和网页端uiwebui)
+[[返回顶部]](#105-logging-zh)

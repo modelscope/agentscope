@@ -2,6 +2,8 @@
 
 SPHINXBUILD   = sphinx-build
 SPHINXPROJ    = AgentScope-Doc
+ASSETSDIR     = assets
+BUILDDIR      = build/html
 SOURCEDIR_EN  = en/source
 BUILDDIR_EN   = build/html/en
 SOURCEDIR_ZH  = zh_CN/source
@@ -19,10 +21,12 @@ zh_CN:
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR_ZH)"
 
+index:
+	@cp "$(ASSETSDIR)/redirect.html" "$(BUILDDIR)"
 
 %: Makefile
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR_EN)" "$(BUILDDIR_EN)" $(O)
 
-all: en zh_CN
+all: en zh_CN index
 
-.PHONY: all en zh_CN
+.PHONY: all en zh_CN index

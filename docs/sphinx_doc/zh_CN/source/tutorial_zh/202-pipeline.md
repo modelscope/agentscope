@@ -1,6 +1,6 @@
 (202-pipeline-zh)=
 
-# 智能体间交互：深入探索Pipeline和Message Hub
+# 智能体间交互
 
 **Pipeline**和**Message Hub**主要用于描绘应用中信息的交换和传播过程，它们极大简化了Multi-Agent应用流程的编排工作。
 在本教程中，我们将详细的介绍Pipeline和Message Hub的原理和使用方式。
@@ -299,4 +299,4 @@ hub.add(new_agent)
 hub.delete(existing_agent)
 ```
 
-[[返回顶部]](#智能体间交互深入探索pipeline和message-hub)
+[[返回顶部]](#202-pipeline-zh)

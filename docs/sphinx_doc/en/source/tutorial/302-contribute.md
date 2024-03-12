@@ -1,4 +1,4 @@
-(302-contribute)=
+(302-contribute-en)=
 
 # Contributing to AgentScope
 
@@ -67,4 +67,4 @@ We will review your pull request. This process might involve some discussion, ad
 
 Wait for us to review your pull request. We may suggest some changes or improvements. Keep an eye on your GitHub notifications and be responsive to any feedback.
 
-[[Return to the top]](#contributing-to-agentScope)
+[[Return to the top]](#302-contribute-en)

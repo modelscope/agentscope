@@ -1,6 +1,6 @@
 (301-community-zh)=
 
-# 加入 AgentScope 社区
+# 加入AgentScope社区
 
 加入AgentScope社区可以让您与其他用户和开发者建立联系。您可以分享见解、提出问题、并及时了解最新的进展和有趣的Multi-Agent应用程序。以下是加入我们的方法：
 
@@ -31,4 +31,4 @@
 
 我们欢迎所有对AgentScope感兴趣的人加入我们的社区，并为平台的发展做出贡献！
 
-[[Return to the top]](#joining-the-agentscope-community)
+[[Return to the top]](#301-community-zh)

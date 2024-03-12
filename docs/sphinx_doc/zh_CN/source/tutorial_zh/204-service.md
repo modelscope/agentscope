@@ -35,6 +35,7 @@
 ## 使用Service函数
 
 AgentScope为Service函数提供了两个服务类，分别是`ServiceFactory`和`ServiceResponse`。
+
 - `ServiceFactory`的主要作用是将一般的Python函数编程大模型可以直接使用的形式，同时自动生成函数说明。
 - `ServiceResponse`是一个字典的子类，为所有Service函数提供了统一的调用结果接口。
 
@@ -130,6 +131,7 @@ def bing_search(question: str) -> ServiceResponse:
 中自动提取的，因此建议原函数的docstring应该按照Google风格进行书写，以便更好的提取函数说明。
 
 **建议**：
+
 - Service函数的名称应该是自解释的，这样智能体可以理解函数并正确使用它。
 - 在定义函数时应提供参数的类型（例如`def func(a: int, b: str, c: bool)`），以便智能体正确指定参数。
 
@@ -233,4 +235,4 @@ class YourAgent(AgentBase):
         # ... [为简洁起见省略代码]
 ```
 
-[[返回顶部]](#关于服务)
+[[返回顶部]](#204-service-zh)

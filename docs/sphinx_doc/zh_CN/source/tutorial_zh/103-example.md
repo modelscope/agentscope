@@ -1,4 +1,4 @@
-(103-start-zh)=
+(103-example-zh)=
 
 # 快速开始
 
@@ -114,4 +114,4 @@ while x is None or x.content != "exit":
 
 有关如何使用Pipeline进行复杂的智能体交互的更多细节，请参考[[Agent Interactions: Dive deeper into Pipelines and Message Hub]](202-pipeline)。
 
-[[返回顶部]](#快速开始)
+[[返回顶部]](#103-example-zh)

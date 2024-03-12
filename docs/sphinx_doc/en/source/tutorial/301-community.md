@@ -1,4 +1,4 @@
-(301-community)=
+(301-community-en)=
 
 # Joining The AgentScope Community
 
@@ -31,4 +31,4 @@ Scan the QR code below on Wechat to join:  <img width="150" src="https://img.ali
 
 We welcome everyone interested in AgentScope to join our community and contribute to the growth of the platform!
 
-[[Return to the top]](#joining-the-agentscope-community)
+[[Return to the top]](#301-community-en)

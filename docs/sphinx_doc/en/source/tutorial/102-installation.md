@@ -1,12 +1,12 @@
-(102-installation)=
+(102-installation-en)=
 
 # Installation
 
 To install AgentScope, you need to have Python 3.9 or higher installed. We recommend setting up a new virtual environment specifically for AgentScope:
 
-### Create a Virtual Environment
+## Create a Virtual Environment
 
-#### Using Conda
+### Using Conda
 
 If you're using Conda as your package and environment management tool, you can create a new virtual environment with Python 3.9 using the following commands:
 
@@ -18,7 +18,7 @@ conda create -n agentscope python=3.9
 conda activate agentscope
 ```
 
-#### Using Virtualenv
+### Using Virtualenv
 
 Alternatively, if you prefer `virtualenv`, you can install it first (if it's not already installed) and then create a new virtual environment as shown:
 
@@ -33,9 +33,9 @@ virtualenv agentscope --python=python3.9
 source agentscope/bin/activate  # On Windows use `agentscope\Scripts\activate`
 ```
 
-### Installing AgentScope
+## Installing AgentScope
 
-#### Install with Pip
+### Install with Pip
 
 If you prefer to install AgentScope from Pypi, you can do so easily using `pip`:
 
@@ -46,7 +46,7 @@ pip install agentscope
 pip install agentscope[distribute]  # On Mac use `pip install agentscope\[distribute\]`
 ```
 
-#### Install from Source
+### Install from Source
 
 For users who prefer to install AgentScope directly from the source code, follow these steps to clone the repository and install the platform in editable mode:
 
@@ -65,4 +65,4 @@ pip install -e .[distribute]  # On Mac use `pip install -e .\[distribute\]`
 
 **Note**: The `[distribute]` option installs additional dependencies required for distributed applications. Remember to activate your virtual environment before running these commands.
 
-[[Return to the top]](#installation)
+[[Return to the top]](#102-installation-en)

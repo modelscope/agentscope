@@ -4,38 +4,21 @@
 
 <img src="https://img.alicdn.com/imgextra/i3/O1CN01dFpOh82643mygUh2Z_!!6000000007607-2-tps-1024-1024.png" alt="img" style="zoom:25%;" />
 
-
 在介绍更多AgentScope的高阶内容前，我们先会给您展示如何利用AgentScope内置的功能，快速搭建一个狼人杀游戏模拟应用。
-
 
 **狼人杀**是一个广为人知的桌面游戏。游戏设定在一个虚拟世界的村庄里。村庄里有真正的村民、也有伪装成村民的狼人；每个参与者都在游戏中都有自己的角色。对于村民方而言，他们的胜利条件是在全灭之前找出并杀死所有的狼人；对于狼人方而言，胜利条件就是杀死所有的村民。狼人杀这样的游戏是一个很好的可以自动展示多个有不同目标的智能体之间如何互动。
 
 话不多说，让我们开始通过狼人杀这个游戏，解锁AgentScope多智体的应用吧！
 
-- [创造您的第一个应用](#创造您的第一个应用)
-  - [开始](#开始)
-    - [第一步: 准备模型API和设定模型配置](#第一步-准备模型api和设定模型配置)
-    - [第二步：定义每个智能体（Agent）的角色](#第二步定义每个智能体agent的角色)
-    - [第三步：初始化AgentScope和Agents](#第三步初始化agentscope和agents)
-    - [第四步：构建游戏逻辑](#第四步构建游戏逻辑)
-      - [使用 Pipeline 和 MsgHub](#使用-pipeline-和-msghub)
-      - [实现狼人杀的游戏流程](#实现狼人杀的游戏流程)
-    - [第五步：运行应用](#第五步运行应用)
-  - [下一步](#下一步)
-  - [其他样例](#其他样例)
-
 ## 开始
 
-首先，确保您已经正确安装和配置好AgentScope。除此之外，本节内容会涉及到`Model API`,  `Agent`, `Msg`和 `Pipeline`这几个概念（详情可以参考[Tutorial-Concept](101-agentscope)）。以下是本节教程内容概览。
-
-
-
+首先，确保您已经正确安装和配置好AgentScope。除此之外，本节内容会涉及到`Model API`,  `Agent`, `Msg`和 `Pipeline`这几个概念（详情可以参考[关于AgentScope](101-agentscope)）。以下是本节教程内容概览。
 
 **提示**：本教程中的所有配置和代码文件均可以在`examples/werewolf`中找到。
 
 ### 第一步: 准备模型API和设定模型配置
 
-就像我们在上一节教程中展示的，您需要为了您选择的OpenAI chat API, FastChat, 或vllm 准备一个JSON样式的模型配置文件。更多细节和高阶永达，比如用POST API配置本地模型，可以参考[Tutorial-Model-API](203-model)。
+就像我们在上一节教程中展示的，您需要为了您选择的OpenAI chat API, FastChat, 或vllm 准备一个JSON样式的模型配置文件。更多细节和高阶永达，比如用POST API配置本地模型，可以参考[关于模型](203-model)。
 
 ```json
 [
@@ -52,8 +35,6 @@
 ]
 ```
 
-
-
 ### 第二步：定义每个智能体（Agent）的角色
 
 在狼人杀游戏中，不同智能体会扮演不同角色；不同角色的智能体也有不同的能力和目标。羡慕便是我们大概归纳
@@ -62,7 +43,6 @@
 - 狼人：伪装成村民的掠夺者，目标是比村民活得更久并杀死村民们。
 - 预言家：一位拥有每晚看到一名玩家真实身份能力的村民。
 - 女巫：一位村民，每晚可以救活或毒杀一名玩家
-
 
 要实现你自己的agent，你需要继承AgentBase并实现reply函数，当通过agent1(x)调用agent实例时，将执行此函数。
 
@@ -90,17 +70,13 @@ AgentScope提供了几种开箱即用的agent实现，作为一个agent样例池
 }
 ```
 
-
 在这个配置中，Player1被指定为一个DictDialogAgent。参数包括一个系统提示（sys_prompt），它可以指导agent的行为；一个模型配置名（model_config_name），它决定了模型配置的名称；以及一个标志（use_memory），指示agent是否应该记住过去的互动。
 
-
 对于其他玩家，大家可以根据他们的角色进行定制。每个角色可能有不同的提示、模型或记忆设置。你可以参考位于AgentScope示例目录下的`examples/werewolf/configs/agent_configs.json`文件。
-
 
 ### 第三步：初始化AgentScope和Agents
 
 现在我们已经定义了角色，我们可以初始化AgentScope环境和所有agents。这个过程通过AgentScope的几行代码和我们准备的配置文件（假设有2个狼人、2个村民、1个女巫和1个预言家）就能简单完成：
-
 
 ```python
 import agentscope
@@ -121,13 +97,11 @@ roles = ["werewolf", "werewolf", "villager", "villager", "seer", "witch"]
 wolves, villagers, witch, seer = survivors[:2], survivors[2:-2], survivors[-1], survivors[-2]
 ```
 
-
 上面这段代码中，我们为我们的agent分配了角色，并将它们与决定它们行为的配置相关联。
 
 ### 第四步：构建游戏逻辑
 
 在这一步中，你将使用AgentScope的辅助工具设置游戏逻辑，并组织狼人游戏的流程。
-
 
 #### 使用 Pipeline 和 MsgHub
 
@@ -157,12 +131,9 @@ wolves, villagers, witch, seer = survivors[:2], survivors[2:-2], survivors[-1], 
         hub.add(agent4)
     ```
 
-
 #### 实现狼人杀的游戏流程
 
-
 游戏逻辑分为两个主要阶段：(1)夜晚，狼人行动；以及(2)白天，所有玩家讨论和投票。每个阶段都将通过使用pipelines来管理多agent通信的代码部分来处理。
-
 
 - **1.1 夜晚阶段：狼人讨论和投票**
 
@@ -195,9 +166,7 @@ for i in range(1, MAX_GAME_ROUND + 1):
         )
 ```
 
-
 - **1.2 女巫的回合**
-
 
 如果女巫还活着，她就有机会使用她的力量：救被狼人选中的（被杀的）玩家，或使用她的毒药去杀一位玩家。
 
@@ -219,7 +188,6 @@ for i in range(1, MAX_GAME_ROUND + 1):
                 healing = False
 ```
 
-
 - **1.3 预言家的回合**
 
 预言家有机会揭示一名玩家的真实身份。这信息对于村民方来说可能至关重要。`observe()`函数允许每个agent注意到一个消息，而不需要立即产生回复。
@@ -239,7 +207,6 @@ for i in range(1, MAX_GAME_ROUND + 1):
         seer.observe(hint)
 ```
 
-
 - **1.4 更新存活玩家**
 
 根据夜间采取的行动，程序需要更新幸存玩家的列表。
@@ -248,7 +215,6 @@ for i in range(1, MAX_GAME_ROUND + 1):
     # Update the list of survivors and werewolves after the night's events
     survivors, wolves = update_alive_players(survivors, wolves, dead_player)
 ```
-
 
 - **2.1 白天阶段：讨论和投票**
 
@@ -270,7 +236,6 @@ for i in range(1, MAX_GAME_ROUND + 1):
         survivors, wolves = update_alive_players(survivors, wolves, vote_res)
 ```
 
-
 - **2.2 检查胜利条件**
 
 每个阶段结束后，游戏会检查是狼人还是村民获胜。
@@ -281,7 +246,6 @@ for i in range(1, MAX_GAME_ROUND + 1):
             break
 ```
 
-
 - **2.3 继续到下一轮**
 
 如果狼人和村民都没有获胜，游戏将继续到下一轮。
@@ -291,21 +255,17 @@ for i in range(1, MAX_GAME_ROUND + 1):
         hub.broadcast(HostMsg(content=Prompts.to_all_continue))
 ```
 
-
 这些代码块展现了使用AgentScope的`msghub`和`pipeline`的狼人游戏的核心游戏循环，这些工具有助于轻松管理应用程序的操作逻辑。
-
 
 ### 第五步：运行应用
 
 完成了以上游戏逻辑和agent的设置，你已经可以运行狼人游戏了。通过执行`pipeline`，游戏将按预定义的阶段进行，agents
 基于它们的角色和上述编码的策略进行互动：
 
-
 ```bash
 cd examples/werewolf
 python main.py  # Assuming the pipeline is implemented in main.py
 ```
-
 
 游戏开始后，你将在终端看到类似于下面的日志输出。这些日志展示了游戏是如何展开的：
 
@@ -347,15 +307,13 @@ Moderator: The day is coming, all the players open your eyes. Last night is peac
 
 ## 下一步
 
-
 现在你已经掌握了如何使用AgentScope方便地设置多agent应用程序。您可以随意修改游戏，包括引入额外的角色或者引入更复杂的策略。如果你想更深入地探索AgentScope的更多功能，比如agent使用的内存管理和服务函数，请参考高级探索部分的教程并查阅API参考。
 
 ## 其他样例
-
 
 - 简单群聊样例: [examples/Simple Conversation](https://github.com/modelscope/agentscope/tree/main/examples/simple_chat/README.md)
 - 狼人杀样例[examples/Werewolves](https://github.com/modelscope/agentscope/tree/main/examples/werewolves/README.md)
 - 分布式agents样例[examples/Distributed Agents](https://github.com/modelscope/agentscope/tree/main/examples/distributed_agents/README.md)
 - ...
 
-[[返回顶部]](#创造您的第一个应用)
+[[返回顶部]](#104-usecase-zh)

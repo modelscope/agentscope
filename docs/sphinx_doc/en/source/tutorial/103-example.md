@@ -1,4 +1,4 @@
-(103-start)=
+(103-start-en)=
 
 # Quick Start
 
@@ -14,7 +14,7 @@ AgentScope decouples the deployment and invocation of models to better build mul
 In terms of model deployment, users can use third-party model services such
 as OpenAI API, HuggingFace/ModelScope Inference API, and can also quickly
 deploy local open-source model services through the [scripts]
-(https://github.com/modelscope/agentscope/blob/main/scripts/README.md) in
+(<https://github.com/modelscope/agentscope/blob/main/scripts/README.md>) in
 the repository. Currently, we support building basic model services quickly
 using Flask with Transformers (or ModelScope), and also support deploying
 local model services through FastChat and vllm inference engines.
@@ -22,7 +22,6 @@ local model services through FastChat and vllm inference engines.
 While in terms of model invocation, AgentScope provides a `ModelWrapper` class to encapsulate OpenAI API and RESTful Post Request calls.
 Currently, the supported OpenAI APIs include Chat, Image generation, and Embedding.
 Users can specify the model service by setting different model configs.
-
 
 |   Model Usage               | Supported APIs                                                              |
 | --------------------------- |-----------------------------------------------------------------------------|
@@ -43,7 +42,7 @@ model_config = {
 }
 ```
 
-For open-source models, we support integration with various model interfaces such as HuggingFace, ModelScope, FastChat, and vllm. You can find scripts on deploying these services in the `scripts` directory, and we defer the detailed instructions to [[Using Different Model Sources with Model API]](203-model).
+For open-source models, we support integration with various model interfaces such as HuggingFace, ModelScope, FastChat, and vllm. You can find scripts on deploying these services in the `scripts` directory, and we defer the detailed instructions to [[Using Different Model Sources with Model API]](#203-model).
 
 You can register your configuration by calling AgentScope's initialization method as follow. Besides, you can also load more than one config by calling init multiple times.
 
@@ -115,4 +114,4 @@ while x is None or x.content != "exit":
 
 For more details about how to utilize pipelines for complex agent interactions, please refer to [[Agent Interactions: Dive deeper into Pipelines and Message Hub]](202-pipeline).
 
-[[Return to the top]](#getting-started-with-a-simple-example)
+[[Return to the top]](#103-start-en)

@@ -1,6 +1,6 @@
 (203-model-zh)=
 
-# 模型服务
+# 关于模型
 
 AgentScope中，模型的部署和调用是通过`ModelWrapper`来解耦开的，开发者可以通过提供模型
 配置（Model config）的方式指定模型，同时AgentScope也提供脚本支持开发者自定义模型服务。
@@ -8,6 +8,7 @@ AgentScope中，模型的部署和调用是通过`ModelWrapper`来解耦开的�
 ## 支持模型
 
 目前，AgentScope内置以下模型服务API的支持：
+
 - OpenAI API，包括对话（Chat），图片生成（DALL-E)和文本嵌入（Embedding）。
 - Post请求API，基于Post请求实现的模型推理服务，包括Huggingface/ModelScope
   Inference API和各种符合Post请求格式的API。
@@ -94,7 +95,6 @@ API如下：
 | 文本嵌入   | `openai_embedding` | `OpenAIEmbeddingWrapper` | 用于文本嵌入的 API                                                |
 | POST请求 | `post_api`         | `PostAPIModelWrapperBase` | Huggingface/ModelScope inference API 和自定义的post request API |
 
-
 #### 详细参数
 
 根据`ModelWrapper`的不同，详细参数中所包含的参数不同。
@@ -150,9 +150,10 @@ API如下：
 ## 从零搭建模型服务
 
 针对需要自己搭建模型服务的开发者，AgentScope提供了一些脚本来帮助开发者快速搭建模型服务。您可以在[scripts]
-(https://github.com/modelscope/agentscope/tree/main/scripts)目录下找到这些脚本以及说明。
+(<https://github.com/modelscope/agentscope/tree/main/scripts)目录下找到这些脚本以及说明。>
 
 具体而言，AgentScope提供了以下模型服务的脚本：
+
 - 基于Flask + HuggingFace的模型服务
 - 基于Flask + ModelScope的模型服务
 - FastChat推理引擎
@@ -206,5 +207,4 @@ python flask_transformers/setup_hf_service.py
 
 在这种模型服务中，来自 post 请求的消息应该是 **STRING** 格式。您可以使用来自 *transformers* 的[聊天模型模板](https://huggingface.co/docs/transformers/main/chat_templating)，只需在[`./flask_transformers/setup_hf_service.py`](https://github.com/modelscope/agentscope/blob/main/scripts/flask_transformers/setup_hf_service.py)做一点修改即可。
 
-
-[[返回顶部]](#模型服务)
+[[返回顶部]](#203-model-zh)

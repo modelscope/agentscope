@@ -1,4 +1,4 @@
-(206-prompt)=
+(206-prompt-en)=
 
 # Prompt Engine
 
@@ -70,4 +70,4 @@ hint_prompt = "Find the weather in {location}."
 prompt = engine.join(system_prompt, user_input, hint_prompt, format_map=variables)
 ```
 
-[[Return to the top]](#prompt-engine)
+[[Return to the top]](#206-prompt-en)
