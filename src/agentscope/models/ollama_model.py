@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for Ollama models."""
-from typing import Sequence, Any
+from typing import Sequence, Any, Optional
 
 from loguru import logger
 
@@ -93,6 +93,8 @@ class OllamaChatWrapper(OllamaWrapperBase):
     def __call__(
         self,
         messages: Sequence[dict],
+        options: Optional[dict] = None,
+        keep_alive: Optional[str] = None,
         **kwargs: Any,
     ) -> ModelResponse:
         """Generate response from the given messages.
@@ -101,6 +103,15 @@ class OllamaChatWrapper(OllamaWrapperBase):
             messages (`Sequence[dict]`):
                 A list of messages, each message is a dict contains the `role`
                 and `content` of the message.
+            options (`dict`, default `None`):
+                The extra arguments used in ollama chat API, which takes
+                effect only on this call, and will be merged with the
+                `options` input in the constructor,
+                e.g. `{"temperature": 0., "seed": 123}`.
+            keep_alive (`str`, default `None`):
+                How long the model will stay loaded into memory following
+                the request, which takes effect only on this call, and will
+                override the `keep_alive` input in the constructor.
 
         Returns:
             `ModelResponse`:
@@ -108,13 +119,12 @@ class OllamaChatWrapper(OllamaWrapperBase):
                 `raw` field.
         """
         # step1: prepare parameters accordingly
-        if "options" in kwargs:
-            # merge the options
-            options = {**self.options, **kwargs["options"]}
-        else:
+        if options is None:
             options = self.options
+        else:
+            options = {**self.options, **options}
 
-        keep_alive = kwargs.get("keep_alive", self.keep_alive)
+        keep_alive = keep_alive or self.keep_alive
 
         # step2: forward to generate response
         response = ollama.chat(
@@ -187,6 +197,8 @@ class OllamaEmbeddingWrapper(OllamaWrapperBase):
     def __call__(
         self,
         prompt: str,
+        options: Optional[dict] = None,
+        keep_alive: Optional[str] = None,
         **kwargs: Any,
     ) -> ModelResponse:
         """Generate embedding from the given prompt.
@@ -195,8 +207,14 @@ class OllamaEmbeddingWrapper(OllamaWrapperBase):
             prompt (`str`):
                 The prompt to generate response.
             options (`dict`, default `None`):
-                The extra keyword arguments used in Ollama api generation,
+                The extra arguments used in ollama embedding API, which takes
+                effect only on this call, and will be merged with the
+                `options` input in the constructor,
                 e.g. `{"temperature": 0., "seed": 123}`.
+            keep_alive (`str`, default `None`):
+                How long the model will stay loaded into memory following
+                the request, which takes effect only on this call, and will
+                override the `keep_alive` input in the constructor.
 
         Returns:
             `ModelResponse`:
@@ -204,13 +222,12 @@ class OllamaEmbeddingWrapper(OllamaWrapperBase):
                 response in `raw` field.
         """
         # step1: prepare parameters accordingly
-        if "options" in kwargs:
-            # merge the options
-            options = {**self.options, **kwargs["options"]}
-        else:
+        if options is None:
             options = self.options
+        else:
+            options = {**self.options, **options}
 
-        keep_alive = kwargs.get("keep_alive", self.keep_alive)
+        keep_alive = keep_alive or self.keep_alive
 
         # step2: forward to generate response
         response = ollama.embeddings(
@@ -260,14 +277,29 @@ class OllamaEmbeddingWrapper(OllamaWrapperBase):
 class OllamaGenerationWrapper(OllamaWrapperBase):
     """The model wrapper for Ollama generation API."""
 
-    model_type: str = "ollama_generation"
+    model_type: str = "ollama_generate"
 
-    def __call__(self, prompt: str, **kwargs: Any) -> ModelResponse:
+    def __call__(
+        self,
+        prompt: str,
+        options: Optional[dict] = None,
+        keep_alive: Optional[str] = None,
+        **kwargs: Any
+    ) -> ModelResponse:
         """Generate response from the given prompt.
 
         Args:
             prompt (`str`):
                 The prompt to generate response.
+            options (`dict`, default `None`):
+                The extra arguments used in ollama generation API, which takes
+                effect only on this call, and will be merged with the
+                `options` input in the constructor,
+                e.g. `{"temperature": 0., "seed": 123}`.
+            keep_alive (`str`, default `None`):
+                How long the model will stay loaded into memory following
+                the request, which takes effect only on this call, and will
+                override the `keep_alive` input in the constructor.
 
         Returns:
             `ModelResponse`:
@@ -276,13 +308,12 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
 
         """
         # step1: prepare parameters accordingly
-        if "options" in kwargs:
-            # merge the options
-            options = {**self.options, **kwargs["options"]}
-        else:
+        if options is None:
             options = self.options
+        else:
+            options = {**self.options, **options}
 
-        keep_alive = kwargs.get("keep_alive", self.keep_alive)
+        keep_alive = keep_alive or self.keep_alive
 
         # step2: forward to generate response
         response = ollama.generate(
