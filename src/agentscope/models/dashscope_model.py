@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for DashScope models"""
 from http import HTTPStatus
-from typing import Any
+from typing import Any, Union
 
 try:
     import dashscope
@@ -12,6 +12,7 @@ from loguru import logger
 
 from .model import ModelWrapperBase, ModelResponse
 
+from ..file_manager import file_manager
 from ..utils.monitor import MonitorFactory
 from ..utils.monitor import get_full_name
 from ..constants import _DEFAULT_API_BUDGET
@@ -19,7 +20,12 @@ from ..constants import _DEFAULT_API_BUDGET
 # The models in this list require that the roles of messages must alternate
 # between "user" and "assistant".
 # TODO: add more models
-SPECIAL_MODEL_LIST = ["qwen-turbo", "qwen-plus", "qwen1.5-72b-chat"]
+SPECIAL_MODEL_LIST = [
+    "qwen-turbo",
+    "qwen-plus",
+    "qwen1.5-72b-chat",
+    "qwen-max",
+]
 
 
 class DashScopeWrapper(ModelWrapperBase):
@@ -190,45 +196,27 @@ class DashScopeChatWrapper(DashScopeWrapper):
             **kwargs,
         )
 
-        if response.status_code == 400:
-            logger.warning(
-                "Initial API call failed with status 400. Attempting role "
-                "preprocessing and retrying. You'd better do it yourself in "
-                "the prompt engineering to satisfy the model call rule.",
-            )
-            # TODO: remove this and leave prompt engineering to user
-            messages = self._preprocess_role(messages)
-            # Retry the API call
-            response = dashscope.Generation.call(
-                model=self.model,
-                messages=messages,
-                result_format="message",
-                # set the result to be "message" format.
-                **kwargs,
-            )
-
-        # step4: record the api invocation if needed
-        self._save_model_invocation(
-            arguments={
-                "model": self.model,
-                "messages": messages,
-                **kwargs,
-            },
-            json_response=response,
-        )
-
-        # TODO: Add monitor for DashScope?
-        # step5: update monitor accordingly
-        # try:
-        #     self.monitor.update(
-        #         response.usage,
-        #         prefix=self.model,
-        #     )
-        # except QuotaExceededError as e:
-        #     logger.error(e.message)
-
-        # step6: return response
         if response.status_code == HTTPStatus.OK:
+            # step4: record the api invocation if needed
+            self._save_model_invocation(
+                arguments={
+                    "model": self.model,
+                    "messages": messages,
+                    **kwargs,
+                },
+                json_response=response,
+            )
+
+            # step5: update monitor accordingly
+            try:
+                self.monitor.update(
+                    response.usage,
+                    prefix=self.model,
+                )
+            except Exception as e:
+                logger.error(e)
+
+            # step6: return response
             return ModelResponse(
                 text=response.output["choices"][0]["message"]["content"],
                 raw=response,
@@ -242,3 +230,182 @@ class DashScopeChatWrapper(DashScopeWrapper):
             )
 
             raise RuntimeError(error_msg)
+
+    class DashScopeWanxWrapper(DashScopeWrapper):
+        """The model wrapper for DashScope's wanx API."""
+
+        model_type: str = "dashscope_wanx"
+
+        def _register_default_metrics(self) -> None:
+            # Set monitor accordingly
+            # TODO: set quota to the following metrics
+            self.monitor = MonitorFactory.get_monitor()
+            self.monitor.register(
+                self._metric("image_count"),
+                metric_unit="image",
+            )
+
+        def __call__(
+            self,
+            prompt: str,
+            save_local: bool = False,
+            **kwargs: Any,
+        ) -> ModelResponse:
+            """
+             Args:
+                 prompt (`str`):
+                     The prompt string to generate images from.
+                 save_local: (`bool`, default `False`):
+                     Whether to save the generated images locally, and replace
+                     the returned image url with the local path.
+                 **kwargs (`Any`):
+                     The keyword arguments to DashScope image generation API,
+                     e.g. `n`, `size`, etc. Please refer to
+                     https://help.aliyun.com/zh/dashscope/developer-reference/api-details-9?spm=a2c4g.11186623.0.0.4c1e7e1cs7Lv0A
+            for more detailed arguments.
+
+             Returns:
+                 `ModelResponse`:
+                     A list of image urls in image_urls field and the
+                     raw response in raw field.
+
+             Note:
+                 `parse_func`, `fault_handler` and `max_retries` are
+                 reserved for `_response_parse_decorator` to parse and check
+                 the response generated by model wrapper. Their usages are
+                 listed as follows:
+                     - `parse_func` is a callable function used to parse and
+                     check the response generated by the model, which takes
+                     the response as input.
+                     - `max_retries` is the maximum number of retries when the
+                     `parse_func` raise an exception.
+                     - `fault_handler` is a callable function which is called
+                     when the response generated by the model is invalid after
+                     `max_retries` retries.
+            """
+            # step1: prepare keyword arguments
+            kwargs = {**self.generate_args, **kwargs}
+
+            # step2: forward to generate response
+            response = dashscope.ImageSynthesis.call(
+                model=self.model,
+                prompt=prompt,
+                n=1,
+                **kwargs,
+            )
+            if response.status_code != HTTPStatus.OK:
+                err_msg = (
+                    f"Failed, status_code: {response.status_code}, "
+                    f"code: {response.code}, "
+                    f"message: {response.message}"
+                )
+                raise RuntimeError(err_msg)
+
+            print("response", response)
+            # step3: record the model api invocation if needed
+            self._save_model_invocation(
+                arguments={
+                    "model": self.model,
+                    "prompt": prompt,
+                    **kwargs,
+                },
+                json_response=response,
+            )
+
+            # step4: return response
+            raw_response = response
+            images = raw_response["output"]["results"]
+            # Get image urls as a list
+            urls = [_["url"] for _ in images]
+
+            if save_local:
+                # Return local url if save_local is True
+                urls = [file_manager.save_image(_) for _ in urls]
+            return ModelResponse(image_urls=urls, raw=raw_response)
+
+    class DashScopeEmbeddingWrapper(DashScopeWrapper):
+        """The model wrapper for DashScope embedding API."""
+
+        model_type: str = "dashscope_embedding"
+
+        def _register_default_metrics(self) -> None:
+            # Set monitor accordingly
+            # TODO: set quota to the following metrics
+            self.monitor = MonitorFactory.get_monitor()
+            self.monitor.register(
+                self._metric("total_tokens"),
+                metric_unit="token",
+            )
+
+        def __call__(
+            self,
+            texts: Union[list[str], str],
+            **kwargs: Any,
+        ) -> ModelResponse:
+            """Embed the messages with DashScope embedding API.
+
+            Args:
+                texts (`list[str]` or `str`):
+                    The messages used to embed.
+                **kwargs (`Any`):
+                    The keyword arguments to DashScope embedding API,
+                    e.g. `encoding_format`, `user`. Please refer to
+                    https://help.aliyun.com/zh/dashscope/developer-reference/api-details-15?spm=a2c4g.11186623.0.0.7a962a9d0tN89b
+                    for more detailed arguments.
+
+            Returns:
+                `ModelResponse`:
+                    A list of embeddings in embedding field and the
+                    raw response in raw field.
+
+            Note:
+                `parse_func`, `fault_handler` and `max_retries` are
+                reserved for `_response_parse_decorator` to parse and check
+                the response generated by model wrapper. Their usages are
+                listed as follows:
+                    - `parse_func` is a callable function used to parse and
+                    check the response generated by the model, which takes
+                    the response as input.
+                    - `max_retries` is the maximum number of retries when the
+                    `parse_func` raise an exception.
+                    - `fault_handler` is a callable function which is called
+                    when the response generated by the model is invalid after
+                    `max_retries` retries.
+            """
+            # step1: prepare keyword arguments
+            kwargs = {**self.generate_args, **kwargs}
+
+            # step2: forward to generate response
+            response = dashscope.TextEmbedding.call(
+                input=texts,
+                model=self.model,
+                **kwargs,
+            )
+
+            if response.status_code != HTTPStatus.OK:
+                raise RuntimeError(response)
+            # step3: record the model api invocation if needed
+            self._save_model_invocation(
+                arguments={
+                    "model": self.model,
+                    "input": texts,
+                    **kwargs,
+                },
+                json_response=response,
+            )
+
+            # step4: return response
+            response_json = response
+            if len(response_json["output"]["embeddings"]) == 0:
+                return ModelResponse(
+                    embedding=response_json["output"]["embedding"][0],
+                    raw=response_json,
+                )
+            else:
+                return ModelResponse(
+                    embedding=[
+                        _["embedding"]
+                        for _ in response_json["output"]["embeddings"]
+                    ],
+                    raw=response_json,
+                )
