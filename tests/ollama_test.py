@@ -83,7 +83,7 @@ class OllamaModelWrapperTest(unittest.TestCase):
             "eval_count": 9,
             "eval_duration": 223689000,
         }
-        self.tmp = MonitorFactory._instance
+        self.tmp = MonitorFactory._instance  # pylint: disable=W0212
         MonitorFactory._instance = None  # pylint: disable=W0212
         self.db_path = f"test-{uuid.uuid4()}.db"
         _ = MonitorFactory.get_monitor(db_path=self.db_path)
@@ -160,7 +160,7 @@ class OllamaModelWrapperTest(unittest.TestCase):
 
     def tearDown(self) -> None:
         """Clean up after each test."""
-        MonitorFactory._instance = self.tmp
+        MonitorFactory._instance = self.tmp  # pylint: disable=W0212
         os.remove(self.db_path)
 
 
