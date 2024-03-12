@@ -39,6 +39,8 @@ __all__ = [
     "clear_model_configs",
     "DashScopeWrapper",
     "DashScopeChatWrapper",
+    "DashScopeWanxWrapper",
+    "DashScopeEmbeddingWrapper",
 ]
 
 _MODEL_CONFIGS: dict[str, dict] = {}
