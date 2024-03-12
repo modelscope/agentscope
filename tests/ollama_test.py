@@ -156,7 +156,7 @@ class OllamaModelWrapperTest(unittest.TestCase):
 
         self.assertEqual(response.raw, self.dummy_generate)
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clean up after each test."""
         if os.path.exists("./runs"):
             shutil.rmtree("./runs")
