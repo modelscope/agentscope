@@ -17,16 +17,6 @@ from ..utils.monitor import MonitorFactory
 from ..utils.monitor import get_full_name
 from ..constants import _DEFAULT_API_BUDGET
 
-# The models in this list require that the roles of messages must alternate
-# between "user" and "assistant".
-# TODO: add more models
-SPECIAL_MODEL_LIST = [
-    "qwen-turbo",
-    "qwen-plus",
-    "qwen1.5-72b-chat",
-    "qwen-max",
-]
-
 
 class DashScopeWrapper(ModelWrapperBase):
     """The model wrapper for DashScope API."""
