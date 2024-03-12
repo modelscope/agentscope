@@ -20,6 +20,8 @@ from .openai_model import (
 from .dashscope_model import (
     DashScopeWrapper,
     DashScopeChatWrapper,
+    DashScopeWanxWrapper,
+    DashScopeEmbeddingWrapper,
 )
 
 
