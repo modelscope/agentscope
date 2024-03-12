@@ -44,12 +44,13 @@ minimal_requires = [
     "tiktoken",
     "Pillow",
     "requests",
-    "openai>=1.3.0",
     "numpy",
     "Flask==3.0.0",
     "Flask-Cors==4.0.0",
     "Flask-SocketIO==5.3.6",
     "dashscope==1.14.1",
+    "openai>=1.3.0",
+    "google-generativeai>=0.4.0",
 ]
 
 distribute_requires = minimal_requires + rpc_requires
