@@ -21,6 +21,11 @@ from .tongyi_model import (
     TongyiWrapper,
     TongyiChatWrapper,
 )
+from ollama_model import (
+    OllamaChatWrapper,
+    OllamaEmbeddingWrapper,
+    OllamaGenerationWrapper,
+)
 
 
 __all__ = [
@@ -37,6 +42,9 @@ __all__ = [
     "clear_model_configs",
     "TongyiWrapper",
     "TongyiChatWrapper",
+    "OllamaChatWrapper",
+    "OllamaEmbeddingWrapper",
+    "OllamaGenerationWrapper",
 ]
 
 _MODEL_CONFIGS: dict[str, dict] = {}
