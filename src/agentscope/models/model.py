@@ -114,7 +114,7 @@ class ModelResponse:
             "image_urls": self.image_urls,
             "raw": self.raw,
         }
-        return json.dumps(serialized_fields, indent=4)
+        return json.dumps(serialized_fields, indent=4, ensure_ascii=False)
 
 
 def _response_parse_decorator(
@@ -223,7 +223,10 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
         """
         self.config_name = config_name
         logger.info(f"Initialize model [{config_name}]")
-        logger.debug(f"[{config_name}]:\n {json.dumps(kwargs, indent=2)}")
+        logger.debug(
+            f"[{config_name}]:\n"
+            f"{json.dumps(kwargs, indent=2, ensure_ascii=False)}"
+        )
 
     def __call__(self, *args: Any, **kwargs: Any) -> ModelResponse:
         """Processing input with the model."""
