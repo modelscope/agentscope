@@ -12,6 +12,7 @@ from agentscope.msghub import msghub
 from agentscope.utils.common import timer
 
 USER_TIME_TO_SPEAK = 10
+DEFAULT_TOPIC = "This is a chat room and you can speak freely."
 
 
 def main() -> None:
@@ -27,7 +28,7 @@ def main() -> None:
 
     hint = Msg(
         name="Host",
-        content="This is a chat room and you can speak freely.",
+        content=DEFAULT_TOPIC,
     )
 
     rnd = 0
