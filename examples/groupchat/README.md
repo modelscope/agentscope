@@ -50,7 +50,7 @@ The `USER_TIME_TO_SPEAK` variable sets the time limit (in seconds) for the user 
 For example, to change the time limit to 20 seconds, update the line in `main.py` as follows:
 
 ```
-1USER_TIME_TO_SPEAK = 20  # User has 20 seconds to type their message
+USER_TIME_TO_SPEAK = 20  # User has 20 seconds to type their message
 ```
 
 ### Setting a Default Topic for the Chat Room
