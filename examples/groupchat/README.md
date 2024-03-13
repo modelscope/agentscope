@@ -20,7 +20,7 @@ To start the group conversation, follow these steps:
 ```bash
 python main.py
 
-# or launch webui
+# or launch agentscope studio
 as_studio main.py
 ```
 
@@ -34,10 +34,11 @@ The conversation takes place in a simulated chat room environment with roles def
 ### Example Interaction
 
 ```
-User: Hi, everyone! I'm excited to join this chat.
+User input: Hi, everyone! I'm excited to join this chat.
 AgentA: Welcome! We're glad to have you here.
-User: @AgentB, what do you think about the new technology trends?
+User input: @AgentB, what do you think about the new technology trends?
 AgentB: It's an exciting time for tech! There are so many innovations on the horizon.
+...
 ```
 
 ## Customization Options
