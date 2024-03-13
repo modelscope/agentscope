@@ -5,7 +5,7 @@ from typing import Any, Union
 
 try:
     import dashscope
-except ImportError:
+except ModuleNotFoundError:
     dashscope = None
 
 from loguru import logger
@@ -111,11 +111,11 @@ class DashScopeChatWrapper(DashScopeWrapper):
         # TODO: set quota to the following metrics
         self.monitor = MonitorFactory.get_monitor()
         self.monitor.register(
-            self._metric("input_tokens"),
+            self._metric("prompt_tokens"),
             metric_unit="token",
         )
         self.monitor.register(
-            self._metric("output_tokens"),
+            self._metric("completion_tokens"),
             metric_unit="token",
         )
         self.monitor.register(
@@ -146,7 +146,7 @@ class DashScopeChatWrapper(DashScopeWrapper):
                 The keyword arguments to DashScope chat completions API,
                 e.g. `temperature`, `max_tokens`, `top_p`, etc. Please
                 refer to
-                https://help.aliyun.com/zh/dashscope/developer-reference/api-details?spm=a2c4g.11186623.0.0.35e912b0W9wMv7
+                https://help.aliyun.com/zh/dashscope/developer-reference/api-details
                 for more detailed arguments.
 
         Returns:
@@ -168,7 +168,7 @@ class DashScopeChatWrapper(DashScopeWrapper):
                 `max_retries` retries.
             The rule of roles in messages for DashScope is very rigid,
             for more details, please refer to
-            https://help.aliyun.com/zh/dashscope/developer-reference/api-details?spm=a2c4g.11186623.0.0.35e912b0W9wMv7
+            https://help.aliyun.com/zh/dashscope/developer-reference/api-details
         """
 
         # step1: prepare keyword arguments
@@ -212,7 +212,11 @@ class DashScopeChatWrapper(DashScopeWrapper):
         # step5: update monitor accordingly
         try:
             self.monitor.update(
-                response.usage,
+                {
+                    "prompt_tokens": response.usage["input_tokens"],
+                    "completion_tokens": response.usage["output_tokens"],
+                    "total_tokens": response.usage["total_tokens"],
+                },
                 prefix=self.model,
             )
         except Exception as e:
@@ -255,7 +259,7 @@ class DashScopeWanxWrapper(DashScopeWrapper):
              **kwargs (`Any`):
                  The keyword arguments to DashScope image generation API,
                  e.g. `n`, `size`, etc. Please refer to
-                 https://help.aliyun.com/zh/dashscope/developer-reference/api-details-9?spm=a2c4g.11186623.0.0.4c1e7e1cs7Lv0A
+                 https://help.aliyun.com/zh/dashscope/developer-reference/api-details-9
         for more detailed arguments.
 
          Returns:
@@ -352,7 +356,7 @@ class DashScopeEmbeddingWrapper(DashScopeWrapper):
             **kwargs (`Any`):
                 The keyword arguments to DashScope embedding API,
                 e.g. `text_type`. Please refer to
-                https://help.aliyun.com/zh/dashscope/developer-reference/api-details-15?spm=a2c4g.11186623.0.0.7a962a9d0tN89b
+                https://help.aliyun.com/zh/dashscope/developer-reference/api-details-15
                 for more detailed arguments.
 
         Returns:
