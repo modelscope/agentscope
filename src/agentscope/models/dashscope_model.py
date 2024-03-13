@@ -333,7 +333,7 @@ class DashScopeImageSynthesisWrapper(DashScopeWrapper):
 class DashScopeTextEmbeddingWrapper(DashScopeWrapper):
     """The model wrapper for DashScope Text Embedding API."""
 
-    model_type: str = "dashscope_embedding"
+    model_type: str = "dashscope_text_embedding"
 
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
