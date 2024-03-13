@@ -232,7 +232,7 @@ class DashScopeChatWrapper(DashScopeWrapper):
 class DashScopeImageSynthesisWrapper(DashScopeWrapper):
     """The model wrapper for DashScope Image Synthesis API."""
 
-    model_type: str = "dashscope_imagesynthesis"
+    model_type: str = "dashscope_image_synthesis"
 
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
@@ -333,7 +333,7 @@ class DashScopeImageSynthesisWrapper(DashScopeWrapper):
 class DashScopeTextEmbeddingWrapper(DashScopeWrapper):
     """The model wrapper for DashScope Text Embedding API."""
 
-    model_type: str = "dashscope_textembedding"
+    model_type: str = "dashscope_embedding"
 
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
