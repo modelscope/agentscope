@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """ A group chat where user can talk any time implemented by agentscope. """
+from loguru import logger
 from groupchat_utils import (
     select_next_one,
     filter_names,
@@ -9,7 +10,6 @@ import agentscope
 from agentscope.agents import UserAgent
 from agentscope.message import Msg
 from agentscope.msghub import msghub
-from agentscope.utils.common import timer
 
 USER_TIME_TO_SPEAK = 10
 DEFAULT_TOPIC = "This is a chat room and you can speak freely."
@@ -36,13 +36,15 @@ def main() -> None:
     with msghub(agents, announcement=hint):
         while True:
             try:
-                with timer(USER_TIME_TO_SPEAK):
-                    x = user()
-                    if x.content == "exit":
-                        break
+                x = user(timeout=USER_TIME_TO_SPEAK)
+                if x.content == "exit":
+                    break
             except TimeoutError:
                 x = {"content": ""}
-                print("\n")
+                logger.info(
+                    f"User has not typed text for "
+                    f"{USER_TIME_TO_SPEAK} seconds, skip.",
+                )
 
             speak_list += filter_names(x.get("content", ""), npc_agents)
 

@@ -5,6 +5,7 @@ import threading
 from typing import Optional
 import hashlib
 from multiprocessing import Queue
+from queue import Empty
 from collections import defaultdict
 
 from PIL import Image
@@ -91,12 +92,20 @@ def send_player_input(msg: str, uid: Optional[str] = None) -> None:
 
 
 def get_player_input(
+    timeout: Optional[int] = None,
     uid: Optional[str] = None,
 ) -> str:
     """Gets player input from the web UI or command line."""
     global glb_uid_dict
     glb_queue_user_input = glb_uid_dict[uid]["glb_queue_user_input"]
-    content = glb_queue_user_input.get(block=True)[1]
+
+    if timeout:
+        try:
+            content = glb_queue_user_input.get(block=True, timeout=timeout)[1]
+        except Empty as error:
+            raise TimeoutError("timed out") from error
+    else:
+        content = glb_queue_user_input.get(block=True)[1]
     if content == "**Reset**":
         glb_uid_dict[uid] = init_uid_queues()
         raise ResetException
@@ -180,12 +189,21 @@ def audio2text(audio_path: str) -> str:
     return " ".join([s["text"] for s in result["output"]["sentence"]])
 
 
-def user_input() -> str:
+def user_input(timeout: Optional[int] = None) -> str:
     """get user input"""
     if hasattr(thread_local_data, "uid"):
         content = get_player_input(
+            timeout=timeout,
             uid=thread_local_data.uid,
         )
     else:
-        content = input("User input: ")
+        if timeout:
+            from inputimeout import inputimeout, TimeoutOccurred
+
+            try:
+                content = inputimeout("User input: ", timeout=timeout)
+            except TimeoutOccurred as error:
+                raise TimeoutError("timed out") from error
+        else:
+            content = input("User input: ")
     return content
