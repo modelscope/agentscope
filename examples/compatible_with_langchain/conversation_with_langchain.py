@@ -11,6 +11,7 @@ from langchain.chains import LLMChain
 
 import agentscope
 from agentscope.agents import AgentBase
+from agentscope.agents import UserAgent
 from agentscope.message import Msg
 
 
@@ -37,7 +38,7 @@ class LangChainAgent(AgentBase):
 
         prompt = PromptTemplate(
             input_variables=["chat_history", "human_input"],
-            template=template
+            template=template,
         )
 
         llm = OpenAI(openai_api_key=os.environ["OPENAI_API_KEY"])
@@ -47,16 +48,15 @@ class LangChainAgent(AgentBase):
             llm=llm,
             prompt=prompt,
             verbose=False,
-            memory=memory
+            memory=memory,
         )
         # [END] BY LANGCHAIN
 
-    def reply(self, msg: Optional[Msg] = None) -> Msg:
-
+    def reply(self, x: Optional[dict] = None) -> Msg:
         # [START] BY LANGCHAIN
 
         # Generate response
-        response_str = self.llm_chain.predict(human_input=msg.content)
+        response_str = self.llm_chain.predict(human_input=x.content)
 
         # [END] BY LANGCHAIN
 
@@ -72,15 +72,14 @@ agentscope.init()
 # Create an instance of the langchain agent
 agent = LangChainAgent(name="Assistant")
 
-# Import a user agent from AgentScope
-from agentscope.agents import UserAgent
+# Create a user agent from AgentScope
 user = UserAgent("User")
 
-x = None
+msg = None
 while True:
     # User input
-    x = user(x)
-    if x.content == "exit":
+    msg = user(msg)
+    if msg.content == "exit":
         break
     # Agent speaks
-    x = agent(x)
+    msg = agent(msg)
