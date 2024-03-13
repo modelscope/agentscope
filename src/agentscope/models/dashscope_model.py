@@ -191,7 +191,7 @@ class DashScopeChatWrapper(DashScopeWrapper):
 
         if response.status_code != HTTPStatus.OK:
             error_msg = (
-                f"Request id: {response.request_id},"
+                f" Request id: {response.request_id},"
                 f" Status code: {response.status_code},"
                 f" error code: {response.code},"
                 f" error message: {response.message}."
@@ -292,12 +292,13 @@ class DashScopeImageSynthesisWrapper(DashScopeWrapper):
             **kwargs,
         )
         if response.status_code != HTTPStatus.OK:
-            err_msg = (
-                f"Failed, status_code: {response.status_code}, "
-                f"code: {response.code}, "
-                f"message: {response.message}"
+            error_msg = (
+                f" Request id: {response.request_id},"
+                f" Status code: {response.status_code},"
+                f" error code: {response.code},"
+                f" error message: {response.message}."
             )
-            raise RuntimeError(err_msg)
+            raise RuntimeError(error_msg)
 
         # step3: record the model api invocation if needed
         self._save_model_invocation(
@@ -388,7 +389,13 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapper):
         )
 
         if response.status_code != HTTPStatus.OK:
-            raise RuntimeError(response)
+            error_msg = (
+                f" Request id: {response.request_id},"
+                f" Status code: {response.status_code},"
+                f" error code: {response.code},"
+                f" error message: {response.message}."
+            )
+            raise RuntimeError(error_msg)
 
         # step3: record the model api invocation if needed
         self._save_model_invocation(
