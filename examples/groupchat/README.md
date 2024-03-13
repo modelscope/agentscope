@@ -63,16 +63,16 @@ The `DEFAULT_TOPIC` variable defines the initial message or topic of the chat ro
 To customize this message, modify the `DEFAULT_TOPIC` variable in the `main.py` script. For instance, if you want to set the default topic to discuss "The Future of Artificial Intelligence," you would change the code as follows:
 
 ```python
-DEFAULT_TOPIC = "Let's discuss the future of Artificial Intelligence."
-```
+DEFAULT_TOPIC = """
+This is a chat room about the Future of Artificial Intelligence and you can
+speak freely and briefly.
 
-Remember to update the hint message sent to the `msghub` accordingly:
+You can designate a member to reply to your message, you can use the @ symbol.
+This means including the @ symbol in your message, followed by
+that person's name, and leaving a space after the name.
 
-```python
-hint = Msg(
-    name="Host",
-    content=DEFAULT_TOPIC,
-)
+All participants are: {agent_names}
+"""
 ```
 
 With these customizations, the chat room can be tailored to fit specific themes or time constraints, enhancing the user's control over the chat experience.
