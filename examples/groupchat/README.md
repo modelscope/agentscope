@@ -19,6 +19,9 @@ To start the group conversation, follow these steps:
 
 ```bash
 python main.py
+
+# or launch webui
+as_studio main.py
 ```
 
 1. To address a specific agent in the chat, type "@" followed by the agent's name in your message.
