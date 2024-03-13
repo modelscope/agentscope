@@ -102,8 +102,8 @@ def get_player_input(
     if timeout:
         try:
             content = glb_queue_user_input.get(block=True, timeout=timeout)[1]
-        except Empty as error:
-            raise TimeoutError("timed out") from error
+        except Empty as exc:
+            raise TimeoutError("timed out") from exc
     else:
         content = glb_queue_user_input.get(block=True)[1]
     if content == "**Reset**":
@@ -202,8 +202,8 @@ def user_input(timeout: Optional[int] = None) -> str:
 
             try:
                 content = inputimeout("User input: ", timeout=timeout)
-            except TimeoutOccurred as error:
-                raise TimeoutError("timed out") from error
+            except TimeoutOccurred as exc:
+                raise TimeoutError("timed out") from exc
         else:
             content = input("User input: ")
     return content
