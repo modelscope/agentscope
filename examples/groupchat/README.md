@@ -66,12 +66,6 @@ To customize this message, modify the `DEFAULT_TOPIC` variable in the `main.py` 
 DEFAULT_TOPIC = """
 This is a chat room about the Future of Artificial Intelligence and you can
 speak freely and briefly.
-
-You can designate a member to reply to your message, you can use the @ symbol.
-This means including the @ symbol in your message, followed by
-that person's name, and leaving a space after the name.
-
-All participants are: {agent_names}
 """
 ```
 

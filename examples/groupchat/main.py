@@ -14,7 +14,9 @@ from agentscope.msghub import msghub
 USER_TIME_TO_SPEAK = 10
 DEFAULT_TOPIC = """
 This is a chat room and you can speak freely and briefly.
+"""
 
+SYS_PROMPT = """
 You can designate a member to reply to your message, you can use the @ symbol.
 This means including the @ symbol in your message, followed by
 that person's name, and leaving a space after the name.
@@ -36,7 +38,8 @@ def main() -> None:
 
     hint = Msg(
         name="Host",
-        content=DEFAULT_TOPIC.format(
+        content=DEFAULT_TOPIC
+        + SYS_PROMPT.format(
             agent_names=[agent.name for agent in agents],
         ),
     )
