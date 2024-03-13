@@ -18,10 +18,9 @@ from .openai_model import (
     OpenAIEmbeddingWrapper,
 )
 from .dashscope_model import (
-    DashScopeWrapper,
     DashScopeChatWrapper,
-    DashScopeWanxWrapper,
-    DashScopeEmbeddingWrapper,
+    DashScopeImageSynthesisWrapper,
+    DashScopeTextEmbeddingWrapper,
 )
 
 
@@ -37,10 +36,9 @@ __all__ = [
     "load_model_by_config_name",
     "read_model_configs",
     "clear_model_configs",
-    "DashScopeWrapper",
     "DashScopeChatWrapper",
-    "DashScopeWanxWrapper",
-    "DashScopeEmbeddingWrapper",
+    "DashScopeImageSynthesisWrapper",
+    "DashScopeTextEmbeddingWrapper",
 ]
 
 _MODEL_CONFIGS: dict[str, dict] = {}
