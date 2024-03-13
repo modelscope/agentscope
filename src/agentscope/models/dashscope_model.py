@@ -229,10 +229,10 @@ class DashScopeChatWrapper(DashScopeWrapper):
         )
 
 
-class DashScopeWanxWrapper(DashScopeWrapper):
-    """The model wrapper for DashScope's wanx API."""
+class DashScopeImageSynthesisWrapper(DashScopeWrapper):
+    """The model wrapper for DashScope Image Synthesis API."""
 
-    model_type: str = "dashscope_wanx"
+    model_type: str = "dashscope_imagesynthesis"
 
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
@@ -257,7 +257,7 @@ class DashScopeWanxWrapper(DashScopeWrapper):
                  Whether to save the generated images locally, and replace
                  the returned image url with the local path.
              **kwargs (`Any`):
-                 The keyword arguments to DashScope image generation API,
+                 The keyword arguments to DashScope Image Synthesis API,
                  e.g. `n`, `size`, etc. Please refer to
                  https://help.aliyun.com/zh/dashscope/developer-reference/api-details-9
         for more detailed arguments.
@@ -329,10 +329,10 @@ class DashScopeWanxWrapper(DashScopeWrapper):
         return ModelResponse(image_urls=urls, raw=response)
 
 
-class DashScopeEmbeddingWrapper(DashScopeWrapper):
-    """The model wrapper for DashScope embedding API."""
+class DashScopeTextEmbeddingWrapper(DashScopeWrapper):
+    """The model wrapper for DashScope Text Embedding API."""
 
-    model_type: str = "dashscope_embedding"
+    model_type: str = "dashscope_textembedding"
 
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
@@ -348,13 +348,13 @@ class DashScopeEmbeddingWrapper(DashScopeWrapper):
         texts: Union[list[str], str],
         **kwargs: Any,
     ) -> ModelResponse:
-        """Embed the messages with DashScope embedding API.
+        """Embed the messages with DashScope Text Embedding API.
 
         Args:
             texts (`list[str]` or `str`):
                 The messages used to embed.
             **kwargs (`Any`):
-                The keyword arguments to DashScope embedding API,
+                The keyword arguments to DashScope Text Embedding API,
                 e.g. `text_type`. Please refer to
                 https://help.aliyun.com/zh/dashscope/developer-reference/api-details-15
                 for more detailed arguments.
