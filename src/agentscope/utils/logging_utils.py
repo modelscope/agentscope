@@ -95,7 +95,12 @@ def _chat(message: Union[str, dict], *args: Any, **kwargs: Any) -> None:
             <content>".
     """
     # Save message into file
-    logger.log(LEVEL_CHAT_SAVE, json.dumps(message), *args, **kwargs)
+    logger.log(
+        LEVEL_CHAT_SAVE,
+        json.dumps(message, ensure_ascii=False),
+        *args,
+        **kwargs,
+    )
 
     # Print message in terminal with specific format
     if isinstance(message, dict):
