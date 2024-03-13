@@ -225,7 +225,7 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
         logger.info(f"Initialize model [{config_name}]")
         logger.debug(
             f"[{config_name}]:\n"
-            f"{json.dumps(kwargs, indent=2, ensure_ascii=False)}"
+            f"{json.dumps(kwargs, indent=2, ensure_ascii=False)}",
         )
 
     def __call__(self, *args: Any, **kwargs: Any) -> ModelResponse:
