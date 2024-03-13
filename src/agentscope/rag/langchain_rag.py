@@ -36,14 +36,16 @@ class LangChainRAG(RAGBase):
         self.config = kwargs
         self.vector_store_type = vector_store_type
         self.loader = None
-        self.splitter = splitter_type
+        self.splitter = None
         self.vector_store = None
         self.embedding_model = embedding_model
         self.retriever = None
 
     def load_data(self, path: Union[Path, str], **kwargs: Any) -> Any:
         """loading data from a directory"""
+        self.loader = self.loader_type(path)
         docs = self.loader.load()
+        self.splitter = self.splitter_type(**kwargs)
         all_splits = self.splitter.split_documents(docs)
         return all_splits
 
