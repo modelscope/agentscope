@@ -3,7 +3,7 @@
 from loguru import logger
 from groupchat_utils import (
     select_next_one,
-    filter_names,
+    filter_agents,
 )
 
 import agentscope
@@ -12,7 +12,15 @@ from agentscope.message import Msg
 from agentscope.msghub import msghub
 
 USER_TIME_TO_SPEAK = 10
-DEFAULT_TOPIC = "This is a chat room and you can speak freely."
+DEFAULT_TOPIC = """
+This is a chat room and you can speak freely and briefly.
+
+You can designate a member to reply to your message, you can use the @ symbol.
+This means including the @ symbol in your message, followed by
+that person's name, and leaving a space after the name.
+
+All participants are: {agent_names}
+"""
 
 
 def main() -> None:
@@ -28,7 +36,9 @@ def main() -> None:
 
     hint = Msg(
         name="Host",
-        content=DEFAULT_TOPIC,
+        content=DEFAULT_TOPIC.format(
+            agent_names=[agent.name for agent in agents],
+        ),
     )
 
     rnd = 0
@@ -46,7 +56,7 @@ def main() -> None:
                     f"{USER_TIME_TO_SPEAK} seconds, skip.",
                 )
 
-            speak_list += filter_names(x.get("content", ""), npc_agents)
+            speak_list += filter_agents(x.get("content", ""), npc_agents)
 
             if len(speak_list) > 0:
                 next_agent = speak_list.pop(0)
@@ -55,7 +65,7 @@ def main() -> None:
                 next_agent = select_next_one(npc_agents, rnd)
                 x = next_agent()
 
-            speak_list += filter_names(x.content, npc_agents)
+            speak_list += filter_agents(x.content, npc_agents)
 
             rnd += 1
 

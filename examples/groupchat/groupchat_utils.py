@@ -11,7 +11,7 @@ def select_next_one(agents: Sequence, rnd: int) -> Sequence:
     return agents[rnd % len(agents)]
 
 
-def filter_names(string: str, agents: Sequence) -> Sequence:
+def filter_agents(string: str, agents: Sequence) -> Sequence:
     """
     This function filters the input string for occurrences of the given names
     prefixed with '@' and returns a list of the found names.
