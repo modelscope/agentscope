@@ -189,7 +189,10 @@ def audio2text(audio_path: str) -> str:
     return " ".join([s["text"] for s in result["output"]["sentence"]])
 
 
-def user_input(timeout: Optional[int] = None) -> str:
+def user_input(
+    prefix: str = "User input: ",
+    timeout: Optional[int] = None,
+) -> str:
     """get user input"""
     if hasattr(thread_local_data, "uid"):
         content = get_player_input(
@@ -201,9 +204,9 @@ def user_input(timeout: Optional[int] = None) -> str:
             from inputimeout import inputimeout, TimeoutOccurred
 
             try:
-                content = inputimeout("User input: ", timeout=timeout)
+                content = inputimeout(prefix, timeout=timeout)
             except TimeoutOccurred as exc:
                 raise TimeoutError("timed out") from exc
         else:
-            content = input("User input: ")
+            content = input(prefix)
     return content
