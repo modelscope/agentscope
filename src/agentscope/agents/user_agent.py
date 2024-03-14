@@ -33,6 +33,7 @@ class UserAgent(AgentBase):
         self,
         x: dict = None,
         required_keys: Optional[Union[list[str], str]] = None,
+        timeout: Optional[int] = None,
     ) -> dict:
         """
         Processes the input provided by the user and stores it in memory,
@@ -51,6 +52,9 @@ class UserAgent(AgentBase):
                 (`Optional[Union[list[str], str]]`, defaults to `None`):
                 Strings that requires user to input, which will be used as
                 the key of the returned dict. Defaults to None.
+            timeout (`Optional[int]`, defaults to `None`):
+                Raise `TimeoutError` if user exceed input time, set to None
+                for no limit.
 
         Returns:
             `dict`: A dictionary representing the message object that contains
@@ -63,7 +67,7 @@ class UserAgent(AgentBase):
         # TODO: To avoid order confusion, because `input` print much quicker
         #  than logger.chat
         time.sleep(0.5)
-        content = user_input()
+        content = user_input(timeout=timeout)
 
         kwargs = {}
         if required_keys is not None:
