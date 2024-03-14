@@ -6,6 +6,7 @@ import uuid
 from unittest.mock import MagicMock, patch
 
 import agentscope
+from agentscope import _runtime
 from agentscope.models import load_model_by_config_name
 from agentscope.utils import MonitorFactory
 
@@ -30,6 +31,8 @@ class GeminiModelWrapperTest(unittest.TestCase):
         MonitorFactory._instance = None  # pylint: disable=W0212
         self.db_path = f"test-{uuid.uuid4()}.db"
         _ = MonitorFactory.get_monitor(db_path=self.db_path)
+
+        self.tmp_runtime = _runtime
 
     @patch("google.generativeai.GenerativeModel")
     def test_gemini_chat(self, mock_model: MagicMock) -> None:
@@ -87,6 +90,9 @@ class GeminiModelWrapperTest(unittest.TestCase):
         """Clean up after each test."""
         MonitorFactory._instance = self.tmp  # pylint: disable=W0212
         os.remove(self.db_path)
+
+        _runtime = self.tmp_runtime
+        print(_runtime.datetime)
 
 
 if __name__ == "__main__":
