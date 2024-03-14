@@ -182,7 +182,7 @@ class DashScopeChatWrapper(DashScopeWrapper):
                 "Each message in the 'messages' list must contain a 'role' "
                 "and 'content' key for DashScope API.",
             )
-
+        print(messages)
         # step3: forward to generate response
         response = dashscope.Generation.call(
             model=self.model,
