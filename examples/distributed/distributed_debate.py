@@ -13,7 +13,7 @@ from agentscope.agents.rpc_agent import RpcAgentServerLauncher
 from agentscope.message import Msg
 from agentscope.utils.logging_utils import logger
 
-ANNOUNCEMENT = """
+FIRST_ROUND = """
 Welcome to the debate on whether Artificial General Intelligence (AGI) can be achieved using the GPT model framework. This debate will consist of three rounds. In each round, the affirmative side will present their argument first, followed by the negative side. After both sides have presented, the adjudicator will summarize the key points and analyze the strengths of the arguments.
 
 The rules are as follows:
@@ -26,8 +26,16 @@ At the conclusion of the three rounds, the adjudicator will declare the overall 
 Let us begin the first round. The affirmative side: please present your argument for why AGI can be achieved using the GPT model framework.
 """  # noqa
 
+SECOND_ROUND = """
+Let us begin the second round. It's your turn, the affirmative side.
+"""
+
+THIRD_ROUND = """
+Next is the final round.
+"""
+
 END = """
-Adjudicator, please declare the overall winner.
+Judge, please declare the overall winner now.
 """
 
 
@@ -113,17 +121,22 @@ def run_main_process(parsed_args: argparse.Namespace) -> None:
         launch_server=False,
     )
     participants = [pro_agent, con_agent, judge_agent]
-    hint = Msg(name="System", content=ANNOUNCEMENT)
-    end = Msg(name="System", content=END)
-    with msghub(participants=participants, announcement=hint):
-        for _ in range(3):
+    announcements = [
+        Msg(name="system", content=FIRST_ROUND),
+        Msg(name="system", content=SECOND_ROUND),
+        Msg(name="system", content=THIRD_ROUND),
+    ]
+    end = Msg(name="system", content=END)
+    with msghub(participants=participants) as hub:
+        for i in range(3):
+            hub.broadcast(announcements[i])
             pro_resp = pro_agent()
             logger.chat(pro_resp)
             con_resp = con_agent()
             logger.chat(con_resp)
-            judge_resp = judge_agent()
-            judge_resp.update_value()
-        judge_agent(end)
+            judge_agent()
+        hub.broadcast(end)
+        judge_agent()
 
 
 if __name__ == "__main__":
