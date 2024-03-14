@@ -110,7 +110,6 @@ def run_main_process(parsed_args: argparse.Namespace) -> None:
     )
     participants = [pro_agent, con_agent, judge_agent]
     hint = Msg(name="System", content=ANNOUNCEMENT)
-    x = None
     with msghub(participants=participants, announcement=hint):
         for _ in range(3):
             pro_resp = pro_agent()
@@ -118,7 +117,7 @@ def run_main_process(parsed_args: argparse.Namespace) -> None:
             con_resp = con_agent()
             logger.chat(con_resp)
             judge_agent()
-        judge_agent(x)
+        judge_agent()
 
 
 if __name__ == "__main__":
