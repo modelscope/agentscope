@@ -308,6 +308,9 @@
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span>
 
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+
         <span class="c1"># step4: record the api invocation if needed</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_save_model_invocation</span><span class="p">(</span>
             <span class="n">arguments</span><span class="o">=</span><span class="p">{</span>
@@ -414,6 +417,9 @@
             <span class="p">)</span>
             <span class="k">raise</span> <span class="n">e</span>
 
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+
         <span class="c1"># step3: record the model api invocation if needed</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_save_model_invocation</span><span class="p">(</span>
             <span class="n">arguments</span><span class="o">=</span><span class="p">{</span>
@@ -500,6 +506,9 @@
             <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
 
         <span class="c1"># step3: record the model api invocation if needed</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_save_model_invocation</span><span class="p">(</span>

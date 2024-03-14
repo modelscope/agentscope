@@ -113,9 +113,10 @@
     <span class="n">OpenAIDALLEWrapper</span><span class="p">,</span>
     <span class="n">OpenAIEmbeddingWrapper</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">.tongyi_model</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">TongyiWrapper</span><span class="p">,</span>
-    <span class="n">TongyiChatWrapper</span><span class="p">,</span>
+<span class="kn">from</span> <span class="nn">.dashscope_model</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DashScopeChatWrapper</span><span class="p">,</span>
+    <span class="n">DashScopeImageSynthesisWrapper</span><span class="p">,</span>
+    <span class="n">DashScopeTextEmbeddingWrapper</span><span class="p">,</span>
 <span class="p">)</span>
 
 
@@ -131,8 +132,9 @@
     <span class="s2">&quot;load_model_by_config_name&quot;</span><span class="p">,</span>
     <span class="s2">&quot;read_model_configs&quot;</span><span class="p">,</span>
     <span class="s2">&quot;clear_model_configs&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;TongyiWrapper&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;TongyiChatWrapper&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;DashScopeChatWrapper&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;DashScopeImageSynthesisWrapper&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;DashScopeTextEmbeddingWrapper&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="n">_MODEL_CONFIGS</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -155,6 +157,13 @@
         <span class="k">return</span> <span class="n">ModelWrapperBase</span><span class="o">.</span><span class="n">registry</span><span class="p">[</span>  <span class="c1"># type: ignore [return-value]</span>
             <span class="n">model_type</span>
         <span class="p">]</span>
+    <span class="k">elif</span> <span class="n">model_type</span> <span class="ow">in</span> <span class="n">ModelWrapperBase</span><span class="o">.</span><span class="n">deprecated_type_registry</span><span class="p">:</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="n">ModelWrapperBase</span><span class="o">.</span><span class="n">deprecated_type_registry</span><span class="p">[</span><span class="n">model_type</span><span class="p">]</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Model type [</span><span class="si">{</span><span class="n">model_type</span><span class="si">}</span><span class="s2">] will be deprecated in future releases,&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; please use [</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">model_type</span><span class="si">}</span><span class="s2">] instead.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span>  <span class="c1"># type: ignore [return-value]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Unsupported model_type [</span><span class="si">{</span><span class="n">model_type</span><span class="si">}</span><span class="s2">],&quot;</span>

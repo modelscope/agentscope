@@ -300,10 +300,15 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;registry&quot;</span><span class="p">):</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">registry</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">type_registry</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">deprecated_type_registry</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">registry</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;model_type&quot;</span><span class="p">):</span>
                 <span class="bp">cls</span><span class="o">.</span><span class="n">type_registry</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">model_type</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;deprecated_model_type&quot;</span><span class="p">):</span>
+                    <span class="bp">cls</span><span class="o">.</span><span class="n">deprecated_type_registry</span><span class="p">[</span>
+                        <span class="bp">cls</span><span class="o">.</span><span class="n">deprecated_model_type</span>
+                    <span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attrs</span><span class="p">)</span>
 
 
