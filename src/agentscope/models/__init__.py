@@ -22,6 +22,11 @@ from .dashscope_model import (
     DashScopeImageSynthesisWrapper,
     DashScopeTextEmbeddingWrapper,
 )
+from .ollama_model import (
+    OllamaChatWrapper,
+    OllamaEmbeddingWrapper,
+    OllamaGenerationWrapper,
+)
 from .gemini_model import (
     GeminiChatWrapper,
     GeminiEmbeddingWrapper,
@@ -43,6 +48,9 @@ __all__ = [
     "DashScopeChatWrapper",
     "DashScopeImageSynthesisWrapper",
     "DashScopeTextEmbeddingWrapper",
+    "OllamaChatWrapper",
+    "OllamaEmbeddingWrapper",
+    "OllamaGenerationWrapper",
     "GeminiChatWrapper",
     "GeminiEmbeddingWrapper",
 ]
@@ -104,7 +112,6 @@ def load_model_by_config_name(config_name: str) -> ModelWrapperBase:
 
     model_type = config.model_type
 
-    # Remove unnecessary fields
     kwargs = {k: v for k, v in config.items() if k != "model_type"}
 
     return _get_model_wrapper(model_type=model_type)(**kwargs)

@@ -48,8 +48,10 @@ minimal_requires = [
     "Flask==3.0.0",
     "Flask-Cors==4.0.0",
     "Flask-SocketIO==5.3.6",
+    # TODO: move into other requires
     "dashscope==1.14.1",
     "openai>=1.3.0",
+    "ollama>=0.1.7",
     "google-generativeai>=0.4.0",
 ]
 
