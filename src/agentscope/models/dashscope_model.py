@@ -106,6 +106,8 @@ class DashScopeChatWrapper(DashScopeWrapper):
 
     model_type: str = "dashscope_chat"
 
+    deprecated_model_type: str = "tongyi_chat"
+
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
         # TODO: set quota to the following metrics

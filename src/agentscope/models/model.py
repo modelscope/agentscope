@@ -200,10 +200,15 @@ class _ModelWrapperMeta(ABCMeta):
         if not hasattr(cls, "registry"):
             cls.registry = {}
             cls.type_registry = {}
+            cls.deprecated_type_registry = {}
         else:
             cls.registry[name] = cls
             if hasattr(cls, "model_type"):
                 cls.type_registry[cls.model_type] = cls
+                if hasattr(cls, "deprecated_model_type"):
+                    cls.deprecated_type_registry[
+                        cls.deprecated_model_type
+                    ] = cls
         super().__init__(name, bases, attrs)
 
 
