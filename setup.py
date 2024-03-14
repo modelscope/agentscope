@@ -44,6 +44,8 @@ minimal_requires = [
     "tiktoken",
     "Pillow",
     "requests",
+    "inputimeout",
+    "openai>=1.3.0",
     "numpy",
     "Flask==3.0.0",
     "Flask-Cors==4.0.0",
