@@ -37,7 +37,7 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
         self,
         name: str,
         sys_prompt: Optional[str] = None,
-        config_name_or_model: Optional[str, Callable[..., Any]] = None,
+        config_name_or_model: Optional[Union[str, Callable[..., Any]]] = None,
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
     ) -> None:
@@ -73,7 +73,7 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
             else:
                 raise ValueError(
                     f"Invalid type for "
-                    f"argument `model_or_config_name`:"
+                    f"argument `config_name_or_model`:"
                     f" {type(config_name_or_model)}",
                 )
 

@@ -31,7 +31,7 @@ class AgentBase(Operator):
             self,
             name: str,
             sys_prompt: Optional[str] = None,
-            model_or_config_name: str = None,
+            config_name_or_model: str = None,
             use_memory: bool = True,
             memory_config: Optional[dict] = None,
     ) -> None:
@@ -108,7 +108,7 @@ from agentscope.agents import DialogAgent
 # Configuration for the DialogAgent
 dialog_agent_config = {
     "name": "ServiceBot",
-    "model_or_config_name": "gpt-3.5",  # Specify the model used for dialogue generation
+    "config_name_or_model": "gpt-3.5",  # Specify the model used for dialogue generation
     "sys_prompt": "Act as AI assistant to interact with the others. Try to "
     "reponse on one line.\n",  # Custom prompt for the agent
     # Other configurations specific to the DialogAgent

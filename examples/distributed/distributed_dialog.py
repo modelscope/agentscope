@@ -41,7 +41,7 @@ def setup_assistant_server(assistant_host: str, assistant_port: int) -> None:
         agent_kwargs={
             "name": "Assitant",
             "sys_prompt": "You are a helpful assistant.",
-            "model_or_config_name": "gpt-3.5-turbo",
+            "config_name_or_model": "gpt-3.5-turbo",
             "use_memory": True,
         },
         host=assistant_host,
