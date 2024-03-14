@@ -68,3 +68,15 @@ python distributed_debate.py --role main \
 ```
 
 ### step 3: watch or join in the debate in your terminal
+
+Suppose you join the debate as Con, you will see the following in your command line.
+
+```text
+System: Welcome to the debate on whether Artificial General Intelligence (AGI) can be achieved
+...
+
+Pro: Thank you. I argue that AGI can be achieved using the GPT model framework.
+...
+
+User Input:
+```
