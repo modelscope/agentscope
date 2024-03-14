@@ -4,6 +4,8 @@
 import argparse
 import json
 
+from user_proxy_agent import UserProxyAgent
+
 import agentscope
 from agentscope.msghub import msghub
 from agentscope.agents.dialog_agent import DialogAgent
@@ -11,7 +13,7 @@ from agentscope.agents.rpc_agent import RpcAgentServerLauncher
 from agentscope.message import Msg
 from agentscope.utils.logging_utils import logger
 
-ANNOUNCEMENT = """
+FIRST_ROUND = """
 Welcome to the debate on whether Artificial General Intelligence (AGI) can be achieved using the GPT model framework. This debate will consist of three rounds. In each round, the affirmative side will present their argument first, followed by the negative side. After both sides have presented, the adjudicator will summarize the key points and analyze the strengths of the arguments.
 
 The rules are as follows:
@@ -24,15 +26,28 @@ At the conclusion of the three rounds, the adjudicator will declare the overall 
 Let us begin the first round. The affirmative side: please present your argument for why AGI can be achieved using the GPT model framework.
 """  # noqa
 
+SECOND_ROUND = """
+Let us begin the second round. It's your turn, the affirmative side.
+"""
+
+THIRD_ROUND = """
+Next is the final round.
+"""
+
+END = """
+Judge, please declare the overall winner now.
+"""
+
 
 def parse_args() -> argparse.Namespace:
     """Parse arguments"""
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--role",
-        choices=["pro", "con", "judge", "main"],
+        choices=["pro", "con", "main"],
         default="main",
     )
+    parser.add_argument("--is-human", action="store_true")
     parser.add_argument("--pro-host", type=str, default="localhost")
     parser.add_argument(
         "--pro-port",
@@ -59,28 +74,34 @@ def setup_server(parsed_args: argparse.Namespace) -> None:
     agentscope.init(
         model_configs="configs/model_configs.json",
     )
-    with open(
-        "configs/debate_agent_configs.json",
-        "r",
-        encoding="utf-8",
-    ) as f:
-        configs = json.load(f)
-        configs = {
-            "pro": configs[0]["args"],
-            "con": configs[1]["args"],
-            "judge": configs[2]["args"],
-        }
-        config = configs[parsed_args.role]
-        host = getattr(parsed_args, f"{parsed_args.role}_host")
-        port = getattr(parsed_args, f"{parsed_args.role}_port")
-        server_launcher = RpcAgentServerLauncher(
-            agent_class=DialogAgent,
-            agent_kwargs=config,
-            host=host,
-            port=port,
-        )
-        server_launcher.launch()
-        server_launcher.wait_until_terminate()
+    host = getattr(parsed_args, f"{parsed_args.role}_host")
+    port = getattr(parsed_args, f"{parsed_args.role}_port")
+    if parsed_args.is_human:
+        agent_class = UserProxyAgent
+        config = {"name": parsed_args.role}
+    else:
+        with open(
+            "configs/debate_agent_configs.json",
+            "r",
+            encoding="utf-8",
+        ) as f:
+            configs = json.load(f)
+            configs = {
+                "pro": configs[0]["args"],
+                "con": configs[1]["args"],
+                "judge": configs[2]["args"],
+            }
+            config = configs[parsed_args.role]
+            agent_class = DialogAgent
+
+    server_launcher = RpcAgentServerLauncher(
+        agent_class=agent_class,
+        agent_kwargs=config,
+        host=host,
+        port=port,
+    )
+    server_launcher.launch(in_subprocess=False)
+    server_launcher.wait_until_terminate()
 
 
 def run_main_process(parsed_args: argparse.Namespace) -> None:
@@ -99,24 +120,23 @@ def run_main_process(parsed_args: argparse.Namespace) -> None:
         port=parsed_args.con_port,
         launch_server=False,
     )
-    judge_agent = judge_agent.to_dist(
-        host=parsed_args.judge_host,
-        port=parsed_args.judge_port,
-        launch_server=False,
-    )
     participants = [pro_agent, con_agent, judge_agent]
-    hint = Msg(name="System", content=ANNOUNCEMENT)
-    x = None
-    with msghub(participants=participants, announcement=hint):
-        for _ in range(3):
-            pro_resp = pro_agent(x)
+    announcements = [
+        Msg(name="system", content=FIRST_ROUND),
+        Msg(name="system", content=SECOND_ROUND),
+        Msg(name="system", content=THIRD_ROUND),
+    ]
+    end = Msg(name="system", content=END)
+    with msghub(participants=participants) as hub:
+        for i in range(3):
+            hub.broadcast(announcements[i])
+            pro_resp = pro_agent()
             logger.chat(pro_resp)
-            con_resp = con_agent(pro_resp)
+            con_resp = con_agent()
             logger.chat(con_resp)
-            x = judge_agent(con_resp)
-            logger.chat(x)
-        x = judge_agent(x)
-        logger.chat(x)
+            judge_agent()
+        hub.broadcast(end)
+        judge_agent()
 
 
 if __name__ == "__main__":

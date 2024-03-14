@@ -397,7 +397,13 @@ class RpcAgentServerLauncher:
         )
 
     def launch(self, in_subprocess: bool = True) -> None:
-        """launch a local rpc agent server."""
+        """launch a rpc agent server.
+
+        Args:
+            in_subprocess (bool, optional): launch the server in subprocess.
+                Defaults to True. For agents that need to obtain command line
+                input, such as UserAgent, please set this value to False.
+        """
         if in_subprocess:
             self._launch_in_sub()
         else:
