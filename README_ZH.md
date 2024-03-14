@@ -38,6 +38,7 @@ AgentScope是一款全新的Multi-Agent框架，专为应用开发者打造，�
     - [基础使用](#基础使用)
       - [第1步：准备Model Configs](#第1步准备model-configs)
         - [OpenAI API Configs](#openai-api-configs)
+        - [DashScope API Config](#dashscope-api-config)
         - [Post Request API Config](#post-request-api-config)
       - [第2步：创建Agent](#第2步创建agent)
       - [第3步：构造对话](#第3步构造对话)
@@ -120,6 +121,7 @@ AgentScope支持以下模型API服务：
 | OpenAI Chat API      | `openai`            | 标准OpenAI Chat API, FastChat和vllm                    |
 | OpenAI DALL-E API    | `openai_dall_e`     | 标准DALL-E API                                            |
 | OpenAI Embedding API | `openai_embedding`  | OpenAI 嵌入式API                                           |
+| DashScope Chat API   | `dashscope_chat`    | DashScope chat API，其中包含通义千问系列 |
 | Post API             | `post_api`          | Huggingface/ModelScope 推理API, 以及定制化的post API  |
 
 ##### OpenAI API Configs
@@ -136,6 +138,21 @@ AgentScope支持以下模型API服务：
     "organization": "xxx",                      # OpenAI API的组织。如果未设置，将使用环境变量OPENAI_ORGANIZATION。
 }
 ```
+
+##### DashScope API Config
+
+对于 DashScope API，你需要准备一个包含如下字段的配置字典：
+
+```
+{
+    "config_name": "{配置名称}",                   # 用于识别配置的名称
+    "model_type": "dashscope_chat" | "dashscope_text_embedding" | "dashscope_image_synthesis",
+    "model_name": "{模型名称，例如 qwen-max}",      # dashscope 中的模型
+    "api_key": "xxx",                             # The API key for DashScope API.
+}
+```
+
+> 注意: dashscope API 可能对消息中的`role`域有严格的要求。请谨慎使用。
 
 ##### Post Request API Config
 

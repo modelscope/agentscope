@@ -114,12 +114,15 @@ class ServiceFactory:
         }
 
         # Prepare default values
-        args_defaults = dict(
-            zip(
-                reversed(argsspec.args),
-                reversed(argsspec.defaults),  # type: ignore
-            ),
-        )
+        if argsspec.defaults is None:
+            args_defaults = {}
+        else:
+            args_defaults = dict(
+                zip(
+                    reversed(argsspec.args),
+                    reversed(argsspec.defaults),  # type: ignore
+                ),
+            )
 
         args_required = sorted(
             list(set(args_agent) - set(args_defaults.keys())),

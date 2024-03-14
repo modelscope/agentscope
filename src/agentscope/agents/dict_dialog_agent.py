@@ -145,7 +145,7 @@ class DictDialogAgent(AgentBase):
         ).raw
 
         # logging raw messages in debug mode
-        logger.debug(json.dumps(response, indent=4))
+        logger.debug(json.dumps(response, indent=4, ensure_ascii=False))
 
         # In this agent, if the response is a dict, we treat "speak" as a
         # special key, which represents the text to be spoken

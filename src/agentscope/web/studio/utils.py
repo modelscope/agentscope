@@ -180,12 +180,12 @@ def audio2text(audio_path: str) -> str:
     return " ".join([s["text"] for s in result["output"]["sentence"]])
 
 
-def user_input() -> str:
+def user_input(prefix: str = "User input: ") -> str:
     """get user input"""
     if hasattr(thread_local_data, "uid"):
         content = get_player_input(
             uid=thread_local_data.uid,
         )
     else:
-        content = input("User input: ")
+        content = input(prefix)
     return content

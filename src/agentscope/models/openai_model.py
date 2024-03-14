@@ -185,6 +185,9 @@ class OpenAIChatWrapper(OpenAIWrapper):
             **kwargs,
         )
 
+        if response.status_code != 200:
+            raise RuntimeError(response.json())
+
         # step4: record the api invocation if needed
         self._save_model_invocation(
             arguments={
@@ -288,6 +291,9 @@ class OpenAIDALLEWrapper(OpenAIWrapper):
             )
             raise e
 
+        if response.status_code != 200:
+            raise RuntimeError(response.json())
+
         # step3: record the model api invocation if needed
         self._save_model_invocation(
             arguments={
@@ -371,6 +377,9 @@ class OpenAIEmbeddingWrapper(OpenAIWrapper):
             model=self.model_name,
             **kwargs,
         )
+
+        if response.status_code != 200:
+            raise RuntimeError(response.json())
 
         # step3: record the model api invocation if needed
         self._save_model_invocation(

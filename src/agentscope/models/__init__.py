@@ -17,9 +17,10 @@ from .openai_model import (
     OpenAIDALLEWrapper,
     OpenAIEmbeddingWrapper,
 )
-from .tongyi_model import (
-    TongyiWrapper,
-    TongyiChatWrapper,
+from .dashscope_model import (
+    DashScopeChatWrapper,
+    DashScopeImageSynthesisWrapper,
+    DashScopeTextEmbeddingWrapper,
 )
 from .gemini_model import (
     GeminiChatWrapper,
@@ -39,8 +40,9 @@ __all__ = [
     "load_model_by_config_name",
     "read_model_configs",
     "clear_model_configs",
-    "TongyiWrapper",
-    "TongyiChatWrapper",
+    "DashScopeChatWrapper",
+    "DashScopeImageSynthesisWrapper",
+    "DashScopeTextEmbeddingWrapper",
     "GeminiChatWrapper",
     "GeminiEmbeddingWrapper",
 ]
@@ -65,6 +67,13 @@ def _get_model_wrapper(model_type: str) -> Type[ModelWrapperBase]:
         return ModelWrapperBase.registry[  # type: ignore [return-value]
             model_type
         ]
+    elif model_type in ModelWrapperBase.deprecated_type_registry:
+        cls = ModelWrapperBase.deprecated_type_registry[model_type]
+        logger.warning(
+            f"Model type [{model_type}] will be deprecated in future releases,"
+            f" please use [{cls.model_type}] instead.",
+        )
+        return cls  # type: ignore [return-value]
     else:
         logger.warning(
             f"Unsupported model_type [{model_type}],"
