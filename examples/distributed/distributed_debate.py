@@ -72,7 +72,7 @@ def parse_args() -> argparse.Namespace:
 def setup_server(parsed_args: argparse.Namespace) -> None:
     """Setup rpc server for participant agent"""
     agentscope.init(
-        model_configs="configs/model_configs_pxc.json",
+        model_configs="configs/model_configs.json",
     )
     host = getattr(parsed_args, f"{parsed_args.role}_host")
     port = getattr(parsed_args, f"{parsed_args.role}_port")
@@ -107,7 +107,7 @@ def setup_server(parsed_args: argparse.Namespace) -> None:
 def run_main_process(parsed_args: argparse.Namespace) -> None:
     """Setup the main debate competition process"""
     pro_agent, con_agent, judge_agent = agentscope.init(
-        model_configs="configs/model_configs_pxc.json",
+        model_configs="configs/model_configs.json",
         agent_configs="configs/debate_agent_configs.json",
     )
     pro_agent = pro_agent.to_dist(
