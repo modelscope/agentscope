@@ -1,55 +1,46 @@
 # -*- coding: utf-8 -*-
-"""Model wrapper for OpenAI models"""
-from typing import Union, Any
+"""Model wrapper for DashScope models"""
+from http import HTTPStatus
+from typing import Any, Union
+
+try:
+    import dashscope
+except ModuleNotFoundError:
+    dashscope = None
 
 from loguru import logger
 
 from .model import ModelWrapperBase, ModelResponse
+
 from ..file_manager import file_manager
-
-try:
-    import openai
-except ImportError:
-    openai = None
-
 from ..utils.monitor import MonitorFactory
 from ..utils.monitor import get_full_name
-from ..utils import QuotaExceededError
-from ..utils.token_utils import get_openai_max_length
 from ..constants import _DEFAULT_API_BUDGET
 
 
-class OpenAIWrapper(ModelWrapperBase):
-    """The model wrapper for OpenAI API."""
+class DashScopeWrapper(ModelWrapperBase):
+    """The model wrapper for DashScope API."""
 
     def __init__(
         self,
         config_name: str,
         model_name: str = None,
         api_key: str = None,
-        organization: str = None,
-        client_args: dict = None,
         generate_args: dict = None,
         budget: float = _DEFAULT_API_BUDGET,
         **kwargs: Any,
     ) -> None:
-        """Initialize the openai client.
+        """Initialize the DashScope wrapper.
 
         Args:
             config_name (`str`):
                 The name of the model config.
             model_name (`str`, default `None`):
-                The name of the model to use in OpenAI API.
+                The name of the model to use in DashScope API.
             api_key (`str`, default `None`):
-                The API key for OpenAI API. If not specified, it will
-                be read from the environment variable `OPENAI_API_KEY`.
-            organization (`str`, default `None`):
-                The organization ID for OpenAI API. If not specified, it will
-                be read from the environment variable `OPENAI_ORGANIZATION`.
-            client_args (`dict`, default `None`):
-                The extra keyword arguments to initialize the OpenAI client.
+                The API key for DashScope API.
             generate_args (`dict`, default `None`):
-                The extra keyword arguments used in openai api generation,
+                The extra keyword arguments used in DashScope api generation,
                 e.g. `temperature`, `seed`.
             budget (`float`, default `None`):
                 The total budget using this model. Set to `None` means no
@@ -61,34 +52,21 @@ class OpenAIWrapper(ModelWrapperBase):
         super().__init__(
             config_name=config_name,
             model_name=model_name,
-            client_args=client_args,
             generate_args=generate_args,
             budget=budget,
             **kwargs,
         )
-
-        if openai is None:
+        if dashscope is None:
             raise ImportError(
-                "Cannot find openai package in current python environment.",
+                "Cannot find dashscope package in current python environment.",
             )
 
         self.model = model_name
         self.generate_args = generate_args or {}
 
-        self.client = openai.OpenAI(
-            api_key=api_key,
-            organization=organization,
-            **(client_args or {}),
-        )
-
-        # Set the max length of OpenAI model
-        try:
-            self.max_length = get_openai_max_length(self.model)
-        except Exception as e:
-            logger.warning(
-                f"fail to get max_length for {self.model}: " f"{e}",
-            )
-            self.max_length = None
+        self.api_key = api_key
+        dashscope.api_key = self.api_key
+        self.max_length = None
 
         # Set monitor accordingly
         self.monitor = None
@@ -123,10 +101,12 @@ class OpenAIWrapper(ModelWrapperBase):
         return get_full_name(name=metric_name, prefix=self.model)
 
 
-class OpenAIChatWrapper(OpenAIWrapper):
-    """The model wrapper for OpenAI's chat API."""
+class DashScopeChatWrapper(DashScopeWrapper):
+    """The model wrapper for DashScope's chat API."""
 
-    model_type: str = "openai"
+    model_type: str = "dashscope_chat"
+
+    deprecated_model_type: str = "tongyi_chat"
 
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
@@ -150,24 +130,25 @@ class OpenAIChatWrapper(OpenAIWrapper):
         messages: list,
         **kwargs: Any,
     ) -> ModelResponse:
-        """Processes a list of messages to construct a payload for the OpenAI
-        API call. It then makes a request to the OpenAI API and returns the
-        response. This method also updates monitoring metrics based on the
-        API response.
+        """Processes a list of messages to construct a payload for the
+        DashScope API call. It then makes a request to the DashScope API
+        and returns the response. This method also updates monitoring
+        metrics based on the API response.
 
         Each message in the 'messages' list can contain text content and
         optionally an 'image_urls' key. If 'image_urls' is provided,
         it is expected to be a list of strings representing URLs to images.
-        These URLs will be transformed to a suitable format for the OpenAI
+        These URLs will be transformed to a suitable format for the DashScope
         API, which might involve converting local file paths to data URIs.
 
         Args:
             messages (`list`):
                 A list of messages to process.
             **kwargs (`Any`):
-                The keyword arguments to OpenAI chat completions API,
-                e.g. `temperature`, `max_tokens`, `top_p`, etc. Please refer to
-                https://platform.openai.com/docs/api-reference/chat/create
+                The keyword arguments to DashScope chat completions API,
+                e.g. `temperature`, `max_tokens`, `top_p`, etc. Please
+                refer to
+                https://help.aliyun.com/zh/dashscope/developer-reference/api-details
                 for more detailed arguments.
 
         Returns:
@@ -187,6 +168,9 @@ class OpenAIChatWrapper(OpenAIWrapper):
                 - `fault_handler` is a callable function which is called
                 when the response generated by the model is invalid after
                 `max_retries` retries.
+            The rule of roles in messages for DashScope is very rigid,
+            for more details, please refer to
+            https://help.aliyun.com/zh/dashscope/developer-reference/api-details
         """
 
         # step1: prepare keyword arguments
@@ -196,18 +180,26 @@ class OpenAIChatWrapper(OpenAIWrapper):
         if not all("role" in msg and "content" in msg for msg in messages):
             raise ValueError(
                 "Each message in the 'messages' list must contain a 'role' "
-                "and 'content' key for OpenAI API.",
+                "and 'content' key for DashScope API.",
             )
 
         # step3: forward to generate response
-        response = self.client.chat.completions.create(
+        response = dashscope.Generation.call(
             model=self.model,
             messages=messages,
+            result_format="message",  # set the result to be "message" format.
             **kwargs,
         )
 
-        if response.status_code != 200:
-            raise RuntimeError(response.json())
+        if response.status_code != HTTPStatus.OK:
+            error_msg = (
+                f" Request id: {response.request_id},"
+                f" Status code: {response.status_code},"
+                f" error code: {response.code},"
+                f" error message: {response.message}."
+            )
+
+            raise RuntimeError(error_msg)
 
         # step4: record the api invocation if needed
         self._save_model_invocation(
@@ -216,48 +208,42 @@ class OpenAIChatWrapper(OpenAIWrapper):
                 "messages": messages,
                 **kwargs,
             },
-            json_response=response.model_dump(),
+            json_response=response,
         )
 
         # step5: update monitor accordingly
         try:
             self.monitor.update(
-                response.usage.model_dump(),
+                {
+                    "prompt_tokens": response.usage["input_tokens"],
+                    "completion_tokens": response.usage["output_tokens"],
+                    "total_tokens": response.usage["total_tokens"],
+                },
                 prefix=self.model,
             )
-        except QuotaExceededError as e:
-            # TODO: optimize quota exceeded error handling process
-            logger.error(e.message)
+        except Exception as e:
+            logger.error(e)
 
         # step6: return response
         return ModelResponse(
-            text=response.choices[0].message.content,
-            raw=response.model_dump(),
+            text=response.output["choices"][0]["message"]["content"],
+            raw=response,
         )
 
 
-class OpenAIDALLEWrapper(OpenAIWrapper):
-    """The model wrapper for OpenAI's DALL·E API."""
+class DashScopeImageSynthesisWrapper(DashScopeWrapper):
+    """The model wrapper for DashScope Image Synthesis API."""
 
-    model_type: str = "openai_dall_e"
-
-    _resolutions: list = [
-        "1792*1024",
-        "1024*1792",
-        "1024*1024",
-        "512*512",
-        "256*256",
-    ]
+    model_type: str = "dashscope_image_synthesis"
 
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
         # TODO: set quota to the following metrics
         self.monitor = MonitorFactory.get_monitor()
-        for resolution in self._resolutions:
-            self.monitor.register(
-                self._metric(resolution),
-                metric_unit="image",
-            )
+        self.monitor.register(
+            self._metric("image_count"),
+            metric_unit="image",
+        )
 
     def __call__(
         self,
@@ -266,54 +252,55 @@ class OpenAIDALLEWrapper(OpenAIWrapper):
         **kwargs: Any,
     ) -> ModelResponse:
         """
-        Args:
-            prompt (`str`):
-                The prompt string to generate images from.
-            save_local: (`bool`, default `False`):
-                Whether to save the generated images locally, and replace
-                the returned image url with the local path.
-            **kwargs (`Any`):
-                The keyword arguments to OpenAI image generation API, e.g.
-                `n`, `quality`, `response_format`, `size`, etc. Please refer to
-                https://platform.openai.com/docs/api-reference/images/create
-                for more detailed arguments.
+         Args:
+             prompt (`str`):
+                 The prompt string to generate images from.
+             save_local: (`bool`, default `False`):
+                 Whether to save the generated images locally, and replace
+                 the returned image url with the local path.
+             **kwargs (`Any`):
+                 The keyword arguments to DashScope Image Synthesis API,
+                 e.g. `n`, `size`, etc. Please refer to
+                 https://help.aliyun.com/zh/dashscope/developer-reference/api-details-9
+        for more detailed arguments.
 
-        Returns:
-            `ModelResponse`:
-                A list of image urls in image_urls field and the
-                raw response in raw field.
+         Returns:
+             `ModelResponse`:
+                 A list of image urls in image_urls field and the
+                 raw response in raw field.
 
-        Note:
-            `parse_func`, `fault_handler` and `max_retries` are reserved for
-            `_response_parse_decorator` to parse and check the response
-            generated by model wrapper. Their usages are listed as follows:
-                - `parse_func` is a callable function used to parse and check
-                the response generated by the model, which takes the response
-                as input.
-                - `max_retries` is the maximum number of retries when the
-                `parse_func` raise an exception.
-                - `fault_handler` is a callable function which is called
-                when the response generated by the model is invalid after
-                `max_retries` retries.
+         Note:
+             `parse_func`, `fault_handler` and `max_retries` are reserved
+             for `_response_parse_decorator` to parse and check the
+             response generated by model wrapper. Their usages are listed
+             as follows:
+                 - `parse_func` is a callable function used to parse and
+                 check the response generated by the model, which takes
+                 the response as input.
+                 - `max_retries` is the maximum number of retries when the
+                 `parse_func` raise an exception.
+                 - `fault_handler` is a callable function which is called
+                 when the response generated by the model is invalid after
+                 `max_retries` retries.
         """
         # step1: prepare keyword arguments
         kwargs = {**self.generate_args, **kwargs}
 
         # step2: forward to generate response
-        try:
-            response = self.client.images.generate(
-                model=self.model,
-                prompt=prompt,
-                **kwargs,
+        response = dashscope.ImageSynthesis.call(
+            model=self.model,
+            prompt=prompt,
+            n=1,
+            **kwargs,
+        )
+        if response.status_code != HTTPStatus.OK:
+            error_msg = (
+                f" Request id: {response.request_id},"
+                f" Status code: {response.status_code},"
+                f" error code: {response.code},"
+                f" error message: {response.message}."
             )
-        except Exception as e:
-            logger.error(
-                f"Failed to generate images for prompt '{prompt}': {e}",
-            )
-            raise e
-
-        if response.status_code != 200:
-            raise RuntimeError(response.json())
+            raise RuntimeError(error_msg)
 
         # step3: record the model api invocation if needed
         self._save_model_invocation(
@@ -322,34 +309,38 @@ class OpenAIDALLEWrapper(OpenAIWrapper):
                 "prompt": prompt,
                 **kwargs,
             },
-            json_response=response.model_dump(),
+            json_response=response,
         )
 
-        # step4: return response
-        raw_response = response.model_dump()
-        images = raw_response["data"]
+        # step4: update monitor accordingly
+        try:
+            self.monitor.update(
+                response.usage,
+                prefix=self.model,
+            )
+        except Exception as e:
+            logger.error(e)
+
+        # step5: return response
+        images = response["output"]["results"]
         # Get image urls as a list
         urls = [_["url"] for _ in images]
 
         if save_local:
             # Return local url if save_local is True
             urls = [file_manager.save_image(_) for _ in urls]
-        return ModelResponse(image_urls=urls, raw=raw_response)
+        return ModelResponse(image_urls=urls, raw=response)
 
 
-class OpenAIEmbeddingWrapper(OpenAIWrapper):
-    """The model wrapper for OpenAI embedding API."""
+class DashScopeTextEmbeddingWrapper(DashScopeWrapper):
+    """The model wrapper for DashScope Text Embedding API."""
 
-    model_type: str = "openai_embedding"
+    model_type: str = "dashscope_text_embedding"
 
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
         # TODO: set quota to the following metrics
         self.monitor = MonitorFactory.get_monitor()
-        self.monitor.register(
-            self._metric("prompt_tokens"),
-            metric_unit="token",
-        )
         self.monitor.register(
             self._metric("total_tokens"),
             metric_unit="token",
@@ -360,29 +351,29 @@ class OpenAIEmbeddingWrapper(OpenAIWrapper):
         texts: Union[list[str], str],
         **kwargs: Any,
     ) -> ModelResponse:
-        """Embed the messages with OpenAI embedding API.
+        """Embed the messages with DashScope Text Embedding API.
 
         Args:
             texts (`list[str]` or `str`):
                 The messages used to embed.
             **kwargs (`Any`):
-                The keyword arguments to OpenAI embedding API,
-                e.g. `encoding_format`, `user`. Please refer to
-                https://platform.openai.com/docs/api-reference/embeddings
+                The keyword arguments to DashScope Text Embedding API,
+                e.g. `text_type`. Please refer to
+                https://help.aliyun.com/zh/dashscope/developer-reference/api-details-15
                 for more detailed arguments.
 
         Returns:
             `ModelResponse`:
-                A list of embeddings in embedding field and the
-                raw response in raw field.
+                A list of embeddings in embedding field and the raw
+                response in raw field.
 
         Note:
-            `parse_func`, `fault_handler` and `max_retries` are reserved for
-            `_response_parse_decorator` to parse and check the response
+            `parse_func`, `fault_handler` and `max_retries` are reserved
+            for `_response_parse_decorator` to parse and check the response
             generated by model wrapper. Their usages are listed as follows:
-                - `parse_func` is a callable function used to parse and check
-                the response generated by the model, which takes the response
-                as input.
+                - `parse_func` is a callable function used to parse and
+                check the response generated by the model, which takes the
+                response as input.
                 - `max_retries` is the maximum number of retries when the
                 `parse_func` raise an exception.
                 - `fault_handler` is a callable function which is called
@@ -393,14 +384,20 @@ class OpenAIEmbeddingWrapper(OpenAIWrapper):
         kwargs = {**self.generate_args, **kwargs}
 
         # step2: forward to generate response
-        response = self.client.embeddings.create(
+        response = dashscope.TextEmbedding.call(
             input=texts,
             model=self.model,
             **kwargs,
         )
 
-        if response.status_code != 200:
-            raise RuntimeError(response.json())
+        if response.status_code != HTTPStatus.OK:
+            error_msg = (
+                f" Request id: {response.request_id},"
+                f" Status code: {response.status_code},"
+                f" error code: {response.code},"
+                f" error message: {response.message}."
+            )
+            raise RuntimeError(error_msg)
 
         # step3: record the model api invocation if needed
         self._save_model_invocation(
@@ -409,18 +406,28 @@ class OpenAIEmbeddingWrapper(OpenAIWrapper):
                 "input": texts,
                 **kwargs,
             },
-            json_response=response.model_dump(),
+            json_response=response,
         )
 
-        # step4: return response
-        response_json = response.model_dump()
-        if len(response_json["data"]) == 0:
+        # step4: update monitor accordingly
+        try:
+            self.monitor.update(
+                response.usage,
+                prefix=self.model,
+            )
+        except Exception as e:
+            logger.error(e)
+
+        # step5: return response
+        if len(response["output"]["embeddings"]) == 0:
             return ModelResponse(
-                embedding=response_json["data"]["embedding"][0],
-                raw=response_json,
+                embedding=response["output"]["embedding"][0],
+                raw=response,
             )
         else:
             return ModelResponse(
-                embedding=[_["embedding"] for _ in response_json["data"]],
-                raw=response_json,
+                embedding=[
+                    _["embedding"] for _ in response["output"]["embeddings"]
+                ],
+                raw=response,
             )
