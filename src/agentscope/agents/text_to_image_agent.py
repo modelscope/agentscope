@@ -15,7 +15,7 @@ class TextToImageAgent(AgentBase):
         self,
         name: str,
         sys_prompt: Optional[str] = None,
-        model_or_config_name: str = None,
+        config_name_or_model: str = None,
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
     ) -> None:
@@ -27,7 +27,7 @@ class TextToImageAgent(AgentBase):
             sys_prompt (`Optional[str]`):
                 The system prompt of the agent, which can be passed by args
                 or hard-coded in the agent.
-            model_or_config_name (`str`, defaults to None):
+            config_name_or_model (`str`, defaults to None):
                 The name of the model config, which is used to load model from
                 configuration.
             use_memory (`bool`, defaults to `True`):
@@ -38,7 +38,7 @@ class TextToImageAgent(AgentBase):
         super().__init__(
             name=name,
             sys_prompt=sys_prompt,
-            model_or_config_name=model_or_config_name,
+            config_name_or_model=config_name_or_model,
             use_memory=use_memory,
             memory_config=memory_config,
         )

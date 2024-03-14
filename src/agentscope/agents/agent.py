@@ -37,7 +37,7 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
         self,
         name: str,
         sys_prompt: Optional[str] = None,
-        model_or_config_name: [str, Callable[..., Any]] = None,
+        config_name_or_model: Optional[str, Callable[..., Any]] = None,
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
     ) -> None:
@@ -49,7 +49,7 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
             sys_prompt (`Optional[str]`):
                 The system prompt of the agent, which can be passed by args
                 or hard-coded in the agent.
-            model_or_config_name (`[str, Callable[..., ...]`, defaults to
+            config_name_or_model (`[str, Callable[..., Any]`, defaults to
             None):
                 The name of the model config, which is used to load model from
                 configuration.
@@ -65,16 +65,16 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
         if sys_prompt is not None:
             self.sys_prompt = sys_prompt
 
-        if model_or_config_name is not None:
-            if isinstance(model_or_config_name, str):
-                self.model = load_model_by_config_name(model_or_config_name)
-            elif callable(model_or_config_name):
-                self.model = model_or_config_name
+        if config_name_or_model is not None:
+            if isinstance(config_name_or_model, str):
+                self.model = load_model_by_config_name(config_name_or_model)
+            elif callable(config_name_or_model):
+                self.model = config_name_or_model
             else:
                 raise ValueError(
                     f"Invalid type for "
                     f"argument `model_or_config_name`:"
-                    f" {type(model_or_config_name)}",
+                    f" {type(config_name_or_model)}",
                 )
 
         if use_memory:

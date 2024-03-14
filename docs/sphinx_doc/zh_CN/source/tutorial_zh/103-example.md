@@ -65,7 +65,9 @@ from agentscope.agents import DialogAgent, UserAgent
 agentscope.init(model_configs="./model_configs.json")
 
 # 创建一个对话智能体和一个用户智能体
-dialogAgent = DialogAgent(name="assistant", model_config_name="gpt-4", sys_prompt="You are a helpful ai assistant")
+dialogAgent = DialogAgent(name="assistant",
+                          config_name_or_model="gpt-4",
+                          sys_prompt="You are a helpful ai assistant")
 userAgent = UserAgent()
 ```
 

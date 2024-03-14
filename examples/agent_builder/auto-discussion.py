@@ -33,7 +33,7 @@ agentscope.init(model_configs=model_configs)
 agent_builder = DialogAgent(
     name="agent_builder",
     sys_prompt="You're a helpful assistant.",
-    model_or_config_name="my_post_api",
+    config_name_or_model="my_post_api",
 )
 
 
@@ -56,7 +56,7 @@ agents = [
     DialogAgent(
         name=key,
         sys_prompt=val,
-        model_or_config_name="my_post_api",
+        config_name_or_model="my_post_api",
     )
     for key, val in scenario_participants["Participants"].items()
 ]
