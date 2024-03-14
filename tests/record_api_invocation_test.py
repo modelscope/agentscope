@@ -31,6 +31,7 @@ class RecordApiInvocation(unittest.TestCase):
         """Test record model invocation with calling init function."""
         # prepare mock response
         mock_response = MagicMock()
+        mock_response.status_code = 200
         mock_response.model_dump.return_value = self.dummy_response
         mock_response.usage.model_dump.return_value = {}
 
