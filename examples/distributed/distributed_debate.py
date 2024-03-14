@@ -4,6 +4,8 @@
 import argparse
 import json
 
+from user_proxy_agent import UserProxyAgent
+
 import agentscope
 from agentscope.msghub import msghub
 from agentscope.agents.dialog_agent import DialogAgent
@@ -30,9 +32,10 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--role",
-        choices=["pro", "con", "judge", "main"],
+        choices=["pro", "con", "main"],
         default="main",
     )
+    parser.add_argument("--is-human", action="store_true")
     parser.add_argument("--pro-host", type=str, default="localhost")
     parser.add_argument(
         "--pro-port",
@@ -59,28 +62,34 @@ def setup_server(parsed_args: argparse.Namespace) -> None:
     agentscope.init(
         model_configs="configs/model_configs.json",
     )
-    with open(
-        "configs/debate_agent_configs.json",
-        "r",
-        encoding="utf-8",
-    ) as f:
-        configs = json.load(f)
-        configs = {
-            "pro": configs[0]["args"],
-            "con": configs[1]["args"],
-            "judge": configs[2]["args"],
-        }
-        config = configs[parsed_args.role]
-        host = getattr(parsed_args, f"{parsed_args.role}_host")
-        port = getattr(parsed_args, f"{parsed_args.role}_port")
-        server_launcher = RpcAgentServerLauncher(
-            agent_class=DialogAgent,
-            agent_kwargs=config,
-            host=host,
-            port=port,
-        )
-        server_launcher.launch()
-        server_launcher.wait_until_terminate()
+    host = getattr(parsed_args, f"{parsed_args.role}_host")
+    port = getattr(parsed_args, f"{parsed_args.role}_port")
+    if parsed_args.is_human:
+        agent_class = UserProxyAgent
+        config = {"name": parsed_args.role}
+    else:
+        with open(
+            "configs/debate_agent_configs.json",
+            "r",
+            encoding="utf-8",
+        ) as f:
+            configs = json.load(f)
+            configs = {
+                "pro": configs[0]["args"],
+                "con": configs[1]["args"],
+                "judge": configs[2]["args"],
+            }
+            config = configs[parsed_args.role]
+            agent_class = DialogAgent
+
+    server_launcher = RpcAgentServerLauncher(
+        agent_class=agent_class,
+        agent_kwargs=config,
+        host=host,
+        port=port,
+    )
+    server_launcher.launch(in_subprocess=False)
+    server_launcher.wait_until_terminate()
 
 
 def run_main_process(parsed_args: argparse.Namespace) -> None:
@@ -99,24 +108,17 @@ def run_main_process(parsed_args: argparse.Namespace) -> None:
         port=parsed_args.con_port,
         launch_server=False,
     )
-    judge_agent = judge_agent.to_dist(
-        host=parsed_args.judge_host,
-        port=parsed_args.judge_port,
-        launch_server=False,
-    )
     participants = [pro_agent, con_agent, judge_agent]
     hint = Msg(name="System", content=ANNOUNCEMENT)
     x = None
     with msghub(participants=participants, announcement=hint):
         for _ in range(3):
-            pro_resp = pro_agent(x)
+            pro_resp = pro_agent()
             logger.chat(pro_resp)
-            con_resp = con_agent(pro_resp)
+            con_resp = con_agent()
             logger.chat(con_resp)
-            x = judge_agent(con_resp)
-            logger.chat(x)
-        x = judge_agent(x)
-        logger.chat(x)
+            judge_agent()
+        judge_agent(x)
 
 
 if __name__ == "__main__":
