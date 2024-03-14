@@ -47,12 +47,12 @@ class UserProxyAgent(AgentBase):
                 required_keys = [required_keys]
 
             for key in required_keys:
-                kwargs[key] = input(f"{key}: ")
+                kwargs[key] = user_input(f"{key}: ")
 
         # Input url of file, image, video, audio or website
         url = None
         if self.require_url:
-            url = input("URL: ")
+            url = user_input("URL: ")
 
         # Add additional keys
         msg = Msg(
