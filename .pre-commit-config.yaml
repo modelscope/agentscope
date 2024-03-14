@@ -28,6 +28,7 @@ repos:
             (?x)(
                 pb2\.py$
                 | grpc\.py$
+                | ^docs
             )
         args: [ --disallow-untyped-defs,
                 --disallow-incomplete-defs,

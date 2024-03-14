@@ -244,9 +244,12 @@ def setup_rcp_agent_server(
         f"rpc server [{agent_class.__name__}] at port [{port}] started "
         "successfully",
     )
-    pipe.send(port)
-    start_event.set()
-    stop_event.wait()
+    if start_event is not None:
+        pipe.send(port)
+        start_event.set()
+        stop_event.wait()
+    else:
+        server.wait_for_termination()
     logger.info(
         f"Stopping rpc server [{agent_class.__name__}] at port [{port}]",
     )
@@ -335,13 +338,35 @@ class RpcAgentServerLauncher:
         self.port = check_port(port)
         self.max_pool_size = max_pool_size
         self.max_timeout_seconds = max_timeout_seconds
-        self.local_model = local_mode
+        self.local_mode = local_mode
         self.server = None
         self.stop_event = None
         self.parent_con = None
 
-    def launch(self) -> None:
-        """launch a local rpc agent server."""
+    def _launch_in_main(self) -> None:
+        """Launch gRPC server in main-process"""
+        server_thread = threading.Thread(
+            target=setup_rcp_agent_server,
+            kwargs={
+                "agent_class": self.agent_class,
+                "agent_args": self.agent_args,
+                "agent_kwargs": self.agent_kwargs,
+                "host": self.host,
+                "port": self.port,
+                "max_pool_size": self.max_pool_size,
+                "max_timeout_seconds": self.max_timeout_seconds,
+                "local_mode": self.local_mode,
+            },
+        )
+        server_thread.start()
+        logger.info(
+            f"Launch [{self.agent_class.__name__}] server at "
+            f"[{self.host}:{self.port}] success",
+        )
+        server_thread.join()
+
+    def _launch_in_sub(self) -> None:
+        """Launch gRPC server in sub-process."""
         self.stop_event = Event()
         self.parent_con, child_con = Pipe()
         start_event = Event()
@@ -359,7 +384,7 @@ class RpcAgentServerLauncher:
                 "pipe": child_con,
                 "max_pool_size": self.max_pool_size,
                 "max_timeout_seconds": self.max_timeout_seconds,
-                "local_mode": self.local_model,
+                "local_mode": self.local_mode,
             },
         )
         server_process.start()
@@ -370,6 +395,19 @@ class RpcAgentServerLauncher:
             f"Launch [{self.agent_class.__name__}] server at "
             f"[{self.host}:{self.port}] success",
         )
+
+    def launch(self, in_subprocess: bool = True) -> None:
+        """launch a rpc agent server.
+
+        Args:
+            in_subprocess (bool, optional): launch the server in subprocess.
+                Defaults to True. For agents that need to obtain command line
+                input, such as UserAgent, please set this value to False.
+        """
+        if in_subprocess:
+            self._launch_in_sub()
+        else:
+            self._launch_in_main()
 
     def wait_until_terminate(self) -> None:
         """Wait for server process"""
@@ -382,8 +420,8 @@ class RpcAgentServerLauncher:
             if self.stop_event is not None:
                 self.stop_event.set()
                 self.stop_event = None
-            self.server.terminate()
             self.server.join(timeout=5)
+            self.server.terminate()
             if self.server.is_alive():
                 self.server.kill()
                 logger.info(

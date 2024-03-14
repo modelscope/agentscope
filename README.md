@@ -28,7 +28,6 @@ Welcome to join our community on
 |---------|----------|--------|
 | <img src="https://gw.alicdn.com/imgextra/i1/O1CN01hhD1mu1Dd3BWVUvxN_!!6000000000238-2-tps-400-400.png" width="100" height="100"> | <img src="https://img.alicdn.com/imgextra/i2/O1CN01tuJ5971OmAqNg9cOw_!!6000000001747-0-tps-444-460.jpg" width="100" height="100"> | <img src="https://img.alicdn.com/imgextra/i3/O1CN01UyfWfx1CYBM3WqlBy_!!6000000000092-2-tps-400-400.png" width="100" height="100"> |
 
-
 ----
 
 ## News
@@ -40,6 +39,7 @@ Table of Contents
 =================
 
 - [AgentScope](#agentscope)
+  - [News](#news)
 - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
     - [From source](#from-source)
@@ -48,6 +48,7 @@ Table of Contents
     - [Basic Usage](#basic-usage)
       - [Step 1: Prepare Model Configs](#step-1-prepare-model-configs)
         - [OpenAI API Config](#openai-api-config)
+        - [DashScope API Config](#dashscope-api-config)
         - [Post Request API Config](#post-request-api-config)
       - [Step 2: Create Agents](#step-2-create-agents)
       - [Step 3: Construct Conversation](#step-3-construct-conversation)
@@ -124,6 +125,7 @@ AgentScope supports the following model API services:
 | OpenAI Chat API      | `openai`            | Standard OpenAI Chat API, FastChat and vllm                    |
 | OpenAI DALL-E API    | `openai_dall_e`     | Standard DALL-E API                                            |
 | OpenAI Embedding API | `openai_embedding`  | OpenAI embedding API                                           |
+| DashScope Chat API   | `dashscope_chat`    | DashScope chat API, including Qwen series |
 | Post API             | `post_api`          | Huggingface/ModelScope inference API, and customized post API  |
 
 ##### OpenAI API Config
@@ -143,6 +145,21 @@ For OpenAI APIs, you need to prepare a dict of model config with the following f
                                                 # variable OPENAI_ORGANIZATION will be used.
 }
 ```
+
+##### DashScope API Config
+
+For DashScope APIs, you need to prepare a dict of model config with the following fields:
+
+```
+{
+    "config_name": "{config name}",               # The name to identify the config
+    "model_type": "dashscope_chat" | "dashscope_text_embedding" | "dashscope_image_synthesis",
+    "model_name": "{model name, e.g. qwen-max}",  # The model in dashscope API
+    "api_key": "xxx",                             # The API key for DashScope API.
+}
+```
+
+> Note: The dashscope APIs may have strict requirements on the `role` field in messages. Please use with caution.
 
 ##### Post Request API Config
 
