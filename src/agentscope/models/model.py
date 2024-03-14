@@ -114,7 +114,7 @@ class ModelResponse:
             "image_urls": self.image_urls,
             "raw": self.raw,
         }
-        return json.dumps(serialized_fields, indent=4)
+        return json.dumps(serialized_fields, indent=4, ensure_ascii=False)
 
 
 def _response_parse_decorator(
@@ -200,10 +200,15 @@ class _ModelWrapperMeta(ABCMeta):
         if not hasattr(cls, "registry"):
             cls.registry = {}
             cls.type_registry = {}
+            cls.deprecated_type_registry = {}
         else:
             cls.registry[name] = cls
             if hasattr(cls, "model_type"):
                 cls.type_registry[cls.model_type] = cls
+                if hasattr(cls, "deprecated_model_type"):
+                    cls.deprecated_type_registry[
+                        cls.deprecated_model_type
+                    ] = cls
         super().__init__(name, bases, attrs)
 
 
@@ -223,7 +228,10 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
         """
         self.config_name = config_name
         logger.info(f"Initialize model [{config_name}]")
-        logger.debug(f"[{config_name}]:\n {json.dumps(kwargs, indent=2)}")
+        logger.debug(
+            f"[{config_name}]:\n"
+            f"{json.dumps(kwargs, indent=2, ensure_ascii=False)}",
+        )
 
     def __call__(self, *args: Any, **kwargs: Any) -> ModelResponse:
         """Processing input with the model."""
