@@ -1,19 +1,25 @@
 # -*- coding: utf-8 -*-
 """Unit test for gemini model wrapper."""
-import os
 import unittest
-import uuid
 from unittest.mock import MagicMock, patch
 
 import agentscope
-from agentscope import _runtime
 from agentscope.models import load_model_by_config_name
-from agentscope.utils import MonitorFactory
+from agentscope._runtime import _Runtime
+from agentscope.file_manager import _FileManager
+from agentscope.utils.monitor import MonitorFactory
 
 
-# TODO: The file name `z_gemini_test.py` is to place the unit test for
-#  gemini at the end of the test list. It is a temporary solution. We will
-#  fix it in the future.
+def flush() -> None:
+    """
+    ** Only for unittest usage. Don't use this function in your code. **
+    Clear the runtime dir and destroy all singletons.
+    """
+    _Runtime._flush()  # pylint: disable=W0212
+    _FileManager._flush()  # pylint: disable=W0212
+    MonitorFactory.flush()
+
+
 class DummyResponse:
     """Dummy response for testing."""
 
@@ -29,13 +35,7 @@ class GeminiModelWrapperTest(unittest.TestCase):
 
     def setUp(self) -> None:
         """Set up for GeminiModelWrapperTest."""
-        self.tmp = MonitorFactory._instance  # pylint: disable=W0212
-
-        MonitorFactory._instance = None  # pylint: disable=W0212
-        self.db_path = f"test-{uuid.uuid4()}.db"
-        _ = MonitorFactory.get_monitor(db_path=self.db_path)
-
-        self.tmp_runtime = _runtime
+        flush()
 
     @patch("google.generativeai.GenerativeModel")
     def test_gemini_chat(self, mock_model: MagicMock) -> None:
@@ -91,11 +91,7 @@ class GeminiModelWrapperTest(unittest.TestCase):
 
     def tearDown(self) -> None:
         """Clean up after each test."""
-        MonitorFactory._instance = self.tmp  # pylint: disable=W0212
-        os.remove(self.db_path)
-
-        _runtime = self.tmp_runtime
-        print(_runtime.datetime)
+        flush()
 
 
 if __name__ == "__main__":

@@ -20,7 +20,7 @@ class GeminiWrapperBase(ModelWrapperBase):
     """The base class for Google Gemini model wrapper."""
 
     _generation_method = None
-    """The generation method used in `__call__` function, which is used to 
+    """The generation method used in `__call__` function, which is used to
     filter models in `list_models` function."""
 
     def __init__(
