@@ -88,7 +88,10 @@ def reply(self, x: dict = None) -> dict:
         self.memory.add(x)  # Update the memory with the input
 
     # Generate a prompt for the language model using the system prompt and memory
-    prompt = self.engine.join(self.sys_prompt, self.memory.get_memory())
+    prompt = self.engine.join(
+        self.sys_prompt,
+        self.memory and self.memory.get_memory(),
+    )
 
     # Invoke the language model with the prepared prompt
     response = self.model(prompt).text
