@@ -14,7 +14,6 @@ from .model import ModelWrapperBase, ModelResponse
 
 from ..file_manager import file_manager
 from ..utils.monitor import MonitorFactory
-from ..utils.monitor import get_full_name
 from ..constants import _DEFAULT_API_BUDGET
 
 
@@ -70,35 +69,13 @@ class DashScopeWrapper(ModelWrapperBase):
 
         # Set monitor accordingly
         self.monitor = None
-        self.budget = budget
-        self._register_budget()
         self._register_default_metrics()
-
-    def _register_budget(self) -> None:
-        self.monitor = MonitorFactory.get_monitor()
-        self.monitor.register_budget(
-            model_name=self.model,
-            value=self.budget,
-            prefix=self.model,
-        )
 
     def _register_default_metrics(self) -> None:
         """Register metrics to the monitor."""
         raise NotImplementedError(
             "The _register_default_metrics function is not Implemented.",
         )
-
-    def _metric(self, metric_name: str) -> str:
-        """Add the class name and model name as prefix to the metric name.
-
-        Args:
-            metric_name (`str`):
-                The metric name.
-
-        Returns:
-            `str`: Metric name of this wrapper.
-        """
-        return get_full_name(name=metric_name, prefix=self.model)
 
 
 class DashScopeChatWrapper(DashScopeWrapper):
@@ -113,15 +90,15 @@ class DashScopeChatWrapper(DashScopeWrapper):
         # TODO: set quota to the following metrics
         self.monitor = MonitorFactory.get_monitor()
         self.monitor.register(
-            self._metric("prompt_tokens"),
+            self._metric("prompt_tokens", self.model),
             metric_unit="token",
         )
         self.monitor.register(
-            self._metric("completion_tokens"),
+            self._metric("completion_tokens", self.model),
             metric_unit="token",
         )
         self.monitor.register(
-            self._metric("total_tokens"),
+            self._metric("total_tokens", self.model),
             metric_unit="token",
         )
 
@@ -210,7 +187,7 @@ class DashScopeChatWrapper(DashScopeWrapper):
                 "messages": messages,
                 **kwargs,
             },
-            json_response=response,
+            response=response,
         )
 
         # step5: update monitor accordingly
@@ -271,7 +248,7 @@ class DashScopeImageSynthesisWrapper(DashScopeWrapper):
         # TODO: set quota to the following metrics
         self.monitor = MonitorFactory.get_monitor()
         self.monitor.register(
-            self._metric("image_count"),
+            self._metric("image_count", self.model),
             metric_unit="image",
         )
 
@@ -339,7 +316,7 @@ class DashScopeImageSynthesisWrapper(DashScopeWrapper):
                 "prompt": prompt,
                 **kwargs,
             },
-            json_response=response,
+            response=response,
         )
 
         # step4: update monitor accordingly
@@ -372,7 +349,7 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapper):
         # TODO: set quota to the following metrics
         self.monitor = MonitorFactory.get_monitor()
         self.monitor.register(
-            self._metric("total_tokens"),
+            self._metric("total_tokens", self.model),
             metric_unit="token",
         )
 
@@ -436,7 +413,7 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapper):
                 "input": texts,
                 **kwargs,
             },
-            json_response=response,
+            response=response,
         )
 
         # step4: update monitor accordingly

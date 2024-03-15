@@ -27,6 +27,10 @@ from .ollama_model import (
     OllamaEmbeddingWrapper,
     OllamaGenerationWrapper,
 )
+from .gemini_model import (
+    GeminiChatWrapper,
+    GeminiEmbeddingWrapper,
+)
 
 
 __all__ = [
@@ -47,6 +51,8 @@ __all__ = [
     "OllamaChatWrapper",
     "OllamaEmbeddingWrapper",
     "OllamaGenerationWrapper",
+    "GeminiChatWrapper",
+    "GeminiEmbeddingWrapper",
 ]
 
 _MODEL_CONFIGS: dict[str, dict] = {}

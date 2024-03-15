@@ -60,5 +60,14 @@ class _Runtime:
         """Get the current timestamp in specific format."""
         return self._timestamp.strftime(_RUNTIME_TIMESTAMP_FORMAT)
 
+    @staticmethod
+    def _flush() -> None:
+        """
+        Only for unittest usage. Don't use this function in your code.
+        Flush the runtime singleton.
+        """
+        global _runtime
+        _runtime = _Runtime()
+
 
 _runtime = _Runtime()

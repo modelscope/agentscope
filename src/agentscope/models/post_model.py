@@ -155,7 +155,7 @@ class PostAPIModelWrapperBase(ModelWrapperBase):
         # `FileManager.save_api_invocation` is `False`
         self._save_model_invocation(
             arguments=request_kwargs,
-            json_response=response.json(),
+            response=response.json(),
         )
 
         # step4: parse the response
