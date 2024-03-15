@@ -27,23 +27,6 @@ LOG_LEVEL = Literal[
 LEVEL_CHAT_LOG = "CHAT_LOG"
 LEVEL_CHAT_SAVE = "CHAT_SAVE"
 
-
-class _Stream:
-    """Redirect stderr to logging"""
-
-    def write(self, message: str) -> None:
-        """Redirect to logging.
-
-        Args:
-            message (`str`):
-                The message to be logged.
-        """
-        logger.error(message, enqueue=True)
-
-    def flush(self) -> None:
-        """Flush the stream."""
-
-
 _SPEAKER_COLORS = [
     ("<blue>", "</blue>"),
     ("<cyan>", "</cyan>"),
@@ -214,27 +197,22 @@ def setup_logger(
             `"CRITICAL"`.
     """
     # avoid reinit in subprocess
-    if hasattr(logger, "chat"):
-        return
+    if not hasattr(logger, "chat"):
+        # add chat function for logger
+        logger.level(LEVEL_CHAT_LOG, no=21)
+        logger.level(LEVEL_CHAT_SAVE, no=0)
+        logger.chat = _chat
 
-    # redirect stderr to record errors in logging
-    sys.stderr = _Stream()
-
-    # add chat function for logger
-    logger.level(LEVEL_CHAT_LOG, no=21)
-    logger.level(LEVEL_CHAT_SAVE, no=0)
-    logger.chat = _chat
-
-    # set logging level
-    logger.remove()
-    # standard output for all logging except chat
-    logger.add(
-        sys.stdout,
-        filter=lambda record: record["level"].name != LEVEL_CHAT_SAVE,
-        format=_level_format,
-        enqueue=True,
-        level=level,
-    )
+        # set logging level
+        logger.remove()
+        # standard output for all logging except chat
+        logger.add(
+            sys.stdout,
+            filter=lambda record: record["level"].name != LEVEL_CHAT_SAVE,
+            format=_level_format,
+            enqueue=True,
+            level=level,
+        )
 
     if path_log is not None:
         if not os.path.exists(path_log):
