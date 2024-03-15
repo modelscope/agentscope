@@ -27,7 +27,6 @@ AgentScope中，我们将运行应用流程的进程称为“主进程”，而�
 - `launch_server`: 是否在本地启动RPC服务器，默认为`True`。
 
 假设有两个智能体类`AgentA`和`AgentB`，它们都继承自 `AgentBase`。
-Suppose there are two agent classes `AgentA` and `AgentB`, both of which inherit from `AgentBase`.
 
 #### 主从模式
 
