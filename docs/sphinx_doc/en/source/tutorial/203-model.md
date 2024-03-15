@@ -11,7 +11,10 @@ model services.
 
 Currently, AgentScope supports the following model service APIs:
 
-- OpenAI API, including Chat, image generation (DALL-E), and Embedding.
+- OpenAI API, including chat, image generation (DALL-E), and Embedding.
+- DashScope API, including chat, image sythesis and text embedding.
+- Gemini API, including chat and embedding.
+- Ollama API, including chat, embedding and generation.
 - Post Request API, model inference services based on Post
   requests, including Huggingface/ModelScope Inference API and various
   post request based model APIs.
@@ -59,7 +62,7 @@ model_configs = [
 
 ### Configuration Format
 
-In AgentScope the model configuration is a dictionary used to specify the type of model and set the call parameters.
+In AgentScope, the model configuration is a dictionary used to specify the type of model and set the call parameters.
 We divide the fields in the model configuration into two categories: _basic parameters_ and _detailed parameters_.
 Among them, the basic parameters include `config_name` and `model_type`, which are used to distinguish different model configurations and specific `ModelWrapper` types.
 
@@ -93,12 +96,22 @@ class OpenAIChatWrapper(OpenAIWrapper):
 In the current AgentScope, the supported `model_type` types, the corresponding
 `ModelWrapper` classes, and the supported APIs are as follows:
 
-| Task             | model_type         | ModelWrapper             | Supported APIs                                                |
-|------------------|--------------------|--------------------------|------------------------------------------------------------|
-| Text generation  | `openai`           | `OpenAIChatWrapper`      | Standard OpenAI chat API, FastChat and vllm                     |
-| Image generation | `openai_dall_e`    | `OpenAIDALLEWrapper`     | DALL-E API for generating images                             |
-| Embedding        | `openai_embedding` | `OpenAIEmbeddingWrapper` | API for text embeddings                                      |
-| Post Request     | `post_api`         | `PostAPIModelWrapperBase` | Huggingface/ModelScope Inference API, and customized post API |
+
+| API                    | Task            | Model Wrapper                    | `model_type`                |
+|------------------------|-----------------|----------------------------------|-----------------------------|
+| OpenAI API             | Chat            | `OpenAIChatWrapper`              | "openai"                    |
+|                        | Embedding       | `OpenAIEmbeddingWrapper`         | "openai_embedding"          |
+|                        | DALL·E          | `OpenAIDALLEWrapper`             | "openai_dall_e"             |
+| DashScope API          | Chat            | `DashScopeChatWrapper`           | "dashscope_chat"            |
+|                        | Image Synthesis | `DashScopeImageSynthesisWrapper` | "dashscope_image_synthesis" |
+|                        | Text Embedding  | `DashScopeTextEmbeddingWrapper`  | "dashscope_text_embedding"  |
+| Gemini API             | Chat            | `GeminiChatWrapper`              | "gemini_chat"               |
+|                        | Embedding       | `GeminiEmbeddingWrapper`         | "gemini_embedding"          |
+| ollama                 | Chat            | `OllamaChatWrapper`              | "ollama_chat"               |
+|                        | Embedding       | `OllamaEmbedding`                | "ollama_embedding"          |
+|                        | Generation      | `OllamaGenerationWrapper`        | "ollama_generate"           |
+| Post Request based API | -               | `PostAPIModelWrapper`            | "post_api“                  |
+|                        | Chat            | `PostAPIChatWrapper`             | "post_api_chat"             |
 
 #### Detailed Parameters
 
@@ -133,16 +146,73 @@ their `ModelWrapper` classes.
 }
 ```
 
+- For DashScope API, the model configuration parameters are as follows:
+```python
+{
+    # basic parameters
+    "config_name": "my_qwen_config",               # The name to identify the config.
+    "model_type": "dashscope_chat" ,               # can also be "dashscope_text_embedding" for embedding and  "dashscope_image_synthesis" for text-to-image.
+
+    # detailed parameters
+    # required parameters
+    "model_name": "qwen-max",                      # The model in dashscope API.
+
+    # optional
+    "api_key": "xxx",                              # The API key for DashScope API. If not provided, will try to read from the environment variable.
+
+    "generate_args": {                              # Parameters passed to the model when calling.
+        # e.g. "temperature": 0.0, "seed": 123
+    },
+}
+```
+
+
+- For Gemini API, the model configuration parameters are as follows:
+```python
+{
+    # basic parameters
+    "config_name": "my_gemini_chat",            # The name to identify the config.
+    "model_type": "gemini_chat",                # can also be "gemini_embedding" for embedding
+
+    # detailed parameters
+    # required parameters
+    "model_name": "gemini-pro",
+
+    # optional
+    "api_key": "xxx",                          # The API key
+    "generation_config": {                     # Parameters passed to the model when calling.
+          # "temperature": 0.2,
+    }
+}
+```
+
+- For ollama API, the model configuration parameters are as follows:
+
+```python
+{
+    # basic parameters
+    "config_name": "my_ollama_chat",                    # The name to identify the config.
+    "model_type": "ollama_chat",                        # can also be "ollama_embedding" for embedding and "ollama_generate" for generation
+
+    "model": "llama2",                                  # the model name used in ollama API.
+
+    "options": {                                        # Parameters passed to the model when calling.
+        # e.g. "temperature": 0.0
+    },
+    "keep_alive": "5m",                                 # Controls how long the model will stay loaded into memory
+}
+```
+
 - For post request API, the model configuration parameters are as follows:
 
 ```python
 {
-    # Basic parameters
+    # basic parameters
     "config_name": "gpt-4_temperature-0.0",
     "model_type": "post_api",
 
-    # Detailed parameters
-    "api_url": "http://xxx.png",
+    # detailed parameters
+    "api_url": "http://xxx",
     "headers": {
         # e.g. "Authorization": "Bearer xxx",
     },
