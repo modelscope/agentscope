@@ -2,14 +2,13 @@
 """ Test for record api invocation."""
 import json
 import os
-import shutil
 import unittest
 from unittest.mock import patch, MagicMock
 
 import agentscope
 from agentscope.models import OpenAIChatWrapper
 from agentscope._runtime import _Runtime
-from agentscope.file_manager import _FileManager
+from agentscope.file_manager import _FileManager, file_manager
 from agentscope.utils.monitor import MonitorFactory
 
 
@@ -33,8 +32,6 @@ class RecordApiInvocation(unittest.TestCase):
 
         self.dummy_response = {"content": "dummy_response"}
 
-        if os.path.exists("./runs"):
-            shutil.rmtree("./runs")
         flush()
 
     @patch("openai.OpenAI")
@@ -70,17 +67,11 @@ class RecordApiInvocation(unittest.TestCase):
 
     def assert_invocation_record(self) -> None:
         """Assert invocation record."""
-        sub_dirs = list(os.listdir("./runs"))
-
-        # only one runtime dir is here
-        self.assertEqual(len(sub_dirs), 1)
-
-        sub_dir = sub_dirs[0]
-
+        run_dir = file_manager.dir_root
         records = [
             _
             for _ in os.listdir(
-                os.path.join("./runs", sub_dir, "invoke"),
+                os.path.join(run_dir, "invoke"),
             )
             if _.startswith("model_OpenAIChatWrapper_")
         ]
@@ -92,7 +83,7 @@ class RecordApiInvocation(unittest.TestCase):
         timestamp = filename.split("_")[2]
 
         with open(
-            os.path.join("./runs/", sub_dir, "invoke", filename),
+            os.path.join(run_dir, "invoke", filename),
             "r",
             encoding="utf-8",
         ) as file:
