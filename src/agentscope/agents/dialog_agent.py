@@ -15,8 +15,8 @@ class DialogAgent(AgentBase):
     def __init__(
         self,
         name: str,
-        sys_prompt: Optional[str] = None,
-        model_config_name: str = None,
+        sys_prompt: str,
+        model_config_name: str,
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
         prompt_type: Optional[PromptType] = PromptType.LIST,
@@ -29,7 +29,7 @@ class DialogAgent(AgentBase):
             sys_prompt (`Optional[str]`):
                 The system prompt of the agent, which can be passed by args
                 or hard-coded in the agent.
-            model_config_name (`str`, defaults to None):
+            model_config_name (`str`):
                 The name of the model config, which is used to load model from
                 configuration.
             use_memory (`bool`, defaults to `True`):
@@ -68,13 +68,13 @@ class DialogAgent(AgentBase):
             response to the user's input.
         """
         # record the input if needed
-        if x is not None:
+        if not self.memory:
             self.memory.add(x)
 
         # prepare prompt
         prompt = self.engine.join(
             self.sys_prompt,
-            self.memory.get_memory(),
+            self.memory and self.memory.get_memory(),
         )
 
         # call llm and generate response
@@ -85,6 +85,7 @@ class DialogAgent(AgentBase):
         self.speak(msg)
 
         # Record the message in memory
-        self.memory.add(msg)
+        if not self.memory:
+            self.memory.add(msg)
 
         return msg

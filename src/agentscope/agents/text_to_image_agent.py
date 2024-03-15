@@ -14,8 +14,8 @@ class TextToImageAgent(AgentBase):
     def __init__(
         self,
         name: str,
-        sys_prompt: Optional[str] = None,
-        model_config_name: str = None,
+        sys_prompt: str,
+        model_config_name: str,
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
     ) -> None:
@@ -44,8 +44,9 @@ class TextToImageAgent(AgentBase):
         )
 
     def reply(self, x: dict = None) -> dict:
-        if x is not None:
+        if not self.memory and x is not None:
             self.memory.add(x)
+
         image_urls = self.model(x.content).image_urls
         # TODO: optimize the construction of content
         msg = Msg(
@@ -54,5 +55,8 @@ class TextToImageAgent(AgentBase):
             url=image_urls,
         )
         logger.chat(msg)
-        self.memory.add(msg)
+
+        if not self.memory:
+            self.memory.add(msg)
+
         return msg

@@ -108,6 +108,10 @@ class PromptEngine:
         converted to `Msg` from `system`.
         """
         # TODO: achieve the summarize function
+
+        # Filter `None`
+        args = [_ for _ in args if _ is not None]
+
         if self.prompt_type == PromptType.STRING:
             return self.join_to_str(*args, format_map=format_map)
         elif self.prompt_type == PromptType.LIST:

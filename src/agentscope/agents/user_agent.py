@@ -61,7 +61,7 @@ class UserAgent(AgentBase):
             the user's input and any additional details. This is also
             stored in the object's memory.
         """
-        if x is not None:
+        if not self.memory and x is not None:
             self.memory.add(x)
 
         # TODO: To avoid order confusion, because `input` print much quicker
@@ -91,6 +91,7 @@ class UserAgent(AgentBase):
         )
 
         # Add to memory
-        self.memory.add(msg)
+        if not self.memory:
+            self.memory.add(msg)
 
         return msg
