@@ -183,6 +183,8 @@ class DashScopeChatWrapper(DashScopeWrapper):
                 "and 'content' key for DashScope API.",
             )
 
+        # TODO: move is to prompt engineering
+        messages = self._preprocess_role(messages)
         # step3: forward to generate response
         response = dashscope.Generation.call(
             model=self.model,
@@ -229,6 +231,34 @@ class DashScopeChatWrapper(DashScopeWrapper):
             text=response.output["choices"][0]["message"]["content"],
             raw=response,
         )
+
+    def _preprocess_role(self, messages: list) -> list:
+        """preprocess role rules for DashScope"""
+        # The models in this list require that the roles of messages must
+        # alternate between "user" and "assistant".
+        message_length = len(messages)
+        if message_length % 2 == 1:
+            # If the length of the message list is odd, roles will
+            # alternate, starting with "user"
+            roles = [
+                "user" if i % 2 == 0 else "assistant"
+                for i in range(message_length)
+            ]
+        else:
+            # If the length of the message list is even, the first role
+            # will be "system", followed by alternating "user" and
+            # "assistant"
+            roles = ["system"] + [
+                "user" if i % 2 == 1 else "assistant"
+                for i in range(1, message_length)
+            ]
+
+        # Assign the roles list to the "role" key for each message in
+        # the messages list
+        for message, role in zip(messages, roles):
+            message["role"] = role
+
+        return messages
 
 
 class DashScopeImageSynthesisWrapper(DashScopeWrapper):
