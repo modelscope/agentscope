@@ -123,23 +123,6 @@
 <span class="n">LEVEL_CHAT_LOG</span> <span class="o">=</span> <span class="s2">&quot;CHAT_LOG&quot;</span>
 <span class="n">LEVEL_CHAT_SAVE</span> <span class="o">=</span> <span class="s2">&quot;CHAT_SAVE&quot;</span>
 
-
-<span class="k">class</span> <span class="nc">_Stream</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Redirect stderr to logging&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Redirect to logging.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            message (`str`):</span>
-<span class="sd">                The message to be logged.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">enqueue</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Flush the stream.&quot;&quot;&quot;</span>
-
-
 <span class="n">_SPEAKER_COLORS</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">(</span><span class="s2">&quot;&lt;blue&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;/blue&gt;&quot;</span><span class="p">),</span>
     <span class="p">(</span><span class="s2">&quot;&lt;cyan&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;/cyan&gt;&quot;</span><span class="p">),</span>
@@ -315,27 +298,22 @@
 <span class="sd">            `&quot;CRITICAL&quot;`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># avoid reinit in subprocess</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="s2">&quot;chat&quot;</span><span class="p">):</span>
-        <span class="k">return</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="s2">&quot;chat&quot;</span><span class="p">):</span>
+        <span class="c1"># add chat function for logger</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">level</span><span class="p">(</span><span class="n">LEVEL_CHAT_LOG</span><span class="p">,</span> <span class="n">no</span><span class="o">=</span><span class="mi">21</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">level</span><span class="p">(</span><span class="n">LEVEL_CHAT_SAVE</span><span class="p">,</span> <span class="n">no</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">chat</span> <span class="o">=</span> <span class="n">_chat</span>
 
-    <span class="c1"># redirect stderr to record errors in logging</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="n">_Stream</span><span class="p">()</span>
-
-    <span class="c1"># add chat function for logger</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">level</span><span class="p">(</span><span class="n">LEVEL_CHAT_LOG</span><span class="p">,</span> <span class="n">no</span><span class="o">=</span><span class="mi">21</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">level</span><span class="p">(</span><span class="n">LEVEL_CHAT_SAVE</span><span class="p">,</span> <span class="n">no</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">chat</span> <span class="o">=</span> <span class="n">_chat</span>
-
-    <span class="c1"># set logging level</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
-    <span class="c1"># standard output for all logging except chat</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span>
-        <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">record</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;level&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="n">LEVEL_CHAT_SAVE</span><span class="p">,</span>
-        <span class="nb">format</span><span class="o">=</span><span class="n">_level_format</span><span class="p">,</span>
-        <span class="n">enqueue</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span>
-    <span class="p">)</span>
+        <span class="c1"># set logging level</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+        <span class="c1"># standard output for all logging except chat</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span>
+            <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">record</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;level&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="n">LEVEL_CHAT_SAVE</span><span class="p">,</span>
+            <span class="nb">format</span><span class="o">=</span><span class="n">_level_format</span><span class="p">,</span>
+            <span class="n">enqueue</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">path_log</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path_log</span><span class="p">):</span>

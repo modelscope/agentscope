@@ -98,6 +98,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.utils.monitor.MonitorFactory"><code class="docutils literal notranslate"><span class="pre">MonitorFactory</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.utils.monitor.MonitorFactory.flush"><code class="docutils literal notranslate"><span class="pre">MonitorFactory.flush()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#agentscope.utils.monitor.MonitorFactory.get_monitor"><code class="docutils literal notranslate"><span class="pre">MonitorFactory.get_monitor()</span></code></a></li>
 </ul>
 </li>
@@ -576,6 +577,13 @@ the same <cite>prefix</cite>, only the first time will take effect.</p></li>
 <span class="n">monitor</span> <span class="o">=</span> <span class="n">MonitorFactory</span><span class="o">.</span><span class="n">get_monitor</span><span class="p">()</span>
 </pre></div>
 </div>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.utils.monitor.MonitorFactory.flush">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">flush</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/utils/monitor.html#MonitorFactory.flush"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.utils.monitor.MonitorFactory.flush" title="Link to this definition"></a></dt>
+<dd><p>Only for unittest usage. Don’t use this function in your code.
+Flush the monitor singleton.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.utils.monitor.MonitorFactory.get_monitor">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_monitor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">impl_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'agentscope.db'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#agentscope.utils.monitor.MonitorBase" title="agentscope.utils.monitor.MonitorBase"><span class="pre">MonitorBase</span></a></span></span><a class="reference internal" href="_modules/agentscope/utils/monitor.html#MonitorFactory.get_monitor"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.utils.monitor.MonitorFactory.get_monitor" title="Link to this definition"></a></dt>

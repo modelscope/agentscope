@@ -845,6 +845,17 @@
                     <span class="s2">&quot;Monitor with type [</span><span class="si">{type}</span><span class="s2">] is not implemented.&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>  <span class="c1"># type: ignore [return-value]</span></div>
+
+
+<div class="viewcode-block" id="MonitorFactory.flush">
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorFactory.flush">[文档]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">flush</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Only for unittest usage. Don&#39;t use this function in your code.</span>
+<span class="sd">        Flush the monitor singleton.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="kc">None</span></div>
 </div>
 
 </pre></div>
