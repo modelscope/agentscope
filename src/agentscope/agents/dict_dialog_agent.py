@@ -127,7 +127,7 @@ class DictDialogAgent(AgentBase):
                 it defaults to treating the response as plain text.
         """
         # record the input if needed
-        if not self.memory:
+        if self.memory:
             self.memory.add(x)
 
         # prepare prompt
@@ -158,7 +158,7 @@ class DictDialogAgent(AgentBase):
         self.speak(msg)
 
         # record to memory
-        if not self.memory:
+        if self.memory:
             self.memory.add(msg)
 
         return msg

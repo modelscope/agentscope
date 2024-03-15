@@ -68,7 +68,7 @@ class DialogAgent(AgentBase):
             response to the user's input.
         """
         # record the input if needed
-        if not self.memory:
+        if self.memory:
             self.memory.add(x)
 
         # prepare prompt
@@ -85,7 +85,7 @@ class DialogAgent(AgentBase):
         self.speak(msg)
 
         # Record the message in memory
-        if not self.memory:
+        if self.memory:
             self.memory.add(msg)
 
         return msg

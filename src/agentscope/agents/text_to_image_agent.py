@@ -44,7 +44,7 @@ class TextToImageAgent(AgentBase):
         )
 
     def reply(self, x: dict = None) -> dict:
-        if not self.memory and x is not None:
+        if self.memory:
             self.memory.add(x)
 
         image_urls = self.model(x.content).image_urls
@@ -56,7 +56,7 @@ class TextToImageAgent(AgentBase):
         )
         logger.chat(msg)
 
-        if not self.memory:
+        if self.memory:
             self.memory.add(msg)
 
         return msg

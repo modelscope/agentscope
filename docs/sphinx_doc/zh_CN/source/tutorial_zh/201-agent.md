@@ -84,7 +84,7 @@ class AgentBase(Operator):
 def reply(self, x: dict = None) -> dict:
     # Additional processing steps can occur here
 
-    if x is not None:
+    if self.memory:
         self.memory.add(x)  # Update the memory with the input
 
     # Generate a prompt for the language model using the system prompt and memory
@@ -100,7 +100,8 @@ def reply(self, x: dict = None) -> dict:
     msg = Msg(self.name, response)
 
     # Record the message to memory and return it
-    self.memory.add(msg)
+    if self.memory:
+        self.memory.add(msg)
     return msg
 ```
 
@@ -133,7 +134,7 @@ def reply(
     required_keys: Optional[Union[list[str], str]] = None,
 ) -> dict:
     # Check if there is initial data to be added to memory
-    if x is not None:
+    if self.memory:
         self.memory.add(x)
 
     content = input(f"{self.name}: ")  # Prompt the user for input
@@ -155,7 +156,9 @@ def reply(
     msg = Msg(self.name, content=content, url=url, **kwargs)
 
     # Add the message object to memory
-    self.memory.add(msg)
+    if self.memory:
+        self.memory.add(msg)
+
     return msg
 ```
 
