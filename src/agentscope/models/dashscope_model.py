@@ -154,6 +154,11 @@ class DashScopeChatWrapper(DashScopeWrapper):
         kwargs = {**self.generate_args, **kwargs}
 
         # step2: checking messages
+        if not isinstance(messages, list):
+            raise ValueError(
+                "Dashscope `messages` field expected type `list`, "
+                f"got `{type(messages)}` instead."
+            )
         if not all("role" in msg and "content" in msg for msg in messages):
             raise ValueError(
                 "Each message in the 'messages' list must contain a 'role' "
