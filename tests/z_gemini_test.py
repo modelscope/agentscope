@@ -11,6 +11,9 @@ from agentscope.models import load_model_by_config_name
 from agentscope.utils import MonitorFactory
 
 
+# TODO: The file name `z_gemini_test.py` is to place the unit test for
+#  gemini at the end of the test list. It is a temporary solution. We will
+#  fix it in the future.
 class DummyResponse:
     """Dummy response for testing."""
 
