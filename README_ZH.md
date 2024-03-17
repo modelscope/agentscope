@@ -2,7 +2,7 @@
 
 # AgentScope
 
-开始以一种更简单的方式构建基于LLM的多智能体应用。
+更简单地构建基于LLM的多智能体应用。
 
 [![](https://img.shields.io/badge/cs.MA-2402.14034-B31C1C?logo=arxiv&logoColor=B31C1C)](https://arxiv.org/abs/2402.14034)
 [![](https://img.shields.io/badge/python-3.9+-blue)](https://pypi.org/project/agentscope/)
@@ -149,118 +149,49 @@ AgentScope中，模型的部署和调用是通过`ModelWrapper`实现解耦的�
 
 ```python
 model_config = {
-    # The identifies of your config and used model wrapper
-    "config_name": "{your_config_name}",          # The name to identify the config
-    "model_type": "{model_type}",                 # The type to identify the model wrapper
+    # 模型配置的名称，以及使用的模型wrapper
+    "config_name": "{your_config_name}",          # 模型配置的名称
+    "model_type": "{model_type}",                 # 模型wrapper的类型
     
-    # Detailed parameters into initialize the model wrapper
+    # 用以初始化模型wrapper的详细参数
     # ... 
 }
 ```
-Taking OpenAI Chat API as an example, the model configuration is as follows:
+
+以OpenAI Chat API为例，模型配置如下：
 
 ```python
 openai_model_config = {    
-    "config_name": "my_openai_config",             # The name to identify the config
-    "model_type": "openai",                        # The type to identify the model wrapper
+    "config_name": "my_openai_config",             # 模型配置的名称
+    "model_type": "openai",                        # 模型wrapper的类型
     
-    # Detailed parameters into initialize the model wrapper
-    "model_name": "gpt-4",                         # The used model in openai API, e.g. gpt-4, gpt-3.5-turbo, etc.
-    "api_key": "xxx",                              # The API key for OpenAI API. If not set, env
-                                                   # variable OPENAI_API_KEY will be used.
-    "organization": "xxx",                         # The organization for OpenAI API. If not set, env
-                                                   # variable OPENAI_ORGANIZATION will be used.
-
-
-#### 第1步：准备Model Configs
-
-AgentScope支持以下模型API服务：
-
-- OpenAI Python APIs，包括
-
-  - OpenAI Chat, DALL-E和Embedding API
-
-  - 兼容OpenAI的Inference库，例如[FastChat](https://github.com/lm-sys/FastChat)和[vllm](https://github.com/vllm-project/vllm)
-
-- Post Request APIs，包括
-
-  - [HuggingFace](https://huggingface.co/docs/api-inference/index)和[ModelScope](https://www.modelscope.cn/docs/%E9%AD%94%E6%90%ADv1.5%E7%89%88%E6%9C%AC%20Release%20Note%20(20230428)) Inference API
-
-  - 自定义模型API
-
-|                      | 模型类型参数 | 支持的API                                                   |
-|----------------------|---------------------|----------------------------------------------------------------|
-| OpenAI Chat API      | `openai`            | 标准OpenAI Chat API, FastChat和vllm                    |
-| OpenAI DALL-E API    | `openai_dall_e`     | 标准DALL-E API                                            |
-| OpenAI Embedding API | `openai_embedding`  | OpenAI 嵌入式API                                           |
-| DashScope Chat API   | `dashscope_chat`    | DashScope chat API，其中包含通义千问系列 |
-| Post API             | `post_api`          | Huggingface/ModelScope 推理API, 以及定制化的post API  |
-
-##### OpenAI API Configs
-
-对于OpenAI API，您需要准备一个包含以下字段的模型配置字典：
-
-```
-{
-    "config_name": "{配置名称}",                 # 用于识别配置的名称
-    "model_type": "openai" | "openai_dall_e" | "openai_embedding",
-    "model_name": "{模型名称，例如gpt-4}",        # openai API中的模型
-    # 可选
-    "api_key": "xxx",                           # OpenAI API的API密钥。如果未设置，将使用环境变量OPENAI_API_KEY。
-    "organization": "xxx",                      # OpenAI API的组织。如果未设置，将使用环境变量OPENAI_ORGANIZATION。
+    # 用以初始化模型wrapper的详细参数
+    "model_name": "gpt-4",                         # OpenAI API中的模型名
+    "api_key": "xxx",                              # OpenAI API的API密钥。如果未设置，将使用环境变量OPENAI_API_KEY。
+    "organization": "xxx",                         # OpenAI API的组织。如果未设置，将使用环境变量OPENAI_ORGANIZATION。
 }
 ```
 
-##### DashScope API Config
+关于部署本地模型服务和准备模型配置的更多细节，请参阅我们的[教程](https://modelscope.github.io/agentscope/index.html#welcome-to-agentscope-tutorial-hub)。
 
-对于 DashScope API，你需要准备一个包含如下字段的配置字典：
+### 创建Agent
 
-```
-{
-    "config_name": "{配置名称}",                   # 用于识别配置的名称
-    "model_type": "dashscope_chat" | "dashscope_text_embedding" | "dashscope_image_synthesis",
-    "model_name": "{模型名称，例如 qwen-max}",      # dashscope 中的模型
-    "api_key": "xxx",                             # The API key for DashScope API.
-}
-```
-
-> 注意: dashscope API 可能对消息中的`role`域有严格的要求。请谨慎使用。
-
-##### Post Request API Config
-
-对于post请求API，配置包含以下字段。
-
-```
-{
-    "config_name": "{配置名称}",       # 用于识别配置的名称
-    "model_type": "post_api",
-    "api_url": "https://xxx",         # 目标url
-    "headers": {                      # 需要的头信息
-      ...
-    },
-}
-```
-
-为了方便开发和调试，AgentScope在[scripts](./scripts/README.md)目录下提供了丰富的脚本以快速部署模型服务。
-有关模型服务的详细使用，请参阅我们的[教程](https://modelscope.github.io/agentscope/index.html#welcome-to-agentscope-tutorial-hub)和[API文档](https://modelscope.github.io/agentscope/index.html#indices-and-tables)。
-
-#### 第2步：创建Agent
-
-创建内置的用户和助手Agent：
+创建AgentScope内置的`DialogAgent`和`UserAgent`对象.
 
 ```python
 from agentscope.agents import DialogAgent, UserAgent
 import agentscope
 
-# 载入模型配置
+# 加载模型配置
 agentscope.init(model_configs="./model_configs.json")
 
 # 创建对话Agent和用户Agent
-dialog_agent = DialogAgent(name="assistant", model_config_name="your_config_name")
+dialog_agent = DialogAgent(name="assistant",
+                           model_config_name="my_openai_config")
 user_agent = UserAgent()
 ```
 
-#### 第3步：构造对话
+#### 构造对话
 
 在AgentScope中，**Message**是Agent之间的桥梁，它是一个python**字典**（dict），包含两个必要字段`name`和`content`，以及一个可选字段`url`用于本地文件（图片、视频或音频）或网络链接。
 
@@ -282,114 +213,26 @@ while True:
     break
 ```
 
-### 进阶使用
+## 教程
 
-#### **Pipeline**和**MsgHub**
-
-为了简化Agent间通信的构建，AgentScope提供了两种语法工具：**Pipeline**和**MsgHub**。
-
-- **Pipeline**：它允许用户轻松编写Agent间的通信。以Sequential Pipeline为例，以下两种代码等效，但是pipeline的实现方式更加简洁和优雅。
-
-  - **不使用** pipeline的情况下，agent1、agent2和agent3顺序传递消息：
-
-    ```python
-    x1 = agent1(input_msg)
-    x2 = agent2(x1)
-    x3 = agent3(x2)
-    ```
-
-  - **使用** pipeline对象的情况下：
-
-    ```python
-    from agentscope.pipelines import SequentialPipeline
-
-    pipe = SequentialPipeline([agent1, agent2, agent3])
-    x3 = pipe(input_msg)
-    ```
-
-  - **使用** functional pipeline的情况下：
-
-    ```python
-    from agentscope.pipelines.functional import sequentialpipeline
-
-    x3 = sequentialpipeline([agent1, agent2, agent3], x=input_msg)
-    ```
-
-- **MsgHub**：为了方便地实现多人对话，AgentScope提供了Message Hub。
-
-  - **不使用** `msghub`：实现多人对话：
-
-    ```python
-    x1 = agent1(x)
-    agent2.observe(x1)  # 消息x1应该广播给其他agent
-    agent3.observe(x1)
-
-    x2 = agent2(x1)
-    agent1.observe(x2)
-    agent3.observe(x2)
-    ```
-
-  - **使用** `msghub`：在Message Hub中，来自参与者的消息将自动广播给所有其他参与者，因此在这种情况下，Agent的调用甚至不需要明确输入和输出消息，我们需要做的就是决定发言的顺序。此外，`msghub`还支持动态控制参与者，如下所示。
-
-    ```python
-    from agentscope import msghub
-
-    with msghub(participants=[agent1, agent2, agent3]) as hub:
-        agent1() # `x = agent1(x)`也可行
-        agent2()
-
-        # 向所有参与者广播一条消息
-        hub.broadcast(Msg("Host", "欢迎加入群组对话！"))
-
-        # 动态地添加或删除参与者
-        hub.delete(agent1)
-        hub.add(agent4)
-    ```
-
-#### 定制您自己的Agent
-
-要实现您自己的Agent，您需要继承`AgentBase`类并实现`reply`函数。
-
-```python
-from agentscope.agents import AgentBase
-
-class MyAgent(AgentBase):
-
-    def reply(self, x):
-
-        # 在这里做一些事情，例如调用您的模型并获取原始字段作为agent的回应
-        response = self.model(x).raw
-        return response
-```
-
-#### 内置资源
-
-AgentScope提供丰富的内置资源以便开发人员轻松构建自己的应用程序。更多内置Agent、Service和Example即将推出！
-
-##### Agent Pool
-
-- UserAgent
-- DialogAgent
-- DictDialogAgent
-- ...
-
-##### Services
-
-- 网络搜索服务
-- 代码执行服务
-- 检索服务
-- 数据库服务
-- 文件服务
-- ...
-
-##### Example Applications
-
-- 对话示例：[examples/conversation](examples/conversation_basic/README.md)
-- 狼人杀示例：[examples/werewolf](examples/game_werewolf/README.md)
-- 分布式Agent示例：[examples/distributed](examples/distributed/README.md)
-- ...
-
-更多内置资源即将推出！
+- [快速上手](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/quick_start.html)
+  - [安装](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/102-installation.html)
+  - [关于AgentScope](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/101-agentscope.html)
+  - [快速开始](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/103-example.html)
+  - [创建您的第一个应用](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/104-usecase.html)
+  - [日志和WebUI](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/105-logging.html#)
+- [进阶使用](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/advance.html)
+  - [定制你自己的Agent](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/201-agent.html)
+  - [智能体间交互](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/202-pipeline.html)
+  - [关于模型](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/203-model.html)
+  - [关于服务](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/204-service.html)
+  - [关于记忆](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/205-memory.html)
+  - [提示工程](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/206-prompt.html)
+  - [监控器](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/207-monitor.html)
+  - [关于分布式](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/208-distribute.html)
+- [参与贡献](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/contribute.html)
+  - [加入AgentScope社区](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/301-community.html)
+  - [贡献到AgentScope](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/302-contribute.html)
 
 ## License
 
