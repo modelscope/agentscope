@@ -263,7 +263,7 @@ for i in range(1, MAX_GAME_ROUND + 1):
 基于它们的角色和上述编码的策略进行互动：
 
 ```bash
-cd examples/werewolf
+cd examples/game_werewolf
 python main.py  # Assuming the pipeline is implemented in main.py
 ```
 

@@ -234,6 +234,7 @@ directory.
 
 Specifically, AgentScope provides the following model service scripts:
 
+- CPU inference engine **ollama** 
 - Model service based on **Flask + HuggingFace**
 - Model service based on **Flask + ModelScope**
 - **FastChat** inference engine

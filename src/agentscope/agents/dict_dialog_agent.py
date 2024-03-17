@@ -42,7 +42,7 @@ class DictDialogAgent(AgentBase):
     the speak field as the output response.
 
     For usage example, please refer to the example of werewolf in
-    `examples/werewolf`"""
+    `examples/game_werewolf`"""
 
     def __init__(
         self,

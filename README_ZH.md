@@ -1,4 +1,8 @@
+[English](./README.md) | 中文
+
 # AgentScope
+
+开始以一种更简单的方式构建基于LLM的多智能体应用。
 
 [![](https://img.shields.io/badge/cs.MA-2402.14034-B31C1C?logo=arxiv&logoColor=B31C1C)](https://arxiv.org/abs/2402.14034)
 [![](https://img.shields.io/badge/python-3.9+-blue)](https://pypi.org/project/agentscope/)
@@ -10,15 +14,7 @@
 [![](https://img.shields.io/badge/license-Apache--2.0-black)](./LICENSE)
 [![](https://img.shields.io/badge/Contribute-Welcome-green)](https://modelscope.github.io/agentscope/tutorial/contribute.html)
 
-AgentScope是一款全新的Multi-Agent框架，专为应用开发者打造，旨在提供高易用、高可靠的编程体验！
-
-- **高易用**：AgentScope支持纯Python编程，提供多种语法工具实现灵活的应用流程编排，内置丰富的API服务（Service）以及应用样例，供开发者直接使用。同时，AgentScope提供了详尽的[教程](https://modelscope.github.io/agentscope/)，[API文档](https://modelscope.github.io/agentscope/)和[应用样例](https://modelscope.github.io/agentscope/)。
-
-- **高鲁棒**：确保开发便捷性和编程效率的同时，针对不同能力的大模型，AgentScope提供了全面的重试机制、定制化的容错控制和面向Agent的异常处理，以确保应用的稳定、高效运行；
-
-- **基于Actor的分布式机制**：AgentScope设计了一种新的基于Actor的分布式机制，实现了复杂分布式工作流的集中式编程和自动并行优化，即用户可以使用中心化编程的方式完成分布式应用的流程编排，同时能够零代价将本地应用迁移到分布式的运行环境中。
-
-如果您觉得我们的工作对您有帮助，请引用[我们的论文](https://arxiv.org/abs/2402.14034)。
+如果您觉得我们的工作对您有帮助，请引用我们的[论文](https://arxiv.org/abs/2402.14034)。
 
 欢迎加入我们的社区
 
@@ -26,42 +22,97 @@ AgentScope是一款全新的Multi-Agent框架，专为应用开发者打造，�
 |---------|----------|--------|
 | <img src="https://gw.alicdn.com/imgextra/i1/O1CN01hhD1mu1Dd3BWVUvxN_!!6000000000238-2-tps-400-400.png" width="100" height="100"> | <img src="https://img.alicdn.com/imgextra/i2/O1CN01tuJ5971OmAqNg9cOw_!!6000000001747-0-tps-444-460.jpg" width="100" height="100"> | <img src="https://img.alicdn.com/imgextra/i3/O1CN01UyfWfx1CYBM3WqlBy_!!6000000000092-2-tps-400-400.png" width="100" height="100"> |
 
-目录
-=================
+## 新闻
 
-- [AgentScope](#agentscope)
-- [目录](#目录)
-  - [安装](#安装)
-    - [从源码安装](#从源码安装)
-    - [使用pip](#使用pip)
-  - [快速开始](#快速开始)
-    - [基础使用](#基础使用)
-      - [第1步：准备Model Configs](#第1步准备model-configs)
-        - [OpenAI API Configs](#openai-api-configs)
-        - [DashScope API Config](#dashscope-api-config)
-        - [Post Request API Config](#post-request-api-config)
-      - [第2步：创建Agent](#第2步创建agent)
-      - [第3步：构造对话](#第3步构造对话)
-    - [进阶使用](#进阶使用)
-      - [**Pipeline**和**MsgHub**](#pipeline和msghub)
-      - [定制您自己的Agent](#定制您自己的agent)
-      - [内置资源](#内置资源)
-        - [Agent Pool](#agent-pool)
-        - [Services](#services)
-        - [Example Applications](#example-applications)
-  - [License](#license)
-  - [贡献](#贡献)
-  - [引用](#引用)
+- ![new](https://img.alicdn.com/imgextra/i4/O1CN01kUiDtl1HVxN6G56vN_!!6000000000764-2-tps-43-19.png) 
+[2024-03-15] 我们现在发布了**AgentScope** v0.0.2版本！在这个新版本中，AgentScope支持了[DashScope](), [ollama]() 和 [Gemini]() APIs。
+
+- ![new](https://img.alicdn.com/imgextra/i4/O1CN01kUiDtl1HVxN6G56vN_!!6000000000764-2-tps-43-19.png)
+[2024-03-15] AgentScope的[中文教程](https://modelscope.github.io/agentscope/zh_CN/index.html)上线了！
+
+- [2024-02-27] 我们现在发布了**AgentScope** v0.0.1版本！现在，AgentScope也可以在[PyPI]
+(https://pypi.org/project/agentscope/)上下载！
+
+- [2024-02-14] 我们在arXiv上发布了论文["AgentScope: A Flexible yet Robust 
+Multi-Agent Platform"](https://arxiv.org/abs/2402.14034)!
+
+---
+
+## 什么是AgentScope？
+
+AgentScope是一个创新的多智能体开发平台，旨在赋予开发人员使用大模型轻松构建多智能体应用的能力。
+
+- 🤝 **高易用**： AgentScope专为开发人员设计，提供了[丰富的组件](), [全面的文档](https://modelscope.github.io/agentscope/zh_CN/index.html)和广泛的兼容性。
+
+- ✅ **高鲁棒**：支持自定义的容错控制和重试机制，以提高应用程序的稳定性。
+
+- 🚀 **分布式**：支持以中心化的方式构建分布式多智能体应用程序。
+
+
+**支持的模型API**
+
+AgentScope提供了一系列`ModelWrapper`来支持本地模型服务和第三方模型API。
+
+| API                    | Task            | Model Wrapper                    |
+|------------------------|-----------------|----------------------------------|
+| ollama                 | Chat            | `OllamaChatWrapper`              |  
+|                        | Embedding       | `OllamaEmbedding`                | 
+|                        | Generation      | `OllamaGenerationWrapper`        |
+| OpenAI API             | Chat            | `OpenAIChatWrapper`              |
+|                        | Embedding       | `OpenAIEmbeddingWrapper`         |
+|                        | DALL·E          | `OpenAIDALLEWrapper`             |
+| Gemini API             | Chat            | `GeminiChatWrapper`              | 
+|                        | Embedding       | `GeminiEmbeddingWrapper`         | 
+| DashScope API          | Chat            | `DashScopeChatWrapper`           |
+|                        | Image Synthesis | `DashScopeImageSynthesisWrapper` |
+|                        | Text Embedding  | `DashScopeTextEmbeddingWrapper`  |
+| Post Request based API | -               | `PostAPIModelWrapper`            |
+
+**支持的本地模型部署**
+
+AgentScope支持使用以下库快速部署本地模型服务。
+
+- [ollama (CPU inference)]()
+- [Flask + Transformers]()
+- [Flask + ModelScope]()
+- [FastChat]()
+- [vllm]()
+
+**支持的服务**
+
+- 网络搜索
+- 数据查询
+- 数据检索
+- 代码执行
+- 文件操作
+- 文本处理
+
+**样例应用**
+
+- 对话
+  - [基础对话](./examples/conversation_basic)
+  - [带有@功能的自主对话](./examples/conversation_with_mentions)
+  - [智能体自组织的对话](./examples/conversation_self_organizing)
+  - [兼容LangChain的基础对话](./examples/conversation_with_langchain)
+
+- 游戏
+  - [狼人杀](./examples/game_werewolf)
+
+- 分布式
+  - [分布式对话](./examples/distribution_conversation) 
+  - [分布式辩论](./examples/distribution_debate)
+
+更多模型API、服务和示例即将推出！
 
 ## 安装
 
-要安装AgentScope，您需要安装Python 3.9或更高版本。
+AgentScope需要Python 3.9或更高版本。
 
 **_注意：该项目目前正在积极开发中，建议从源码安装AgentScope。_**
 
 ### 从源码安装
 
-- 运行以下命令以编辑模式安装AgentScope。
+- 以编辑模式安装AgentScope：
 
 ```bash
 # 从github拉取源代码
@@ -71,7 +122,7 @@ cd AgentScope
 pip install -e .
 ```
 
-- 构建分布式Multi-Agent应用程序依赖于[gRPC](https://github.com/grpc/grpc)库，您可以按以下方式安装所需的依赖项。
+- 构建分布式多智能体应用需要按照以下方式安装：
 
 ```bash
 # 在windows上
@@ -82,7 +133,7 @@ pip install -e .\[distribute\]
 
 ### 使用pip
 
-- 使用以下命令安装最新发布的AgentScope。
+- 从pip安装的AgentScope
 
 ```bash
 pip install agentscope
@@ -90,15 +141,36 @@ pip install agentscope
 
 ## 快速开始
 
-### 基础使用
+### 配置
 
-以用户和助手Agent对话的Multi-Agent应用程序为例，您需要执行以下步骤：
+AgentScope中，模型的部署和调用是通过`ModelWrapper`实现解耦的。
 
-- [第1步：准备Model Configs](#第1步准备model-configs)
+为了使用这些`ModelWrapper`, 您需要准备如下的模型配置文件：
 
-- [第2步：创建Agent](#第2步创建agent)
+```python
+model_config = {
+    # The identifies of your config and used model wrapper
+    "config_name": "{your_config_name}",          # The name to identify the config
+    "model_type": "{model_type}",                 # The type to identify the model wrapper
+    
+    # Detailed parameters into initialize the model wrapper
+    # ... 
+}
+```
+Taking OpenAI Chat API as an example, the model configuration is as follows:
 
-- [第3步：构造对话](#第3步构造对话)
+```python
+openai_model_config = {    
+    "config_name": "my_openai_config",             # The name to identify the config
+    "model_type": "openai",                        # The type to identify the model wrapper
+    
+    # Detailed parameters into initialize the model wrapper
+    "model_name": "gpt-4",                         # The used model in openai API, e.g. gpt-4, gpt-3.5-turbo, etc.
+    "api_key": "xxx",                              # The API key for OpenAI API. If not set, env
+                                                   # variable OPENAI_API_KEY will be used.
+    "organization": "xxx",                         # The organization for OpenAI API. If not set, env
+                                                   # variable OPENAI_ORGANIZATION will be used.
+
 
 #### 第1步：准备Model Configs
 
@@ -312,8 +384,8 @@ AgentScope提供丰富的内置资源以便开发人员轻松构建自己的应�
 
 ##### Example Applications
 
-- 对话示例：[examples/conversation](examples/conversation/README.md)
-- 狼人杀示例：[examples/werewolf](examples/werewolf/README.md)
+- 对话示例：[examples/conversation](examples/conversation_basic/README.md)
+- 狼人杀示例：[examples/werewolf](examples/game_werewolf/README.md)
 - 分布式Agent示例：[examples/distributed](examples/distributed/README.md)
 - ...
 
