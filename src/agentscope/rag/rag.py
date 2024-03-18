@@ -13,8 +13,7 @@ generate an answer.
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Optional, Union
-from pathlib import Path
+from typing import Any, Optional
 
 from agentscope.models import ModelWrapperBase
 
@@ -25,19 +24,31 @@ class RAGBase(ABC):
     def __init__(
         self,
         model: Optional[ModelWrapperBase],
+        emb_model: Optional[ModelWrapperBase],
         **kwargs: Any,
     ) -> None:
         # pylint: disable=unused-argument
         self.postprocessing_model = model
+        self.emb_model = emb_model
 
     @abstractmethod
-    def load_data(self, path: Union[Path, str], **kwargs: Any) -> Any:
+    def load_data(
+        self,
+        loader: Any,
+        query: Any,
+        **kwargs: Any,
+    ) -> Any:
         """
-        load data from disk to memory for following preprocessing
+        load data (documents) from disk to memory and chunking them
         """
 
     @abstractmethod
-    def store_and_index(self, docs: Any) -> None:
+    def store_and_index(
+        self,
+        docs: Any,
+        vector_store: Any,
+        **kwargs: Any,
+    ) -> Any:
         """
         preprocessing the loaded documents, for example:
         1) chunking,
@@ -51,9 +62,9 @@ class RAGBase(ABC):
         retrieve list of content from vdb to memory
         """
 
-    def generate_answer(
+    def post_processing(
         self,
-        retrieved_docs: list[str],
+        retrieved_docs: list[Any],
         prompt: str,
         **kwargs: Any,
     ) -> Any:

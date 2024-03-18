@@ -20,6 +20,12 @@ def main() -> None:
                 "model_name": "qwen-max",
                 "api_key": f"{os.environ.get('DASHSCOPE_API_KEY')}",
             },
+            {
+                "model_type": "dashscope_text_embedding",
+                "config_name": "qwen_emb_config",
+                "model_name": "text-embedding-v2",
+                "api_key": f"{os.environ.get('DASHSCOPE_API_KEY')}",
+            },
         ],
     )
 
@@ -30,10 +36,12 @@ def main() -> None:
         "based on the provided context:\n "
         "Context: \n {retrieved_context}\n ",
         model_config_name="qwen_config",  # replace by your model config name
+        emb_model_config_name="qwen_emb_config",
     )
     user_agent = UserAgent()
     # start the conversation between user and assistant
     x = user_agent()
+    x.role = "user"  # to enforce dashscope requirement on roles
     rag_agent(x)
 
 

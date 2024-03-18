@@ -4,8 +4,9 @@ This module is integrate the LangChain RAG model into our AgentScope package
 """
 
 
-from typing import Type, Any, Union
-from pathlib import Path
+from typing import Type, Any, Optional
+
+# from pathlib import Path
 
 from langchain_community.document_loaders.base import BaseLoader
 from langchain_core.vectorstores import VectorStore
@@ -23,14 +24,15 @@ class LangChainRAG(RAGBase):
 
     def __init__(
         self,
-        model: ModelWrapperBase,
+        model: Optional[ModelWrapperBase],
+        emb_model: Optional[ModelWrapperBase],
         loader_type: Type[BaseLoader],
         splitter_type: Type[TextSplitter],
         vector_store_type: Type[VectorStore],
         embedding_model: Type[OpenAIEmbeddings],
         **kwargs: Any,
     ) -> None:
-        super().__init__(model, **kwargs)
+        super().__init__(model, emb_model, **kwargs)
         self.loader_type = loader_type
         self.splitter_type = splitter_type
         self.config = kwargs
@@ -41,15 +43,25 @@ class LangChainRAG(RAGBase):
         self.embedding_model = embedding_model
         self.retriever = None
 
-    def load_data(self, path: Union[Path, str], **kwargs: Any) -> Any:
+    def load_data(
+        self,
+        loader: Any,
+        query: Any,
+        **kwargs: Any,
+    ) -> Any:
         """loading data from a directory"""
-        self.loader = self.loader_type(path)
+        self.loader = loader
         docs = self.loader.load()
         self.splitter = self.splitter_type(**kwargs)
         all_splits = self.splitter.split_documents(docs)
         return all_splits
 
-    def store_and_index(self, docs: Any) -> None:
+    def store_and_index(
+        self,
+        docs: Any,
+        vector_store: Any,
+        **kwargs: Any,
+    ) -> None:
         """indexing the documents and store them into the vector store"""
         self.vector_store = self.vector_store_type.from_documents(
             documents=docs,
