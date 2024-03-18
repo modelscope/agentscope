@@ -44,7 +44,7 @@ telescope gather than your eye?"
 
 # get the discussion scenario and participant agents
 x = load_txt(
-    "examples/conversation_self_organizing/agent_builder_instruct.txt"
+    "examples/conversation_self_organizing/agent_builder_instruct.txt",
 ).format(
     question=query,
 )
