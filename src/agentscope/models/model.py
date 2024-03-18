@@ -236,10 +236,10 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
     """The name of the model, which is used in model api calling."""
 
     def __init__(
-        self,
+        self,  # pylint: disable=W0613
         config_name: str,
         **kwargs: Any,
-    ) -> None:  # pylint: disable=W0613
+    ) -> None:
         """Base class for model wrapper.
 
         All model wrappers should inherit this class and implement the
