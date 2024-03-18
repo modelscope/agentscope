@@ -167,6 +167,8 @@
 
         <span class="k">if</span> <span class="n">use_memory</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">memory</span> <span class="o">=</span> <span class="n">TemporaryMemory</span><span class="p">(</span><span class="n">memory_config</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">memory</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># The audience of this agent, which means if this agent generates a</span>
         <span class="c1"># response, it will be passed to all agents in the audience.</span>

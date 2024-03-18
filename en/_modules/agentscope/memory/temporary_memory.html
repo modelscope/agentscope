@@ -139,9 +139,12 @@
 <a class="viewcode-back" href="../../../agentscope.memory.html#agentscope.memory.temporary_memory.TemporaryMemory.add">[docs]</a>
     <span class="k">def</span> <span class="nf">add</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">memories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">dict</span><span class="p">],</span>
+        <span class="n">memories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
         <span class="n">embed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">memories</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">memories</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="n">record_memories</span> <span class="o">=</span> <span class="p">[</span><span class="n">memories</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
