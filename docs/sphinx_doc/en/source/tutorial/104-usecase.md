@@ -308,11 +308,5 @@ Moderator: The day is coming, all the players open your eyes. Last night is peac
 
 Now you've grasped how to conveniently set up a multi-agent application with AgentScope. Feel free to tailor the game to include additional roles and introduce more sophisticated strategies. For more advanced tutorials that delve deeper into more capabilities of AgentScope, such as *memory management* and *service functions* utilized by agents, please refer to the tutorials in the **Advanced Exploration** section and look up the API references.
 
-## Other Example Applications
-
-- Example of Simple Group Conversation: [examples/Simple Conversation](https://github.com/modelscope/agentscope/tree/main/examples/simple_chat/README.md)
-- Example of Werewolves: [examples/Werewolves](https://github.com/modelscope/agentscope/tree/main/examples/werewolves/README.md)
-- Example of Distributed Agents: [examples/Distributed Agents](https://github.com/modelscope/agentscope/tree/main/examples/distributed_agents/README.md)
-- ...
 
 [[Return to the top]](#104-usecase-en)
