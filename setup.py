@@ -33,6 +33,7 @@ service_requires = [
     "langchain-text-splitters",
     "beautifulsoup4",
     "playwright",
+    "lxml",
 ]
 
 doc_requires = [
