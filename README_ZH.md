@@ -24,7 +24,7 @@
 
 ## 新闻
 
-- ![new](https://img.alicdn.com/imgextra/i4/O1CN01kUiDtl1HVxN6G56vN_!!6000000000764-2-tps-43-19.png) 
+- ![new](https://img.alicdn.com/imgextra/i4/O1CN01kUiDtl1HVxN6G56vN_!!6000000000764-2-tps-43-19.png)
 [2024-03-15] 我们现在发布了**AgentScope** v0.0.2版本！在这个新版本中，AgentScope支持了[DashScope](), [ollama]() 和 [Gemini]() APIs。
 
 - ![new](https://img.alicdn.com/imgextra/i4/O1CN01kUiDtl1HVxN6G56vN_!!6000000000764-2-tps-43-19.png)
@@ -33,7 +33,7 @@
 - [2024-02-27] 我们现在发布了**AgentScope** v0.0.1版本！现在，AgentScope也可以在[PyPI]
 (https://pypi.org/project/agentscope/)上下载！
 
-- [2024-02-14] 我们在arXiv上发布了论文["AgentScope: A Flexible yet Robust 
+- [2024-02-14] 我们在arXiv上发布了论文["AgentScope: A Flexible yet Robust
 Multi-Agent Platform"](https://arxiv.org/abs/2402.14034)!
 
 ---
@@ -55,14 +55,14 @@ AgentScope提供了一系列`ModelWrapper`来支持本地模型服务和第三�
 
 | API                    | Task            | Model Wrapper                    |
 |------------------------|-----------------|----------------------------------|
-| ollama                 | Chat            | `OllamaChatWrapper`              |  
-|                        | Embedding       | `OllamaEmbedding`                | 
+| ollama                 | Chat            | `OllamaChatWrapper`              |
+|                        | Embedding       | `OllamaEmbedding`                |
 |                        | Generation      | `OllamaGenerationWrapper`        |
 | OpenAI API             | Chat            | `OpenAIChatWrapper`              |
 |                        | Embedding       | `OpenAIEmbeddingWrapper`         |
 |                        | DALL·E          | `OpenAIDALLEWrapper`             |
-| Gemini API             | Chat            | `GeminiChatWrapper`              | 
-|                        | Embedding       | `GeminiEmbeddingWrapper`         | 
+| Gemini API             | Chat            | `GeminiChatWrapper`              |
+|                        | Embedding       | `GeminiEmbeddingWrapper`         |
 | DashScope API          | Chat            | `DashScopeChatWrapper`           |
 |                        | Image Synthesis | `DashScopeImageSynthesisWrapper` |
 |                        | Text Embedding  | `DashScopeTextEmbeddingWrapper`  |
@@ -99,7 +99,7 @@ AgentScope支持使用以下库快速部署本地模型服务。
   - [狼人杀](./examples/game_werewolf)
 
 - 分布式
-  - [分布式对话](./examples/distribution_conversation) 
+  - [分布式对话](./examples/distribution_conversation)
   - [分布式辩论](./examples/distribution_debate)
 
 更多模型API、服务和示例即将推出！
@@ -152,19 +152,19 @@ model_config = {
     # 模型配置的名称，以及使用的模型wrapper
     "config_name": "{your_config_name}",          # 模型配置的名称
     "model_type": "{model_type}",                 # 模型wrapper的类型
-    
+
     # 用以初始化模型wrapper的详细参数
-    # ... 
+    # ...
 }
 ```
 
 以OpenAI Chat API为例，模型配置如下：
 
 ```python
-openai_model_config = {    
+openai_model_config = {
     "config_name": "my_openai_config",             # 模型配置的名称
     "model_type": "openai",                        # 模型wrapper的类型
-    
+
     # 用以初始化模型wrapper的详细参数
     "model_name": "gpt-4",                         # OpenAI API中的模型名
     "api_key": "xxx",                              # OpenAI API的API密钥。如果未设置，将使用环境变量OPENAI_API_KEY。

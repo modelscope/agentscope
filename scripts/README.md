@@ -1,7 +1,7 @@
 # Set up Local Model API Serving
 
-AgentScope supports developers to build their local model API serving with different inference engines/libraries. 
-This document will introduce how to fast build their local API serving with provided scripts. 
+AgentScope supports developers to build their local model API serving with different inference engines/libraries.
+This document will introduce how to fast build their local API serving with provided scripts.
 
 Table of Contents
 =================
@@ -33,7 +33,7 @@ Table of Contents
 
 ### ollama
 
-[ollama] is a CPU inference engine for LLMs. With ollama, developers can build their local model API serving without GPU requirements. 
+[ollama] is a CPU inference engine for LLMs. With ollama, developers can build their local model API serving without GPU requirements.
 
 #### Install Libraries and Set up Serving
 
@@ -47,7 +47,7 @@ ollama pull llama2
 
 #### How to use in AgentScope
 
-In AgentScope, you can use the following model configurations to load the model. 
+In AgentScope, you can use the following model configurations to load the model.
 
 - For ollama Chat API:
 
@@ -55,7 +55,7 @@ In AgentScope, you can use the following model configurations to load the model.
 {
     "config_name": "my_ollama_chat_config",
     "model_type": "ollama_chat",
-    
+
     # Required parameters
     "model": "{model_name}",                    # The model name used in ollama API, e.g. llama2
 

@@ -100,12 +100,12 @@ Here we provide example configurations for different model wrappers.
 openai_chat_config = {
     "config_name": "{your_config_name}",
     "model_type": "openai",
-    
+
     # Required parameters
     "model_name": "gpt-4",
-  
+
     # Optional parameters
-    "api_key": "{your_api_key}",                # OpenAI API Key, if not provided, it will be read from the environment variable  
+    "api_key": "{your_api_key}",                # OpenAI API Key, if not provided, it will be read from the environment variable
     "organization": "{your_organization}",      # Organization name, if not provided, it will be read from the environment variable
     "client_args": {                            # Parameters for initializing the OpenAI API Client
         # e.g. "max_retries": 3,
@@ -126,12 +126,12 @@ openai_chat_config = {
 {
     "config_name": "{your_config_name}",
     "model_type": "openai_dall_e",
-    
+
     # Required parameters
     "model_name": "{model_name}",               # OpenAI model name, e.g. dall-e-2, dall-e-3
-  
+
     # Optional parameters
-    "api_key": "{your_api_key}",                # OpenAI API Key, if not provided, it will be read from the environment variable  
+    "api_key": "{your_api_key}",                # OpenAI API Key, if not provided, it will be read from the environment variable
     "organization": "{your_organization}",      # Organization name, if not provided, it will be read from the environment variable
     "client_args": {                            # Parameters for initializing the OpenAI API Client
         # e.g. "max_retries": 3,
@@ -154,9 +154,9 @@ openai_chat_config = {
 
     # Required parameters
     "model_name": "{model_name}",               # OpenAI model name, e.g. text-embedding-ada-002, text-embedding-3-small
-    
+
     # Optional parameters
-    "api_key": "{your_api_key}",                # OpenAI API Key, if not provided, it will be read from the environment variable  
+    "api_key": "{your_api_key}",                # OpenAI API Key, if not provided, it will be read from the environment variable
     "organization": "{your_organization}",      # Organization name, if not provided, it will be read from the environment variable
     "client_args": {                            # Parameters for initializing the OpenAI API Client
         # e.g. "max_retries": 3,
@@ -199,7 +199,7 @@ openai_chat_config = {
 {
     "config_name": "my_dashscope_image_synthesis_config",
     "model_type": "dashscope_image_synthesis",
-  
+
     # Required parameters
     "model_name": "{model_name}",               # The model name in DashScope Image Synthesis API, e.g. wanx-v1
 
@@ -222,10 +222,10 @@ openai_chat_config = {
 {
     "config_name": "my_dashscope_text_embedding_config",
     "model_type": "dashscope_text_embedding",
-    
+
     # Required parameters
     "model_name": "{model_name}",               # The model name in DashScope Text Embedding API, e.g. text-embedding-v1
-  
+
     # Optional parameters
     "api_key": "{your_api_key}",
     "generate_args": {
@@ -245,7 +245,7 @@ openai_chat_config = {
 {
     "config_name": "my_gemini_chat_config",
     "model_type": "gemini_chat",
-  
+
     # Required parameters
     "model_name": "{model_name}",               # The model name in Gemini API, e.g. gemini-prp
 
@@ -263,7 +263,7 @@ openai_chat_config = {
 {
     "config_name": "my_gemini_embedding_config",
     "model_type": "gemini_embedding",
-  
+
     # Required parameters
     "model_name": "{model_name}",               # The model name in Gemini API, e.g. gemini-prp
 
@@ -283,7 +283,7 @@ openai_chat_config = {
 {
     "config_name": "my_ollama_chat_config",
     "model_type": "ollama_chat",
-    
+
     # Required parameters
     "model": "{model_name}",                    # The model name used in ollama API, e.g. llama2
 
@@ -348,13 +348,13 @@ openai_chat_config = {
 {
     "config_name": "my_postapiwrapper_config",
     "model_type": "post_api",
-  
+
     # Required parameters
     "api_url": "https://xxx.com",
     "headers": {
         # e.g. "Authorization": "Bearer xxx",
     },
-  
+
     # Optional parameters
     "messages_key": "messages",
 }
@@ -371,7 +371,7 @@ directory.
 
 Specifically, AgentScope provides the following model service scripts:
 
-- CPU inference engine **ollama** 
+- CPU inference engine **ollama**
 - Model service based on **Flask + HuggingFace**
 - Model service based on **Flask + ModelScope**
 - **FastChat** inference engine

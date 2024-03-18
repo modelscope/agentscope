@@ -26,16 +26,16 @@ Welcome to join our community on
 ----
 
 ## News
-- ![new](https://img.alicdn.com/imgextra/i4/O1CN01kUiDtl1HVxN6G56vN_!!6000000000764-2-tps-43-19.png) 
-[2024-03-15] We release **AgentScope** v0.0.2 now! In this new version, 
+- ![new](https://img.alicdn.com/imgextra/i4/O1CN01kUiDtl1HVxN6G56vN_!!6000000000764-2-tps-43-19.png)
+[2024-03-15] We release **AgentScope** v0.0.2 now! In this new version,
 AgentScope supports [DashScope](), [ollama]() and [Gemini]() APIs.
 
 - ![new](https://img.alicdn.com/imgextra/i4/O1CN01kUiDtl1HVxN6G56vN_!!6000000000764-2-tps-43-19.png)
 [2024-03-15] The [Chinese tutorial](https://modelscope.github.io/agentscope/zh_CN/index.html) of AgentScope is online now!
 
-- [2024-02-27] We release **AgentScope v0.0.1** now, which is also 
+- [2024-02-27] We release **AgentScope v0.0.1** now, which is also
 available in [PyPI](https://pypi.org/project/agentscope/)!
-- [2024-02-14] We release our paper "AgentScope: A Flexible yet Robust 
+- [2024-02-14] We release our paper "AgentScope: A Flexible yet Robust
 Multi-Agent Platform" in [arXiv](https://arxiv.org/abs/2402.14034) now!
 
 ---
@@ -46,30 +46,30 @@ AgentScope is an innovative multi-agent platform designed to empower developers
 to build multi-agent applications with large-scale models.
 It features three high-level capabilities:
 
-- 🤝 **Easy-to-Use**: Designed for developers, with [fruitful components](), 
-[comprehensive documentation](https://modelscope.github.io/agentscope/en/index.html), and broad compatibility. 
+- 🤝 **Easy-to-Use**: Designed for developers, with [fruitful components](),
+[comprehensive documentation](https://modelscope.github.io/agentscope/en/index.html), and broad compatibility.
 
-- ✅ **High Robustness**: Supporting customized fault-tolerance controls and 
+- ✅ **High Robustness**: Supporting customized fault-tolerance controls and
 retry mechanisms to enhance application stability.
 
-- 🚀 **Actor-Based Distribution**: Building distributed multi-agent 
+- 🚀 **Actor-Based Distribution**: Building distributed multi-agent
 applications in a centralized programming manner for streamlined development.
 
 **Supported Model Libraries**
 
-AgentScope provides a list of `ModelWrapper` to support both local model 
-services and third-party model APIs. 
+AgentScope provides a list of `ModelWrapper` to support both local model
+services and third-party model APIs.
 
 | API                    | Task            | Model Wrapper                    |
 |------------------------|-----------------|----------------------------------|
-| ollama                 | Chat            | `OllamaChatWrapper`              |  
-|                        | Embedding       | `OllamaEmbedding`                | 
+| ollama                 | Chat            | `OllamaChatWrapper`              |
+|                        | Embedding       | `OllamaEmbedding`                |
 |                        | Generation      | `OllamaGenerationWrapper`        |
 | OpenAI API             | Chat            | `OpenAIChatWrapper`              |
 |                        | Embedding       | `OpenAIEmbeddingWrapper`         |
 |                        | DALL·E          | `OpenAIDALLEWrapper`             |
-| Gemini API             | Chat            | `GeminiChatWrapper`              | 
-|                        | Embedding       | `GeminiEmbeddingWrapper`         | 
+| Gemini API             | Chat            | `GeminiChatWrapper`              |
+|                        | Embedding       | `GeminiEmbeddingWrapper`         |
 | DashScope API          | Chat            | `DashScopeChatWrapper`           |
 |                        | Image Synthesis | `DashScopeImageSynthesisWrapper` |
 |                        | Text Embedding  | `DashScopeTextEmbeddingWrapper`  |
@@ -78,8 +78,8 @@ services and third-party model APIs.
 
 **Supported Local Model Deployment**
 
-AgentScope enables developers to rapidly deploy local model services using 
-the following libraries. 
+AgentScope enables developers to rapidly deploy local model services using
+the following libraries.
 
 - [ollama (CPU inference)]()
 - [Flask + Transformers]()
@@ -116,7 +116,7 @@ More models, services and examples are coming soon!
 
 ## Installation
 
-AgentScope requires **Python 3.9** or higher. 
+AgentScope requires **Python 3.9** or higher.
 
 **_Note: This project is currently in active development, it's recommended to
 install AgentScope from source._**
@@ -144,7 +144,7 @@ pip install -e .\[distribute\]
 
 ### Using pip
 
-- Install AgentScope from pip: 
+- Install AgentScope from pip:
 
 ```bash
 pip install agentscope
@@ -158,26 +158,26 @@ In AgentScope, the model deployment and invocation are decoupled by
 `ModelWrapper`.
 
 
-To use these model wrappers, you need to prepare a model config file as 
-follows. 
+To use these model wrappers, you need to prepare a model config file as
+follows.
 
 ```python
 model_config = {
     # The identifies of your config and used model wrapper
     "config_name": "{your_config_name}",          # The name to identify the config
     "model_type": "{model_type}",                 # The type to identify the model wrapper
-    
+
     # Detailed parameters into initialize the model wrapper
-    # ... 
+    # ...
 }
 ```
 Taking OpenAI Chat API as an example, the model configuration is as follows:
 
 ```python
-openai_model_config = {    
+openai_model_config = {
     "config_name": "my_openai_config",             # The name to identify the config
     "model_type": "openai",                        # The type to identify the model wrapper
-    
+
     # Detailed parameters into initialize the model wrapper
     "model_name": "gpt-4",                         # The used model in openai API, e.g. gpt-4, gpt-3.5-turbo, etc.
     "api_key": "xxx",                              # The API key for OpenAI API. If not set, env
@@ -187,8 +187,8 @@ openai_model_config = {
 }
 ```
 
-More details about how to set up local model services and prepare model 
-configurations is in our 
+More details about how to set up local model services and prepare model
+configurations is in our
 [tutorial](https://modelscope.github.io/agentscope/index.html#welcome-to-agentscope-tutorial-hub).
 
 ### Create Agents

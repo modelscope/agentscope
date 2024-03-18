@@ -120,12 +120,12 @@ API如下：
 openai_chat_config = {
     "config_name": "{your_config_name}",
     "model_type": "openai",
-    
+
     # 必要参数
     "model_name": "gpt-4",
-  
+
     # 可选参数
-    "api_key": "{your_api_key}",                # OpenAI API Key，如果没有提供，将从环境变量中读取  
+    "api_key": "{your_api_key}",                # OpenAI API Key，如果没有提供，将从环境变量中读取
     "organization": "{your_organization}",      # Organization name，如果没有提供，将从环境变量中读取
     "client_args": {                            # 用于初始化OpenAI API Client的参数
         # e.g. "max_retries": 3,
@@ -146,13 +146,13 @@ openai_chat_config = {
 {
     "config_name": "{your_config_name}",
     "model_type": "openai_dall_e",
-    
+
     # 必要参数
     "model_name": "{model_name}",               # OpenAI model name, e.g. dall-e-2, dall-e-3
-  
+
     # 可选参数
-    "api_key": "{your_api_key}",                # OpenAI API Key，如果没有提供，将从环境变量中读取  
-    "organization": "{your_organization}",      # Organization name，如果没有提供，将从环境变量中读取  
+    "api_key": "{your_api_key}",                # OpenAI API Key，如果没有提供，将从环境变量中读取
+    "organization": "{your_organization}",      # Organization name，如果没有提供，将从环境变量中读取
     "client_args": {                            # 用于初始化OpenAI API Client的参数
         # e.g. "max_retries": 3,
     },
@@ -174,10 +174,10 @@ openai_chat_config = {
 
     # 必要参数
     "model_name": "{model_name}",               # OpenAI model name, e.g. text-embedding-ada-002, text-embedding-3-small
-    
+
     # 可选参数
-    "api_key": "{your_api_key}",                # OpenAI API Key，如果没有提供，将从环境变量中读取   
-    "organization": "{your_organization}",      # Organization name，如果没有提供，将从环境变量中读取  
+    "api_key": "{your_api_key}",                # OpenAI API Key，如果没有提供，将从环境变量中读取
+    "organization": "{your_organization}",      # Organization name，如果没有提供，将从环境变量中读取
     "client_args": {                            # 用于初始化OpenAI API Client的参数
         # e.g. "max_retries": 3,
     },
@@ -219,7 +219,7 @@ openai_chat_config = {
 {
     "config_name": "my_dashscope_image_synthesis_config",
     "model_type": "dashscope_image_synthesis",
-  
+
     # 必要参数
     "model_name": "{model_name}",               # DashScope Image Synthesis API中的模型名， e.g. wanx-v1
 
@@ -242,10 +242,10 @@ openai_chat_config = {
 {
     "config_name": "my_dashscope_text_embedding_config",
     "model_type": "dashscope_text_embedding",
-    
+
     # 必要参数
     "model_name": "{model_name}",               # DashScope Text Embedding API中的模型名, e.g. text-embedding-v1
-  
+
     # 可选参数
     "api_key": "{your_api_key}",
     "generate_args": {
@@ -265,7 +265,7 @@ openai_chat_config = {
 {
     "config_name": "my_gemini_chat_config",
     "model_type": "gemini_chat",
-  
+
     # 必要参数
     "model_name": "{model_name}",               # Gemini Chat API中的模型名，e.g. gemini-prp
 
@@ -283,7 +283,7 @@ openai_chat_config = {
 {
     "config_name": "my_gemini_embedding_config",
     "model_type": "gemini_embedding",
-  
+
     # 必要参数
     "model_name": "{model_name}",               # Gemini Embedding API中的模型名，e.g. gemini-prp
 
@@ -303,7 +303,7 @@ openai_chat_config = {
 {
     "config_name": "my_ollama_chat_config",
     "model_type": "ollama_chat",
-    
+
     # 必要参数
     "model": "{model_name}",                    # ollama Chat API中的模型名, e.g. llama2
 
@@ -368,13 +368,13 @@ openai_chat_config = {
 {
     "config_name": "my_postapiwrapper_config",
     "model_type": "post_api",
-  
+
     # 必要参数
     "api_url": "https://xxx.com",
     "headers": {
         # e.g. "Authorization": "Bearer xxx",
     },
-  
+
     # 可选参数
     "messages_key": "messages",
 }
