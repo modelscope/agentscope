@@ -128,12 +128,12 @@ openai_chat_config = {
     "api_key": "{your_api_key}",                # OpenAI API Key，如果没有提供，将从环境变量中读取
     "organization": "{your_organization}",      # Organization name，如果没有提供，将从环境变量中读取
     "client_args": {                            # 用于初始化OpenAI API Client的参数
-        # e.g. "max_retries": 3,
+        # 例如："max_retries": 3,
     },
     "generate_args": {                          # 模型API接口被调用时传入的参数
-        # e.g. "temperature": 0.0
+        # 例如："temperature": 0.0
     },
-    "budget": 100                               # API budget
+    "budget": 100                               # API费用预算
 }
 ```
 
@@ -148,16 +148,16 @@ openai_chat_config = {
     "model_type": "openai_dall_e",
 
     # 必要参数
-    "model_name": "{model_name}",               # OpenAI model name, e.g. dall-e-2, dall-e-3
+    "model_name": "{model_name}",               # OpenAI model name, 例如：dall-e-2, dall-e-3
 
     # 可选参数
     "api_key": "{your_api_key}",                # OpenAI API Key，如果没有提供，将从环境变量中读取
     "organization": "{your_organization}",      # Organization name，如果没有提供，将从环境变量中读取
     "client_args": {                            # 用于初始化OpenAI API Client的参数
-        # e.g. "max_retries": 3,
+        # 例如："max_retries": 3,
     },
     "generate_args": {                          # 模型API接口被调用时传入的参数
-        # e.g. "n": 1, "size": "512x512"
+        # 例如："n": 1, "size": "512x512"
     }
 }
 ```
@@ -173,16 +173,16 @@ openai_chat_config = {
     "model_type": "openai_embedding",
 
     # 必要参数
-    "model_name": "{model_name}",               # OpenAI model name, e.g. text-embedding-ada-002, text-embedding-3-small
+    "model_name": "{model_name}",               # OpenAI model name, 例如：text-embedding-ada-002, text-embedding-3-small
 
     # 可选参数
     "api_key": "{your_api_key}",                # OpenAI API Key，如果没有提供，将从环境变量中读取
     "organization": "{your_organization}",      # Organization name，如果没有提供，将从环境变量中读取
     "client_args": {                            # 用于初始化OpenAI API Client的参数
-        # e.g. "max_retries": 3,
+        # 例如："max_retries": 3,
     },
     "generate_args": {                          # 模型API接口被调用时传入的参数
-        # e.g. "encoding_format": "float"
+        # 例如："encoding_format": "float"
     }
 }
 ```
@@ -202,12 +202,12 @@ openai_chat_config = {
     "model_type": "dashscope_chat",
 
     # 必要参数
-    "model_name": "{model_name}",               # DashScope Chat API中的模型名， e.g. qwen-max
+    "model_name": "{model_name}",               # DashScope Chat API中的模型名， 例如：qwen-max
 
     # 可选参数
     "api_key": "{your_api_key}",                # DashScope API Key，如果没有提供，将从环境变量中读取
     "generate_args": {
-        # e.g. "temperature": 0.5
+        # 例如："temperature": 0.5
     },
 }
 ```
@@ -223,7 +223,7 @@ openai_chat_config = {
     "model_type": "dashscope_image_synthesis",
 
     # 必要参数
-    "model_name": "{model_name}",               # DashScope Image Synthesis API中的模型名， e.g. wanx-v1
+    "model_name": "{model_name}",               # DashScope Image Synthesis API中的模型名， 例如：wanx-v1
 
     # 可选参数
     "api_key": "{your_api_key}",
@@ -246,7 +246,7 @@ openai_chat_config = {
     "model_type": "dashscope_text_embedding",
 
     # 必要参数
-    "model_name": "{model_name}",               # DashScope Text Embedding API中的模型名, e.g. text-embedding-v1
+    "model_name": "{model_name}",               # DashScope Text Embedding API中的模型名, 例如：text-embedding-v1
 
     # 可选参数
     "api_key": "{your_api_key}",
@@ -271,7 +271,7 @@ openai_chat_config = {
     "model_type": "gemini_chat",
 
     # 必要参数
-    "model_name": "{model_name}",               # Gemini Chat API中的模型名，e.g. gemini-prp
+    "model_name": "{model_name}",               # Gemini Chat API中的模型名，例如：gemini-prp
 
     # 可选参数
     "api_key": "{your_api_key}",                # 如果没有提供，将从环境变量GEMINI_API_KEY中读取
@@ -289,7 +289,7 @@ openai_chat_config = {
     "model_type": "gemini_embedding",
 
     # 必要参数
-    "model_name": "{model_name}",               # Gemini Embedding API中的模型名，e.g. gemini-prp
+    "model_name": "{model_name}",               # Gemini Embedding API中的模型名，例如：gemini-prp
 
     # 可选参数
     "api_key": "{your_api_key}",                # 如果没有提供，将从环境变量GEMINI_API_KEY中读取
@@ -311,11 +311,11 @@ openai_chat_config = {
     "model_type": "ollama_chat",
 
     # 必要参数
-    "model": "{model_name}",                    # ollama Chat API中的模型名, e.g. llama2
+    "model": "{model_name}",                    # ollama Chat API中的模型名, 例如：llama2
 
     # 可选参数
     "options": {                                # 模型API接口被调用时传入的参数
-        # e.g. "temperature": 0., "seed": "123",
+        # 例如："temperature": 0., "seed": "123",
     },
     "keep_alive": "5m",                         # 控制一次调用后模型在内存中的存活时间
 }
@@ -332,7 +332,7 @@ openai_chat_config = {
     "model_type": "ollama_generate",
 
     # 必要参数
-    "model": "{model_name}",                    # ollama Generate API, e.g. llama2
+    "model": "{model_name}",                    # ollama Generate API, 例如：llama2
 
     # 可选参数
     "options": {                                # 模型API接口被调用时传入的参数
@@ -353,7 +353,7 @@ openai_chat_config = {
     "model_type": "ollama_embedding",
 
     # 必要参数
-    "model": "{model_name}",                    # ollama Embedding API, e.g. llama2
+    "model": "{model_name}",                    # ollama Embedding API, 例如：llama2
 
     # 可选参数
     "options": {                                # 模型API接口被调用时传入的参数
@@ -378,9 +378,9 @@ openai_chat_config = {
     "model_type": "post_api",
 
     # 必要参数
-    "api_url": "https://xxx.com",
+    "api_url": "https://xxx.xxx",
     "headers": {
-        # e.g. "Authorization": "Bearer xxx",
+        # 例如："Authorization": "Bearer xxx",
     },
 
     # 可选参数

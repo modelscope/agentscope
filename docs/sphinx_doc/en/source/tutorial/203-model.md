@@ -358,7 +358,7 @@ openai_chat_config = {
     "model_type": "post_api",
 
     # Required parameters
-    "api_url": "https://xxx.com",
+    "api_url": "https://xxx.xxx",
     "headers": {
         # e.g. "Authorization": "Bearer xxx",
     },
