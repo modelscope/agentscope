@@ -189,6 +189,8 @@ openai_chat_config = {
 
 </details>
 
+<br/>
+
 #### DashScope API
 
 <details>
@@ -256,6 +258,8 @@ openai_chat_config = {
 
 </details>
 
+<br/>
+
 #### Gemini API
 
 <details>
@@ -293,6 +297,8 @@ openai_chat_config = {
 ```
 
 </details>
+
+<br/>
 
 #### Ollama API
 
@@ -359,6 +365,8 @@ openai_chat_config = {
 
 </details>
 
+<br/>
+
 #### Post Request API
 
 <details>
@@ -381,6 +389,8 @@ openai_chat_config = {
 ```
 
 </details>
+
+<br/>
 
 ## 从零搭建模型服务
 
