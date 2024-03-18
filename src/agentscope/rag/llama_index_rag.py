@@ -29,7 +29,8 @@ from agentscope.models import ModelWrapperBase
 
 class _EmbeddingModel(BaseEmbedding):
     """
-    wrapp a ModelWrapperBase to an embedding mode in Llama Index.
+    wrapper for ModelWrapperBase to an embedding model can be used
+    in Llama Index pipeline.
     """
 
     _emb_model_wrapper: ModelWrapperBase = PrivateAttr()
@@ -185,6 +186,7 @@ class LlamaIndexRAG(RAGBase):
             nodes = pipeline.run(documents=docs)
             self.index = VectorStoreIndex(nodes=nodes)
 
+        # set the retriever
         if retriever is None:
             self.retriever = self.index.as_retriever(**kwargs)
         else:

@@ -64,14 +64,21 @@ class RAGBase(ABC):
 
     def post_processing(
         self,
-        retrieved_docs: list[Any],
+        retrieved_docs: list[str],
         prompt: str,
         **kwargs: Any,
     ) -> Any:
         """
-        post-processing function, generates answer based on the
-        retrieved documents.
+        A default solution for post-processing function, generates answer
+        based on the retrieved documents.
+        :param retrieved_docs: list of retrieved documents
+        :param prompt: prompt for LLM generating answer with the
+        retrieved documents
+
+
         Example:
             self.postprocessing_model(prompt.format(retrieved_docs))
         """
-        raise NotImplementedError
+        assert self.postprocessing_model
+        prompt = prompt.format(retrieved_docs)
+        return self.postprocessing_model(prompt, **kwargs).text

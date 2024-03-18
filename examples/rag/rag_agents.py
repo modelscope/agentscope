@@ -49,6 +49,7 @@ class LlamaIndexAgent(AgentBase):
             model=self.model,
             emb_model=self.emb_model,
         )
+        # load the document to memory
         docs = self.rag.load_data(
             loader=SimpleDirectoryReader("./data"),
         )
@@ -56,6 +57,7 @@ class LlamaIndexAgent(AgentBase):
             docs,
             transformations=[
                 TokenTextSplitter(),
+                # just an example, more operators can be added
             ],
         )
 

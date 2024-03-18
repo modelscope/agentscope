@@ -20,6 +20,7 @@ from agentscope.models import ModelWrapperBase
 class LangChainRAG(RAGBase):
     """
     This class is a wrapper around the LangChain RAG.
+    TODO: still under construction
     """
 
     def __init__(
