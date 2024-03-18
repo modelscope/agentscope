@@ -3,7 +3,7 @@
 from typing import Any, Optional, Union
 from enum import IntEnum
 
-from agentscope.models import OpenAIWrapper, ModelWrapperBase
+from agentscope.models import OpenAIWrapperBase, ModelWrapperBase
 from agentscope.constants import ShrinkPolicy
 from agentscope.utils.tools import to_openai_dict, to_dialog_str
 
@@ -84,7 +84,7 @@ class PromptEngine:
         self.max_length = max_length or model.max_length
 
         if prompt_type is None:
-            if isinstance(model, OpenAIWrapper):
+            if isinstance(model, OpenAIWrapperBase):
                 self.prompt_type = PromptType.LIST
             else:
                 self.prompt_type = PromptType.STRING

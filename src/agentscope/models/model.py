@@ -62,6 +62,9 @@ import json
 
 from loguru import logger
 
+from agentscope.utils import QuotaExceededError
+
+
 from ..file_manager import file_manager
 from ..utils import MonitorFactory
 from ..utils.monitor import get_full_name
@@ -222,7 +225,21 @@ class _ModelWrapperMeta(ABCMeta):
 class ModelWrapperBase(metaclass=_ModelWrapperMeta):
     """The base class for model wrapper."""
 
-    def __init__(self, config_name: str, **kwargs: Any) -> None:
+    model_type: str
+    """The type of the model wrapper, which is to identify the model wrapper
+    class in model configuration."""
+
+    config_name: str
+    """The name of the model configuration."""
+
+    model_name: str
+    """The name of the model, which is used in model api calling."""
+
+    def __init__(
+        self,
+        config_name: str,
+        **kwargs: Any,
+    ) -> None:  # pylint: disable=W0613
         """Base class for model wrapper.
 
         All model wrappers should inherit this class and implement the
@@ -233,14 +250,10 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
                 The id of the model, which is used to extract configuration
                 from the config file.
         """
-        self.monitor = None
+        self.monitor = MonitorFactory.get_monitor()
 
         self.config_name = config_name
         logger.info(f"Initialize model [{config_name}]")
-        logger.debug(
-            f"[{config_name}]:\n"
-            f"{json.dumps(kwargs, indent=2, ensure_ascii=False)}",
-        )
 
     def __call__(self, *args: Any, **kwargs: Any) -> ModelResponse:
         """Processing input with the model."""
@@ -273,23 +286,47 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
 
     def _register_budget(self, model_name: str, budget: float) -> None:
         """Register the budget of the model by model_name."""
-        self.monitor = MonitorFactory.get_monitor()
         self.monitor.register_budget(
             model_name=model_name,
             value=budget,
             prefix=model_name,
         )
 
-    def _metric(self, metric_name: str, prefix: str = None) -> str:
+    def _register_default_metrics(self) -> None:
+        """Register metrics to the monitor."""
+
+    def _metric(self, metric_name: str) -> str:
         """Add the class name and model name as prefix to the metric name.
 
         Args:
             metric_name (`str`):
                 The metric name.
-            prefix (`str`):
-                The prefix of the metric name.
 
         Returns:
             `str`: Metric name of this wrapper.
         """
-        return get_full_name(name=metric_name, prefix=prefix)
+
+        if hasattr(self, "model_name"):
+            return get_full_name(name=metric_name, prefix=self.model_name)
+        else:
+            return get_full_name(name=metric_name)
+
+    def update_monitor(self, **kwargs: Any) -> None:
+        """Update the monitor with the given values.
+
+        Args:
+            kwargs (`dict`):
+                The values to be updated to the monitor.
+        """
+        if hasattr(self, "model_name"):
+            prefix = self.model_name
+        else:
+            prefix = None
+
+        try:
+            self.monitor.update(
+                kwargs,
+                prefix=prefix,
+            )
+        except QuotaExceededError as e:
+            logger.error(e.message)

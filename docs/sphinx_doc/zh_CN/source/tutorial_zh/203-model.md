@@ -77,7 +77,7 @@ AgentScope中，模型配置是一个字典，用于指定模型的类型以及�
 `类的`model_type`字段。
 
 ```python
-class OpenAIChatWrapper(OpenAIWrapper):
+class OpenAIChatWrapper(OpenAIWrapperBase):
     """The model wrapper for OpenAI's chat API."""
 
     model_type: str = "openai"
