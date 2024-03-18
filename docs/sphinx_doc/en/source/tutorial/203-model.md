@@ -381,11 +381,11 @@ directory.
 
 Specifically, AgentScope provides the following model service scripts:
 
-- CPU inference engine **ollama**
-- Model service based on **Flask + HuggingFace**
-- Model service based on **Flask + ModelScope**
-- **FastChat** inference engine
-- **vllm** inference engine
+- [CPU inference engine **ollama**](https://github.com/modelscope/agentscope/blob/main/scripts/README.md#ollama)
+- [Model service based on **Flask + Transformers**](https://github.com/modelscope/agentscope/blob/main/scripts/README.md#with-transformers-library)
+- [Model service based on **Flask + ModelScope**](https://github.com/modelscope/agentscope/blob/main/scripts/README.md#with-modelscope-library)
+- [**FastChat** inference engine](https://github.com/modelscope/agentscope/blob/main/scripts/README.md#fastchat)
+- [**vllm** inference engine](https://github.com/modelscope/agentscope/blob/main/scripts/README.md#vllm)
 
 About how to quickly start these model services, users can refer to the [README.md](https://github.com/modelscope/agentscope/blob/main/scripts/README.md) file under the [scripts](https://github.com/modelscope/agentscope/blob/main/scripts/) directory.
 
@@ -396,7 +396,7 @@ The new model wrapper class should
 - inherit from `ModelWrapperBase` class,
 - provide a `model_type` field to identify this model wrapper in the model configuration, and
 - implement its `__init__` and `__call__` functions.
--
+
 The following is an example for creating a new model wrapper class.
 
 ```python
@@ -406,8 +406,9 @@ class MyModelWrapper(ModelWrapperBase):
 
     model_type: str = "my_model"
 
-    def __init__(self, my_arg1, my_arg2, **kwargs):
+    def __init__(self, config_name, my_arg1, my_arg2, **kwargs):
         # Initialize the model instance
+        super().__init__(config_name=config_name)
         # ...
 
     def __call__(self, input, **kwargs) -> str:
