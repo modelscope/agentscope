@@ -1,6 +1,6 @@
 (203-model-zh)=
 
-# 关于模型
+# 模型
 
 AgentScope中，模型的部署和调用是通过`ModelWrapper`来解耦开的，开发者可以通过提供模型配置（Model config）的方式指定模型，同时AgentScope也提供脚本支持开发者自定义模型服务。
 
@@ -388,57 +388,51 @@ openai_chat_config = {
 
 具体而言，AgentScope提供了以下模型服务的脚本：
 
+- CPU推理引擎ollama
 - 基于Flask + HuggingFace的模型服务
 - 基于Flask + ModelScope的模型服务
 - FastChat推理引擎
 - vllm推理引擎
 
-下面我们以Flask + hugingface的模型服务为例，介绍如何使用AgentScope的模型服务脚本。
-更多的模型服务脚本可以在[scripts](https://github.com/modelscope/agentscope/blob/main/scripts/)中查看。
+关于如何快速启动这些模型服务，用户可以参考[scripts](https://github.com/modelscope/agentscope/blob/main/scripts/)目录下的[README.md](https://github.com/modelscope/agentscope/blob/main/scripts/README.md)文件。
 
-### 基于Flask 的模型 API 服务
+## 创建自己的Model Wrapper
 
-[Flask](https://github.com/pallets/flask)是一个轻量级的Web应用框架。利用Flask可以很容易地搭建本地模型API服务。
+AgentScope允许开发者自定义自己的模型包装器。新的模型包装器类应该
+- 继承自`ModelWrapperBase`类，
+- 提供`model_type`字段以在模型配置中标识这个Model Wrapper类，并
+- 实现`__init__`和`__call__`函数。
 
-#### 使用transformers库
+```python
+from agentscope.models import ModelWrapperBase
 
-##### 安装transformers并配置服务
+class MyModelWrapper(ModelWrapperBase):
+  
+    model_type: str = "my_model"
 
-按照以下命令安装 Flask 和 Transformers：
+    def __init__(self, my_arg1, my_arg2, **kwargs):
+        # 初始化模型实例
+        # ...
 
-```bash
-pip install Flask transformers
+    def __call__(self, input, **kwargs) -> str:
+        # 调用模型实例
+        # ...
 ```
 
-以模型 `meta-llama/Llama-2-7b-chat-hf` 和端口 `8000` 为例，通过运行以下命令来设置模型 API 服务。
+在创建新的模型包装器类之后，模型包装器将自动注册到AgentScope中。
+您可以直接在模型配置中使用它。
 
-```bash
-python flask_transformers/setup_hf_service.py
-    --model_name_or_path meta-llama/Llama-2-7b-chat-hf
-    --device "cuda:0" # or "cpu"
-    --port 8000
-```
-
-您可以将 `meta-llama/Llama-2-7b-chat-hf` 替换为 huggingface 模型中心的任何模型卡片。
-
-##### 在AgentScope中调用
-
-在 AgentScope 中，您可以使用以下模型配置加载型：[./flask_transformers/model_config.json](https://github.com/modelscope/agentscope/blob/main/scripts/flask_transformers/model_config.json)。
-
-```json
-{
-    "model_type": "post_api",
-    "config_name": "flask_llama2-7b-chat",
-    "api_url": "http://127.0.0.1:8000/llm/",
-    "json_args": {
-        "max_length": 4096,
-        "temperature": 0.5
-    }
+```python
+my_model_config = {
+    # 基础参数
+    "config_name": "my_model_config",
+    "model_type": "my_model",
+  
+    # 详细参数
+    "my_arg1": "xxx",
+    "my_arg2": "yyy",
+    # ...
 }
 ```
-
-##### 注意
-
-在这种模型服务中，来自 post 请求的消息应该是 **STRING** 格式。您可以使用来自 *transformers* 的[聊天模型模板](https://huggingface.co/docs/transformers/main/chat_templating)，只需在[`./flask_transformers/setup_hf_service.py`](https://github.com/modelscope/agentscope/blob/main/scripts/flask_transformers/setup_hf_service.py)做一点修改即可。
 
 [[返回顶部]](#203-model-zh)

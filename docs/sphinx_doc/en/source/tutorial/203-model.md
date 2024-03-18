@@ -1,6 +1,6 @@
 (203-model-en)=
 
-# Model Service
+# Model
 
 In AgentScope, the model deployment and invocation are decoupled by `ModelWrapper`.
 Developers can specify their own model by providing model configurations,
@@ -377,52 +377,48 @@ Specifically, AgentScope provides the following model service scripts:
 - **FastChat** inference engine
 - **vllm** inference engine
 
-Taking the Flask + Huggingface model service as an example, we will introduce how to use the model service script of AgentScope.
-More model service scripts can be found in [scripts](https://github.com/modelscope/agentscope/blob/main/scripts/) directory.
+About how to quickly start these model services, users can refer to the [README.md](https://github.com/modelscope/agentscope/blob/main/scripts/README.md) file under the [scripts](https://github.com/modelscope/agentscope/blob/main/scripts/) directory.
 
-### Flask-based Model API Serving
+## Creat Your Own Model Wrapper
 
-[Flask](https://github.com/pallets/flask) is a lightweight web application framework. It is easy to build a local model API service with Flask.
+AgentScope allows developers to customize their own model wrappers. 
+The new model wrapper class should 
+- inherit from `ModelWrapperBase` class, 
+- provide a `model_type` field to identify this model wrapper in the model configuration, and
+- implement its `__init__` and `__call__` functions. 
+- 
+The following is an example for creating a new model wrapper class.
 
-#### Using transformers library
+```python
+from agentscope.models import ModelWrapperBase
 
-##### Install Libraries and Set up Serving
+class MyModelWrapper(ModelWrapperBase):
+  
+    model_type: str = "my_model"
 
-Install Flask and Transformers by following the command.
+    def __init__(self, my_arg1, my_arg2, **kwargs):
+        # Initialize the model instance
+        # ...
 
-```bash
-pip install Flask transformers
+    def __call__(self, input, **kwargs) -> str:
+        # Call the model instance
+        # ...
 ```
 
-Taking model `meta-llama/Llama-2-7b-chat-hf` and port `8000` as an example, set up the model API service by running the following command.
+After creating the new model wrapper class, the model wrapper will be registered into AgentScope automatically. 
+You can use it in the model configuration directly.
 
-```bash
-python flask_transformers/setup_hf_service.py
-    --model_name_or_path meta-llama/Llama-2-7b-chat-hf
-    --device "cuda:0" # or "cpu"
-    --port 8000
-```
-
-You can replace `meta-llama/Llama-2-7b-chat-hf` with any model card in the huggingface model hub.
-
-##### Use in AgentScope
-
-In AgentScope, you can load the model with the following model configs: [./flask_transformers/model_config.json](https://github.com/modelscope/agentscope/blob/main/scripts/flask_transformers/model_config.json).
-
-```json
-{
-    "model_type": "post_api",
-    "config_name": "flask_llama2-7b-chat",
-    "api_url": "http://127.0.0.1:8000/llm/",
-    "json_args": {
-        "max_length": 4096,
-        "temperature": 0.5
-    }
+```python
+my_model_config = {
+    # Basic parameters
+    "config_name": "my_model_config",
+    "model_type": "my_model",
+  
+    # Detailed parameters
+    "my_arg1": "xxx",
+    "my_arg2": "yyy",
+    # ...
 }
 ```
-
-##### Note
-
-In this model serving, the messages from post requests should be in **STRING** format. You can use [templates for chat model](https://huggingface.co/docs/transformers/main/chat_templating) from _transformers_ with a little modification based on [`./flask_transformers/setup_hf_service.py`](https://github.com/modelscope/agentscope/blob/main/scripts/flask_transformers/setup_hf_service.py).
 
 [[Return to Top]](#203-model-en)
