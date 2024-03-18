@@ -55,7 +55,7 @@ Table of Contents
     - [Advanced Usage](#advanced-usage)
       - [**Pipeline** and **MsgHub**](#pipeline-and-msghub)
       - [Customize Your Own Agent](#customize-your-own-agent)
-      - [AgentScope Studio](#AgentScope-Studio)
+      - [AgentScope Studio](#agentscope-studio)
       - [Built-in Resources](#built-in-resources)
         - [Agent Pool](#agent-pool)
         - [Services](#services)
@@ -300,7 +300,7 @@ class MyAgent(AgentBase):
 
 #### AgentScope Studio
 
-AgentScope provides an easy-to-use runtime user interface capable of displaying multimodal output on the front end, including text, images, audio and video. To start a studio, you can just run `as_studio path/to/your/script.py`. More detail can be found in [src/agentscope/web/README.md](src/agentscope/web/README.md).
+AgentScope provides an easy-to-use runtime user interface capable of displaying multimodal output on the front end, including text, images, audio and video. To start a studio, you can just run `as_studio path/to/your/script.py`. To be able to use the as_studio functionality, please implement the `main` function in your code. More detail can be found in [src/agentscope/web/README.md](src/agentscope/web/README.md).
 
 #### Built-in Resources
 
