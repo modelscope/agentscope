@@ -45,6 +45,7 @@ AgentScope是一款全新的Multi-Agent框架，专为应用开发者打造，�
     - [进阶使用](#进阶使用)
       - [**Pipeline**和**MsgHub**](#pipeline和msghub)
       - [定制您自己的Agent](#定制您自己的agent)
+      - [AgentScope前端](#AgentScope前端)
       - [内置资源](#内置资源)
         - [Agent Pool](#agent-pool)
         - [Services](#services)
@@ -289,6 +290,10 @@ class MyAgent(AgentBase):
         response = self.model(x).raw
         return response
 ```
+
+#### AgentScope前端
+
+AgentScope 提供了一个易于使用的运行时用户界面，能够在前端显示多模态输出，包括文本、图像、音频和视频。要启动前端，只需运行 `as_studio path/to/your/script.py`。更多详情请参见 [src/agentscope/web/README.md](src/agentscope/web/README.md)。
 
 #### 内置资源
 
