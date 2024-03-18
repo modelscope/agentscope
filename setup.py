@@ -24,7 +24,16 @@ rpc_requires = [
     "expiringdict",
 ]
 
-service_requires = ["docstring_parser", "docker", "pymongo", "pymysql"]
+service_requires = [
+    "docstring_parser",
+    "docker",
+    "pymongo",
+    "pymysql",
+    "langchain",
+    "langchain-text-splitters",
+    "beautifulsoup4",
+    "playwright",
+]
 
 doc_requires = [
     "sphinx",
