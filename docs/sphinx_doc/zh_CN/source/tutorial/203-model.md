@@ -417,7 +417,7 @@ AgentScope允许开发者自定义自己的模型包装器。新的模型包装�
 from agentscope.models import ModelWrapperBase
 
 class MyModelWrapper(ModelWrapperBase):
-  
+
     model_type: str = "my_model"
 
     def __init__(self, my_arg1, my_arg2, **kwargs):
@@ -437,7 +437,7 @@ my_model_config = {
     # 基础参数
     "config_name": "my_model_config",
     "model_type": "my_model",
-  
+
     # 详细参数
     "my_arg1": "xxx",
     "my_arg2": "yyy",

@@ -391,19 +391,19 @@ About how to quickly start these model services, users can refer to the [README.
 
 ## Creat Your Own Model Wrapper
 
-AgentScope allows developers to customize their own model wrappers. 
-The new model wrapper class should 
-- inherit from `ModelWrapperBase` class, 
+AgentScope allows developers to customize their own model wrappers.
+The new model wrapper class should
+- inherit from `ModelWrapperBase` class,
 - provide a `model_type` field to identify this model wrapper in the model configuration, and
-- implement its `__init__` and `__call__` functions. 
-- 
+- implement its `__init__` and `__call__` functions.
+-
 The following is an example for creating a new model wrapper class.
 
 ```python
 from agentscope.models import ModelWrapperBase
 
 class MyModelWrapper(ModelWrapperBase):
-  
+
     model_type: str = "my_model"
 
     def __init__(self, my_arg1, my_arg2, **kwargs):
@@ -415,7 +415,7 @@ class MyModelWrapper(ModelWrapperBase):
         # ...
 ```
 
-After creating the new model wrapper class, the model wrapper will be registered into AgentScope automatically. 
+After creating the new model wrapper class, the model wrapper will be registered into AgentScope automatically.
 You can use it in the model configuration directly.
 
 ```python
@@ -423,7 +423,7 @@ my_model_config = {
     # Basic parameters
     "config_name": "my_model_config",
     "model_type": "my_model",
-  
+
     # Detailed parameters
     "my_arg1": "xxx",
     "my_arg2": "yyy",
