@@ -28,7 +28,7 @@ Welcome to join our community on
 ## News
 - ![new](https://img.alicdn.com/imgextra/i4/O1CN01kUiDtl1HVxN6G56vN_!!6000000000764-2-tps-43-19.png)
 [2024-03-15] We release **AgentScope** v0.0.2 now! In this new version,
-AgentScope supports [DashScope](), [ollama]() and [Gemini]() APIs.
+AgentScope supports [DashScope](https://modelscope.github.io/agentscope/en/tutorial/203-model.html#supported-models), [ollama](https://modelscope.github.io/agentscope/en/tutorial/203-model.html#supported-models) and [Gemini](https://modelscope.github.io/agentscope/en/tutorial/203-model.html#supported-models) APIs.
 
 - ![new](https://img.alicdn.com/imgextra/i4/O1CN01kUiDtl1HVxN6G56vN_!!6000000000764-2-tps-43-19.png)
 [2024-03-15] The [Chinese tutorial](https://modelscope.github.io/agentscope/zh_CN/index.html) of AgentScope is online now!
@@ -46,7 +46,7 @@ AgentScope is an innovative multi-agent platform designed to empower developers
 to build multi-agent applications with large-scale models.
 It features three high-level capabilities:
 
-- 🤝 **Easy-to-Use**: Designed for developers, with [fruitful components](),
+- 🤝 **Easy-to-Use**: Designed for developers, with [fruitful components](https://modelscope.github.io/agentscope/en/tutorial/204-service.html#),
 [comprehensive documentation](https://modelscope.github.io/agentscope/en/index.html), and broad compatibility.
 
 - ✅ **High Robustness**: Supporting customized fault-tolerance controls and
@@ -60,20 +60,20 @@ applications in a centralized programming manner for streamlined development.
 AgentScope provides a list of `ModelWrapper` to support both local model
 services and third-party model APIs.
 
-| API                    | Task            | Model Wrapper                    |
-|------------------------|-----------------|----------------------------------|
-| ollama                 | Chat            | `OllamaChatWrapper`              |
-|                        | Embedding       | `OllamaEmbedding`                |
-|                        | Generation      | `OllamaGenerationWrapper`        |
-| OpenAI API             | Chat            | `OpenAIChatWrapper`              |
-|                        | Embedding       | `OpenAIEmbeddingWrapper`         |
-|                        | DALL·E          | `OpenAIDALLEWrapper`             |
-| Gemini API             | Chat            | `GeminiChatWrapper`              |
-|                        | Embedding       | `GeminiEmbeddingWrapper`         |
-| DashScope API          | Chat            | `DashScopeChatWrapper`           |
-|                        | Image Synthesis | `DashScopeImageSynthesisWrapper` |
-|                        | Text Embedding  | `DashScopeTextEmbeddingWrapper`  |
-| Post Request based API | -               | `PostAPIModelWrapper`            |
+| API                    | Task            | Model Wrapper                                                                                                                   |
+|------------------------|-----------------|---------------------------------------------------------------------------------------------------------------------------------|
+| OpenAI API             | Chat            | [`OpenAIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)                 |
+|                        | Embedding       | [`OpenAIEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)            |
+|                        | DALL·E          | [`OpenAIDALLEWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)                |
+| DashScope API          | Chat            | [`DashScopeChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py)           |
+|                        | Image Synthesis | [`DashScopeImageSynthesisWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py) |
+|                        | Text Embedding  | [`DashScopeTextEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py)  |
+| Gemini API             | Chat            | [`GeminiChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py)                 |
+|                        | Embedding       | [`GeminiEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py)            |
+| ollama                 | Chat            | [`OllamaChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)                 |
+|                        | Embedding       | [`OllamaEmbedding`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)                   |
+|                        | Generation      | [`OllamaGenerationWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)           |
+| Post Request based API | -               | [`PostAPIModelWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)                 |
 
 
 **Supported Local Model Deployment**
@@ -81,11 +81,11 @@ services and third-party model APIs.
 AgentScope enables developers to rapidly deploy local model services using
 the following libraries.
 
-- [ollama (CPU inference)]()
-- [Flask + Transformers]()
-- [Flask + ModelScope]()
-- [FastChat]()
-- [vllm]()
+- [ollama (CPU inference)](https://github.com/modelscope/agentscope/blob/main/scripts/README.md#ollama)
+- [Flask + Transformers](https://github.com/modelscope/agentscope/blob/main/scripts/README.md#with-transformers-library)
+- [Flask + ModelScope](https://github.com/modelscope/agentscope/blob/main/scripts/README.md#with-modelscope-library)
+- [FastChat](https://github.com/modelscope/agentscope/blob/main/scripts/README.md#fastchat)
+- [vllm](https://github.com/modelscope/agentscope/blob/main/scripts/README.md#vllm)
 
 
 **Supported Services**
