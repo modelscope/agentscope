@@ -45,7 +45,7 @@ AgentScope是一款全新的Multi-Agent框架，专为应用开发者打造，�
     - [进阶使用](#进阶使用)
       - [**Pipeline**和**MsgHub**](#pipeline和msghub)
       - [定制您自己的Agent](#定制您自己的agent)
-      - [AgentScope前端](#AgentScope前端)
+      - [AgentScope前端](#agentscope前端)
       - [内置资源](#内置资源)
         - [Agent Pool](#agent-pool)
         - [Services](#services)
