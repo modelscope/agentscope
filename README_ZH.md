@@ -33,11 +33,9 @@
 - ![new](https://img.alicdn.com/imgextra/i4/O1CN01kUiDtl1HVxN6G56vN_!!6000000000764-2-tps-43-19.png)
 [2024-03-15] AgentScope的[中文教程](https://modelscope.github.io/agentscope/zh_CN/index.html)上线了！
 
-- [2024-02-27] 我们现在发布了**AgentScope** v0.0.1版本！现在，AgentScope也可以在[PyPI]
-(<https://pypi.org/project/agentscope/>)上下载
+- [2024-02-27] 我们现在发布了**AgentScope** v0.0.1版本！现在，AgentScope也可以在[PyPI](https://pypi.org/project/agentscope/)上下载
 
-- [2024-02-14] 我们在arXiv上发布了论文["AgentScope: A Flexible yet Robust
-Multi-Agent Platform"](https://arxiv.org/abs/2402.14034)!
+- [2024-02-14] 我们在arXiv上发布了论文“[AgentScope: A Flexible yet Robust Multi-Agent Platform](https://arxiv.org/abs/2402.14034)”!
 
 ---
 
