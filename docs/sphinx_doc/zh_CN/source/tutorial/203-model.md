@@ -398,11 +398,11 @@ openai_chat_config = {
 
 具体而言，AgentScope提供了以下模型服务的脚本：
 
-- CPU推理引擎ollama
-- 基于Flask + HuggingFace的模型服务
-- 基于Flask + ModelScope的模型服务
-- FastChat推理引擎
-- vllm推理引擎
+- [CPU推理引擎ollama](https://github.com/modelscope/agentscope/blob/main/scripts/README.md#ollama)
+- [基于Flask + Transformers的模型服务](https://github.com/modelscope/agentscope/blob/main/scripts/README.md#with-transformers-library)
+- [基于Flask + ModelScope的模型服务](https://github.com/modelscope/agentscope/blob/main/scripts/README.md#with-modelscope-library)
+- [FastChat推理引擎](https://github.com/modelscope/agentscope/blob/main/scripts/README.md#fastchat)
+- [vllm推理引擎](https://github.com/modelscope/agentscope/blob/main/scripts/README.md#vllm)
 
 关于如何快速启动这些模型服务，用户可以参考[scripts](https://github.com/modelscope/agentscope/blob/main/scripts/)目录下的[README.md](https://github.com/modelscope/agentscope/blob/main/scripts/README.md)文件。
 
@@ -420,8 +420,9 @@ class MyModelWrapper(ModelWrapperBase):
 
     model_type: str = "my_model"
 
-    def __init__(self, my_arg1, my_arg2, **kwargs):
+    def __init__(self, config_name, my_arg1, my_arg2, **kwargs):
         # 初始化模型实例
+        super().__init__(config_name=config_name)
         # ...
 
     def __call__(self, input, **kwargs) -> str:
