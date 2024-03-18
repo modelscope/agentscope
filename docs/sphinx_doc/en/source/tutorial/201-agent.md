@@ -83,11 +83,14 @@ Below, we provide usages of how to configure various agents from the AgentPool:
 def reply(self, x: dict = None) -> dict:
     # Additional processing steps can occur here
 
-    if x is not None:
+    if self.memory:
         self.memory.add(x)  # Update the memory with the input
 
     # Generate a prompt for the language model using the system prompt and memory
-    prompt = self.engine.join(self.sys_prompt, self.memory.get_memory())
+    prompt = self.engine.join(
+        self.sys_prompt,
+        self.memory and self.memory.get_memory(),
+    )
 
     # Invoke the language model with the prepared prompt
     response = self.model(prompt).text
@@ -129,7 +132,7 @@ def reply(
     required_keys: Optional[Union[list[str], str]] = None,
 ) -> dict:
     # Check if there is initial data to be added to memory
-    if x is not None:
+    if self.memory:
         self.memory.add(x)
 
     content = input(f"{self.name}: ")  # Prompt the user for input
@@ -151,7 +154,8 @@ def reply(
     msg = Msg(self.name, content=content, url=url, **kwargs)
 
     # Add the message object to memory
-    self.memory.add(msg)
+    if self.memory:
+        self.memory.add(msg)
     return msg
 ```
 

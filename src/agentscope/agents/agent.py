@@ -69,6 +69,8 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
 
         if use_memory:
             self.memory = TemporaryMemory(memory_config)
+        else:
+            self.memory = None
 
         # The audience of this agent, which means if this agent generates a
         # response, it will be passed to all agents in the audience.

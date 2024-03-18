@@ -48,7 +48,7 @@ class MemoryBase(ABC):
         """
 
     @abstractmethod
-    def add(self, memories: Union[list[dict], dict]) -> None:
+    def add(self, memories: Union[list[dict], dict, None]) -> None:
         """
         Adding new memory fragment, depending on how the memory are stored
         """
