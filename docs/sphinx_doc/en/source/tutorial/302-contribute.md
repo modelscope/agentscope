@@ -1,6 +1,6 @@
 (302-contribute-en)=
 
-# Contributing to AgentScope
+# Contribute to AgentScope
 
 Our community thrives on the diverse ideas and contributions of its members. Whether you're fixing a bug, adding a new feature, improving the documentation,  or adding examples, your help is welcome. Here's how you can contribute:
 
