@@ -33,7 +33,7 @@ Table of Contents
 
 ### ollama
 
-[ollama] is a CPU inference engine for LLMs. With ollama, developers can build their local model API serving without GPU requirements.
+[ollama](https://github.com/ollama/ollama) is a CPU inference engine for LLMs. With ollama, developers can build their local model API serving without GPU requirements.
 
 #### Install Libraries and Set up Serving
 
