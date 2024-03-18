@@ -12,9 +12,9 @@ agents).
 AgentScope decouples the deployment and invocation of models to better build multi-agent applications.
 
 In terms of model deployment, users can use third-party model services such
-as OpenAI API, Google Gemini API, HuggingFace/ModelScope Inference API, or 
+as OpenAI API, Google Gemini API, HuggingFace/ModelScope Inference API, or
 quickly deploy local open-source model services through the [scripts](https://github.com/modelscope/agentscope/blob/main/scripts/README.md) in
-the repository. 
+the repository.
 
 While for model invocation, users should prepare a model configuration to specify the model service. Taking OpenAI Chat API as an example, the model configuration is like this:
 
@@ -22,7 +22,7 @@ While for model invocation, users should prepare a model configuration to specif
 model_config = {
     "config_name": "{config_name}", # A unique name for the model config.
     "model_type": "openai",         # Choose from "openai", "openai_dall_e", or "openai_embedding".
-    
+
     "model_name": "{model_name}",   # The model identifier used in the OpenAI API, such as "gpt-3.5-turbo", "gpt-4", or "text-embedding-ada-002".
     "api_key": "xxx",               # Your OpenAI API key. If unset, the environment variable OPENAI_API_KEY is used.
     "organization": "xxx",          # Your OpenAI organization ID. If unset, the environment variable OPENAI_ORGANIZATION is used.
