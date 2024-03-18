@@ -63,7 +63,9 @@ import json
 from loguru import logger
 
 from ..file_manager import file_manager
-from ..utils.tools import _get_timestamp
+from ..utils import MonitorFactory
+from ..utils.monitor import get_full_name
+from ..utils.tools import _get_timestamp, _is_json_serializable
 from ..constants import _DEFAULT_MAX_RETRIES
 from ..constants import _DEFAULT_RETRY_INTERVAL
 
@@ -80,7 +82,7 @@ class ModelResponse:
         text: str = None,
         embedding: Sequence = None,
         image_urls: Sequence[str] = None,
-        raw: dict = None,
+        raw: Any = None,
     ) -> None:
         self._text = text
         self._embedding = embedding
@@ -103,16 +105,21 @@ class ModelResponse:
         return self._image_urls
 
     @property
-    def raw(self) -> dict:
-        """Raw dictionary field."""
+    def raw(self) -> Any:
+        """Raw response field."""
         return self._raw
 
     def __str__(self) -> str:
+        if _is_json_serializable(self._raw):
+            raw = self._raw
+        else:
+            raw = str(self._raw)
+
         serialized_fields = {
             "text": self.text,
             "embedding": self.embedding,
             "image_urls": self.image_urls,
-            "raw": self.raw,
+            "raw": raw,
         }
         return json.dumps(serialized_fields, indent=4, ensure_ascii=False)
 
@@ -226,6 +233,8 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
                 The id of the model, which is used to extract configuration
                 from the config file.
         """
+        self.monitor = None
+
         self.config_name = config_name
         logger.info(f"Initialize model [{config_name}]")
         logger.debug(
@@ -244,7 +253,7 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
     def _save_model_invocation(
         self,
         arguments: dict,
-        json_response: Any,
+        response: Any,
     ) -> None:
         """Save model invocation."""
         model_class = self.__class__.__name__
@@ -254,10 +263,33 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
             "model_class": model_class,
             "timestamp": timestamp,
             "arguments": arguments,
-            "json_response": json_response,
+            "response": response,
         }
 
         file_manager.save_api_invocation(
             f"model_{model_class}_{timestamp}",
             invocation_record,
         )
+
+    def _register_budget(self, model_name: str, budget: float) -> None:
+        """Register the budget of the model by model_name."""
+        self.monitor = MonitorFactory.get_monitor()
+        self.monitor.register_budget(
+            model_name=model_name,
+            value=budget,
+            prefix=model_name,
+        )
+
+    def _metric(self, metric_name: str, prefix: str = None) -> str:
+        """Add the class name and model name as prefix to the metric name.
+
+        Args:
+            metric_name (`str`):
+                The metric name.
+            prefix (`str`):
+                The prefix of the metric name.
+
+        Returns:
+            `str`: Metric name of this wrapper.
+        """
+        return get_full_name(name=metric_name, prefix=prefix)

@@ -40,9 +40,12 @@ class TemporaryMemory(MemoryBase):
 
     def add(
         self,
-        memories: Union[Sequence[dict], dict],
+        memories: Union[Sequence[dict], dict, None],
         embed: bool = False,
     ) -> None:
+        if memories is None:
+            return
+
         if not isinstance(memories, list):
             record_memories = [memories]
         else:

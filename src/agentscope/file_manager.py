@@ -164,5 +164,14 @@ class _FileManager:
 
         return path_file
 
+    @staticmethod
+    def _flush() -> None:
+        """
+        Only for unittest usage. Don't use this function in your code.
+        Flush the file_manager singleton.
+        """
+        global file_manager
+        file_manager = _FileManager()
+
 
 file_manager = _FileManager()

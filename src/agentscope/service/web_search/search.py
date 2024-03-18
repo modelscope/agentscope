@@ -150,7 +150,7 @@ def google_search(
     Example:
         .. code-block:: python
 
-            results = _search_google(
+            results = google_search(
                 'Python programming',
                 'your_google_api_key',
                 'your_cse_id',
