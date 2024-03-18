@@ -32,45 +32,19 @@ import agentscope
 agentscope.init(model_configs=MODEL_CONFIG_OR_PATH)
 ```
 
-An example of `model_configs` is as follows:
-
-```python
-model_configs = [
-    {
-        "config_name": "gpt-4-temperature-0.0",
-        "model_type": "openai",
-        "model_name": "gpt-4",
-        "api_key": "xxx",
-        "organization": "xxx",
-        "generate_args": {
-            "temperature": 0.0
-        }
-    },
-    {
-        "config_name": "dall-e-3-size-1024x1024",
-        "model_type": "openai_dall_e",
-        "model_name": "dall-e-3",
-        "api_key": "xxx",
-        "organization": "xxx",
-        "generate_args": {
-            "size": "1024x1024"
-        }
-    },
-    # Additional models can be configured here
-]
-```
-
 ### Configuration Format
 
 In AgentScope, the model configuration is a dictionary used to specify the type of model and set the call parameters.
 We divide the fields in the model configuration into two categories: _basic parameters_ and _detailed parameters_.
+
 Among them, the basic parameters include `config_name` and `model_type`, which are used to distinguish different model configurations and specific `ModelWrapper` types.
+The detailed parameters will be fed into the corresponding model class's constructor to initialize the model instance.
 
 ```python
 {
     # Basic parameters
-    "config_name": "gpt-4-temperature-0.0",     # Model configuration name
-    "model_type": "openai",                     # Correspond to `ModelWrapper` type
+    "config_name": "gpt-4-temperature-0.0",  # Model configuration name
+    "model_type": "openai",  # Correspond to `ModelWrapper` type
 
     # Detailed parameters
     # ...
@@ -96,134 +70,297 @@ class OpenAIChatWrapper(OpenAIWrapper):
 In the current AgentScope, the supported `model_type` types, the corresponding
 `ModelWrapper` classes, and the supported APIs are as follows:
 
-
-| API                    | Task            | Model Wrapper                    | `model_type`                |
-|------------------------|-----------------|----------------------------------|-----------------------------|
-| OpenAI API             | Chat            | `OpenAIChatWrapper`              | "openai"                    |
-|                        | Embedding       | `OpenAIEmbeddingWrapper`         | "openai_embedding"          |
-|                        | DALL·E          | `OpenAIDALLEWrapper`             | "openai_dall_e"             |
-| DashScope API          | Chat            | `DashScopeChatWrapper`           | "dashscope_chat"            |
-|                        | Image Synthesis | `DashScopeImageSynthesisWrapper` | "dashscope_image_synthesis" |
-|                        | Text Embedding  | `DashScopeTextEmbeddingWrapper`  | "dashscope_text_embedding"  |
-| Gemini API             | Chat            | `GeminiChatWrapper`              | "gemini_chat"               |
-|                        | Embedding       | `GeminiEmbeddingWrapper`         | "gemini_embedding"          |
-| ollama                 | Chat            | `OllamaChatWrapper`              | "ollama_chat"               |
-|                        | Embedding       | `OllamaEmbedding`                | "ollama_embedding"          |
-|                        | Generation      | `OllamaGenerationWrapper`        | "ollama_generate"           |
-| Post Request based API | -               | `PostAPIModelWrapper`            | "post_api“                  |
-|                        | Chat            | `PostAPIChatWrapper`             | "post_api_chat"             |
+| API                    | Task            | Model Wrapper                                                                                                                   | `model_type`                  |
+|------------------------|-----------------|---------------------------------------------------------------------------------------------------------------------------------|-------------------------------|
+| OpenAI API             | Chat            | [`OpenAIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)                 | `"openai"`                    |
+|                        | Embedding       | [`OpenAIEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)            | `"openai_embedding"`          |
+|                        | DALL·E          | [`OpenAIDALLEWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)                | `"openai_dall_e"`             |
+| DashScope API          | Chat            | [`DashScopeChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py)           | `"dashscope_chat"`            |
+|                        | Image Synthesis | [`DashScopeImageSynthesisWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py) | `"dashscope_image_synthesis"` |
+|                        | Text Embedding  | [`DashScopeTextEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py)  | `"dashscope_text_embedding"`  |
+| Gemini API             | Chat            | [`GeminiChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py)                 | `"gemini_chat"`               |
+|                        | Embedding       | [`GeminiEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py)            | `"gemini_embedding"`          |
+| ollama                 | Chat            | [`OllamaChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)                 | `"ollama_chat"`               |
+|                        | Embedding       | [`OllamaEmbedding`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)                   | `"ollama_embedding"`          |
+|                        | Generation      | [`OllamaGenerationWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)           | `"ollama_generate"`           |
+| Post Request based API | -               | [`PostAPIModelWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)                 | `"post_api"`                  |
 
 #### Detailed Parameters
 
-According to the different `ModelWrapper`, the parameters contained in the
-detailed parameters are different. However, all detailed parameters will be
-used to initialize the instance of the `ModelWrapper` class. Therefore, more
-detailed parameter descriptions can be viewed according to the constructor of
-their `ModelWrapper` classes.
+In AgentScope, the detailed parameters are different according to the different `ModelWrapper` classes.
+To specify the detailed parameters, you need to refer to the specific `ModelWrapper` class and its constructor.
+Here we provide example configurations for different model wrappers.
 
-- For OpenAI APIs including text generation, image generation, and text embedding, the model configuration parameters are as follows:
+##### OpenAI API
+
+<details>
+<summary>OpenAI Chat API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py">agents.models.OpenAIChatWrapper</a></code>)</summary>
 
 ```python
-{
-    # basic parameters
-    "config_name": "gpt-4_temperature-0.0",
+openai_chat_config = {
+    "config_name": "{your_config_name}",
     "model_type": "openai",
-
-    # detailed parameters
-    # required parameters
-    "model_name": "gpt-4",          # OpenAI model name
-
-    # optional
-    "api_key": "xxx",               # OpenAI API Key, if not provided, it will be read from the environment variable
-    "organization": "xxx",          # Organization name, if not provided, it will be read from the environment variable
-    "client_args": {                # Parameters for initializing the OpenAI API Client
+    
+    # Required parameters
+    "model_name": "gpt-4",
+  
+    # Optional parameters
+    "api_key": "{your_api_key}",                # OpenAI API Key, if not provided, it will be read from the environment variable  
+    "organization": "{your_organization}",      # Organization name, if not provided, it will be read from the environment variable
+    "client_args": {                            # Parameters for initializing the OpenAI API Client
         # e.g. "max_retries": 3,
     },
-    "generate_args": {              # Parameters passed to the model when calling
+    "generate_args": {                          # Parameters passed to the model when calling
         # e.g. "temperature": 0.0
     },
-    "budget": 100.0                 # API budget
+    "budget": 100                               # API budget
 }
 ```
 
-- For DashScope API, the model configuration parameters are as follows:
+</details>
+
+<details>
+<summary>OpenAI DALL·E API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py">agentscope.models.OpenAIDALLEWrapper</a></code>)</summary>
+
 ```python
 {
-    # basic parameters
-    "config_name": "my_qwen_config",               # The name to identify the config.
-    "model_type": "dashscope_chat" ,               # can also be "dashscope_text_embedding" for embedding and  "dashscope_image_synthesis" for text-to-image.
-
-    # detailed parameters
-    # required parameters
-    "model_name": "qwen-max",                      # The model in dashscope API.
-
-    # optional
-    "api_key": "xxx",                              # The API key for DashScope API. If not provided, will try to read from the environment variable.
-
-    "generate_args": {                              # Parameters passed to the model when calling.
-        # e.g. "temperature": 0.0, "seed": 123
+    "config_name": "{your_config_name}",
+    "model_type": "openai_dall_e",
+    
+    # Required parameters
+    "model_name": "{model_name}",               # OpenAI model name, e.g. dall-e-2, dall-e-3
+  
+    # Optional parameters
+    "api_key": "{your_api_key}",                # OpenAI API Key, if not provided, it will be read from the environment variable  
+    "organization": "{your_organization}",      # Organization name, if not provided, it will be read from the environment variable
+    "client_args": {                            # Parameters for initializing the OpenAI API Client
+        # e.g. "max_retries": 3,
     },
-}
-```
-
-
-- For Gemini API, the model configuration parameters are as follows:
-```python
-{
-    # basic parameters
-    "config_name": "my_gemini_chat",            # The name to identify the config.
-    "model_type": "gemini_chat",                # can also be "gemini_embedding" for embedding
-
-    # detailed parameters
-    # required parameters
-    "model_name": "gemini-pro",
-
-    # optional
-    "api_key": "xxx",                          # The API key
-    "generation_config": {                     # Parameters passed to the model when calling.
-          # "temperature": 0.2,
+    "generate_args": {                          # Parameters passed to the model when calling
+        # e.g. "n": 1, "size": "512x512"
     }
 }
 ```
 
-- For ollama API, the model configuration parameters are as follows:
+</details>
+
+<details>
+<summary>OpenAI Embedding API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py">agentscope.models.OpenAIEmbeddingWrapper</a></code>)</summary>
 
 ```python
 {
-    # basic parameters
-    "config_name": "my_ollama_chat",                    # The name to identify the config.
-    "model_type": "ollama_chat",                        # can also be "ollama_embedding" for embedding and "ollama_generate" for generation
+    "config_name": "{your_config_name}",
+    "model_type": "openai_embedding",
 
-    "model": "llama2",                                  # the model name used in ollama API.
-
-    "options": {                                        # Parameters passed to the model when calling.
-        # e.g. "temperature": 0.0
+    # Required parameters
+    "model_name": "{model_name}",               # OpenAI model name, e.g. text-embedding-ada-002, text-embedding-3-small
+    
+    # Optional parameters
+    "api_key": "{your_api_key}",                # OpenAI API Key, if not provided, it will be read from the environment variable  
+    "organization": "{your_organization}",      # Organization name, if not provided, it will be read from the environment variable
+    "client_args": {                            # Parameters for initializing the OpenAI API Client
+        # e.g. "max_retries": 3,
     },
-    "keep_alive": "5m",                                 # Controls how long the model will stay loaded into memory
+    "generate_args": {                          # Parameters passed to the model when calling
+        # e.g. "encoding_format": "float"
+    }
 }
 ```
 
-- For post request API, the model configuration parameters are as follows:
+</details>
+
+#### DashScope API
+
+<details>
+<summary>DashScope Chat API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py">agentscope.models.DashScopeChatWrapper</a></code>)</summary>
 
 ```python
 {
-    # basic parameters
-    "config_name": "gpt-4_temperature-0.0",
-    "model_type": "post_api",
+    "config_name": "my_dashscope_chat_config",
+    "model_type": "dashscope_chat",
 
-    # detailed parameters
-    "api_url": "http://xxx",
+    # Required parameters
+    "model_name": "{model_name}",               # The model name in DashScope API, e.g. qwen-max
+
+    # Optional parameters
+    "api_key": "{your_api_key}",                # DashScope API Key, if not provided, it will be read from the environment variable
+    "generate_args": {
+        # e.g. "temperature": 0.5
+    },
+}
+```
+
+</details>
+
+<details>
+<summary>DashScope Image Synthesis API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py">agentscope.models.DashScopeImageSynthesisWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_dashscope_image_synthesis_config",
+    "model_type": "dashscope_image_synthesis",
+  
+    # Required parameters
+    "model_name": "{model_name}",               # The model name in DashScope Image Synthesis API, e.g. wanx-v1
+
+    # Optional parameters
+    "api_key": "{your_api_key}",
+    "generate_args": {
+        "negative_prompt": "xxx",
+        "n": 1,
+        # ...
+    }
+}
+```
+
+</details>
+
+<details>
+<summary>DashScope Text Embedding API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py">agentscope.models.DashScopeTextEmbeddingWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_dashscope_text_embedding_config",
+    "model_type": "dashscope_text_embedding",
+    
+    # Required parameters
+    "model_name": "{model_name}",               # The model name in DashScope Text Embedding API, e.g. text-embedding-v1
+  
+    # Optional parameters
+    "api_key": "{your_api_key}",
+    "generate_args": {
+        # ...
+    },
+}
+```
+
+</details>
+
+#### Gemini API
+
+<details>
+<summary>Gemini Chat API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py">agentscope.models.GeminiChatWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_gemini_chat_config",
+    "model_type": "gemini_chat",
+  
+    # Required parameters
+    "model_name": "{model_name}",               # The model name in Gemini API, e.g. gemini-prp
+
+    # Optional parameters
+    "api_key": "{your_api_key}",                # If not provided, the API key will be read from the environment variable GEMINI_API_KEY
+}
+```
+
+</details>
+
+<details>
+<summary>Gemini Embedding API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py">agentscope.models.GeminiEmbeddingWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_gemini_embedding_config",
+    "model_type": "gemini_embedding",
+  
+    # Required parameters
+    "model_name": "{model_name}",               # The model name in Gemini API, e.g. gemini-prp
+
+    # Optional parameters
+    "api_key": "{your_api_key}",                # If not provided, the API key will be read from the environment variable GEMINI_API_KEY
+}
+```
+
+</details>
+
+#### Ollama API
+
+<details>
+<summary>Ollama Chat API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py">agentscope.models.OllamaChatWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_ollama_chat_config",
+    "model_type": "ollama_chat",
+    
+    # Required parameters
+    "model": "{model_name}",                    # The model name used in ollama API, e.g. llama2
+
+    # Optional parameters
+    "options": {                                # Parameters passed to the model when calling
+        # e.g. "temperature": 0., "seed": "123",
+    },
+    "keep_alive": "5m",                         # Controls how long the model will stay loaded into memory
+}
+```
+
+</details>
+
+<details>
+<summary>Ollama Generation API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py">agentscope.models.OllamaGenerationWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_ollama_generate_config",
+    "model_type": "ollama_generate",
+
+    # Required parameters
+    "model": "{model_name}",                    # The model name used in ollama API, e.g. llama2
+
+    # Optional parameters
+    "options": {                                # Parameters passed to the model when calling
+        # "temperature": 0., "seed": "123",
+    },
+    "keep_alive": "5m",                         # Controls how long the model will stay loaded into memory
+}
+```
+
+</details>
+
+<details>
+<summary>Ollama Embedding API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py">agentscope.models.OllamaEmbeddingWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_ollama_embedding_config",
+    "model_type": "ollama_embedding",
+
+    # Required parameters
+    "model": "{model_name}",                    # The model name used in ollama API, e.g. llama2
+
+    # Optional parameters
+    "options": {                                # Parameters passed to the model when calling
+        # "temperature": 0., "seed": "123",
+    },
+    "keep_alive": "5m",                         # Controls how long the model will stay loaded into memory
+}
+```
+
+</details>
+
+#### Post Request API
+
+<details>
+<summary>Post request API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIModelWrapperBase</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_postapiwrapper_config",
+    "model_type": "post_api",
+  
+    # Required parameters
+    "api_url": "https://xxx.com",
     "headers": {
         # e.g. "Authorization": "Bearer xxx",
     },
-
-    # Optional parameters, need to be configured according to the requirements of the Post request API
-    "json_args": {
-        # e.g. "temperature": 0.0
-    }
-    # ...
+  
+    # Optional parameters
+    "messages_key": "messages",
 }
 ```
+
+</details>
 
 ## Build Model Service from Scratch
 

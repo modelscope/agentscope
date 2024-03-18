@@ -9,6 +9,9 @@ AgentScope中，模型的部署和调用是通过`ModelWrapper`来解耦开的�
 目前，AgentScope内置以下模型服务API的支持：
 
 - OpenAI API，包括对话（Chat），图片生成（DALL-E)和文本嵌入（Embedding）。
+- DashScope API，包括对话（Chat）和图片生成（Image Sythesis)和文本嵌入（Text Embedding)。
+- Gemini API，包括对话（Chat）和嵌入（Embedding）。
+- Ollama API，包括对话（Chat），嵌入（Embedding）和生成（Generation）。
 - Post请求API，基于Post请求实现的模型推理服务，包括Huggingface/ModelScope
   Inference API和各种符合Post请求格式的API。
 
@@ -87,69 +90,301 @@ class OpenAIChatWrapper(OpenAIWrapper):
 在目前的AgentScope中，所支持的`model_type`类型，对应的`ModelWrapper`类，以及支持的
 API如下：
 
-| 任务     | model_type         | ModelWrapper             | 支持的 API                                                    |
-|--------|--------------------|--------------------------|------------------------------------------------------------|
-| 文本生成   | `openai`           | `OpenAIChatWrapper`      | 标准 OpenAI 聊天 API，FastChat 和 vllm                           |
-| 图像生成   | `openai_dall_e`    | `OpenAIDALLEWrapper`     | 用于生成图像的 DALL-E API                                         |
-| 文本嵌入   | `openai_embedding` | `OpenAIEmbeddingWrapper` | 用于文本嵌入的 API                                                |
-| POST请求 | `post_api`         | `PostAPIModelWrapperBase` | Huggingface/ModelScope inference API 和自定义的post request API |
+| API                    | Task            | Model Wrapper                                                                                                                   | `model_type`                  |
+|------------------------|-----------------|---------------------------------------------------------------------------------------------------------------------------------|-------------------------------|
+| OpenAI API             | Chat            | [`OpenAIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)                 | `"openai"`                    |
+|                        | Embedding       | [`OpenAIEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)            | `"openai_embedding"`          |
+|                        | DALL·E          | [`OpenAIDALLEWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)                | `"openai_dall_e"`             |
+| DashScope API          | Chat            | [`DashScopeChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py)           | `"dashscope_chat"`            |
+|                        | Image Synthesis | [`DashScopeImageSynthesisWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py) | `"dashscope_image_synthesis"` |
+|                        | Text Embedding  | [`DashScopeTextEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py)  | `"dashscope_text_embedding"`  |
+| Gemini API             | Chat            | [`GeminiChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py)                 | `"gemini_chat"`               |
+|                        | Embedding       | [`GeminiEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py)            | `"gemini_embedding"`          |
+| ollama                 | Chat            | [`OllamaChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)                 | `"ollama_chat"`               |
+|                        | Embedding       | [`OllamaEmbedding`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)                   | `"ollama_embedding"`          |
+|                        | Generation      | [`OllamaGenerationWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)           | `"ollama_generate"`           |
+| Post Request based API | -               | [`PostAPIModelWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)                 | `"post_api"`                  |
 
 #### 详细参数
 
 根据`ModelWrapper`的不同，详细参数中所包含的参数不同。
 但是所有的详细参数都会用于初始化`ModelWrapper`类的实例，因此，更详细的参数说明可以根据`ModelWrapper`类的构造函数来查看。
+下面展示了不同`ModelWrapper`对应的模型配置样例，用户可以修改这些样例以适应自己的需求。
 
-- OpenAI的API，包括文本生成，图像生成，文本嵌入，其模型配置参数如下
+##### OpenAI API
+
+<details>
+<summary>OpenAI Chat API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py">agents.models.OpenAIChatWrapper</a></code>)</summary>
 
 ```python
-{
-    # 基础参数
-    "config_name": "gpt-4_temperature-0.0",
+openai_chat_config = {
+    "config_name": "{your_config_name}",
     "model_type": "openai",
-
-    # 详细参数
+    
     # 必要参数
-    "model_name": "gpt-4",          # OpenAI模型名称
-
+    "model_name": "gpt-4",
+  
     # 可选参数
-    "api_key": "xxx",               # OpenAI API Key，如果没有提供则会从环境变量中读取
-    "organization": "xxx",          # 组织名称，如果没有提供则会从环境变量中读取
-    "client_args": {                # 初始化OpenAI API Client的参数
-        "max_retries": 3,
+    "api_key": "{your_api_key}",                # OpenAI API Key，如果没有提供，将从环境变量中读取  
+    "organization": "{your_organization}",      # Organization name，如果没有提供，将从环境变量中读取
+    "client_args": {                            # 用于初始化OpenAI API Client的参数
+        # e.g. "max_retries": 3,
     },
-    "generate_args": {              # 调用模型时传入的参数
-        "temperature": 0.0
+    "generate_args": {                          # 模型API接口被调用时传入的参数
+        # e.g. "temperature": 0.0
     },
-    "budget": 100.0                 # API费用预算
+    "budget": 100                               # API budget
 }
 ```
 
-- Post request API，其模型配置参数如下
+</details>
+
+<details>
+<summary>OpenAI DALL·E API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py">agentscope.models.OpenAIDALLEWrapper</a></code>)</summary>
 
 ```python
 {
-    # 基础参数
-    "config_name": "gpt-4_temperature-0.0",
-    "model_type": "post_api",
+    "config_name": "{your_config_name}",
+    "model_type": "openai_dall_e",
+    
+    # 必要参数
+    "model_name": "{model_name}",               # OpenAI model name, e.g. dall-e-2, dall-e-3
+  
+    # 可选参数
+    "api_key": "{your_api_key}",                # OpenAI API Key，如果没有提供，将从环境变量中读取  
+    "organization": "{your_organization}",      # Organization name，如果没有提供，将从环境变量中读取  
+    "client_args": {                            # 用于初始化OpenAI API Client的参数
+        # e.g. "max_retries": 3,
+    },
+    "generate_args": {                          # 模型API接口被调用时传入的参数
+        # e.g. "n": 1, "size": "512x512"
+    }
+}
+```
 
-    # 详细参数
-    "api_url": "http://xxx.png",
+</details>
+
+<details>
+<summary>OpenAI Embedding API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py">agentscope.models.OpenAIEmbeddingWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "{your_config_name}",
+    "model_type": "openai_embedding",
+
+    # 必要参数
+    "model_name": "{model_name}",               # OpenAI model name, e.g. text-embedding-ada-002, text-embedding-3-small
+    
+    # 可选参数
+    "api_key": "{your_api_key}",                # OpenAI API Key，如果没有提供，将从环境变量中读取   
+    "organization": "{your_organization}",      # Organization name，如果没有提供，将从环境变量中读取  
+    "client_args": {                            # 用于初始化OpenAI API Client的参数
+        # e.g. "max_retries": 3,
+    },
+    "generate_args": {                          # 模型API接口被调用时传入的参数
+        # e.g. "encoding_format": "float"
+    }
+}
+```
+
+</details>
+
+#### DashScope API
+
+<details>
+<summary>DashScope Chat API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py">agentscope.models.DashScopeChatWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_dashscope_chat_config",
+    "model_type": "dashscope_chat",
+
+    # 必要参数
+    "model_name": "{model_name}",               # DashScope Chat API中的模型名， e.g. qwen-max
+
+    # 可选参数
+    "api_key": "{your_api_key}",                # DashScope API Key，如果没有提供，将从环境变量中读取
+    "generate_args": {
+        # e.g. "temperature": 0.5
+    },
+}
+```
+
+</details>
+
+<details>
+<summary>DashScope Image Synthesis API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py">agentscope.models.DashScopeImageSynthesisWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_dashscope_image_synthesis_config",
+    "model_type": "dashscope_image_synthesis",
+  
+    # 必要参数
+    "model_name": "{model_name}",               # DashScope Image Synthesis API中的模型名， e.g. wanx-v1
+
+    # 可选参数
+    "api_key": "{your_api_key}",
+    "generate_args": {
+        "negative_prompt": "xxx",
+        "n": 1,
+        # ...
+    }
+}
+```
+
+</details>
+
+<details>
+<summary>DashScope Text Embedding API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py">agentscope.models.DashScopeTextEmbeddingWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_dashscope_text_embedding_config",
+    "model_type": "dashscope_text_embedding",
+    
+    # 必要参数
+    "model_name": "{model_name}",               # DashScope Text Embedding API中的模型名, e.g. text-embedding-v1
+  
+    # 可选参数
+    "api_key": "{your_api_key}",
+    "generate_args": {
+        # ...
+    },
+}
+```
+
+</details>
+
+#### Gemini API
+
+<details>
+<summary>Gemini Chat API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py">agentscope.models.GeminiChatWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_gemini_chat_config",
+    "model_type": "gemini_chat",
+  
+    # 必要参数
+    "model_name": "{model_name}",               # Gemini Chat API中的模型名，e.g. gemini-prp
+
+    # 可选参数
+    "api_key": "{your_api_key}",                # 如果没有提供，将从环境变量GEMINI_API_KEY中读取
+}
+```
+
+</details>
+
+<details>
+<summary>Gemini Embedding API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py">agentscope.models.GeminiEmbeddingWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_gemini_embedding_config",
+    "model_type": "gemini_embedding",
+  
+    # 必要参数
+    "model_name": "{model_name}",               # Gemini Embedding API中的模型名，e.g. gemini-prp
+
+    # 可选参数
+    "api_key": "{your_api_key}",                # 如果没有提供，将从环境变量GEMINI_API_KEY中读取
+}
+```
+
+</details>
+
+#### Ollama API
+
+<details>
+<summary>Ollama Chat API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py">agentscope.models.OllamaChatWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_ollama_chat_config",
+    "model_type": "ollama_chat",
+    
+    # 必要参数
+    "model": "{model_name}",                    # ollama Chat API中的模型名, e.g. llama2
+
+    # 可选参数
+    "options": {                                # 模型API接口被调用时传入的参数
+        # e.g. "temperature": 0., "seed": "123",
+    },
+    "keep_alive": "5m",                         # 控制一次调用后模型在内存中的存活时间
+}
+```
+
+</details>
+
+<details>
+<summary>Ollama Generation API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py">agentscope.models.OllamaGenerationWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_ollama_generate_config",
+    "model_type": "ollama_generate",
+
+    # 必要参数
+    "model": "{model_name}",                    # ollama Generate API, e.g. llama2
+
+    # 可选参数
+    "options": {                                # 模型API接口被调用时传入的参数
+        # "temperature": 0., "seed": "123",
+    },
+    "keep_alive": "5m",                         # 控制一次调用后模型在内存中的存活时间
+}
+```
+
+</details>
+
+<details>
+<summary>Ollama Embedding API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py">agentscope.models.OllamaEmbeddingWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_ollama_embedding_config",
+    "model_type": "ollama_embedding",
+
+    # 必要参数
+    "model": "{model_name}",                    # ollama Embedding API, e.g. llama2
+
+    # 可选参数
+    "options": {                                # 模型API接口被调用时传入的参数
+        # "temperature": 0., "seed": "123",
+    },
+    "keep_alive": "5m",                         # 控制一次调用后模型在内存中的存活时间
+}
+```
+
+</details>
+
+#### Post Request API
+
+<details>
+<summary>Post request API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIModelWrapperBase</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_postapiwrapper_config",
+    "model_type": "post_api",
+  
+    # 必要参数
+    "api_url": "https://xxx.com",
     "headers": {
         # e.g. "Authorization": "Bearer xxx",
     },
-
-    # 可选参数，需要根据Post请求API的要求进行配置
-    "json_args": {
-        # e.g. "temperature": 0.0
-    }
-    # ...
+  
+    # 可选参数
+    "messages_key": "messages",
 }
 ```
 
+</details>
+
 ## 从零搭建模型服务
 
-针对需要自己搭建模型服务的开发者，AgentScope提供了一些脚本来帮助开发者快速搭建模型服务。您可以在[scripts]
-(<https://github.com/modelscope/agentscope/tree/main/scripts)目录下找到这些脚本以及说明。>
+针对需要自己搭建模型服务的开发者，AgentScope提供了一些脚本来帮助开发者快速搭建模型服务。您可以在[scripts](https://github.com/modelscope/agentscope/tree/main/scripts)目录下找到这些脚本以及说明。
 
 具体而言，AgentScope提供了以下模型服务的脚本：
 
