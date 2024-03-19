@@ -5,6 +5,8 @@ an agent with RAG capability.
 """
 import os
 import argparse
+from loguru import logger
+
 from rag_agents import LlamaIndexAgent, LangChainRAGAgent
 import agentscope
 from agentscope.agents import UserAgent
@@ -41,7 +43,12 @@ def main() -> None:
         "Context: \n {retrieved_context}\n ",
         model_config_name="qwen_config",  # your model config name
         emb_model_config_name="qwen_emb_config",
-        config={"data_path": args.data_path},
+        config={
+            "data_path": args.data_path,
+            "chunk_size": 2048,
+            "chunk_overlap": 40,
+            "similarity_top_k": 10,
+        },
     )
     user_agent = UserAgent()
     # start the conversation between user and assistant
@@ -54,6 +61,8 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    # The default parameters can set a AgentScope consultant to
+    # answer question about agentscope based on tutorial.
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--module",
@@ -63,7 +72,12 @@ if __name__ == "__main__":
     parser.add_argument(
         "--data_path",
         type=str,
-        default="./data/",
+        default="../../docs/sphinx_doc/en/source/tutorial",
     )
     args = parser.parse_args()
+    if args.module == "langchain":
+        logger.warning(
+            "LangChain RAG Chosen. May require install pandoc in advanced.",
+            "For example, run ` brew install pandoc` on MacOS.",
+        )
     main()

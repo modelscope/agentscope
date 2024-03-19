@@ -54,7 +54,7 @@ class RAGAgent(AgentBase):
         x: dict = None,
     ) -> dict:
         """
-        Reply function of the LlamaIndex agent.
+        Reply function of the RAG agent.
         Processes the input data,
         1) use the input data to retrieve with RAG function;
         2) generates a prompt using the current memory and system
@@ -79,7 +79,7 @@ class RAGAgent(AgentBase):
             content = x.get("content", "")
             retrieved_docs = self.rag.retrieve(content, to_list_strs=True)
             for content in retrieved_docs:
-                retrieved_docs_to_string += content
+                retrieved_docs_to_string += "\n>>>> " + content
 
             self.speak("[retrieved]:" + retrieved_docs_to_string)
         # prepare prompt
@@ -137,6 +137,7 @@ class LlamaIndexAgent(RAGAgent):
         self.rag = LlamaIndexRAG(
             model=self.model,
             emb_model=self.emb_model,
+            config=config,
         )
         # load the document to memory
         # Feed the AgentScope tutorial documents, so that
@@ -177,6 +178,7 @@ class LangChainRAGAgent(RAGAgent):
         self.rag = LangChainRAG(
             model=self.model,
             emb_model=self.emb_model,
+            config=config,
         )
         # load the document to memory
         # Feed the AgentScope tutorial documents, so that

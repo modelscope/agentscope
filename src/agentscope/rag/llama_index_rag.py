@@ -25,7 +25,11 @@ from llama_index.core import (
 )
 
 from agentscope.rag import RAGBase
-from agentscope.rag.rag import DEFAULT_CHUNK_SIZE, DEFAULT_CHUNK_OVERLAP
+from agentscope.rag.rag import (
+    DEFAULT_CHUNK_SIZE,
+    DEFAULT_CHUNK_OVERLAP,
+    DEFAULT_TOP_K,
+)
 from agentscope.models import ModelWrapperBase
 
 
@@ -95,6 +99,7 @@ class LlamaIndexRAG(RAGBase):
         self.index = None
         self.persist_dir = kwargs.get("persist_dir", "./")
         self.emb_model = emb_model
+        print(self.config)
 
         # ensure the emb_model is compatible with LlamaIndex
         if isinstance(emb_model, ModelWrapperBase):
@@ -209,8 +214,13 @@ class LlamaIndexRAG(RAGBase):
 
         # set the retriever
         if retriever is None:
+            print(self.config.get("similarity_top_k", DEFAULT_TOP_K))
             self.retriever = self.index.as_retriever(
                 embed_model=self.emb_model,
+                similarity_top_k=self.config.get(
+                    "similarity_top_k",
+                    DEFAULT_TOP_K,
+                ),
                 **kwargs,
             )
         else:
