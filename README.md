@@ -239,23 +239,23 @@ while True:
 ## Tutorial
 
 - [Getting Started](https://modelscope.github.io/agentscope/en/tutorial/quick_start.html)
-  - [Installation](https://modelscope.github.io/agentscope/en/tutorial/102-installation.html)
   - [About AgentScope](https://modelscope.github.io/agentscope/en/tutorial/101-agentscope.html)
+  - [Installation](https://modelscope.github.io/agentscope/en/tutorial/102-installation.html)
   - [Quick Start](https://modelscope.github.io/agentscope/en/tutorial/103-example.html)
   - [Crafting Your First Application](https://modelscope.github.io/agentscope/en/tutorial/104-usecase.html)
   - [Logging and WebUI](https://modelscope.github.io/agentscope/en/tutorial/105-logging.html#)
 - [Advanced Exploration](https://modelscope.github.io/agentscope/en/tutorial/advance.html)
   - [Customize Your Own Agent](https://modelscope.github.io/agentscope/en/tutorial/201-agent.html)
-  - [Agent Interactions: Dive deeper into Pipelines and Messages Hub](https://modelscope.github.io/agentscope/en/tutorial/202-pipeline.html)
-  - [Model Service](https://modelscope.github.io/agentscope/en/tutorial/203-model.html)
-  - [About Service](https://modelscope.github.io/agentscope/en/tutorial/204-service.html)
-  - [About Memory](https://modelscope.github.io/agentscope/en/tutorial/205-memory.html)
+  - [Pipeline and MsgHub](https://modelscope.github.io/agentscope/en/tutorial/202-pipeline.html)
+  - [Model](https://modelscope.github.io/agentscope/en/tutorial/203-model.html)
+  - [Service](https://modelscope.github.io/agentscope/en/tutorial/204-service.html)
+  - [Memory](https://modelscope.github.io/agentscope/en/tutorial/205-memory.html)
   - [Prompt Engine](https://modelscope.github.io/agentscope/en/tutorial/206-prompt.html)
   - [Monitor](https://modelscope.github.io/agentscope/en/tutorial/207-monitor.html)
-  - [About Distribution](https://modelscope.github.io/agentscope/en/tutorial/208-distribute.html)
+  - [Distribution](https://modelscope.github.io/agentscope/en/tutorial/208-distribute.html)
 - [Get Involved](https://modelscope.github.io/agentscope/en/tutorial/contribute.html)
   - [Join AgentScope Community](https://modelscope.github.io/agentscope/en/tutorial/301-community.html)
-  - [Contributing to AgentScope](https://modelscope.github.io/agentscope/en/tutorial/302-contribute.html)
+  - [Contribute to AgentScope](https://modelscope.github.io/agentscope/en/tutorial/302-contribute.html)
 
 ## License
 
