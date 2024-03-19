@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 A simple example for conversation between user and
-a agent with RAG capability.
+an agent with RAG capability.
 """
 import os
 from rag_agents import LlamaIndexAgent
@@ -40,9 +40,12 @@ def main() -> None:
     )
     user_agent = UserAgent()
     # start the conversation between user and assistant
-    x = user_agent()
-    x.role = "user"  # to enforce dashscope requirement on roles
-    rag_agent(x)
+    while True:
+        x = user_agent()
+        x.role = "user"  # to enforce dashscope requirement on roles
+        if len(x["content"]) == 0 or str(x["content"]).startswith("exit"):
+            break
+        rag_agent(x)
 
 
 if __name__ == "__main__":

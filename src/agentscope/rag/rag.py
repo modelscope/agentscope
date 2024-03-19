@@ -17,6 +17,9 @@ from typing import Any, Optional
 
 from agentscope.models import ModelWrapperBase
 
+DEFAULT_CHUNK_SIZE = 1024
+DEFAULT_CHUNK_OVERLAP = 20
+
 
 class RAGBase(ABC):
     """Base class for RAG"""
@@ -24,12 +27,14 @@ class RAGBase(ABC):
     def __init__(
         self,
         model: Optional[ModelWrapperBase],
-        emb_model: Optional[ModelWrapperBase],
+        emb_model: Any = None,
+        config: Optional[dict] = None,
         **kwargs: Any,
     ) -> None:
         # pylint: disable=unused-argument
         self.postprocessing_model = model
         self.emb_model = emb_model
+        self.config = config or {}
 
     @abstractmethod
     def load_data(

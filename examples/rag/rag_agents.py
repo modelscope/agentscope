@@ -4,9 +4,7 @@ This example shows how to build an agent with RAG (backup by LlamaIndex)
 """
 
 from typing import Optional
-from llama_index.embeddings.dashscope import DashScopeEmbedding
-from llama_index.core import Settings, SimpleDirectoryReader
-from llama_index.core.node_parser import TokenTextSplitter
+from llama_index.core import SimpleDirectoryReader
 
 from agentscope.prompt import PromptType
 from agentscope.agents.agent import AgentBase
@@ -14,9 +12,6 @@ from agentscope.prompt import PromptEngine
 from agentscope.message import Msg
 from agentscope.models import load_model_by_config_name
 from agentscope.rag.llama_index_rag import LlamaIndexRAG
-
-
-Settings.embed_model = DashScopeEmbedding()
 
 
 class LlamaIndexAgent(AgentBase):
@@ -50,16 +45,14 @@ class LlamaIndexAgent(AgentBase):
             emb_model=self.emb_model,
         )
         # load the document to memory
+        # Feed the AgentScope tutorial documents, so that
+        # the agent can answer questions related to AgentScope!
         docs = self.rag.load_data(
-            loader=SimpleDirectoryReader("./data"),
+            loader=SimpleDirectoryReader(
+                "../../docs/sphinx_doc/en/source/tutorial",
+            ),
         )
-        self.rag.store_and_index(
-            docs,
-            transformations=[
-                TokenTextSplitter(),
-                # just an example, more operators can be added
-            ],
-        )
+        self.rag.store_and_index(docs)
 
     def reply(
         self,
@@ -93,11 +86,9 @@ class LlamaIndexAgent(AgentBase):
             # retrieve when the input is not None
             content = x.get("content", "")
             retrieved_docs = self.rag.retrieve(content)
-
             for node in retrieved_docs:
                 if node.get_score() > min_score:
                     retrieved_docs_to_string += node.get_text()
-
         # prepare prompt
         prompt = self.engine.join(
             {

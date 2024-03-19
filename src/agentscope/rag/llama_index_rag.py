@@ -9,13 +9,14 @@ from typing import Any, Optional, List, Union
 from llama_index.core.readers.base import BaseReader
 from llama_index.core.base.base_retriever import BaseRetriever
 from llama_index.core.base.embeddings.base import BaseEmbedding, Embedding
-from llama_index.core.node_parser.interface import NodeParser
 from llama_index.core.ingestion import IngestionPipeline
 from llama_index.core.vector_stores.types import (
     BasePydanticVectorStore,
     VectorStore,
 )
 from llama_index.core.bridge.pydantic import PrivateAttr
+from llama_index.core.node_parser.interface import NodeParser
+from llama_index.core.node_parser import SentenceSplitter
 
 
 from llama_index.core import (
@@ -24,6 +25,7 @@ from llama_index.core import (
 )
 
 from agentscope.rag import RAGBase
+from agentscope.rag.rag import DEFAULT_CHUNK_SIZE, DEFAULT_CHUNK_OVERLAP
 from agentscope.models import ModelWrapperBase
 
 
@@ -84,17 +86,29 @@ class LlamaIndexRAG(RAGBase):
     def __init__(
         self,
         model: Optional[ModelWrapperBase],
-        emb_model: Union[ModelWrapperBase, BaseEmbedding],
+        emb_model: Any = None,
+        config: Optional[dict] = None,
         **kwargs: Any,
     ) -> None:
-        super().__init__(model, emb_model, **kwargs)
+        super().__init__(model, emb_model, config, **kwargs)
         self.retriever = None
         self.index = None
         self.persist_dir = kwargs.get("persist_dir", "./")
+        self.emb_model = emb_model
+
+        # ensure the emb_model is compatible with LlamaIndex
+        if issubclass(type(self.emb_model), ModelWrapperBase):
+            self.emb_model = _EmbeddingModel(self.emb_model)
+        elif isinstance(self.emb_model, BaseEmbedding):
+            pass
+        else:
+            raise TypeError(
+                f"Embedding model does not support {type(self.emb_model)}.",
+            )
 
     def load_data(
         self,
-        loader: BaseReader = SimpleDirectoryReader,
+        loader: BaseReader = SimpleDirectoryReader("./data/"),
         query: Optional[str] = None,
         **kwargs: Any,
     ) -> Any:
@@ -140,6 +154,7 @@ class LlamaIndexRAG(RAGBase):
         docs: Any,
         vector_store: Union[BasePydanticVectorStore, VectorStore, None] = None,
         retriever: Optional[BaseRetriever] = None,
+        transformations: Optional[list[NodeParser]] = None,
         **kwargs: Any,
     ) -> Any:
         """
@@ -147,7 +162,8 @@ class LlamaIndexRAG(RAGBase):
         :param docs: documents to be processed
         :param vector_store: vector store
         :param retriever: optional, specifies the retriever to use
-        :param args: additional
+        :param transformations: optional, specifies the transformations
+            to preprocess the documents
         :param kwargs:
 
         In LlamaIndex terms, an Index is a data structure composed
@@ -158,18 +174,23 @@ class LlamaIndexRAG(RAGBase):
         3) store the embedding-content to vdb
         """
         # build and run preprocessing pipeline
-        transformations = []
-        if "transformations" in kwargs:
-            for item in kwargs["transformations"]:
-                if isinstance(item, NodeParser):
-                    transformations.append(item)
+        if transformations is None:
+            transformations = [
+                SentenceSplitter(
+                    chunk_size=self.config.get(
+                        "chunk_size",
+                        DEFAULT_CHUNK_SIZE,
+                    ),
+                    chunk_overlap=self.config.get(
+                        "chunk_overlap",
+                        DEFAULT_CHUNK_OVERLAP,
+                    ),
+                ),
+            ]
 
         # adding embedding model as the last step of transformation
         # https://docs.llamaindex.ai/en/stable/module_guides/loading/ingestion_pipeline/root.html
-        if isinstance(self.emb_model, ModelWrapperBase):
-            transformations.append(_EmbeddingModel(self.emb_model))
-        elif isinstance(self.emb_model, BaseEmbedding):
-            transformations.append(self.emb_model)
+        transformations.append(self.emb_model)
 
         if vector_store is not None:
             pipeline = IngestionPipeline(
@@ -188,7 +209,10 @@ class LlamaIndexRAG(RAGBase):
 
         # set the retriever
         if retriever is None:
-            self.retriever = self.index.as_retriever(**kwargs)
+            self.retriever = self.index.as_retriever(
+                embed_model=self.emb_model,
+                **kwargs,
+            )
         else:
             self.retriever = retriever
         return self.index
