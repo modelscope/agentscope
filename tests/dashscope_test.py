@@ -31,6 +31,11 @@ class TestDashScopeChatWrapper(unittest.TestCase):
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.request_id = "test_request_id"
+        mock_response.usage = {
+            "input_tokens": 3,
+            "output_tokens": 5,
+            "total_tokens": 8,
+        }
         mock_response.output = {
             "choices": [{"message": {"content": "Hello, world!"}}],
         }
@@ -112,9 +117,9 @@ class TestDashScopeImageSynthesisWrapper(unittest.TestCase):
     )
     @patch("agentscope.models.dashscope_model.dashscope.ImageSynthesis.call")
     def test_image_synthesis_wrapper_call_success(
-        self,
-        mock_call: MagicMock,
-        mock_save_image: MagicMock,
+            self,
+            mock_call: MagicMock,
+            mock_save_image: MagicMock,
     ) -> None:
         """Test call success"""
         # Set up the mock response for a successful API call
@@ -147,8 +152,8 @@ class TestDashScopeImageSynthesisWrapper(unittest.TestCase):
 
     @patch("agentscope.models.dashscope_model.dashscope.ImageSynthesis.call")
     def test_image_synthesis_wrapper_call_failure(
-        self,
-        mock_call: MagicMock,
+            self,
+            mock_call: MagicMock,
     ) -> None:
         """Test call failure"""
         # Set up the mock response for a failed API call
@@ -195,6 +200,9 @@ class TestDashScopeTextEmbeddingWrapper(unittest.TestCase):
         # Mock a successful API response
         mock_response = MagicMock()
         mock_response.status_code = 200
+        mock_response.usage = {
+            "total_tokens": 8,
+        }
         mock_response.output = {
             "embeddings": [{"embedding": [0.1, 0.2, 0.3]}],
         }
@@ -207,7 +215,7 @@ class TestDashScopeTextEmbeddingWrapper(unittest.TestCase):
         # Assert the API was called correctly
         mock_call.assert_called_once_with(
             input=texts,
-            model=self.wrapper.model,
+            model=self.wrapper.model_name,
             **self.wrapper.generate_args,
         )
 
@@ -239,7 +247,7 @@ class TestDashScopeTextEmbeddingWrapper(unittest.TestCase):
         # Verify call to dashscope.TextEmbedding.call
         mock_call.assert_called_once_with(
             input=texts,
-            model=self.wrapper.model,
+            model=self.wrapper.model_name,
             **self.wrapper.generate_args,
         )
 
