@@ -1,0 +1,362 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>记忆 &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=7d86a446"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/translations.js?v=beaddf03"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="提示工程" href="206-prompt.html" />
+    <link rel="prev" title="服务函数" href="204-service.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../en/tutorial/205-memory.html">English</a></li> |
+    <a href="../../zh_CN/tutorial/205-memory.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">快速上手</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="advance.html">进阶使用</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="201-agent.html">定制你自己的Agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="202-pipeline.html">Pipeline 和 MsgHub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="203-model.html">模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="204-service.html">服务函数</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">记忆</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#message">关于消息（Message）</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#messagebase">消息基类（<code class="docutils literal notranslate"><span class="pre">MessageBase</span></code>）</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#msg">消息类（<code class="docutils literal notranslate"><span class="pre">Msg</span></code>）</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#memory">关于记忆（Memory）</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#memorybase">关于记忆基类（<code class="docutils literal notranslate"><span class="pre">MemoryBase</span></code>）</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#temporarymemory">关于<code class="docutils literal notranslate"><span class="pre">TemporaryMemory</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="206-prompt.html">提示工程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="207-monitor.html">监控器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="208-distribute.html">分布式</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.agents.html">Agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.memory.html">Memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.models.html">Models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.pipelines.html">Pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.service.html">Service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.rpc.html">RPC package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.utils.html">Utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.web.html">Web UI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.html">Module contents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="advance.html">进阶使用</a></li>
+      <li class="breadcrumb-item active">记忆</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorial/205-memory.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="memory-zh">
+<span id="id1"></span><h1>记忆<a class="headerlink" href="#memory-zh" title="Link to this heading"></a></h1>
+<p>AgentScope中，记忆（memory）用于存储历史消息，从而使智能体能够根据上下文提供更加连贯，更加
+自然的响应。
+本教程将首先介绍memory中信息的载体，消息（message），然后介绍AgentScope中记忆模块的功能
+和使用方法。</p>
+<section id="message">
+<h2>关于消息（Message）<a class="headerlink" href="#message" title="Link to this heading"></a></h2>
+<section id="messagebase">
+<h3>消息基类（<code class="docutils literal notranslate"><span class="pre">MessageBase</span></code>）<a class="headerlink" href="#messagebase" title="Link to this heading"></a></h3>
+<p>AgentScope中，消息基类是Python字典的子类，由<code class="docutils literal notranslate"><span class="pre">name</span></code>，<code class="docutils literal notranslate"><span class="pre">content</span></code>两个必选字段和一个可选的字段
+<code class="docutils literal notranslate"><span class="pre">url</span></code>组成。由于是字典类型，开发者也可以根据需要增加其他字段。
+其中，<code class="docutils literal notranslate"><span class="pre">name</span></code>字段代表消息的发起者，<code class="docutils literal notranslate"><span class="pre">content</span></code>字段代表消息的内容，<code class="docutils literal notranslate"><span class="pre">url</span> </code>则代表消息中附加的数据链接，可以是指向多模态数据的本地链接，也可以是网络链接。
+当一个消息被创建时，将会自动创建一个唯一的ID，用于标识这条消息。同时，消息的创建时间也会以
+时间戳的形式自动记录下来。</p>
+<p>具体实现中，AgentScope首先提供了一个<code class="docutils literal notranslate"><span class="pre">MessageBase</span></code>基类，用于定义消息的基本属性和使用方法。
+与一般的字典类型不同，<code class="docutils literal notranslate"><span class="pre">MessageBase</span></code>的实例化对象可以通过<code class="docutils literal notranslate"><span class="pre">对象名.{属性名}</span></code>的方式访问属性值，
+也可以通过<code class="docutils literal notranslate"><span class="pre">对象名['属性名']</span></code>的方式访问属性值。
+其中，<code class="docutils literal notranslate"><span class="pre">MessageBase</span></code> 类的关键属性如下：</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">name</span></code></strong>：该属性表示信息的发起者。这是一项关键的元数据，在需要区分不同发言者的场景中非常有用。</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">content</span></code></strong>：信息本身的内容。它可以包括文本、结构化数据或其他与交互相关且需要智能体处理的内容形式。</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">url</span></code></strong>：可选属性，允许信息链接到外部资源。这些可以是指向文件的直接链接、多模态数据或网页。</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">timestamp</span></code></strong>：时间戳，显示信息创建的时间。</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">id</span></code></strong>：每条信息在创建时都会被分配一个唯一标识符（ID）。</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MessageBase</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base Message class, which is used to maintain information for dialog,</span>
+<span class="sd">    memory and used to construct prompt.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">content</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the message object</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (`str`):</span>
+<span class="sd">                The name of who send the message. It&#39;s often used in</span>
+<span class="sd">                role-playing scenario to tell the name of the sender.</span>
+<span class="sd">                However, you can also only use `role` when calling openai api.</span>
+<span class="sd">                The usage of `name` refers to</span>
+<span class="sd">                https://cookbook.openai.com/examples/how_to_format_inputs_to_chatgpt_models.</span>
+<span class="sd">            content (`Any`):</span>
+<span class="sd">                The content of the message.</span>
+<span class="sd">            url (`Optional[Union[list[str], str]]`, defaults to None):</span>
+<span class="sd">                A url to file, image, video, audio or website.</span>
+<span class="sd">            timestamp (`Optional[str]`, defaults to None):</span>
+<span class="sd">                The timestamp of the message, if None, it will be set to</span>
+<span class="sd">                current time.</span>
+<span class="sd">            **kwargs (`Any`):</span>
+<span class="sd">                Other attributes of the message. For OpenAI API, you should</span>
+<span class="sd">                add &quot;role&quot; from `[&quot;system&quot;, &quot;user&quot;, &quot;assistant&quot;, &quot;function&quot;]`.</span>
+<span class="sd">                When calling OpenAI API, `&quot;role&quot;: &quot;assistant&quot;` will be added</span>
+<span class="sd">                to the messages that don&#39;t have &quot;role&quot; attribute.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># id and timestamp will be added to the object as its attributes</span>
+        <span class="c1"># rather than items in dict</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span>
+        <span class="k">if</span> <span class="n">timestamp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">=</span> <span class="n">_get_timestamp</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">=</span> <span class="n">timestamp</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">content</span>
+
+        <span class="k">if</span> <span class="n">url</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">url</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;no attribute &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
+    <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="fm">__delattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;no attribute &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
+    <span class="k">def</span> <span class="nf">to_str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the string representation of the message&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the serialized message.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="c1"># ... [省略代码以简化]</span>
+</pre></div>
+</div>
+</section>
+<section id="msg">
+<h3>消息类（<code class="docutils literal notranslate"><span class="pre">Msg</span></code>）<a class="headerlink" href="#msg" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">Msg</span></code>类是AgentScope中最常用的消息类。它继承了 <code class="docutils literal notranslate"><span class="pre">MessageBase</span></code>类，并实现了<code class="docutils literal notranslate"><span class="pre">to_str</span></code> 和
+<code class="docutils literal notranslate"><span class="pre">serialize</span></code> 抽象方法。
+在一个Agent类中，其<code class="docutils literal notranslate"><span class="pre">reply</span></code>函数通常会返回一个<code class="docutils literal notranslate"><span class="pre">Msg</span></code>类的实例，以便在AgentScope中进行消息的
+传递。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Msg</span><span class="p">(</span><span class="n">MessageBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Message class.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">content</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">echo</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">,</span>
+            <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+            <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">echo</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">chat</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">to_str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the string representation of the message&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s2">&quot;__type&quot;</span><span class="p">:</span> <span class="s2">&quot;Msg&quot;</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="p">})</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="memory">
+<h2>关于记忆（Memory）<a class="headerlink" href="#memory" title="Link to this heading"></a></h2>
+<section id="memorybase">
+<h3>关于记忆基类（<code class="docutils literal notranslate"><span class="pre">MemoryBase</span></code>）<a class="headerlink" href="#memorybase" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">MemoryBase</span></code> 是一个抽象类，以结构化的方式处理智能体的记忆。它定义了存储、检索、删除和操作
+<em>信息</em>内容的操作。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MemoryBase</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="c1"># ... [省略代码以简化]</span>
+
+    <span class="k">def</span> <span class="nf">get_memory</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">return_type</span><span class="p">:</span> <span class="n">PromptType</span> <span class="o">=</span> <span class="n">PromptType</span><span class="o">.</span><span class="n">LIST</span><span class="p">,</span>
+        <span class="n">recent_n</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">filter_func</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">memories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span>
+        <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span> <span class="nf">export</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">to_mem</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">file_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</pre></div>
+</div>
+<p>以下是 <code class="docutils literal notranslate"><span class="pre">MemoryBase</span></code> 的关键方法：</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">get_memory</span></code></strong>：这个方法负责从智能体的记忆中检索存储的信息。它可以按照 <code class="docutils literal notranslate"><span class="pre">return_type</span></code> 指定的格式返回这些信息。该方法还可以在提供 <code class="docutils literal notranslate"><span class="pre">recent_n</span></code> 时检索特定数量的最近信息，并且可以应用过滤函数（ <code class="docutils literal notranslate"><span class="pre">filter_func</span></code> ）来根据自定义标准选择信息。</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">add</span></code></strong>：这个方法用于将新的信息添加到智能体的记忆中。它可以接受单个信息或信息列表。每条信息通常是 <code class="docutils literal notranslate"><span class="pre">MessageBase</span></code> 或其子类的实例。</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">delete</span></code></strong>：此方法允许通过信息的索引（如果提供可迭代对象，则为索引集合）从记忆中删除信息。</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">load</span></code></strong>：这个方法允许从外部来源批量加载信息到智能体的内存中。<code class="docutils literal notranslate"><span class="pre">overwrite</span></code> 参数决定是否在加载新的信息集之前清除现有记忆。</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">export</span></code></strong>：这个方法便于将存储的<em>信息</em>从智能体的记忆中导出，要么导出到一个外部文件（由 <code class="docutils literal notranslate"><span class="pre">file_path</span></code> 指定），要么直接导入到程序的运行内存中（如果 <code class="docutils literal notranslate"><span class="pre">to_mem</span></code> 设置为 <code class="docutils literal notranslate"><span class="pre">True</span></code> ）。</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">clear</span></code></strong>：这个方法清除智能体记忆中的所有<em>信息</em>，本质上是重置。</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">size</span></code></strong>：这个方法返回当前存储在智能体记忆中的信息数量。</p></li>
+</ul>
+</section>
+<section id="temporarymemory">
+<h3>关于<code class="docutils literal notranslate"><span class="pre">TemporaryMemory</span></code><a class="headerlink" href="#temporarymemory" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">TemporaryMemory</span></code> 类是 <code class="docutils literal notranslate"><span class="pre">MemoryBase</span></code> 类的一个具体实现，提供了一个智能体运行期间存在的记忆存储，被用作智能体的默认记忆类型。除了 <code class="docutils literal notranslate"><span class="pre">MemoryBase</span></code> 的所有行为外，<code class="docutils literal notranslate"><span class="pre">TemporaryMemory</span></code> 还提供了检索的方法：</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">retrieve_by_embedding</span></code></strong>：基于它们的嵌入向量 (embeddings) 检索与查询最相似的 <code class="docutils literal notranslate"><span class="pre">messages</span></code>。它使用提供的度量标准来确定相关性，并可以返回前 <code class="docutils literal notranslate"><span class="pre">k</span></code> 个最相关的信息。</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">get_embeddings</span></code></strong>：返回记忆中所有信息的嵌入向量。如果信息没有嵌入向量，并且提供了嵌入模型，它将生成并存储信息的嵌入向量。</p></li>
+</ul>
+<p>有关 <code class="docutils literal notranslate"><span class="pre">Memory</span></code> 和 <code class="docutils literal notranslate"><span class="pre">Msg</span></code> 使用的更多细节，请参考 API 文档。</p>
+<p><a class="reference internal" href="#memory-zh">[返回顶端]</a></p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="204-service.html" class="btn btn-neutral float-left" title="服务函数" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="206-prompt.html" class="btn btn-neutral float-right" title="提示工程" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

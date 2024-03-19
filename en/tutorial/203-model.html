@@ -5,7 +5,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Model Service &mdash; AgentScope  documentation</title>
+  <title>Model &mdash; AgentScope  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
@@ -23,8 +23,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="About Service" href="204-service.html" />
-    <link rel="prev" title="Agent Interactions: Dive deeper into Pipelines and Message Hub" href="202-pipeline.html" /> 
+    <link rel="next" title="Service" href="204-service.html" />
+    <link rel="prev" title="Pipeline and MsgHub" href="202-pipeline.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -46,8 +46,8 @@
   </form>
 </div> <!-- language_selector.html -->
 <div class="language-selector">
-    <a href="../../en/index.html">English</a></li> |
-    <a href="../../zh_CN/index.html">中文</a></li>
+    <a href="../../en/tutorial/203-model.html">English</a></li> |
+    <a href="../../zh_CN/tutorial/203-model.html">中文</a></li>
 </div> 
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
@@ -55,24 +55,22 @@
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Getting Started</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="advance.html">Advanced Exploration</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="201-agent.html">Customizing Your Own Agent</a></li>
-<li class="toctree-l2"><a class="reference internal" href="202-pipeline.html">Agent Interactions: Dive deeper into Pipelines and Message Hub</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Model Service</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="202-pipeline.html">Pipeline and MsgHub</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Model</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#supported-models">Supported Models</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#configuration-format">Configuration Format</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#build-model-service-from-scratch">Build Model Service from Scratch</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#flask-based-model-api-serving">Flask-based Model API Serving</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#build-model-service-from-scratch">Build Model Service from Scratch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#creat-your-own-model-wrapper">Creat Your Own Model Wrapper</a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="204-service.html">About Service</a></li>
-<li class="toctree-l2"><a class="reference internal" href="205-memory.html">About Memory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="204-service.html">Service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="205-memory.html">Memory</a></li>
 <li class="toctree-l2"><a class="reference internal" href="206-prompt.html">Prompt Engine</a></li>
 <li class="toctree-l2"><a class="reference internal" href="207-monitor.html">Monitor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="208-distribute.html">About Distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="208-distribute.html">Distribution</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="contribute.html">Get Involved</a></li>
@@ -105,7 +103,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="advance.html">Advanced Exploration</a></li>
-      <li class="breadcrumb-item active">Model Service</li>
+      <li class="breadcrumb-item active">Model</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/tutorial/203-model.md.txt" rel="nofollow"> View page source</a>
       </li>
@@ -115,8 +113,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="model-service">
-<span id="model-en"></span><h1>Model Service<a class="headerlink" href="#model-service" title="Link to this heading"></a></h1>
+  <section id="model">
+<span id="model-en"></span><h1>Model<a class="headerlink" href="#model" title="Link to this heading"></a></h1>
 <p>In AgentScope, the model deployment and invocation are decoupled by <code class="docutils literal notranslate"><span class="pre">ModelWrapper</span></code>.
 Developers can specify their own model by providing model configurations,
 and AgentScope also provides scripts to support developers to customize
@@ -125,7 +123,10 @@ model services.</p>
 <h2>Supported Models<a class="headerlink" href="#supported-models" title="Link to this heading"></a></h2>
 <p>Currently, AgentScope supports the following model service APIs:</p>
 <ul class="simple">
-<li><p>OpenAI API, including Chat, image generation (DALL-E), and Embedding.</p></li>
+<li><p>OpenAI API, including chat, image generation (DALL-E), and Embedding.</p></li>
+<li><p>DashScope API, including chat, image sythesis and text embedding.</p></li>
+<li><p>Gemini API, including chat and embedding.</p></li>
+<li><p>Ollama API, including chat, embedding and generation.</p></li>
 <li><p>Post Request API, model inference services based on Post
 requests, including Huggingface/ModelScope Inference API and various
 post request based model APIs.</p></li>
@@ -142,41 +143,16 @@ post request based model APIs.</p></li>
 <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">model_configs</span><span class="o">=</span><span class="n">MODEL_CONFIG_OR_PATH</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>An example of <code class="docutils literal notranslate"><span class="pre">model_configs</span></code> is as follows:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model_configs</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span>
-        <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-4-temperature-0.0&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;openai&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-4&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;xxx&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;organization&quot;</span><span class="p">:</span> <span class="s2">&quot;xxx&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;generate_args&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.0</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-        <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;dall-e-3-size-1024x1024&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;openai_dall_e&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;dall-e-3&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;xxx&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;organization&quot;</span><span class="p">:</span> <span class="s2">&quot;xxx&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;generate_args&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;1024x1024&quot;</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
-    <span class="c1"># Additional models can be configured here</span>
-<span class="p">]</span>
-</pre></div>
-</div>
 <section id="configuration-format">
 <h3>Configuration Format<a class="headerlink" href="#configuration-format" title="Link to this heading"></a></h3>
-<p>In AgentScope the model configuration is a dictionary used to specify the type of model and set the call parameters.
-We divide the fields in the model configuration into two categories: <em>basic parameters</em> and <em>detailed parameters</em>.
-Among them, the basic parameters include <code class="docutils literal notranslate"><span class="pre">config_name</span></code> and <code class="docutils literal notranslate"><span class="pre">model_type</span></code>, which are used to distinguish different model configurations and specific <code class="docutils literal notranslate"><span class="pre">ModelWrapper</span></code> types.</p>
+<p>In AgentScope, the model configuration is a dictionary used to specify the type of model and set the call parameters.
+We divide the fields in the model configuration into two categories: <em>basic parameters</em> and <em>detailed parameters</em>.</p>
+<p>Among them, the basic parameters include <code class="docutils literal notranslate"><span class="pre">config_name</span></code> and <code class="docutils literal notranslate"><span class="pre">model_type</span></code>, which are used to distinguish different model configurations and specific <code class="docutils literal notranslate"><span class="pre">ModelWrapper</span></code> types.
+The detailed parameters will be fed into the corresponding model class’s constructor to initialize the model instance.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="c1"># Basic parameters</span>
-    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-4-temperature-0.0&quot;</span><span class="p">,</span>     <span class="c1"># Model configuration name</span>
-    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;openai&quot;</span><span class="p">,</span>                     <span class="c1"># Correspond to `ModelWrapper` type</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-4-temperature-0.0&quot;</span><span class="p">,</span>  <span class="c1"># Model configuration name</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;openai&quot;</span><span class="p">,</span>  <span class="c1"># Correspond to `ModelWrapper` type</span>
 
     <span class="c1"># Detailed parameters</span>
     <span class="c1"># ...</span>
@@ -200,90 +176,326 @@ It corresponds to the <code class="docutils literal notranslate"><span class="pr
 <code class="docutils literal notranslate"><span class="pre">ModelWrapper</span></code> classes, and the supported APIs are as follows:</p>
 <table class="docutils align-default">
 <thead>
-<tr class="row-odd"><th class="head"><p>Task</p></th>
-<th class="head"><p>model_type</p></th>
-<th class="head"><p>ModelWrapper</p></th>
-<th class="head"><p>Supported APIs</p></th>
+<tr class="row-odd"><th class="head"><p>API</p></th>
+<th class="head"><p>Task</p></th>
+<th class="head"><p>Model Wrapper</p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">model_type</span></code></p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>Text generation</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">openai</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper</span></code></p></td>
-<td><p>Standard OpenAI chat API, FastChat and vllm</p></td>
+<tr class="row-even"><td><p>OpenAI API</p></td>
+<td><p>Chat</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;openai&quot;</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Image generation</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">openai_dall_e</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">OpenAIDALLEWrapper</span></code></p></td>
-<td><p>DALL-E API for generating images</p></td>
+<tr class="row-odd"><td><p></p></td>
+<td><p>Embedding</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py"><code class="docutils literal notranslate"><span class="pre">OpenAIEmbeddingWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;openai_embedding&quot;</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Embedding</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">openai_embedding</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">OpenAIEmbeddingWrapper</span></code></p></td>
-<td><p>API for text embeddings</p></td>
+<tr class="row-even"><td><p></p></td>
+<td><p>DALL·E</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py"><code class="docutils literal notranslate"><span class="pre">OpenAIDALLEWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;openai_dall_e&quot;</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Post Request</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">post_api</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">PostAPIModelWrapperBase</span></code></p></td>
-<td><p>Huggingface/ModelScope Inference API, and customized post API</p></td>
+<tr class="row-odd"><td><p>DashScope API</p></td>
+<td><p>Chat</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;dashscope_chat&quot;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p>Image Synthesis</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py"><code class="docutils literal notranslate"><span class="pre">DashScopeImageSynthesisWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;dashscope_image_synthesis&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p>Text Embedding</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py"><code class="docutils literal notranslate"><span class="pre">DashScopeTextEmbeddingWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;dashscope_text_embedding&quot;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Gemini API</p></td>
+<td><p>Chat</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py"><code class="docutils literal notranslate"><span class="pre">GeminiChatWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;gemini_chat&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p>Embedding</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py"><code class="docutils literal notranslate"><span class="pre">GeminiEmbeddingWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;gemini_embedding&quot;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>ollama</p></td>
+<td><p>Chat</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py"><code class="docutils literal notranslate"><span class="pre">OllamaChatWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;ollama_chat&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p>Embedding</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py"><code class="docutils literal notranslate"><span class="pre">OllamaEmbedding</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;ollama_embedding&quot;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p>Generation</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py"><code class="docutils literal notranslate"><span class="pre">OllamaGenerationWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;ollama_generate&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Post Request based API</p></td>
+<td><p>-</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py"><code class="docutils literal notranslate"><span class="pre">PostAPIModelWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;post_api&quot;</span></code></p></td>
 </tr>
 </tbody>
 </table>
 </section>
 <section id="detailed-parameters">
 <h4>Detailed Parameters<a class="headerlink" href="#detailed-parameters" title="Link to this heading"></a></h4>
-<p>According to the different <code class="docutils literal notranslate"><span class="pre">ModelWrapper</span></code>, the parameters contained in the
-detailed parameters are different. However, all detailed parameters will be
-used to initialize the instance of the <code class="docutils literal notranslate"><span class="pre">ModelWrapper</span></code> class. Therefore, more
-detailed parameter descriptions can be viewed according to the constructor of
-their <code class="docutils literal notranslate"><span class="pre">ModelWrapper</span></code> classes.</p>
-<ul class="simple">
-<li><p>For OpenAI APIs including text generation, image generation, and text embedding, the model configuration parameters are as follows:</p></li>
-</ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="c1"># basic parameters</span>
-    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-4_temperature-0.0&quot;</span><span class="p">,</span>
+<p>In AgentScope, the detailed parameters are different according to the different <code class="docutils literal notranslate"><span class="pre">ModelWrapper</span></code> classes.
+To specify the detailed parameters, you need to refer to the specific <code class="docutils literal notranslate"><span class="pre">ModelWrapper</span></code> class and its constructor.
+Here we provide example configurations for different model wrappers.</p>
+<section id="openai-api">
+<h5>OpenAI API<a class="headerlink" href="#openai-api" title="Link to this heading"></a></h5>
+<details>
+<summary>OpenAI Chat API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py">agents.models.OpenAIChatWrapper</a></code>)</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">openai_chat_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{your_config_name}</span><span class="s2">&quot;</span><span class="p">,</span>
     <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;openai&quot;</span><span class="p">,</span>
 
-    <span class="c1"># detailed parameters</span>
-    <span class="c1"># required parameters</span>
-    <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-4&quot;</span><span class="p">,</span>          <span class="c1"># OpenAI model name</span>
+    <span class="c1"># Required parameters</span>
+    <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-4&quot;</span><span class="p">,</span>
 
-    <span class="c1"># optional</span>
-    <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;xxx&quot;</span><span class="p">,</span>               <span class="c1"># OpenAI API Key, if not provided, it will be read from the environment variable</span>
-    <span class="s2">&quot;organization&quot;</span><span class="p">:</span> <span class="s2">&quot;xxx&quot;</span><span class="p">,</span>          <span class="c1"># Organization name, if not provided, it will be read from the environment variable</span>
-    <span class="s2">&quot;client_args&quot;</span><span class="p">:</span> <span class="p">{</span>                <span class="c1"># Parameters for initializing the OpenAI API Client</span>
+    <span class="c1"># Optional parameters</span>
+    <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{your_api_key}</span><span class="s2">&quot;</span><span class="p">,</span>                <span class="c1"># OpenAI API Key, if not provided, it will be read from the environment variable</span>
+    <span class="s2">&quot;organization&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{your_organization}</span><span class="s2">&quot;</span><span class="p">,</span>      <span class="c1"># Organization name, if not provided, it will be read from the environment variable</span>
+    <span class="s2">&quot;client_args&quot;</span><span class="p">:</span> <span class="p">{</span>                            <span class="c1"># Parameters for initializing the OpenAI API Client</span>
         <span class="c1"># e.g. &quot;max_retries&quot;: 3,</span>
     <span class="p">},</span>
-    <span class="s2">&quot;generate_args&quot;</span><span class="p">:</span> <span class="p">{</span>              <span class="c1"># Parameters passed to the model when calling</span>
+    <span class="s2">&quot;generate_args&quot;</span><span class="p">:</span> <span class="p">{</span>                          <span class="c1"># Parameters passed to the model when calling</span>
         <span class="c1"># e.g. &quot;temperature&quot;: 0.0</span>
     <span class="p">},</span>
-    <span class="s2">&quot;budget&quot;</span><span class="p">:</span> <span class="mf">100.0</span>                 <span class="c1"># API budget</span>
+    <span class="s2">&quot;budget&quot;</span><span class="p">:</span> <span class="mi">100</span>                               <span class="c1"># API budget</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-<ul class="simple">
-<li><p>For post request API, the model configuration parameters are as follows:</p></li>
-</ul>
+</details>
+<details>
+<summary>OpenAI DALL·E API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py">agentscope.models.OpenAIDALLEWrapper</a></code>)</summary>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="c1"># Basic parameters</span>
-    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-4_temperature-0.0&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{your_config_name}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;openai_dall_e&quot;</span><span class="p">,</span>
+
+    <span class="c1"># Required parameters</span>
+    <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{model_name}</span><span class="s2">&quot;</span><span class="p">,</span>               <span class="c1"># OpenAI model name, e.g. dall-e-2, dall-e-3</span>
+
+    <span class="c1"># Optional parameters</span>
+    <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{your_api_key}</span><span class="s2">&quot;</span><span class="p">,</span>                <span class="c1"># OpenAI API Key, if not provided, it will be read from the environment variable</span>
+    <span class="s2">&quot;organization&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{your_organization}</span><span class="s2">&quot;</span><span class="p">,</span>      <span class="c1"># Organization name, if not provided, it will be read from the environment variable</span>
+    <span class="s2">&quot;client_args&quot;</span><span class="p">:</span> <span class="p">{</span>                            <span class="c1"># Parameters for initializing the OpenAI API Client</span>
+        <span class="c1"># e.g. &quot;max_retries&quot;: 3,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;generate_args&quot;</span><span class="p">:</span> <span class="p">{</span>                          <span class="c1"># Parameters passed to the model when calling</span>
+        <span class="c1"># e.g. &quot;n&quot;: 1, &quot;size&quot;: &quot;512x512&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</details>
+<details>
+<summary>OpenAI Embedding API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py">agentscope.models.OpenAIEmbeddingWrapper</a></code>)</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{your_config_name}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;openai_embedding&quot;</span><span class="p">,</span>
+
+    <span class="c1"># Required parameters</span>
+    <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{model_name}</span><span class="s2">&quot;</span><span class="p">,</span>               <span class="c1"># OpenAI model name, e.g. text-embedding-ada-002, text-embedding-3-small</span>
+
+    <span class="c1"># Optional parameters</span>
+    <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{your_api_key}</span><span class="s2">&quot;</span><span class="p">,</span>                <span class="c1"># OpenAI API Key, if not provided, it will be read from the environment variable</span>
+    <span class="s2">&quot;organization&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{your_organization}</span><span class="s2">&quot;</span><span class="p">,</span>      <span class="c1"># Organization name, if not provided, it will be read from the environment variable</span>
+    <span class="s2">&quot;client_args&quot;</span><span class="p">:</span> <span class="p">{</span>                            <span class="c1"># Parameters for initializing the OpenAI API Client</span>
+        <span class="c1"># e.g. &quot;max_retries&quot;: 3,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;generate_args&quot;</span><span class="p">:</span> <span class="p">{</span>                          <span class="c1"># Parameters passed to the model when calling</span>
+        <span class="c1"># e.g. &quot;encoding_format&quot;: &quot;float&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</details>
+<br/>
+</section>
+</section>
+<section id="dashscope-api">
+<h4>DashScope API<a class="headerlink" href="#dashscope-api" title="Link to this heading"></a></h4>
+<details>
+<summary>DashScope Chat API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py">agentscope.models.DashScopeChatWrapper</a></code>)</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_dashscope_chat_config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;dashscope_chat&quot;</span><span class="p">,</span>
+
+    <span class="c1"># Required parameters</span>
+    <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{model_name}</span><span class="s2">&quot;</span><span class="p">,</span>               <span class="c1"># The model name in DashScope API, e.g. qwen-max</span>
+
+    <span class="c1"># Optional parameters</span>
+    <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{your_api_key}</span><span class="s2">&quot;</span><span class="p">,</span>                <span class="c1"># DashScope API Key, if not provided, it will be read from the environment variable</span>
+    <span class="s2">&quot;generate_args&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="c1"># e.g. &quot;temperature&quot;: 0.5</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</details>
+<details>
+<summary>DashScope Image Synthesis API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py">agentscope.models.DashScopeImageSynthesisWrapper</a></code>)</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_dashscope_image_synthesis_config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;dashscope_image_synthesis&quot;</span><span class="p">,</span>
+
+    <span class="c1"># Required parameters</span>
+    <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{model_name}</span><span class="s2">&quot;</span><span class="p">,</span>               <span class="c1"># The model name in DashScope Image Synthesis API, e.g. wanx-v1</span>
+
+    <span class="c1"># Optional parameters</span>
+    <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{your_api_key}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;generate_args&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;negative_prompt&quot;</span><span class="p">:</span> <span class="s2">&quot;xxx&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;n&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="c1"># ...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</details>
+<details>
+<summary>DashScope Text Embedding API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py">agentscope.models.DashScopeTextEmbeddingWrapper</a></code>)</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_dashscope_text_embedding_config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;dashscope_text_embedding&quot;</span><span class="p">,</span>
+
+    <span class="c1"># Required parameters</span>
+    <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{model_name}</span><span class="s2">&quot;</span><span class="p">,</span>               <span class="c1"># The model name in DashScope Text Embedding API, e.g. text-embedding-v1</span>
+
+    <span class="c1"># Optional parameters</span>
+    <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{your_api_key}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;generate_args&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="c1"># ...</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</details>
+<br/>
+</section>
+<section id="gemini-api">
+<h4>Gemini API<a class="headerlink" href="#gemini-api" title="Link to this heading"></a></h4>
+<details>
+<summary>Gemini Chat API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py">agentscope.models.GeminiChatWrapper</a></code>)</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_gemini_chat_config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;gemini_chat&quot;</span><span class="p">,</span>
+
+    <span class="c1"># Required parameters</span>
+    <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{model_name}</span><span class="s2">&quot;</span><span class="p">,</span>               <span class="c1"># The model name in Gemini API, e.g. gemini-prp</span>
+
+    <span class="c1"># Optional parameters</span>
+    <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{your_api_key}</span><span class="s2">&quot;</span><span class="p">,</span>                <span class="c1"># If not provided, the API key will be read from the environment variable GEMINI_API_KEY</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</details>
+<details>
+<summary>Gemini Embedding API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py">agentscope.models.GeminiEmbeddingWrapper</a></code>)</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_gemini_embedding_config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;gemini_embedding&quot;</span><span class="p">,</span>
+
+    <span class="c1"># Required parameters</span>
+    <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{model_name}</span><span class="s2">&quot;</span><span class="p">,</span>               <span class="c1"># The model name in Gemini API, e.g. gemini-prp</span>
+
+    <span class="c1"># Optional parameters</span>
+    <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{your_api_key}</span><span class="s2">&quot;</span><span class="p">,</span>                <span class="c1"># If not provided, the API key will be read from the environment variable GEMINI_API_KEY</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</details>
+<br/>
+</section>
+<section id="ollama-api">
+<h4>Ollama API<a class="headerlink" href="#ollama-api" title="Link to this heading"></a></h4>
+<details>
+<summary>Ollama Chat API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py">agentscope.models.OllamaChatWrapper</a></code>)</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_ollama_chat_config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;ollama_chat&quot;</span><span class="p">,</span>
+
+    <span class="c1"># Required parameters</span>
+    <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{model_name}</span><span class="s2">&quot;</span><span class="p">,</span>                    <span class="c1"># The model name used in ollama API, e.g. llama2</span>
+
+    <span class="c1"># Optional parameters</span>
+    <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="p">{</span>                                <span class="c1"># Parameters passed to the model when calling</span>
+        <span class="c1"># e.g. &quot;temperature&quot;: 0., &quot;seed&quot;: &quot;123&quot;,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;keep_alive&quot;</span><span class="p">:</span> <span class="s2">&quot;5m&quot;</span><span class="p">,</span>                         <span class="c1"># Controls how long the model will stay loaded into memory</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</details>
+<details>
+<summary>Ollama Generation API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py">agentscope.models.OllamaGenerationWrapper</a></code>)</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_ollama_generate_config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;ollama_generate&quot;</span><span class="p">,</span>
+
+    <span class="c1"># Required parameters</span>
+    <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{model_name}</span><span class="s2">&quot;</span><span class="p">,</span>                    <span class="c1"># The model name used in ollama API, e.g. llama2</span>
+
+    <span class="c1"># Optional parameters</span>
+    <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="p">{</span>                                <span class="c1"># Parameters passed to the model when calling</span>
+        <span class="c1"># &quot;temperature&quot;: 0., &quot;seed&quot;: &quot;123&quot;,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;keep_alive&quot;</span><span class="p">:</span> <span class="s2">&quot;5m&quot;</span><span class="p">,</span>                         <span class="c1"># Controls how long the model will stay loaded into memory</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</details>
+<details>
+<summary>Ollama Embedding API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py">agentscope.models.OllamaEmbeddingWrapper</a></code>)</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_ollama_embedding_config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;ollama_embedding&quot;</span><span class="p">,</span>
+
+    <span class="c1"># Required parameters</span>
+    <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{model_name}</span><span class="s2">&quot;</span><span class="p">,</span>                    <span class="c1"># The model name used in ollama API, e.g. llama2</span>
+
+    <span class="c1"># Optional parameters</span>
+    <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="p">{</span>                                <span class="c1"># Parameters passed to the model when calling</span>
+        <span class="c1"># &quot;temperature&quot;: 0., &quot;seed&quot;: &quot;123&quot;,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;keep_alive&quot;</span><span class="p">:</span> <span class="s2">&quot;5m&quot;</span><span class="p">,</span>                         <span class="c1"># Controls how long the model will stay loaded into memory</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</details>
+<br/>
+</section>
+<section id="post-request-api">
+<h4>Post Request API<a class="headerlink" href="#post-request-api" title="Link to this heading"></a></h4>
+<details>
+<summary>Post request API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIModelWrapperBase</a></code>)</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_postapiwrapper_config&quot;</span><span class="p">,</span>
     <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;post_api&quot;</span><span class="p">,</span>
 
-    <span class="c1"># Detailed parameters</span>
-    <span class="s2">&quot;api_url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://xxx.png&quot;</span><span class="p">,</span>
+    <span class="c1"># Required parameters</span>
+    <span class="s2">&quot;api_url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://xxx.xxx&quot;</span><span class="p">,</span>
     <span class="s2">&quot;headers&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="c1"># e.g. &quot;Authorization&quot;: &quot;Bearer xxx&quot;,</span>
     <span class="p">},</span>
 
-    <span class="c1"># Optional parameters, need to be configured according to the requirements of the Post request API</span>
-    <span class="s2">&quot;json_args&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="c1"># e.g. &quot;temperature&quot;: 0.0</span>
-    <span class="p">}</span>
-    <span class="c1"># ...</span>
+    <span class="c1"># Optional parameters</span>
+    <span class="s2">&quot;messages_key&quot;</span><span class="p">:</span> <span class="s2">&quot;messages&quot;</span><span class="p">,</span>
 <span class="p">}</span>
 </pre></div>
 </div>
+</details>
+<br/>
 </section>
 </section>
 </section>
@@ -295,55 +507,55 @@ You can find these scripts and instructions in the <a class="reference external"
 directory.</p>
 <p>Specifically, AgentScope provides the following model service scripts:</p>
 <ul class="simple">
-<li><p>Model service based on <strong>Flask + HuggingFace</strong></p></li>
-<li><p>Model service based on <strong>Flask + ModelScope</strong></p></li>
-<li><p><strong>FastChat</strong> inference engine</p></li>
-<li><p><strong>vllm</strong> inference engine</p></li>
+<li><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/scripts/README.md#ollama">CPU inference engine <strong>ollama</strong></a></p></li>
+<li><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/scripts/README.md#with-transformers-library">Model service based on <strong>Flask + Transformers</strong></a></p></li>
+<li><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/scripts/README.md#with-modelscope-library">Model service based on <strong>Flask + ModelScope</strong></a></p></li>
+<li><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/scripts/README.md#fastchat"><strong>FastChat</strong> inference engine</a></p></li>
+<li><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/scripts/README.md#vllm"><strong>vllm</strong> inference engine</a></p></li>
 </ul>
-<p>Taking the Flask + Huggingface model service as an example, we will introduce how to use the model service script of AgentScope.
-More model service scripts can be found in <a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/scripts/">scripts</a> directory.</p>
-<section id="flask-based-model-api-serving">
-<h3>Flask-based Model API Serving<a class="headerlink" href="#flask-based-model-api-serving" title="Link to this heading"></a></h3>
-<p><a class="reference external" href="https://github.com/pallets/flask">Flask</a> is a lightweight web application framework. It is easy to build a local model API service with Flask.</p>
-<section id="using-transformers-library">
-<h4>Using transformers library<a class="headerlink" href="#using-transformers-library" title="Link to this heading"></a></h4>
-<section id="install-libraries-and-set-up-serving">
-<h5>Install Libraries and Set up Serving<a class="headerlink" href="#install-libraries-and-set-up-serving" title="Link to this heading"></a></h5>
-<p>Install Flask and Transformers by following the command.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>Flask<span class="w"> </span>transformers
-</pre></div>
-</div>
-<p>Taking model <code class="docutils literal notranslate"><span class="pre">meta-llama/Llama-2-7b-chat-hf</span></code> and port <code class="docutils literal notranslate"><span class="pre">8000</span></code> as an example, set up the model API service by running the following command.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>flask_transformers/setup_hf_service.py
-<span class="w">    </span>--model_name_or_path<span class="w"> </span>meta-llama/Llama-2-7b-chat-hf
-<span class="w">    </span>--device<span class="w"> </span><span class="s2">&quot;cuda:0&quot;</span><span class="w"> </span><span class="c1"># or &quot;cpu&quot;</span>
-<span class="w">    </span>--port<span class="w"> </span><span class="m">8000</span>
-</pre></div>
-</div>
-<p>You can replace <code class="docutils literal notranslate"><span class="pre">meta-llama/Llama-2-7b-chat-hf</span></code> with any model card in the huggingface model hub.</p>
+<p>About how to quickly start these model services, users can refer to the <a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/scripts/README.md">README.md</a> file under the <a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/scripts/">scripts</a> directory.</p>
 </section>
-<section id="use-in-agentscope">
-<h5>Use in AgentScope<a class="headerlink" href="#use-in-agentscope" title="Link to this heading"></a></h5>
-<p>In AgentScope, you can load the model with the following model configs: <a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/scripts/flask_transformers/model_config.json">./flask_transformers/model_config.json</a>.</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;model_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;post_api&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;config_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;flask_llama2-7b-chat&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;api_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://127.0.0.1:8000/llm/&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;json_args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;max_length&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4096</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;temperature&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5</span>
-<span class="w">    </span><span class="p">}</span>
+<section id="creat-your-own-model-wrapper">
+<h2>Creat Your Own Model Wrapper<a class="headerlink" href="#creat-your-own-model-wrapper" title="Link to this heading"></a></h2>
+<p>AgentScope allows developers to customize their own model wrappers.
+The new model wrapper class should</p>
+<ul class="simple">
+<li><p>inherit from <code class="docutils literal notranslate"><span class="pre">ModelWrapperBase</span></code> class,</p></li>
+<li><p>provide a <code class="docutils literal notranslate"><span class="pre">model_type</span></code> field to identify this model wrapper in the model configuration, and</p></li>
+<li><p>implement its <code class="docutils literal notranslate"><span class="pre">__init__</span></code> and <code class="docutils literal notranslate"><span class="pre">__call__</span></code> functions.</p></li>
+</ul>
+<p>The following is an example for creating a new model wrapper class.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span>
+
+<span class="k">class</span> <span class="nc">MyModelWrapper</span><span class="p">(</span><span class="n">ModelWrapperBase</span><span class="p">):</span>
+
+    <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;my_model&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_name</span><span class="p">,</span> <span class="n">my_arg1</span><span class="p">,</span> <span class="n">my_arg2</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># Initialize the model instance</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_name</span><span class="o">=</span><span class="n">config_name</span><span class="p">)</span>
+        <span class="c1"># ...</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="c1"># Call the model instance</span>
+        <span class="c1"># ...</span>
+</pre></div>
+</div>
+<p>After creating the new model wrapper class, the model wrapper will be registered into AgentScope automatically.
+You can use it in the model configuration directly.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">my_model_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># Basic parameters</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_model_config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;my_model&quot;</span><span class="p">,</span>
+
+    <span class="c1"># Detailed parameters</span>
+    <span class="s2">&quot;my_arg1&quot;</span><span class="p">:</span> <span class="s2">&quot;xxx&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;my_arg2&quot;</span><span class="p">:</span> <span class="s2">&quot;yyy&quot;</span><span class="p">,</span>
+    <span class="c1"># ...</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-</section>
-<section id="note">
-<h5>Note<a class="headerlink" href="#note" title="Link to this heading"></a></h5>
-<p>In this model serving, the messages from post requests should be in <strong>STRING</strong> format. You can use <a class="reference external" href="https://huggingface.co/docs/transformers/main/chat_templating">templates for chat model</a> from <em>transformers</em> with a little modification based on <a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/scripts/flask_transformers/setup_hf_service.py"><code class="docutils literal notranslate"><span class="pre">./flask_transformers/setup_hf_service.py</span></code></a>.</p>
 <p><a class="reference internal" href="#model-en">[Return to Top]</a></p>
-</section>
-</section>
-</section>
 </section>
 </section>
 
@@ -351,8 +563,8 @@ More model service scripts can be found in <a class="reference external" href="h
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="202-pipeline.html" class="btn btn-neutral float-left" title="Agent Interactions: Dive deeper into Pipelines and Message Hub" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="204-service.html" class="btn btn-neutral float-right" title="About Service" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="202-pipeline.html" class="btn btn-neutral float-left" title="Pipeline and MsgHub" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="204-service.html" class="btn btn-neutral float-right" title="Service" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

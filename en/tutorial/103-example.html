@@ -24,7 +24,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Crafting Your First Application" href="104-usecase.html" />
-    <link rel="prev" title="About AgentScope" href="101-agentscope.html" /> 
+    <link rel="prev" title="Installation" href="102-installation.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -46,15 +46,15 @@
   </form>
 </div> <!-- language_selector.html -->
 <div class="language-selector">
-    <a href="../../en/index.html">English</a></li> |
-    <a href="../../zh_CN/index.html">中文</a></li>
+    <a href="../../en/tutorial/103-example.html">English</a></li> |
+    <a href="../../zh_CN/tutorial/103-example.html">中文</a></li>
 </div> 
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="quick_start.html">Getting Started</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="102-installation.html">Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="101-agentscope.html">About AgentScope</a></li>
+<li class="toctree-l2"><a class="reference internal" href="102-installation.html">Installation</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Quick Start</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#step1-prepare-model">Step1: Prepare Model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#step2-create-agents">Step2: Create Agents</a></li>
@@ -116,53 +116,31 @@ agents).</p>
 <h2>Step1: Prepare Model<a class="headerlink" href="#step1-prepare-model" title="Link to this heading"></a></h2>
 <p>AgentScope decouples the deployment and invocation of models to better build multi-agent applications.</p>
 <p>In terms of model deployment, users can use third-party model services such
-as OpenAI API, HuggingFace/ModelScope Inference API, and can also quickly
-deploy local open-source model services through the [scripts]
-(<a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/scripts/README.md">https://github.com/modelscope/agentscope/blob/main/scripts/README.md</a>) in
-the repository. Currently, we support building basic model services quickly
-using Flask with Transformers (or ModelScope), and also support deploying
-local model services through FastChat and vllm inference engines.</p>
-<p>While in terms of model invocation, AgentScope provides a <code class="docutils literal notranslate"><span class="pre">ModelWrapper</span></code> class to encapsulate OpenAI API and RESTful Post Request calls.
-Currently, the supported OpenAI APIs include Chat, Image generation, and Embedding.
-Users can specify the model service by setting different model configs.</p>
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Model Usage</p></th>
-<th class="head"><p>Supported APIs</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>Text generation</p></td>
-<td><p>Standard <em>OpenAI</em> chat API, FastChat and vllm</p></td>
-</tr>
-<tr class="row-odd"><td><p>Image generation</p></td>
-<td><p><em>DALL-E</em> API for generating images</p></td>
-</tr>
-<tr class="row-even"><td><p>Embedding</p></td>
-<td><p>API for text embeddings</p></td>
-</tr>
-<tr class="row-odd"><td><p>General usages in POST</p></td>
-<td><p><em>Huggingface</em> and <em>ModelScope</em> Inference API, and other customized post API</p></td>
-</tr>
-</tbody>
-</table>
-<p>Each API has its specific configuration requirements. For example, to configure an OpenAI API, you would need to fill out the following fields in the model config in a dict, a yaml file or a json file:</p>
+as OpenAI API, Google Gemini API, HuggingFace/ModelScope Inference API, or
+quickly deploy local open-source model services through the <a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/scripts/README.md">scripts</a> in
+the repository.</p>
+<p>While for model invocation, users should prepare a model configuration to specify the model service. Taking OpenAI Chat API as an example, the model configuration is like this:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{config_name}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="c1"># A unique name for the model config.</span>
     <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;openai&quot;</span><span class="p">,</span>         <span class="c1"># Choose from &quot;openai&quot;, &quot;openai_dall_e&quot;, or &quot;openai_embedding&quot;.</span>
+
     <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{model_name}</span><span class="s2">&quot;</span><span class="p">,</span>   <span class="c1"># The model identifier used in the OpenAI API, such as &quot;gpt-3.5-turbo&quot;, &quot;gpt-4&quot;, or &quot;text-embedding-ada-002&quot;.</span>
     <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;xxx&quot;</span><span class="p">,</span>               <span class="c1"># Your OpenAI API key. If unset, the environment variable OPENAI_API_KEY is used.</span>
     <span class="s2">&quot;organization&quot;</span><span class="p">:</span> <span class="s2">&quot;xxx&quot;</span><span class="p">,</span>          <span class="c1"># Your OpenAI organization ID. If unset, the environment variable OPENAI_ORGANIZATION is used.</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>For open-source models, we support integration with various model interfaces such as HuggingFace, ModelScope, FastChat, and vllm. You can find scripts on deploying these services in the <code class="docutils literal notranslate"><span class="pre">scripts</span></code> directory, and we defer the detailed instructions to <a class="reference internal" href="203-model.html"><span class="doc std std-doc">[Using Different Model Sources with Model API]</span></a>.</p>
-<p>You can register your configuration by calling AgentScope’s initialization method as follow. Besides, you can also load more than one config by calling init multiple times.</p>
+<p>More details about model invocation, deployment and open-source models please refer to <a class="reference internal" href="203-model.html#model-en"><span class="std std-ref">Model</span></a> section.</p>
+<p>After preparing the model configuration, you can register your configuration by calling the <code class="docutils literal notranslate"><span class="pre">init</span></code> method of AgentScope. Additionally, you can load multiple model configurations at once.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">agentscope</span>
 
 <span class="c1"># init once by passing a list of config dict</span>
-<span class="n">openai_cfg_dict</span> <span class="o">=</span> <span class="p">{</span><span class="o">...</span><span class="n">dict_filling</span><span class="o">...</span><span class="p">}</span>
-<span class="n">modelscope_cfg_dict</span> <span class="o">=</span> <span class="p">{</span><span class="o">...</span><span class="n">dict_filling</span><span class="o">...</span><span class="p">}</span>
+<span class="n">openai_cfg_dict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># ...</span>
+<span class="p">}</span>
+<span class="n">modelscope_cfg_dict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># ...</span>
+<span class="p">}</span>
 <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">model_configs</span><span class="o">=</span><span class="p">[</span><span class="n">openai_cfg_dict</span><span class="p">,</span> <span class="n">modelscope_cfg_dict</span><span class="p">])</span>
 </pre></div>
 </div>
@@ -181,7 +159,7 @@ Users can specify the model service by setting different model configs.</p>
 <span class="n">userAgent</span> <span class="o">=</span> <span class="n">UserAgent</span><span class="p">()</span>
 </pre></div>
 </div>
-<p><strong>NOTE</strong>: Please refer to <a class="reference internal" href="201-agent.html"><span class="doc std std-doc">[Customizing Your Custom Agent with Agent Pool]</span></a> for all available agents.</p>
+<p><strong>NOTE</strong>: Please refer to <a class="reference internal" href="201-agent.html#agent-en"><span class="std std-ref">Customizing Your Own Agent</span></a> for all available agents.</p>
 </section>
 <section id="step3-agent-conversation">
 <h2>Step3: Agent Conversation<a class="headerlink" href="#step3-agent-conversation" title="Link to this heading"></a></h2>
@@ -216,7 +194,7 @@ Users can specify the model service by setting different model configs.</p>
   <span class="n">x</span> <span class="o">=</span> <span class="n">sequentialpipeline</span><span class="p">([</span><span class="n">dialog_agent</span><span class="p">,</span> <span class="n">user_agent</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>For more details about how to utilize pipelines for complex agent interactions, please refer to <a class="reference internal" href="202-pipeline.html"><span class="doc std std-doc">[Agent Interactions: Dive deeper into Pipelines and Message Hub]</span></a>.</p>
+<p>For more details about how to utilize pipelines for complex agent interactions, please refer to <a class="reference internal" href="202-pipeline.html#pipeline-en"><span class="std std-ref">Pipeline and MsgHub</span></a>.</p>
 <p><a class="reference internal" href="#start-en">[Return to the top]</a></p>
 </section>
 </section>
@@ -225,7 +203,7 @@ Users can specify the model service by setting different model configs.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="101-agentscope.html" class="btn btn-neutral float-left" title="About AgentScope" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="102-installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="104-usecase.html" class="btn btn-neutral float-right" title="Crafting Your First Application" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

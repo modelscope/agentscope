@@ -5,7 +5,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>About Memory &mdash; AgentScope  documentation</title>
+  <title>Memory &mdash; AgentScope  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
@@ -24,7 +24,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Prompt Engine" href="206-prompt.html" />
-    <link rel="prev" title="About Service" href="204-service.html" /> 
+    <link rel="prev" title="Service" href="204-service.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -46,8 +46,8 @@
   </form>
 </div> <!-- language_selector.html -->
 <div class="language-selector">
-    <a href="../../en/index.html">English</a></li> |
-    <a href="../../zh_CN/index.html">中文</a></li>
+    <a href="../../en/tutorial/205-memory.html">English</a></li> |
+    <a href="../../zh_CN/tutorial/205-memory.html">中文</a></li>
 </div> 
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
@@ -55,16 +55,16 @@
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Getting Started</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="advance.html">Advanced Exploration</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="201-agent.html">Customizing Your Own Agent</a></li>
-<li class="toctree-l2"><a class="reference internal" href="202-pipeline.html">Agent Interactions: Dive deeper into Pipelines and Message Hub</a></li>
-<li class="toctree-l2"><a class="reference internal" href="203-model.html">Model Service</a></li>
-<li class="toctree-l2"><a class="reference internal" href="204-service.html">About Service</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">About Memory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="202-pipeline.html">Pipeline and MsgHub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="203-model.html">Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="204-service.html">Service</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Memory</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#about-message">About Message</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#messagebase-class"><code class="docutils literal notranslate"><span class="pre">MessageBase</span></code> Class</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#msg-class"><code class="docutils literal notranslate"><span class="pre">Msg</span></code> Class</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#id1">About Memory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#about-memory">About Memory</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#memorybase-class"><code class="docutils literal notranslate"><span class="pre">MemoryBase</span></code> Class</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#temporarymemory"><code class="docutils literal notranslate"><span class="pre">TemporaryMemory</span></code></a></li>
 </ul>
@@ -73,7 +73,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="206-prompt.html">Prompt Engine</a></li>
 <li class="toctree-l2"><a class="reference internal" href="207-monitor.html">Monitor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="208-distribute.html">About Distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="208-distribute.html">Distribution</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="contribute.html">Get Involved</a></li>
@@ -106,7 +106,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="advance.html">Advanced Exploration</a></li>
-      <li class="breadcrumb-item active">About Memory</li>
+      <li class="breadcrumb-item active">Memory</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/tutorial/205-memory.md.txt" rel="nofollow"> View page source</a>
       </li>
@@ -116,8 +116,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="about-memory">
-<span id="memory-en"></span><h1>About Memory<a class="headerlink" href="#about-memory" title="Link to this heading"></a></h1>
+  <section id="memory">
+<span id="memory-en"></span><h1>Memory<a class="headerlink" href="#memory" title="Link to this heading"></a></h1>
 <p>In AgentScope, memory is used to store historical information, allowing the
 agent to provide more coherent and natural responses based on context.
 This tutorial will first introduce the carrier of information in memory,
@@ -270,8 +270,8 @@ Within an <code class="docutils literal notranslate"><span class="pre">Agent</sp
 </div>
 </section>
 </section>
-<section id="id1">
-<h2>About Memory<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<section id="about-memory">
+<h2>About Memory<a class="headerlink" href="#about-memory" title="Link to this heading"></a></h2>
 <section id="memorybase-class">
 <h3><code class="docutils literal notranslate"><span class="pre">MemoryBase</span></code> Class<a class="headerlink" href="#memorybase-class" title="Link to this heading"></a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">MemoryBase</span></code> is an abstract class that handles an agent’s memory in a structured way. It defines operations for storing, retrieving, deleting, and manipulating <em>message</em>’s content.</p>
@@ -341,7 +341,7 @@ Within an <code class="docutils literal notranslate"><span class="pre">Agent</sp
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="204-service.html" class="btn btn-neutral float-left" title="About Service" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="204-service.html" class="btn btn-neutral float-left" title="Service" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="206-prompt.html" class="btn btn-neutral float-right" title="Prompt Engine" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

@@ -1,0 +1,166 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>欢迎来到 AgentScope 教程 &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=7d86a446"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/translations.js?v=beaddf03"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../en/tutorial/main.html">English</a></li> |
+    <a href="../../zh_CN/tutorial/main.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">快速上手</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advance.html">进阶使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.agents.html">Agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.memory.html">Memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.models.html">Models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.pipelines.html">Pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.service.html">Service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.rpc.html">RPC package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.utils.html">Utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.web.html">Web UI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.html">Module contents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">欢迎来到 AgentScope 教程</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorial/main.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="agentscope">
+<h1>欢迎来到 AgentScope 教程<a class="headerlink" href="#agentscope" title="Link to this heading"></a></h1>
+<p>AgentScope是一款全新的Multi-Agent框架，专为应用开发者打造，旨在提供高易用、高可靠的编程体验！</p>
+<ul class="simple">
+<li><p><strong>高易用</strong>：AgentScope支持纯Python编程，提供多种语法工具实现灵活的应用流程编排，内置丰富的API服务（Service）以及应用样例，供开发者直接使用。</p></li>
+<li><p><strong>高鲁棒</strong>：确保开发便捷性和编程效率的同时，针对不同能力的大模型，AgentScope提供了全面的重试机制、定制化的容错控制和面向Agent的异常处理，以确保应用的稳定、高效运行；</p></li>
+<li><p><strong>基于Actor的分布式机制</strong>：AgentScope设计了一种新的基于Actor的分布式机制，实现了复杂分布式工作流的集中式编程和自动并行优化，即用户可以使用中心化编程的方式完成分布式应用的流程编排，同时能够零代价将本地应用迁移到分布式的运行环境中。</p></li>
+</ul>
+<section id="id1">
+<h2>教程大纲<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<section id="id2">
+<h3>快速上手<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><a class="reference internal" href="101-agentscope.html#agentscope-zh"><span class="std std-ref">关于AgentScope</span></a></p></li>
+<li><p><a class="reference internal" href="102-installation.html#installation-zh"><span class="std std-ref">安装</span></a></p></li>
+<li><p><a class="reference internal" href="103-example.html#example-zh"><span class="std std-ref">快速开始</span></a></p></li>
+<li><p><a class="reference internal" href="104-usecase.html#usecase-zh"><span class="std std-ref">创造您的第一个应用</span></a></p></li>
+<li><p><a class="reference internal" href="105-logging.html#logging-zh"><span class="std std-ref">日志和WebUI</span></a></p></li>
+</ul>
+</section>
+<section id="id3">
+<h3>进阶使用<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><a class="reference internal" href="201-agent.html#agent-zh"><span class="std std-ref">定制你自己的Agent</span></a></p></li>
+<li><p><a class="reference internal" href="202-pipeline.html#pipeline-zh"><span class="std std-ref">Pipeline和MsgHub</span></a></p></li>
+<li><p><a class="reference internal" href="203-model.html#model-zh"><span class="std std-ref">模型</span></a></p></li>
+<li><p><a class="reference internal" href="204-service.html#service-zh"><span class="std std-ref">服务函数</span></a></p></li>
+<li><p><a class="reference internal" href="205-memory.html#memory-zh"><span class="std std-ref">记忆</span></a></p></li>
+<li><p><a class="reference internal" href="206-prompt.html#prompt-zh"><span class="std std-ref">提示工程</span></a></p></li>
+<li><p><a class="reference internal" href="207-monitor.html#monitor-zh"><span class="std std-ref">监控器</span></a></p></li>
+<li><p><a class="reference internal" href="208-distribute.html#distribute-zh"><span class="std std-ref">分布式</span></a></p></li>
+</ul>
+</section>
+<section id="id4">
+<h3>参与贡献<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><a class="reference internal" href="301-community.html#community-zh"><span class="std std-ref">加入AgentScope社区</span></a></p></li>
+<li><p><a class="reference internal" href="302-contribute.html#contribute-zh"><span class="std std-ref">贡献到AgentScope</span></a></p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
