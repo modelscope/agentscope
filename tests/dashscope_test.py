@@ -117,9 +117,9 @@ class TestDashScopeImageSynthesisWrapper(unittest.TestCase):
     )
     @patch("agentscope.models.dashscope_model.dashscope.ImageSynthesis.call")
     def test_image_synthesis_wrapper_call_success(
-            self,
-            mock_call: MagicMock,
-            mock_save_image: MagicMock,
+        self,
+        mock_call: MagicMock,
+        mock_save_image: MagicMock,
     ) -> None:
         """Test call success"""
         # Set up the mock response for a successful API call
@@ -152,8 +152,8 @@ class TestDashScopeImageSynthesisWrapper(unittest.TestCase):
 
     @patch("agentscope.models.dashscope_model.dashscope.ImageSynthesis.call")
     def test_image_synthesis_wrapper_call_failure(
-            self,
-            mock_call: MagicMock,
+        self,
+        mock_call: MagicMock,
     ) -> None:
         """Test call failure"""
         # Set up the mock response for a failed API call
