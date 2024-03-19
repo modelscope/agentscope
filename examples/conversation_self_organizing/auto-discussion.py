@@ -11,7 +11,7 @@ model_configs = [
     {
         "model_type": "openai",
         "config_name": "gpt-3.5-turbo",
-        "model": "gpt-3.5-turbo",
+        "model_name": "gpt-3.5-turbo",
         "api_key": "xxx",  # Load from env if not provided
         "organization": "xxx",  # Load from env if not provided
         "generate_args": {
@@ -29,7 +29,7 @@ model_configs = [
 agentscope.init(model_configs=model_configs)
 
 
-# init agent_builder
+# init the self-organizing conversation
 agent_builder = DialogAgent(
     name="agent_builder",
     sys_prompt="You're a helpful assistant.",
@@ -43,7 +43,9 @@ telescope with an aperture of 50 cm. How much more light can the \
 telescope gather than your eye?"
 
 # get the discussion scenario and participant agents
-x = load_txt("examples/agent_builder/agent_builder_instruct.txt").format(
+x = load_txt(
+    "examples/conversation_self_organizing/agent_builder_instruct.txt",
+).format(
     question=query,
 )
 

@@ -1,6 +1,6 @@
 (205-memory-en)=
 
-# About Memory
+# Memory
 
 In AgentScope, memory is used to store historical information, allowing the
 agent to provide more coherent and natural responses based on context.

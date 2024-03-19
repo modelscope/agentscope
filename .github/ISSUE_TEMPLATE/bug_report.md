@@ -12,6 +12,7 @@ A clear and concise description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce the behavior:
+
 1. You code
 2. How to execute
 3. See error
@@ -23,9 +24,10 @@ A clear and concise description of what you expected to happen.
 Detailed error messages.
 
 **Environment (please complete the following information):**
- - AgentScope Version: [e.g. 0.0.1 via `print(agentscope.__version__)`]
- - Python Version: [e.g. 3.9]
- - OS: [e.g. macos, windows]
+
+- AgentScope Version: [e.g. 0.0.2 via `print(agentscope.__version__)`]
+- Python Version: [e.g. 3.9]
+- OS: [e.g. macos, windows]
 
 **Additional context**
 Add any other context about the problem here.

@@ -1,6 +1,6 @@
 (301-community-en)=
 
-# Joining The AgentScope Community
+# Joining AgentScope Community
 
 Becoming a part of the AgentScope community allows you to connect with other users and developers. You can share insights, ask questions, and keep up-to-date with the latest developments and interesting multi-agent applications. Here's how you can join us:
 

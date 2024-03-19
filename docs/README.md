@@ -12,7 +12,7 @@ pip install sphinx sphinx-autobuild sphinx_rtd_theme myst-parser sphinxcontrib-m
 cd sphinx_doc
 
 # step 3: build the sphinx doc
-make clean html
+make clean all
 
 # step 4: view sphinx_doc/build/html/index.html using your browser
 ```
@@ -32,14 +32,14 @@ src
 
 If a new package (`agentscope/new_package`) is added , please add the corresponding documents as follows:
 
-1. use the following script to generate template script (`sphinx_doc/source/agentscope.new_package.rst`) of new packages.
+1. use the following script to generate template script (`sphinx_doc/{language}/source/agentscope.new_package.rst`) of new packages.
 
 ```shell
 cd sphinx_doc
-sphinx-apidoc -o source ../../src/agentscope
+sphinx-apidoc -o {language}/source ../../src/agentscope
 ```
 
-2. edit `sphinx_doc/source/agentscope.new_package.rst`, modify the content of the generated template script. For example, modify
+2. edit `sphinx_doc/{language}/source/agentscope.new_package.rst`, modify the content of the generated template script. For example, modify
 
 ```
 agentscope.new\_package package
@@ -68,7 +68,7 @@ new\_module module
 ...
 ```
 
-1. modify the `sphinx_doc/source/index.rst`, add the new package into the table of contents.
+3. modify the `sphinx_doc/{language}/source/index.rst`, add the new package into the table of contents.
 
 ```
 .. toctree::
@@ -86,8 +86,7 @@ new\_module module
 4. rebuild the sphinx doc of AgentScope
 
 ```
-make clean
-make html
+make clean all
 ```
 
 ### Add doc for new modules
@@ -105,7 +104,7 @@ src
 
 If a new module (agentscope/existing_package/new_module.py) is added , please add the corresponding documents as follows:
 
-1. edit `sphinx_doc/source/agentscope.existing_package.rst` and add the following content.
+1. edit `sphinx_doc/{language}/source/agentscope.existing_package.rst` and add the following content.
 
 ```
 new\_module module
@@ -120,6 +119,5 @@ new\_module module
 2. rebuild the sphinx doc of AgentScope
 
 ```
-make clean
-make html
+make clean all
 ```
