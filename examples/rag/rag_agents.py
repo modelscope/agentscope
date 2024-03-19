@@ -80,6 +80,8 @@ class RAGAgent(AgentBase):
             retrieved_docs = self.rag.retrieve(content, to_list_strs=True)
             for content in retrieved_docs:
                 retrieved_docs_to_string += content
+
+            self.speak("[retrieved]:" + retrieved_docs_to_string)
         # prepare prompt
         prompt = self.engine.join(
             {

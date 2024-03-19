@@ -30,27 +30,19 @@ def main() -> None:
         ],
     )
 
-    # Init RAG agent and user
     if args.module == "llamaindex":
-        rag_agent = LlamaIndexAgent(
-            name="Assistant",
-            sys_prompt="You're a helpful assistant. You need to generate "
-            "answers based on the provided context:\n "
-            "Context: \n {retrieved_context}\n ",
-            model_config_name="qwen_config",  # model config name
-            emb_model_config_name="qwen_emb_config",
-            config={"data_path": args.data_path},
-        )
+        AgentClass = LlamaIndexAgent
     else:
-        rag_agent = LangChainRAGAgent(
-            name="Assistant",
-            sys_prompt="You're a helpful assistant. You need to generate"
-            " answers based on the provided context:\n "
-            "Context: \n {retrieved_context}\n ",
-            model_config_name="qwen_config",  # your model config name
-            emb_model_config_name="qwen_emb_config",
-            config={"data_path": args.data_path},
-        )
+        AgentClass = LangChainRAGAgent
+    rag_agent = AgentClass(
+        name="Assistant",
+        sys_prompt="You're a helpful assistant. You need to generate"
+        " answers based on the provided context:\n "
+        "Context: \n {retrieved_context}\n ",
+        model_config_name="qwen_config",  # your model config name
+        emb_model_config_name="qwen_emb_config",
+        config={"data_path": args.data_path},
+    )
     user_agent = UserAgent()
     # start the conversation between user and assistant
     while True:
