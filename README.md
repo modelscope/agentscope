@@ -28,14 +28,14 @@ Welcome to join our community on
 ## News
 
 - ![new](https://img.alicdn.com/imgextra/i4/O1CN01kUiDtl1HVxN6G56vN_!!6000000000764-2-tps-43-19.png)
-[2024-03-15] We release **AgentScope** v0.0.2 now! In this new version,
+[2024-03-19] We release **AgentScope** v0.0.2 now! In this new version,
 AgentScope supports [ollama](https://modelscope.github.io/agentscope/en/tutorial/203-model.html#supported-models)(A local CPU inference engine), [DashScope](https://modelscope.github.io/agentscope/en/tutorial/203-model.html#supported-models) and Google [Gemini](https://modelscope.github.io/agentscope/en/tutorial/203-model.html#supported-models) APIs.
 
 - ![new](https://img.alicdn.com/imgextra/i4/O1CN01kUiDtl1HVxN6G56vN_!!6000000000764-2-tps-43-19.png)
-[2024-03-15] New examples ["Autonomous Conversation with Mentions"](./examples/conversation_with_mentions) and ["Basic Conversation with LangChain library"](./examples/conversation_with_langchain) are available now!
+[2024-03-19] New examples ["Autonomous Conversation with Mentions"](./examples/conversation_with_mentions) and ["Basic Conversation with LangChain library"](./examples/conversation_with_langchain) are available now!
 
 - ![new](https://img.alicdn.com/imgextra/i4/O1CN01kUiDtl1HVxN6G56vN_!!6000000000764-2-tps-43-19.png)
-[2024-03-15] The [Chinese tutorial](https://modelscope.github.io/agentscope/zh_CN/index.html) of AgentScope is online now!
+[2024-03-19] The [Chinese tutorial](https://modelscope.github.io/agentscope/zh_CN/index.html) of AgentScope is online now!
 
 - [2024-02-27] We release **AgentScope v0.0.1** now, which is also
 available in [PyPI](https://pypi.org/project/agentscope/)!
@@ -239,23 +239,23 @@ while True:
 ## Tutorial
 
 - [Getting Started](https://modelscope.github.io/agentscope/en/tutorial/quick_start.html)
-  - [Installation](https://modelscope.github.io/agentscope/en/tutorial/102-installation.html)
   - [About AgentScope](https://modelscope.github.io/agentscope/en/tutorial/101-agentscope.html)
+  - [Installation](https://modelscope.github.io/agentscope/en/tutorial/102-installation.html)
   - [Quick Start](https://modelscope.github.io/agentscope/en/tutorial/103-example.html)
   - [Crafting Your First Application](https://modelscope.github.io/agentscope/en/tutorial/104-usecase.html)
   - [Logging and WebUI](https://modelscope.github.io/agentscope/en/tutorial/105-logging.html#)
 - [Advanced Exploration](https://modelscope.github.io/agentscope/en/tutorial/advance.html)
   - [Customize Your Own Agent](https://modelscope.github.io/agentscope/en/tutorial/201-agent.html)
-  - [Agent Interactions: Dive deeper into Pipelines and Messages Hub](https://modelscope.github.io/agentscope/en/tutorial/202-pipeline.html)
-  - [Model Service](https://modelscope.github.io/agentscope/en/tutorial/203-model.html)
-  - [About Service](https://modelscope.github.io/agentscope/en/tutorial/204-service.html)
-  - [About Memory](https://modelscope.github.io/agentscope/en/tutorial/205-memory.html)
+  - [Pipeline and MsgHub](https://modelscope.github.io/agentscope/en/tutorial/202-pipeline.html)
+  - [Model](https://modelscope.github.io/agentscope/en/tutorial/203-model.html)
+  - [Service](https://modelscope.github.io/agentscope/en/tutorial/204-service.html)
+  - [Memory](https://modelscope.github.io/agentscope/en/tutorial/205-memory.html)
   - [Prompt Engine](https://modelscope.github.io/agentscope/en/tutorial/206-prompt.html)
   - [Monitor](https://modelscope.github.io/agentscope/en/tutorial/207-monitor.html)
-  - [About Distribution](https://modelscope.github.io/agentscope/en/tutorial/208-distribute.html)
+  - [Distribution](https://modelscope.github.io/agentscope/en/tutorial/208-distribute.html)
 - [Get Involved](https://modelscope.github.io/agentscope/en/tutorial/contribute.html)
   - [Join AgentScope Community](https://modelscope.github.io/agentscope/en/tutorial/301-community.html)
-  - [Contributing to AgentScope](https://modelscope.github.io/agentscope/en/tutorial/302-contribute.html)
+  - [Contribute to AgentScope](https://modelscope.github.io/agentscope/en/tutorial/302-contribute.html)
 
 ## License
 
