@@ -97,8 +97,8 @@ class LlamaIndexRAG(RAGBase):
         self.emb_model = emb_model
 
         # ensure the emb_model is compatible with LlamaIndex
-        if issubclass(type(self.emb_model), ModelWrapperBase):
-            self.emb_model = _EmbeddingModel(self.emb_model)
+        if isinstance(emb_model, ModelWrapperBase):
+            self.emb_model = _EmbeddingModel(emb_model)
         elif isinstance(self.emb_model, BaseEmbedding):
             pass
         else:
@@ -223,7 +223,7 @@ class LlamaIndexRAG(RAGBase):
         """
         self.retriever = retriever
 
-    def retrieve(self, query: str) -> list[Any]:
+    def retrieve(self, query: str, to_list_strs: bool = False) -> list[Any]:
         """
         This is a basic retrieve function
         :param query: query is expected to be a question in string
@@ -232,4 +232,9 @@ class LlamaIndexRAG(RAGBase):
         https://docs.llamaindex.ai/en/stable/examples/query_transformations/query_transform_cookbook.html
         """
         retrieved = self.retriever.retrieve(str(query))
+        if to_list_strs:
+            results = []
+            for node in retrieved:
+                results.append(node.get_text())
+            return results
         return retrieved

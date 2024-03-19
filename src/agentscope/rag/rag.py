@@ -62,7 +62,7 @@ class RAGBase(ABC):
         """
 
     @abstractmethod
-    def retrieve(self, query: Any) -> list[Any]:
+    def retrieve(self, query: Any, to_list_strs: bool = False) -> list[Any]:
         """
         retrieve list of content from vdb to memory
         """
