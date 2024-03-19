@@ -23,7 +23,6 @@ from .retrieval.similarity import cos_sim
 from .text_processing.summarization import summarization
 from .retrieval.retrieval_from_list import retrieve_from_list
 from .service_status import ServiceExecStatus
-from .service_factory import ServiceFactory
 
 
 def get_help() -> None:
