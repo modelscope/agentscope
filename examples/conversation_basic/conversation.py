@@ -7,7 +7,7 @@ from agentscope.pipelines.functional import sequentialpipeline
 
 
 def main() -> None:
-    """A conversation demo"""
+    """A basic conversation demo"""
 
     agentscope.init(
         model_configs=[

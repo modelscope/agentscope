@@ -2,8 +2,10 @@
 """ Tools for agentscope """
 import base64
 import datetime
+import json
 import secrets
 import string
+from typing import Any
 
 from urllib.parse import urlparse
 
@@ -161,3 +163,12 @@ def _generate_random_code(
     if digits:
         characters += string.digits
     return "".join(secrets.choice(characters) for i in range(length))
+
+
+def _is_json_serializable(obj: Any) -> bool:
+    """Check if the given object is json serializable."""
+    try:
+        json.dumps(obj)
+        return True
+    except TypeError:
+        return False

@@ -157,6 +157,8 @@ def import_function_from_path(
 # pylint: disable=too-many-statements
 def run_app() -> None:
     """Entry point for the web UI application."""
+    assert gr is not None, "Please install [full] version of AgentScope."
+
     parser = argparse.ArgumentParser()
     parser.add_argument("script", type=str, help="Script file to run")
     args = parser.parse_args()

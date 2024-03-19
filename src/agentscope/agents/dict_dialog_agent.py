@@ -42,13 +42,13 @@ class DictDialogAgent(AgentBase):
     the speak field as the output response.
 
     For usage example, please refer to the example of werewolf in
-    `examples/werewolf`"""
+    `examples/game_werewolf`"""
 
     def __init__(
         self,
         name: str,
-        sys_prompt: Optional[str] = None,
-        model_config_name: str = None,
+        sys_prompt: str,
+        model_config_name: str,
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
         parse_func: Optional[Callable[..., Any]] = parse_dict,
@@ -127,13 +127,13 @@ class DictDialogAgent(AgentBase):
                 it defaults to treating the response as plain text.
         """
         # record the input if needed
-        if x is not None:
+        if self.memory:
             self.memory.add(x)
 
         # prepare prompt
         prompt = self.engine.join(
             self.sys_prompt,
-            self.memory.get_memory(),
+            self.memory and self.memory.get_memory(),
         )
 
         # call llm
@@ -158,6 +158,7 @@ class DictDialogAgent(AgentBase):
         self.speak(msg)
 
         # record to memory
-        self.memory.add(msg)
+        if self.memory:
+            self.memory.add(msg)
 
         return msg

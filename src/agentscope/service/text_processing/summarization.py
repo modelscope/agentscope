@@ -100,7 +100,7 @@ def summarization(
         except ValueError:
             return ServiceResponse(
                 ServiceExecStatus.ERROR,
-                content=f"Summarization by model {model.model} fail",
+                content="Summarization by model fails",
             )
     else:
         try:

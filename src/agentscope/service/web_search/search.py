@@ -39,7 +39,7 @@ def bing_search(
     Example:
         .. code-block:: python
 
-            results = _search_bing(question="What is an agent?",
+            results = bing_search(question="What is an agent?",
                                  bing_api_key="your bing api key",
                                  num_results=2,
                                  mkt="en-US")
@@ -150,7 +150,7 @@ def google_search(
     Example:
         .. code-block:: python
 
-            results = _search_google(
+            results = google_search(
                 'Python programming',
                 'your_google_api_key',
                 'your_cse_id',
