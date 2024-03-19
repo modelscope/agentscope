@@ -5,8 +5,8 @@ assistant agent to have a conversation. When user input "exit", the
 conversation ends.
 You can modify the `sys_prompt` to change the role of assistant agent.
 ```bash
-# Note: Set your api_key in conversation_basic.py first
-python conversation_basic.py
+# Note: Set your api_key in conversation.py first
+python conversation.py
 ```
 To set up model serving with open-source LLMs, follow the guidance in
 [scripts/REAMDE.md](../../scripts/README.md).
