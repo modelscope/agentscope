@@ -12,46 +12,37 @@ agents).
 AgentScope decouples the deployment and invocation of models to better build multi-agent applications.
 
 In terms of model deployment, users can use third-party model services such
-as OpenAI API, HuggingFace/ModelScope Inference API, and can also quickly
-deploy local open-source model services through the [scripts]
-(<https://github.com/modelscope/agentscope/blob/main/scripts/README.md>) in
-the repository. Currently, we support building basic model services quickly
-using Flask with Transformers (or ModelScope), and also support deploying
-local model services through FastChat and vllm inference engines.
+as OpenAI API, Google Gemini API, HuggingFace/ModelScope Inference API, or
+quickly deploy local open-source model services through the [scripts](https://github.com/modelscope/agentscope/blob/main/scripts/README.md) in
+the repository.
 
-While in terms of model invocation, AgentScope provides a `ModelWrapper` class to encapsulate OpenAI API and RESTful Post Request calls.
-Currently, the supported OpenAI APIs include Chat, Image generation, and Embedding.
-Users can specify the model service by setting different model configs.
-
-|   Model Usage               | Supported APIs                                                              |
-| --------------------------- |-----------------------------------------------------------------------------|
-| Text generation             | Standard *OpenAI* chat API, FastChat and vllm                               |
-| Image generation            | *DALL-E* API for generating images                                          |
-| Embedding                   | API for text embeddings                                                     |
-| General usages in POST      | *Huggingface* and *ModelScope* Inference API, and other customized post API |
-
-Each API has its specific configuration requirements. For example, to configure an OpenAI API, you would need to fill out the following fields in the model config in a dict, a yaml file or a json file:
+While for model invocation, users should prepare a model configuration to specify the model service. Taking OpenAI Chat API as an example, the model configuration is like this:
 
 ```python
 model_config = {
     "config_name": "{config_name}", # A unique name for the model config.
     "model_type": "openai",         # Choose from "openai", "openai_dall_e", or "openai_embedding".
+
     "model_name": "{model_name}",   # The model identifier used in the OpenAI API, such as "gpt-3.5-turbo", "gpt-4", or "text-embedding-ada-002".
     "api_key": "xxx",               # Your OpenAI API key. If unset, the environment variable OPENAI_API_KEY is used.
     "organization": "xxx",          # Your OpenAI organization ID. If unset, the environment variable OPENAI_ORGANIZATION is used.
 }
 ```
 
-For open-source models, we support integration with various model interfaces such as HuggingFace, ModelScope, FastChat, and vllm. You can find scripts on deploying these services in the `scripts` directory, and we defer the detailed instructions to [[Using Different Model Sources with Model API]](#203-model).
+More details about model invocation, deployment and open-source models please refer to [Model](203-model-en) section.
 
-You can register your configuration by calling AgentScope's initialization method as follow. Besides, you can also load more than one config by calling init multiple times.
+After preparing the model configuration, you can register your configuration by calling the `init` method of AgentScope. Additionally, you can load multiple model configurations at once.
 
 ```python
 import agentscope
 
 # init once by passing a list of config dict
-openai_cfg_dict = {...dict_filling...}
-modelscope_cfg_dict = {...dict_filling...}
+openai_cfg_dict = {
+    # ...
+}
+modelscope_cfg_dict = {
+    # ...
+}
 agentscope.init(model_configs=[openai_cfg_dict, modelscope_cfg_dict])
 ```
 
@@ -71,7 +62,7 @@ dialogAgent = DialogAgent(name="assistant", model_config_name="gpt-4", sys_promp
 userAgent = UserAgent()
 ```
 
-**NOTE**: Please refer to [[Customizing Your Custom Agent with Agent Pool]](201-agent) for all available agents.
+**NOTE**: Please refer to [Customizing Your Own Agent](201-agent-en) for all available agents.
 
 ## Step3: Agent Conversation
 
@@ -112,6 +103,6 @@ while x is None or x.content != "exit":
   x = sequentialpipeline([dialog_agent, user_agent])
 ```
 
-For more details about how to utilize pipelines for complex agent interactions, please refer to [[Agent Interactions: Dive deeper into Pipelines and Message Hub]](202-pipeline).
+For more details about how to utilize pipelines for complex agent interactions, please refer to [Pipeline and MsgHub](202-pipeline-en).
 
 [[Return to the top]](#103-start-en)
