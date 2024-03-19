@@ -1,35 +1,107 @@
-# Set up Model API Serving
+# Set up Local Model API Serving
 
-In AgentScope, in addition to OpenAI API, we also support open-source
-models with post request API. In this document, we will introduce how to
-fast set up local model API serving with different inference engines.
+AgentScope supports developers to build their local model API serving with different inference engines/libraries.
+This document will introduce how to fast build their local API serving with provided scripts.
 
 Table of Contents
 =================
 
-- [Set up Model API Serving](#set-up-model-api-serving)
-- [Table of Contents](#table-of-contents)
-  - [Local Model API Serving](#local-model-api-serving)
-    - [Flask-based Model API Serving](#flask-based-model-api-serving)
-      - [With Transformers Library](#with-transformers-library)
-        - [Install Libraries and Set up Serving](#install-libraries-and-set-up-serving)
-        - [How to use in AgentScope](#how-to-use-in-agentscope)
-        - [Note](#note)
-      - [With ModelScope Library](#with-modelscope-library)
-        - [Install Libraries and Set up Serving](#install-libraries-and-set-up-serving-1)
-        - [How to use in AgentScope](#how-to-use-in-agentscope-1)
-        - [Note](#note-1)
-    - [FastChat](#fastchat)
-      - [Install Libraries and Set up Serving](#install-libraries-and-set-up-serving-2)
-      - [Supported Models](#supported-models)
+- [Local Model API Serving](#local-model-api-serving)
+  - [ollama](#ollama)
+    - [Install Libraries and Set up Serving](#install-libraries-and-set-up-serving)
+    - [How to use in AgentScope](#how-to-use-in-agentscope)
+  - [Flask-based Model API Serving](#flask-based-model-api-serving)
+    - [With Transformers Library](#with-transformers-library)
+      - [Install Libraries and Set up Serving](#install-libraries-and-set-up-serving)
+      - [How to use in AgentScope](#how-to-use-in-agentscope-1)
+      - [Note](#note)
+    - [With ModelScope Library](#with-modelscope-library)
+      - [Install Libraries and Set up Serving](#install-libraries-and-set-up-serving-1)
       - [How to use in AgentScope](#how-to-use-in-agentscope-2)
-    - [vllm](#vllm)
-      - [Install Libraries and Set up Serving](#install-libraries-and-set-up-serving-3)
-      - [Supported models](#supported-models-1)
-      - [How to use in AgentScope](#how-to-use-in-agentscope-3)
-  - [Model Inference API](#model-inference-api)
+      - [Note](#note-1)
+  - [FastChat](#fastchat)
+    - [Install Libraries and Set up Serving](#install-libraries-and-set-up-serving-2)
+    - [Supported Models](#supported-models)
+    - [How to use in AgentScope](#how-to-use-in-agentscope-3)
+  - [vllm](#vllm)
+    - [Install Libraries and Set up Serving](#install-libraries-and-set-up-serving-3)
+    - [Supported models](#supported-models-1)
+    - [How to use in AgentScope](#how-to-use-in-agentscope-4)
+- [Model Inference API](#model-inference-api)
 
 ## Local Model API Serving
+
+### ollama
+
+[ollama](https://github.com/ollama/ollama) is a CPU inference engine for LLMs. With ollama, developers can build their local model API serving without GPU requirements.
+
+#### Install Libraries and Set up Serving
+
+- First, install ollama in its [official repository](https://github.com/ollama/ollama) based on your system (e.g. macOS, windows or linux).
+
+- Follow ollama's [guidance](https://github.com/ollama/ollama) to pull or create a model and start its serving. Taking llama2 as an example, you can run the following command to pull the model files.
+
+```bash
+ollama pull llama2
+```
+
+#### How to use in AgentScope
+
+In AgentScope, you can use the following model configurations to load the model.
+
+- For ollama Chat API:
+
+```python
+{
+    "config_name": "my_ollama_chat_config",
+    "model_type": "ollama_chat",
+
+    # Required parameters
+    "model": "{model_name}",                    # The model name used in ollama API, e.g. llama2
+
+    # Optional parameters
+    "options": {                                # Parameters passed to the model when calling
+        # e.g. "temperature": 0., "seed": "123",
+    },
+    "keep_alive": "5m",                         # Controls how long the model will stay loaded into memory
+}
+```
+
+- For ollama generate API:
+
+```python
+{
+    "config_name": "my_ollama_generate_config",
+    "model_type": "ollama_generate",
+
+    # Required parameters
+    "model": "{model_name}",                    # The model name used in ollama API, e.g. llama2
+
+    # Optional parameters
+    "options": {                                # Parameters passed to the model when calling
+        # "temperature": 0., "seed": "123",
+    },
+    "keep_alive": "5m",                         # Controls how long the model will stay loaded into memory
+}
+```
+
+- For ollama embedding API:
+
+```python
+{
+    "config_name": "my_ollama_embedding_config",
+    "model_type": "ollama_embedding",
+
+    # Required parameters
+    "model": "{model_name}",                    # The model name used in ollama API, e.g. llama2
+
+    # Optional parameters
+    "options": {                                # Parameters passed to the model when calling
+        # "temperature": 0., "seed": "123",
+    },
+    "keep_alive": "5m",                         # Controls how long the model will stay loaded into memory
+}
+```
 
 ### Flask-based Model API Serving
 

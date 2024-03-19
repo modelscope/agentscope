@@ -57,8 +57,7 @@ class DemoRpcAgentWithMemory(AgentBase):
     """A demo Rpc agent that count its memory"""
 
     def reply(self, x: dict = None) -> dict:
-        if x is not None:
-            self.memory.add(x)
+        self.memory.add(x)
         msg = Msg(name=self.name, content={"mem_size": self.memory.size()})
         self.memory.add(msg)
         time.sleep(1)

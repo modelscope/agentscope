@@ -2,7 +2,7 @@
 """A dict dialog agent that using `parse_func` and `fault_handler` to
 parse the model response."""
 import json
-from typing import Any, Optional, Callable
+from typing import Any, Optional, Callable, Union
 from loguru import logger
 
 from ..message import Msg
@@ -42,13 +42,13 @@ class DictDialogAgent(AgentBase):
     the speak field as the output response.
 
     For usage example, please refer to the example of werewolf in
-    `examples/werewolf`"""
+    `examples/game_werewolf`"""
 
     def __init__(
         self,
         name: str,
-        sys_prompt: Optional[str] = None,
-        config_name_or_model: str = None,
+        sys_prompt: str,
+        config_name_or_model: Union[str, Callable[..., Any]],
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
         parse_func: Optional[Callable[..., Any]] = parse_dict,
@@ -61,10 +61,10 @@ class DictDialogAgent(AgentBase):
         Arguments:
             name (`str`):
                 The name of the agent.
-            sys_prompt (`Optional[str]`, defaults to `None`):
+            sys_prompt (`Optional[str]`):
                 The system prompt of the agent, which can be passed by args
                 or hard-coded in the agent.
-            config_name_or_model (`str`, defaults to None):
+            config_name_or_model (`Union[str, Callable[..., Any]]`):
                 The name of the model config, which is used to load model from
                 configuration.
             use_memory (`bool`, defaults to `True`):
@@ -127,13 +127,13 @@ class DictDialogAgent(AgentBase):
                 it defaults to treating the response as plain text.
         """
         # record the input if needed
-        if x is not None:
+        if self.memory:
             self.memory.add(x)
 
         # prepare prompt
         prompt = self.engine.join(
             self.sys_prompt,
-            self.memory.get_memory(),
+            self.memory and self.memory.get_memory(),
         )
 
         # call llm
@@ -158,6 +158,7 @@ class DictDialogAgent(AgentBase):
         self.speak(msg)
 
         # record to memory
-        self.memory.add(msg)
+        if self.memory:
+            self.memory.add(msg)
 
         return msg

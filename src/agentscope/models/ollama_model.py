@@ -6,7 +6,6 @@ from loguru import logger
 
 from agentscope.models import ModelWrapperBase, ModelResponse
 from agentscope.utils import QuotaExceededError, MonitorFactory
-from agentscope.utils.monitor import get_full_name
 
 try:
     import ollama
@@ -71,19 +70,6 @@ class OllamaWrapperBase(ModelWrapperBase):
             "The _register_default_metrics function is not Implemented.",
         )
 
-    # TODO: move into ModelWrapperBase
-    def _metric(self, metric_name: str) -> str:
-        """Add the class name and model name as prefix to the metric name.
-
-        Args:
-            metric_name (`str`):
-                The metric name.
-
-        Returns:
-            `str`: Metric name of this wrapper.
-        """
-        return get_full_name(name=metric_name, prefix=self.model)
-
 
 class OllamaChatWrapper(OllamaWrapperBase):
     """The model wrapper for Ollama chat API."""
@@ -144,7 +130,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
                 "keep_alive": keep_alive,
                 **kwargs,
             },
-            json_response=response,
+            response=response,
         )
 
         # step3: monitor the response
@@ -172,19 +158,19 @@ class OllamaChatWrapper(OllamaWrapperBase):
         """Register metrics to the monitor."""
         self.monitor = MonitorFactory.get_monitor()
         self.monitor.register(
-            self._metric("call_counter"),
+            self._metric("call_counter", self.model),
             metric_unit="times",
         )
         self.monitor.register(
-            self._metric("prompt_tokens"),
+            self._metric("prompt_tokens", self.model),
             metric_unit="tokens",
         )
         self.monitor.register(
-            self._metric("completion_tokens"),
+            self._metric("completion_tokens", self.model),
             metric_unit="token",
         )
         self.monitor.register(
-            self._metric("total_tokens"),
+            self._metric("total_tokens", self.model),
             metric_unit="token",
         )
 
@@ -247,7 +233,7 @@ class OllamaEmbeddingWrapper(OllamaWrapperBase):
                 "keep_alive": keep_alive,
                 **kwargs,
             },
-            json_response=response,
+            response=response,
         )
 
         # step4: monitor the response
@@ -269,7 +255,7 @@ class OllamaEmbeddingWrapper(OllamaWrapperBase):
         """Register metrics to the monitor."""
         self.monitor = MonitorFactory.get_monitor()
         self.monitor.register(
-            self._metric("call_counter"),
+            self._metric("call_counter", self.model),
             metric_unit="times",
         )
 
@@ -332,7 +318,7 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
                 "keep_alive": keep_alive,
                 **kwargs,
             },
-            json_response=response,
+            response=response,
         )
 
         # step4: monitor the response
@@ -360,18 +346,18 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
         """Register metrics to the monitor."""
         self.monitor = MonitorFactory.get_monitor()
         self.monitor.register(
-            self._metric("call_counter"),
+            self._metric("call_counter", self.model),
             metric_unit="times",
         )
         self.monitor.register(
-            self._metric("prompt_tokens"),
+            self._metric("prompt_tokens", self.model),
             metric_unit="tokens",
         )
         self.monitor.register(
-            self._metric("completion_tokens"),
+            self._metric("completion_tokens", self.model),
             metric_unit="token",
         )
         self.monitor.register(
-            self._metric("total_tokens"),
+            self._metric("total_tokens", self.model),
             metric_unit="token",
         )

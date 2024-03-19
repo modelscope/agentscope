@@ -1,6 +1,6 @@
 (208-distribute-en)=
 
-# About Distribution
+# Distribution
 
 AgentScope implements an Actor-based distributed deployment and parallel optimization, providing the following features:
 

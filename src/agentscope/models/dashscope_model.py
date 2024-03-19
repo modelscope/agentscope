@@ -14,7 +14,6 @@ from .model import ModelWrapperBase, ModelResponse
 
 from ..file_manager import file_manager
 from ..utils.monitor import MonitorFactory
-from ..utils.monitor import get_full_name
 from ..constants import _DEFAULT_API_BUDGET
 
 
@@ -70,35 +69,13 @@ class DashScopeWrapper(ModelWrapperBase):
 
         # Set monitor accordingly
         self.monitor = None
-        self.budget = budget
-        self._register_budget()
         self._register_default_metrics()
-
-    def _register_budget(self) -> None:
-        self.monitor = MonitorFactory.get_monitor()
-        self.monitor.register_budget(
-            model_name=self.model,
-            value=self.budget,
-            prefix=self.model,
-        )
 
     def _register_default_metrics(self) -> None:
         """Register metrics to the monitor."""
         raise NotImplementedError(
             "The _register_default_metrics function is not Implemented.",
         )
-
-    def _metric(self, metric_name: str) -> str:
-        """Add the class name and model name as prefix to the metric name.
-
-        Args:
-            metric_name (`str`):
-                The metric name.
-
-        Returns:
-            `str`: Metric name of this wrapper.
-        """
-        return get_full_name(name=metric_name, prefix=self.model)
 
 
 class DashScopeChatWrapper(DashScopeWrapper):
@@ -113,15 +90,15 @@ class DashScopeChatWrapper(DashScopeWrapper):
         # TODO: set quota to the following metrics
         self.monitor = MonitorFactory.get_monitor()
         self.monitor.register(
-            self._metric("prompt_tokens"),
+            self._metric("prompt_tokens", self.model),
             metric_unit="token",
         )
         self.monitor.register(
-            self._metric("completion_tokens"),
+            self._metric("completion_tokens", self.model),
             metric_unit="token",
         )
         self.monitor.register(
-            self._metric("total_tokens"),
+            self._metric("total_tokens", self.model),
             metric_unit="token",
         )
 
@@ -177,12 +154,19 @@ class DashScopeChatWrapper(DashScopeWrapper):
         kwargs = {**self.generate_args, **kwargs}
 
         # step2: checking messages
+        if not isinstance(messages, list):
+            raise ValueError(
+                "Dashscope `messages` field expected type `list`, "
+                f"got `{type(messages)}` instead.",
+            )
         if not all("role" in msg and "content" in msg for msg in messages):
             raise ValueError(
                 "Each message in the 'messages' list must contain a 'role' "
                 "and 'content' key for DashScope API.",
             )
 
+        # TODO: move is to prompt engineering
+        messages = self._preprocess_role(messages)
         # step3: forward to generate response
         response = dashscope.Generation.call(
             model=self.model,
@@ -208,7 +192,7 @@ class DashScopeChatWrapper(DashScopeWrapper):
                 "messages": messages,
                 **kwargs,
             },
-            json_response=response,
+            response=response,
         )
 
         # step5: update monitor accordingly
@@ -230,6 +214,34 @@ class DashScopeChatWrapper(DashScopeWrapper):
             raw=response,
         )
 
+    def _preprocess_role(self, messages: list) -> list:
+        """preprocess role rules for DashScope"""
+        # The models in this list require that the roles of messages must
+        # alternate between "user" and "assistant".
+        message_length = len(messages)
+        if message_length % 2 == 1:
+            # If the length of the message list is odd, roles will
+            # alternate, starting with "user"
+            roles = [
+                "user" if i % 2 == 0 else "assistant"
+                for i in range(message_length)
+            ]
+        else:
+            # If the length of the message list is even, the first role
+            # will be "system", followed by alternating "user" and
+            # "assistant"
+            roles = ["system"] + [
+                "user" if i % 2 == 1 else "assistant"
+                for i in range(1, message_length)
+            ]
+
+        # Assign the roles list to the "role" key for each message in
+        # the messages list
+        for message, role in zip(messages, roles):
+            message["role"] = role
+
+        return messages
+
 
 class DashScopeImageSynthesisWrapper(DashScopeWrapper):
     """The model wrapper for DashScope Image Synthesis API."""
@@ -241,7 +253,7 @@ class DashScopeImageSynthesisWrapper(DashScopeWrapper):
         # TODO: set quota to the following metrics
         self.monitor = MonitorFactory.get_monitor()
         self.monitor.register(
-            self._metric("image_count"),
+            self._metric("image_count", self.model),
             metric_unit="image",
         )
 
@@ -309,7 +321,7 @@ class DashScopeImageSynthesisWrapper(DashScopeWrapper):
                 "prompt": prompt,
                 **kwargs,
             },
-            json_response=response,
+            response=response,
         )
 
         # step4: update monitor accordingly
@@ -322,7 +334,7 @@ class DashScopeImageSynthesisWrapper(DashScopeWrapper):
             logger.error(e)
 
         # step5: return response
-        images = response["output"]["results"]
+        images = response.output["results"]
         # Get image urls as a list
         urls = [_["url"] for _ in images]
 
@@ -342,7 +354,7 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapper):
         # TODO: set quota to the following metrics
         self.monitor = MonitorFactory.get_monitor()
         self.monitor.register(
-            self._metric("total_tokens"),
+            self._metric("total_tokens", self.model),
             metric_unit="token",
         )
 
@@ -406,7 +418,7 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapper):
                 "input": texts,
                 **kwargs,
             },
-            json_response=response,
+            response=response,
         )
 
         # step4: update monitor accordingly
@@ -419,15 +431,15 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapper):
             logger.error(e)
 
         # step5: return response
-        if len(response["output"]["embeddings"]) == 0:
+        if len(response.output["embeddings"]) == 0:
             return ModelResponse(
-                embedding=response["output"]["embedding"][0],
+                embedding=response.output["embedding"][0],
                 raw=response,
             )
         else:
             return ModelResponse(
                 embedding=[
-                    _["embedding"] for _ in response["output"]["embeddings"]
+                    _["embedding"] for _ in response.output["embeddings"]
                 ],
                 raw=response,
             )

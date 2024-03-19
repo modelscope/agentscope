@@ -18,6 +18,7 @@ from .sql_query.sqlite import query_sqlite
 from .sql_query.mongodb import query_mongodb
 from .web_search.search import bing_search, google_search
 from .service_response import ServiceResponse
+from .service_factory import ServiceFactory
 from .retrieval.similarity import cos_sim
 from .text_processing.summarization import summarization
 from .retrieval.retrieval_from_list import retrieve_from_list
@@ -49,6 +50,7 @@ __all__ = [
     "query_sqlite",
     "query_mongodb",
     "ServiceResponse",
+    "ServiceFactory",
     "cos_sim",
     "summarization",
     "retrieve_from_list",

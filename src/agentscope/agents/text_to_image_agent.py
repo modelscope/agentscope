@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """A agent that convert text to image."""
 
-from typing import Optional
+from typing import Optional, Union, Callable, Any
 from loguru import logger
 
 from .agent import AgentBase
@@ -14,8 +14,8 @@ class TextToImageAgent(AgentBase):
     def __init__(
         self,
         name: str,
-        sys_prompt: Optional[str] = None,
-        config_name_or_model: str = None,
+        sys_prompt: str,
+        config_name_or_model: Union[str, Callable[..., Any]],
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
     ) -> None:
@@ -27,7 +27,7 @@ class TextToImageAgent(AgentBase):
             sys_prompt (`Optional[str]`):
                 The system prompt of the agent, which can be passed by args
                 or hard-coded in the agent.
-            config_name_or_model (`str`, defaults to None):
+            config_name_or_model (`Union[str, Callable[..., Any]]`):
                 The name of the model config, which is used to load model from
                 configuration.
             use_memory (`bool`, defaults to `True`):
@@ -44,8 +44,9 @@ class TextToImageAgent(AgentBase):
         )
 
     def reply(self, x: dict = None) -> dict:
-        if x is not None:
+        if self.memory:
             self.memory.add(x)
+
         image_urls = self.model(x.content).image_urls
         # TODO: optimize the construction of content
         msg = Msg(
@@ -54,5 +55,8 @@ class TextToImageAgent(AgentBase):
             url=image_urls,
         )
         logger.chat(msg)
-        self.memory.add(msg)
+
+        if self.memory:
+            self.memory.add(msg)
+
         return msg

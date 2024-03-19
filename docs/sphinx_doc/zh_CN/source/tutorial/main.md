@@ -12,24 +12,24 @@ AgentScope是一款全新的Multi-Agent框架，专为应用开发者打造，�
 
 ### 快速上手
 
+- [关于AgentScope](101-agentscope-zh)
 - [安装](102-installation-zh)
-- [基础概念](101-agentscope-zh)
-- [快速上手案例](103-example-zh)
-- [创建您的第一个应用](104-usecase-zh)
+- [快速开始](103-example-zh)
+- [创造您的第一个应用](104-usecase-zh)
 - [日志和WebUI](105-logging-zh)
 
 ### 进阶使用
 
-- [定制自己的Agent](201-agent-zh)
-- [智能体间交互](202-pipeline-zh)
-- [关于模型](203-model-zh)
-- [关于服务](204-service-zh)
-- [关于记忆](205-memory-zh)
+- [定制你自己的Agent](201-agent-zh)
+- [Pipeline和MsgHub](202-pipeline-zh)
+- [模型](203-model-zh)
+- [服务函数](204-service-zh)
+- [记忆](205-memory-zh)
 - [提示工程](206-prompt-zh)
 - [监控器](207-monitor-zh)
-- [关于分布式](208-distribute-zh)
+- [分布式](208-distribute-zh)
 
 ### 参与贡献
 
-- [加入 AgentScope 社区](301-community-zh)
-- [为 AgentScope 做贡献](302-contribute-zh)
+- [加入AgentScope社区](301-community-zh)
+- [贡献到AgentScope](302-contribute-zh)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """A general dialog agent."""
-from typing import Optional
+from typing import Optional, Callable, Any, Union
 
 from ..message import Msg
 from .agent import AgentBase
@@ -15,8 +15,8 @@ class DialogAgent(AgentBase):
     def __init__(
         self,
         name: str,
-        sys_prompt: Optional[str] = None,
-        config_name_or_model: str = None,
+        sys_prompt: str,
+        config_name_or_model: Union[str, Callable[..., Any]],
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
         prompt_type: Optional[PromptType] = PromptType.LIST,
@@ -29,7 +29,7 @@ class DialogAgent(AgentBase):
             sys_prompt (`Optional[str]`):
                 The system prompt of the agent, which can be passed by args
                 or hard-coded in the agent.
-            config_name_or_model (`str`, defaults to None):
+            config_name_or_model (`Union[str, Callable[..., Any]]`):
                 The name of the model config, which is used to load model from
                 configuration.
             use_memory (`bool`, defaults to `True`):
@@ -68,13 +68,13 @@ class DialogAgent(AgentBase):
             response to the user's input.
         """
         # record the input if needed
-        if x is not None:
+        if self.memory:
             self.memory.add(x)
 
         # prepare prompt
         prompt = self.engine.join(
             self.sys_prompt,
-            self.memory.get_memory(),
+            self.memory and self.memory.get_memory(),
         )
 
         # call llm and generate response
@@ -85,6 +85,7 @@ class DialogAgent(AgentBase):
         self.speak(msg)
 
         # Record the message in memory
-        self.memory.add(msg)
+        if self.memory:
+            self.memory.add(msg)
 
         return msg
