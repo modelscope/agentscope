@@ -86,5 +86,5 @@ class RAGBase(ABC):
             self.postprocessing_model(prompt.format(retrieved_docs))
         """
         assert self.postprocessing_model
-        prompt = prompt.format(retrieved_docs)
+        prompt = prompt.format("\n".join(retrieved_docs))
         return self.postprocessing_model(prompt, **kwargs).text

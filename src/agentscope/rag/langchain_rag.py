@@ -141,7 +141,6 @@ class LangChainRAG(RAGBase):
             search_type=search_type,
             search_kwargs={
                 "k": self.config.get("similarity_top_k", 6),
-                "score_threshold": self.config.get("score_threshold", 0),
             },
         )
 
