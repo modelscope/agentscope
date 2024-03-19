@@ -136,11 +136,13 @@ class LangChainRAG(RAGBase):
         )
 
         # build retriever
-        k = self.config.get("k", 6)
         search_type = self.config.get("search_type", "similarity")
         self.retriever = self.vector_store.as_retriever(
             search_type=search_type,
-            search_kwargs={"k": k},
+            search_kwargs={
+                "k": self.config.get("similarity_top_k", 6),
+                "score_threshold": self.config.get("score_threshold", 0),
+            },
         )
 
     def retrieve(self, query: Any, to_list_strs: bool = False) -> list[Any]:
