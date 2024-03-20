@@ -263,7 +263,7 @@ for i in range(1, MAX_GAME_ROUND + 1):
 基于它们的角色和上述编码的策略进行互动：
 
 ```bash
-cd examples/werewolf
+cd examples/game_werewolf
 python main.py  # Assuming the pipeline is implemented in main.py
 ```
 
@@ -308,12 +308,5 @@ Moderator: The day is coming, all the players open your eyes. Last night is peac
 ## 下一步
 
 现在你已经掌握了如何使用AgentScope方便地设置多agent应用程序。您可以随意修改游戏，包括引入额外的角色或者引入更复杂的策略。如果你想更深入地探索AgentScope的更多功能，比如agent使用的内存管理和服务函数，请参考高级探索部分的教程并查阅API参考。
-
-## 其他样例
-
-- 简单群聊样例: [examples/Simple Conversation](https://github.com/modelscope/agentscope/tree/main/examples/simple_chat/README.md)
-- 狼人杀样例[examples/Werewolves](https://github.com/modelscope/agentscope/tree/main/examples/werewolves/README.md)
-- 分布式agents样例[examples/Distributed Agents](https://github.com/modelscope/agentscope/tree/main/examples/distributed_agents/README.md)
-- ...
 
 [[返回顶部]](#104-usecase-zh)

@@ -8,37 +8,24 @@ AgentScope内置了灵活的通信机制。在本教程中，我们将通过一�
 
 为了更好的构建多智能体应用，AgentScope将模型的部署与调用解耦开，以API服务调用的方式支持各种不同的模型。
 
-在模型部署方面，用户可以使用第三方模型服务，例如OpenAI API，HuggingFace Inference
-API，同时也可以通过仓库中的[脚本](https://github.com/modelscope/agentscope/blob/main/scripts/README.md)快速部署本地开源模型服务，
-目前已支持通过Flask配合Transformers（或ModelScope）快速建立基础的模型服务，同时也已经支持通过FastChat和vllm等推理引擎部署本地模型服务。
+在模型部署方面，用户可以使用第三方模型服务，例如OpenAI API，Google Gemini API, HuggingFace/ModelScope Inference API等，或者也可以通过AgentScope仓库中的[脚本](https://github.com/modelscope/agentscope/blob/main/scripts/README.md)快速部署本地开源模型服务，
 
-模型调用方面，AgentScope通过`ModelWrapper`类提供OpenAI API和RESTful Post Request调用的封装。
-目前支持的OpenAI API包括了对话（Chat），图片生成（Image generation）和嵌入式（Embedding）。
-用户可以通过设定不同的model config来指定模型服务。
-
-| 模型使用         | APIs                                                                   |
-|--------------|------------------------------------------------------------------------|
-| 文本生成         | *OpenAI* chat API，FastChat和vllm                                        |
-| 图片生成         | *DALL-E* API                                                           |
-| 文本嵌入         | 文本Embedding                                                            |
-| 基于Post请求的API | *Huggingface*/*ModelScope* Inference API，以及用户自定应的基于Post请求的API |
-
-每种API都有其特定的配置要求。例如，要配置OpenAI API，您需要在模型配置中填写以下字段：
+模型调用方面，用户需要通过设定模型配置来指定模型服务。以OpenAI Chat API为例，需要准备如下的模型配置：
 
 ```python
 model_config = {
     "config_name": "{config_name}", # A unique name for the model config.
     "model_type": "openai",         # Choose from "openai", "openai_dall_e", or "openai_embedding".
+
     "model_name": "{model_name}",   # The model identifier used in the OpenAI API, such as "gpt-3.5-turbo", "gpt-4", or "text-embedding-ada-002".
     "api_key": "xxx",               # Your OpenAI API key. If unset, the environment variable OPENAI_API_KEY is used.
     "organization": "xxx",          # Your OpenAI organization ID. If unset, the environment variable OPENAI_ORGANIZATION is used.
 }
 ```
 
-对于开源模型，我们支持与HuggingFace、ModelScope、FastChat和vllm等各种模型接口的集成。您可以在`scripts
-`目录中找到部署这些服务的脚本，详细说明请见[[模型服务]](203-model).
+更多关于模型调用，部署和开源模型的信息请见[模型](203-model-zh)章节。
 
-您可以通过调用AgentScope的初始化方法来注册您的配置。此外，您还可以一次性加载多个模型配置。
+准备好模型配置后，用户可以通过调用AgentScope的初始化方法`init`函数来注册您的配置。此外，您还可以一次性加载多个模型配置。
 
 ```python
 import agentscope
@@ -69,7 +56,7 @@ dialogAgent = DialogAgent(name="assistant", model_config_name="gpt-4", sys_promp
 userAgent = UserAgent()
 ```
 
-**注意**：请参考[[使用Agent Pool自定义您的自定义智能体]](201-agent)以获取所有可用的智能体以及创建自定义的智能体。
+**注意**：请参考[定制你自己的Agent](201-agent-zh)以获取所有可用的智能体以及创建自定义的智能体。
 
 ## 第三步：智能体对话
 
@@ -112,6 +99,6 @@ while x is None or x.content != "exit":
   x = sequentialpipeline([dialog_agent, user_agent])
 ```
 
-有关如何使用Pipeline进行复杂的智能体交互的更多细节，请参考[[Agent Interactions: Dive deeper into Pipelines and Message Hub]](202-pipeline)。
+有关如何使用Pipeline进行复杂的智能体交互的更多细节，请参考[Pipeline和MsgHub](202-pipeline-zh)。
 
 [[返回顶部]](#103-example-zh)

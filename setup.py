@@ -44,6 +44,7 @@ minimal_requires = [
     "tiktoken",
     "Pillow",
     "requests",
+    "chardet",
     "inputimeout",
     "openai>=1.3.0",
     "numpy",

@@ -334,7 +334,7 @@ class DashScopeImageSynthesisWrapper(DashScopeWrapper):
             logger.error(e)
 
         # step5: return response
-        images = response["output"]["results"]
+        images = response.output["results"]
         # Get image urls as a list
         urls = [_["url"] for _ in images]
 
@@ -431,15 +431,15 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapper):
             logger.error(e)
 
         # step5: return response
-        if len(response["output"]["embeddings"]) == 0:
+        if len(response.output["embeddings"]) == 0:
             return ModelResponse(
-                embedding=response["output"]["embedding"][0],
+                embedding=response.output["embedding"][0],
                 raw=response,
             )
         else:
             return ModelResponse(
                 embedding=[
-                    _["embedding"] for _ in response["output"]["embeddings"]
+                    _["embedding"] for _ in response.output["embeddings"]
                 ],
                 raw=response,
             )
