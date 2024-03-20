@@ -67,7 +67,7 @@ class TestWebSearches(unittest.TestCase):
             """Dummy model for testing"""
 
             def __init__(self) -> None:
-                pass
+                self.max_length = 1000
 
             def __call__(self, messages: list[Msg]) -> ModelResponse:
                 return ModelResponse(text="model return")

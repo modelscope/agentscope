@@ -1,24 +1,23 @@
 # -*- coding: utf-8 -*-
 """parsing and digesting the web pages"""
-from typing import Optional
+from typing import Optional, Union
 import requests
+from loguru import logger
 
 from agentscope.service.service_response import ServiceResponse
 from agentscope.service.service_status import ServiceExecStatus
 from agentscope.models.model import ModelWrapperBase
-from agentscope.message import Msg
+from agentscope.prompt import PromptEngine, PromptType
 
 
 DEFAULT_SYS_PROMPT = (
     "You're a web page analyser. You job is to extract important"
     "and useful information from html or webpage description.\n"
-    "Extract useful part from the following:{}"
 )
 
 DEFAULT_SUMMARY_PROMPT = (
     "You're a web page analyser. You job is to summarize the "
     "content of a webpage.\n"
-    "Summarize from the following:{}"
 )
 
 DEFAULT_SPLIT_LEVEL = [
@@ -30,6 +29,7 @@ DEFAULT_SPLIT_LEVEL = [
 def webpage_digest(
     url: str,
     model: Optional[ModelWrapperBase] = None,
+    prompt_type: Optional[PromptType] = PromptType.LIST,
     html_split_levels: Optional[tuple[str]] = ("h1", "h2"),
     digest_prompt: Optional[str] = DEFAULT_SYS_PROMPT,
     digest_summary_prompt: Optional[str] = DEFAULT_SUMMARY_PROMPT,
@@ -39,8 +39,11 @@ def webpage_digest(
         url (str): the url of the web page
         model (Optional[ModelWrapperBase]): the model that is
             used to digest the web page content.
+        prompt_type (Optional[PromptEngine]): how the prompt engine
+            compose the messages.
         html_split_levels (Optional[tuple[str]):
-            parameters for splitting the html file.
+            In case the webpage is too long, this
+            parameter is for splitting the html file.
             Default will split a html file at 'h1' and 'h2' levels,
             and feed each partition to model to digest.
         digest_prompt (Optional[str]): prompt for
@@ -86,6 +89,7 @@ def webpage_digest(
                  the content of all text information on web page.
     """
     html = requests.get(url)
+    logger.info(f"Get content from {url}...")
     digest_result = {}
 
     try:
@@ -108,6 +112,7 @@ def webpage_digest(
     bs_transformer = BeautifulSoupTransformer()
     html_content = bs_transformer.transform_documents([html_doc])
     digest_result["html_text_content"] = html_content[0].page_content
+    logger.info(f"Parse text info from {url}, save to 'html_text_content'")
 
     # obtain links in html
     links = []
@@ -121,10 +126,31 @@ def webpage_digest(
                 },
             )
     digest_result["href_links"] = links
+    logger.info(f"Parse href links from {url}, save to 'href_links'")
 
     # split the webpage and feed them to a model for analysis
     model_digested = []
     if model is not None:
+        logger.info(f"Start using model to digest {url}")
+        prompt_engine = PromptEngine(model=model, prompt_type=prompt_type)
+
+        def compose_prompt(
+            instruction: Optional[str],
+            content: Optional[str],
+        ) -> Union[str, list[dict]]:
+            """simply compose to feed model"""
+            sys_msg = {
+                "name": "system",
+                "role": "system",
+                "content": instruction or " ",
+            }
+            info_msg = {
+                "name": "user",
+                "role": "user",
+                "content": content or " ",
+            }
+            return prompt_engine.join(sys_msg, info_msg)
+
         all_text = ""
         if html_split_levels is None:
             # set the default splitting granularity to h1 and h2 in html
@@ -138,12 +164,8 @@ def webpage_digest(
         for split in html_header_splits:
             if len(split.page_content) == 0:
                 pass
-            msg = Msg(
-                name="user",
-                role="user",
-                content=digest_prompt.format(split.page_content),
-            )
-            analysis_res = model(messages=[msg])
+            prompt = compose_prompt(digest_prompt, split.page_content)
+            analysis_res = model(messages=prompt)
             if analysis_res.text:
                 model_digested.append(
                     {
@@ -153,12 +175,8 @@ def webpage_digest(
                 )
             all_text += analysis_res.text
         # generate a final summary
-        msg = Msg(
-            name="user",
-            role="user",
-            content=digest_summary_prompt.format(all_text),
-        )
-        analysis_res = model(messages=[msg])
+        prompt = compose_prompt(digest_summary_prompt, all_text)
+        analysis_res = model(messages=prompt)
         if analysis_res.text:
             model_digested.append(
                 {
