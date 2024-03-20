@@ -39,8 +39,7 @@ def main() -> None:
     rag_agent = AgentClass(
         name="Assistant",
         sys_prompt="You're a helpful assistant. You need to generate"
-        " answers based on the provided context:\n "
-        "Context: \n {retrieved_context}\n ",
+        " answers based on the provided context:\n ",
         model_config_name="qwen_config",  # your model config name
         emb_model_config_name="qwen_emb_config",
         config={
@@ -48,6 +47,7 @@ def main() -> None:
             "chunk_size": 2048,
             "chunk_overlap": 40,
             "similarity_top_k": 10,
+            "log_retrieval": True,
         },
     )
     user_agent = UserAgent()

@@ -45,7 +45,13 @@ class RAGBase(ABC):
         **kwargs: Any,
     ) -> Any:
         """
-        load data (documents) from disk to memory and chunking them
+        Load data (documents) from disk to memory and chunking them
+        Args:
+            loader (Any): data loader, depending on the package
+            query (str): query for getting data from DB
+
+        Returns:
+            Any: loaded documents
         """
 
     @abstractmethod
@@ -56,6 +62,16 @@ class RAGBase(ABC):
         **kwargs: Any,
     ) -> Any:
         """
+        Store and index the documents.
+        Args:
+            docs (Any):
+                documents to be processed, stored and indexed
+            vector_store (Any):
+                vector store to store the index and/or documents
+
+        Returns:
+            Any: can be indices, depending on the RAG package
+
         preprocessing the loaded documents, for example:
         1) chunking,
         2) generate embedding,
@@ -66,6 +82,12 @@ class RAGBase(ABC):
     def retrieve(self, query: Any, to_list_strs: bool = False) -> list[Any]:
         """
         retrieve list of content from vdb to memory
+        Args:
+            query (Any): query to retrieve
+            to_list_strs (bool): whether return a list of str
+
+        Returns:
+            return a list with retrieved documents (in strings)
         """
 
     def post_processing(
@@ -77,10 +99,14 @@ class RAGBase(ABC):
         """
         A default solution for post-processing function, generates answer
         based on the retrieved documents.
-        :param retrieved_docs: list of retrieved documents
-        :param prompt: prompt for LLM generating answer with the
-        retrieved documents
+        Args:
+            retrieved_docs (list[str]):
+                list of retrieved documents
+            prompt (str):
+                prompt for LLM generating answer with the retrieved documents
 
+        Returns:
+            Any: a synthesized answer from LLM with retrieved documents
 
         Example:
             self.postprocessing_model(prompt.format(retrieved_docs))

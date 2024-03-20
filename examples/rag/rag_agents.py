@@ -4,8 +4,6 @@ This example shows how to build an agent with RAG (backup by LlamaIndex)
 """
 
 from typing import Optional
-from llama_index.core import SimpleDirectoryReader
-from langchain_community.document_loaders import DirectoryLoader
 
 from agentscope.prompt import PromptType
 from agentscope.agents.agent import AgentBase
@@ -28,7 +26,6 @@ class RAGAgent(AgentBase):
         sys_prompt: Optional[str] = None,
         model_config_name: str = None,
         emb_model_config_name: str = None,
-        use_memory: bool = True,
         memory_config: Optional[dict] = None,
         prompt_type: Optional[PromptType] = PromptType.LIST,
         config: Optional[dict] = None,
@@ -37,7 +34,7 @@ class RAGAgent(AgentBase):
             name=name,
             sys_prompt=sys_prompt,
             model_config_name=model_config_name,
-            use_memory=use_memory,
+            use_memory=True,
             memory_config=memory_config,
         )
         # init prompt engine
@@ -48,6 +45,8 @@ class RAGAgent(AgentBase):
         # MUST USE LlamaIndexAgent OR LangChainAgent
         self.rag = None
         self.config = config or {}
+        if "log_retrieval" not in self.config:
+            self.config["log_retrieval"] = True
 
     def reply(
         self,
@@ -73,25 +72,28 @@ class RAGAgent(AgentBase):
         """
         retrieved_docs_to_string = ""
         # record the input if needed
-        if x is not None:
+        if self.memory:
             self.memory.add(x)
+
+        if x is not None:
             # retrieve when the input is not None
             content = x.get("content", "")
             retrieved_docs = self.rag.retrieve(content, to_list_strs=True)
             for content in retrieved_docs:
                 retrieved_docs_to_string += "\n>>>> " + content
 
-            self.speak("[retrieved]:" + retrieved_docs_to_string)
+            if self.config["log_retrieval"]:
+                self.speak("[retrieved]:" + retrieved_docs_to_string)
+
         # prepare prompt
         prompt = self.engine.join(
             {
                 "role": "system",
-                "content": self.sys_prompt.format_map(
-                    {"retrieved_context": retrieved_docs_to_string},
-                ),
+                "content": self.sys_prompt,
             },
             # {"role": "system", "content": retrieved_docs_to_string},
             self.memory.get_memory(),
+            "Context: " + retrieved_docs_to_string,
         )
 
         # call llm and generate response
@@ -118,7 +120,6 @@ class LlamaIndexAgent(RAGAgent):
         sys_prompt: Optional[str] = None,
         model_config_name: str = None,
         emb_model_config_name: str = None,
-        use_memory: bool = True,
         memory_config: Optional[dict] = None,
         prompt_type: Optional[PromptType] = PromptType.LIST,
         config: Optional[dict] = None,
@@ -128,11 +129,17 @@ class LlamaIndexAgent(RAGAgent):
             sys_prompt=sys_prompt,
             model_config_name=model_config_name,
             emb_model_config_name=emb_model_config_name,
-            use_memory=use_memory,
             memory_config=memory_config,
             prompt_type=prompt_type,
             config=config,
         )
+        try:
+            from llama_index.core import SimpleDirectoryReader
+        except ImportError as exc:
+            raise ImportError(
+                " LlamaIndexAgent requires llama-index to be install."
+                "Please run `pip install llama-index`",
+            ) from exc
         # init rag related attributes
         self.rag = LlamaIndexRAG(
             model=self.model,
@@ -159,7 +166,6 @@ class LangChainRAGAgent(RAGAgent):
         sys_prompt: Optional[str] = None,
         model_config_name: str = None,
         emb_model_config_name: str = None,
-        use_memory: bool = True,
         memory_config: Optional[dict] = None,
         prompt_type: Optional[PromptType] = PromptType.LIST,
         config: Optional[dict] = None,
@@ -169,11 +175,19 @@ class LangChainRAGAgent(RAGAgent):
             sys_prompt=sys_prompt,
             model_config_name=model_config_name,
             emb_model_config_name=emb_model_config_name,
-            use_memory=use_memory,
             memory_config=memory_config,
             prompt_type=prompt_type,
             config=config,
         )
+        try:
+            from langchain_community.document_loaders import DirectoryLoader
+        except ImportError as exc:
+            raise ImportError(
+                "LangChainRAGAgent requires LangChain related packages "
+                "installed. Please run `pip install langchain "
+                "unstructured[all-docs] langchain-text-splitters`",
+            ) from exc
+
         # init rag related attributes
         self.rag = LangChainRAG(
             model=self.model,

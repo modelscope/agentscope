@@ -5,24 +5,34 @@ into AgentScope package
 """
 
 from typing import Any, Optional, List, Union
+from loguru import logger
 
-from llama_index.core.readers.base import BaseReader
-from llama_index.core.base.base_retriever import BaseRetriever
-from llama_index.core.base.embeddings.base import BaseEmbedding, Embedding
-from llama_index.core.ingestion import IngestionPipeline
-from llama_index.core.vector_stores.types import (
-    BasePydanticVectorStore,
-    VectorStore,
-)
-from llama_index.core.bridge.pydantic import PrivateAttr
-from llama_index.core.node_parser.interface import NodeParser
-from llama_index.core.node_parser import SentenceSplitter
-
-
-from llama_index.core import (
-    VectorStoreIndex,
-    SimpleDirectoryReader,
-)
+try:
+    from llama_index.core.readers.base import BaseReader
+    from llama_index.core.base.base_retriever import BaseRetriever
+    from llama_index.core.base.embeddings.base import BaseEmbedding, Embedding
+    from llama_index.core.ingestion import IngestionPipeline
+    from llama_index.core.vector_stores.types import (
+        BasePydanticVectorStore,
+        VectorStore,
+    )
+    from llama_index.core.bridge.pydantic import PrivateAttr
+    from llama_index.core.node_parser.interface import NodeParser
+    from llama_index.core.node_parser import SentenceSplitter
+    from llama_index.core import (
+        VectorStoreIndex,
+        SimpleDirectoryReader,
+    )
+except ImportError:
+    BaseReader, BaseRetriever, BaseEmbedding, Embedding = (
+        None,
+        None,
+        None,
+        None,
+    )
+    IngestionPipeline, BasePydanticVectorStore, VectorStore = None, None, None
+    PrivateAttr, NodeParser, SentenceSplitter = None, None, None
+    VectorStoreIndex, SimpleDirectoryReader = None, None
 
 from agentscope.rag import RAGBase
 from agentscope.rag.rag import (
@@ -46,6 +56,14 @@ class _EmbeddingModel(BaseEmbedding):
         emb_model: ModelWrapperBase,
         embed_batch_size: int = 1,
     ) -> None:
+        """
+        Dummy wrapper to convert a ModelWrapperBase to llama Index
+        embedding model
+
+        Args:
+            emb_model (ModelWrapperBase): embedding model in ModelWrapperBase
+            embed_batch_size (int): batch size, defaults to 1
+        """
         super().__init__(
             model_name="Temporary_embedding_wrapper",
             embed_batch_size=embed_batch_size,
@@ -53,16 +71,31 @@ class _EmbeddingModel(BaseEmbedding):
         self._emb_model_wrapper = emb_model
 
     def _get_query_embedding(self, query: str) -> List[float]:
+        """
+        get embedding for query
+        Args:
+            query (str): query to be embedded
+        """
         # Note: AgentScope embedding model wrapper returns list of embedding
         return list(self._emb_model_wrapper(query).embedding[0])
 
     def _get_text_embeddings(self, texts: List[str]) -> List[Embedding]:
+        """
+        get embedding for list of strings
+        Args:
+             texts ( List[str]): texts to be embedded
+        """
         results = [
             list(self._emb_model_wrapper(t).embedding[0]) for t in texts
         ]
         return results
 
     def _get_text_embedding(self, text: str) -> Embedding:
+        """
+        get embedding for a single string
+        Args:
+             text (str): texts to be embedded
+        """
         return list(self._emb_model_wrapper(text).embedding[0])
 
     # TODO: use proper async methods, but depends on model wrapper
@@ -84,16 +117,26 @@ class _EmbeddingModel(BaseEmbedding):
 
 class LlamaIndexRAG(RAGBase):
     """
-    This class is a wrapper around the Llama index RAG.
+    This class is a wrapper with the llama index RAG.
     """
 
     def __init__(
         self,
         model: Optional[ModelWrapperBase],
-        emb_model: Any = None,
+        emb_model: Union[ModelWrapperBase, BaseEmbedding, None] = None,
         config: Optional[dict] = None,
         **kwargs: Any,
     ) -> None:
+        """
+        RAG component based on llama index.
+        Args:
+            model (ModelWrapperBase):
+                The language model used for final synthesis
+            emb_model (Optional[ModelWrapperBase]):
+                The embedding model used for generate embeddings
+            config (dict):
+                The additional configuration for llama index rag
+        """
         super().__init__(model, emb_model, config, **kwargs)
         self.retriever = None
         self.index = None
@@ -119,10 +162,15 @@ class LlamaIndexRAG(RAGBase):
     ) -> Any:
         """
         Accept a loader, loading the desired data (no chunking)
-        :param loader: object to load data, expected be an instance of class
-        inheriting from BaseReader.
-        :param query: optional, used when the data is in a database.
-        :return: the loaded documents (un-chunked)
+        Args:
+            loader (BaseReader):
+                object to load data, expected be an instance of class
+                inheriting from BaseReader in llama index.
+            query (Optional[str]):
+                optional, used when the data is in a database.
+
+        Returns:
+            Any: loaded documents
 
         Example 1: use simple directory loader to load general documents,
         including Markdown, PDFs, Word documents, PowerPoint decks, images,
@@ -152,6 +200,7 @@ class LlamaIndexRAG(RAGBase):
             documents = loader.load_data()
         else:
             documents = loader.load_data(query)
+        logger.info(f"loaded {len(documents)} documents")
         return documents
 
     def store_and_index(
@@ -164,12 +213,21 @@ class LlamaIndexRAG(RAGBase):
     ) -> Any:
         """
         Preprocessing the loaded documents.
-        :param docs: documents to be processed
-        :param vector_store: vector store
-        :param retriever: optional, specifies the retriever to use
-        :param transformations: optional, specifies the transformations
-            to preprocess the documents
-        :param kwargs:
+        Args:
+            docs (Any):
+                documents to be processed, usually expected to be in
+                 llama index Documents.
+            vector_store (Union[BasePydanticVectorStore, VectorStore, None]):
+                vector store in llama index
+            retriever (Optional[BaseRetriever]):
+                optional, specifies the retriever in llama index to be used
+            transformations (Optional[list[NodeParser]]):
+                optional, specifies the transformations (operators) to
+                process documents (e.g., split the documents into smaller
+                chunks)
+
+        Return:
+            Any: return the index of the processed document
 
         In LlamaIndex terms, an Index is a data structure composed
         of Document objects, designed to enable querying by an LLM.
@@ -210,11 +268,16 @@ class LlamaIndexRAG(RAGBase):
                 transformations=transformations,
             )
             nodes = pipeline.run(documents=docs)
-            self.index = VectorStoreIndex(nodes=nodes)
+            self.index = VectorStoreIndex(
+                nodes=nodes,
+                embed_model=self.emb_model,
+            )
 
         # set the retriever
         if retriever is None:
-            print(self.config.get("similarity_top_k", DEFAULT_TOP_K))
+            logger.info(
+                f'{self.config.get("similarity_top_k", DEFAULT_TOP_K)}',
+            )
             self.retriever = self.index.as_retriever(
                 embed_model=self.emb_model,
                 similarity_top_k=self.config.get(
@@ -230,13 +293,24 @@ class LlamaIndexRAG(RAGBase):
     def set_retriever(self, retriever: BaseRetriever) -> None:
         """
         Reset the retriever if necessary.
+        Args:
+            retriever (BaseRetriever): passing a retriever in llama index.
         """
         self.retriever = retriever
 
     def retrieve(self, query: str, to_list_strs: bool = False) -> list[Any]:
         """
         This is a basic retrieve function
-        :param query: query is expected to be a question in string
+        Args:
+            query (str):
+                query is expected to be a question in string
+            to_list_strs (book):
+                whether returns the list of strings;
+                if False, return NodeWithScore
+
+        Return:
+            list[Any]: list of str or NodeWithScore
+
 
         More advanced query processing can refer to
         https://docs.llamaindex.ai/en/stable/examples/query_transformations/query_transform_cookbook.html

@@ -4,19 +4,24 @@ This module is integrate the LangChain RAG model into our AgentScope package
 """
 
 
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
-# from pathlib import Path
-
-from langchain_core.vectorstores import VectorStore
-from langchain_core.documents import Document
-from langchain_core.embeddings import Embeddings
-from langchain_community.document_loaders.base import BaseLoader
-from langchain_community.vectorstores import Chroma
-from langchain_text_splitters.base import TextSplitter
-
-# from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_text_splitters import CharacterTextSplitter
+try:
+    from langchain_core.vectorstores import VectorStore
+    from langchain_core.documents import Document
+    from langchain_core.embeddings import Embeddings
+    from langchain_community.document_loaders.base import BaseLoader
+    from langchain_community.vectorstores import Chroma
+    from langchain_text_splitters.base import TextSplitter
+    from langchain_text_splitters import CharacterTextSplitter
+except ImportError:
+    VectorStore = None
+    Document = None
+    Embeddings = None
+    BaseLoader = None
+    Chroma = None
+    TextSplitter = None
+    CharacterTextSplitter = None
 
 from agentscope.rag import RAGBase
 from agentscope.rag.rag import DEFAULT_CHUNK_OVERLAP, DEFAULT_CHUNK_SIZE
@@ -24,12 +29,25 @@ from agentscope.models import ModelWrapperBase
 
 
 class _LangChainEmbModel(Embeddings):
-    def __init__(self, emb_model: ModelWrapperBase):
+    """
+    Dummy wrapper to convert the ModelWrapperBase embedding model
+    to a LanguageChain RAG model
+    """
+
+    def __init__(self, emb_model: ModelWrapperBase) -> None:
+        """
+        Dummy wrapper
+        Args:
+            emb_model (ModelWrapperBase): embedding model of
+                ModelWrapperBase type
+        """
         self._emb_model_wrapper = emb_model
 
     def embed_documents(self, texts: list[str]) -> list[list[float]]:
         """
         Wrapper function for embedding list of documents
+        Args:
+            texts (list[str]): list of texts to be embedded
         """
         results = [
             list(self._emb_model_wrapper(t).embedding[0]) for t in texts
@@ -39,6 +57,8 @@ class _LangChainEmbModel(Embeddings):
     def embed_query(self, text: str) -> list[float]:
         """
         Wrapper function for embedding a single query
+        Args:
+            text (str): query to be embedded
         """
         return list(self._emb_model_wrapper(text).embedding[0])
 
@@ -46,22 +66,36 @@ class _LangChainEmbModel(Embeddings):
 class LangChainRAG(RAGBase):
     """
     This class is a wrapper around the LangChain RAG.
-    TODO: still under construction
     """
 
     def __init__(
         self,
         model: Optional[ModelWrapperBase],
-        emb_model: Optional[ModelWrapperBase],
+        emb_model: Union[ModelWrapperBase, Embeddings, None],
         config: Optional[dict] = None,
         **kwargs: Any,
     ) -> None:
+        """
+        Initializes the LangChainRAG
+        Args:
+            model (ModelWrapperBase):
+                The language model used for final synthesis
+            emb_model ( Union[ModelWrapperBase, Embeddings, None]):
+                The embedding model used for generate embeddings
+            config (dict):
+                The additional configuration for llama index rag
+        """
         super().__init__(model, emb_model, **kwargs)
 
         self.loader = None
         self.splitter = None
         self.retriever = None
         self.vector_store = None
+
+        if VectorStore is None:
+            raise ImportError(
+                "Please install LangChain RAG packages to use LangChain RAG.",
+            )
 
         self.config = config or {}
         if isinstance(emb_model, ModelWrapperBase):
@@ -81,18 +115,17 @@ class LangChainRAG(RAGBase):
     ) -> list[Document]:
         # pylint: disable=unused-argument
         """
-        loading data from a directory
-        :param loader: accepting a LangChain loader instance, default is a
-        :param _: accepting a query, LangChain does not rely on this
-        :param kwargs: other parameters for loader and splitter
-        :return: a list of documents
-
-        Notice: currently LangChain supports
+        Loading data from a directory
+        Args:
+            loader (BaseLoader):
+                accepting a LangChain loader instance
+            query (str):
+                accepting a query, LangChain does not rely on this
+        Returns:
+            list[Document]: a list of documents loaded
         """
         self.loader = loader
         docs = self.loader.load()
-        # self.splitter = self.splitter_type(**kwargs)
-        # all_splits = self.splitter.split_documents(docs)
         return docs
 
     def store_and_index(
@@ -101,15 +134,20 @@ class LangChainRAG(RAGBase):
         vector_store: Optional[VectorStore] = None,
         splitter: Optional[TextSplitter] = None,
         **kwargs: Any,
-    ) -> None:
+    ) -> Any:
         """
         Preprocessing the loaded documents.
-        :param docs: documents to be processed
-        :param vector_store: vector store
-        :param retriever: optional, specifies the retriever to use
-        :param splitter: optional, specifies the splitter to preprocess
-            the documents
-        :param kwargs:
+        Args:
+            docs (Any):
+                documents to be processed
+            vector_store (Optional[VectorStore]):
+                vector store in LangChain RAG
+            splitter (Optional[TextSplitter]):
+                optional, specifies the splitter to preprocess
+                the documents
+
+        Returns:
+            None
 
         In LlamaIndex terms, an Index is a data structure composed
         of Document objects, designed to enable querying by an LLM.
@@ -147,7 +185,11 @@ class LangChainRAG(RAGBase):
     def retrieve(self, query: Any, to_list_strs: bool = False) -> list[Any]:
         """
         This is a basic retrieve function with LangChain APIs
-        :param query: query is expected to be a question in string
+        Args:
+          query: query is expected to be a question in string
+
+        Returns:
+            list of answers
 
         More advanced retriever can refer to
         https://python.langchain.com/docs/modules/data_connection/retrievers/
