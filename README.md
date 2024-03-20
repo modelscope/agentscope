@@ -34,7 +34,6 @@ AgentScope supports [ollama](https://modelscope.github.io/agentscope/en/tutorial
 - ![new](https://img.alicdn.com/imgextra/i4/O1CN01kUiDtl1HVxN6G56vN_!!6000000000764-2-tps-43-19.png)
 [2024-03-19] New examples ["Autonomous Conversation with Mentions"](./examples/conversation_with_mentions) and ["Basic Conversation with LangChain library"](./examples/conversation_with_langchain) are available now!
 
-
 - ![new](https://img.alicdn.com/imgextra/i4/O1CN01kUiDtl1HVxN6G56vN_!!6000000000764-2-tps-43-19.png)
 [2024-03-19] The [Chinese tutorial](https://modelscope.github.io/agentscope/zh_CN/index.html) of AgentScope is online now!
 
@@ -207,7 +206,8 @@ import agentscope
 agentscope.init(model_configs="./model_configs.json")
 
 # Create a dialog agent and a user agent
-dialog_agent = DialogAgent(name="assistant", model_config_name="your_config_name")
+dialog_agent = DialogAgent(name="assistant",
+                           model_config_name="your_config_name")
 user_agent = UserAgent()
 ```
 
