@@ -54,4 +54,5 @@ __all__ = [
     "summarization",
     "retrieve_from_list",
     "ServiceExecStatus",
+    "ServiceFactory",
 ]

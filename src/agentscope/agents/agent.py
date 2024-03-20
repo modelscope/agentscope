@@ -7,6 +7,7 @@ from typing import Optional
 from typing import Sequence
 from typing import Union
 from typing import Any
+from typing import Callable
 from loguru import logger
 
 from agentscope.agents.operator import Operator
@@ -36,7 +37,7 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
         self,
         name: str,
         sys_prompt: Optional[str] = None,
-        model_config_name: str = None,
+        config_name_or_model: Optional[Union[str, Callable[..., Any]]] = None,
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
     ) -> None:
@@ -48,7 +49,8 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
             sys_prompt (`Optional[str]`):
                 The system prompt of the agent, which can be passed by args
                 or hard-coded in the agent.
-            model_config_name (`str`, defaults to None):
+            config_name_or_model (`[str, Callable[..., Any]`, defaults to
+            None):
                 The name of the model config, which is used to load model from
                 configuration.
             use_memory (`bool`, defaults to `True`):
@@ -63,9 +65,17 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
         if sys_prompt is not None:
             self.sys_prompt = sys_prompt
 
-        # TODO: support to receive a ModelWrapper instance
-        if model_config_name is not None:
-            self.model = load_model_by_config_name(model_config_name)
+        if config_name_or_model is not None:
+            if isinstance(config_name_or_model, str):
+                self.model = load_model_by_config_name(config_name_or_model)
+            elif callable(config_name_or_model):
+                self.model = config_name_or_model
+            else:
+                raise ValueError(
+                    f"Invalid type for "
+                    f"argument `config_name_or_model`:"
+                    f" {type(config_name_or_model)}",
+                )
 
         if use_memory:
             self.memory = TemporaryMemory(memory_config)
