@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 """Prompt engineering module."""
-from typing import Any, Optional, Union
+from typing import Any, Optional, Union, List
 from enum import IntEnum
 
 from agentscope.models import OpenAIWrapperBase, ModelWrapperBase
-from agentscope.constants import ShrinkPolicy
 from agentscope.utils.tools import to_openai_dict, to_dialog_str
 
 
@@ -15,39 +14,100 @@ class PromptType(IntEnum):
     LIST = 1
 
 
+class OpenAIFormatter:
+    @classmethod
+    def to_prompt(cls, unit: Any):
+        if isinstance(unit, str):
+            return cls.str_to_prompt(unit)
+        elif isinstance(unit, dict):
+            return cls.dict_to_prompt(unit)
+        else:
+            raise TypeError(
+                f"Prompt unit should be a string or a dictionary, but got {type(unit)}"
+            )
+
+    @classmethod
+    def str_to_prompt(cls, index: int, unit: str):
+        return {"role": "assistant", "content": unit}
+
+
+
+
+    @classmethod
+    def dict_to_prompt(cls, index: int, unit: dict):
+        # Content field
+        if "content" not in unit:
+            return {"role": "assistant", "content": str(unit)}
+
+        # Role field
+        openai_msg = {}
+        if "role" in unit:
+            openai_msg["role"] = unit["role"]
+        else:
+            # Set role according to name, which requires the name to be
+            # strictly "user", "system" or "assistant", otherwise, the role
+            # will be set to "assistant" by default.
+            if "name" in unit:
+                unit_name = str(unit["name"]).lower()
+                if unit_name == "user":
+                    openai_msg["role"] = "user"
+                elif unit_name == "system":
+                    openai_msg["role"] = "system"
+                elif unit_name == "assistant":
+                    openai_msg["role"] = "assistant"
+
+        # Name field
+        if "name" in unit:
+            openai_msg["name"] = unit["name"]
+
+
+class DashScopeFormatter:
+    _version: str = "2024/03/20"
+
+    roles: List[str] = ["system", "user", "assistant", "tool"]
+
+    contents:
+
+
+
+
+    @classmethod
+    def str_to_prompt(cls, index: int, unit: str):
+        return {"content": unit}
+
+    @classmethod
+    def dict_to_prompt(self, index: int, unit: str):
+
+
+
 class PromptEngine:
-    """Prompt engineering module for both list and string prompt"""
+    """A module that combines (a list of) dicts, strings, into a
+    prompt with specified format.
+
+    Note:
+        It's challenging to fit different prompt requirements of different
+        models in a single module. Therefore, this prompt engine only
+        provide several basic strategies, and the user should be
+        aware of and handle the prompt requirements of the target model.
+
+    First, users should ensure the final prompt format is a string or a list
+    of dictionaries. We provide two interfaces to transfer the input units to
+    the target format, which are `dict_to_prompt`, and `str_to_prompt`.
+
+    If the input unit is a dictionary, it will be processed by
+    `dict_to_prompt` function. If the input unit is a string, it will be
+    processed by `str_to_prompt` function.
+    """
 
     def __init__(
         self,
         model: ModelWrapperBase,
-        shrink_policy: ShrinkPolicy = ShrinkPolicy.TRUNCATE,
-        max_length: Optional[int] = None,
-        prompt_type: Optional[PromptType] = None,
-        max_summary_length: int = 200,
-        summarize_model: Optional[ModelWrapperBase] = None,
     ) -> None:
         """
 
         Args:
             model (`ModelWrapperBase`):
                 The target model for prompt engineering.
-            shrink_policy (`ShrinkPolicy`, defaults to
-            `ShrinkPolicy.TRUNCATE`):
-                The shrink policy for prompt engineering, defaults to
-                `ShrinkPolicy.TRUNCATE`.
-            max_length (`Optional[int]`, defaults to `None`):
-                The max length of context, if it is None, it will be set to the
-                max length of the model.
-            prompt_type (`Optional[MsgType]`, defaults to `None`):
-                The type of prompt, if it is None, it will be set according to
-                the model.
-            max_summary_length (`int`, defaults to `200`):
-                The max length of summary, if it is None, it will be set to the
-                max length of the model.
-            summarize_model (`Optional[ModelWrapperBase]`, defaults to `None`):
-                The model used for summarization, if it is None, it will be
-                set to `model`.
 
         Note:
             1. TODO: Shrink function is still under development.
@@ -112,12 +172,10 @@ class PromptEngine:
         # Filter `None`
         args = [_ for _ in args if _ is not None]
 
-        if self.prompt_type == PromptType.STRING:
-            return self.join_to_str(*args, format_map=format_map)
-        elif self.prompt_type == PromptType.LIST:
-            return self.join_to_list(*args, format_map=format_map)
-        else:
-            raise RuntimeError("Invalid prompt type.")
+        if isinstance(self.model, OpenAIWrapperBase):
+            for
+            prompt_unit = OpenAIFormatter.str_to_prompt()
+
 
     def join_to_str(self, *args: Any, format_map: Union[dict, None]) -> str:
         """Join prompt components to a string."""
