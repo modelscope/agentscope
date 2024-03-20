@@ -278,7 +278,7 @@ pip install -e .\[dev\]
 pre-commit install
 ```
 
-Please refer to our [Contribution Guide](https://modelscope.github.io/agentscope/tutorial/contribute.html) for more details.
+Please refer to our [Contribution Guide](https://modelscope.github.io/agentscope/en/tutorial/302-contribute.html) for more details.
 
 ## References
 
