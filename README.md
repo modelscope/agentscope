@@ -207,7 +207,7 @@ agentscope.init(model_configs="./model_configs.json")
 
 # Create a dialog agent and a user agent
 dialog_agent = DialogAgent(name="assistant",
-                           model_config_name="your_config_name")
+                           model_config_name="my_openai_config")
 user_agent = UserAgent()
 ```
 
