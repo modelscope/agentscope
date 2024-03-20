@@ -26,7 +26,7 @@ The `PromptEngine` class provides a structured way to combine different componen
 When creating an instance of `PromptEngine`, you can specify the target model and, optionally, the shrinking policy, the maximum length of the prompt, the prompt type, and a summarization model (could be the same as the target model).
 
 ```python
-model = OpenAIWrapper(...)
+model = OpenAIChatWrapper(...)
 engine = PromptEngine(model)
 ```
 

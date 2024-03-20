@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for DashScope models"""
+from abc import ABC
 from http import HTTPStatus
 from typing import Any, Union
 
@@ -13,11 +14,9 @@ from loguru import logger
 from .model import ModelWrapperBase, ModelResponse
 
 from ..file_manager import file_manager
-from ..utils.monitor import MonitorFactory
-from ..constants import _DEFAULT_API_BUDGET
 
 
-class DashScopeWrapper(ModelWrapperBase):
+class DashScopeWrapperBase(ModelWrapperBase, ABC):
     """The model wrapper for DashScope API."""
 
     def __init__(
@@ -26,7 +25,6 @@ class DashScopeWrapper(ModelWrapperBase):
         model_name: str = None,
         api_key: str = None,
         generate_args: dict = None,
-        budget: float = _DEFAULT_API_BUDGET,
         **kwargs: Any,
     ) -> None:
         """Initialize the DashScope wrapper.
@@ -41,26 +39,19 @@ class DashScopeWrapper(ModelWrapperBase):
             generate_args (`dict`, default `None`):
                 The extra keyword arguments used in DashScope api generation,
                 e.g. `temperature`, `seed`.
-            budget (`float`, default `None`):
-                The total budget using this model. Set to `None` means no
-                limit.
         """
         if model_name is None:
             model_name = config_name
             logger.warning("model_name is not set, use config_name instead.")
-        super().__init__(
-            config_name=config_name,
-            model_name=model_name,
-            generate_args=generate_args,
-            budget=budget,
-            **kwargs,
-        )
+
+        super().__init__(config_name=config_name)
+
         if dashscope is None:
             raise ImportError(
                 "Cannot find dashscope package in current python environment.",
             )
 
-        self.model = model_name
+        self.model_name = model_name
         self.generate_args = generate_args or {}
 
         self.api_key = api_key
@@ -68,17 +59,10 @@ class DashScopeWrapper(ModelWrapperBase):
         self.max_length = None
 
         # Set monitor accordingly
-        self.monitor = None
         self._register_default_metrics()
 
-    def _register_default_metrics(self) -> None:
-        """Register metrics to the monitor."""
-        raise NotImplementedError(
-            "The _register_default_metrics function is not Implemented.",
-        )
 
-
-class DashScopeChatWrapper(DashScopeWrapper):
+class DashScopeChatWrapper(DashScopeWrapperBase):
     """The model wrapper for DashScope's chat API."""
 
     model_type: str = "dashscope_chat"
@@ -88,17 +72,20 @@ class DashScopeChatWrapper(DashScopeWrapper):
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
         # TODO: set quota to the following metrics
-        self.monitor = MonitorFactory.get_monitor()
         self.monitor.register(
-            self._metric("prompt_tokens", self.model),
+            self._metric("call_counter"),
+            metric_unit="times",
+        )
+        self.monitor.register(
+            self._metric("prompt_tokens"),
             metric_unit="token",
         )
         self.monitor.register(
-            self._metric("completion_tokens", self.model),
+            self._metric("completion_tokens"),
             metric_unit="token",
         )
         self.monitor.register(
-            self._metric("total_tokens", self.model),
+            self._metric("total_tokens"),
             metric_unit="token",
         )
 
@@ -169,7 +156,7 @@ class DashScopeChatWrapper(DashScopeWrapper):
         messages = self._preprocess_role(messages)
         # step3: forward to generate response
         response = dashscope.Generation.call(
-            model=self.model,
+            model=self.model_name,
             messages=messages,
             result_format="message",  # set the result to be "message" format.
             **kwargs,
@@ -188,7 +175,7 @@ class DashScopeChatWrapper(DashScopeWrapper):
         # step4: record the api invocation if needed
         self._save_model_invocation(
             arguments={
-                "model": self.model,
+                "model": self.model_name,
                 "messages": messages,
                 **kwargs,
             },
@@ -196,17 +183,13 @@ class DashScopeChatWrapper(DashScopeWrapper):
         )
 
         # step5: update monitor accordingly
-        try:
-            self.monitor.update(
-                {
-                    "prompt_tokens": response.usage["input_tokens"],
-                    "completion_tokens": response.usage["output_tokens"],
-                    "total_tokens": response.usage["total_tokens"],
-                },
-                prefix=self.model,
-            )
-        except Exception as e:
-            logger.error(e)
+        # The metric names are unified for comparison
+        self.update_monitor(
+            call_counter=1,
+            prompt_tokens=response.usage["input_tokens"],
+            completion_tokens=response.usage["output_tokens"],
+            total_tokens=response.usage["total_tokens"],
+        )
 
         # step6: return response
         return ModelResponse(
@@ -243,7 +226,7 @@ class DashScopeChatWrapper(DashScopeWrapper):
         return messages
 
 
-class DashScopeImageSynthesisWrapper(DashScopeWrapper):
+class DashScopeImageSynthesisWrapper(DashScopeWrapperBase):
     """The model wrapper for DashScope Image Synthesis API."""
 
     model_type: str = "dashscope_image_synthesis"
@@ -251,9 +234,12 @@ class DashScopeImageSynthesisWrapper(DashScopeWrapper):
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
         # TODO: set quota to the following metrics
-        self.monitor = MonitorFactory.get_monitor()
         self.monitor.register(
-            self._metric("image_count", self.model),
+            self._metric("call_counter"),
+            metric_unit="times",
+        )
+        self.monitor.register(
+            self._metric("image_count"),
             metric_unit="image",
         )
 
@@ -300,7 +286,7 @@ class DashScopeImageSynthesisWrapper(DashScopeWrapper):
 
         # step2: forward to generate response
         response = dashscope.ImageSynthesis.call(
-            model=self.model,
+            model=self.model_name,
             prompt=prompt,
             n=1,
             **kwargs,
@@ -317,7 +303,7 @@ class DashScopeImageSynthesisWrapper(DashScopeWrapper):
         # step3: record the model api invocation if needed
         self._save_model_invocation(
             arguments={
-                "model": self.model,
+                "model": self.model_name,
                 "prompt": prompt,
                 **kwargs,
             },
@@ -325,13 +311,10 @@ class DashScopeImageSynthesisWrapper(DashScopeWrapper):
         )
 
         # step4: update monitor accordingly
-        try:
-            self.monitor.update(
-                response.usage,
-                prefix=self.model,
-            )
-        except Exception as e:
-            logger.error(e)
+        self.update_monitor(
+            call_counter=1,
+            **response.usage,
+        )
 
         # step5: return response
         images = response.output["results"]
@@ -344,7 +327,7 @@ class DashScopeImageSynthesisWrapper(DashScopeWrapper):
         return ModelResponse(image_urls=urls, raw=response)
 
 
-class DashScopeTextEmbeddingWrapper(DashScopeWrapper):
+class DashScopeTextEmbeddingWrapper(DashScopeWrapperBase):
     """The model wrapper for DashScope Text Embedding API."""
 
     model_type: str = "dashscope_text_embedding"
@@ -352,9 +335,12 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapper):
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
         # TODO: set quota to the following metrics
-        self.monitor = MonitorFactory.get_monitor()
         self.monitor.register(
-            self._metric("total_tokens", self.model),
+            self._metric("call_counter"),
+            metric_unit="times",
+        )
+        self.monitor.register(
+            self._metric("total_tokens"),
             metric_unit="token",
         )
 
@@ -398,7 +384,7 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapper):
         # step2: forward to generate response
         response = dashscope.TextEmbedding.call(
             input=texts,
-            model=self.model,
+            model=self.model_name,
             **kwargs,
         )
 
@@ -414,7 +400,7 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapper):
         # step3: record the model api invocation if needed
         self._save_model_invocation(
             arguments={
-                "model": self.model,
+                "model": self.model_name,
                 "input": texts,
                 **kwargs,
             },
@@ -422,13 +408,10 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapper):
         )
 
         # step4: update monitor accordingly
-        try:
-            self.monitor.update(
-                response.usage,
-                prefix=self.model,
-            )
-        except Exception as e:
-            logger.error(e)
+        self.update_monitor(
+            call_counter=1,
+            **response.usage,
+        )
 
         # step5: return response
         if len(response.output["embeddings"]) == 0:

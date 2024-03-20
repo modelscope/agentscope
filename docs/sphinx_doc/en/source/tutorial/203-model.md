@@ -60,7 +60,7 @@ which we will use to specify the model service when initializing an agent.
 It corresponds to the `model_type` field in the `ModelWrapper` class in the source code.
 
 ```python
-class OpenAIChatWrapper(OpenAIWrapper):
+class OpenAIChatWrapper(OpenAIWrapperBase):
     """The model wrapper for OpenAI's chat API."""
 
     model_type: str = "openai"

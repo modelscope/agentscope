@@ -53,7 +53,7 @@ class BasicModelTest(unittest.TestCase):
         """Test to load model configs"""
         configs = [
             {
-                "model_type": "openai",
+                "model_type": "openai_chat",
                 "config_name": "gpt-4",
                 "model_name": "gpt-4",
                 "api_key": "xxx",

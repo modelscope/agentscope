@@ -5,7 +5,7 @@ from typing import Any
 
 from agentscope.models import read_model_configs
 from agentscope.models import load_model_by_config_name
-from agentscope.models import ModelResponse, OpenAIWrapper
+from agentscope.models import ModelResponse, OpenAIWrapperBase
 from agentscope.prompt import PromptEngine
 
 
@@ -51,7 +51,7 @@ class PromptEngineTest(unittest.TestCase):
     def test_list_prompt(self) -> None:
         """Test for list prompt."""
 
-        class TestModelWrapper(OpenAIWrapper):
+        class TestModelWrapperBase(OpenAIWrapperBase):
             """Test model wrapper."""
 
             def __init__(self) -> None:
@@ -67,7 +67,7 @@ class PromptEngineTest(unittest.TestCase):
             def _register_default_metrics(self) -> None:
                 pass
 
-        model = TestModelWrapper()
+        model = TestModelWrapperBase()
         engine = PromptEngine(model)
 
         prompt = engine.join(

@@ -8,7 +8,6 @@ from loguru import logger
 
 from agentscope.message import Msg
 from agentscope.models import ModelWrapperBase, ModelResponse
-from agentscope.utils import QuotaExceededError, MonitorFactory
 
 try:
     import google.generativeai as genai
@@ -39,13 +38,7 @@ class GeminiWrapperBase(ModelWrapperBase):
                 The api_key for the model. If it is not provided, it will be
                 loaded from environment variable.
         """
-        # TODO: remove super().__init__()
-        super().__init__(
-            config_name,
-            model_name=model_name,
-            api_key=api_key,
-            **kwargs,
-        )
+        super().__init__(config_name=config_name)
 
         # Load the api_key from argument or environment variable
         api_key = api_key or os.environ.get("GOOGLE_API_KEY")
@@ -60,7 +53,6 @@ class GeminiWrapperBase(ModelWrapperBase):
 
         self.model_name = model_name
 
-        self.monitor = None
         self._register_default_metrics()
 
     def _register_default_metrics(self) -> None:
@@ -171,18 +163,12 @@ class GeminiChatWrapper(GeminiWrapperBase):
         #  the tokens manually.
         token_prompt = self.model.count_tokens(contents).total_tokens
         token_response = self.model.count_tokens(response.text).total_tokens
-        try:
-            self.monitor.update(
-                {
-                    "call_counter": 1,
-                    "completion_tokens": token_response,
-                    "prompt_tokens": token_prompt,
-                    "total_tokens": token_prompt + token_response,
-                },
-                prefix=self.model.model_name,
-            )
-        except QuotaExceededError as e:
-            logger.error(e.message)
+        self.update_monitor(
+            call_counter=1,
+            completion_tokens=token_response,
+            prompt_tokens=token_prompt,
+            total_tokens=token_prompt + token_response,
+        )
 
         # step6: return response
         return ModelResponse(
@@ -192,21 +178,20 @@ class GeminiChatWrapper(GeminiWrapperBase):
 
     def _register_default_metrics(self) -> None:
         """Register the default metrics for the model."""
-        self.monitor = MonitorFactory.get_monitor()
         self.monitor.register(
-            self._metric("call_counter", prefix=self.model_name),
+            self._metric("call_counter"),
             metric_unit="times",
         )
         self.monitor.register(
-            self._metric("prompt_tokens", prefix=self.model_name),
+            self._metric("prompt_tokens"),
             metric_unit="token",
         )
         self.monitor.register(
-            self._metric("completion_tokens", prefix=self.model_name),
+            self._metric("completion_tokens"),
             metric_unit="token",
         )
         self.monitor.register(
-            self._metric("total_tokens", prefix=self.model_name),
+            self._metric("total_tokens"),
             metric_unit="token",
         )
 
@@ -270,15 +255,8 @@ class GeminiEmbeddingWrapper(GeminiWrapperBase):
 
         # TODO: Up to 2023/03/11, the embedding model doesn't support to
         #  count tokens.
-        try:
-            self.monitor.update(
-                {
-                    "call_counter": 1,
-                },
-                prefix=self.model_name,
-            )
-        except QuotaExceededError as e:
-            logger.error(e.message)
+        # step3: update monitor accordingly
+        self.update_monitor(call_counter=1)
 
         return ModelResponse(
             raw=response,
@@ -287,8 +265,7 @@ class GeminiEmbeddingWrapper(GeminiWrapperBase):
 
     def _register_default_metrics(self) -> None:
         """Register the default metrics for the model."""
-        self.monitor = MonitorFactory.get_monitor()
         self.monitor.register(
-            self._metric("call_counter", prefix=self.model_name),
+            self._metric("call_counter"),
             metric_unit="times",
         )
