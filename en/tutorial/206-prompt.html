@@ -136,7 +136,7 @@ prompts for LLMs.</p>
 <section id="initialization">
 <h3>Initialization<a class="headerlink" href="#initialization" title="Link to this heading"></a></h3>
 <p>When creating an instance of <code class="docutils literal notranslate"><span class="pre">PromptEngine</span></code>, you can specify the target model and, optionally, the shrinking policy, the maximum length of the prompt, the prompt type, and a summarization model (could be the same as the target model).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">OpenAIWrapper</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">OpenAIChatWrapper</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 <span class="n">engine</span> <span class="o">=</span> <span class="n">PromptEngine</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 </pre></div>
 </div>

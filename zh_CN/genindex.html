@@ -410,15 +410,19 @@
 </li>
       <li><a href="agentscope.memory.html#agentscope.memory.temporary_memory.TemporaryMemory.clear">clear() （agentscope.memory.temporary_memory.TemporaryMemory 方法）</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.utils.html#agentscope.utils.monitor.MonitorBase.clear">clear() （agentscope.utils.monitor.MonitorBase 方法）</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.clear">clear() （agentscope.utils.monitor.SqliteMonitor 方法）</a>
 </li>
       <li><a href="agentscope.agents.html#agentscope.agents.agent.AgentBase.clear_audience">clear_audience() （agentscope.agents.agent.AgentBase 方法）</a>
 </li>
       <li><a href="agentscope.models.html#agentscope.models.clear_model_configs">clear_model_configs()（在 agentscope.models 模块中）</a>
+</li>
+      <li><a href="agentscope.models.html#agentscope.models.model.ModelWrapperBase.config_name">config_name（agentscope.models.model.ModelWrapperBase 属性）</a>
+</li>
+      <li><a href="agentscope.models.html#agentscope.models.openai_model.OpenAIWrapperBase.config_name">config_name（agentscope.models.openai_model.OpenAIWrapperBase 属性）</a>
 </li>
       <li><a href="agentscope.service.retrieval.html#agentscope.service.retrieval.similarity.cos_sim">cos_sim()（在 agentscope.service.retrieval.similarity 模块中）</a>
 </li>
@@ -447,6 +451,8 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.service.file.html#agentscope.service.file.common.delete_file">delete_file()（在 agentscope.service.file.common 模块中）</a>
+</li>
+      <li><a href="agentscope.models.html#agentscope.models.openai_model.OpenAIChatWrapper.deprecated_model_type">deprecated_model_type（agentscope.models.openai_model.OpenAIChatWrapper 属性）</a>
 </li>
       <li><a href="agentscope.models.html#agentscope.models.model.ModelWrapperBase.deprecated_type_registry">deprecated_type_registry（agentscope.models.model.ModelWrapperBase 属性）</a>
 </li>
@@ -493,8 +499,6 @@
       <li><a href="agentscope.pipelines.html#agentscope.pipelines.functional.forlooppipeline">forlooppipeline()（在 agentscope.pipelines.functional 模块中）</a>
 </li>
       <li><a href="agentscope.pipelines.html#agentscope.pipelines.pipeline.ForLoopPipeline">ForLoopPipeline（agentscope.pipelines.pipeline 中的类）</a>
-</li>
-      <li><a href="agentscope.models.html#agentscope.models.config.ModelConfig.format_configs">format_configs()（agentscope.models.config.ModelConfig 类方法）</a>
 </li>
   </ul></td>
 </tr></table>
@@ -598,19 +602,25 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.memory.html#agentscope.memory.memory.MemoryBase">MemoryBase（agentscope.memory.memory 中的类）</a>
 </li>
+      <li><a href="agentscope.models.html#agentscope.models.model.ModelWrapperBase.model_name">model_name（agentscope.models.model.ModelWrapperBase 属性）</a>
+</li>
+      <li><a href="agentscope.models.html#agentscope.models.openai_model.OpenAIWrapperBase.model_name">model_name（agentscope.models.openai_model.OpenAIWrapperBase 属性）</a>
+</li>
+      <li><a href="agentscope.models.html#agentscope.models.model.ModelWrapperBase.model_type">model_type（agentscope.models.model.ModelWrapperBase 属性）</a>
+</li>
       <li><a href="agentscope.models.html#agentscope.models.openai_model.OpenAIChatWrapper.model_type">model_type（agentscope.models.openai_model.OpenAIChatWrapper 属性）</a>
 </li>
       <li><a href="agentscope.models.html#agentscope.models.openai_model.OpenAIDALLEWrapper.model_type">model_type（agentscope.models.openai_model.OpenAIDALLEWrapper 属性）</a>
 </li>
       <li><a href="agentscope.models.html#agentscope.models.openai_model.OpenAIEmbeddingWrapper.model_type">model_type（agentscope.models.openai_model.OpenAIEmbeddingWrapper 属性）</a>
 </li>
+      <li><a href="agentscope.models.html#agentscope.models.openai_model.OpenAIWrapperBase.model_type">model_type（agentscope.models.openai_model.OpenAIWrapperBase 属性）</a>
+</li>
       <li><a href="agentscope.models.html#agentscope.models.post_model.PostAPIChatWrapper.model_type">model_type（agentscope.models.post_model.PostAPIChatWrapper 属性）</a>
 </li>
       <li><a href="agentscope.models.html#agentscope.models.post_model.PostAPIDALLEWrapper.model_type">model_type（agentscope.models.post_model.PostAPIDALLEWrapper 属性）</a>
 </li>
       <li><a href="agentscope.models.html#agentscope.models.post_model.PostAPIModelWrapperBase.model_type">model_type（agentscope.models.post_model.PostAPIModelWrapperBase 属性）</a>
-</li>
-      <li><a href="agentscope.models.html#agentscope.models.config.ModelConfig">ModelConfig（agentscope.models.config 中的类）</a>
 </li>
       <li><a href="agentscope.models.html#agentscope.models.model.ModelResponse">ModelResponse（agentscope.models.model 中的类）</a>
 </li>
@@ -731,7 +741,7 @@
 </li>
       <li><a href="agentscope.models.html#agentscope.models.openai_model.OpenAIEmbeddingWrapper">OpenAIEmbeddingWrapper（agentscope.models.openai_model 中的类）</a>
 </li>
-      <li><a href="agentscope.models.html#agentscope.models.openai_model.OpenAIWrapper">OpenAIWrapper（agentscope.models.openai_model 中的类）</a>
+      <li><a href="agentscope.models.html#agentscope.models.openai_model.OpenAIWrapperBase">OpenAIWrapperBase（agentscope.models.openai_model 中的类）</a>
 </li>
       <li><a href="agentscope.agents.html#agentscope.agents.operator.Operator">Operator（agentscope.agents.operator 中的类）</a>
 </li>
@@ -924,6 +934,8 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.memory.html#agentscope.memory.memory.MemoryBase.update_config">update_config() （agentscope.memory.memory.MemoryBase 方法）</a>
+</li>
+      <li><a href="agentscope.models.html#agentscope.models.model.ModelWrapperBase.update_monitor">update_monitor() （agentscope.models.model.ModelWrapperBase 方法）</a>
 </li>
       <li><a href="agentscope.agents.html#agentscope.agents.user_agent.UserAgent">UserAgent（agentscope.agents.user_agent 中的类）</a>
 </li>

@@ -100,14 +100,14 @@
 
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
-<span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">ModelConfig</span>
+<span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">_ModelConfig</span>
 <span class="kn">from</span> <span class="nn">.model</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ModelResponse</span>
 <span class="kn">from</span> <span class="nn">.post_model</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">PostAPIModelWrapperBase</span><span class="p">,</span>
     <span class="n">PostAPIChatWrapper</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.openai_model</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">OpenAIWrapper</span><span class="p">,</span>
+    <span class="n">OpenAIWrapperBase</span><span class="p">,</span>
     <span class="n">OpenAIChatWrapper</span><span class="p">,</span>
     <span class="n">OpenAIDALLEWrapper</span><span class="p">,</span>
     <span class="n">OpenAIEmbeddingWrapper</span><span class="p">,</span>
@@ -133,7 +133,7 @@
     <span class="s2">&quot;ModelResponse&quot;</span><span class="p">,</span>
     <span class="s2">&quot;PostAPIModelWrapperBase&quot;</span><span class="p">,</span>
     <span class="s2">&quot;PostAPIChatWrapper&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;OpenAIWrapper&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;OpenAIWrapperBase&quot;</span><span class="p">,</span>
     <span class="s2">&quot;OpenAIChatWrapper&quot;</span><span class="p">,</span>
     <span class="s2">&quot;OpenAIDALLEWrapper&quot;</span><span class="p">,</span>
     <span class="s2">&quot;OpenAIEmbeddingWrapper&quot;</span><span class="p">,</span>
@@ -259,7 +259,7 @@
             <span class="p">)</span>
         <span class="n">cfgs</span> <span class="o">=</span> <span class="n">configs</span>
 
-    <span class="n">format_configs</span> <span class="o">=</span> <span class="n">ModelConfig</span><span class="o">.</span><span class="n">format_configs</span><span class="p">(</span><span class="n">configs</span><span class="o">=</span><span class="n">cfgs</span><span class="p">)</span>
+    <span class="n">format_configs</span> <span class="o">=</span> <span class="n">_ModelConfig</span><span class="o">.</span><span class="n">format_configs</span><span class="p">(</span><span class="n">configs</span><span class="o">=</span><span class="n">cfgs</span><span class="p">)</span>
 
     <span class="c1"># check if name is unique</span>
     <span class="k">for</span> <span class="n">cfg</span> <span class="ow">in</span> <span class="n">format_configs</span><span class="p">:</span>

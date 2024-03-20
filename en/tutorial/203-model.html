@@ -165,7 +165,7 @@ The detailed parameters will be fed into the corresponding model class’s const
 which we will use to specify the model service when initializing an agent.</p>
 <p><code class="docutils literal notranslate"><span class="pre">model_type</span></code> corresponds to the type of <code class="docutils literal notranslate"><span class="pre">ModelWrapper</span></code> and is used to specify the type of model service.
 It corresponds to the <code class="docutils literal notranslate"><span class="pre">model_type</span></code> field in the <code class="docutils literal notranslate"><span class="pre">ModelWrapper</span></code> class in the source code.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">OpenAIChatWrapper</span><span class="p">(</span><span class="n">OpenAIWrapper</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">OpenAIChatWrapper</span><span class="p">(</span><span class="n">OpenAIWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for OpenAI&#39;s chat API.&quot;&quot;&quot;</span>
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;openai&quot;</span>
