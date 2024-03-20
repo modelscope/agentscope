@@ -3,7 +3,7 @@
 Service for text processing
 """
 
-from agentscope.models import ModelWrapperBase, OpenAIWrapper
+from agentscope.models import ModelWrapperBase, OpenAIWrapperBase
 from agentscope.service.service_status import ServiceExecStatus
 from agentscope.service.service_response import ServiceResponse
 from agentscope.message import Msg
@@ -71,7 +71,7 @@ def summarization(
     prompt = summarization_prompt.format(text)
     if max_return_token > 0:
         system_prompt += token_limit_prompt.format(max_return_token)
-    if isinstance(model, OpenAIWrapper):
+    if isinstance(model, OpenAIWrapperBase):
         try:
             msgs = [
                 Msg(name="system", content=system_prompt),

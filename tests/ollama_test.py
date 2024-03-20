@@ -105,7 +105,7 @@ class OllamaModelWrapperTest(unittest.TestCase):
             model_configs={
                 "config_name": "my_ollama_chat",
                 "model_type": "ollama_chat",
-                "model": "llama2",
+                "model_name": "llama2",
                 "options": {
                     "temperature": 0.5,
                 },
@@ -129,7 +129,7 @@ class OllamaModelWrapperTest(unittest.TestCase):
             model_configs={
                 "config_name": "my_ollama_embedding",
                 "model_type": "ollama_embedding",
-                "model": "llama2",
+                "model_name": "llama2",
                 "options": {
                     "temperature": 0.5,
                 },
@@ -153,7 +153,7 @@ class OllamaModelWrapperTest(unittest.TestCase):
             model_configs={
                 "config_name": "my_ollama_generate",
                 "model_type": "ollama_generate",
-                "model": "llama2",
+                "model_name": "llama2",
                 "options": None,
                 "keep_alive": "5m",
             },
