@@ -48,6 +48,10 @@ class TestWebSearches(unittest.TestCase):
                         "split_info": {},
                         "digested_text": "model return",
                     },
+                    {
+                        "split_info": "summary",
+                        "digested_text": "model return",
+                    },
                 ],
             },
         )

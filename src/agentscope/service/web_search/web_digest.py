@@ -10,34 +10,43 @@ from agentscope.message import Msg
 
 
 DEFAULT_SYS_PROMPT = (
-    "You're a data cleaner. You job is to extract important"
-    "and useful information from html or webpage source.\n"
+    "You're a web page analyser. You job is to extract important"
+    "and useful information from html or webpage description.\n"
     "Extract useful part from the following:{}"
 )
 
+DEFAULT_SUMMARY_PROMPT = (
+    "You're a web page analyser. You job is to summarize the "
+    "content of a webpage.\n"
+    "Summarize from the following:{}"
+)
+
 DEFAULT_SPLIT_LEVEL = [
-    ("h1", "Header 1"),
-    ("h2", "Header 2"),
+    ("h1", "h1"),
+    ("h2", "h1"),
 ]
 
 
 def webpage_digest(
     url: str,
     model: Optional[ModelWrapperBase] = None,
-    html_split_levels: Optional[list[tuple[str, str]]] = None,
+    html_split_levels: Optional[tuple[str]] = ("h1", "h2"),
     digest_prompt: Optional[str] = DEFAULT_SYS_PROMPT,
+    digest_summary_prompt: Optional[str] = DEFAULT_SUMMARY_PROMPT,
 ) -> ServiceResponse:
     """Function for parsing and digesting the web page.
     Args:
         url (str): the url of the web page
         model (Optional[ModelWrapperBase]): the model that is
             used to digest the web page content.
-        html_split_levels (Optional[list[tuple[str, str]]]):
+        html_split_levels (Optional[tuple[str]):
             parameters for splitting the html file.
             Default will split a html file at 'h1' and 'h2' levels,
             and feed each partition to model to digest.
         digest_prompt (Optional[str]): prompt for
             the model to analyze the webpage content
+        digest_summary_prompt  (Optional[str]): prompt for
+            the model to summarize the webpage content
 
     Returns:
         ServiceResponse: containing the following digested content in dict.
@@ -60,14 +69,21 @@ def webpage_digest(
                 file if `model` is not None
                 [
                     {
-                        "split_info": $metadata_of_the_split
-                        "digested_text": $model_digested_info
+                        "split_info": {'h1': 'Foo'}
+                        "digested_text": "model digested info for
+                                        content under h1"
+                    },
+                    {
+                        "split_info": "summary"
+                        "digested_text": "model summarize info for
+                                        the whole page"
                     }
                 ]
                 If `model` is None, this will be an empty list.
-                "split_info" is the title/header of split
-                e.g. html_split_levels uses DEFAULT_SPLIT_LEVEL
-                then one of them may be {'Header 1': 'Foo'}.
+                "split_info" is the header of the split,  "digested_text"
+                is the digested content of the split.
+                There is a special "split_info": "summary" for summarizing
+                 the content of all text information on web page.
     """
     html = requests.get(url)
     digest_result = {}
@@ -109,10 +125,13 @@ def webpage_digest(
     # split the webpage and feed them to a model for analysis
     model_digested = []
     if model is not None:
+        all_text = ""
         if html_split_levels is None:
-            html_split_levels = DEFAULT_SPLIT_LEVEL
+            # set the default splitting granularity to h1 and h2 in html
+            html_split_levels = ("h1", "h2")
+        split_levels = [(s, s) for s in html_split_levels]
         html_splitter = HTMLHeaderTextSplitter(
-            headers_to_split_on=html_split_levels,
+            headers_to_split_on=split_levels,
         )
         html_header_splits = html_splitter.split_text(html_doc.page_content)
         # ask the model to analyze all split parts
@@ -120,8 +139,8 @@ def webpage_digest(
             if len(split.page_content) == 0:
                 pass
             msg = Msg(
-                name="system",
-                role="system",
+                name="user",
+                role="user",
                 content=digest_prompt.format(split.page_content),
             )
             analysis_res = model(messages=[msg])
@@ -132,7 +151,23 @@ def webpage_digest(
                         "digested_text": analysis_res.text,
                     },
                 )
-        digest_result["model_digested"] = model_digested
+            all_text += analysis_res.text
+        # generate a final summary
+        msg = Msg(
+            name="user",
+            role="user",
+            content=digest_summary_prompt.format(all_text),
+        )
+        analysis_res = model(messages=[msg])
+        if analysis_res.text:
+            model_digested.append(
+                {
+                    "split_info": "summary",
+                    "digested_text": analysis_res.text,
+                },
+            )
+
+    digest_result["model_digested"] = model_digested
 
     return ServiceResponse(
         status=ServiceExecStatus.SUCCESS,
