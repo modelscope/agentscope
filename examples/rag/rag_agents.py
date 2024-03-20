@@ -30,6 +30,17 @@ class RAGAgent(AgentBase):
         prompt_type: Optional[PromptType] = PromptType.LIST,
         config: Optional[dict] = None,
     ) -> None:
+        """
+        Initialize the RAG base agent
+        Args:
+            name (str): the name for the agent
+            sys_prompt (str): system prompt for the RAG agent
+            model_config_name (str): language model for the agent
+            emb_model_config_name (str): embedding model for the agent
+            memory_config (dict): memory configuration
+            prompt_type (PromptType): prompt type, list or str
+            config (dict): additional config for RAG and agent
+        """
         super().__init__(
             name=name,
             sys_prompt=sys_prompt,
@@ -124,6 +135,17 @@ class LlamaIndexAgent(RAGAgent):
         prompt_type: Optional[PromptType] = PromptType.LIST,
         config: Optional[dict] = None,
     ) -> None:
+        """
+        Initialize the RAG LlamaIndexAgent
+        Args:
+            name (str): the name for the agent
+            sys_prompt (str): system prompt for the RAG agent
+            model_config_name (str): language model for the agent
+            emb_model_config_name (str): embedding model for the agent
+            memory_config (dict): memory configuration
+            prompt_type (PromptType): prompt type, list or str
+            config (dict): additional config for RAG and agent
+        """
         super().__init__(
             name=name,
             sys_prompt=sys_prompt,
@@ -170,6 +192,17 @@ class LangChainRAGAgent(RAGAgent):
         prompt_type: Optional[PromptType] = PromptType.LIST,
         config: Optional[dict] = None,
     ) -> None:
+        """
+        Initialize the RAG LangChainRAGAgent
+        Args:
+            name (str): the name for the agent
+            sys_prompt (str): system prompt for the RAG agent
+            model_config_name (str): language model for the agent
+            emb_model_config_name (str): embedding model for the agent
+            memory_config (dict): memory configuration
+            prompt_type (PromptType): prompt type, list or str
+            config (dict): additional config for RAG and agent
+        """
         super().__init__(
             name=name,
             sys_prompt=sys_prompt,
