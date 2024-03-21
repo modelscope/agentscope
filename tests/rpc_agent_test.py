@@ -393,16 +393,31 @@ class BasicRpcAgentTest(unittest.TestCase):
             port=launcher.port,
             launch_server=False,
         )
+        # agent3 has the same session id as agent1
+        # so it share the same memory with agent1
+        agent3 = DemoRpcAgentWithMemory(
+            name="a",
+        ).to_dist(
+            host="127.0.0.1",
+            port=launcher.port,
+            launch_server=False,
+        )
+        agent3.client.session_id = agent1.client.session_id
         msg1 = Msg(name="System", content="First Msg for agent1")
         res1 = agent1(msg1)
         self.assertEqual(res1.content["mem_size"], 1)
         msg2 = Msg(name="System", content="First Msg for agent2")
         res2 = agent2(msg2)
         self.assertEqual(res2.content["mem_size"], 1)
-        msg3 = Msg(name="System", content="Second Msg for agent1")
-        res3 = agent1(msg3)
+        msg3 = Msg(name="System", content="First Msg for agent3")
+        res3 = agent3(msg3)
         self.assertEqual(res3.content["mem_size"], 3)
         msg4 = Msg(name="System", content="Second Msg for agent2")
         res4 = agent2(msg4)
         self.assertEqual(res4.content["mem_size"], 3)
+        # delete existing session
+        agent2.client.del_session()
+        msg2 = Msg(name="System", content="First Msg for agent2")
+        res2 = agent2(msg2)
+        self.assertEqual(res2.content["mem_size"], 1)
         launcher.shutdown()

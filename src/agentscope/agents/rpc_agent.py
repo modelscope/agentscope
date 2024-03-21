@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
 """ Base class for Rpc Agent """
 
-from multiprocessing import (
-    Process,
-    Event,
-    Pipe,
-)
+from multiprocessing import Process, Event, Pipe, cpu_count
 from multiprocessing.synchronize import Event as EventClass
 import socket
 import threading
@@ -94,8 +90,10 @@ class RpcAgent(AgentBase):
                 Max number of task results that the server can accommodate.
             max_timeout_seconds (`int`, defaults to `1800`):
                 Timeout for task results.
+            launch_server (`bool`, defaults to `True`):
+                Whether to launch the gRPC agent server.
             local_mode (`bool`, defaults to `True`):
-                Whether the started rpc server only listens to local
+                Whether the started gRPC server only listens to local
                 requests.
             lazy_launch (`bool`, defaults to `True`):
                 Only launch the server when the agent is called.
@@ -183,7 +181,6 @@ def setup_rcp_agent_server(
     local_mode: bool = True,
     max_pool_size: int = 100,
     max_timeout_seconds: int = 1800,
-    max_workers: int = 4,
 ) -> None:
     """Setup gRPC server rpc agent.
 
@@ -214,8 +211,6 @@ def setup_rcp_agent_server(
             Max number of task results that the server can accommodate.
         max_timeout_seconds (`int`, defaults to `1800`):
             Timeout for task results.
-        max_workers (`int`, defaults to `4`):
-            max worker number of grpc server.
     """
 
     if init_settings is not None:
@@ -238,7 +233,7 @@ def setup_rcp_agent_server(
                 f" [{port}]...",
             )
             server = grpc.server(
-                futures.ThreadPoolExecutor(max_workers=max_workers),
+                futures.ThreadPoolExecutor(max_workers=cpu_count()),
             )
             add_RpcAgentServicer_to_server(servicer, server)
             if local_mode:
@@ -453,7 +448,6 @@ class RpcServerSideWrapper(RpcAgentServicer):
         agent_kwargs: dict,
         host: str = "localhost",
         port: int = None,
-        max_workers: int = 4,
         max_pool_size: int = 100,
         max_timeout_seconds: int = 1800,
     ):
@@ -487,7 +481,7 @@ class RpcServerSideWrapper(RpcAgentServicer):
             max_len=max_pool_size,
             max_age_seconds=max_timeout_seconds,
         )
-        self.executor = futures.ThreadPoolExecutor(max_workers=max_workers)
+        self.executor = futures.ThreadPoolExecutor(max_workers=cpu_count())
         self.task_id_lock = threading.Lock()
         self.session_id_lock = threading.Lock()
         self.task_id_counter = 0
@@ -513,6 +507,18 @@ class RpcServerSideWrapper(RpcAgentServicer):
                     *self.agent_args,
                     **self.agent_kwargs,
                 )
+
+    def check_and_delete_session(self, session_id: str) -> None:
+        """
+        Check whether the session exists, and delete the agent instance
+        for the session_id.
+
+        Args:
+            session_id (`str`): the session id.
+        """
+        with self.session_id_lock:
+            if session_id in self.agent_pool:
+                self.agent_pool.pop(session_id)
 
     def call_func(self, request: RpcMsg, _: ServicerContext) -> RpcMsg:
         """Call the specific servicer function."""
@@ -599,6 +605,10 @@ class RpcServerSideWrapper(RpcAgentServicer):
             if isinstance(msg, PlaceholderMessage):
                 msg.update_value()
         self.agent_pool[request.session_id].observe(msgs)
+        return RpcMsg()
+
+    def _del_session(self, request: RpcMsg) -> RpcMsg:
+        self.check_and_delete_session(request.session_id)
         return RpcMsg()
 
     def process_messages(

@@ -53,3 +53,13 @@ class RpcAgentClient:
                 ),
             )
             return result_msg.value
+
+    def del_session(self) -> None:
+        """
+        Delete the session created by this client.
+        """
+        try:
+            if self.session_id is not None and len(self.session_id) > 0:
+                self.call_func("_del_session")
+        except Exception:
+            return
