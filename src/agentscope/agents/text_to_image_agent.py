@@ -51,7 +51,7 @@ class TextToImageAgent(AgentBase):
                 x = self.memory.get_memory()[-1]
             else:
                 # if no message find, just return None
-                return None
+                return {}
         image_urls = self.model(x.content).image_urls
         # TODO: optimize the construction of content
         msg = Msg(
