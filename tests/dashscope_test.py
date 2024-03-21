@@ -275,11 +275,11 @@ class TestDashScopeMultiModalWrapper(unittest.TestCase):
         mock_response.status_code = 200
         mock_response.output = {
             "choices": [
-                {"message": {"content": [{"text": "this is the result"}]}},
+                {"message": {"content": [{"text": "this is the result."}]}},
             ],
         }
         mock_response.usage = {
-            "input_tokens": 20,
+            "input_tokens": 23,
             "output_tokens": 5,
             "image_tokens": 17,
         }
@@ -289,7 +289,7 @@ class TestDashScopeMultiModalWrapper(unittest.TestCase):
             {
                 "role": "user",
                 "content": [
-                    {"text": "What does this picture depict？"},
+                    {"text": "What does this picture depict?"},
                     {"image": "http://example.com/image.jpg"},
                 ],
             },
