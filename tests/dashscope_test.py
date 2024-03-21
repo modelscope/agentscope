@@ -275,7 +275,7 @@ class TestDashScopeMultiModalWrapper(unittest.TestCase):
         mock_response.status_code = 200
         mock_response.output = {
             "choices": [
-                {"message": {"content": [{"text": "this is the result."}]}},
+                {"message": {"content": [{"text": "This is the result."}]}},
             ],
         }
         mock_response.usage = {
@@ -297,7 +297,7 @@ class TestDashScopeMultiModalWrapper(unittest.TestCase):
         # Calling the wrapper and validating the response
         response = self.wrapper(messages=messages)
         self.assertIsInstance(response, ModelResponse)
-        self.assertEqual(response.text, "this is the result")
+        self.assertEqual(response.text, "This is the result.")
         self.assertEqual(response.raw, mock_response)
 
         # Verify call to dashscope.MultiModalConversation.call
@@ -324,7 +324,7 @@ class TestDashScopeMultiModalWrapper(unittest.TestCase):
             {
                 "role": "user",
                 "content": [
-                    {"text": "What does this picture depict？"},
+                    {"text": "What does this picture depict?"},
                     {"image": "http://example.com/image.jpg"},
                 ],
             },
