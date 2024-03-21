@@ -363,3 +363,46 @@ class BasicRpcAgentTest(unittest.TestCase):
         msg = agent_b(msg)
         logger.chat(msg)
         self.assertTrue(msg["content"]["quota_exceeded"])
+
+    def test_multi_session(self) -> None:
+        """test agent server with multi session"""
+        launcher = RpcAgentServerLauncher(
+            # choose port automatically
+            agent_class=DemoRpcAgentWithMemory,
+            agent_kwargs={
+                "name": "a",
+            },
+            local_mode=False,
+            host="127.0.0.1",
+            port=12010,
+        )
+        launcher.launch()
+        # although agent1 and agent2 connect to the same server
+        # they are different instances with different memories
+        agent1 = DemoRpcAgentWithMemory(
+            name="a",
+        ).to_dist(
+            host="127.0.0.1",
+            port=launcher.port,
+            launch_server=False,
+        )
+        agent2 = DemoRpcAgentWithMemory(
+            name="a",
+        ).to_dist(
+            host="127.0.0.1",
+            port=launcher.port,
+            launch_server=False,
+        )
+        msg1 = Msg(name="System", content="First Msg for agent1")
+        res1 = agent1(msg1)
+        self.assertEqual(res1.content["mem_size"], 1)
+        msg2 = Msg(name="System", content="First Msg for agent2")
+        res2 = agent2(msg2)
+        self.assertEqual(res2.content["mem_size"], 1)
+        msg3 = Msg(name="System", content="Second Msg for agent1")
+        res3 = agent1(msg3)
+        self.assertEqual(res3.content["mem_size"], 3)
+        msg4 = Msg(name="System", content="Second Msg for agent2")
+        res4 = agent2(msg4)
+        self.assertEqual(res4.content["mem_size"], 3)
+        launcher.shutdown()

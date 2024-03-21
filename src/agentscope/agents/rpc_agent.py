@@ -11,12 +11,8 @@ import socket
 import threading
 import time
 import json
-from typing import Any
-from typing import Optional
-from typing import Union
-from typing import Type
-from typing import Sequence
-from queue import Queue
+import uuid
+from typing import Any, Optional, Union, Type, Sequence
 from concurrent import futures
 from loguru import logger
 
@@ -109,6 +105,7 @@ class RpcAgent(AgentBase):
         self.port = port
         self.server_launcher = None
         self.client = None
+        self.session_id = generate_session_id()
         if launch_server:
             self.server_launcher = RpcAgentServerLauncher(
                 agent_class=agent_class,
@@ -123,19 +120,27 @@ class RpcAgent(AgentBase):
             if not lazy_launch:
                 self._launch_server()
         else:
-            self.client = RpcAgentClient(host=self.host, port=self.port)
+            self.client = RpcAgentClient(
+                host=self.host,
+                port=self.port,
+                session_id=self.session_id,
+            )
 
     def _launch_server(self) -> None:
         """Launch a rpc server and update the port and the client"""
         self.server_launcher.launch()
         self.port = self.server_launcher.port
-        self.client = RpcAgentClient(host=self.host, port=self.port)
+        self.client = RpcAgentClient(
+            host=self.host,
+            port=self.port,
+            session_id=self.session_id,
+        )
 
     def reply(self, x: dict = None) -> dict:
         if self.client is None:
             self._launch_server()
         res_msg = self.client.call_func(
-            func_name="_call",
+            func_name="_reply",
             value=x.serialize() if x is not None else "",
         )
         return PlaceholderMessage(
@@ -158,6 +163,11 @@ class RpcAgent(AgentBase):
     def __del__(self) -> None:
         if self.server_launcher is not None:
             self.server_launcher.shutdown()
+
+
+def generate_session_id() -> str:
+    """Generate a uuid as session id"""
+    return uuid.uuid4().hex
 
 
 def setup_rcp_agent_server(
@@ -211,7 +221,9 @@ def setup_rcp_agent_server(
     if init_settings is not None:
         init_process(**init_settings)
     servicer = RpcServerSideWrapper(
-        agent_class(*agent_args, **agent_kwargs),
+        agent_class,
+        agent_args,
+        agent_kwargs,
         host=host,
         port=port,
         max_pool_size=max_pool_size,
@@ -436,16 +448,24 @@ class RpcServerSideWrapper(RpcAgentServicer):
 
     def __init__(
         self,
-        agent_instance: AgentBase,
+        agent_class: Type[AgentBase],
+        agent_args: tuple,
+        agent_kwargs: dict,
         host: str = "localhost",
         port: int = None,
+        max_workers: int = 4,
         max_pool_size: int = 100,
         max_timeout_seconds: int = 1800,
     ):
         """Init the service side wrapper.
 
         Args:
-            agent_instance (`AgentBase`): an instance of `AgentBase`.
+            agent_class (`Type[AgentBase]`): The AgentBase subclass
+                encapsulated by this wrapper.
+            agent_args (`tuple`): The args tuple used to initialize the
+                agent_class.
+            agent_kwargs (`dict`): The args dict used to initialize the
+                agent_class.
             host (`str`, defaults to "localhost"):
                 Hostname of the rpc agent server.
             port (`int`, defaults to `None`):
@@ -458,18 +478,20 @@ class RpcServerSideWrapper(RpcAgentServicer):
                 Timeout for task results. Note that expired results will be
                 deleted.
         """
+        self.agent_class = agent_class
+        self.agent_args = agent_args
+        self.agent_kwargs = agent_kwargs
         self.host = host
         self.port = port
         self.result_pool = ExpiringDict(
             max_len=max_pool_size,
             max_age_seconds=max_timeout_seconds,
         )
-        self.task_queue = Queue()
-        self.worker_thread = threading.Thread(target=self.process_tasks)
-        self.worker_thread.start()
+        self.executor = futures.ThreadPoolExecutor(max_workers=max_workers)
         self.task_id_lock = threading.Lock()
+        self.session_id_lock = threading.Lock()
         self.task_id_counter = 0
-        self.agent = agent_instance
+        self.agent_pool: dict[str, AgentBase] = {}
 
     def get_task_id(self) -> int:
         """Get the auto-increment task id."""
@@ -477,20 +499,37 @@ class RpcServerSideWrapper(RpcAgentServicer):
             self.task_id_counter += 1
             return self.task_id_counter
 
+    def check_and_generate_session(self, session_id: str) -> None:
+        """
+        Check whether the session exists, and create new agent instance
+        for new session.
+
+        Args:
+            session_id (`str`): the session id.
+        """
+        with self.session_id_lock:
+            if session_id not in self.agent_pool:
+                self.agent_pool[session_id] = self.agent_class(
+                    *self.agent_args,
+                    **self.agent_kwargs,
+                )
+
     def call_func(self, request: RpcMsg, _: ServicerContext) -> RpcMsg:
         """Call the specific servicer function."""
         if hasattr(self, request.target_func):
+            self.check_and_generate_session(request.session_id)
             return getattr(self, request.target_func)(request)
         else:
+            # TODO: support other user defined method
             logger.error(f"Unsupported method {request.target_func}")
             return RpcMsg(
                 value=Msg(
-                    name=self.agent.name,
+                    name=self.agent_pool[request.session_id].name,
                     content=f"Unsupported method {request.target_func}",
                 ).serialize(),
             )
 
-    def _call(self, request: RpcMsg) -> RpcMsg:
+    def _reply(self, request: RpcMsg) -> RpcMsg:
         """Call function of RpcAgentService
 
         Args:
@@ -507,10 +546,15 @@ class RpcServerSideWrapper(RpcAgentServicer):
         else:
             msg = None
         task_id = self.get_task_id()
-        self.task_queue.put((task_id, msg))
+        self.executor.submit(
+            self.process_messages,
+            task_id,
+            request.session_id,
+            msg,  # type: ignore[arg-type]
+        )
         return RpcMsg(
             value=Msg(
-                name=self.agent.name,
+                name=self.agent_pool[request.session_id].name,
                 content=None,
                 host=self.host,
                 port=self.port,
@@ -532,7 +576,6 @@ class RpcServerSideWrapper(RpcAgentServicer):
         Returns:
             `RpcMsg`: Concrete values of the specific message (or part of it).
         """
-        # todo: add format specification of request
         msg = json.loads(request.value)
         # todo: implement the waiting in a more elegant way, add timeout
         while True:
@@ -555,15 +598,17 @@ class RpcServerSideWrapper(RpcAgentServicer):
         for msg in msgs:
             if isinstance(msg, PlaceholderMessage):
                 msg.update_value()
-        self.agent.observe(msgs)
+        self.agent_pool[request.session_id].observe(msgs)
         return RpcMsg()
 
-    def process_tasks(self) -> None:
-        """Task processing thread."""
-        while True:
-            task_id, task_msg = self.task_queue.get()
-            # TODO: optimize this and avoid blocking
-            if isinstance(task_msg, PlaceholderMessage):
-                task_msg.update_value()
-            result = self.agent.reply(task_msg)
-            self.result_pool[task_id] = result
+    def process_messages(
+        self,
+        task_id: int,
+        session_id: str,
+        task_msg: dict = None,
+    ) -> None:
+        """Task processing."""
+        if isinstance(task_msg, PlaceholderMessage):
+            task_msg.update_value()
+        result = self.agent_pool[session_id].reply(task_msg)
+        self.result_pool[task_id] = result
