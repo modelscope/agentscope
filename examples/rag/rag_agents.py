@@ -4,6 +4,7 @@ This example shows how to build an agent with RAG (backup by LlamaIndex)
 """
 
 from typing import Optional
+from loguru import logger
 
 from agentscope.prompt import PromptType
 from agentscope.agents.agent import AgentBase
@@ -14,7 +15,7 @@ from agentscope.rag.llama_index_rag import LlamaIndexRAG
 from agentscope.rag.langchain_rag import LangChainRAG
 
 
-class RAGAgent(AgentBase):
+class RAGAgentBase(AgentBase):
     """
     Base class for RAG agents, child classes include the
     RAG agents built with LlamaIndex and LangChain in this file
@@ -23,9 +24,9 @@ class RAGAgent(AgentBase):
     def __init__(
         self,
         name: str,
-        sys_prompt: Optional[str] = None,
-        model_config_name: str = None,
-        emb_model_config_name: str = None,
+        sys_prompt: str,
+        model_config_name: str,
+        emb_model_config_name: str,
         memory_config: Optional[dict] = None,
         prompt_type: Optional[PromptType] = PromptType.LIST,
         config: Optional[dict] = None,
@@ -40,6 +41,24 @@ class RAGAgent(AgentBase):
             memory_config (dict): memory configuration
             prompt_type (PromptType): prompt type, list or str
             config (dict): additional config for RAG and agent
+                Current support adjustable parameters includes:
+                "data_path":
+                    path to data directory where data is stored,
+                "chunk_size":
+                    maximum chunk size for preprocessed documents,
+                    default is agentscope.rag.rag.DEFAULT_CHUNK_SIZE
+                "chunk_overlap":
+                    overlap between preprocessed chunks, default is
+                    agentscope.rag.rag.DEFAULT_CHUNK_OVERLAP
+                "similarity_top_k":
+                    number of chunks in each retrieval, default
+                    is agentscope.rag.rag.DEFAULT_TOP_K
+                "log_retrieval" (bool):
+                    whether to user agent.speak() to print the
+                    retrieved documents, default is False.
+                "recent_n_mem":
+                    how many messages in memory is used as query
+                    for retrieval if memory is used, default is 1
         """
         super().__init__(
             name=name,
@@ -85,11 +104,28 @@ class RAGAgent(AgentBase):
         # record the input if needed
         if self.memory:
             self.memory.add(x)
+            # in case no input is provided (e.g., in msghub),
+            # use the memory as query
+            history = self.engine.join(
+                self.memory.get_memory(
+                    recent_n=self.config.get("recent_n_mem", 1),
+                ),
+            )
+            query = (
+                "/n".join(
+                    [msg["content"] for msg in history],
+                )
+                if isinstance(history, list)
+                else str(history)
+            )
+        elif x is not None:
+            query = x["content"]
+        else:
+            query = ""
 
-        if x is not None:
-            # retrieve when the input is not None
-            content = x.get("content", "")
-            retrieved_docs = self.rag.retrieve(content, to_list_strs=True)
+        if len(query) > 0:
+            # when content has information, do retrieval
+            retrieved_docs = self.rag.retrieve(query, to_list_strs=True)
             for content in retrieved_docs:
                 retrieved_docs_to_string += "\n>>>> " + content
 
@@ -114,13 +150,14 @@ class RAGAgent(AgentBase):
         # Print/speak the message in this agent's voice
         self.speak(msg)
 
-        # Record the message in memory
-        self.memory.add(msg)
+        if self.memory:
+            # Record the message in memory
+            self.memory.add(msg)
 
         return msg
 
 
-class LlamaIndexAgent(RAGAgent):
+class LlamaIndexAgent(RAGAgentBase):
     """
     A LlamaIndex agent build on LlamaIndex.
     """
@@ -128,8 +165,8 @@ class LlamaIndexAgent(RAGAgent):
     def __init__(
         self,
         name: str,
-        sys_prompt: Optional[str] = None,
-        model_config_name: str = None,
+        sys_prompt: str,
+        model_config_name: str,
         emb_model_config_name: str = None,
         memory_config: Optional[dict] = None,
         prompt_type: Optional[PromptType] = PromptType.LIST,
@@ -145,6 +182,24 @@ class LlamaIndexAgent(RAGAgent):
             memory_config (dict): memory configuration
             prompt_type (PromptType): prompt type, list or str
             config (dict): additional config for RAG and agent
+                Current support adjustable parameters includes:
+                "data_path":
+                    path to data directory where data is stored,
+                "chunk_size":
+                    maximum chunk size for preprocessed documents,
+                    default is agentscope.rag.rag.DEFAULT_CHUNK_SIZE
+                "chunk_overlap":
+                    overlap between preprocessed chunks, default is
+                    agentscope.rag.rag.DEFAULT_CHUNK_OVERLAP
+                "similarity_top_k":
+                    number of chunks in each retrieval, default
+                    is agentscope.rag.rag.DEFAULT_TOP_K
+                "log_retrieval" (bool):
+                    whether to user agent.speak() to print the
+                    retrieved documents, default is False.
+                "recent_n_mem":
+                    how many messages in memory is used as query
+                    for retrieval if memory is used, default is 1
         """
         super().__init__(
             name=name,
@@ -171,13 +226,19 @@ class LlamaIndexAgent(RAGAgent):
         # load the document to memory
         # Feed the AgentScope tutorial documents, so that
         # the agent can answer questions related to AgentScope!
+        if "data_path" not in self.config:
+            self.config[" data_path"] = "./data"
+            logger.warning(
+                "No data_path provided in RAG agent config,"
+                "use default path `./data`",
+            )
         docs = self.rag.load_data(
             loader=SimpleDirectoryReader(self.config["data_path"]),
         )
         self.rag.store_and_index(docs)
 
 
-class LangChainRAGAgent(RAGAgent):
+class LangChainRAGAgent(RAGAgentBase):
     """
     A LlamaIndex agent build on LlamaIndex.
     """
@@ -185,9 +246,9 @@ class LangChainRAGAgent(RAGAgent):
     def __init__(
         self,
         name: str,
-        sys_prompt: Optional[str] = None,
-        model_config_name: str = None,
-        emb_model_config_name: str = None,
+        sys_prompt: str,
+        model_config_name: str,
+        emb_model_config_name: str,
         memory_config: Optional[dict] = None,
         prompt_type: Optional[PromptType] = PromptType.LIST,
         config: Optional[dict] = None,
@@ -202,6 +263,24 @@ class LangChainRAGAgent(RAGAgent):
             memory_config (dict): memory configuration
             prompt_type (PromptType): prompt type, list or str
             config (dict): additional config for RAG and agent
+                Current support adjustable parameters includes:
+                "data_path":
+                    path to data directory where data is stored,
+                "chunk_size":
+                    maximum chunk size for preprocessed documents,
+                    default is agentscope.rag.rag.DEFAULT_CHUNK_SIZE
+                "chunk_overlap":
+                    overlap between preprocessed chunks, default is
+                    agentscope.rag.rag.DEFAULT_CHUNK_OVERLAP
+                "similarity_top_k":
+                    number of chunks in each retrieval, default
+                    is agentscope.rag.rag.DEFAULT_TOP_K
+                "log_retrieval" (bool):
+                    whether to user agent.speak() to print the
+                    retrieved documents, default is False.
+                "recent_n_mem":
+                    how many messages in memory is used as query
+                    for retrieval if memory is used, default is 1
         """
         super().__init__(
             name=name,
@@ -230,6 +309,12 @@ class LangChainRAGAgent(RAGAgent):
         # load the document to memory
         # Feed the AgentScope tutorial documents, so that
         # the agent can answer questions related to AgentScope!
+        if "data_path" not in self.config:
+            self.config[" data_path"] = "./data"
+            logger.warning(
+                "No data_path provided in RAG agent config,"
+                "use default path `./data`",
+            )
         docs = self.rag.load_data(
             loader=DirectoryLoader(self.config["data_path"]),
         )

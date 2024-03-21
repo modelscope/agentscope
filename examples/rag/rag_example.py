@@ -7,7 +7,6 @@ import os
 import argparse
 from loguru import logger
 
-from rag_agents import LlamaIndexAgent, LangChainRAGAgent
 import agentscope
 from agentscope.agents import UserAgent
 
@@ -33,13 +32,25 @@ def main() -> None:
     )
 
     if args.module == "llamaindex":
+        try:
+            from rag_agents import LlamaIndexAgent
+        except ImportError as exc:
+            raise ImportError(
+                "Please install llamaindex packages.",
+            ) from exc
         AgentClass = LlamaIndexAgent
     else:
+        try:
+            from rag_agents import LangChainRAGAgent
+        except ImportError as exc:
+            raise ImportError(
+                "Please install LangChain RAG packages.",
+            ) from exc
         AgentClass = LangChainRAGAgent
     rag_agent = AgentClass(
         name="Assistant",
         sys_prompt="You're a helpful assistant. You need to generate"
-        " answers based on the provided context:\n ",
+        " answers based on the provided context.",
         model_config_name="qwen_config",  # your model config name
         emb_model_config_name="qwen_emb_config",
         config={
@@ -48,6 +59,7 @@ def main() -> None:
             "chunk_overlap": 40,
             "similarity_top_k": 10,
             "log_retrieval": True,
+            "recent_n_mem": 1,
         },
     )
     user_agent = UserAgent()

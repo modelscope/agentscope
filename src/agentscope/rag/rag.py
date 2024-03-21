@@ -23,7 +23,9 @@ DEFAULT_TOP_K = 5
 
 
 class RAGBase(ABC):
-    """Base class for RAG"""
+    """
+    Base class for RAG, CANNOT be instantiated directly
+    """
 
     def __init__(
         self,
