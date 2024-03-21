@@ -32,7 +32,8 @@ def timer(seconds: Optional[Union[int, float]] = None) -> Generator:
     if (
         seconds is None
         or sys.platform == "win32"
-        or threading.currentThread().name != "MainThread"
+        or threading.currentThread().name  # pylint: disable=W4902
+        != "MainThread"
     ):
         yield
         return

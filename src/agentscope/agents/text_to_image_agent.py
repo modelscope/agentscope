@@ -2,7 +2,6 @@
 """A agent that convert text to image."""
 
 from typing import Optional
-from loguru import logger
 
 from .agent import AgentBase
 from ..message import Msg
@@ -60,7 +59,8 @@ class TextToImageAgent(AgentBase):
             content="This is the generated image ",
             url=image_urls,
         )
-        logger.chat(msg)
+
+        self.speak(msg)
 
         if self.memory:
             self.memory.add(msg)
