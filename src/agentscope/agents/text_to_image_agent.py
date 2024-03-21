@@ -47,7 +47,7 @@ class TextToImageAgent(AgentBase):
             self.memory.add(x)
         if x is None:
             # get the last message from memory
-            if self.memory.size() > 0:
+            if self.memory and self.memory.size() > 0:
                 x = self.memory.get_memory()[-1]
             else:
                 # if no message find, just return None
