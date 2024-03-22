@@ -111,16 +111,22 @@ def _chat(message: Union[str, dict], *args: Any, **kwargs: Any) -> None:
                 )
                 logger.log(LEVEL_CHAT_LOG, print_str, *args, **kwargs)
 
+                if (
+                    "disable_studio" in message
+                    and message["disable_studio"] is True
+                ):
+                    return
+
                 if hasattr(thread_local_data, "uid"):
-                    log_gradio(message, thread_local_data.uid, **kwargs)
+                    log_studio(message, thread_local_data.uid, **kwargs)
                 return
 
     message = str(message).replace("{", "{{").replace("}", "}}")
     logger.log(LEVEL_CHAT_LOG, message, *args, **kwargs)
 
 
-def log_gradio(message: dict, uid: str, **kwargs: Any) -> None:
-    """Send chat message to gradio.
+def log_studio(message: dict, uid: str, **kwargs: Any) -> None:
+    """Send chat message to studio.
 
     Args:
         message (`dict`):
