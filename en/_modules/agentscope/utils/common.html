@@ -129,7 +129,8 @@
     <span class="k">if</span> <span class="p">(</span>
         <span class="n">seconds</span> <span class="ow">is</span> <span class="kc">None</span>
         <span class="ow">or</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;win32&quot;</span>
-        <span class="ow">or</span> <span class="n">threading</span><span class="o">.</span><span class="n">currentThread</span><span class="p">()</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">&quot;MainThread&quot;</span>
+        <span class="ow">or</span> <span class="n">threading</span><span class="o">.</span><span class="n">currentThread</span><span class="p">()</span><span class="o">.</span><span class="n">name</span>  <span class="c1"># pylint: disable=W4902</span>
+        <span class="o">!=</span> <span class="s2">&quot;MainThread&quot;</span>
     <span class="p">):</span>
         <span class="k">yield</span>
         <span class="k">return</span>
