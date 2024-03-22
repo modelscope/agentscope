@@ -2,19 +2,21 @@
 """A agent that convert text to image."""
 
 from typing import Optional
-from loguru import logger
 
 from .agent import AgentBase
 from ..message import Msg
 
 
 class TextToImageAgent(AgentBase):
-    """A agent used to perform text to image tasks."""
+    """
+    A agent used to perform text to image tasks.
+
+    TODO: change the agent into a service.
+    """
 
     def __init__(
         self,
         name: str,
-        sys_prompt: str,
         model_config_name: str,
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
@@ -24,9 +26,6 @@ class TextToImageAgent(AgentBase):
         Arguments:
             name (`str`):
                 The name of the agent.
-            sys_prompt (`Optional[str]`):
-                The system prompt of the agent, which can be passed by args
-                or hard-coded in the agent.
             model_config_name (`str`, defaults to None):
                 The name of the model config, which is used to load model from
                 configuration.
@@ -37,7 +36,7 @@ class TextToImageAgent(AgentBase):
         """
         super().__init__(
             name=name,
-            sys_prompt=sys_prompt,
+            sys_prompt="",
             model_config_name=model_config_name,
             use_memory=use_memory,
             memory_config=memory_config,
@@ -46,7 +45,13 @@ class TextToImageAgent(AgentBase):
     def reply(self, x: dict = None) -> dict:
         if self.memory:
             self.memory.add(x)
-
+        if x is None:
+            # get the last message from memory
+            if self.memory and self.memory.size() > 0:
+                x = self.memory.get_memory()[-1]
+            else:
+                # if no message find, just return None
+                return {}
         image_urls = self.model(x.content).image_urls
         # TODO: optimize the construction of content
         msg = Msg(
@@ -54,7 +59,8 @@ class TextToImageAgent(AgentBase):
             content="This is the generated image ",
             url=image_urls,
         )
-        logger.chat(msg)
+
+        self.speak(msg)
 
         if self.memory:
             self.memory.add(msg)
