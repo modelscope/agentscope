@@ -230,6 +230,7 @@ class PlaceholderMessage(MessageBase):
         self,
         name: str,
         content: Any,
+        role: Literal["system", "user", "assistant"] = "assistant",
         url: Optional[Union[Sequence[str], str]] = None,
         timestamp: Optional[str] = None,
         host: str = None,
@@ -248,6 +249,10 @@ class PlaceholderMessage(MessageBase):
                 https://cookbook.openai.com/examples/how_to_format_inputs_to_chatgpt_models.
             content (`Any`):
                 The content of the message.
+            role (`Literal["system", "user", "assistant"]`, defaults to
+            "assistant"):
+                The role of the message, which can be one of the `"system"`,
+                `"user"`, or `"assistant"`.
             url (`Optional[Union[list[str], str]]`, defaults to None):
                 A url to file, image, video, audio or website.
             timestamp (`Optional[str]`, defaults to None):
@@ -264,6 +269,7 @@ class PlaceholderMessage(MessageBase):
         super().__init__(
             name=name,
             content=content,
+            role=role,
             url=url,
             timestamp=timestamp,
             **kwargs,
@@ -327,6 +333,7 @@ class PlaceholderMessage(MessageBase):
                     "__type": "PlaceholderMessage",
                     "name": self.name,
                     "content": None,
+                    "role": self.role,
                     "timestamp": self.timestamp,
                     "host": self._host,
                     "port": self._port,
