@@ -10,11 +10,6 @@ from collections import defaultdict
 
 from PIL import Image
 
-try:
-    import gradio as gr
-except ImportError:
-    gr = None
-
 from dashscope.audio.asr import RecognitionCallback, Recognition
 
 SYS_MSG_PREFIX = "【SYSTEM】"
@@ -139,6 +134,7 @@ def check_uuid(uid: Optional[str]) -> str:
     """Checks whether a UUID is provided or generates a default one."""
     if not uid or uid == "":
         if os.getenv("MODELSCOPE_ENVIRONMENT") == "studio":
+            import gradio as gr
             raise gr.Error("Please login first")
         uid = "local_user"
     return uid
