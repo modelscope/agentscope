@@ -74,7 +74,7 @@ class DialogAgent(AgentBase):
         # prepare prompt
         prompt = self.model.format(
             Msg("system", self.sys_prompt, role="system"),
-            self.memory and self.memory.get_memory(),
+            self.memory and self.memory.get_memory(),  # type: ignore[arg-type]
         )
 
         # call llm and generate response

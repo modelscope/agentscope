@@ -124,9 +124,9 @@ class Msg(MessageBase):
 
         if role is None:
             logger.warning(
-                'A new field `role` is newly added to the message. '
-                'Please specify the role of the message. Currently we use '
-                'a default "assistant" value.'
+                "A new field `role` is newly added to the message. "
+                "Please specify the role of the message. Currently we use "
+                'a default "assistant" value.',
             )
 
         super().__init__(
