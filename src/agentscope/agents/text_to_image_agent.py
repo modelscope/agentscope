@@ -52,6 +52,7 @@ class TextToImageAgent(AgentBase):
         msg = Msg(
             self.name,
             content="This is the generated image ",
+            role="assistant",
             url=image_urls,
         )
         logger.chat(msg)

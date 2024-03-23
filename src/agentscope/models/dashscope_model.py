@@ -2,14 +2,15 @@
 """Model wrapper for DashScope models"""
 from abc import ABC
 from http import HTTPStatus
-from typing import Any, Union
+from typing import Any, Union, List, Sequence
+from loguru import logger
+
+from ..message import Msg
 
 try:
     import dashscope
 except ModuleNotFoundError:
     dashscope = None
-
-from loguru import logger
 
 from .model import ModelWrapperBase, ModelResponse
 
@@ -60,6 +61,16 @@ class DashScopeWrapperBase(ModelWrapperBase, ABC):
 
         # Set monitor accordingly
         self._register_default_metrics()
+
+    def format(
+        self,
+        *args: Union[Msg, Sequence[Msg]],
+    ) -> Union[List[dict], str]:
+        raise RuntimeError(
+            f"Model Wrapper [{type(self).__name__}] doesn't "
+            f"need to format the input. Please try to use the "
+            f"model wrapper directly.",
+        )
 
 
 class DashScopeChatWrapper(DashScopeWrapperBase):
@@ -196,6 +207,32 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             text=response.output["choices"][0]["message"]["content"],
             raw=response,
         )
+
+    def format(
+        self,
+        *args: Union[Msg, Sequence[Msg]],
+    ) -> List:
+        """Format the messages for DashScope Chat API.
+
+        Args:
+            *args (`Union[Msg, Sequence[Msg]]`):
+                The input arguments to be formatted, where each argument
+                should be a `Msg` object, or a list of `Msg` objects
+
+        Returns:
+            `List[dict]`:
+                The formatted messages.
+        """
+        # TODO: This function only convert agentscope msgs into qwen
+        #  messages, the re-range is executed in _preprocess_role function.
+        user_prompt = []
+        for arg in args:
+            if isinstance(arg, Msg):
+                user_prompt.append(f"{arg.name}: {arg.content}")
+            elif isinstance(arg, list):
+                user_prompt.extend(self.format(*arg))
+
+        return [{"role": "user", "content": "\n".join(user_prompt)}]
 
     def _preprocess_role(self, messages: list) -> list:
         """preprocess role rules for DashScope"""

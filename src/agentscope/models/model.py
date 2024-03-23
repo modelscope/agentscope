@@ -57,7 +57,7 @@ import inspect
 import time
 from abc import ABCMeta
 from functools import wraps
-from typing import Sequence, Any, Callable
+from typing import Sequence, Any, Callable, Union, List
 import json
 
 from loguru import logger
@@ -66,6 +66,7 @@ from agentscope.utils import QuotaExceededError
 
 
 from ..file_manager import file_manager
+from ..message import Msg
 from ..utils import MonitorFactory
 from ..utils.monitor import get_full_name
 from ..utils.tools import _get_timestamp, _is_json_serializable
@@ -259,8 +260,19 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
         """Processing input with the model."""
         raise NotImplementedError(
             f"Model Wrapper [{type(self).__name__}]"
-            f" is missing the  the required `__call__`"
+            f" is missing the required `__call__`"
             f" method.",
+        )
+
+    def format(
+        self,
+        *args: Union[Msg, Sequence[Msg]],
+    ) -> Union[List[dict], str]:
+        """Format the input string or dict into the format that the model
+        API required."""
+        raise NotImplementedError(
+            f"Model Wrapper [{type(self).__name__}]"
+            f" is missing the required `format` method",
         )
 
     def _save_model_invocation(

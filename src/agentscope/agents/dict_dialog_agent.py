@@ -150,9 +150,14 @@ class DictDialogAgent(AgentBase):
         # In this agent, if the response is a dict, we treat "speak" as a
         # special key, which represents the text to be spoken
         if isinstance(response, dict) and "speak" in response:
-            msg = Msg(self.name, response["speak"], **response)
+            msg = Msg(
+                self.name,
+                response["speak"],
+                role="assistant",
+                **response,
+            )
         else:
-            msg = Msg(self.name, response)
+            msg = Msg(self.name, response, role="assistant")
 
         # Print/speak the message in this agent's voice
         self.speak(msg)

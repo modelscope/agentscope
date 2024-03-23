@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for Ollama models."""
 from abc import ABC
-from typing import Sequence, Any, Optional
+from typing import Sequence, Any, Optional, List, Union
 
+from agentscope.message import Msg
 from agentscope.models import ModelWrapperBase, ModelResponse
 
 try:
@@ -160,6 +161,40 @@ class OllamaChatWrapper(OllamaWrapperBase):
             self._metric("total_tokens"),
             metric_unit="token",
         )
+
+    def format(
+        self,
+        *msgs: Union[Msg, Sequence[Msg]],
+    ) -> List[dict]:
+        """A basic strategy to format the input into the required format of
+        Ollama Chat API.
+
+        Args:
+            *args (`Union[Msg, Sequence[Msg]]`):
+                The input arguments to be formatted, where each argument
+                should be a `Msg` object or a list of `Msg` objects
+
+        Returns:
+            `List[dict]`:
+                The formatted messages.
+        """
+        ollama_msgs = []
+        for msg in msgs:
+            if isinstance(msg, Msg):
+                ollama_msg = {
+                    "role": msg.role,
+                    "content": msg.content,
+                }
+
+                # image url
+                if msg.url is not None:
+                    ollama_msg["images"] = [msg.url]
+
+                ollama_msgs.append(ollama_msg)
+            elif isinstance(msg, list):
+                ollama_msgs.extend(self.format(*msg))
+
+        return ollama_msgs
 
 
 class OllamaEmbeddingWrapper(OllamaWrapperBase):
@@ -334,3 +369,31 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
             self._metric("total_tokens"),
             metric_unit="token",
         )
+
+    def format(self, *args: Union[Msg, Sequence[Msg]]) -> str:
+        """Forward the input to the model.
+
+        Args:
+            *args (`Union[Msg, Sequence[Msg]]`):
+                The input arguments to be formatted, where each argument
+                should be a string or a dict or a list of strings or dicts.
+
+        Returns:
+            `str`:
+                The formatted prompt.
+        """
+
+        prompt = []
+
+        for arg in args:
+            if isinstance(arg, Msg):
+                prompt.append(f"{arg.name}: {arg.content}")
+            elif isinstance(arg, list):
+                prompt.extend(self.format(*arg))
+            else:
+                raise TypeError(
+                    f"The input should be a Msg object or a list "
+                    f"of Msg objects, got {type(arg)}.",
+                )
+
+        return "\n".join(prompt)

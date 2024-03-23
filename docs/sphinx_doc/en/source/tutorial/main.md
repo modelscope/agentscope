@@ -25,7 +25,7 @@ AgentScope is an innovative multi-agent platform designed to empower developers 
 - [Model](203-model-en)
 - [Service](204-service-en)
 - [Memory](205-memory-en)
-- [Prompt Engine](206-prompt-en)
+- [Prompt Engineering](206-prompt-en)
 - [Monitor](207-monitor-en)
 - [Distribution](208-distribute-en)
 
