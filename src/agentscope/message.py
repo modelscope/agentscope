@@ -95,7 +95,7 @@ class Msg(MessageBase):
         self,
         name: str,
         content: Any,
-        role: Literal["system", "user", "assistant"],
+        role: Literal["system", "user", "assistant"] = None,
         url: Optional[Union[Sequence[str], str]] = None,
         timestamp: Optional[str] = None,
         echo: bool = False,
@@ -122,10 +122,17 @@ class Msg(MessageBase):
 
         """
 
+        if role is None:
+            logger.warning(
+                'A new field `role` is newly added to the message. '
+                'Please specify the role of the message. Currently we use '
+                'a default "assistant" value.'
+            )
+
         super().__init__(
             name=name,
             content=content,
-            role=role,
+            role=role or "assistant",
             url=url,
             timestamp=timestamp,
             **kwargs,

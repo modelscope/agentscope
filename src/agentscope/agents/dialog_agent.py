@@ -72,8 +72,8 @@ class DialogAgent(AgentBase):
             self.memory.add(x)
 
         # prepare prompt
-        prompt = self.engine.join(
-            self.sys_prompt,
+        prompt = self.model.format(
+            Msg("system", self.sys_prompt, role="system"),
             self.memory and self.memory.get_memory(),
         )
 
