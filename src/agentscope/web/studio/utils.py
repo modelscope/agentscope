@@ -135,6 +135,7 @@ def check_uuid(uid: Optional[str]) -> str:
     if not uid or uid == "":
         if os.getenv("MODELSCOPE_ENVIRONMENT") == "studio":
             import gradio as gr
+
             raise gr.Error("Please login first")
         uid = "local_user"
     return uid
