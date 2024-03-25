@@ -421,3 +421,37 @@ class BasicRpcAgentTest(unittest.TestCase):
         res2 = agent2(msg2)
         self.assertEqual(res2.content["mem_size"], 1)
         launcher.shutdown()
+
+    def test_clone_instances(self) -> None:
+        """Test the clone_instances method of RpcAgent"""
+        agent = DemoRpcAgentWithMemory(
+            name="a",
+        ).to_dist()
+        # lazy launch will not init client
+        self.assertIsNone(agent.client)
+        # generate two agents (the first is it self)
+        agents = agent.clone_instances(2)
+        self.assertEqual(len(agents), 2)
+        agent1 = agents[0]
+        agent2 = agents[1]
+        # clone instance will init client
+        self.assertIsNotNone(agent.client)
+        self.assertEqual(agent.session_id, agent1.session_id)
+        self.assertNotEqual(agent1.session_id, agent2.session_id)
+        self.assertIsNotNone(agent.server_launcher)
+        self.assertIsNotNone(agent1.server_launcher)
+        self.assertIsNone(agent2.server_launcher)
+        msg1 = Msg(name="System", content="First Msg for agent1")
+        res1 = agent1(msg1)
+        self.assertEqual(res1.content["mem_size"], 1)
+        msg2 = Msg(name="System", content="First Msg for agent2")
+        res2 = agent2(msg2)
+        self.assertEqual(res2.content["mem_size"], 1)
+        new_agents = agent.clone_instances(2, including_self=False)
+        agent3 = new_agents[0]
+        agent4 = new_agents[1]
+        self.assertEqual(len(new_agents), 2)
+        self.assertNotEqual(agent3.session_id, agent.session_id)
+        self.assertNotEqual(agent4.session_id, agent.session_id)
+        self.assertIsNone(agent3.server_launcher)
+        self.assertIsNone(agent4.server_launcher)
