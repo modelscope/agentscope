@@ -214,6 +214,38 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
     ) -> List:
         """Format the messages for DashScope Chat API.
 
+        In this format function, the input messages are formatted into a
+        single system messages with format "{name}: {content}" for each
+        message. Note this strategy maybe not suitable for all scenarios,
+        and developers are encouraged to implement their own prompt
+        engineering strategies.
+
+        The following is an example:
+
+        .. code-block:: python
+
+            prompt = model.format(
+                Msg("system", "You're a helpful assistant", role="system"),
+                Msg("Bob", "Hi, how can I help you?", role="assistant"),
+                Msg("user", "What's the date today?", role="user")
+            )
+
+        The prompt will be as follows:
+
+        .. code-block:: python
+
+            [
+                {
+                    "role": "system",
+                    "content": (
+                       "system: You're a helpful assistant\n",
+                       "Bob: Hi, how can I help you?\n",
+                       "user: What's the date today?"
+                    )
+                }
+            ]
+
+
         Args:
             *args (`Union[Msg, Sequence[Msg]]`):
                 The input arguments to be formatted, where each argument
@@ -232,7 +264,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             elif isinstance(arg, list):
                 user_prompt.extend(self.format(*arg))
 
-        return [{"role": "user", "content": "\n".join(user_prompt)}]
+        return [{"role": "system", "content": "\n".join(user_prompt)}]
 
     def _preprocess_role(self, messages: list) -> list:
         """preprocess role rules for DashScope"""

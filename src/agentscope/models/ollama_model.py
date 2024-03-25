@@ -274,6 +274,16 @@ class OllamaEmbeddingWrapper(OllamaWrapperBase):
             metric_unit="times",
         )
 
+    def format(
+        self,
+        *args: Union[Msg, Sequence[Msg]],
+    ) -> Union[List[dict], str]:
+        raise RuntimeError(
+            f"Model Wrapper [{type(self).__name__}] doesn't "
+            f"need to format the input. Please try to use the "
+            f"model wrapper directly.",
+        )
+
 
 class OllamaGenerationWrapper(OllamaWrapperBase):
     """The model wrapper for Ollama generation API."""

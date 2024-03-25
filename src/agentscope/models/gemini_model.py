@@ -3,7 +3,7 @@
 import os
 from abc import ABC
 from collections.abc import Iterable
-from typing import Sequence, Union, Any
+from typing import Sequence, Union, Any, List
 
 from loguru import logger
 
@@ -196,10 +196,10 @@ class GeminiChatWrapper(GeminiWrapperBase):
             metric_unit="token",
         )
 
-    def format(self, *args: Union[Msg, Sequence[Msg]]) -> str:
-        """This function provide a basic prompting strategy for Gemini
-        generation API in multi-party conversation, which combines all input
-        into a single string.
+    def format(self, *args: Union[Msg, Sequence[Msg]]) -> List[dict]:
+        """This function provide a basic prompting strategy for Gemini Chat
+        API in multi-party conversation, which combines all input into a
+        single string, and wrap it into a user message.
 
         We make the above decision based on the following constraints of the
         Gemini generate API:
@@ -218,9 +218,9 @@ class GeminiChatWrapper(GeminiWrapperBase):
         https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini
 
         Based on the above considerations, we decide to combine all messages
-        into a single string. This is a simple and straightforward strategy,
-        if you have any better ideas, pull request and discussion are
-        welcome in our GitHub repository
+        into a single user message. This is a simple and straightforward
+        strategy, if you have any better ideas, pull request and
+        discussion are welcome in our GitHub repository
         https://github.com/agentscope/agentscope!
 
         Args:
@@ -229,8 +229,8 @@ class GeminiChatWrapper(GeminiWrapperBase):
                 `Msg` objects.
 
         Returns:
-            `str`:
-                The formatted string prompt.
+            `List[dict]`:
+                A list with one user message.
         """
         prompt = []
         for unit in args:
@@ -243,7 +243,10 @@ class GeminiChatWrapper(GeminiWrapperBase):
                     f"The input should be a Msg object or a list "
                     f"of Msg objects, got {type(unit)}.",
                 )
-        return "\n".join(prompt)
+
+        prompt_str = "\n".join(prompt)
+
+        return [{"role": "user", "parts": [prompt_str]}]
 
 
 class GeminiEmbeddingWrapper(GeminiWrapperBase):

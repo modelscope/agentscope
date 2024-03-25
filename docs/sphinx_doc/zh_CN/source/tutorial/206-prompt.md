@@ -79,12 +79,13 @@ print(prompt)
 `DashScopeChatWrapper`封装了DashScope聊天API，它接受消息列表作为输入。消息必须遵守以下规则：
 
 - 需要`role`和`content`字段，以及一个可选的`name`字段。
-- `role`字段必须是`"user"`或`"assistant"`之一。
+- `role`字段必须是`"user"`，`"system"`或`"assistant"`之一。
+- 如果一条信息的`role`字段是`"system"`，那么这条信息必须也只能出现在消息列表的开头。
 - `user`和`assistant`必须交替发言。
 
 #### 提示的构建策略
 
-目前，我们为`DashScopeChatWrapper`提供了一个简单的策略，将所有输入消息组合成一个字符串，并将其填入一个`role`字段为`“user”`的字典中。
+目前，我们为`DashScopeChatWrapper`提供了一个简单的策略，将所有输入消息组合成一个字符串，并将其填入一个`role`字段为`“system”`的字典中。
 
 样例如下：
 
@@ -109,7 +110,7 @@ print(prompt)
 
 ```bash
 [
-  {"role": "user", "content": "system: You are a helpful assistant\nBob: Hi.\nAlice: Nice to meet you!"},
+  {"role": "system", "content": "system: You are a helpful assistant\nBob: Hi.\nAlice: Nice to meet you!"},
 ]
 ```
 
@@ -197,7 +198,7 @@ Alice: Nice to meet you!
 - `user`必须在输入消息列表的开头和结尾发言。
 
 当代理可能扮演多种不同角色并连续发言时，这些要求使得构建多代理对话变得困难。
-因此，我们决定在内置的`format`函数中将消息列表转换为字符串提示。
+因此，我们决定在内置的`format`函数中将消息列表转换为字符串提示，并且封装在一条user信息中。
 
 #### 提示的构建策略
 
@@ -231,9 +232,14 @@ print(prompt)
 ```
 
 ```bash
-system: You are a helpful assistant
-Bob: Hi.
-Alice: Nice to meet you!
+[
+  {
+    "role": "user",
+    "parts": [
+      "system: You are a helpful assistant\nBob: Hi.\nAlice: Nice to meet you!"
+    ]
+  }
+]
 ```
 
 ## 关于`PromptEngine`类 （将会在未来版本弃用）

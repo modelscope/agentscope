@@ -6,9 +6,9 @@ Prompt engineering is critical in LLM-empowered applications. However,
 crafting prompts for large language models (LLMs) can be challenging,
 especially with different requirements from various model APIs.
 
-To help developers ease the process of adapting prompt to different
-model APIs, AgentScope provides a structured way to organize different data
-types (e.g. instruction, hints, dialogue history) into the desired format.
+To ease the process of adapting prompt to different model APIs, AgentScope 
+provides a structured way to organize different data types (e.g. instruction, 
+hints, dialogue history) into the desired format.
 
 Note there is no **one-size-fits-all** solution for prompt crafting.
 **The goal of built-in strategies is to enable beginners to smoothly invoke
@@ -100,13 +100,15 @@ print(prompt)
 `DashScopeChatWrapper` encapsulates the DashScope chat API, which takes a list of messages as input. The message must obey the following rules (updated in 2024/03/22):
 
 - Require `role` and `content` fields, and `role` must be either `"user"`
-  or `"assistant"`.
+  `"system"` or `"assistant"`.
+- If `role` is `"system"`, this message must and can only be the first 
+  message in the list.
 - The `user` and `assistant` must speak alternatively.
 - The `user` must speak in the beginning and end of the input messages list.
 
 #### Prompt Strategy
 
-Currently, we provide a simple strategy for `DashScopeChatWrapper`: combine all input messages into a string, and feed it into a `"user"` message.
+Currently, we provide a simple strategy for `DashScopeChatWrapper`: combine all input messages into a string, and feed it into a `"system"` message.
 
 An example is shown below:
 
@@ -131,7 +133,7 @@ print(prompt)
 
 ```bash
 [
-  {"role": "user", "content": "system: You are a helpful assistant\nBob: Hi.\nAlice: Nice to meet you!"},
+  {"role": "system", "content": "system: You are a helpful assistant\nBob: Hi.\nAlice: Nice to meet you!"},
 ]
 ```
 
@@ -229,7 +231,7 @@ pass a list of messages, it must obey the following rules:
 
 Such requirements make it difficult to build a multi-agent conversation when
 an agent may act as many different roles and speak continuously.
-Therefore, we decide to convert the list of messages into a string prompt
+Therefore, we decide to convert the list of messages into a user message
 in our built-in `format` function.
 
 #### Prompt Strategy
@@ -265,9 +267,14 @@ print(prompt)
 ```
 
 ```bash
-system: You are a helpful assistant
-Bob: Hi.
-Alice: Nice to meet you!
+[
+  {
+    "role": "user",
+    "parts": [
+      "system: You are a helpful assistant\nBob: Hi.\nAlice: Nice to meet you!"
+    ]
+  }
+]
 ```
 
 ## Prompt Engine (Will be deprecated in the future)
