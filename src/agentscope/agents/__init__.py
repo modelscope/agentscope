@@ -7,7 +7,7 @@ from .dict_dialog_agent import DictDialogAgent
 from .user_agent import UserAgent
 from .text_to_image_agent import TextToImageAgent
 from .rpc_agent import RpcAgentServerLauncher
-
+from .tool_agent import ToolAgent
 
 __all__ = [
     "AgentBase",
@@ -17,4 +17,5 @@ __all__ = [
     "TextToImageAgent",
     "UserAgent",
     "RpcAgentServerLauncher",
+    "ToolAgent",
 ]
