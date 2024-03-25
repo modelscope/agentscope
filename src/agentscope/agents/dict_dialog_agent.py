@@ -14,7 +14,16 @@ from ..prompt import PromptType
 
 def parse_dict(response: ModelResponse) -> ModelResponse:
     """Parse function for DictDialogAgent"""
-    return ModelResponse(raw=json.loads(response.text))
+    try:
+        response_dict = json.loads(response.text)
+    except json.decoder.JSONDecodeError:
+        # Sometimes LLM may return a response with single quotes, which is not
+        # a valid JSON format. We replace single quotes with double quotes and
+        # try to load it again.
+        # TODO: maybe using a more robust json library to handle this case
+        response_dict = json.loads(response.text.replace("'", '"'))
+
+    return ModelResponse(raw=response_dict)
 
 
 def default_response(response: ModelResponse) -> ModelResponse:
@@ -159,6 +168,12 @@ class DictDialogAgent(AgentBase):
 
         # record to memory
         if self.memory:
-            self.memory.add(msg)
+            # Convert the response dict into a string to store in memory
+            msg_memory = Msg(
+                name=self.name,
+                content=str(msg.content),
+                role="assistant",
+            )
+            self.memory.add(msg_memory)
 
         return msg
