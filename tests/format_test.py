@@ -4,8 +4,13 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from agentscope.message import Msg
-from agentscope.models import OpenAIChatWrapper, OllamaChatWrapper, \
-    OllamaGenerationWrapper, GeminiChatWrapper, DashScopeChatWrapper
+from agentscope.models import (
+    OpenAIChatWrapper,
+    OllamaChatWrapper,
+    OllamaGenerationWrapper,
+    GeminiChatWrapper,
+    DashScopeChatWrapper,
+)
 
 
 class ExampleTest(unittest.TestCase):
@@ -20,7 +25,7 @@ class ExampleTest(unittest.TestCase):
             [
                 Msg("user", "What's the weather today?", role="user"),
                 Msg("assistant", "It's sunny today", role="assistant"),
-            ]
+            ],
         ]
 
         self.wrong_inputs = [
@@ -28,7 +33,7 @@ class ExampleTest(unittest.TestCase):
             [
                 "What's the weather today?",
                 Msg("assistant", "It's sunny today", role="assistant"),
-            ]
+            ],
         ]
 
     @patch("openai.OpenAI")
@@ -44,18 +49,29 @@ class ExampleTest(unittest.TestCase):
 
         # correct format
         ground_truth = [
-            {"role": "system", "content": "You're a helpful assistant",
-             "name": "system"},
-            {"role": "user", "content": "What's the weather today?","name": "user"},
-            {"role": "assistant", "content": "It's sunny today","name": "assistant"}
+            {
+                "role": "system",
+                "content": "You're a helpful assistant",
+                "name": "system",
+            },
+            {
+                "role": "user",
+                "content": "What's the weather today?",
+                "name": "user",
+            },
+            {
+                "role": "assistant",
+                "content": "It's sunny today",
+                "name": "assistant",
+            },
         ]
 
-        prompt = model.format(*self.inputs)
+        prompt = model.format(*self.inputs)  # type: ignore[arg-type]
         self.assertListEqual(prompt, ground_truth)
 
         # wrong format
         with self.assertRaises(TypeError):
-            model.format(self.wrong_inputs)
+            model.format(*self.wrong_inputs)  # type: ignore[arg-type]
 
     def test_ollama_chat(self) -> None:
         """Unit test for the format function in ollama chat api wrapper."""
@@ -68,14 +84,14 @@ class ExampleTest(unittest.TestCase):
         ground_truth = [
             {"role": "system", "content": "You're a helpful assistant"},
             {"role": "user", "content": "What's the weather today?"},
-            {"role": "assistant", "content": "It's sunny today"}
+            {"role": "assistant", "content": "It's sunny today"},
         ]
-        prompt = model.format(*self.inputs)
+        prompt = model.format(*self.inputs)  # type: ignore[arg-type]
         self.assertEqual(prompt, ground_truth)
 
         # wrong format
         with self.assertRaises(TypeError):
-            model.format(self.wrong_inputs)
+            model.format(*self.wrong_inputs)  # type: ignore[arg-type]
 
     def test_ollama_generation(self) -> None:
         """Unit test for the generation function in ollama chat api wrapper."""
@@ -85,13 +101,16 @@ class ExampleTest(unittest.TestCase):
         )
 
         # correct format
-        ground_truth = "system: You're a helpful assistant\nuser: What's the weather today?\nassistant: It's sunny today"
-        prompt = model.format(*self.inputs)
+        ground_truth = (
+            "system: You're a helpful assistant\nuser: What's "
+            "the weather today?\nassistant: It's sunny today"
+        )
+        prompt = model.format(*self.inputs)  # type: ignore[arg-type]
         self.assertEqual(prompt, ground_truth)
 
         # wrong format
         with self.assertRaises(TypeError):
-            model.format(self.wrong_inputs)
+            model.format(*self.wrong_inputs)  # type: ignore[arg-type]
 
     @patch("google.generativeai.configure")
     def test_gemini_chat(self, mock_configure: MagicMock) -> None:
@@ -101,40 +120,50 @@ class ExampleTest(unittest.TestCase):
         model = GeminiChatWrapper(
             config_name="",
             model_name="gemini-pro",
-            api_key="xxx"
+            api_key="xxx",
         )
 
         # correct format
         ground_truth = [
-            {"role": "user", "parts": ["system: You're a helpful assistant\nuser: What's the weather today?\nassistant: It's sunny today"]}
+            {
+                "role": "user",
+                "parts": [
+                    "system: You're a helpful assistant\nuser: What's the "
+                    "weather today?\nassistant: It's sunny today",
+                ],
+            },
         ]
 
-        prompt = model.format(*self.inputs)
+        prompt = model.format(*self.inputs)  # type: ignore[arg-type]
         self.assertListEqual(prompt, ground_truth)
 
         # wrong format
         with self.assertRaises(TypeError):
-            model.format(self.wrong_inputs)
+            model.format(*self.wrong_inputs)  # type: ignore[arg-type]
 
     def test_dashscope_chat(self) -> None:
         """Unit test for the format function in dashscope chat api wrapper."""
         model = DashScopeChatWrapper(
             config_name="",
             model_name="qwen-max",
-            api_key="xxx"
+            api_key="xxx",
         )
 
         # correct format
         ground_truth = [
-            {"role": "system", "content": "system: You're a helpful assistant\nuser: What's the weather today?\nassistant: It's sunny today"}
+            {
+                "role": "system",
+                "content": "system: You're a helpful assistant\nuser: What's "
+                "the weather today?\nassistant: It's sunny today",
+            },
         ]
 
-        prompt = model.format(*self.inputs)
+        prompt = model.format(*self.inputs)  # type: ignore[arg-type]
         self.assertListEqual(prompt, ground_truth)
 
         # wrong format
         with self.assertRaises(TypeError):
-            model.format(self.wrong_inputs)
+            model.format(*self.wrong_inputs)  # type: ignore[arg-type]
 
 
 if __name__ == "__main__":
