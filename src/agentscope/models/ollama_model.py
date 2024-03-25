@@ -193,6 +193,10 @@ class OllamaChatWrapper(OllamaWrapperBase):
                 ollama_msgs.append(ollama_msg)
             elif isinstance(msg, list):
                 ollama_msgs.extend(self.format(*msg))
+            else:
+                raise TypeError(
+                    f"Invalid message type: {type(msg)}, `Msg` is expected.",
+                )
 
         return ollama_msgs
 

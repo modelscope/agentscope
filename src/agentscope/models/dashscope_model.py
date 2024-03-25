@@ -257,14 +257,30 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         """
         # TODO: This function only convert agentscope msgs into qwen
         #  messages, the re-range is executed in _preprocess_role function.
-        user_prompt = []
-        for arg in args:
-            if isinstance(arg, Msg):
-                user_prompt.append(f"{arg.name}: {arg.content}")
-            elif isinstance(arg, list):
-                user_prompt.extend(self.format(*arg))
+        prompt = []
+        for unit in args:
+            if isinstance(unit, Msg):
+                prompt.append(f"{unit.name}: {unit.content}")
+            elif isinstance(unit, list):
+                for child_unit in unit:
+                    if isinstance(child_unit, Msg):
+                        prompt.append(
+                            f"{child_unit.name}: " f"{child_unit.content}",
+                        )
+                    else:
+                        raise TypeError(
+                            f"The input should be a Msg object or a list "
+                            f"of Msg objects, got {type(child_unit)}.",
+                        )
+            else:
+                raise TypeError(
+                    f"The input should be a Msg object or a list "
+                    f"of Msg objects, got {type(unit)}.",
+                )
 
-        return [{"role": "system", "content": "\n".join(user_prompt)}]
+        prompt_str = "\n".join(prompt)
+
+        return [{"role": "system", "content": "\n".join(prompt_str)}]
 
     def _preprocess_role(self, messages: list) -> list:
         """preprocess role rules for DashScope"""

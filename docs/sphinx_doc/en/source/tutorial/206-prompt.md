@@ -6,8 +6,8 @@ Prompt engineering is critical in LLM-empowered applications. However,
 crafting prompts for large language models (LLMs) can be challenging,
 especially with different requirements from various model APIs.
 
-To ease the process of adapting prompt to different model APIs, AgentScope 
-provides a structured way to organize different data types (e.g. instruction, 
+To ease the process of adapting prompt to different model APIs, AgentScope
+provides a structured way to organize different data types (e.g. instruction,
 hints, dialogue history) into the desired format.
 
 Note there is no **one-size-fits-all** solution for prompt crafting.
@@ -101,7 +101,7 @@ print(prompt)
 
 - Require `role` and `content` fields, and `role` must be either `"user"`
   `"system"` or `"assistant"`.
-- If `role` is `"system"`, this message must and can only be the first 
+- If `role` is `"system"`, this message must and can only be the first
   message in the list.
 - The `user` and `assistant` must speak alternatively.
 - The `user` must speak in the beginning and end of the input messages list.

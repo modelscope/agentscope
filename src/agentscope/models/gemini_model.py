@@ -237,7 +237,16 @@ class GeminiChatWrapper(GeminiWrapperBase):
             if isinstance(unit, Msg):
                 prompt.append(f"{unit.name}: {unit.content}")
             elif isinstance(unit, list):
-                prompt.extend(self.format(*unit))
+                for child_unit in unit:
+                    if isinstance(child_unit, Msg):
+                        prompt.append(
+                            f"{child_unit.name}: " f"{child_unit.content}",
+                        )
+                    else:
+                        raise TypeError(
+                            f"The input should be a Msg object or a list "
+                            f"of Msg objects, got {type(child_unit)}.",
+                        )
             else:
                 raise TypeError(
                     f"The input should be a Msg object or a list "
