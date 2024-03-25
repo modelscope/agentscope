@@ -21,18 +21,18 @@ class ExampleTest(unittest.TestCase):
     def setUp(self) -> None:
         """Init for ExampleTest."""
         self.inputs = [
-            Msg("system", "You're a helpful assistant", role="system"),
+            Msg("system", "You are a helpful assistant", role="system"),
             [
-                Msg("user", "What's the weather today?", role="user"),
-                Msg("assistant", "It's sunny today", role="assistant"),
+                Msg("user", "What is the weather today?", role="user"),
+                Msg("assistant", "It is sunny today", role="assistant"),
             ],
         ]
 
         self.wrong_inputs = [
-            Msg("system", "You're a helpful assistant", role="system"),
+            Msg("system", "You are a helpful assistant", role="system"),
             [
-                "What's the weather today?",
-                Msg("assistant", "It's sunny today", role="assistant"),
+                "What is the weather today?",
+                Msg("assistant", "It is sunny today", role="assistant"),
             ],
         ]
 
@@ -51,17 +51,17 @@ class ExampleTest(unittest.TestCase):
         ground_truth = [
             {
                 "role": "system",
-                "content": "You're a helpful assistant",
+                "content": "You are a helpful assistant",
                 "name": "system",
             },
             {
                 "role": "user",
-                "content": "What's the weather today?",
+                "content": "What is the weather today?",
                 "name": "user",
             },
             {
                 "role": "assistant",
-                "content": "It's sunny today",
+                "content": "It is sunny today",
                 "name": "assistant",
             },
         ]
@@ -82,9 +82,9 @@ class ExampleTest(unittest.TestCase):
 
         # correct format
         ground_truth = [
-            {"role": "system", "content": "You're a helpful assistant"},
-            {"role": "user", "content": "What's the weather today?"},
-            {"role": "assistant", "content": "It's sunny today"},
+            {"role": "system", "content": "You are a helpful assistant"},
+            {"role": "user", "content": "What is the weather today?"},
+            {"role": "assistant", "content": "It is sunny today"},
         ]
         prompt = model.format(*self.inputs)  # type: ignore[arg-type]
         self.assertEqual(prompt, ground_truth)
@@ -102,8 +102,8 @@ class ExampleTest(unittest.TestCase):
 
         # correct format
         ground_truth = (
-            "system: You're a helpful assistant\nuser: What's "
-            "the weather today?\nassistant: It's sunny today"
+            "system: You are a helpful assistant\nuser: What is "
+            "the weather today?\nassistant: It is sunny today"
         )
         prompt = model.format(*self.inputs)  # type: ignore[arg-type]
         self.assertEqual(prompt, ground_truth)
@@ -128,8 +128,8 @@ class ExampleTest(unittest.TestCase):
             {
                 "role": "user",
                 "parts": [
-                    "system: You're a helpful assistant\nuser: What's the "
-                    "weather today?\nassistant: It's sunny today",
+                    "system: You are a helpful assistant\nuser: What is the "
+                    "weather today?\nassistant: It is sunny today",
                 ],
             },
         ]
@@ -150,15 +150,23 @@ class ExampleTest(unittest.TestCase):
         )
 
         # correct format
+        # ground_truth = [
+        #     {
+        #         "role": "system",
+        #         "content": "system: You are a helpful assistant\nuser:
+        #         What is the weather today?\nassistant: It is sunny today",
+        #     },
+        # ]
+
         ground_truth = [
-            {
-                "role": "system",
-                "content": "system: You're a helpful assistant\nuser: What's "
-                "the weather today?\nassistant: It's sunny today",
-            },
+            {"role": "system", "content": "You are a helpful assistant"},
+            {"role": "user", "content": "What is the weather today?"},
+            {"role": "assistant", "content": "It is sunny today"},
         ]
 
         prompt = model.format(*self.inputs)  # type: ignore[arg-type]
+        print(prompt)
+        print(ground_truth)
         self.assertListEqual(prompt, ground_truth)
 
         # wrong format

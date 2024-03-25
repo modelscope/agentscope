@@ -263,7 +263,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                 prompt.append(
                     {
                         "role": unit.get("role", "assistant"),
-                        "content": json.dumps(unit.content),
+                        "content": str(unit.content),
                     },
                 )
             elif isinstance(unit, list):
@@ -272,7 +272,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                         prompt.append(
                             {
                                 "role": child_unit.role,
-                                "content": json.dumps(child_unit.content),
+                                "content": str(child_unit.content),
                             },
                         )
                     else:
