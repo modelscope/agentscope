@@ -104,6 +104,4 @@ class UserAgent(AgentBase):
         content: Union[str, dict],
     ) -> None:
         """Speak the content to the audience."""
-        if isinstance(content, dict):
-            content["disable_studio"] = True
-        logger.chat(content)
+        logger.chat(content, disable_studio=True)

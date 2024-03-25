@@ -67,7 +67,12 @@ def _get_speaker_color(speaker: str) -> tuple[str, str]:
 
 
 # add chat function for logger
-def _chat(message: Union[str, dict], *args: Any, **kwargs: Any) -> None:
+def _chat(
+    message: Union[str, dict],
+    *args: Any,
+    disable_studio: bool = False,
+    **kwargs: Any,
+) -> None:
     """Log a chat message with the format of"<speaker>: <content>".
 
     Args:
@@ -111,10 +116,7 @@ def _chat(message: Union[str, dict], *args: Any, **kwargs: Any) -> None:
                 )
                 logger.log(LEVEL_CHAT_LOG, print_str, *args, **kwargs)
 
-                if (
-                    "disable_studio" in message
-                    and message["disable_studio"] is True
-                ):
+                if disable_studio:
                     return
 
                 if hasattr(thread_local_data, "uid"):
