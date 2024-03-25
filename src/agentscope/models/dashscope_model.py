@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for DashScope models"""
-import json
 from abc import ABC
 from http import HTTPStatus
 from typing import Any, Union, List, Sequence
