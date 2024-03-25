@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 """parsing and digesting the web pages"""
-import typing
 import json
-import re
-from typing import Optional, Callable, Literal, Any, Sequence
+from urllib.parse import urlparse
+from typing import Optional, Callable, Sequence
 import requests
 from loguru import logger
 
@@ -14,17 +13,10 @@ from agentscope.models.model import ModelWrapperBase
 from agentscope.service import summarization
 
 
-DEFAULT_SYS_PROMPT = (
+DEFAULT_WEB_SYS_PROMPT = (
     "You're a web page analyser. You job is to extract important"
     "and useful information from html or webpage description.\n"
 )
-
-
-HTML_PARSING_TYPES = Literal[
-    "raw",
-    "selected_tags_to_text",
-    "self_define_func",
-]
 
 
 def is_valid_url(url: str) -> bool:
@@ -37,49 +29,47 @@ def is_valid_url(url: str) -> bool:
         bool: True if url is valid, False otherwise
     """
     # This regex pattern is designed to match most common URLs.
-    regex = re.compile(
-        r"^(https?://)"  # http:// or https://
-        r"(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+"
-        r"[A-Z]{2,6}\.?|"  # domain...
-        r"localhost|"  # localhost...
-        r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"  # ...or ip
-        r"(?::\d+)?"  # optional port
-        r"(?:/?|[/?]\S+)$",
-        re.IGNORECASE,
-    )  # rest of url
-    return re.match(regex, url) is not None
+    try:
+        result = urlparse(url)
+        # Check if the URL has both a scheme
+        # (e.g., "http" or "https") and a netloc (domain).
+        return all([result.scheme, result.netloc])
+    except ValueError:
+        return False  # A ValueError indicates that the URL is not valid.
 
 
-def web_load(
+def load_web(
     url: str,
-    html_parsing_types: Sequence[HTML_PARSING_TYPES] = tuple(
-        ["selected_tags_to_text"],
-    ),
-    html_selected_tags: Optional[Sequence[str]] = tuple(
-        ["h", "p", "li", "div", "a"],
-    ),
-    html_parse_func: Optional[Callable[[requests.Response], Any]] = None,
+    keep_raw: bool = True,
+    html_selected_tags: Optional[Sequence[str]] = None,
+    html_parse_func: Optional[Callable] = None,
 ) -> ServiceResponse:
     """Function for parsing and digesting the web page.
     Args:
         url (str): the url of the web page
-        html_parsing_types (Sequence[HTML_PARSING_TYPES]): parsing/
-            pre-processing strategies for the HTML web pages:
-                "raw": returns the raw HTML content
-                "selected_tags_to_text": returns the text content of
-                    selected HTML tags. Tags are set by the
-                    `html_select_tags` parameter.
-                "self_define_func": user-define processing function
-                    for HTML file
-        html_selected_tags (Optional[Sequence[str]]): if
-            "selected_tags_to_text" is in `html_parsing_types`,
-            then the text in `html_select_tags` will be extracted.
-            Defaults to ["h", "p", "li", "div", "a"].
-        html_parse_func (Optional[Callable[[requests.Response], Any]]): if
-            "self_define_func" in `html_parsing_types`, then the
-            `html_parse_func` will be invoked with the response as input.
-            For example,
-                `html_parse_func(requests.get(url))`
+        keep_raw (bool):
+            Whether to keep raw HTML. If True, the content is
+            stored with key "raw".
+        html_selected_tags (Optional[Sequence[str]]):
+            the text in elements of `selected_tags` will
+            be extracted and stored with "selected_tags_text"
+            key in return.
+        html_parse_func (Optional[Callable]):
+            if "html_parse_func" is not None, then the
+            `html_parse_func` will be invoked with the response
+            text as input. The result is stored with
+            `self_define_func` key
+
+    Returns:
+        `ServiceResponse`: If successful, `ServiceResponse` object is returned
+        with `content` field is a dict, where keys are subset of
+        {"raw", "self_define_func", "selected_tags_text"}
+         For example, `content` field is
+        {
+            "raw": raw_content_of_web,
+            "selected_tags_text":
+                processed_text_content_of_the_selected_tags,
+        }
 
     Returns:
         `ServiceResponse`: If successful, `ServiceResponse` object is returned
@@ -105,9 +95,9 @@ def web_load(
         if response.status_code == 200:
             content_type = response.headers["Content-Type"].lower()
             if "html" in content_type:
-                return html_parse(
-                    response,
-                    html_parsing_types,
+                return parse_html(
+                    response.text,
+                    keep_raw,
                     html_selected_tags,
                     html_parse_func,
                 )
@@ -142,7 +132,7 @@ def web_load(
                 f"status code {response.status_code}",
             )
             return ServiceResponse(
-                ServiceExecStatus.SUCCESS,
+                ServiceExecStatus.ERROR,
                 content="",
             )
     except Exception as e:
@@ -150,108 +140,86 @@ def web_load(
         return ServiceResponse(ServiceExecStatus.ERROR, content="")
 
 
-def html_parse(
-    html_response: requests.Response,
-    html_parsing_types: Sequence[HTML_PARSING_TYPES] = tuple(
-        ["selected_tags_to_text"],
-    ),
-    html_selected_tags: Optional[Sequence[str]] = tuple(
-        ["h", "p", "li", "div", "a"],
-    ),
+def parse_html(
+    html_text: str,
+    keep_raw: bool = True,
+    html_selected_tags: Optional[Sequence[str]] = None,
     html_parse_func: Optional[Callable] = None,
 ) -> ServiceResponse:
     """
     Parse the obtained HTML file.
     Args:
-        html_response (requests): HTTP response, returned by
-            requests.get function
-        html_parsing_types (Sequence[HTML_PARSING_TYPES]):
-            parsing/pre-processing strategies for the HTML
-            web pages, can be any combination of:
-                "raw": returns the raw HTML content
-                "selected_tags_to_text": returns the text content of
-                selected HTML tags. Tags are set by the
-                    `html_select_tags` parameter.
-                "self_define_func": user-define processing function for
-                    HTML file
-        html_selected_tags (Optional[Sequence[str]]): if
-            "selected_tags_to_text" is in `html_parsing_types`, then the
-            text in `html_select_tags` will be extracted.
-            Defaults to ["h", "p", "li", "div", "a"].
-        html_parse_func (Optional[Callable[[requests.Response], Any]]): if
-            "self_define_func" in `html_parsing_types`, then the
-            `html_parse_func` will be invoked with the response as
-            input. For example,
-                `html_parse_func(requests.get(url))`
+        html_text (str):
+            HTTP response text
+        keep_raw (bool):
+            Whether to keep raw HTML. If True, the content is
+            stored with key "raw".
+        html_selected_tags (Optional[Sequence[str]]):
+            the text in elements of `selected_tags` will
+            be extracted and stored with "selected_tags_text"
+            key in return.
+        html_parse_func (Optional[Callable]):
+            if "html_parse_func" is not None, then the
+            `html_parse_func` will be invoked with the response
+            text as input. The result is stored with
+            `self_define_func` key
 
     Returns:
         `ServiceResponse`: If successful, `ServiceResponse` object is returned
-        with `content` field is a dict, where keys are `html_parsing_types` and
-        values are the (pre-processed) parsed content. For example, if
-        `html_parsing_types = ['raw', 'selected_tags_to_text']` the
-        `content` field is
+        with `content` field is a dict, where keys are subset of
+        {"raw", "self_define_func", "selected_tags_text"}
+         For example, `content` field is
         {
             "raw": raw_content_of_web,
-            "selected_tags_to_text":
+            "selected_tags_text":
                 processed_text_content_of_the_selected_tags,
         }
     """
-    logger.info(f"parsing_types: {html_parsing_types}")
-    assert set(html_parsing_types) <= set(
-        typing.get_args(HTML_PARSING_TYPES),
-    ), (
-        f"html_parsing_types must be subset of "
-        f"{typing.get_args(HTML_PARSING_TYPES)}"
-    )
-
     results = {}
 
-    for parse_type in html_parsing_types:
-        if parse_type == "raw":
-            results[str(parse_type)] = html_response.text
-        elif parse_type == "self_define_func" and html_parse_func is not None:
-            results[str(parse_type)] = html_parse_func(html_response)
-        elif parse_type == "selected_tags_to_text":
-            logger.info(
-                f"extracting text information "
-                f"from tags: {html_selected_tags}",
-            )
-            try:
-                from bs4 import BeautifulSoup, NavigableString, Tag
-            except ImportError as exc:
-                raise ImportError(
-                    "BeautifulSoup4 is required for processing the "
-                    "web page without model."
-                    "Please install with `pip install bs4` .",
-                ) from exc
+    if keep_raw:
+        results["raw"] = html_text
 
-            doc = BeautifulSoup(html_response.text, "html.parser")
+    if html_parse_func is not None:
+        results["self_define_func"] = html_parse_func(html_text)
+    if html_selected_tags:
+        logger.info(
+            f"extracting text information from tags: " f"{html_selected_tags}",
+        )
+        try:
+            from bs4 import BeautifulSoup, NavigableString, Tag
+        except ImportError as exc:
+            raise ImportError(
+                "BeautifulSoup4 is required for processing the "
+                "web page without model."
+                "Please install with `pip install bs4` .",
+            ) from exc
 
-            def get_navigable_strings(
-                e: Tag,
-            ) -> str:
-                # pylint: disable=cell-var-from-loop
-                text = ""
-                for child in e.children:
-                    if isinstance(child, Tag):
-                        # pylint: disable=cell-var-from-loop
-                        text += get_navigable_strings(child).strip(" \n\t")
-                    elif isinstance(child, NavigableString):
-                        if (e.name == "a") and (href := e.get("href")):
-                            if is_valid_url(href):
-                                text += f"{child.strip()} ({href})"
-                        else:
-                            text += child.text
-                return " ".join(text.split())
+        doc = BeautifulSoup(html_text, "html.parser")
 
-            text_parts = ""
-            if html_selected_tags is None:
-                html_selected_tags = ["h", "p", "li", "div", "a"]
-            for element in doc.find_all(recursive=True):
-                if element.name in html_selected_tags:
-                    text_parts += get_navigable_strings(element).strip(" \n\t")
-                    element.decompose()
-            results[str(parse_type)] = text_parts
+        def get_navigable_strings(
+            e: Tag,
+        ) -> str:
+            # pylint: disable=cell-var-from-loop
+            text = ""
+            for child in e.children:
+                if isinstance(child, Tag):
+                    # pylint: disable=cell-var-from-loop
+                    text += get_navigable_strings(child).strip(" \n\t")
+                elif isinstance(child, NavigableString):
+                    if (e.name == "a") and (href := e.get("href")):
+                        if is_valid_url(href):
+                            text += f"[{child.strip()}]({href})"
+                    else:
+                        text += child.text
+            return " ".join(text.split())
+
+        text_parts = ""
+        for element in doc.find_all(recursive=True):
+            if element.name in html_selected_tags:
+                text_parts += get_navigable_strings(element).strip(" \n\t")
+                element.decompose()
+        results["selected_tags_text"] = text_parts
 
     return ServiceResponse(
         status=ServiceExecStatus.SUCCESS,
@@ -259,15 +227,19 @@ def html_parse(
     )
 
 
-def webpage_digest(
+def digest_webpage(
     web_text_or_url: str,
     model: ModelWrapperBase = None,
-    digest_prompt: str = DEFAULT_SYS_PROMPT,
+    html_selected_tags: Sequence[str] = ("h", "p", "li", "div", "a"),
+    digest_prompt: str = DEFAULT_WEB_SYS_PROMPT,
 ) -> ServiceResponse:
     """
     Args:
         web_text_or_url (str): preprocessed web text or url to the web page
         model (ModelWrapperBase): the model to digest the web content
+        html_selected_tags (Sequence[str]):
+            the text in elements of `selected_tags` will
+            be extracted and feed to the model
         digest_prompt (str): system prompt for the model to digest
             the web content
 
@@ -278,12 +250,14 @@ def webpage_digest(
     if is_valid_url(web_text_or_url):
         # if an url is provided, then
         # load the content of the url first
-        response = web_load(
+        if html_selected_tags is None or len(html_selected_tags) == 0:
+            html_selected_tags = ["h", "p", "li", "div", "a"]
+        response = load_web(
             url=web_text_or_url,
-            html_parsing_types=["selected_tags_to_text"],
+            html_selected_tags=html_selected_tags,
         )
         if response.status == ServiceExecStatus.SUCCESS:
-            web_text = response.content["selected_tags_to_text"]
+            web_text = response.content["selected_tags_text"]
         else:
             return ServiceResponse(
                 status=response.status,
