@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for DashScope models"""
+import json
 from abc import ABC
 from http import HTTPStatus
 from typing import Any, Union, List, Sequence
@@ -209,6 +210,85 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         )
 
     def format(
+        self,
+        *args: Union[Msg, Sequence[Msg]],
+    ) -> List:
+        """Format the messages for DashScope Chat API.
+
+        In this format function, the input messages are converted into
+        dictionaries with `role` and `content` fields. This conversation may
+        not meet the requirement that `user` and `assistant` speak
+        alternatively. It'll be correct in `preprocess_role` function.
+
+        # TODO: We will merge these two functions into one `format` function
+        soon.
+
+        The following is an example:
+
+        .. code-block:: python
+
+            prompt = model.format(
+                Msg("system", "You're a helpful assistant", role="system"),
+                Msg("Bob", "Hi, how can I help you?", role="assistant"),
+                Msg("user", "What's the date today?", role="user")
+            )
+
+        The prompt will be as follows:
+
+        .. code-block:: python
+
+            [
+                {"role": "system", "content": "You are a helpful assistant"},
+                {"role": "assistant", "content": "Hi, how can I help you"},
+                {"role": "assistant", "content": "What's the date today?"}
+            ]
+
+
+        Args:
+            *args (`Union[Msg, Sequence[Msg]]`):
+                The input arguments to be formatted, where each argument
+                should be a `Msg` object, or a list of `Msg` objects
+
+        Returns:
+            `List[dict]`:
+                The formatted messages.
+        """
+        # TODO: This function only convert agentscope msgs into qwen
+        #  messages, the re-range is executed in _preprocess_role function.
+
+        # TODO: This strategy will be replaced by a new strategy in the future.
+        prompt = []
+        for unit in args:
+            if isinstance(unit, Msg):
+                prompt.append(
+                    {
+                        "role": unit.get("role", "assistant"),
+                        "content": json.dumps(unit.content),
+                    },
+                )
+            elif isinstance(unit, list):
+                for child_unit in unit:
+                    if isinstance(child_unit, Msg):
+                        prompt.append(
+                            {
+                                "role": child_unit.role,
+                                "content": json.dumps(child_unit.content),
+                            },
+                        )
+                    else:
+                        raise TypeError(
+                            f"The input should be a Msg object or a list "
+                            f"of Msg objects, got {type(child_unit)}.",
+                        )
+            else:
+                raise TypeError(
+                    f"The input should be a Msg object or a list "
+                    f"of Msg objects, got {type(unit)}.",
+                )
+
+        return prompt
+
+    def advanced_format(
         self,
         *args: Union[Msg, Sequence[Msg]],
     ) -> List:

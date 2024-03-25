@@ -85,7 +85,7 @@ print(prompt)
 
 #### 提示的构建策略
 
-目前，我们为`DashScopeChatWrapper`提供了一个简单的策略，将所有输入消息组合成一个字符串，并将其填入一个`role`字段为`“system”`的字典中。
+目前，AgentScope简单地将`Msg`对象修改成包含`role`和`content`两个字段的字典。我们将很快为`DashScopeChatWrapper`更新一个更加灵活的提示构建策略。
 
 样例如下：
 
@@ -110,9 +110,14 @@ print(prompt)
 
 ```bash
 [
-  {"role": "system", "content": "system: You are a helpful assistant\nBob: Hi.\nAlice: Nice to meet you!"},
+  {"role": "system", "content": "You are a helpful assistant"},
+  {"role": "assistant", "content": "Hi."},
+  {"role": "assistant", "content": "Nice to meet you!}
 ]
 ```
+
+请注意上述策略产生的提示没有遵循第三条要求：`user`和`assistant`交替发言，这个问题会在`DashScopeChatWrapper`的`preprocess`函数中纠正。
+在未来的版本中，我们会将`format`和`preprocess`函数合在一处。
 
 ### `OllamaChatWrapper`
 

@@ -108,7 +108,8 @@ print(prompt)
 
 #### Prompt Strategy
 
-Currently, we provide a simple strategy for `DashScopeChatWrapper`: combine all input messages into a string, and feed it into a `"system"` message.
+Currently, we simply convert `Msg` objects into a dictionary with `role` and `content` fields.
+We will update a more flexible strategy in the future.
 
 An example is shown below:
 
@@ -133,9 +134,16 @@ print(prompt)
 
 ```bash
 [
-  {"role": "system", "content": "system: You are a helpful assistant\nBob: Hi.\nAlice: Nice to meet you!"},
+  {"role": "system", "content": "You are a helpful assistant"},
+  {"role": "assistant", "content": "Hi."},
+  {"role": "assistant", "content": "Nice to meet you!}
 ]
 ```
+
+Note the output prompt doesn't follow the third requirement, which requires
+`user` and `assistant` to speak alternatively.
+It will be corrected within the model wrapper by a `preprocess` function,
+we will merge `format` and `preprocess` function soon.
 
 ### `OllamaChatWrapper`
 
