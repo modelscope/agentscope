@@ -29,11 +29,6 @@ service_requires = [
     "docker",
     "pymongo",
     "pymysql",
-    "langchain",
-    "langchain-text-splitters",
-    "beautifulsoup4",
-    "playwright",
-    "lxml",
 ]
 
 doc_requires = [
