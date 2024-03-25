@@ -6,6 +6,7 @@ from typing import Any, Union, List, Sequence
 from loguru import logger
 
 from ..message import Msg
+from ..utils.tools import to_openai_dict
 
 try:
     import dashscope
@@ -259,21 +260,11 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         prompt = []
         for unit in args:
             if isinstance(unit, Msg):
-                prompt.append(
-                    {
-                        "role": unit.get("role", "assistant"),
-                        "content": str(unit.content),
-                    },
-                )
+                prompt.append(to_openai_dict(unit))
             elif isinstance(unit, list):
                 for child_unit in unit:
                     if isinstance(child_unit, Msg):
-                        prompt.append(
-                            {
-                                "role": child_unit.role,
-                                "content": str(child_unit.content),
-                            },
-                        )
+                        prompt.append(to_openai_dict(child_unit))
                     else:
                         raise TypeError(
                             f"The input should be a Msg object or a list "

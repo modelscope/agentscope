@@ -159,9 +159,21 @@ class ExampleTest(unittest.TestCase):
         # ]
 
         ground_truth = [
-            {"role": "system", "content": "You are a helpful assistant"},
-            {"role": "user", "content": "What is the weather today?"},
-            {"role": "assistant", "content": "It is sunny today"},
+            {
+                "role": "system",
+                "name": "system",
+                "content": "You are a helpful assistant",
+            },
+            {
+                "role": "user",
+                "name": "user",
+                "content": "What is the weather today?",
+            },
+            {
+                "role": "assistant",
+                "name": "assistant",
+                "content": "It is sunny today",
+            },
         ]
 
         prompt = model.format(*self.inputs)  # type: ignore[arg-type]
