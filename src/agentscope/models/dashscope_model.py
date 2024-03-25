@@ -280,7 +280,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
 
         prompt_str = "\n".join(prompt)
 
-        return [{"role": "system", "content": "\n".join(prompt_str)}]
+        return [{"role": "system", "content": prompt_str}]
 
     def _preprocess_role(self, messages: list) -> list:
         """preprocess role rules for DashScope"""

@@ -394,7 +394,7 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
 
         Returns:
             `str`:
-                The formatted prompt.
+                The formatted string prompt.
         """
 
         prompt = []
@@ -403,7 +403,14 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
             if isinstance(arg, Msg):
                 prompt.append(f"{arg.name}: {arg.content}")
             elif isinstance(arg, list):
-                prompt.extend(self.format(*arg))
+                for child_arg in arg:
+                    if isinstance(child_arg, Msg):
+                        prompt.append(f"{child_arg.name}: {child_arg.content}")
+                    else:
+                        raise TypeError(
+                            f"The input should be a Msg object or a list "
+                            f"of Msg objects, got {type(child_arg)}.",
+                        )
             else:
                 raise TypeError(
                     f"The input should be a Msg object or a list "
