@@ -5,7 +5,7 @@ import unittest
 from unittest.mock import patch, MagicMock, Mock
 
 from agentscope.service import ServiceResponse
-from agentscope.service import webpage_digest
+from agentscope.service import web_load, webpage_digest
 from agentscope.service.service_status import ServiceExecStatus
 from agentscope.models import ModelWrapperBase, ModelResponse
 from agentscope.message import Msg
@@ -15,8 +15,8 @@ class TestWebSearches(unittest.TestCase):
     """ExampleTest for a unit test."""
 
     @patch("requests.get")
-    def test_webpage_digest(self, mock_get: MagicMock) -> None:
-        """test webpage_digest"""
+    def test_web_load(self, mock_get: MagicMock) -> None:
+        """test web_load function loading html"""
         # Set up the mock response
         mock_response = Mock()
         mock_return_text = """
@@ -35,32 +35,30 @@ class TestWebSearches(unittest.TestCase):
         expected_result = ServiceResponse(
             status=ServiceExecStatus.SUCCESS,
             content={
-                "html_text_content": "Some intro text about Foo. "
-                "Examples (xxx)",
-                "href_links": [
-                    {
-                        "content": "Examples",
-                        "href_link": "xxx",
-                    },
-                ],
-                "model_digested": [
-                    {
-                        "split_info": {},
-                        "digested_text": "model return",
-                    },
-                    {
-                        "split_info": "summary",
-                        "digested_text": "model return",
-                    },
-                ],
+                "raw": mock_return_text,
+                "selected_tags_to_text": "Some intro text about Foo.",
             },
         )
 
         mock_response.text = mock_return_text
+        mock_response.status_code = 200
+        mock_response.headers = {"Content-Type": "text/html"}
         mock_get.return_value = mock_response
 
         # set parameters
         fake_url = "fake-url"
+
+        results = web_load(
+            url=fake_url,
+            html_parsing_types=["raw", "selected_tags_to_text"],
+        )
+        self.assertEqual(
+            results,
+            expected_result,
+        )
+
+    def test_web_digest(self) -> None:
+        """test web_digest function"""
 
         # test the case with dummy model
         class DummyModel(ModelWrapperBase):
@@ -73,9 +71,13 @@ class TestWebSearches(unittest.TestCase):
                 return ModelResponse(text="model return")
 
         dummy_model = DummyModel()
-        results = webpage_digest(url=fake_url, model=dummy_model)
+        response = webpage_digest("testing", dummy_model)
+        expected_result = ServiceResponse(
+            status=ServiceExecStatus.SUCCESS,
+            content="model return",
+        )
         self.assertEqual(
-            results,
+            response,
             expected_result,
         )
 
