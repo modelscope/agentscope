@@ -73,19 +73,8 @@ class PostAPIModelWrapperBase(ModelWrapperBase):
                     **post_args
                 )
         """
-        super().__init__(
-            config_name=config_name,
-            api_url=api_url,
-            headers=headers,
-            max_length=max_length,
-            timeout=timeout,
-            json_args=json_args,
-            post_args=post_args,
-            max_retries=max_retries,
-            messages_key=messages_key,
-            retry_interval=retry_interval,
-            **kwargs,
-        )
+        super().__init__(config_name=config_name)
+
         self.api_url = api_url
         self.headers = headers
         self.max_length = max_length
@@ -155,7 +144,7 @@ class PostAPIModelWrapperBase(ModelWrapperBase):
         # `FileManager.save_api_invocation` is `False`
         self._save_model_invocation(
             arguments=request_kwargs,
-            json_response=response.json(),
+            response=response.json(),
         )
 
         # step4: parse the response

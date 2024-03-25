@@ -1,13 +1,22 @@
 # -*- coding: utf-8 -*-
 """Unit test for Ollama model APIs."""
-import os
 import unittest
-import uuid
 from unittest.mock import patch, MagicMock
-
 import agentscope
 from agentscope.models import load_model_by_config_name
-from agentscope.utils import MonitorFactory
+from agentscope._runtime import _Runtime
+from agentscope.file_manager import _FileManager
+from agentscope.utils.monitor import MonitorFactory
+
+
+def flush() -> None:
+    """
+    ** Only for unittest usage. Don't use this function in your code. **
+    Clear the runtime dir and destroy all singletons.
+    """
+    _Runtime._flush()  # pylint: disable=W0212
+    _FileManager._flush()  # pylint: disable=W0212
+    MonitorFactory.flush()
 
 
 class OllamaModelWrapperTest(unittest.TestCase):
@@ -83,10 +92,7 @@ class OllamaModelWrapperTest(unittest.TestCase):
             "eval_count": 9,
             "eval_duration": 223689000,
         }
-        self.tmp = MonitorFactory._instance  # pylint: disable=W0212
-        MonitorFactory._instance = None  # pylint: disable=W0212
-        self.db_path = f"test-{uuid.uuid4()}.db"
-        _ = MonitorFactory.get_monitor(db_path=self.db_path)
+        flush()
 
     @patch("ollama.chat")
     def test_ollama_chat(self, mock_chat: MagicMock) -> None:
@@ -99,7 +105,7 @@ class OllamaModelWrapperTest(unittest.TestCase):
             model_configs={
                 "config_name": "my_ollama_chat",
                 "model_type": "ollama_chat",
-                "model": "llama2",
+                "model_name": "llama2",
                 "options": {
                     "temperature": 0.5,
                 },
@@ -123,7 +129,7 @@ class OllamaModelWrapperTest(unittest.TestCase):
             model_configs={
                 "config_name": "my_ollama_embedding",
                 "model_type": "ollama_embedding",
-                "model": "llama2",
+                "model_name": "llama2",
                 "options": {
                     "temperature": 0.5,
                 },
@@ -147,7 +153,7 @@ class OllamaModelWrapperTest(unittest.TestCase):
             model_configs={
                 "config_name": "my_ollama_generate",
                 "model_type": "ollama_generate",
-                "model": "llama2",
+                "model_name": "llama2",
                 "options": None,
                 "keep_alive": "5m",
             },
@@ -160,8 +166,7 @@ class OllamaModelWrapperTest(unittest.TestCase):
 
     def tearDown(self) -> None:
         """Clean up after each test."""
-        MonitorFactory._instance = self.tmp  # pylint: disable=W0212
-        os.remove(self.db_path)
+        flush()
 
 
 if __name__ == "__main__":

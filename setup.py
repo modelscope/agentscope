@@ -49,6 +49,7 @@ minimal_requires = [
     "tiktoken",
     "Pillow",
     "requests",
+    "chardet",
     "inputimeout",
     "openai>=1.3.0",
     "numpy",
@@ -59,6 +60,7 @@ minimal_requires = [
     "dashscope==1.14.1",
     "openai>=1.3.0",
     "ollama>=0.1.7",
+    "google-generativeai>=0.4.0",
 ]
 
 distribute_requires = minimal_requires + rpc_requires

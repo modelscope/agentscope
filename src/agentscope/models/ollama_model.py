@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for Ollama models."""
+from abc import ABC
 from typing import Sequence, Any, Optional
 
-from loguru import logger
-
 from agentscope.models import ModelWrapperBase, ModelResponse
-from agentscope.utils import QuotaExceededError, MonitorFactory
-from agentscope.utils.monitor import get_full_name
 
 try:
     import ollama
@@ -14,7 +11,7 @@ except ImportError:
     ollama = None
 
 
-class OllamaWrapperBase(ModelWrapperBase):
+class OllamaWrapperBase(ModelWrapperBase, ABC):
     """The base class for Ollama model wrappers.
 
     To use Ollama API, please
@@ -24,7 +21,11 @@ class OllamaWrapperBase(ModelWrapperBase):
     After that, you can use the ollama API.
     """
 
-    model: str
+    model_type: str
+    """The type of the model wrapper, which is to identify the model wrapper
+    class in model configuration."""
+
+    model_name: str
     """The model name used in ollama API."""
 
     options: dict
@@ -38,14 +39,14 @@ class OllamaWrapperBase(ModelWrapperBase):
     def __init__(
         self,
         config_name: str,
-        model: str,
+        model_name: str,
         options: dict = None,
         keep_alive: str = "5m",
     ) -> None:
         """Initialize the model wrapper for Ollama API.
 
         Args:
-            model (`str`):
+            model_name (`str`):
                 The model name used in ollama API.
             options (`dict`, default `None`):
                 The extra keyword arguments used in Ollama api generation,
@@ -57,32 +58,11 @@ class OllamaWrapperBase(ModelWrapperBase):
 
         super().__init__(config_name=config_name)
 
-        self.model = model
+        self.model_name = model_name
         self.options = options
         self.keep_alive = keep_alive
 
-        self.monitor = None
-
         self._register_default_metrics()
-
-    def _register_default_metrics(self) -> None:
-        """Register metrics to the monitor."""
-        raise NotImplementedError(
-            "The _register_default_metrics function is not Implemented.",
-        )
-
-    # TODO: move into ModelWrapperBase
-    def _metric(self, metric_name: str) -> str:
-        """Add the class name and model name as prefix to the metric name.
-
-        Args:
-            metric_name (`str`):
-                The metric name.
-
-        Returns:
-            `str`: Metric name of this wrapper.
-        """
-        return get_full_name(name=metric_name, prefix=self.model)
 
 
 class OllamaChatWrapper(OllamaWrapperBase):
@@ -128,7 +108,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
 
         # step2: forward to generate response
         response = ollama.chat(
-            model=self.model,
+            model=self.model_name,
             messages=messages,
             options=options,
             keep_alive=keep_alive,
@@ -138,29 +118,23 @@ class OllamaChatWrapper(OllamaWrapperBase):
         # step2: record the api invocation if needed
         self._save_model_invocation(
             arguments={
-                "model": self.model,
+                "model": self.model_name,
                 "messages": messages,
                 "options": options,
                 "keep_alive": keep_alive,
                 **kwargs,
             },
-            json_response=response,
+            response=response,
         )
 
         # step3: monitor the response
-        try:
-            prompt_tokens = response["prompt_eval_count"]
-            completion_tokens = response["eval_count"]
-            self.monitor.update(
-                {
-                    "call_counter": 1,
-                    "prompt_tokens": prompt_tokens,
-                    "completion_tokens": completion_tokens,
-                    "total_tokens": prompt_tokens + completion_tokens,
-                },
-            )
-        except (QuotaExceededError, KeyError) as e:
-            logger.error(e.message)
+        self.update_monitor(
+            call_counter=1,
+            prompt_tokens=response["prompt_eval_count"],
+            completion_tokens=response["eval_count"],
+            total_tokens=response["prompt_eval_count"]
+            + response["eval_count"],
+        )
 
         # step4: return response
         return ModelResponse(
@@ -170,7 +144,6 @@ class OllamaChatWrapper(OllamaWrapperBase):
 
     def _register_default_metrics(self) -> None:
         """Register metrics to the monitor."""
-        self.monitor = MonitorFactory.get_monitor()
         self.monitor.register(
             self._metric("call_counter"),
             metric_unit="times",
@@ -231,7 +204,7 @@ class OllamaEmbeddingWrapper(OllamaWrapperBase):
 
         # step2: forward to generate response
         response = ollama.embeddings(
-            model=self.model,
+            model=self.model_name,
             prompt=prompt,
             options=options,
             keep_alive=keep_alive,
@@ -241,23 +214,17 @@ class OllamaEmbeddingWrapper(OllamaWrapperBase):
         # step3: record the api invocation if needed
         self._save_model_invocation(
             arguments={
-                "model": self.model,
+                "model": self.model_name,
                 "prompt": prompt,
                 "options": options,
                 "keep_alive": keep_alive,
                 **kwargs,
             },
-            json_response=response,
+            response=response,
         )
 
         # step4: monitor the response
-        try:
-            self.monitor.update(
-                {"call_counter": 1},
-                prefix=self.model,
-            )
-        except (QuotaExceededError, KeyError) as e:
-            logger.error(e.message)
+        self.update_monitor(call_counter=1)
 
         # step5: return response
         return ModelResponse(
@@ -267,7 +234,6 @@ class OllamaEmbeddingWrapper(OllamaWrapperBase):
 
     def _register_default_metrics(self) -> None:
         """Register metrics to the monitor."""
-        self.monitor = MonitorFactory.get_monitor()
         self.monitor.register(
             self._metric("call_counter"),
             metric_unit="times",
@@ -317,7 +283,7 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
 
         # step2: forward to generate response
         response = ollama.generate(
-            model=self.model,
+            model=self.model_name,
             prompt=prompt,
             options=options,
             keep_alive=keep_alive,
@@ -326,29 +292,23 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
         # step3: record the api invocation if needed
         self._save_model_invocation(
             arguments={
-                "model": self.model,
+                "model": self.model_name,
                 "prompt": prompt,
                 "options": options,
                 "keep_alive": keep_alive,
                 **kwargs,
             },
-            json_response=response,
+            response=response,
         )
 
         # step4: monitor the response
-        try:
-            prompt_tokens = response["prompt_eval_count"]
-            completion_tokens = response["eval_count"]
-            self.monitor.update(
-                {
-                    "call_counter": 1,
-                    "prompt_tokens": prompt_tokens,
-                    "completion_tokens": completion_tokens,
-                    "total_tokens": prompt_tokens + completion_tokens,
-                },
-            )
-        except (QuotaExceededError, KeyError) as e:
-            logger.error(e.message)
+        self.update_monitor(
+            call_counter=1,
+            prompt_tokens=response["prompt_eval_count"],
+            completion_tokens=response["eval_count"],
+            total_tokens=response["prompt_eval_count"]
+            + response["eval_count"],
+        )
 
         # step5: return response
         return ModelResponse(
@@ -358,7 +318,6 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
 
     def _register_default_metrics(self) -> None:
         """Register metrics to the monitor."""
-        self.monitor = MonitorFactory.get_monitor()
         self.monitor.register(
             self._metric("call_counter"),
             metric_unit="times",

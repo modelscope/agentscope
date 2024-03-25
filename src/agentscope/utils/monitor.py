@@ -649,3 +649,11 @@ class MonitorFactory:
                     "Monitor with type [{type}] is not implemented.",
                 )
         return cls._instance  # type: ignore [return-value]
+
+    @classmethod
+    def flush(cls) -> None:
+        """
+        Only for unittest usage. Don't use this function in your code.
+        Flush the monitor singleton.
+        """
+        cls._instance = None

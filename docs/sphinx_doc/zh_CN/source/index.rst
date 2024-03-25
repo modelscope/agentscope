@@ -9,7 +9,7 @@ AgentScope 文档
 ======================================
 
 
-.. include:: tutorial_zh/main.md
+.. include:: tutorial/main.md
    :parser: myst_parser.sphinx_
 
 .. toctree::
@@ -18,9 +18,9 @@ AgentScope 文档
    :hidden:
    :caption: AgentScope 教程
 
-   tutorial_zh/quick_start.rst
-   tutorial_zh/advance.rst
-   tutorial_zh/contribute.rst
+   tutorial/quick_start.rst
+   tutorial/advance.rst
+   tutorial/contribute.rst
 
 
 .. toctree::

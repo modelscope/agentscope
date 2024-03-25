@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for OpenAI models"""
+from abc import ABC
 from typing import Union, Any
 
 from loguru import logger
@@ -12,14 +13,11 @@ try:
 except ImportError:
     openai = None
 
-from ..utils.monitor import MonitorFactory
-from ..utils.monitor import get_full_name
-from ..utils import QuotaExceededError
 from ..utils.token_utils import get_openai_max_length
 from ..constants import _DEFAULT_API_BUDGET
 
 
-class OpenAIWrapper(ModelWrapperBase):
+class OpenAIWrapperBase(ModelWrapperBase, ABC):
     """The model wrapper for OpenAI API."""
 
     def __init__(
@@ -55,24 +53,19 @@ class OpenAIWrapper(ModelWrapperBase):
                 The total budget using this model. Set to `None` means no
                 limit.
         """
+
         if model_name is None:
             model_name = config_name
             logger.warning("model_name is not set, use config_name instead.")
-        super().__init__(
-            config_name=config_name,
-            model_name=model_name,
-            client_args=client_args,
-            generate_args=generate_args,
-            budget=budget,
-            **kwargs,
-        )
+
+        super().__init__(config_name=config_name)
 
         if openai is None:
             raise ImportError(
                 "Cannot find openai package in current python environment.",
             )
 
-        self.model = model_name
+        self.model_name = model_name
         self.generate_args = generate_args or {}
 
         self.client = openai.OpenAI(
@@ -83,55 +76,32 @@ class OpenAIWrapper(ModelWrapperBase):
 
         # Set the max length of OpenAI model
         try:
-            self.max_length = get_openai_max_length(self.model)
+            self.max_length = get_openai_max_length(self.model_name)
         except Exception as e:
             logger.warning(
-                f"fail to get max_length for {self.model}: " f"{e}",
+                f"fail to get max_length for {self.model_name}: " f"{e}",
             )
             self.max_length = None
 
         # Set monitor accordingly
-        self.monitor = None
-        self.budget = budget
-        self._register_budget()
+        self._register_budget(model_name, budget)
         self._register_default_metrics()
 
-    def _register_budget(self) -> None:
-        self.monitor = MonitorFactory.get_monitor()
-        self.monitor.register_budget(
-            model_name=self.model,
-            value=self.budget,
-            prefix=self.model,
-        )
 
-    def _register_default_metrics(self) -> None:
-        """Register metrics to the monitor."""
-        raise NotImplementedError(
-            "The _register_default_metrics function is not Implemented.",
-        )
-
-    def _metric(self, metric_name: str) -> str:
-        """Add the class name and model name as prefix to the metric name.
-
-        Args:
-            metric_name (`str`):
-                The metric name.
-
-        Returns:
-            `str`: Metric name of this wrapper.
-        """
-        return get_full_name(name=metric_name, prefix=self.model)
-
-
-class OpenAIChatWrapper(OpenAIWrapper):
+class OpenAIChatWrapper(OpenAIWrapperBase):
     """The model wrapper for OpenAI's chat API."""
 
-    model_type: str = "openai"
+    model_type: str = "openai_chat"
+
+    deprecated_model_type: str = "openai"
 
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
         # TODO: set quota to the following metrics
-        self.monitor = MonitorFactory.get_monitor()
+        self.monitor.register(
+            self._metric("call_counter"),
+            metric_unit="times",
+        )
         self.monitor.register(
             self._metric("prompt_tokens"),
             metric_unit="token",
@@ -193,6 +163,11 @@ class OpenAIChatWrapper(OpenAIWrapper):
         kwargs = {**self.generate_args, **kwargs}
 
         # step2: checking messages
+        if not isinstance(messages, list):
+            raise ValueError(
+                "OpenAI `messages` field expected type `list`, "
+                f"got `{type(messages)}` instead.",
+            )
         if not all("role" in msg and "content" in msg for msg in messages):
             raise ValueError(
                 "Each message in the 'messages' list must contain a 'role' "
@@ -201,7 +176,7 @@ class OpenAIChatWrapper(OpenAIWrapper):
 
         # step3: forward to generate response
         response = self.client.chat.completions.create(
-            model=self.model,
+            model=self.model_name,
             messages=messages,
             **kwargs,
         )
@@ -209,22 +184,15 @@ class OpenAIChatWrapper(OpenAIWrapper):
         # step4: record the api invocation if needed
         self._save_model_invocation(
             arguments={
-                "model": self.model,
+                "model": self.model_name,
                 "messages": messages,
                 **kwargs,
             },
-            json_response=response.model_dump(),
+            response=response.model_dump(),
         )
 
         # step5: update monitor accordingly
-        try:
-            self.monitor.update(
-                response.usage.model_dump(),
-                prefix=self.model,
-            )
-        except QuotaExceededError as e:
-            # TODO: optimize quota exceeded error handling process
-            logger.error(e.message)
+        self.update_monitor(call_counter=1, **response.usage.model_dump())
 
         # step6: return response
         return ModelResponse(
@@ -233,7 +201,7 @@ class OpenAIChatWrapper(OpenAIWrapper):
         )
 
 
-class OpenAIDALLEWrapper(OpenAIWrapper):
+class OpenAIDALLEWrapper(OpenAIWrapperBase):
     """The model wrapper for OpenAI's DALL·E API."""
 
     model_type: str = "openai_dall_e"
@@ -249,7 +217,10 @@ class OpenAIDALLEWrapper(OpenAIWrapper):
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
         # TODO: set quota to the following metrics
-        self.monitor = MonitorFactory.get_monitor()
+        self.monitor.register(
+            self._metric("call_counter"),
+            metric_unit="times",
+        )
         for resolution in self._resolutions:
             self.monitor.register(
                 self._metric(resolution),
@@ -299,7 +270,7 @@ class OpenAIDALLEWrapper(OpenAIWrapper):
         # step2: forward to generate response
         try:
             response = self.client.images.generate(
-                model=self.model,
+                model=self.model_name,
                 prompt=prompt,
                 **kwargs,
             )
@@ -312,14 +283,17 @@ class OpenAIDALLEWrapper(OpenAIWrapper):
         # step3: record the model api invocation if needed
         self._save_model_invocation(
             arguments={
-                "model": self.model,
+                "model": self.model_name,
                 "prompt": prompt,
                 **kwargs,
             },
-            json_response=response.model_dump(),
+            response=response.model_dump(),
         )
 
-        # step4: return response
+        # step4: update monitor accordingly
+        self.update_monitor(call_counter=1)
+
+        # step5: return response
         raw_response = response.model_dump()
         images = raw_response["data"]
         # Get image urls as a list
@@ -331,7 +305,7 @@ class OpenAIDALLEWrapper(OpenAIWrapper):
         return ModelResponse(image_urls=urls, raw=raw_response)
 
 
-class OpenAIEmbeddingWrapper(OpenAIWrapper):
+class OpenAIEmbeddingWrapper(OpenAIWrapperBase):
     """The model wrapper for OpenAI embedding API."""
 
     model_type: str = "openai_embedding"
@@ -339,7 +313,10 @@ class OpenAIEmbeddingWrapper(OpenAIWrapper):
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
         # TODO: set quota to the following metrics
-        self.monitor = MonitorFactory.get_monitor()
+        self.monitor.register(
+            self._metric("call_counter"),
+            metric_unit="times",
+        )
         self.monitor.register(
             self._metric("prompt_tokens"),
             metric_unit="token",
@@ -389,21 +366,24 @@ class OpenAIEmbeddingWrapper(OpenAIWrapper):
         # step2: forward to generate response
         response = self.client.embeddings.create(
             input=texts,
-            model=self.model,
+            model=self.model_name,
             **kwargs,
         )
 
         # step3: record the model api invocation if needed
         self._save_model_invocation(
             arguments={
-                "model": self.model,
+                "model": self.model_name,
                 "input": texts,
                 **kwargs,
             },
-            json_response=response.model_dump(),
+            response=response.model_dump(),
         )
 
-        # step4: return response
+        # step4: update monitor accordingly
+        self.update_monitor(call_counter=1, **response.usage.model_dump())
+
+        # step5: return response
         response_json = response.model_dump()
         if len(response_json["data"]) == 0:
             return ModelResponse(

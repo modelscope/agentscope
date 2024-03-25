@@ -22,7 +22,7 @@ AgentScope中允许开发者按照自己的需求定制提示，同时提供了`
 当创建 `PromptEngine` 的实例时，您可以指定目标模型，以及（可选的）缩减原则、提示的最大长度、提示类型和总结模型（可以与目标模型相同）。
 
 ```python
-model = OpenAIWrapper(...)
+model = OpenAIChatWrapper(...)
 engine = PromptEngine(model)
 ```
 
