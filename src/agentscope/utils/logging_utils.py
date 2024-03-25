@@ -116,10 +116,7 @@ def _chat(
                 )
                 logger.log(LEVEL_CHAT_LOG, print_str, *args, **kwargs)
 
-                if disable_studio:
-                    return
-
-                if hasattr(thread_local_data, "uid"):
+                if hasattr(thread_local_data, "uid") and not disable_studio:
                     log_studio(message, thread_local_data.uid, **kwargs)
                 return
 
