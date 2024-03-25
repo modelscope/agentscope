@@ -31,6 +31,12 @@ Notice:
 2. Only use the tool function when it's necessary.
 3. Check if the arguments you provided to the tool function is correct in type and value.
 4. You can't take some problems for granted. For example, where you are, what's the time now, etc. But you can try to use the tool function to solve the problem.
+5. If the function execution fails, you should analyze the error and try to solve it.
+
+"""  # noqa
+
+RESPONSE_HINT_PROMPT = """
+Generate a response in the following format:
 
 Response Format:
 You should respond in the following format, which can be loaded by `json.loads` in Python:
@@ -133,11 +139,20 @@ class ToolAgent(AgentBase):
 
         self.engine = PromptEngine(self.model, prompt_type=PromptType.LIST)
 
-        self.tools_prompt = self.prepare_funcs_prompt(tools)
+        # Record the function name mapping
+        self.tools_prompt, self.func_name_mapping = self.prepare_funcs_prompt(
+            tools,
+        )
 
         self.verbose = verbose
 
-    def prepare_funcs_prompt(self, tools: List[Tuple]) -> str:
+        self.sys_prompt = sys_prompt.format_map(
+            {
+                "function_prompt": self.tools_prompt,
+            },
+        )
+
+    def prepare_funcs_prompt(self, tools: List[Tuple]) -> Tuple[str, dict]:
         """Convert function descriptions from json schema format to
         string prompt format.
 
@@ -147,7 +162,9 @@ class ToolAgent(AgentBase):
                 schema format.
 
         Returns:
-            `str`: The string prompt of the tool functions in the format of
+            `Tuple[str, dict]`:
+                The string prompt for the tool functions and a function name
+                mapping dict.
 
             .. code-block:: python
 
@@ -160,7 +177,6 @@ class ToolAgent(AgentBase):
         func_name_mapping = {}
         for i, (func, desc) in enumerate(tools):
             func_name = desc["function"]["name"]
-
             func_name_mapping[func_name] = func
 
             func_desc = desc["function"]["description"]
@@ -182,9 +198,7 @@ class ToolAgent(AgentBase):
             func_prompt = "\n".join(args_list)
             tools_prompt.append(func_prompt)
 
-        self.func_name_mapping = func_name_mapping
-
-        return "\n".join(tools_prompt)
+        return "\n".join(tools_prompt), func_name_mapping
 
     def _customize_print(
         self,
@@ -267,15 +281,10 @@ class ToolAgent(AgentBase):
         if self.memory:
             self.memory.add(x)
 
-        sys_prompt = self.sys_prompt.format_map(
-            {
-                "function_prompt": self.tools_prompt,
-            },
-        )
-
         prompt = self.engine.join(
-            Msg("system", sys_prompt, role="system"),
+            Msg("system", self.sys_prompt, role="system"),
             self.memory and self.memory.get_memory(),
+            Msg("system", RESPONSE_HINT_PROMPT, role="system"),
         )
 
         response = self.model(
@@ -286,7 +295,8 @@ class ToolAgent(AgentBase):
 
         # parse function call
         res = response.raw
-        print(res)
+        self._customize_print(" RAW RESPONSE FROM MODEL ".center(80, "#"))
+        self._customize_print(json.dumps(res, indent=4))
         msg = Msg(self.name, res["speak"])
 
         # print and feed into memory
