@@ -111,7 +111,16 @@
 <a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.dict_dialog_agent.parse_dict">[docs]</a>
 <span class="k">def</span> <span class="nf">parse_dict</span><span class="p">(</span><span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse function for DictDialogAgent&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span><span class="n">raw</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">))</span></div>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+        <span class="c1"># Sometimes LLM may return a response with single quotes, which is not</span>
+        <span class="c1"># a valid JSON format. We replace single quotes with double quotes and</span>
+        <span class="c1"># try to load it again.</span>
+        <span class="c1"># TODO: maybe using a more robust json library to handle this case</span>
+        <span class="n">response_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span><span class="n">raw</span><span class="o">=</span><span class="n">response_dict</span><span class="p">)</span></div>
 
 
 
@@ -264,7 +273,13 @@
 
         <span class="c1"># record to memory</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="c1"># Convert the response dict into a string to store in memory</span>
+            <span class="n">msg_memory</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">content</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">content</span><span class="p">),</span>
+                <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">msg_memory</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">msg</span></div>
 </div>
