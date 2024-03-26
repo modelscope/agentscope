@@ -57,13 +57,19 @@ import inspect
 import time
 from abc import ABCMeta
 from functools import wraps
-from typing import Sequence, Any, Callable
+from typing import Sequence, Any, Callable, Union, List
 import json
 
 from loguru import logger
 
+from agentscope.utils import QuotaExceededError
+
+
 from ..file_manager import file_manager
-from ..utils.tools import _get_timestamp
+from ..message import Msg
+from ..utils import MonitorFactory
+from ..utils.monitor import get_full_name
+from ..utils.tools import _get_timestamp, _is_json_serializable
 from ..constants import _DEFAULT_MAX_RETRIES
 from ..constants import _DEFAULT_RETRY_INTERVAL
 
@@ -80,7 +86,7 @@ class ModelResponse:
         text: str = None,
         embedding: Sequence = None,
         image_urls: Sequence[str] = None,
-        raw: dict = None,
+        raw: Any = None,
     ) -> None:
         self._text = text
         self._embedding = embedding
@@ -103,18 +109,23 @@ class ModelResponse:
         return self._image_urls
 
     @property
-    def raw(self) -> dict:
-        """Raw dictionary field."""
+    def raw(self) -> Any:
+        """Raw response field."""
         return self._raw
 
     def __str__(self) -> str:
+        if _is_json_serializable(self._raw):
+            raw = self._raw
+        else:
+            raw = str(self._raw)
+
         serialized_fields = {
             "text": self.text,
             "embedding": self.embedding,
             "image_urls": self.image_urls,
-            "raw": self.raw,
+            "raw": raw,
         }
-        return json.dumps(serialized_fields, indent=4)
+        return json.dumps(serialized_fields, indent=4, ensure_ascii=False)
 
 
 def _response_parse_decorator(
@@ -200,17 +211,36 @@ class _ModelWrapperMeta(ABCMeta):
         if not hasattr(cls, "registry"):
             cls.registry = {}
             cls.type_registry = {}
+            cls.deprecated_type_registry = {}
         else:
             cls.registry[name] = cls
             if hasattr(cls, "model_type"):
                 cls.type_registry[cls.model_type] = cls
+                if hasattr(cls, "deprecated_model_type"):
+                    cls.deprecated_type_registry[
+                        cls.deprecated_model_type
+                    ] = cls
         super().__init__(name, bases, attrs)
 
 
 class ModelWrapperBase(metaclass=_ModelWrapperMeta):
     """The base class for model wrapper."""
 
-    def __init__(self, config_name: str, **kwargs: Any) -> None:
+    model_type: str
+    """The type of the model wrapper, which is to identify the model wrapper
+    class in model configuration."""
+
+    config_name: str
+    """The name of the model configuration."""
+
+    model_name: str
+    """The name of the model, which is used in model api calling."""
+
+    def __init__(
+        self,  # pylint: disable=W0613
+        config_name: str,
+        **kwargs: Any,
+    ) -> None:
         """Base class for model wrapper.
 
         All model wrappers should inherit this class and implement the
@@ -221,24 +251,34 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
                 The id of the model, which is used to extract configuration
                 from the config file.
         """
+        self.monitor = MonitorFactory.get_monitor()
+
         self.config_name = config_name
-        logger.info(
-            f"Initialize model [{config_name}] with config:\n"
-            f"{json.dumps(kwargs, indent=2)}",
-        )
+        logger.info(f"Initialize model [{config_name}]")
 
     def __call__(self, *args: Any, **kwargs: Any) -> ModelResponse:
         """Processing input with the model."""
         raise NotImplementedError(
             f"Model Wrapper [{type(self).__name__}]"
-            f" is missing the  the required `__call__`"
+            f" is missing the required `__call__`"
             f" method.",
+        )
+
+    def format(
+        self,
+        *args: Union[Msg, Sequence[Msg]],
+    ) -> Union[List[dict], str]:
+        """Format the input string or dict into the format that the model
+        API required."""
+        raise NotImplementedError(
+            f"Model Wrapper [{type(self).__name__}]"
+            f" is missing the required `format` method",
         )
 
     def _save_model_invocation(
         self,
         arguments: dict,
-        json_response: Any,
+        response: Any,
     ) -> None:
         """Save model invocation."""
         model_class = self.__class__.__name__
@@ -248,10 +288,57 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
             "model_class": model_class,
             "timestamp": timestamp,
             "arguments": arguments,
-            "json_response": json_response,
+            "response": response,
         }
 
         file_manager.save_api_invocation(
             f"model_{model_class}_{timestamp}",
             invocation_record,
         )
+
+    def _register_budget(self, model_name: str, budget: float) -> None:
+        """Register the budget of the model by model_name."""
+        self.monitor.register_budget(
+            model_name=model_name,
+            value=budget,
+            prefix=model_name,
+        )
+
+    def _register_default_metrics(self) -> None:
+        """Register metrics to the monitor."""
+
+    def _metric(self, metric_name: str) -> str:
+        """Add the class name and model name as prefix to the metric name.
+
+        Args:
+            metric_name (`str`):
+                The metric name.
+
+        Returns:
+            `str`: Metric name of this wrapper.
+        """
+
+        if hasattr(self, "model_name"):
+            return get_full_name(name=metric_name, prefix=self.model_name)
+        else:
+            return get_full_name(name=metric_name)
+
+    def update_monitor(self, **kwargs: Any) -> None:
+        """Update the monitor with the given values.
+
+        Args:
+            kwargs (`dict`):
+                The values to be updated to the monitor.
+        """
+        if hasattr(self, "model_name"):
+            prefix = self.model_name
+        else:
+            prefix = None
+
+        try:
+            self.monitor.update(
+                kwargs,
+                prefix=prefix,
+            )
+        except QuotaExceededError as e:
+            logger.error(e.message)

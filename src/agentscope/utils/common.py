@@ -5,7 +5,9 @@ import contextlib
 import os
 import re
 import signal
+import sys
 import tempfile
+import threading
 from typing import Any, Generator, Optional, Union
 from loguru import logger
 import requests
@@ -21,14 +23,27 @@ def timer(seconds: Optional[Union[int, float]] = None) -> Generator:
     given number of seconds.
     The implementation of this contextmanager are borrowed from
     https://github.com/openai/human-eval/blob/master/human_eval/execution.py
+
+    Note:
+        This function only works in Unix and MainThread,
+        since `signal.setitimer` is only available in Unix.
+
     """
-    if seconds is not None:
+    if (
+        seconds is None
+        or sys.platform == "win32"
+        or threading.currentThread().name  # pylint: disable=W4902
+        != "MainThread"
+    ):
+        yield
+        return
 
-        def signal_handler(*args: Any, **kwargs: Any) -> None:
-            raise TimeoutError("timed out")
+    def signal_handler(*args: Any, **kwargs: Any) -> None:
+        raise TimeoutError("timed out")
 
-        signal.setitimer(signal.ITIMER_REAL, seconds)
-        signal.signal(signal.SIGALRM, signal_handler)
+    signal.setitimer(signal.ITIMER_REAL, seconds)
+    signal.signal(signal.SIGALRM, signal_handler)
+
     try:
         # Enter the context and execute the code block.
         yield

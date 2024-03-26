@@ -3,9 +3,11 @@
 import time
 from typing import Union
 from typing import Optional
+from loguru import logger
 
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
+from agentscope.web.studio.utils import user_input
 
 
 class UserAgent(AgentBase):
@@ -32,6 +34,7 @@ class UserAgent(AgentBase):
         self,
         x: dict = None,
         required_keys: Optional[Union[list[str], str]] = None,
+        timeout: Optional[int] = None,
     ) -> dict:
         """
         Processes the input provided by the user and stores it in memory,
@@ -50,19 +53,22 @@ class UserAgent(AgentBase):
                 (`Optional[Union[list[str], str]]`, defaults to `None`):
                 Strings that requires user to input, which will be used as
                 the key of the returned dict. Defaults to None.
+            timeout (`Optional[int]`, defaults to `None`):
+                Raise `TimeoutError` if user exceed input time, set to None
+                for no limit.
 
         Returns:
             `dict`: A dictionary representing the message object that contains
             the user's input and any additional details. This is also
             stored in the object's memory.
         """
-        if x is not None:
+        if self.memory:
             self.memory.add(x)
 
         # TODO: To avoid order confusion, because `input` print much quicker
         #  than logger.chat
         time.sleep(0.5)
-        content = input(f"{self.name}: ")
+        content = user_input(timeout=timeout)
 
         kwargs = {}
         if required_keys is not None:
@@ -79,7 +85,8 @@ class UserAgent(AgentBase):
 
         # Add additional keys
         msg = Msg(
-            self.name,
+            name=self.name,
+            role="user",
             content=content,
             url=url,
             **kwargs,  # type: ignore[arg-type]
@@ -88,6 +95,14 @@ class UserAgent(AgentBase):
         self.speak(msg)
 
         # Add to memory
-        self.memory.add(msg)
+        if self.memory:
+            self.memory.add(msg)
 
         return msg
+
+    def speak(
+        self,
+        content: Union[str, dict],
+    ) -> None:
+        """Speak the content to the audience."""
+        logger.chat(content, disable_studio=True)

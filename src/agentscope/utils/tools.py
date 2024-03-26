@@ -2,34 +2,15 @@
 """ Tools for agentscope """
 import base64
 import datetime
+import json
 import secrets
 import string
+from typing import Any
 
 from urllib.parse import urlparse
 
 import requests
 from loguru import logger
-
-
-def extract_json_str(json_str: str) -> str:
-    """Extract json from the string and try to fix its format manually."""
-    # Start index of character '{'
-    try:
-        start_index = json_str.index("{")
-    except ValueError:
-        json_str = "{" + json_str
-        start_index = 0
-
-    # End index of character '}'
-    try:
-        end_index = json_str.rindex("}")
-    except ValueError:
-        json_str += "}"
-        end_index = len(json_str) - 1
-
-    json_str = json_str[: end_index + 1]
-
-    return json_str[start_index:]
 
 
 def _get_timestamp(
@@ -56,7 +37,7 @@ def to_openai_dict(item: dict) -> dict:
         clean_dict["role"] = "assistant"
 
     if "content" in item:
-        clean_dict["content"] = item["content"]
+        clean_dict["content"] = _convert_to_str(item["content"])
     else:
         logger.warning(
             f"Message {item} doesn't have `content` field for " f"OpenAI API.",
@@ -161,3 +142,47 @@ def _generate_random_code(
     if digits:
         characters += string.digits
     return "".join(secrets.choice(characters) for i in range(length))
+
+
+def _is_json_serializable(obj: Any) -> bool:
+    """Check if the given object is json serializable."""
+    try:
+        json.dumps(obj)
+        return True
+    except TypeError:
+        return False
+
+
+def _convert_to_str(content: Any) -> str:
+    """Convert the content to string.
+
+    Note:
+        For prompt engineering, simply calling `str(content)` or
+        `json.dumps(content)` is not enough.
+
+        - For `str(content)`, if `content` is a dictionary, it will turn double
+        quotes to single quotes. When this string is fed into prompt, the LLMs
+        may learn to use single quotes instead of double quotes (which
+        cannot be loaded by `json.loads` API).
+
+        - For `json.dumps(content)`, if `content` is a string, it will add
+        double quotes to the string. LLMs may learn to use double quotes to
+        wrap strings, which leads to the same issue as `str(content)`.
+
+        To avoid these issues, we use this function to safely convert the
+        content to a string used in prompt.
+
+    Args:
+        content (`Any`):
+            The content to be converted.
+
+    Returns:
+        `str`: The converted string.
+    """
+
+    if isinstance(content, str):
+        return content
+    elif isinstance(content, (dict, list, int, float, bool, tuple)):
+        return json.dumps(content, ensure_ascii=False)
+    else:
+        return str(content)

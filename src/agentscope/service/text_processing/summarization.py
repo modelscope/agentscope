@@ -3,7 +3,7 @@
 Service for text processing
 """
 
-from agentscope.models import ModelWrapperBase, OpenAIWrapper
+from agentscope.models import ModelWrapperBase, OpenAIWrapperBase
 from agentscope.service.service_status import ServiceExecStatus
 from agentscope.service.service_response import ServiceResponse
 from agentscope.message import Msg
@@ -20,7 +20,9 @@ def summarization(
     max_return_token: int = -1,
     token_limit_prompt: str = _DEFAULT_TOKEN_LIMIT_PROMPT,
 ) -> ServiceResponse:
-    """Summarization function (Notice: curent version of token limitation is
+    """Summarize the input text.
+
+    Summarization function (Notice: curent version of token limitation is
     built with Open AI API)
 
     Args:
@@ -69,11 +71,11 @@ def summarization(
     prompt = summarization_prompt.format(text)
     if max_return_token > 0:
         system_prompt += token_limit_prompt.format(max_return_token)
-    if isinstance(model, OpenAIWrapper):
+    if isinstance(model, OpenAIWrapperBase):
         try:
             msgs = [
-                Msg(name="system", content=system_prompt),
-                Msg(name="user", content=prompt),
+                Msg(name="system", content=system_prompt, role="system"),
+                Msg(name="user", content=prompt, role="system"),
             ]
             model_output = model(messages=msgs)
             summary = model_output.choices[0].message.content
@@ -98,7 +100,7 @@ def summarization(
         except ValueError:
             return ServiceResponse(
                 ServiceExecStatus.ERROR,
-                content=f"Summarization by model {model.model} fail",
+                content="Summarization by model fails",
             )
     else:
         try:

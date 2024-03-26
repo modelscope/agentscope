@@ -7,6 +7,13 @@ from typing import Optional, Literal, Union, Any
 
 from loguru import logger
 
+from agentscope.web.studio.utils import (
+    generate_image_from_name,
+    send_msg,
+    get_reset_msg,
+    thread_local_data,
+)
+
 LOG_LEVEL = Literal[
     "TRACE",
     "DEBUG",
@@ -19,23 +26,6 @@ LOG_LEVEL = Literal[
 
 LEVEL_CHAT_LOG = "CHAT_LOG"
 LEVEL_CHAT_SAVE = "CHAT_SAVE"
-
-
-class _Stream:
-    """Redirect stderr to logging"""
-
-    def write(self, message: str) -> None:
-        """Redirect to logging.
-
-        Args:
-            message (`str`):
-                The message to be logged.
-        """
-        logger.error(message, enqueue=True)
-
-    def flush(self) -> None:
-        """Flush the stream."""
-
 
 _SPEAKER_COLORS = [
     ("<blue>", "</blue>"),
@@ -77,7 +67,12 @@ def _get_speaker_color(speaker: str) -> tuple[str, str]:
 
 
 # add chat function for logger
-def _chat(message: Union[str, dict], *args: Any, **kwargs: Any) -> None:
+def _chat(
+    message: Union[str, dict],
+    *args: Any,
+    disable_studio: bool = False,
+    **kwargs: Any,
+) -> None:
     """Log a chat message with the format of"<speaker>: <content>".
 
     Args:
@@ -88,13 +83,18 @@ def _chat(message: Union[str, dict], *args: Any, **kwargs: Any) -> None:
             <content>".
     """
     # Save message into file
-    logger.log(LEVEL_CHAT_SAVE, json.dumps(message), *args, **kwargs)
+    logger.log(
+        LEVEL_CHAT_SAVE,
+        json.dumps(message, ensure_ascii=False),
+        *args,
+        **kwargs,
+    )
 
     # Print message in terminal with specific format
     if isinstance(message, dict):
         contain_name_or_role = "name" in message or "role" in message
         contain_content = "content" in message
-        contain_url = "url" in message
+        contain_url = message.get("url", None) is not None
 
         # print content if contain name or role and contain content
         if contain_name_or_role:
@@ -115,10 +115,63 @@ def _chat(message: Union[str, dict], *args: Any, **kwargs: Any) -> None:
                     "\n".join(print_str).replace("{", "{{").replace("}", "}}")
                 )
                 logger.log(LEVEL_CHAT_LOG, print_str, *args, **kwargs)
+
+                if hasattr(thread_local_data, "uid") and not disable_studio:
+                    log_studio(message, thread_local_data.uid, **kwargs)
                 return
 
     message = str(message).replace("{", "{{").replace("}", "}}")
     logger.log(LEVEL_CHAT_LOG, message, *args, **kwargs)
+
+
+def log_studio(message: dict, uid: str, **kwargs: Any) -> None:
+    """Send chat message to studio.
+
+    Args:
+        message (`dict`):
+            The message to be logged. It should have "name"(or "role") and
+            "content" keys, and the message will be logged as "<name/role>:
+            <content>".
+        uid (`str`):
+            The local value 'uid' of the thread.
+    """
+    if uid:
+        get_reset_msg(uid=uid)
+        name = message.get("name", "default") or message.get("role", "default")
+        avatar = kwargs.get("avatar", None) or generate_image_from_name(
+            message["name"],
+        )
+
+        msg = message["content"]
+        flushing = True
+        if "url" in message:
+            flushing = False
+            for i in range(len(message["url"])):
+                msg += "\n" + f"""<img src="{message['url'][i]}"/>"""
+        if "audio_path" in message:
+            flushing = False
+            for i in range(len(message["audio_path"])):
+                msg += (
+                    "\n"
+                    + f"""<audio src="{message['audio_path'][i]}"
+                controls/></audio>"""
+                )
+        if "video_path" in message:
+            flushing = False
+            for i in range(len(message["video_path"])):
+                msg += (
+                    "\n"
+                    + f"""<video src="{message['video_path'][i]}"
+                controls/></video>"""
+                )
+
+        send_msg(
+            msg,
+            role=name,
+            uid=uid,
+            flushing=flushing,
+            avatar=avatar,
+        )
 
 
 def _level_format(record: dict) -> str:
@@ -149,27 +202,22 @@ def setup_logger(
             `"CRITICAL"`.
     """
     # avoid reinit in subprocess
-    if hasattr(logger, "chat"):
-        return
+    if not hasattr(logger, "chat"):
+        # add chat function for logger
+        logger.level(LEVEL_CHAT_LOG, no=21)
+        logger.level(LEVEL_CHAT_SAVE, no=0)
+        logger.chat = _chat
 
-    # redirect stderr to record errors in logging
-    sys.stderr = _Stream()
-
-    # add chat function for logger
-    logger.level(LEVEL_CHAT_LOG, no=21)
-    logger.level(LEVEL_CHAT_SAVE, no=0)
-    logger.chat = _chat
-
-    # set logging level
-    logger.remove()
-    # standard output for all logging except chat
-    logger.add(
-        sys.stdout,
-        filter=lambda record: record["level"].name != LEVEL_CHAT_SAVE,
-        format=_level_format,
-        enqueue=True,
-        level=level,
-    )
+        # set logging level
+        logger.remove()
+        # standard output for all logging except chat
+        logger.add(
+            sys.stdout,
+            filter=lambda record: record["level"].name != LEVEL_CHAT_SAVE,
+            format=_level_format,
+            enqueue=True,
+            level=level,
+        )
 
     if path_log is not None:
         if not os.path.exists(path_log):

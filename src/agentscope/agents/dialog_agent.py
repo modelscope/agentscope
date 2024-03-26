@@ -2,9 +2,10 @@
 """A general dialog agent."""
 from typing import Optional
 
+from loguru import logger
+
 from ..message import Msg
 from .agent import AgentBase
-from ..prompt import PromptEngine
 from ..prompt import PromptType
 
 
@@ -15,11 +16,11 @@ class DialogAgent(AgentBase):
     def __init__(
         self,
         name: str,
-        sys_prompt: Optional[str] = None,
-        model_config_name: str = None,
+        sys_prompt: str,
+        model_config_name: str,
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
-        prompt_type: Optional[PromptType] = PromptType.LIST,
+        prompt_type: Optional[PromptType] = None,
     ) -> None:
         """Initialize the dialog agent.
 
@@ -29,7 +30,7 @@ class DialogAgent(AgentBase):
             sys_prompt (`Optional[str]`):
                 The system prompt of the agent, which can be passed by args
                 or hard-coded in the agent.
-            model_config_name (`str`, defaults to None):
+            model_config_name (`str`):
                 The name of the model config, which is used to load model from
                 configuration.
             use_memory (`bool`, defaults to `True`):
@@ -49,8 +50,11 @@ class DialogAgent(AgentBase):
             memory_config=memory_config,
         )
 
-        # init prompt engine
-        self.engine = PromptEngine(self.model, prompt_type=prompt_type)
+        if prompt_type is not None:
+            logger.warning(
+                "The argument `prompt_type` is deprecated and "
+                "will be removed in the future.",
+            )
 
     def reply(self, x: dict = None) -> dict:
         """Reply function of the agent. Processes the input data,
@@ -68,23 +72,24 @@ class DialogAgent(AgentBase):
             response to the user's input.
         """
         # record the input if needed
-        if x is not None:
+        if self.memory:
             self.memory.add(x)
 
         # prepare prompt
-        prompt = self.engine.join(
-            self.sys_prompt,
-            self.memory.get_memory(),
+        prompt = self.model.format(
+            Msg("system", self.sys_prompt, role="system"),
+            self.memory and self.memory.get_memory(),  # type: ignore[arg-type]
         )
 
         # call llm and generate response
         response = self.model(prompt).text
-        msg = Msg(self.name, response)
+        msg = Msg(self.name, response, role="assistant")
 
         # Print/speak the message in this agent's voice
         self.speak(msg)
 
         # Record the message in memory
-        self.memory.add(msg)
+        if self.memory:
+            self.memory.add(msg)
 
         return msg

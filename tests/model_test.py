@@ -3,9 +3,11 @@
 Unit tests for model wrapper classes and functions
 """
 
-from typing import Any
+from typing import Any, Union, List, Sequence
 import unittest
+from unittest.mock import patch, MagicMock
 
+from agentscope.message import Msg
 from agentscope.models import (
     ModelResponse,
     ModelWrapperBase,
@@ -23,6 +25,12 @@ class TestModelWrapperSimple(ModelWrapperBase):
 
     def __call__(self, *args: Any, **kwargs: Any) -> ModelResponse:
         return ModelResponse(text=self.config_name)
+
+    def format(
+        self,
+        *args: Union[Msg, Sequence[Msg]],
+    ) -> Union[List[dict], str]:
+        return ""
 
 
 class BasicModelTest(unittest.TestCase):
@@ -46,13 +54,14 @@ class BasicModelTest(unittest.TestCase):
             PostAPIModelWrapperBase,
         )
 
-    def test_load_model_configs(self) -> None:
+    @patch("loguru.logger.warning")
+    def test_load_model_configs(self, mock_logging: MagicMock) -> None:
         """Test to load model configs"""
         configs = [
             {
-                "model_type": "openai",
+                "model_type": "openai_chat",
                 "config_name": "gpt-4",
-                "model": "gpt-4",
+                "model_name": "gpt-4",
                 "api_key": "xxx",
                 "organization": "xxx",
                 "generate_args": {"temperature": 0.5},
@@ -83,8 +92,12 @@ class BasicModelTest(unittest.TestCase):
         self.assertEqual(model.config_name, "gpt-4")
         self.assertRaises(ValueError, load_model_by_config_name, "my_post_api")
 
-        # automatically detect model with the same id
-        self.assertRaises(ValueError, read_model_configs, configs[0])
+        # load model with the same id
+        read_model_configs(configs=configs[0], clear_existing=False)
+        mock_logging.assert_called_once_with(
+            "config_name [gpt-4] already exists.",
+        )
+
         read_model_configs(
             configs={
                 "model_type": "TestModelWrapperSimple",

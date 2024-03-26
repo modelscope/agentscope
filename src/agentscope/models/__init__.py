@@ -5,17 +5,31 @@ from typing import Union, Type
 
 from loguru import logger
 
-from .config import ModelConfig
+from .config import _ModelConfig
 from .model import ModelWrapperBase, ModelResponse
 from .post_model import (
     PostAPIModelWrapperBase,
     PostAPIChatWrapper,
 )
 from .openai_model import (
-    OpenAIWrapper,
+    OpenAIWrapperBase,
     OpenAIChatWrapper,
     OpenAIDALLEWrapper,
     OpenAIEmbeddingWrapper,
+)
+from .dashscope_model import (
+    DashScopeChatWrapper,
+    DashScopeImageSynthesisWrapper,
+    DashScopeTextEmbeddingWrapper,
+)
+from .ollama_model import (
+    OllamaChatWrapper,
+    OllamaEmbeddingWrapper,
+    OllamaGenerationWrapper,
+)
+from .gemini_model import (
+    GeminiChatWrapper,
+    GeminiEmbeddingWrapper,
 )
 
 
@@ -24,13 +38,21 @@ __all__ = [
     "ModelResponse",
     "PostAPIModelWrapperBase",
     "PostAPIChatWrapper",
-    "OpenAIWrapper",
+    "OpenAIWrapperBase",
     "OpenAIChatWrapper",
     "OpenAIDALLEWrapper",
     "OpenAIEmbeddingWrapper",
     "load_model_by_config_name",
     "read_model_configs",
     "clear_model_configs",
+    "DashScopeChatWrapper",
+    "DashScopeImageSynthesisWrapper",
+    "DashScopeTextEmbeddingWrapper",
+    "OllamaChatWrapper",
+    "OllamaEmbeddingWrapper",
+    "OllamaGenerationWrapper",
+    "GeminiChatWrapper",
+    "GeminiEmbeddingWrapper",
 ]
 
 _MODEL_CONFIGS: dict[str, dict] = {}
@@ -53,6 +75,13 @@ def _get_model_wrapper(model_type: str) -> Type[ModelWrapperBase]:
         return ModelWrapperBase.registry[  # type: ignore [return-value]
             model_type
         ]
+    elif model_type in ModelWrapperBase.deprecated_type_registry:
+        cls = ModelWrapperBase.deprecated_type_registry[model_type]
+        logger.warning(
+            f"Model type [{model_type}] will be deprecated in future releases,"
+            f" please use [{cls.model_type}] instead.",
+        )
+        return cls  # type: ignore [return-value]
     else:
         logger.warning(
             f"Unsupported model_type [{model_type}],"
@@ -82,7 +111,10 @@ def load_model_by_config_name(config_name: str) -> ModelWrapperBase:
         )
 
     model_type = config.model_type
-    return _get_model_wrapper(model_type=model_type)(**config)
+
+    kwargs = {k: v for k, v in config.items() if k != "model_type"}
+
+    return _get_model_wrapper(model_type=model_type)(**kwargs)
 
 
 def clear_model_configs() -> None:
@@ -124,14 +156,15 @@ def read_model_configs(
             )
         cfgs = configs
 
-    format_configs = ModelConfig.format_configs(configs=cfgs)
+    format_configs = _ModelConfig.format_configs(configs=cfgs)
 
     # check if name is unique
     for cfg in format_configs:
         if cfg.config_name in _MODEL_CONFIGS:
-            raise ValueError(
+            logger.warning(
                 f"config_name [{cfg.config_name}] already exists.",
             )
+            continue
         _MODEL_CONFIGS[cfg.config_name] = cfg
 
     # print the loaded model configs

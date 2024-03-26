@@ -64,7 +64,9 @@ class LoggerTest(unittest.TestCase):
 
     def tearDown(self) -> None:
         """Tear down for LoggerTest."""
-        shutil.rmtree(self.run_dir)
+        logger.stop()
+        if os.path.exists(self.run_dir):
+            shutil.rmtree(self.run_dir)
 
 
 if __name__ == "__main__":

@@ -57,9 +57,12 @@ class DemoRpcAgentWithMemory(AgentBase):
     """A demo Rpc agent that count its memory"""
 
     def reply(self, x: dict = None) -> dict:
-        if x is not None:
-            self.memory.add(x)
-        msg = Msg(name=self.name, content={"mem_size": self.memory.size()})
+        self.memory.add(x)
+        msg = Msg(
+            name=self.name,
+            content={"mem_size": self.memory.size()},
+            role="assistant",
+        )
         self.memory.add(msg)
         time.sleep(1)
         return msg
@@ -120,7 +123,11 @@ class BasicRpcAgentTest(unittest.TestCase):
             port=port,
         )
         self.assertIsNotNone(agent_a)
-        msg = Msg(name="System", content={"text": "hello world"})
+        msg = Msg(
+            name="System",
+            content={"text": "hello world"},
+            role="system",
+        )
         result = agent_a(msg)
         # get name without waiting for the server
         self.assertEqual(result.name, "a")
@@ -179,21 +186,33 @@ class BasicRpcAgentTest(unittest.TestCase):
             port=launcher.port,
             launch_server=False,
         )
-        msg = Msg(name="System", content={"text": "hello world"})
+        msg = Msg(
+            name="System",
+            content={"text": "hello world"},
+            role="system",
+        )
         result = agent_a(msg)
         # get name without waiting for the server
         self.assertEqual(result.name, "a")
         # waiting for server
         self.assertEqual(result.content, msg.content)
         # test dict usage
-        msg = Msg(name="System", content={"text": "hi world"})
+        msg = Msg(
+            name="System",
+            content={"text": "hi world"},
+            role="system",
+        )
         result = agent_a(msg)
         # get name without waiting for the server
         self.assertEqual(result["name"], "a")
         # waiting for server
         self.assertEqual(result["content"], msg.content)
         # test to_str
-        msg = Msg(name="System", content={"text": "test"})
+        msg = Msg(
+            name="System",
+            content={"text": "test"},
+            role="system",
+        )
         result = agent_a(msg)
         self.assertEqual(result.to_str(), "a: {'text': 'test'}")
         launcher.shutdown()
@@ -227,7 +246,11 @@ class BasicRpcAgentTest(unittest.TestCase):
         )
 
         # test sequential
-        msg = Msg(name="System", content={"value": 0})
+        msg = Msg(
+            name="System",
+            content={"value": 0},
+            role="system",
+        )
         start_time = time.time()
         msg = agent_a(msg)
         self.assertTrue(isinstance(msg, PlaceholderMessage))
@@ -244,7 +267,11 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertTrue((end_time - start_time) >= 3)
 
         # test parallel
-        msg = Msg(name="System", content={"value": -1})
+        msg = Msg(
+            name="System",
+            content={"value": -1},
+            role="system",
+        )
         start_time = time.time()
         msg_a = agent_a(msg)
         msg_b = agent_b(msg)
@@ -283,7 +310,11 @@ class BasicRpcAgentTest(unittest.TestCase):
             port=port2,
             lazy_launch=False,
         )
-        msg = Msg(name="System", content={"value": 0})
+        msg = Msg(
+            name="System",
+            content={"value": 0},
+            role="system",
+        )
 
         while msg.content["value"] < 4:
             msg = agent_a(msg)
@@ -304,8 +335,8 @@ class BasicRpcAgentTest(unittest.TestCase):
         ).to_dist()
         participants = [agent_a, agent_b, agent_c]
         annonuncement_msgs = [
-            Msg(name="System", content="Announcement 1"),
-            Msg(name="System", content="Announcement 2"),
+            Msg(name="System", content="Announcement 1", role="system"),
+            Msg(name="System", content="Announcement 2", role="system"),
         ]
         with msghub(
             participants=participants,
@@ -350,7 +381,7 @@ class BasicRpcAgentTest(unittest.TestCase):
             port=port2,
             lazy_launch=False,
         )
-        msg = Msg(name="System", content={"msg_num": 0})
+        msg = Msg(name="System", content={"msg_num": 0}, role="system")
         j = 0
         for _ in range(5):
             msg = agent_a(msg)
