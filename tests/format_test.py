@@ -149,15 +149,6 @@ class ExampleTest(unittest.TestCase):
             api_key="xxx",
         )
 
-        # correct format
-        # ground_truth = [
-        #     {
-        #         "role": "system",
-        #         "content": "system: You are a helpful assistant\nuser:
-        #         What is the weather today?\nassistant: It is sunny today",
-        #     },
-        # ]
-
         ground_truth = [
             {
                 "role": "system",
@@ -177,8 +168,32 @@ class ExampleTest(unittest.TestCase):
         ]
 
         prompt = model.format(*self.inputs)  # type: ignore[arg-type]
-        print(prompt)
-        print(ground_truth)
+        self.assertListEqual(prompt, ground_truth)
+
+        # wrong format
+        with self.assertRaises(TypeError):
+            model.format(*self.wrong_inputs)  # type: ignore[arg-type]
+
+    def test_dashscope_advance_format(self) -> None:
+        """Unit test for the advanced format function in dashscope chat api
+        wrapper."""
+        model = DashScopeChatWrapper(
+            config_name="",
+            model_name="qwen-max",
+            api_key="xxx",
+        )
+
+        # correct format
+        ground_truth = [
+            {
+                "role": "system",
+                "content": "system: You are a helpful assistant\nuser: "
+                           "What is the weather today?\nassistant: It "
+                           "is sunny today",
+            },
+        ]
+
+        prompt = model.advanced_format(*self.inputs)  # type: ignore[arg-type]
         self.assertListEqual(prompt, ground_truth)
 
         # wrong format

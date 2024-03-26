@@ -218,7 +218,8 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         In this format function, the input messages are converted into
         dictionaries with `role` and `content` fields. This conversation may
         not meet the requirement that `user` and `assistant` speak
-        alternatively. It'll be correct in `preprocess_role` function.
+        alternatively. This requirement can be enforced by calling
+        `preprocess_role` function..
 
         # TODO: We will merge these two functions into one `format` function
         soon.
