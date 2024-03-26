@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """Google Gemini model wrapper."""
 import os
+from abc import ABC
 from collections.abc import Iterable
-from typing import Sequence, Union, Any
+from typing import Sequence, Union, Any, List
 
 from loguru import logger
 
@@ -15,7 +16,7 @@ except ImportError:
     genai = None
 
 
-class GeminiWrapperBase(ModelWrapperBase):
+class GeminiWrapperBase(ModelWrapperBase, ABC):
     """The base class for Google Gemini model wrapper."""
 
     _generation_method = None
@@ -194,6 +195,67 @@ class GeminiChatWrapper(GeminiWrapperBase):
             self._metric("total_tokens"),
             metric_unit="token",
         )
+
+    def format(self, *args: Union[Msg, Sequence[Msg]]) -> List[dict]:
+        """This function provide a basic prompting strategy for Gemini Chat
+        API in multi-party conversation, which combines all input into a
+        single string, and wrap it into a user message.
+
+        We make the above decision based on the following constraints of the
+        Gemini generate API:
+
+        1. In Gemini `generate_content` API, the `role` field must be either
+        `user` or `model`.
+
+        2. If we pass a list of messages to the `generate_content` API,
+        the `user` role must speak in the beginning and end of the
+        messages, and `user` and `model` must alternative. This prevents
+        us to build a multi-party conversations, where `model` may keep
+        speaking in different names.
+
+        The above information is updated to 2024/03/21. More information
+        about the Gemini `generate_content` API can be found in
+        https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini
+
+        Based on the above considerations, we decide to combine all messages
+        into a single user message. This is a simple and straightforward
+        strategy, if you have any better ideas, pull request and
+        discussion are welcome in our GitHub repository
+        https://github.com/agentscope/agentscope!
+
+        Args:
+            args (`Union[Msg, Sequence[Msg]]`):
+                The items in `args` should be `Msg` objects or a list of
+                `Msg` objects.
+
+        Returns:
+            `List[dict]`:
+                A list with one user message.
+        """
+        prompt = []
+        for unit in args:
+            if isinstance(unit, Msg):
+                prompt.append(f"{unit.name}: {unit.content}")
+            elif isinstance(unit, list):
+                for child_unit in unit:
+                    if isinstance(child_unit, Msg):
+                        prompt.append(
+                            f"{child_unit.name}: " f"{child_unit.content}",
+                        )
+                    else:
+                        raise TypeError(
+                            f"The input should be a Msg object or a list "
+                            f"of Msg objects, got {type(child_unit)}.",
+                        )
+            else:
+                raise TypeError(
+                    f"The input should be a Msg object or a list "
+                    f"of Msg objects, got {type(unit)}.",
+                )
+
+        prompt_str = "\n".join(prompt)
+
+        return [{"role": "user", "parts": [prompt_str]}]
 
 
 class GeminiEmbeddingWrapper(GeminiWrapperBase):

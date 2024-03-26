@@ -250,7 +250,7 @@ while True:
   - [Model](https://modelscope.github.io/agentscope/en/tutorial/203-model.html)
   - [Service](https://modelscope.github.io/agentscope/en/tutorial/204-service.html)
   - [Memory](https://modelscope.github.io/agentscope/en/tutorial/205-memory.html)
-  - [Prompt Engine](https://modelscope.github.io/agentscope/en/tutorial/206-prompt.html)
+  - [Prompt Engineering](https://modelscope.github.io/agentscope/en/tutorial/206-prompt.html)
   - [Monitor](https://modelscope.github.io/agentscope/en/tutorial/207-monitor.html)
   - [Distribution](https://modelscope.github.io/agentscope/en/tutorial/208-distribute.html)
 - [Get Involved](https://modelscope.github.io/agentscope/en/tutorial/contribute.html)

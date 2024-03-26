@@ -2,9 +2,10 @@
 """A general dialog agent."""
 from typing import Optional
 
+from loguru import logger
+
 from ..message import Msg
 from .agent import AgentBase
-from ..prompt import PromptEngine
 from ..prompt import PromptType
 
 
@@ -19,7 +20,7 @@ class DialogAgent(AgentBase):
         model_config_name: str,
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
-        prompt_type: Optional[PromptType] = PromptType.LIST,
+        prompt_type: Optional[PromptType] = None,
     ) -> None:
         """Initialize the dialog agent.
 
@@ -49,8 +50,11 @@ class DialogAgent(AgentBase):
             memory_config=memory_config,
         )
 
-        # init prompt engine
-        self.engine = PromptEngine(self.model, prompt_type=prompt_type)
+        if prompt_type is not None:
+            logger.warning(
+                "The argument `prompt_type` is deprecated and "
+                "will be removed in the future.",
+            )
 
     def reply(self, x: dict = None) -> dict:
         """Reply function of the agent. Processes the input data,
@@ -72,14 +76,14 @@ class DialogAgent(AgentBase):
             self.memory.add(x)
 
         # prepare prompt
-        prompt = self.engine.join(
-            self.sys_prompt,
-            self.memory and self.memory.get_memory(),
+        prompt = self.model.format(
+            Msg("system", self.sys_prompt, role="system"),
+            self.memory and self.memory.get_memory(),  # type: ignore[arg-type]
         )
 
         # call llm and generate response
         response = self.model(prompt).text
-        msg = Msg(self.name, response)
+        msg = Msg(self.name, response, role="assistant")
 
         # Print/speak the message in this agent's voice
         self.speak(msg)
