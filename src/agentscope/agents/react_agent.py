@@ -2,7 +2,7 @@
 """
 """
 import json
-from typing import Sequence, Tuple, Literal
+from typing import Sequence, Tuple, Literal, List
 
 from loguru import logger
 
@@ -12,8 +12,7 @@ from agentscope.models import ModelResponse
 from agentscope.service import ServiceResponse, ServiceExecStatus
 
 
-DEFAULT_SYS_PROMPT = """
-You're a helpful assistant. You target is to help users to solve their problems.
+DEFAULT_TOOL_PROMPT = """
 
 The following tool functions are available in the format of
 ```
@@ -53,16 +52,6 @@ Taking using web_search function as an example, the response should be like this
 }}
 """  # noqa
 
-FUNCTION_RESULT_TITLE_PROMPT = """
-Execute Results:
-"""
-
-FUNCTION_RESULT_PROMPT = """
-{index}. {function_name}:
-    [EXECUTE STATUS]: {status}
-    [EXECUTE RESULT]: {result}
-"""
-
 OBSERVE_HINT_PROMPT = """
 Determine if you've achieved your goals based on the above dialogue history and execution results. 
 
@@ -73,20 +62,30 @@ You should respond in the following format, which can be loaded by `json.loads` 
 }} 
 """
 
+FUNCTION_RESULT_TITLE_PROMPT = """
+Execute Results:
+"""
+
+FUNCTION_RESULT_PROMPT = """
+{index}. {function_name}:
+    [EXECUTE STATUS]: {status}
+    [EXECUTE RESULT]: {result}
+"""
+
 
 def parse_func(response: ModelResponse) -> ModelResponse:
-    return ModelResponse(raw=json.loads(response.raw))
+    return ModelResponse(raw=json.loads(response.text))
 
 
 class ReactAgent(AgentBase):
     def __init__(
-            self,
-            name: str,
-            sys_prompt: str,
-            model_config_name: str,
-            tools: Sequence[Tuple[str, dict]],
-            max_iters: int = 10,
-            verbose: bool = True,
+        self,
+        name: str,
+        model_config_name: str,
+        tools: Sequence[Tuple[str, dict]],
+        sys_prompt: str = "You're a helpful assistant.",
+        max_iters: int = 10,
+        verbose: bool = True,
     ):
         """Initialize the ReAct agent with the given name, model config name
         and tools.
@@ -117,10 +116,18 @@ class ReactAgent(AgentBase):
         self.verbose = verbose
         self.max_iters = max_iters
 
-        self.func_name_mapping = ()
+        func_prompt, self.func_name_mapping = self.prepare_funcs_prompt(tools)
 
-        # Put system prompt into memory
-        self.memory.add(Msg("system", self.sys_prompt, role="system"))
+        # Prepare system prompt
+        tools_prompt = DEFAULT_TOOL_PROMPT.format(function_prompt=func_prompt)
+
+        if sys_prompt.endswith("\n"):
+            sys_prompt = sys_prompt + tools_prompt
+        else:
+            sys_prompt = sys_prompt + "\n" + tools_prompt
+
+        # Put sys prompt into memory
+        self.memory.add(Msg("system", sys_prompt, role="system"))
 
     def reply(self, x: dict = None) -> dict:
         if self.memory:
@@ -168,13 +175,14 @@ class ReactAgent(AgentBase):
             execute_results_prompt = FUNCTION_RESULT_TITLE_PROMPT + execute_results_prompt
 
             # Record execution results into memory as a message from the system
-            msg = Msg(
+            msg_res = Msg(
                 name="system",
                 content=execute_results_prompt,
                 role="system",
             )
+            self.speak(msg_res)
             if self.memory:
-                self.memory.add(msg)
+                self.memory.add(msg_res)
 
             ######################## Step 3: Observe ########################
 
@@ -248,3 +256,46 @@ class ReactAgent(AgentBase):
                 print("\033[34m" + content + "\033[0m")
             else:
                 print(content)
+
+    def prepare_funcs_prompt(self, tools: List[Tuple]) -> Tuple[str, dict]:
+        """Convert function descriptions from json schema format to
+        string prompt format.
+        Args:
+            tools (`List[Tuple]`):
+                The list of tool functions and their descriptions in JSON
+                schema format.
+        Returns:
+            `Tuple[str, dict]`:
+                The string prompt for the tool functions and a function name
+                mapping dict.
+            .. code-block:: python
+                {index}. {function name}: {function description}
+                    {argument name} ({argument type}): {argument description}
+                    ...
+        """
+        tools_prompt = []
+        func_name_mapping = {}
+        for i, (func, desc) in enumerate(tools):
+            func_name = desc["function"]["name"]
+            func_name_mapping[func_name] = func
+
+            func_desc = desc["function"]["description"]
+            args_desc = desc["function"]["parameters"]["properties"]
+
+            args_list = [f"{i + 1}. {func_name}: {func_desc}"]
+            for args_name, args_info in args_desc.items():
+                if "type" in args_info:
+                    args_line = (
+                        f'\t{args_name} ({args_info["type"]}): '
+                        f'{args_info.get("description", "")}'
+                    )
+                else:
+                    args_line = (
+                        f'\t{args_name}: {args_info.get("description", "")}'
+                    )
+                args_list.append(args_line)
+
+            func_prompt = "\n".join(args_list)
+            tools_prompt.append(func_prompt)
+
+        return "\n".join(tools_prompt), func_name_mapping
