@@ -98,6 +98,8 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">IntEnum</span>
 
+<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+
 <span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">OpenAIWrapperBase</span><span class="p">,</span> <span class="n">ModelWrapperBase</span>
 <span class="kn">from</span> <span class="nn">agentscope.constants</span> <span class="kn">import</span> <span class="n">ShrinkPolicy</span>
 <span class="kn">from</span> <span class="nn">agentscope.utils.tools</span> <span class="kn">import</span> <span class="n">to_openai_dict</span><span class="p">,</span> <span class="n">to_dialog_str</span>
@@ -181,7 +183,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shrink_policy</span> <span class="o">=</span> <span class="n">shrink_policy</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">max_length</span> <span class="o">=</span> <span class="n">max_length</span> <span class="ow">or</span> <span class="n">model</span><span class="o">.</span><span class="n">max_length</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_length</span> <span class="o">=</span> <span class="n">max_length</span>
 
         <span class="k">if</span> <span class="n">prompt_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">OpenAIWrapperBase</span><span class="p">):</span>
@@ -195,6 +197,14 @@
 
         <span class="k">if</span> <span class="n">summarize_model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">summarize_model</span> <span class="o">=</span> <span class="n">model</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">&quot;The prompt engine will be deprecated in the future. &quot;</span>
+            <span class="s2">&quot;Please use the `format` function in model wrapper object &quot;</span>
+            <span class="s2">&quot;instead. More details refer to &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;https://modelscope.github.io/agentscope/en/tutorial/206-prompt&quot;</span>
+            <span class="s2">&quot;.html&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="PromptEngine.join">
 <a class="viewcode-back" href="../../agentscope.html#agentscope.prompt.PromptEngine.join">[docs]</a>

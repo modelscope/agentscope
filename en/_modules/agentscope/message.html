@@ -96,7 +96,7 @@
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;The base class for message unit&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Literal</span>
 <span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">uuid4</span>
 <span class="kn">import</span> <span class="nn">json</span>
 
@@ -127,9 +127,6 @@
 <span class="sd">            name (`str`):</span>
 <span class="sd">                The name of who send the message. It&#39;s often used in</span>
 <span class="sd">                role-playing scenario to tell the name of the sender.</span>
-<span class="sd">                However, you can also only use `role` when calling openai api.</span>
-<span class="sd">                The usage of `name` refers to</span>
-<span class="sd">                https://cookbook.openai.com/examples/how_to_format_inputs_to_chatgpt_models.</span>
 <span class="sd">            content (`Any`):</span>
 <span class="sd">                The content of the message.</span>
 <span class="sd">            url (`Optional[Union[list[str], str]]`, defaults to None):</span>
@@ -138,10 +135,7 @@
 <span class="sd">                The timestamp of the message, if None, it will be set to</span>
 <span class="sd">                current time.</span>
 <span class="sd">            **kwargs (`Any`):</span>
-<span class="sd">                Other attributes of the message. For OpenAI API, you should</span>
-<span class="sd">                add &quot;role&quot; from `[&quot;system&quot;, &quot;user&quot;, &quot;assistant&quot;, &quot;function&quot;]`.</span>
-<span class="sd">                When calling OpenAI API, `&quot;role&quot;: &quot;assistant&quot;` will be added</span>
-<span class="sd">                to the messages that don&#39;t have &quot;role&quot; attribute.</span>
+<span class="sd">                Other attributes of the message.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># id and timestamp will be added to the object as its attributes</span>
@@ -157,6 +151,8 @@
 
         <span class="k">if</span> <span class="n">url</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">url</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -200,14 +196,44 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">content</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">role</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;assistant&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">echo</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the message object</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (`str`):</span>
+<span class="sd">                The name of who send the message.</span>
+<span class="sd">            content (`Any`):</span>
+<span class="sd">                The content of the message.</span>
+<span class="sd">            role (`Literal[&quot;system&quot;, &quot;user&quot;, &quot;assistant&quot;]`):</span>
+<span class="sd">                Used to identify the source of the message, e.g. the system</span>
+<span class="sd">                information, the user input, or the model response. This</span>
+<span class="sd">                argument is used to accommodate most Chat API formats.</span>
+<span class="sd">            url (`Optional[Union[list[str], str]]`, defaults to None):</span>
+<span class="sd">                A url to file, image, video, audio or website.</span>
+<span class="sd">            timestamp (`Optional[str]`, defaults to None):</span>
+<span class="sd">                The timestamp of the message, if None, it will be set to</span>
+<span class="sd">                current time.</span>
+<span class="sd">            **kwargs (`Any`):</span>
+<span class="sd">                Other attributes of the message.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">role</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;A new field `role` is newly added to the message. &quot;</span>
+                <span class="s2">&quot;Please specify the role of the message. Currently we use &quot;</span>
+                <span class="s1">&#39;a default &quot;assistant&quot; value.&#39;</span><span class="p">,</span>
+            <span class="p">)</span>
+
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">,</span>
+            <span class="n">role</span><span class="o">=</span><span class="n">role</span> <span class="ow">or</span> <span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
             <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
             <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
@@ -281,6 +307,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="s2">&quot;thought&quot;</span><span class="p">,</span>
             <span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">,</span>
+            <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
             <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -340,6 +367,10 @@
 <span class="sd">                https://cookbook.openai.com/examples/how_to_format_inputs_to_chatgpt_models.</span>
 <span class="sd">            content (`Any`):</span>
 <span class="sd">                The content of the message.</span>
+<span class="sd">            role (`Literal[&quot;system&quot;, &quot;user&quot;, &quot;assistant&quot;]`, defaults to</span>
+<span class="sd">            &quot;assistant&quot;):</span>
+<span class="sd">                The role of the message, which can be one of the `&quot;system&quot;`,</span>
+<span class="sd">                `&quot;user&quot;`, or `&quot;assistant&quot;`.</span>
 <span class="sd">            url (`Optional[Union[list[str], str]]`, defaults to None):</span>
 <span class="sd">                A url to file, image, video, audio or website.</span>
 <span class="sd">            timestamp (`Optional[str]`, defaults to None):</span>

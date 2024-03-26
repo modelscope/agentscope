@@ -98,9 +98,10 @@
 <span class="sd">&quot;&quot;&quot;A general dialog agent.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 
+<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+
 <span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">Msg</span>
 <span class="kn">from</span> <span class="nn">.agent</span> <span class="kn">import</span> <span class="n">AgentBase</span>
-<span class="kn">from</span> <span class="nn">..prompt</span> <span class="kn">import</span> <span class="n">PromptEngine</span>
 <span class="kn">from</span> <span class="nn">..prompt</span> <span class="kn">import</span> <span class="n">PromptType</span>
 
 
@@ -117,7 +118,7 @@
         <span class="n">model_config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">use_memory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">memory_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">prompt_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PromptType</span><span class="p">]</span> <span class="o">=</span> <span class="n">PromptType</span><span class="o">.</span><span class="n">LIST</span><span class="p">,</span>
+        <span class="n">prompt_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PromptType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the dialog agent.</span>
 
@@ -147,8 +148,11 @@
             <span class="n">memory_config</span><span class="o">=</span><span class="n">memory_config</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="c1"># init prompt engine</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="n">PromptEngine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">prompt_type</span><span class="o">=</span><span class="n">prompt_type</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">prompt_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;The argument `prompt_type` is deprecated and &quot;</span>
+                <span class="s2">&quot;will be removed in the future.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
 
 <div class="viewcode-block" id="DialogAgent.reply">
 <a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.dialog_agent.DialogAgent.reply">[文档]</a>
@@ -172,14 +176,14 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
         <span class="c1"># prepare prompt</span>
-        <span class="n">prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sys_prompt</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">memory</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">get_memory</span><span class="p">(),</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sys_prompt</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">memory</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">get_memory</span><span class="p">(),</span>  <span class="c1"># type: ignore[arg-type]</span>
         <span class="p">)</span>
 
         <span class="c1"># call llm and generate response</span>
         <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">)</span>
 
         <span class="c1"># Print/speak the message in this agent&#39;s voice</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>

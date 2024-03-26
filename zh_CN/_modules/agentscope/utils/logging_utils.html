@@ -185,7 +185,7 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">contain_name_or_role</span> <span class="o">=</span> <span class="s2">&quot;name&quot;</span> <span class="ow">in</span> <span class="n">message</span> <span class="ow">or</span> <span class="s2">&quot;role&quot;</span> <span class="ow">in</span> <span class="n">message</span>
         <span class="n">contain_content</span> <span class="o">=</span> <span class="s2">&quot;content&quot;</span> <span class="ow">in</span> <span class="n">message</span>
-        <span class="n">contain_url</span> <span class="o">=</span> <span class="s2">&quot;url&quot;</span> <span class="ow">in</span> <span class="n">message</span>
+        <span class="n">contain_url</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
         <span class="c1"># print content if contain name or role and contain content</span>
         <span class="k">if</span> <span class="n">contain_name_or_role</span><span class="p">:</span>
