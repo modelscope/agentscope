@@ -236,6 +236,28 @@ while True:
         break
 ```
 
+### AgentScope Studio
+
+AgentScope provides an easy-to-use runtime user interface capable of
+displaying multimodal output on the front end, including text, images,
+audio and video. To start a studio, you should install the `full` version
+of AgentScope.
+```
+# On windows
+pip install -e .[full]
+# On mac
+pip install -e .\[full\]
+```
+Once installed, you can just run
+```
+as_studio  path/to/your/script.py
+```
+Then the studio will be launched at `localhost:xxxx`, and you can see the UI similar to the
+following:
+![](https://gw.alicdn.com/imgextra/i3/O1CN01X673v81WaHV1oCxEN_!!6000000002804-0-tps-2992-1498.jpg)
+To be able to use the `as_studio` functionality, please implement the `main` function in your code. More detail can be found in [src/agentscope/web/README.md](src/agentscope/web/README.md).
+
+
 ## Tutorial
 
 - [Getting Started](https://modelscope.github.io/agentscope/en/tutorial/quick_start.html)
@@ -250,7 +272,7 @@ while True:
   - [Model](https://modelscope.github.io/agentscope/en/tutorial/203-model.html)
   - [Service](https://modelscope.github.io/agentscope/en/tutorial/204-service.html)
   - [Memory](https://modelscope.github.io/agentscope/en/tutorial/205-memory.html)
-  - [Prompt Engine](https://modelscope.github.io/agentscope/en/tutorial/206-prompt.html)
+  - [Prompt Engineering](https://modelscope.github.io/agentscope/en/tutorial/206-prompt.html)
   - [Monitor](https://modelscope.github.io/agentscope/en/tutorial/207-monitor.html)
   - [Distribution](https://modelscope.github.io/agentscope/en/tutorial/208-distribute.html)
 - [Get Involved](https://modelscope.github.io/agentscope/en/tutorial/contribute.html)

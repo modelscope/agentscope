@@ -8,7 +8,6 @@ from loguru import logger
 from ..message import Msg
 from .agent import AgentBase
 from ..models.model import ModelResponse
-from ..prompt import PromptEngine
 from ..prompt import PromptType
 from ..utils.tools import _convert_to_str
 
@@ -64,7 +63,7 @@ class DictDialogAgent(AgentBase):
         parse_func: Optional[Callable[..., Any]] = parse_dict,
         fault_handler: Optional[Callable[..., Any]] = default_response,
         max_retries: Optional[int] = 3,
-        prompt_type: Optional[PromptType] = PromptType.LIST,
+        prompt_type: Optional[PromptType] = None,
     ) -> None:
         """Initialize the dict dialog agent.
 
@@ -111,8 +110,11 @@ class DictDialogAgent(AgentBase):
         self.fault_handler = fault_handler
         self.max_retries = max_retries
 
-        # init prompt engine
-        self.engine = PromptEngine(self.model, prompt_type=prompt_type)
+        if prompt_type is not None:
+            logger.warning(
+                "The argument `prompt_type` is deprecated and "
+                "will be removed in the future.",
+            )
 
     def reply(self, x: dict = None) -> dict:
         """Reply function of the agent.
@@ -141,9 +143,9 @@ class DictDialogAgent(AgentBase):
             self.memory.add(x)
 
         # prepare prompt
-        prompt = self.engine.join(
-            self.sys_prompt,
-            self.memory and self.memory.get_memory(),
+        prompt = self.model.format(
+            Msg("system", self.sys_prompt, role="system"),
+            self.memory and self.memory.get_memory(),  # type: ignore[arg-type]
         )
 
         # call llm
@@ -160,9 +162,14 @@ class DictDialogAgent(AgentBase):
         # In this agent, if the response is a dict, we treat "speak" as a
         # special key, which represents the text to be spoken
         if isinstance(response, dict) and "speak" in response:
-            msg = Msg(self.name, response["speak"], **response)
+            msg = Msg(
+                self.name,
+                response["speak"],
+                role="assistant",
+                **response,
+            )
         else:
-            msg = Msg(self.name, response)
+            msg = Msg(self.name, response, role="assistant")
 
         # Print/speak the message in this agent's voice
         self.speak(msg)

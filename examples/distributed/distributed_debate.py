@@ -122,11 +122,11 @@ def run_main_process(parsed_args: argparse.Namespace) -> None:
     )
     participants = [pro_agent, con_agent, judge_agent]
     announcements = [
-        Msg(name="system", content=FIRST_ROUND),
-        Msg(name="system", content=SECOND_ROUND),
-        Msg(name="system", content=THIRD_ROUND),
+        Msg(name="system", content=FIRST_ROUND, role="system"),
+        Msg(name="system", content=SECOND_ROUND, role="system"),
+        Msg(name="system", content=THIRD_ROUND, role="system"),
     ]
-    end = Msg(name="system", content=END)
+    end = Msg(name="system", content=END, role="system")
     with msghub(participants=participants) as hub:
         for i in range(3):
             hub.broadcast(announcements[i])

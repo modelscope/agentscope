@@ -2,14 +2,16 @@
 """Model wrapper for DashScope models"""
 from abc import ABC
 from http import HTTPStatus
-from typing import Any, Union
+from typing import Any, Union, List, Sequence
+from loguru import logger
+
+from ..message import Msg
+from ..utils.tools import to_openai_dict
 
 try:
     import dashscope
 except ModuleNotFoundError:
     dashscope = None
-
-from loguru import logger
 
 from .model import ModelWrapperBase, ModelResponse
 
@@ -60,6 +62,16 @@ class DashScopeWrapperBase(ModelWrapperBase, ABC):
 
         # Set monitor accordingly
         self._register_default_metrics()
+
+    def format(
+        self,
+        *args: Union[Msg, Sequence[Msg]],
+    ) -> Union[List[dict], str]:
+        raise RuntimeError(
+            f"Model Wrapper [{type(self).__name__}] doesn't "
+            f"need to format the input. Please try to use the "
+            f"model wrapper directly.",
+        )
 
 
 class DashScopeChatWrapper(DashScopeWrapperBase):
@@ -196,6 +208,150 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             text=response.output["choices"][0]["message"]["content"],
             raw=response,
         )
+
+    def format(
+        self,
+        *args: Union[Msg, Sequence[Msg]],
+    ) -> List:
+        """Format the messages for DashScope Chat API.
+
+        In this format function, the input messages are converted into
+        dictionaries with `role` and `content` fields. This conversation may
+        not meet the requirement that `user` and `assistant` speak
+        alternatively. This requirement can be enforced by calling
+        `preprocess_role` function..
+
+        # TODO: We will merge these two functions into one `format` function
+        soon.
+
+        The following is an example:
+
+        .. code-block:: python
+
+            prompt = model.format(
+                Msg("system", "You're a helpful assistant", role="system"),
+                Msg("Bob", "Hi, how can I help you?", role="assistant"),
+                Msg("user", "What's the date today?", role="user")
+            )
+
+        The prompt will be as follows:
+
+        .. code-block:: python
+
+            [
+                {"role": "system", "content": "You are a helpful assistant"},
+                {"role": "assistant", "content": "Hi, how can I help you"},
+                {"role": "assistant", "content": "What's the date today?"}
+            ]
+
+
+        Args:
+            *args (`Union[Msg, Sequence[Msg]]`):
+                The input arguments to be formatted, where each argument
+                should be a `Msg` object, or a list of `Msg` objects
+
+        Returns:
+            `List[dict]`:
+                The formatted messages.
+        """
+        # TODO: This function only convert agentscope msgs into qwen
+        #  messages, the re-range is executed in _preprocess_role function.
+
+        # TODO: This strategy will be replaced by a new strategy in the future.
+        prompt = []
+        for unit in args:
+            if isinstance(unit, Msg):
+                prompt.append(to_openai_dict(unit))
+            elif isinstance(unit, list):
+                for child_unit in unit:
+                    if isinstance(child_unit, Msg):
+                        prompt.append(to_openai_dict(child_unit))
+                    else:
+                        raise TypeError(
+                            f"The input should be a Msg object or a list "
+                            f"of Msg objects, got {type(child_unit)}.",
+                        )
+            else:
+                raise TypeError(
+                    f"The input should be a Msg object or a list "
+                    f"of Msg objects, got {type(unit)}.",
+                )
+
+        return prompt
+
+    def advanced_format(
+        self,
+        *args: Union[Msg, Sequence[Msg]],
+    ) -> List:
+        """Format the messages for DashScope Chat API.
+
+        In this format function, the input messages are formatted into a
+        single system messages with format "{name}: {content}" for each
+        message. Note this strategy maybe not suitable for all scenarios,
+        and developers are encouraged to implement their own prompt
+        engineering strategies.
+
+        The following is an example:
+
+        .. code-block:: python
+
+            prompt = model.format(
+                Msg("system", "You're a helpful assistant", role="system"),
+                Msg("Bob", "Hi, how can I help you?", role="assistant"),
+                Msg("user", "What's the date today?", role="user")
+            )
+
+        The prompt will be as follows:
+
+        .. code-block:: python
+
+            [
+                {
+                    "role": "system",
+                    "content": (
+                       "system: You're a helpful assistant\n",
+                       "Bob: Hi, how can I help you?\n",
+                       "user: What's the date today?"
+                    )
+                }
+            ]
+
+
+        Args:
+            *args (`Union[Msg, Sequence[Msg]]`):
+                The input arguments to be formatted, where each argument
+                should be a `Msg` object, or a list of `Msg` objects
+
+        Returns:
+            `List[dict]`:
+                The formatted messages.
+        """
+        # TODO: This function only convert agentscope msgs into qwen
+        #  messages, the re-range is executed in _preprocess_role function.
+        prompt = []
+        for unit in args:
+            if isinstance(unit, Msg):
+                prompt.append(f"{unit.name}: {unit.content}")
+            elif isinstance(unit, list):
+                for child_unit in unit:
+                    if isinstance(child_unit, Msg):
+                        prompt.append(
+                            f"{child_unit.name}: " f"{child_unit.content}",
+                        )
+                    else:
+                        raise TypeError(
+                            f"The input should be a Msg object or a list "
+                            f"of Msg objects, got {type(child_unit)}.",
+                        )
+            else:
+                raise TypeError(
+                    f"The input should be a Msg object or a list "
+                    f"of Msg objects, got {type(unit)}.",
+                )
+
+        prompt_str = "\n".join(prompt)
+
+        return [{"role": "system", "content": prompt_str}]
 
     def _preprocess_role(self, messages: list) -> list:
         """preprocess role rules for DashScope"""

@@ -3,6 +3,8 @@
 from typing import Any, Optional, Union
 from enum import IntEnum
 
+from loguru import logger
+
 from agentscope.models import OpenAIWrapperBase, ModelWrapperBase
 from agentscope.constants import ShrinkPolicy
 from agentscope.utils.tools import to_openai_dict, to_dialog_str
@@ -81,7 +83,7 @@ class PromptEngine:
         """
         self.model = model
         self.shrink_policy = shrink_policy
-        self.max_length = max_length or model.max_length
+        self.max_length = max_length
 
         if prompt_type is None:
             if isinstance(model, OpenAIWrapperBase):
@@ -95,6 +97,14 @@ class PromptEngine:
 
         if summarize_model is None:
             self.summarize_model = model
+
+        logger.warning(
+            "The prompt engine will be deprecated in the future. "
+            "Please use the `format` function in model wrapper object "
+            "instead. More details refer to ",
+            "https://modelscope.github.io/agentscope/en/tutorial/206-prompt"
+            ".html",
+        )
 
     def join(
         self,

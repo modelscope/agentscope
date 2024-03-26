@@ -2,7 +2,8 @@
 """Model wrapper for post-based inference apis."""
 import json
 import time
-from typing import Any
+from abc import ABC
+from typing import Any, Union, Sequence, List
 
 import requests
 from loguru import logger
@@ -11,9 +12,10 @@ from .model import ModelWrapperBase, ModelResponse
 from ..constants import _DEFAULT_MAX_RETRIES
 from ..constants import _DEFAULT_MESSAGES_KEY
 from ..constants import _DEFAULT_RETRY_INTERVAL
+from ..message import Msg
 
 
-class PostAPIModelWrapperBase(ModelWrapperBase):
+class PostAPIModelWrapperBase(ModelWrapperBase, ABC):
     """The base model wrapper for the model deployed on the POST API."""
 
     model_type: str = "post_api"
@@ -171,6 +173,38 @@ class PostAPIChatWrapper(PostAPIModelWrapperBase):
             ],
         )
 
+    def format(self, *args: Union[Msg, Sequence[Msg]]) -> Union[List[dict]]:
+        """Format the input messages into a list of dict, which is
+        compatible to OpenAI Chat API.
+
+        Args:
+            args (`Union[Msg, Sequence[Msg]]`):
+                The input messages.
+
+        Returns:
+            `Union[List[dict]]`:
+                The formatted messages.
+        """
+        messages = []
+        for arg in args:
+            if isinstance(arg, Msg):
+                messages.append(
+                    {
+                        "role": arg.role,
+                        "name": arg.name,
+                        "content": arg.content,
+                    },
+                )
+            elif isinstance(arg, list):
+                messages.extend(self.format(*arg))
+            else:
+                raise TypeError(
+                    f"The input should be a Msg object or a list "
+                    f"of Msg objects, got {type(arg)}.",
+                )
+
+        return messages
+
 
 class PostAPIDALLEWrapper(PostAPIModelWrapperBase):
     """A post api model wrapper compatible with openai dalle"""
@@ -180,3 +214,13 @@ class PostAPIDALLEWrapper(PostAPIModelWrapperBase):
     def _parse_response(self, response: dict) -> ModelResponse:
         urls = [img["url"] for img in response["data"]["response"]["data"]]
         return ModelResponse(image_urls=urls)
+
+    def format(
+        self,
+        *args: Union[Msg, Sequence[Msg]],
+    ) -> Union[List[dict], str]:
+        raise RuntimeError(
+            f"Model Wrapper [{type(self).__name__}] doesn't "
+            f"need to format the input. Please try to use the "
+            f"model wrapper directly.",
+        )
