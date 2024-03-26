@@ -155,8 +155,7 @@ class PostAPIModelWrapperBase(ModelWrapperBase, ABC):
         else:
             logger.error(json.dumps(request_kwargs, indent=4))
             raise RuntimeError(
-                f"Failed to call the model with "
-                f"requests.codes == {response.status_code}",
+                f"Failed to call the model with {response.json()}"
             )
 
 
