@@ -241,7 +241,7 @@ class GeminiChatWrapper(GeminiWrapperBase):
                 for child_unit in unit:
                     if isinstance(child_unit, Msg):
                         prompt.append(
-                            f"{child_unit.name}: " 
+                            f"{child_unit.name}: "
                             f"{_convert_to_str(child_unit.content)}",
                         )
                     else:

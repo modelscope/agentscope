@@ -408,7 +408,7 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
                     if isinstance(child_arg, Msg):
                         prompt.append(
                             f"{child_arg.name}: "
-                            f"{_convert_to_str(child_arg.content)}"
+                            f"{_convert_to_str(child_arg.content)}",
                         )
                     else:
                         raise TypeError(
