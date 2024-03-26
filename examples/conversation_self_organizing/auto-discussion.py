@@ -49,7 +49,7 @@ x = load_txt(
     question=query,
 )
 
-x = Msg("user", x)
+x = Msg("user", x, role="user")
 settings = agent_builder(x)
 scenario_participants = extract_scenario_and_participants(settings["content"])
 
@@ -64,6 +64,6 @@ agents = [
 ]
 
 # begin discussion
-msg = Msg("user", f"let's discuss to solve the question: {query}")
+msg = Msg("user", f"let's discuss to solve the question: {query}", role="user")
 for i in range(max_round):
     msg = sequentialpipeline(agents, msg)
