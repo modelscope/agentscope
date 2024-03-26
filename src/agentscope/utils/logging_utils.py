@@ -89,7 +89,7 @@ def _chat(message: Union[str, dict], *args: Any, **kwargs: Any) -> None:
     if isinstance(message, dict):
         contain_name_or_role = "name" in message or "role" in message
         contain_content = "content" in message
-        contain_url = "url" in message
+        contain_url = message.get("url", None) is not None
 
         # print content if contain name or role and contain content
         if contain_name_or_role:

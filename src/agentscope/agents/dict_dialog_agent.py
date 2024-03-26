@@ -8,7 +8,6 @@ from loguru import logger
 from ..message import Msg
 from .agent import AgentBase
 from ..models.model import ModelResponse
-from ..prompt import PromptEngine
 from ..prompt import PromptType
 
 
@@ -100,9 +99,6 @@ class DictDialogAgent(AgentBase):
         self.parse_func = parse_func
         self.fault_handler = fault_handler
         self.max_retries = max_retries
-
-        # init prompt engine
-        self.engine = PromptEngine(self.model, prompt_type=prompt_type)
 
     def reply(self, x: dict = None) -> dict:
         """Reply function of the agent.

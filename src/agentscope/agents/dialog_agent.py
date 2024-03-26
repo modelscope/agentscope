@@ -4,7 +4,6 @@ from typing import Optional
 
 from ..message import Msg
 from .agent import AgentBase
-from ..prompt import PromptEngine
 from ..prompt import PromptType
 
 
@@ -48,9 +47,6 @@ class DialogAgent(AgentBase):
             use_memory=use_memory,
             memory_config=memory_config,
         )
-
-        # init prompt engine
-        self.engine = PromptEngine(self.model, prompt_type=prompt_type)
 
     def reply(self, x: dict = None) -> dict:
         """Reply function of the agent. Processes the input data,
