@@ -8,13 +8,21 @@ from loguru import logger
 from ..message import Msg
 from .agent import AgentBase
 from ..models.model import ModelResponse
-from ..prompt import PromptEngine
 from ..prompt import PromptType
 
 
 def parse_dict(response: ModelResponse) -> ModelResponse:
     """Parse function for DictDialogAgent"""
-    return ModelResponse(raw=json.loads(response.text))
+    try:
+        response_dict = json.loads(response.text)
+    except json.decoder.JSONDecodeError:
+        # Sometimes LLM may return a response with single quotes, which is not
+        # a valid JSON format. We replace single quotes with double quotes and
+        # try to load it again.
+        # TODO: maybe using a more robust json library to handle this case
+        response_dict = json.loads(response.text.replace("'", '"'))
+
+    return ModelResponse(raw=response_dict)
 
 
 def default_response(response: ModelResponse) -> ModelResponse:
@@ -54,7 +62,7 @@ class DictDialogAgent(AgentBase):
         parse_func: Optional[Callable[..., Any]] = parse_dict,
         fault_handler: Optional[Callable[..., Any]] = default_response,
         max_retries: Optional[int] = 3,
-        prompt_type: Optional[PromptType] = PromptType.LIST,
+        prompt_type: Optional[PromptType] = None,
     ) -> None:
         """Initialize the dict dialog agent.
 
@@ -101,8 +109,11 @@ class DictDialogAgent(AgentBase):
         self.fault_handler = fault_handler
         self.max_retries = max_retries
 
-        # init prompt engine
-        self.engine = PromptEngine(self.model, prompt_type=prompt_type)
+        if prompt_type is not None:
+            logger.warning(
+                "The argument `prompt_type` is deprecated and "
+                "will be removed in the future.",
+            )
 
     def reply(self, x: dict = None) -> dict:
         """Reply function of the agent.
@@ -131,9 +142,9 @@ class DictDialogAgent(AgentBase):
             self.memory.add(x)
 
         # prepare prompt
-        prompt = self.engine.join(
-            self.sys_prompt,
-            self.memory and self.memory.get_memory(),
+        prompt = self.model.format(
+            Msg("system", self.sys_prompt, role="system"),
+            self.memory and self.memory.get_memory(),  # type: ignore[arg-type]
         )
 
         # call llm
@@ -150,15 +161,26 @@ class DictDialogAgent(AgentBase):
         # In this agent, if the response is a dict, we treat "speak" as a
         # special key, which represents the text to be spoken
         if isinstance(response, dict) and "speak" in response:
-            msg = Msg(self.name, response["speak"], **response)
+            msg = Msg(
+                self.name,
+                response["speak"],
+                role="assistant",
+                **response,
+            )
         else:
-            msg = Msg(self.name, response)
+            msg = Msg(self.name, response, role="assistant")
 
         # Print/speak the message in this agent's voice
         self.speak(msg)
 
         # record to memory
         if self.memory:
-            self.memory.add(msg)
+            # Convert the response dict into a string to store in memory
+            msg_memory = Msg(
+                name=self.name,
+                content=str(msg.content),
+                role="assistant",
+            )
+            self.memory.add(msg_memory)
 
         return msg

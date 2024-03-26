@@ -214,6 +214,24 @@ while True:
     break
 ```
 
+### AgentScope前端
+
+AgentScope
+提供了一个易于使用的运行时用户界面，能够在前端显示多模态输出，包括文本、图像、音频和视频。要启动前端，需要先安装AgentScope完整版本。
+```
+# On windows
+pip install -e .[full]
+# On mac
+pip install -e .\[full\]
+```
+然后运行
+```
+as_studio  path/to/your/script.py
+```
+前端就会在端口 `localhost:xxxx`上启动，打开后就能看到类似下图的界面：
+![](https://gw.alicdn.com/imgextra/i3/O1CN01X673v81WaHV1oCxEN_!!6000000002804-0-tps-2992-1498.jpg)
+为了能使用该前端功能，你需要在代码中实现`main`函数。更多详情请参见 [src/agentscope/web/README.md](src/agentscope/web/README.md)。
+
 ## 教程
 
 - [快速上手](https://modelscope.github.io/agentscope/zh_CN/tutorial/quick_start.html)
