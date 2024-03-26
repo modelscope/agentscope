@@ -188,8 +188,8 @@ class ExampleTest(unittest.TestCase):
             {
                 "role": "system",
                 "content": "system: You are a helpful assistant\nuser: "
-                           "What is the weather today?\nassistant: It "
-                           "is sunny today",
+                "What is the weather today?\nassistant: It "
+                "is sunny today",
             },
         ]
 
