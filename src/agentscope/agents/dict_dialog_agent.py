@@ -10,6 +10,7 @@ from .agent import AgentBase
 from ..models.model import ModelResponse
 from ..prompt import PromptEngine
 from ..prompt import PromptType
+from ..utils.tools import _convert_to_str
 
 
 def parse_dict(response: ModelResponse) -> ModelResponse:
@@ -171,7 +172,8 @@ class DictDialogAgent(AgentBase):
             # Convert the response dict into a string to store in memory
             msg_memory = Msg(
                 name=self.name,
-                content=str(msg.content),
+                # TODO: use `_convert_to_str` in format method
+                content=_convert_to_str(response),
                 role="assistant",
             )
             self.memory.add(msg_memory)
