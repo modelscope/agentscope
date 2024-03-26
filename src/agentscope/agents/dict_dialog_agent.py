@@ -179,7 +179,6 @@ class DictDialogAgent(AgentBase):
             # Convert the response dict into a string to store in memory
             msg_memory = Msg(
                 name=self.name,
-                # TODO: use `_convert_to_str` in format method
                 content=_convert_to_str(response),
                 role="assistant",
             )

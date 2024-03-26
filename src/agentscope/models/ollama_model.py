@@ -5,6 +5,7 @@ from typing import Sequence, Any, Optional, List, Union
 
 from agentscope.message import Msg
 from agentscope.models import ModelWrapperBase, ModelResponse
+from agentscope.utils.tools import _convert_to_str
 
 try:
     import ollama
@@ -183,7 +184,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
             if isinstance(msg, Msg):
                 ollama_msg = {
                     "role": msg.role,
-                    "content": msg.content,
+                    "content": _convert_to_str(msg.content),
                 }
 
                 # image url
@@ -401,11 +402,14 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
 
         for arg in args:
             if isinstance(arg, Msg):
-                prompt.append(f"{arg.name}: {arg.content}")
+                prompt.append(f"{arg.name}: {_convert_to_str(arg.content)}")
             elif isinstance(arg, list):
                 for child_arg in arg:
                     if isinstance(child_arg, Msg):
-                        prompt.append(f"{child_arg.name}: {child_arg.content}")
+                        prompt.append(
+                            f"{child_arg.name}: "
+                            f"{_convert_to_str(child_arg.content)}"
+                        )
                     else:
                         raise TypeError(
                             f"The input should be a Msg object or a list "

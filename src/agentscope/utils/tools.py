@@ -37,7 +37,7 @@ def to_openai_dict(item: dict) -> dict:
         clean_dict["role"] = "assistant"
 
     if "content" in item:
-        clean_dict["content"] = item["content"]
+        clean_dict["content"] = _convert_to_str(item["content"])
     else:
         logger.warning(
             f"Message {item} doesn't have `content` field for " f"OpenAI API.",

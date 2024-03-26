@@ -8,6 +8,7 @@ from loguru import logger
 from .model import ModelWrapperBase, ModelResponse
 from ..file_manager import file_manager
 from ..message import Msg
+from ..utils.tools import _convert_to_str
 
 try:
     import openai
@@ -236,7 +237,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
                     {
                         "role": arg.role,
                         "name": arg.name,
-                        "content": arg.content,
+                        "content": _convert_to_str(arg.content),
                     },
                 )
             elif isinstance(arg, list):
