@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """ Client of rpc agent server """
 
-from typing import Any
+import json
+from typing import Any, Optional
+from loguru import logger
 
 try:
     import grpc
@@ -33,7 +35,7 @@ class RpcAgentClient:
         self.port = port
         self.session_id = session_id
 
-    def call_func(self, func_name: str, value: str = None) -> str:
+    def call_func(self, func_name: str, value: Optional[str] = None) -> str:
         """Call the specific function of rpc server.
 
         Args:
@@ -54,12 +56,31 @@ class RpcAgentClient:
             )
             return result_msg.value
 
-    def del_session(self) -> None:
+    def create_session(self, agent_configs: Optional[dict]) -> None:
+        """Create a new session for this client."""
+        try:
+            if self.session_id is None or len(self.session_id) == 0:
+                return
+            self.call_func(
+                func_name="_create_session",
+                value=(
+                    None
+                    if agent_configs is None
+                    else json.dumps(agent_configs)
+                ),
+            )
+        except Exception as e:
+            logger.warning(e)
+            logger.warning(
+                f"Fail to create session with id [{self.session_id}]",
+            )
+
+    def delete_session(self) -> None:
         """
         Delete the session created by this client.
         """
         try:
             if self.session_id is not None and len(self.session_id) > 0:
-                self.call_func("_del_session")
+                self.call_func("_delete_session")
         except Exception:
             return

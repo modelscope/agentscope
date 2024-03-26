@@ -416,10 +416,23 @@ class BasicRpcAgentTest(unittest.TestCase):
         res4 = agent2(msg4)
         self.assertEqual(res4.content["mem_size"], 3)
         # delete existing session
-        agent2.client.del_session()
+        agent2.client.delete_session()
         msg2 = Msg(name="System", content="First Msg for agent2")
         res2 = agent2(msg2)
         self.assertEqual(res2.content["mem_size"], 1)
+
+        # should override remote default parameter(e.g. name field)
+        agent4 = DemoRpcAgentWithMemory(
+            name="b",
+        ).to_dist(
+            host="127.0.0.1",
+            port=launcher.port,
+            launch_server=False,
+        )
+        msg5 = Msg(name="System", content="Second Msg for agent4")
+        res5 = agent4(msg5)
+        self.assertEqual(res5.name, "b")
+        self.assertEqual(res5.content["mem_size"], 1)
         launcher.shutdown()
 
     def test_clone_instances(self) -> None:

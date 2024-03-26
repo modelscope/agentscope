@@ -109,6 +109,7 @@ class RpcAgent(AgentBase):
         local_mode: bool = True,
         lazy_launch: bool = True,
         session_id: str = None,
+        create_session_with_agent_configs: bool = True,
     ) -> None:
         """Initialize a RpcAgent instance.
 
@@ -136,6 +137,11 @@ class RpcAgent(AgentBase):
             session_id (`str`, defaults to `None`):
                 The session id of this instance. If `None`, it will
                 be generated randomly.
+            create_session_with_agent_configs (`bool`, defaults to `True`):
+                Only takes effect when `agent_configs` is provided.
+                If true, create the agent instance for the session with
+                provided `agent_configs`, otherwise uses the agent server's
+                default parameters.
         """
         super().__init__(name=name)
         self.host = host
@@ -166,6 +172,8 @@ class RpcAgent(AgentBase):
                 port=self.port,
                 session_id=self.session_id,
             )
+            if create_session_with_agent_configs:
+                self.client.create_session(agent_configs)
 
     def _launch_server(self) -> None:
         """Launch a rpc server and update the port and the client"""
@@ -235,6 +243,7 @@ class RpcAgent(AgentBase):
                     host=self.host,
                     port=self.port,
                     launch_server=False,
+                    create_session_with_agent_configs=False,
                 ),
             )
         return generated_instances
@@ -579,7 +588,11 @@ class RpcServerSideWrapper(RpcAgentServicer):
             self.task_id_counter += 1
             return self.task_id_counter
 
-    def check_and_generate_session(self, session_id: str) -> None:
+    def check_and_generate_session(
+        self,
+        session_id: str,
+        agent_configs: dict = None,
+    ) -> None:
         """
         Check whether the session exists, and create new agent instance
         for new session.
@@ -589,10 +602,16 @@ class RpcServerSideWrapper(RpcAgentServicer):
         """
         with self.session_id_lock:
             if session_id not in self.agent_pool:
-                self.agent_pool[session_id] = self.agent_class(
-                    *self.agent_args,
-                    **self.agent_kwargs,
-                )
+                if agent_configs is not None:
+                    self.agent_pool[session_id] = self.agent_class(
+                        *agent_configs["args"],
+                        **agent_configs["kwargs"],
+                    )
+                else:
+                    self.agent_pool[session_id] = self.agent_class(
+                        *self.agent_args,
+                        **self.agent_kwargs,
+                    )
 
     def check_and_delete_session(self, session_id: str) -> None:
         """
@@ -609,7 +628,8 @@ class RpcServerSideWrapper(RpcAgentServicer):
     def call_func(self, request: RpcMsg, _: ServicerContext) -> RpcMsg:
         """Call the specific servicer function."""
         if hasattr(self, request.target_func):
-            self.check_and_generate_session(request.session_id)
+            if request.target_func != "_create_session":
+                self.check_and_generate_session(request.session_id)
             return getattr(self, request.target_func)(request)
         else:
             # TODO: support other user defined method
@@ -693,7 +713,24 @@ class RpcServerSideWrapper(RpcAgentServicer):
         self.agent_pool[request.session_id].observe(msgs)
         return RpcMsg()
 
-    def _del_session(self, request: RpcMsg) -> RpcMsg:
+    def _create_session(self, request: RpcMsg) -> RpcMsg:
+        """Create a new agent instance for the session_id.
+
+        Args:
+            request (RpcMsg): request message with a `session_id` field.
+        """
+        self.check_and_generate_session(
+            request.session_id,
+            agent_configs=json.loads(request.value) if request.value else None,
+        )
+        return RpcMsg()
+
+    def _delete_session(self, request: RpcMsg) -> RpcMsg:
+        """Delete the agent instance of the specific sesssion_id.
+
+        Args:
+            request (RpcMsg): request message with a `session_id` field.
+        """
         self.check_and_delete_session(request.session_id)
         return RpcMsg()
 
