@@ -43,6 +43,7 @@ def load_web(
     keep_raw: bool = True,
     html_selected_tags: Optional[Sequence[str]] = None,
     html_parse_func: Optional[Callable] = None,
+    timeout: int = 5,
 ) -> ServiceResponse:
     """Function for parsing and digesting the web page.
     Args:
@@ -59,6 +60,7 @@ def load_web(
             `html_parse_func` will be invoked with the response
             text as input. The result is stored with
             `self_define_func` key
+        timeout (int): timeout parameter for requests.
 
     Returns:
         `ServiceResponse`: If successful, `ServiceResponse` object is returned
@@ -91,7 +93,7 @@ def load_web(
         " AppleWebKit/537.36 (KHTML, like Gecko) ",
     }
     try:
-        response = requests.get(url=url, headers=header, timeout=5)
+        response = requests.get(url=url, headers=header, timeout=timeout)
         if response.status_code == 200:
             content_type = response.headers["Content-Type"].lower()
             if "html" in content_type:
