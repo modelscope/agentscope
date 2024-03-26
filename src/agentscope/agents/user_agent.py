@@ -84,7 +84,8 @@ class UserAgent(AgentBase):
 
         # Add additional keys
         msg = Msg(
-            self.name,
+            name=self.name,
+            role="user",
             content=content,
             url=url,
             **kwargs,  # type: ignore[arg-type]

@@ -74,8 +74,8 @@ def summarization(
     if isinstance(model, OpenAIWrapperBase):
         try:
             msgs = [
-                Msg(name="system", content=system_prompt),
-                Msg(name="user", content=prompt),
+                Msg(name="system", content=system_prompt, role="system"),
+                Msg(name="user", content=prompt, role="system"),
             ]
             model_output = model(messages=msgs)
             summary = model_output.choices[0].message.content
