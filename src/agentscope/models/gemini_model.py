@@ -235,6 +235,8 @@ class GeminiChatWrapper(GeminiWrapperBase):
         """
         prompt = []
         for unit in args:
+            if unit is None:
+                continue
             if isinstance(unit, Msg):
                 prompt.append(f"{unit.name}: {_convert_to_str(unit.content)}")
             elif isinstance(unit, list):

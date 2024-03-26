@@ -188,6 +188,8 @@ class PostAPIChatWrapper(PostAPIModelWrapperBase):
         """
         messages = []
         for arg in args:
+            if arg is None:
+                continue
             if isinstance(arg, Msg):
                 messages.append(
                     {

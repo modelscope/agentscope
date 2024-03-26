@@ -181,6 +181,8 @@ class OllamaChatWrapper(OllamaWrapperBase):
         """
         ollama_msgs = []
         for msg in msgs:
+            if msg is None:
+                continue
             if isinstance(msg, Msg):
                 ollama_msg = {
                     "role": msg.role,
@@ -401,6 +403,8 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
         prompt = []
 
         for arg in args:
+            if arg is None:
+                continue
             if isinstance(arg, Msg):
                 prompt.append(f"{arg.name}: {_convert_to_str(arg.content)}")
             elif isinstance(arg, list):
