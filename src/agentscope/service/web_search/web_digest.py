@@ -21,14 +21,13 @@ DEFAULT_WEB_SYS_PROMPT = (
 
 def is_valid_url(url: str) -> bool:
     """
-    Use regex to check if a URL is valid
+    Use urlparse to check if a URL is valid
     Args:
         url (str): string to be checked
 
     Returns:
         bool: True if url is valid, False otherwise
     """
-    # This regex pattern is designed to match most common URLs.
     try:
         result = urlparse(url)
         # Check if the URL has both a scheme
