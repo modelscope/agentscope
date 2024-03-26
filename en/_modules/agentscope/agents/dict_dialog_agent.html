@@ -104,6 +104,7 @@
 <span class="kn">from</span> <span class="nn">.agent</span> <span class="kn">import</span> <span class="n">AgentBase</span>
 <span class="kn">from</span> <span class="nn">..models.model</span> <span class="kn">import</span> <span class="n">ModelResponse</span>
 <span class="kn">from</span> <span class="nn">..prompt</span> <span class="kn">import</span> <span class="n">PromptType</span>
+<span class="kn">from</span> <span class="nn">..utils.tools</span> <span class="kn">import</span> <span class="n">_convert_to_str</span>
 
 
 <div class="viewcode-block" id="parse_dict">
@@ -283,7 +284,7 @@
             <span class="c1"># Convert the response dict into a string to store in memory</span>
             <span class="n">msg_memory</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span>
                 <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                <span class="n">content</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">content</span><span class="p">),</span>
+                <span class="n">content</span><span class="o">=</span><span class="n">_convert_to_str</span><span class="p">(</span><span class="n">response</span><span class="p">),</span>
                 <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">msg_memory</span><span class="p">)</span>
