@@ -67,7 +67,12 @@ def _get_speaker_color(speaker: str) -> tuple[str, str]:
 
 
 # add chat function for logger
-def _chat(message: Union[str, dict], *args: Any, **kwargs: Any) -> None:
+def _chat(
+    message: Union[str, dict],
+    *args: Any,
+    disable_studio: bool = False,
+    **kwargs: Any,
+) -> None:
     """Log a chat message with the format of"<speaker>: <content>".
 
     Args:
@@ -111,16 +116,16 @@ def _chat(message: Union[str, dict], *args: Any, **kwargs: Any) -> None:
                 )
                 logger.log(LEVEL_CHAT_LOG, print_str, *args, **kwargs)
 
-                if hasattr(thread_local_data, "uid"):
-                    log_gradio(message, thread_local_data.uid, **kwargs)
+                if hasattr(thread_local_data, "uid") and not disable_studio:
+                    log_studio(message, thread_local_data.uid, **kwargs)
                 return
 
     message = str(message).replace("{", "{{").replace("}", "}}")
     logger.log(LEVEL_CHAT_LOG, message, *args, **kwargs)
 
 
-def log_gradio(message: dict, uid: str, **kwargs: Any) -> None:
-    """Send chat message to gradio.
+def log_studio(message: dict, uid: str, **kwargs: Any) -> None:
+    """Send chat message to studio.
 
     Args:
         message (`dict`):
