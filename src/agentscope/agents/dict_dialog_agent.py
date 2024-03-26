@@ -53,7 +53,7 @@ class DictDialogAgent(AgentBase):
         parse_func: Optional[Callable[..., Any]] = parse_dict,
         fault_handler: Optional[Callable[..., Any]] = default_response,
         max_retries: Optional[int] = 3,
-        prompt_type: Optional[PromptType] = PromptType.LIST,
+        prompt_type: Optional[PromptType] = None,
     ) -> None:
         """Initialize the dict dialog agent.
 
@@ -99,6 +99,12 @@ class DictDialogAgent(AgentBase):
         self.parse_func = parse_func
         self.fault_handler = fault_handler
         self.max_retries = max_retries
+
+        if prompt_type is not None:
+            logger.warning(
+                "The argument `prompt_type` is deprecated and "
+                "will be removed in the future.",
+            )
 
     def reply(self, x: dict = None) -> dict:
         """Reply function of the agent.
