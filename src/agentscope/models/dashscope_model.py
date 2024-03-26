@@ -260,6 +260,8 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         # TODO: This strategy will be replaced by a new strategy in the future.
         prompt = []
         for unit in args:
+            if unit is None:
+                continue
             if isinstance(unit, Msg):
                 prompt.append(to_openai_dict(unit))
             elif isinstance(unit, list):
