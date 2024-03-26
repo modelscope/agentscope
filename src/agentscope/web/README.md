@@ -45,8 +45,9 @@ By clicking a running instance, we can observe more details.
 
 ## AgentScope Studio
 
-A running-time interface for AgentScope, which is a tool for monitoring
-the communication of agents in a multi-agent application.
+A running-time interface for AgentScope, which is a tool for monitoring the
+communication of agents in a multi-agent application, powered by `gradio`
+and `modelscope_studio`.
 
 ### How to Use
 To start a studio, you can run the following python code:
@@ -63,7 +64,7 @@ Run the following code in the root directory of this project after you setup the
 ```python
 as_studio examples/conversation/conversation.py
 ```
-The following interface will be launched at `localhost:7860`.
+The following interface will be launched at `localhost:xxxx`.
 
 ![](https://gw.alicdn.com/imgextra/i3/O1CN01X673v81WaHV1oCxEN_!!6000000002804-0-tps-2992-1498.jpg)
 

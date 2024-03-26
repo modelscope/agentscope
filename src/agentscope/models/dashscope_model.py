@@ -6,7 +6,7 @@ from typing import Any, Union, List, Sequence
 from loguru import logger
 
 from ..message import Msg
-from ..utils.tools import to_openai_dict
+from ..utils.tools import to_openai_dict, _convert_to_str
 
 try:
     import dashscope
@@ -331,12 +331,13 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         prompt = []
         for unit in args:
             if isinstance(unit, Msg):
-                prompt.append(f"{unit.name}: {unit.content}")
+                prompt.append(f"{unit.name}: {_convert_to_str(unit.content)}")
             elif isinstance(unit, list):
                 for child_unit in unit:
                     if isinstance(child_unit, Msg):
                         prompt.append(
-                            f"{child_unit.name}: " f"{child_unit.content}",
+                            f"{child_unit.name}: "
+                            f"{_convert_to_str(child_unit.content)}",
                         )
                     else:
                         raise TypeError(

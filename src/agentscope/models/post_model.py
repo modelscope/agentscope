@@ -13,6 +13,7 @@ from ..constants import _DEFAULT_MAX_RETRIES
 from ..constants import _DEFAULT_MESSAGES_KEY
 from ..constants import _DEFAULT_RETRY_INTERVAL
 from ..message import Msg
+from ..utils.tools import _convert_to_str
 
 
 class PostAPIModelWrapperBase(ModelWrapperBase, ABC):
@@ -191,7 +192,7 @@ class PostAPIChatWrapper(PostAPIModelWrapperBase):
                     {
                         "role": arg.role,
                         "name": arg.name,
-                        "content": arg.content,
+                        "content": _convert_to_str(arg.content),
                     },
                 )
             elif isinstance(arg, list):
