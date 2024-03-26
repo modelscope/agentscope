@@ -1,0 +1,11 @@
+{
+    "config_name": "gpt-4",
+    "model_type": "openai_chat",
+    "model_name": "gpt-4",
+    "api_key": "xxxxx",
+    "organization_id": "yyyyy",
+    "generate_args": {
+        "temperature": 0.1,
+        "stop": "##GAMEEND##"
+    }
+}
