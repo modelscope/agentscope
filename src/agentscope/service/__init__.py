@@ -23,7 +23,7 @@ from .retrieval.similarity import cos_sim
 from .text_processing.summarization import summarization
 from .retrieval.retrieval_from_list import retrieve_from_list
 from .service_status import ServiceExecStatus
-from .web_search.web_digest import digest_webpage, load_web, parse_html
+from .web_search.web_digest import digest_webpage, load_web, parse_html_to_text
 
 
 def get_help() -> None:
@@ -57,5 +57,5 @@ __all__ = [
     "ServiceExecStatus",
     "digest_webpage",
     "load_web",
-    "parse_html",
+    "parse_html_to_text",
 ]

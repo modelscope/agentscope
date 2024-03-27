@@ -2,6 +2,7 @@
 """ Python web digest test."""
 
 import unittest
+from typing import Union, Sequence, List
 from unittest.mock import patch, MagicMock, Mock
 
 from agentscope.service import ServiceResponse
@@ -11,8 +12,8 @@ from agentscope.models import ModelWrapperBase, ModelResponse
 from agentscope.message import Msg
 
 
-class TestWebSearches(unittest.TestCase):
-    """ExampleTest for a unit test."""
+class TestWebDigest(unittest.TestCase):
+    """Tests for web loading and digesting."""
 
     @patch("requests.get")
     def test_web_load(self, mock_get: MagicMock) -> None:
@@ -44,13 +45,14 @@ class TestWebSearches(unittest.TestCase):
         expected_result = ServiceResponse(
             status=ServiceExecStatus.SUCCESS,
             content={
-                "raw": mock_return_text,
-                "selected_tags_text": "Hello World! Testing! Some intro text "
+                "raw": bytes(mock_return_text, "utf-8"),
+                "html_to_text": "Hello World! Testing! Some intro text "
                 "about Foo. Test list.Test list again.",
             },
         )
 
         mock_response.text = mock_return_text
+        mock_response.content = bytes(mock_return_text, "utf-8")
         mock_response.status_code = 200
         mock_response.headers = {"Content-Type": "text/html"}
         mock_get.return_value = mock_response
@@ -80,6 +82,12 @@ class TestWebSearches(unittest.TestCase):
 
             def __call__(self, messages: list[Msg]) -> ModelResponse:
                 return ModelResponse(text="model return")
+
+            def format(
+                self,
+                *args: Union[Msg, Sequence[Msg]],
+            ) -> Union[List[dict], str]:
+                return str(args)
 
         dummy_model = DummyModel()
         response = digest_webpage("testing", dummy_model)

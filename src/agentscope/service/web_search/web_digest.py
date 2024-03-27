@@ -2,7 +2,7 @@
 """parsing and digesting the web pages"""
 import json
 from urllib.parse import urlparse
-from typing import Optional, Callable, Sequence
+from typing import Optional, Callable, Sequence, Any
 import requests
 from loguru import logger
 
@@ -41,7 +41,7 @@ def load_web(
     url: str,
     keep_raw: bool = True,
     html_selected_tags: Optional[Sequence[str]] = None,
-    html_parse_func: Optional[Callable] = None,
+    self_parse_func: Optional[Callable[[requests.Response], Any]] = None,
     timeout: int = 5,
 ) -> ServiceResponse:
     """Function for parsing and digesting the web page.
@@ -51,38 +51,33 @@ def load_web(
             Whether to keep raw HTML. If True, the content is
             stored with key "raw".
         html_selected_tags (Optional[Sequence[str]]):
-            the text in elements of `selected_tags` will
-            be extracted and stored with "selected_tags_text"
+            the text in elements of `html_selected_tags` will
+            be extracted and stored with "html_to_text"
             key in return.
-        html_parse_func (Optional[Callable]):
-            if "html_parse_func" is not None, then the
-            `html_parse_func` will be invoked with the response
-            text as input. The result is stored with
-            `self_define_func` key
+        self_parse_func (Optional[Callable]):
+            if "self_parse_func" is not None, then the
+            function will be invoked with the
+            requests.Response as input.
+            The result is stored with `self_define_func`
+            key
         timeout (int): timeout parameter for requests.
 
-    Returns:
-        `ServiceResponse`: If successful, `ServiceResponse` object is returned
-        with `content` field is a dict, where keys are subset of
-        {"raw", "self_define_func", "selected_tags_text"}
-         For example, `content` field is
-        {
-            "raw": raw_content_of_web,
-            "selected_tags_text":
-                processed_text_content_of_the_selected_tags,
-        }
 
     Returns:
         `ServiceResponse`: If successful, `ServiceResponse` object is returned
-        with `content` field is a dict, where keys are `html_parsing_types` and
-        values are the (pre-processed) parsed content. For example, if
-        `html_parsing_types = ['raw', 'selected_tags_to_text']` the
-            `content` field is
-            {
-                "raw": raw_content_of_web,
-                "selected_tags_to_text":
-                    processed_text_content_of_the_selected_tags,
-            }
+        with `content` field is a dict, where keys are subset of:
+            "raw": exists if `keep_raw` is True, store raw HTML content`;
+            "self_define_func": exists if `self_parse_func` is provided,
+                store the return of self_define_func;
+            "html_to_text": exists if `html_selected_tags` is provided
+                and not empty;
+            "json": exists if url links to a json webpage, then it is
+                parsed as json.
+         For example, `ServiceResponse.content` field is
+        {
+            "raw": xxxxx,
+            "selected_tags_text": xxxxx
+        }
     """
     header = {
         "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
@@ -93,40 +88,46 @@ def load_web(
     }
     try:
         response = requests.get(url=url, headers=header, timeout=timeout)
+
         if response.status_code == 200:
+            results = {}
+            if keep_raw:
+                results["raw"] = response.content
+
+            if self_parse_func:
+                results["self_define_func"] = self_parse_func(response)
+
             content_type = response.headers["Content-Type"].lower()
-            if "html" in content_type:
-                return parse_html(
+            if "html" in content_type and html_selected_tags:
+                html_clean_text = parse_html_to_text(
                     response.text,
-                    keep_raw,
                     html_selected_tags,
-                    html_parse_func,
                 )
+                results["html_to_text"] = html_clean_text
             elif "pdf" in content_type:
                 # TODO: support pdf in the future
-                raise NotImplementedError(
-                    "Unsupported url to PDF content.",
+                logger.warning(
+                    "Current version does not parse url with pdf "
+                    "Content-Types",
                 )
             elif "json" in content_type:
-                return ServiceResponse(
-                    ServiceExecStatus.SUCCESS,
-                    content=json.loads(response.text),
-                )
+                results["json"] = json.loads(response.text)
             elif "image" in content_type:
                 # TODO: to support image (gif, jpeg, png) data
                 logger.warning(
                     "Current implementation returns binary "
                     "response.content for url with image Content-Types",
                 )
-                return ServiceResponse(
-                    ServiceExecStatus.SUCCESS,
-                    content=response.content,
-                )
             else:
                 raise NotImplementedError(
                     f"Unsupported content type ({content_type}) "
                     f"with url: ({url})",
                 )
+
+            return ServiceResponse(
+                ServiceExecStatus.SUCCESS,
+                content=results,
+            )
         else:
             logger.warning(
                 f"Fail to load web page, "
@@ -141,48 +142,22 @@ def load_web(
         return ServiceResponse(ServiceExecStatus.ERROR, content="")
 
 
-def parse_html(
+def parse_html_to_text(
     html_text: str,
-    keep_raw: bool = True,
     html_selected_tags: Optional[Sequence[str]] = None,
-    html_parse_func: Optional[Callable] = None,
-) -> ServiceResponse:
+) -> str:
     """
     Parse the obtained HTML file.
     Args:
         html_text (str):
-            HTTP response text
-        keep_raw (bool):
-            Whether to keep raw HTML. If True, the content is
-            stored with key "raw".
+            HTML source code
         html_selected_tags (Optional[Sequence[str]]):
-            the text in elements of `selected_tags` will
-            be extracted and stored with "selected_tags_text"
-            key in return.
-        html_parse_func (Optional[Callable]):
-            if "html_parse_func" is not None, then the
-            `html_parse_func` will be invoked with the response
-            text as input. The result is stored with
-            `self_define_func` key
-
+            the text in elements of `html_selected_tags` will
+            be extracted and returned.
     Returns:
         `ServiceResponse`: If successful, `ServiceResponse` object is returned
-        with `content` field is a dict, where keys are subset of
-        {"raw", "self_define_func", "selected_tags_text"}
-         For example, `content` field is
-        {
-            "raw": raw_content_of_web,
-            "selected_tags_text":
-                processed_text_content_of_the_selected_tags,
-        }
+        with `content` field is processed text content of the selected tags,
     """
-    results = {}
-
-    if keep_raw:
-        results["raw"] = html_text
-
-    if html_parse_func is not None:
-        results["self_define_func"] = html_parse_func(html_text)
     if html_selected_tags:
         logger.info(
             f"extracting text information from tags: " f"{html_selected_tags}",
@@ -220,12 +195,10 @@ def parse_html(
             if element.name in html_selected_tags:
                 text_parts += get_navigable_strings(element).strip(" \n\t")
                 element.decompose()
-        results["selected_tags_text"] = text_parts
+    else:
+        text_parts = ""
 
-    return ServiceResponse(
-        status=ServiceExecStatus.SUCCESS,
-        content=results,
-    )
+    return text_parts
 
 
 def digest_webpage(
@@ -239,14 +212,14 @@ def digest_webpage(
         web_text_or_url (str): preprocessed web text or url to the web page
         model (ModelWrapperBase): the model to digest the web content
         html_selected_tags (Sequence[str]):
-            the text in elements of `selected_tags` will
+            the text in elements of `html_selected_tags` will
             be extracted and feed to the model
         digest_prompt (str): system prompt for the model to digest
             the web content
 
     Returns:
         `ServiceResponse`: If successful, `ServiceResponse` object is returned
-        with `content` field is filled with the model output.
+        with `content` field filled with the model output.
     """
     if is_valid_url(web_text_or_url):
         # if an url is provided, then
@@ -258,12 +231,9 @@ def digest_webpage(
             html_selected_tags=html_selected_tags,
         )
         if response.status == ServiceExecStatus.SUCCESS:
-            web_text = response.content["selected_tags_text"]
+            web_text = response.content["html_to_text"]
         else:
-            return ServiceResponse(
-                status=response.status,
-                content=response.content,
-            )
+            return response
     else:
         web_text = web_text_or_url
     return summarization(
