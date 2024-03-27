@@ -96,6 +96,7 @@ AgentScope支持使用以下库快速部署本地模型服务。
   - [兼容LangChain的基础对话](./examples/conversation_with_langchain)
 
 - 游戏
+  - [五子棋](./examples/game_gomoku)
   - [狼人杀](./examples/game_werewolf)
 
 - 分布式
