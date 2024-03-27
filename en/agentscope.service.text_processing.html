@@ -147,27 +147,23 @@ contains the summary as well).</p>
 </dl>
 <p>Example:</p>
 <p>The default message with <cite>text</cite> to be summarized:</p>
-<blockquote>
-<div><dl>
-<dt>[</dt><dd><dl class="simple">
-<dt>{</dt><dd><p>“role”: “system”,
-“name”: “system”,
-“content”: “You are a helpful agent to summarize the text.You need to keep all the key information of the text in thesummary.”</p>
-</dd>
-</dl>
-<p>},
-{</p>
-<blockquote>
-<div><p>“role”: “user”,
-“name”: “user”,
-“content”: text</p>
-</div></blockquote>
-<p>},</p>
-</dd>
-</dl>
-<p>]
-Messages will be processed by model.format() before feeding to models.</p>
-</div></blockquote>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;You are a helpful agent to summarize the text.</span><span class="se">\</span>
+<span class="s2">        You need to keep all the key information of the text in the</span><span class="se">\</span>
+<span class="s2">        summary.&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">text</span>
+    <span class="p">},</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>Messages will be processed by model.format() before feeding to models.</p>
 </dd></dl>
 
 </section>
