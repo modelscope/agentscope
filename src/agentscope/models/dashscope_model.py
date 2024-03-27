@@ -687,6 +687,102 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
             raw=response,
         )
 
+    def format(
+        self,
+        *args: Union[Msg, Sequence[Msg]],
+    ) -> List:
+        """Format the messages for DashScope Multimodal API.
+
+        In this format function, the input messages are converted into
+        dictionaries with `role` and `content` fields. This conversation may
+        not meet the requirement that `user` and `assistant` speak
+        alternatively. This requirement can be enforced by calling
+        `preprocess_role` function..
+
+
+        The following is an example:
+
+        .. code-block:: python
+
+            prompt = model.format(
+                Msg("system", "You're a helpful assistant", role="system"),
+                Msg("Bob", "Hi, how can I help you?", role="assistant"),
+                Msg("user", "What's in the image?", image="http://xxxx.com"
+                    role="user")
+            )
+
+        The prompt will be as follows:
+
+        .. code-block:: python
+
+            [
+                {"role": "system", "content": [{"text": "You are a helpful
+                assistant"}]},
+                {"role": "assistant", "content": [{"text": "Hi, how can I help
+                you"}]},
+                {"role": "user", "content": [{"text": "What's in the
+                image?"}, {"image": "http://xxxx.com"}]},
+            ]
+
+        Args:
+            *args (`Union[Msg, Sequence[Msg]]`):
+                The input arguments to be formatted, where each argument
+                should be a `Msg` object, or a list of `Msg` objects
+
+        Returns:
+            `List[dict]`:
+                The formatted messages.
+        """
+
+        prompt = []
+        for unit in args:
+            if unit is None:
+                continue
+            if isinstance(unit, Msg):
+                prompt.append(self.to_multimodal_dict(unit))
+            elif isinstance(unit, list):
+                for child_unit in unit:
+                    if isinstance(child_unit, Msg):
+                        prompt.append(self.to_multimodal_dict(child_unit))
+                    else:
+                        raise TypeError(
+                            f"The input should be a Msg object or a list "
+                            f"of Msg objects, got {type(child_unit)}.",
+                        )
+            else:
+                raise TypeError(
+                    f"The input should be a Msg object or a list "
+                    f"of Msg objects, got {type(unit)}.",
+                )
+        return prompt
+
+    def to_multimodal_dict(self, item: dict) -> dict:
+        """Convert `Msg` to `dict` for OpenAI API."""
+        clean_dict = {}
+        if "name" in item:
+            clean_dict["name"] = item["name"]
+        if "role" in item:
+            clean_dict["role"] = item["role"]
+        else:
+            clean_dict["role"] = "assistant"
+
+        clean_dict["content"] = []
+        if "content" in item:
+            if isinstance(item["content"], list):
+                clean_dict["content"] = item["content"]
+                return clean_dict
+            clean_dict["content"].append({"text": item["content"]})
+        else:
+            logger.warning(
+                f"Message {item} doesn't have `content` field for Multimodal "
+                f"API.",
+            )
+        if "image" in item:
+            clean_dict["content"].append({"image": item["image"]})
+        if "audio" in item:
+            clean_dict["content"].append({"audio": item["audio"]})
+        return clean_dict
+
 
 def _preprocess_role(messages: list) -> list:
     """preprocess role rules for DashScope"""
