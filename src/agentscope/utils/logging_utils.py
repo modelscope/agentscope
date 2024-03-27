@@ -146,18 +146,24 @@ def log_studio(message: dict, uid: str, **kwargs: Any) -> None:
         flushing = True
         if "url" in message and message["url"]:
             flushing = False
+            if isinstance(message["url"], str):
+                message["url"] = [message["url"]]
             for i in range(len(message["url"])):
                 msg += "\n" + f"""<img src="{message['url'][i]}"/>"""
-        if "audio_path" in message:
+        if "audio_path" in message and message["audio_path"]:
             flushing = False
+            if isinstance(message["audio_path"], str):
+                message["audio_path"] = [message["audio_path"]]
             for i in range(len(message["audio_path"])):
                 msg += (
                     "\n"
                     + f"""<audio src="{message['audio_path'][i]}"
                 controls/></audio>"""
                 )
-        if "video_path" in message:
+        if "video_path" in message and message["video_path"]:
             flushing = False
+            if isinstance(message["video_path"], str):
+                message["video_path"] = [message["video_path"]]
             for i in range(len(message["video_path"])):
                 msg += (
                     "\n"
