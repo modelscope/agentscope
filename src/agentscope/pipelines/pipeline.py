@@ -124,7 +124,7 @@ class SwitchPipeline(PipelineBase):
         self.case_operators = case_operators
         self.default_operators = default_operators
         self.participants = list(self.case_operators.values()) + [
-            self.else_body_operator,
+            self.default_operators,
         ]
 
     def __call__(self, x: Optional[dict] = None) -> dict:
