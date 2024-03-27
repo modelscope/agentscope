@@ -42,6 +42,7 @@ def main() -> None:
         + SYS_PROMPT.format(
             agent_names=[agent.name for agent in agents],
         ),
+        role="assistant",
     )
 
     rnd = 0
