@@ -3,6 +3,7 @@
 
 from typing import Callable, Sequence
 from typing import Any
+from typing import List
 from typing import Mapping
 from typing import Optional
 from abc import abstractmethod
@@ -25,6 +26,9 @@ class PipelineBase(Operator):
     The pipeline is a special kind of operator that includes
     multiple operators and the interaction logic among them.
     """
+
+    def __init__(self) -> None:
+        self.participants: List[Operator] = []
 
     @abstractmethod
     def __call__(self, x: Optional[dict] = None) -> dict:
@@ -72,6 +76,7 @@ class IfElsePipeline(PipelineBase):
         self.condition_func = condition_func
         self.if_body_operator = if_body_operators
         self.else_body_operator = else_body_operators
+        self.participants = [self.if_body_operator, self.else_body_operator]
 
     def __call__(self, x: Optional[dict] = None) -> dict:
         return ifelsepipeline(
@@ -118,6 +123,9 @@ class SwitchPipeline(PipelineBase):
         self.condition_func = condition_func
         self.case_operators = case_operators
         self.default_operators = default_operators
+        self.participants = list(self.case_operators.values()) + [
+            self.else_body_operator,
+        ]
 
     def __call__(self, x: Optional[dict] = None) -> dict:
         return switchpipeline(
@@ -167,6 +175,7 @@ class ForLoopPipeline(PipelineBase):
         self.loop_body_operators = loop_body_operators
         self.max_loop = max_loop
         self.break_func = break_func
+        self.participants = [self.loop_body_operators]
 
     def __call__(self, x: Optional[dict] = None) -> dict:
         return forlooppipeline(
@@ -207,6 +216,7 @@ class WhileLoopPipeline(PipelineBase):
         """
         self.condition_func = condition_func
         self.loop_body_operators = loop_body_operators
+        self.participants = [self.loop_body_operators]
 
     def __call__(self, x: Optional[dict] = None) -> dict:
         return whilelooppipeline(
@@ -235,6 +245,7 @@ class SequentialPipeline(PipelineBase):
                 A Sequence of operators to be executed sequentially.
         """
         self.operators = operators
+        self.participants = list(self.operators)
 
     def __call__(self, x: Optional[dict] = None) -> dict:
         return sequentialpipeline(operators=self.operators, x=x)
