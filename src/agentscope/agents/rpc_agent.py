@@ -72,7 +72,7 @@ class PlaceholderAgent(AgentBase):
         self,
         host: str = "localhost",
         port: int = None,
-        max_pool_size: int = 100,
+        max_pool_size: int = 8192,
         max_timeout_seconds: int = 1800,
         launch_server: bool = True,
         local_mode: bool = True,
@@ -104,7 +104,7 @@ class RpcAgent(AgentBase):
         launch_server: bool = True,
         agent_class: Type[AgentBase] = PlaceholderAgent,
         agent_configs: Optional[dict] = None,
-        max_pool_size: int = 100,
+        max_pool_size: int = 8192,
         max_timeout_seconds: int = 1800,
         local_mode: bool = True,
         lazy_launch: bool = True,
@@ -125,7 +125,7 @@ class RpcAgent(AgentBase):
                 The AgentBase subclass encapsulated by this wrapper.
             agent_configs (`dict`, defaults to `None`): The args used to
                 initialize the agent_class.
-            max_pool_size (`int`, defaults to `100`):
+            max_pool_size (`int`, defaults to `8192`):
                 Max number of task results that the server can accommodate.
             max_timeout_seconds (`int`, defaults to `1800`):
                 Timeout for task results.
@@ -274,7 +274,7 @@ def setup_rcp_agent_server(
     stop_event: EventClass = None,
     pipe: int = None,
     local_mode: bool = True,
-    max_pool_size: int = 100,
+    max_pool_size: int = 8192,
     max_timeout_seconds: int = 1800,
 ) -> None:
     """Setup gRPC server rpc agent.
@@ -302,7 +302,7 @@ def setup_rcp_agent_server(
             A pipe instance used to pass the actual port of the server.
         local_mode (`bool`, defaults to `None`):
             Only listen to local requests.
-        max_pool_size (`int`, defaults to `100`):
+        max_pool_size (`int`, defaults to `8192`):
             Max number of task results that the server can accommodate.
         max_timeout_seconds (`int`, defaults to `1800`):
             Timeout for task results.
@@ -408,7 +408,7 @@ class RpcAgentServerLauncher:
         agent_kwargs: dict = None,
         host: str = "localhost",
         port: int = None,
-        max_pool_size: int = 100,
+        max_pool_size: int = 8192,
         max_timeout_seconds: int = 1800,
         local_mode: bool = False,
     ) -> None:
@@ -425,7 +425,7 @@ class RpcAgentServerLauncher:
                 Hostname of the rpc agent server.
             port (`int`, defaults to `None`):
                 Port of the rpc agent server.
-            max_pool_size (`int`, defaults to `100`):
+            max_pool_size (`int`, defaults to `8192`):
                 Max number of task results that the server can accommodate.
             max_timeout_seconds (`int`, defaults to `1800`):
                 Timeout for task results.
@@ -543,7 +543,7 @@ class RpcServerSideWrapper(RpcAgentServicer):
         agent_kwargs: dict,
         host: str = "localhost",
         port: int = None,
-        max_pool_size: int = 100,
+        max_pool_size: int = 8192,
         max_timeout_seconds: int = 1800,
     ):
         """Init the service side wrapper.
@@ -559,7 +559,7 @@ class RpcServerSideWrapper(RpcAgentServicer):
                 Hostname of the rpc agent server.
             port (`int`, defaults to `None`):
                 Port of the rpc agent server.
-            max_pool_size (`int`, defaults to `100`):
+            max_pool_size (`int`, defaults to `8192`):
                 The max number of task results that the server can
                 accommodate. Note that the oldest result will be deleted
                 after exceeding the pool size.
