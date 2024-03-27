@@ -98,12 +98,12 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Service for text processing</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
-<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">OpenAIWrapperBase</span>
+<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span>
 <span class="kn">from</span> <span class="nn">agentscope.service.service_status</span> <span class="kn">import</span> <span class="n">ServiceExecStatus</span>
 <span class="kn">from</span> <span class="nn">agentscope.service.service_response</span> <span class="kn">import</span> <span class="n">ServiceResponse</span>
 <span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
-<span class="kn">from</span> <span class="nn">agentscope.constants</span> <span class="kn">import</span> <span class="n">_DEFAULT_SUMMARIZATION_PROMPT</span>
 <span class="kn">from</span> <span class="nn">agentscope.constants</span> <span class="kn">import</span> <span class="n">_DEFAULT_SYSTEM_PROMPT</span>
 <span class="kn">from</span> <span class="nn">agentscope.constants</span> <span class="kn">import</span> <span class="n">_DEFAULT_TOKEN_LIMIT_PROMPT</span>
 
@@ -114,13 +114,12 @@
     <span class="n">model</span><span class="p">:</span> <span class="n">ModelWrapperBase</span><span class="p">,</span>
     <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">system_prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_DEFAULT_SYSTEM_PROMPT</span><span class="p">,</span>
-    <span class="n">summarization_prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_DEFAULT_SUMMARIZATION_PROMPT</span><span class="p">,</span>
     <span class="n">max_return_token</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
     <span class="n">token_limit_prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_DEFAULT_TOKEN_LIMIT_PROMPT</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Summarize the input text.</span>
 
-<span class="sd">    Summarization function (Notice: curent version of token limitation is</span>
+<span class="sd">    Summarization function (Notice: current version of token limitation is</span>
 <span class="sd">    built with Open AI API)</span>
 
 <span class="sd">    Args:</span>
@@ -129,12 +128,8 @@
 <span class="sd">        text (`str`):</span>
 <span class="sd">            Text to be summarized by the model.</span>
 <span class="sd">        system_prompt (`str`, defaults to `_DEFAULT_SYSTEM_PROMPT`):</span>
-<span class="sd">            Prompts as instruction for the system, typically used in Open AI</span>
-<span class="sd">            API. See the following example for more details.</span>
-<span class="sd">        summarization_prompt (`str`, defaults to \</span>
-<span class="sd">            `_DEFAULT_SUMMARIZATION_PROMPT`):</span>
-<span class="sd">            Prompts for the beginning of the user provided text to be</span>
-<span class="sd">            summarized. See the following example for more details.</span>
+<span class="sd">            Prompts as instruction for the system, will be as an instruction</span>
+<span class="sd">            for the model.</span>
 <span class="sd">        max_return_token (`int`, defaults to `-1`):</span>
 <span class="sd">            Whether provide additional prompting instruction to limit the</span>
 <span class="sd">            number of tokens in summarization returned by the model.</span>
@@ -151,69 +146,44 @@
 
 <span class="sd">    Example:</span>
 
-<span class="sd">    With Open AI models, the default message with a $STR_TEXT and Open AI API::</span>
+<span class="sd">    The default message with `text` to be summarized:</span>
 
 <span class="sd">        [</span>
 <span class="sd">            {</span>
 <span class="sd">                &quot;role&quot;: &quot;system&quot;,</span>
-<span class="sd">                &quot;content&quot;: &quot;You are a helpful agent to summarizethe text.\\</span>
+<span class="sd">                &quot;name&quot;: &quot;system&quot;,</span>
+<span class="sd">                &quot;content&quot;: &quot;You are a helpful agent to summarize the text.\\</span>
 <span class="sd">                You need to keep all the key information of the text in the\\</span>
 <span class="sd">                summary.&quot;</span>
 <span class="sd">            },</span>
 <span class="sd">            {</span>
 <span class="sd">                &quot;role&quot;: &quot;user&quot;,</span>
-<span class="sd">                &quot;content&quot;: &quot;TEXT: {$STR_TEXT} \\n&quot;</span>
+<span class="sd">                &quot;name&quot;: &quot;user&quot;,</span>
+<span class="sd">                &quot;content&quot;: text</span>
 <span class="sd">            },</span>
 <span class="sd">        ]</span>
+<span class="sd">        Messages will be processed by model.format() before feeding to models.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">prompt</span> <span class="o">=</span> <span class="n">summarization_prompt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">max_return_token</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">system_prompt</span> <span class="o">+=</span> <span class="n">token_limit_prompt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">max_return_token</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">OpenAIWrapperBase</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">msgs</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">Msg</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="n">system_prompt</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">),</span>
-                <span class="n">Msg</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="n">prompt</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">),</span>
-            <span class="p">]</span>
-            <span class="n">model_output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">messages</span><span class="o">=</span><span class="n">msgs</span><span class="p">)</span>
-            <span class="n">summary</span> <span class="o">=</span> <span class="n">model_output</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">content</span>
-            <span class="k">if</span> <span class="n">max_return_token</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-                <span class="n">return_tokens</span> <span class="o">=</span> <span class="n">model_output</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">completion_tokens</span>
-                <span class="k">if</span> <span class="n">return_tokens</span> <span class="o">&gt;</span> <span class="n">max_return_token</span><span class="p">:</span>
-                    <span class="c1"># When the number of tokens in summary is larger than</span>
-                    <span class="c1"># required, return ERROR but also has the too-long summary</span>
-                    <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
-                        <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
-                        <span class="n">content</span><span class="o">=</span><span class="p">{</span>
-                            <span class="s2">&quot;error_msg&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Summarization by model has &quot;</span>
-                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">return_tokens</span><span class="w"> </span><span class="si">}</span><span class="s2"> tokens, more than &quot;</span>
-                            <span class="sa">f</span><span class="s2">&quot;required </span><span class="si">{</span><span class="n">max_return_token</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                            <span class="s2">&quot;summary&quot;</span><span class="p">:</span> <span class="n">summary</span><span class="p">,</span>
-                        <span class="p">},</span>
-                    <span class="p">)</span>
-            <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
-                <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
-                <span class="n">content</span><span class="o">=</span><span class="n">summary</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
-                <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
-                <span class="n">content</span><span class="o">=</span><span class="s2">&quot;Summarization by model fails&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">prompt</span> <span class="o">=</span> <span class="n">system_prompt</span> <span class="o">+</span> <span class="n">prompt</span>
-            <span class="n">model_output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">messages</span><span class="o">=</span><span class="n">prompt</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
-                <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
-                <span class="n">content</span><span class="o">=</span><span class="n">model_output</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
-                <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
-                <span class="n">content</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Fail to get summary from model the with the &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;&#39;response&#39; key from the output of </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">model_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="p">)</span></div>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">msgs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">Msg</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="n">system_prompt</span><span class="p">),</span>
+            <span class="n">Msg</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="n">text</span><span class="p">),</span>
+        <span class="p">]</span>
+        <span class="n">msgs</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msgs</span><span class="p">)</span>
+        <span class="n">model_output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">messages</span><span class="o">=</span><span class="n">msgs</span><span class="p">)</span>
+        <span class="n">summary</span> <span class="o">=</span> <span class="n">model_output</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="n">summary</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Summarization by model </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2"> fail&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div>
 
 </pre></div>
 
