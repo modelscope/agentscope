@@ -28,7 +28,7 @@ class PipelineBase(Operator):
     """
 
     def __init__(self) -> None:
-        self.participants: List[Operator] = []
+        self.participants: List[Any] = []
 
     @abstractmethod
     def __call__(self, x: Optional[dict] = None) -> dict:
@@ -175,9 +175,7 @@ class ForLoopPipeline(PipelineBase):
         self.loop_body_operators = loop_body_operators
         self.max_loop = max_loop
         self.break_func = break_func
-        self.participants = [
-            self.loop_body_operators,  # type: ignore[list-item]
-        ]
+        self.participants = [self.loop_body_operators]
 
     def __call__(self, x: Optional[dict] = None) -> dict:
         return forlooppipeline(
@@ -218,9 +216,7 @@ class WhileLoopPipeline(PipelineBase):
         """
         self.condition_func = condition_func
         self.loop_body_operators = loop_body_operators
-        self.participants = [
-            self.loop_body_operators,  # type: ignore[list-item]
-        ]
+        self.participants = [self.loop_body_operators]
 
     def __call__(self, x: Optional[dict] = None) -> dict:
         return whilelooppipeline(
