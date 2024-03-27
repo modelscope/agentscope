@@ -5,7 +5,6 @@ from multiprocessing import Process, Event, Pipe, cpu_count
 from multiprocessing.synchronize import Event as EventClass
 import socket
 import threading
-import time
 import json
 import uuid
 from typing import Any, Optional, Union, Type, Sequence
@@ -658,6 +657,7 @@ class RpcServerSideWrapper(RpcAgentServicer):
         else:
             msg = None
         task_id = self.get_task_id()
+        self.result_pool[task_id] = threading.Condition()
         self.executor.submit(
             self.process_messages,
             task_id,
@@ -689,12 +689,14 @@ class RpcServerSideWrapper(RpcAgentServicer):
             `RpcMsg`: Concrete values of the specific message (or part of it).
         """
         msg = json.loads(request.value)
-        # todo: implement the waiting in a more elegant way, add timeout
         while True:
-            result = self.result_pool.get(msg["task_id"], None)
-            if result is not None:
-                return RpcMsg(value=result.serialize())
-            time.sleep(0.1)
+            result = self.result_pool.get(msg["task_id"])
+            if isinstance(result, threading.Condition):
+                with result:
+                    result.wait(timeout=1)
+            else:
+                break
+        return RpcMsg(value=result.serialize())
 
     def _observe(self, request: RpcMsg) -> RpcMsg:
         """Observe function of RpcAgentService
@@ -743,5 +745,8 @@ class RpcServerSideWrapper(RpcAgentServicer):
         """Task processing."""
         if isinstance(task_msg, PlaceholderMessage):
             task_msg.update_value()
+        cond = self.result_pool[task_id]
         result = self.agent_pool[session_id].reply(task_msg)
         self.result_pool[task_id] = result
+        with cond:
+            cond.notify_all()
