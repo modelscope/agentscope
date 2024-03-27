@@ -76,7 +76,7 @@ class IfElsePipeline(PipelineBase):
         self.condition_func = condition_func
         self.if_body_operator = if_body_operators
         self.else_body_operator = else_body_operators
-        self.participants = [self.if_body_operator, self.else_body_operator]
+        self.participants = [self.if_body_operator] + [self.else_body_operator]
 
     def __call__(self, x: Optional[dict] = None) -> dict:
         return ifelsepipeline(
@@ -175,7 +175,9 @@ class ForLoopPipeline(PipelineBase):
         self.loop_body_operators = loop_body_operators
         self.max_loop = max_loop
         self.break_func = break_func
-        self.participants = [self.loop_body_operators]
+        self.participants = [
+            self.loop_body_operators,  # type: ignore[list-item]
+        ]
 
     def __call__(self, x: Optional[dict] = None) -> dict:
         return forlooppipeline(
@@ -216,7 +218,9 @@ class WhileLoopPipeline(PipelineBase):
         """
         self.condition_func = condition_func
         self.loop_body_operators = loop_body_operators
-        self.participants = [self.loop_body_operators]
+        self.participants = [
+            self.loop_body_operators,  # type: ignore[list-item]
+        ]
 
     def __call__(self, x: Optional[dict] = None) -> dict:
         return whilelooppipeline(
