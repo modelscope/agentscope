@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for Ollama models."""
-from typing import Sequence, Any, Optional
+from abc import ABC
+from typing import Sequence, Any, Optional, List, Union
 
-from loguru import logger
-
+from agentscope.message import Msg
 from agentscope.models import ModelWrapperBase, ModelResponse
-from agentscope.utils import QuotaExceededError, MonitorFactory
+from agentscope.utils.tools import _convert_to_str
 
 try:
     import ollama
@@ -13,7 +13,7 @@ except ImportError:
     ollama = None
 
 
-class OllamaWrapperBase(ModelWrapperBase):
+class OllamaWrapperBase(ModelWrapperBase, ABC):
     """The base class for Ollama model wrappers.
 
     To use Ollama API, please
@@ -23,7 +23,11 @@ class OllamaWrapperBase(ModelWrapperBase):
     After that, you can use the ollama API.
     """
 
-    model: str
+    model_type: str
+    """The type of the model wrapper, which is to identify the model wrapper
+    class in model configuration."""
+
+    model_name: str
     """The model name used in ollama API."""
 
     options: dict
@@ -37,14 +41,14 @@ class OllamaWrapperBase(ModelWrapperBase):
     def __init__(
         self,
         config_name: str,
-        model: str,
+        model_name: str,
         options: dict = None,
         keep_alive: str = "5m",
     ) -> None:
         """Initialize the model wrapper for Ollama API.
 
         Args:
-            model (`str`):
+            model_name (`str`):
                 The model name used in ollama API.
             options (`dict`, default `None`):
                 The extra keyword arguments used in Ollama api generation,
@@ -56,19 +60,11 @@ class OllamaWrapperBase(ModelWrapperBase):
 
         super().__init__(config_name=config_name)
 
-        self.model = model
+        self.model_name = model_name
         self.options = options
         self.keep_alive = keep_alive
 
-        self.monitor = None
-
         self._register_default_metrics()
-
-    def _register_default_metrics(self) -> None:
-        """Register metrics to the monitor."""
-        raise NotImplementedError(
-            "The _register_default_metrics function is not Implemented.",
-        )
 
 
 class OllamaChatWrapper(OllamaWrapperBase):
@@ -114,7 +110,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
 
         # step2: forward to generate response
         response = ollama.chat(
-            model=self.model,
+            model=self.model_name,
             messages=messages,
             options=options,
             keep_alive=keep_alive,
@@ -124,7 +120,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
         # step2: record the api invocation if needed
         self._save_model_invocation(
             arguments={
-                "model": self.model,
+                "model": self.model_name,
                 "messages": messages,
                 "options": options,
                 "keep_alive": keep_alive,
@@ -134,19 +130,13 @@ class OllamaChatWrapper(OllamaWrapperBase):
         )
 
         # step3: monitor the response
-        try:
-            prompt_tokens = response["prompt_eval_count"]
-            completion_tokens = response["eval_count"]
-            self.monitor.update(
-                {
-                    "call_counter": 1,
-                    "prompt_tokens": prompt_tokens,
-                    "completion_tokens": completion_tokens,
-                    "total_tokens": prompt_tokens + completion_tokens,
-                },
-            )
-        except (QuotaExceededError, KeyError) as e:
-            logger.error(e.message)
+        self.update_monitor(
+            call_counter=1,
+            prompt_tokens=response["prompt_eval_count"],
+            completion_tokens=response["eval_count"],
+            total_tokens=response["prompt_eval_count"]
+            + response["eval_count"],
+        )
 
         # step4: return response
         return ModelResponse(
@@ -156,23 +146,62 @@ class OllamaChatWrapper(OllamaWrapperBase):
 
     def _register_default_metrics(self) -> None:
         """Register metrics to the monitor."""
-        self.monitor = MonitorFactory.get_monitor()
         self.monitor.register(
-            self._metric("call_counter", self.model),
+            self._metric("call_counter"),
             metric_unit="times",
         )
         self.monitor.register(
-            self._metric("prompt_tokens", self.model),
+            self._metric("prompt_tokens"),
             metric_unit="tokens",
         )
         self.monitor.register(
-            self._metric("completion_tokens", self.model),
+            self._metric("completion_tokens"),
             metric_unit="token",
         )
         self.monitor.register(
-            self._metric("total_tokens", self.model),
+            self._metric("total_tokens"),
             metric_unit="token",
         )
+
+    def format(
+        self,
+        *msgs: Union[Msg, Sequence[Msg]],
+    ) -> List[dict]:
+        """A basic strategy to format the input into the required format of
+        Ollama Chat API.
+
+        Args:
+            *args (`Union[Msg, Sequence[Msg]]`):
+                The input arguments to be formatted, where each argument
+                should be a `Msg` object or a list of `Msg` objects
+
+        Returns:
+            `List[dict]`:
+                The formatted messages.
+        """
+        ollama_msgs = []
+        for msg in msgs:
+            if msg is None:
+                continue
+            if isinstance(msg, Msg):
+                ollama_msg = {
+                    "role": msg.role,
+                    "content": _convert_to_str(msg.content),
+                }
+
+                # image url
+                if msg.url is not None:
+                    ollama_msg["images"] = [msg.url]
+
+                ollama_msgs.append(ollama_msg)
+            elif isinstance(msg, list):
+                ollama_msgs.extend(self.format(*msg))
+            else:
+                raise TypeError(
+                    f"Invalid message type: {type(msg)}, `Msg` is expected.",
+                )
+
+        return ollama_msgs
 
 
 class OllamaEmbeddingWrapper(OllamaWrapperBase):
@@ -217,7 +246,7 @@ class OllamaEmbeddingWrapper(OllamaWrapperBase):
 
         # step2: forward to generate response
         response = ollama.embeddings(
-            model=self.model,
+            model=self.model_name,
             prompt=prompt,
             options=options,
             keep_alive=keep_alive,
@@ -227,7 +256,7 @@ class OllamaEmbeddingWrapper(OllamaWrapperBase):
         # step3: record the api invocation if needed
         self._save_model_invocation(
             arguments={
-                "model": self.model,
+                "model": self.model_name,
                 "prompt": prompt,
                 "options": options,
                 "keep_alive": keep_alive,
@@ -237,13 +266,7 @@ class OllamaEmbeddingWrapper(OllamaWrapperBase):
         )
 
         # step4: monitor the response
-        try:
-            self.monitor.update(
-                {"call_counter": 1},
-                prefix=self.model,
-            )
-        except (QuotaExceededError, KeyError) as e:
-            logger.error(e.message)
+        self.update_monitor(call_counter=1)
 
         # step5: return response
         return ModelResponse(
@@ -253,10 +276,19 @@ class OllamaEmbeddingWrapper(OllamaWrapperBase):
 
     def _register_default_metrics(self) -> None:
         """Register metrics to the monitor."""
-        self.monitor = MonitorFactory.get_monitor()
         self.monitor.register(
-            self._metric("call_counter", self.model),
+            self._metric("call_counter"),
             metric_unit="times",
+        )
+
+    def format(
+        self,
+        *args: Union[Msg, Sequence[Msg]],
+    ) -> Union[List[dict], str]:
+        raise RuntimeError(
+            f"Model Wrapper [{type(self).__name__}] doesn't "
+            f"need to format the input. Please try to use the "
+            f"model wrapper directly.",
         )
 
 
@@ -303,7 +335,7 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
 
         # step2: forward to generate response
         response = ollama.generate(
-            model=self.model,
+            model=self.model_name,
             prompt=prompt,
             options=options,
             keep_alive=keep_alive,
@@ -312,7 +344,7 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
         # step3: record the api invocation if needed
         self._save_model_invocation(
             arguments={
-                "model": self.model,
+                "model": self.model_name,
                 "prompt": prompt,
                 "options": options,
                 "keep_alive": keep_alive,
@@ -322,19 +354,13 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
         )
 
         # step4: monitor the response
-        try:
-            prompt_tokens = response["prompt_eval_count"]
-            completion_tokens = response["eval_count"]
-            self.monitor.update(
-                {
-                    "call_counter": 1,
-                    "prompt_tokens": prompt_tokens,
-                    "completion_tokens": completion_tokens,
-                    "total_tokens": prompt_tokens + completion_tokens,
-                },
-            )
-        except (QuotaExceededError, KeyError) as e:
-            logger.error(e.message)
+        self.update_monitor(
+            call_counter=1,
+            prompt_tokens=response["prompt_eval_count"],
+            completion_tokens=response["eval_count"],
+            total_tokens=response["prompt_eval_count"]
+            + response["eval_count"],
+        )
 
         # step5: return response
         return ModelResponse(
@@ -344,20 +370,59 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
 
     def _register_default_metrics(self) -> None:
         """Register metrics to the monitor."""
-        self.monitor = MonitorFactory.get_monitor()
         self.monitor.register(
-            self._metric("call_counter", self.model),
+            self._metric("call_counter"),
             metric_unit="times",
         )
         self.monitor.register(
-            self._metric("prompt_tokens", self.model),
+            self._metric("prompt_tokens"),
             metric_unit="tokens",
         )
         self.monitor.register(
-            self._metric("completion_tokens", self.model),
+            self._metric("completion_tokens"),
             metric_unit="token",
         )
         self.monitor.register(
-            self._metric("total_tokens", self.model),
+            self._metric("total_tokens"),
             metric_unit="token",
         )
+
+    def format(self, *args: Union[Msg, Sequence[Msg]]) -> str:
+        """Forward the input to the model.
+
+        Args:
+            *args (`Union[Msg, Sequence[Msg]]`):
+                The input arguments to be formatted, where each argument
+                should be a string or a dict or a list of strings or dicts.
+
+        Returns:
+            `str`:
+                The formatted string prompt.
+        """
+
+        prompt = []
+
+        for arg in args:
+            if arg is None:
+                continue
+            if isinstance(arg, Msg):
+                prompt.append(f"{arg.name}: {_convert_to_str(arg.content)}")
+            elif isinstance(arg, list):
+                for child_arg in arg:
+                    if isinstance(child_arg, Msg):
+                        prompt.append(
+                            f"{child_arg.name}: "
+                            f"{_convert_to_str(child_arg.content)}",
+                        )
+                    else:
+                        raise TypeError(
+                            f"The input should be a Msg object or a list "
+                            f"of Msg objects, got {type(child_arg)}.",
+                        )
+            else:
+                raise TypeError(
+                    f"The input should be a Msg object or a list "
+                    f"of Msg objects, got {type(arg)}.",
+                )
+
+        return "\n".join(prompt)

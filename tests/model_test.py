@@ -3,11 +3,11 @@
 Unit tests for model wrapper classes and functions
 """
 
-from typing import Any
+from typing import Any, Union, List, Sequence
 import unittest
 from unittest.mock import patch, MagicMock
 
-
+from agentscope.message import Msg
 from agentscope.models import (
     ModelResponse,
     ModelWrapperBase,
@@ -25,6 +25,12 @@ class TestModelWrapperSimple(ModelWrapperBase):
 
     def __call__(self, *args: Any, **kwargs: Any) -> ModelResponse:
         return ModelResponse(text=self.config_name)
+
+    def format(
+        self,
+        *args: Union[Msg, Sequence[Msg]],
+    ) -> Union[List[dict], str]:
+        return ""
 
 
 class BasicModelTest(unittest.TestCase):
@@ -53,7 +59,7 @@ class BasicModelTest(unittest.TestCase):
         """Test to load model configs"""
         configs = [
             {
-                "model_type": "openai",
+                "model_type": "openai_chat",
                 "config_name": "gpt-4",
                 "model_name": "gpt-4",
                 "api_key": "xxx",

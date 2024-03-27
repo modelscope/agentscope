@@ -96,6 +96,7 @@ AgentScope支持使用以下库快速部署本地模型服务。
   - [兼容LangChain的基础对话](./examples/conversation_with_langchain)
 
 - 游戏
+  - [五子棋](./examples/game_gomoku)
   - [狼人杀](./examples/game_werewolf)
 
 - 分布式
@@ -213,26 +214,44 @@ while True:
     break
 ```
 
+### AgentScope前端
+
+AgentScope
+提供了一个易于使用的运行时用户界面，能够在前端显示多模态输出，包括文本、图像、音频和视频。要启动前端，需要先安装AgentScope完整版本。
+```
+# On windows
+pip install -e .[full]
+# On mac
+pip install -e .\[full\]
+```
+然后运行
+```
+as_studio  path/to/your/script.py
+```
+前端就会在端口 `localhost:xxxx`上启动，打开后就能看到类似下图的界面：
+![](https://gw.alicdn.com/imgextra/i3/O1CN01X673v81WaHV1oCxEN_!!6000000002804-0-tps-2992-1498.jpg)
+为了能使用该前端功能，你需要在代码中实现`main`函数。更多详情请参见 [src/agentscope/web/README.md](src/agentscope/web/README.md)。
+
 ## 教程
 
-- [快速上手](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/quick_start.html)
-  - [关于AgentScope](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/101-agentscope.html)
-  - [安装](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/102-installation.html)
-  - [快速开始](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/103-example.html)
-  - [创建您的第一个应用](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/104-usecase.html)
-  - [日志和WebUI](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/105-logging.html#)
-- [进阶使用](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/advance.html)
-  - [定制你自己的Agent](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/201-agent.html)
-  - [Pipeline和MsgHub](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/202-pipeline.html)
-  - [模型](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/203-model.html)
-  - [服务函数](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/204-service.html)
-  - [记忆](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/205-memory.html)
-  - [提示工程](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/206-prompt.html)
-  - [监控器](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/207-monitor.html)
-  - [分布式](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/208-distribute.html)
-- [参与贡献](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/contribute.html)
-  - [加入AgentScope社区](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/301-community.html)
-  - [贡献到AgentScope](https://modelscope.github.io/agentscope/zh_CN/tutorial_zh/302-contribute.html)
+- [快速上手](https://modelscope.github.io/agentscope/zh_CN/tutorial/quick_start.html)
+  - [关于AgentScope](https://modelscope.github.io/agentscope/zh_CN/tutorial/101-agentscope.html)
+  - [安装](https://modelscope.github.io/agentscope/zh_CN/tutorial/102-installation.html)
+  - [快速开始](https://modelscope.github.io/agentscope/zh_CN/tutorial/103-example.html)
+  - [创建您的第一个应用](https://modelscope.github.io/agentscope/zh_CN/tutorial/104-usecase.html)
+  - [日志和WebUI](https://modelscope.github.io/agentscope/zh_CN/tutorial/105-logging.html#)
+- [进阶使用](https://modelscope.github.io/agentscope/zh_CN/tutorial/advance.html)
+  - [定制你自己的Agent](https://modelscope.github.io/agentscope/zh_CN/tutorial/201-agent.html)
+  - [Pipeline和MsgHub](https://modelscope.github.io/agentscope/zh_CN/tutorial/202-pipeline.html)
+  - [模型](https://modelscope.github.io/agentscope/zh_CN/tutorial/203-model.html)
+  - [服务函数](https://modelscope.github.io/agentscope/zh_CN/tutorial/204-service.html)
+  - [记忆](https://modelscope.github.io/agentscope/zh_CN/tutorial/205-memory.html)
+  - [提示工程](https://modelscope.github.io/agentscope/zh_CN/tutorial/206-prompt.html)
+  - [监控器](https://modelscope.github.io/agentscope/zh_CN/tutorial/207-monitor.html)
+  - [分布式](https://modelscope.github.io/agentscope/zh_CN/tutorial/208-distribute.html)
+- [参与贡献](https://modelscope.github.io/agentscope/zh_CN/tutorial/contribute.html)
+  - [加入AgentScope社区](https://modelscope.github.io/agentscope/zh_CN/tutorial/301-community.html)
+  - [贡献到AgentScope](https://modelscope.github.io/agentscope/zh_CN/tutorial/302-contribute.html)
 
 ## License
 
@@ -253,7 +272,7 @@ pip install -e .\[dev\]
 pre-commit install
 ```
 
-请参阅我们的[贡献指南](https://modelscope.github.io/agentscope/tutorial/contribute.html)了解更多细节。
+请参阅我们的[贡献指南](https://modelscope.github.io/agentscope/zh_CN/tutorial/302-contribute.html)了解更多细节。
 
 ## 引用
 

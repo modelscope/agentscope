@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 """Google Gemini model wrapper."""
 import os
+from abc import ABC
 from collections.abc import Iterable
-from typing import Sequence, Union, Any
+from typing import Sequence, Union, Any, List
 
 from loguru import logger
 
 from agentscope.message import Msg
 from agentscope.models import ModelWrapperBase, ModelResponse
-from agentscope.utils import QuotaExceededError, MonitorFactory
+from agentscope.utils.tools import _convert_to_str
 
 try:
     import google.generativeai as genai
@@ -16,7 +17,7 @@ except ImportError:
     genai = None
 
 
-class GeminiWrapperBase(ModelWrapperBase):
+class GeminiWrapperBase(ModelWrapperBase, ABC):
     """The base class for Google Gemini model wrapper."""
 
     _generation_method = None
@@ -39,13 +40,7 @@ class GeminiWrapperBase(ModelWrapperBase):
                 The api_key for the model. If it is not provided, it will be
                 loaded from environment variable.
         """
-        # TODO: remove super().__init__()
-        super().__init__(
-            config_name,
-            model_name=model_name,
-            api_key=api_key,
-            **kwargs,
-        )
+        super().__init__(config_name=config_name)
 
         # Load the api_key from argument or environment variable
         api_key = api_key or os.environ.get("GOOGLE_API_KEY")
@@ -60,7 +55,6 @@ class GeminiWrapperBase(ModelWrapperBase):
 
         self.model_name = model_name
 
-        self.monitor = None
         self._register_default_metrics()
 
     def _register_default_metrics(self) -> None:
@@ -171,18 +165,12 @@ class GeminiChatWrapper(GeminiWrapperBase):
         #  the tokens manually.
         token_prompt = self.model.count_tokens(contents).total_tokens
         token_response = self.model.count_tokens(response.text).total_tokens
-        try:
-            self.monitor.update(
-                {
-                    "call_counter": 1,
-                    "completion_tokens": token_response,
-                    "prompt_tokens": token_prompt,
-                    "total_tokens": token_prompt + token_response,
-                },
-                prefix=self.model.model_name,
-            )
-        except QuotaExceededError as e:
-            logger.error(e.message)
+        self.update_monitor(
+            call_counter=1,
+            completion_tokens=token_response,
+            prompt_tokens=token_prompt,
+            total_tokens=token_prompt + token_response,
+        )
 
         # step6: return response
         return ModelResponse(
@@ -192,23 +180,86 @@ class GeminiChatWrapper(GeminiWrapperBase):
 
     def _register_default_metrics(self) -> None:
         """Register the default metrics for the model."""
-        self.monitor = MonitorFactory.get_monitor()
         self.monitor.register(
-            self._metric("call_counter", prefix=self.model_name),
+            self._metric("call_counter"),
             metric_unit="times",
         )
         self.monitor.register(
-            self._metric("prompt_tokens", prefix=self.model_name),
+            self._metric("prompt_tokens"),
             metric_unit="token",
         )
         self.monitor.register(
-            self._metric("completion_tokens", prefix=self.model_name),
+            self._metric("completion_tokens"),
             metric_unit="token",
         )
         self.monitor.register(
-            self._metric("total_tokens", prefix=self.model_name),
+            self._metric("total_tokens"),
             metric_unit="token",
         )
+
+    def format(self, *args: Union[Msg, Sequence[Msg]]) -> List[dict]:
+        """This function provide a basic prompting strategy for Gemini Chat
+        API in multi-party conversation, which combines all input into a
+        single string, and wrap it into a user message.
+
+        We make the above decision based on the following constraints of the
+        Gemini generate API:
+
+        1. In Gemini `generate_content` API, the `role` field must be either
+        `user` or `model`.
+
+        2. If we pass a list of messages to the `generate_content` API,
+        the `user` role must speak in the beginning and end of the
+        messages, and `user` and `model` must alternative. This prevents
+        us to build a multi-party conversations, where `model` may keep
+        speaking in different names.
+
+        The above information is updated to 2024/03/21. More information
+        about the Gemini `generate_content` API can be found in
+        https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini
+
+        Based on the above considerations, we decide to combine all messages
+        into a single user message. This is a simple and straightforward
+        strategy, if you have any better ideas, pull request and
+        discussion are welcome in our GitHub repository
+        https://github.com/agentscope/agentscope!
+
+        Args:
+            args (`Union[Msg, Sequence[Msg]]`):
+                The items in `args` should be `Msg` objects or a list of
+                `Msg` objects.
+
+        Returns:
+            `List[dict]`:
+                A list with one user message.
+        """
+        prompt = []
+        for unit in args:
+            if unit is None:
+                continue
+            if isinstance(unit, Msg):
+                prompt.append(f"{unit.name}: {_convert_to_str(unit.content)}")
+            elif isinstance(unit, list):
+                for child_unit in unit:
+                    if isinstance(child_unit, Msg):
+                        prompt.append(
+                            f"{child_unit.name}: "
+                            f"{_convert_to_str(child_unit.content)}",
+                        )
+                    else:
+                        raise TypeError(
+                            f"The input should be a Msg object or a list "
+                            f"of Msg objects, got {type(child_unit)}.",
+                        )
+            else:
+                raise TypeError(
+                    f"The input should be a Msg object or a list "
+                    f"of Msg objects, got {type(unit)}.",
+                )
+
+        prompt_str = "\n".join(prompt)
+
+        return [{"role": "user", "parts": [prompt_str]}]
 
 
 class GeminiEmbeddingWrapper(GeminiWrapperBase):
@@ -270,15 +321,8 @@ class GeminiEmbeddingWrapper(GeminiWrapperBase):
 
         # TODO: Up to 2023/03/11, the embedding model doesn't support to
         #  count tokens.
-        try:
-            self.monitor.update(
-                {
-                    "call_counter": 1,
-                },
-                prefix=self.model_name,
-            )
-        except QuotaExceededError as e:
-            logger.error(e.message)
+        # step3: update monitor accordingly
+        self.update_monitor(call_counter=1)
 
         return ModelResponse(
             raw=response,
@@ -287,8 +331,7 @@ class GeminiEmbeddingWrapper(GeminiWrapperBase):
 
     def _register_default_metrics(self) -> None:
         """Register the default metrics for the model."""
-        self.monitor = MonitorFactory.get_monitor()
         self.monitor.register(
-            self._metric("call_counter", prefix=self.model_name),
+            self._metric("call_counter"),
             metric_unit="times",
         )

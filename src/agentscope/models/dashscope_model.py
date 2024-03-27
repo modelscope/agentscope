@@ -1,23 +1,24 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for DashScope models"""
+from abc import ABC
 from http import HTTPStatus
-from typing import Any, Union
+from typing import Any, Union, List, Sequence
+from loguru import logger
+
+from ..message import Msg
+from ..utils.tools import to_openai_dict, _convert_to_str
 
 try:
     import dashscope
 except ModuleNotFoundError:
     dashscope = None
 
-from loguru import logger
-
 from .model import ModelWrapperBase, ModelResponse
 
 from ..file_manager import file_manager
-from ..utils.monitor import MonitorFactory
-from ..constants import _DEFAULT_API_BUDGET
 
 
-class DashScopeWrapper(ModelWrapperBase):
+class DashScopeWrapperBase(ModelWrapperBase, ABC):
     """The model wrapper for DashScope API."""
 
     def __init__(
@@ -26,7 +27,6 @@ class DashScopeWrapper(ModelWrapperBase):
         model_name: str = None,
         api_key: str = None,
         generate_args: dict = None,
-        budget: float = _DEFAULT_API_BUDGET,
         **kwargs: Any,
     ) -> None:
         """Initialize the DashScope wrapper.
@@ -41,26 +41,19 @@ class DashScopeWrapper(ModelWrapperBase):
             generate_args (`dict`, default `None`):
                 The extra keyword arguments used in DashScope api generation,
                 e.g. `temperature`, `seed`.
-            budget (`float`, default `None`):
-                The total budget using this model. Set to `None` means no
-                limit.
         """
         if model_name is None:
             model_name = config_name
             logger.warning("model_name is not set, use config_name instead.")
-        super().__init__(
-            config_name=config_name,
-            model_name=model_name,
-            generate_args=generate_args,
-            budget=budget,
-            **kwargs,
-        )
+
+        super().__init__(config_name=config_name)
+
         if dashscope is None:
             raise ImportError(
                 "Cannot find dashscope package in current python environment.",
             )
 
-        self.model = model_name
+        self.model_name = model_name
         self.generate_args = generate_args or {}
 
         self.api_key = api_key
@@ -68,17 +61,20 @@ class DashScopeWrapper(ModelWrapperBase):
         self.max_length = None
 
         # Set monitor accordingly
-        self.monitor = None
         self._register_default_metrics()
 
-    def _register_default_metrics(self) -> None:
-        """Register metrics to the monitor."""
-        raise NotImplementedError(
-            "The _register_default_metrics function is not Implemented.",
+    def format(
+        self,
+        *args: Union[Msg, Sequence[Msg]],
+    ) -> Union[List[dict], str]:
+        raise RuntimeError(
+            f"Model Wrapper [{type(self).__name__}] doesn't "
+            f"need to format the input. Please try to use the "
+            f"model wrapper directly.",
         )
 
 
-class DashScopeChatWrapper(DashScopeWrapper):
+class DashScopeChatWrapper(DashScopeWrapperBase):
     """The model wrapper for DashScope's chat API."""
 
     model_type: str = "dashscope_chat"
@@ -88,17 +84,20 @@ class DashScopeChatWrapper(DashScopeWrapper):
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
         # TODO: set quota to the following metrics
-        self.monitor = MonitorFactory.get_monitor()
         self.monitor.register(
-            self._metric("prompt_tokens", self.model),
+            self._metric("call_counter"),
+            metric_unit="times",
+        )
+        self.monitor.register(
+            self._metric("prompt_tokens"),
             metric_unit="token",
         )
         self.monitor.register(
-            self._metric("completion_tokens", self.model),
+            self._metric("completion_tokens"),
             metric_unit="token",
         )
         self.monitor.register(
-            self._metric("total_tokens", self.model),
+            self._metric("total_tokens"),
             metric_unit="token",
         )
 
@@ -169,7 +168,7 @@ class DashScopeChatWrapper(DashScopeWrapper):
         messages = self._preprocess_role(messages)
         # step3: forward to generate response
         response = dashscope.Generation.call(
-            model=self.model,
+            model=self.model_name,
             messages=messages,
             result_format="message",  # set the result to be "message" format.
             **kwargs,
@@ -188,7 +187,7 @@ class DashScopeChatWrapper(DashScopeWrapper):
         # step4: record the api invocation if needed
         self._save_model_invocation(
             arguments={
-                "model": self.model,
+                "model": self.model_name,
                 "messages": messages,
                 **kwargs,
             },
@@ -196,23 +195,166 @@ class DashScopeChatWrapper(DashScopeWrapper):
         )
 
         # step5: update monitor accordingly
-        try:
-            self.monitor.update(
-                {
-                    "prompt_tokens": response.usage["input_tokens"],
-                    "completion_tokens": response.usage["output_tokens"],
-                    "total_tokens": response.usage["total_tokens"],
-                },
-                prefix=self.model,
-            )
-        except Exception as e:
-            logger.error(e)
+        # The metric names are unified for comparison
+        self.update_monitor(
+            call_counter=1,
+            prompt_tokens=response.usage["input_tokens"],
+            completion_tokens=response.usage["output_tokens"],
+            total_tokens=response.usage["total_tokens"],
+        )
 
         # step6: return response
         return ModelResponse(
             text=response.output["choices"][0]["message"]["content"],
             raw=response,
         )
+
+    def format(
+        self,
+        *args: Union[Msg, Sequence[Msg]],
+    ) -> List:
+        """Format the messages for DashScope Chat API.
+
+        In this format function, the input messages are converted into
+        dictionaries with `role` and `content` fields. This conversation may
+        not meet the requirement that `user` and `assistant` speak
+        alternatively. This requirement can be enforced by calling
+        `preprocess_role` function..
+
+        # TODO: We will merge these two functions into one `format` function
+        soon.
+
+        The following is an example:
+
+        .. code-block:: python
+
+            prompt = model.format(
+                Msg("system", "You're a helpful assistant", role="system"),
+                Msg("Bob", "Hi, how can I help you?", role="assistant"),
+                Msg("user", "What's the date today?", role="user")
+            )
+
+        The prompt will be as follows:
+
+        .. code-block:: python
+
+            [
+                {"role": "system", "content": "You are a helpful assistant"},
+                {"role": "assistant", "content": "Hi, how can I help you"},
+                {"role": "assistant", "content": "What's the date today?"}
+            ]
+
+
+        Args:
+            *args (`Union[Msg, Sequence[Msg]]`):
+                The input arguments to be formatted, where each argument
+                should be a `Msg` object, or a list of `Msg` objects
+
+        Returns:
+            `List[dict]`:
+                The formatted messages.
+        """
+        # TODO: This function only convert agentscope msgs into qwen
+        #  messages, the re-range is executed in _preprocess_role function.
+
+        # TODO: This strategy will be replaced by a new strategy in the future.
+        prompt = []
+        for unit in args:
+            if unit is None:
+                continue
+            if isinstance(unit, Msg):
+                prompt.append(to_openai_dict(unit))
+            elif isinstance(unit, list):
+                for child_unit in unit:
+                    if isinstance(child_unit, Msg):
+                        prompt.append(to_openai_dict(child_unit))
+                    else:
+                        raise TypeError(
+                            f"The input should be a Msg object or a list "
+                            f"of Msg objects, got {type(child_unit)}.",
+                        )
+            else:
+                raise TypeError(
+                    f"The input should be a Msg object or a list "
+                    f"of Msg objects, got {type(unit)}.",
+                )
+
+        return prompt
+
+    def advanced_format(
+        self,
+        *args: Union[Msg, Sequence[Msg]],
+    ) -> List:
+        """Format the messages for DashScope Chat API.
+
+        In this format function, the input messages are formatted into a
+        single system messages with format "{name}: {content}" for each
+        message. Note this strategy maybe not suitable for all scenarios,
+        and developers are encouraged to implement their own prompt
+        engineering strategies.
+
+        The following is an example:
+
+        .. code-block:: python
+
+            prompt = model.format(
+                Msg("system", "You're a helpful assistant", role="system"),
+                Msg("Bob", "Hi, how can I help you?", role="assistant"),
+                Msg("user", "What's the date today?", role="user")
+            )
+
+        The prompt will be as follows:
+
+        .. code-block:: python
+
+            [
+                {
+                    "role": "system",
+                    "content": (
+                       "system: You're a helpful assistant\n",
+                       "Bob: Hi, how can I help you?\n",
+                       "user: What's the date today?"
+                    )
+                }
+            ]
+
+
+        Args:
+            *args (`Union[Msg, Sequence[Msg]]`):
+                The input arguments to be formatted, where each argument
+                should be a `Msg` object, or a list of `Msg` objects
+
+        Returns:
+            `List[dict]`:
+                The formatted messages.
+        """
+        # TODO: This function only convert agentscope msgs into qwen
+        #  messages, the re-range is executed in _preprocess_role function.
+        prompt = []
+        for unit in args:
+            if isinstance(unit, Msg):
+                prompt.append(f"{unit.name}: {_convert_to_str(unit.content)}")
+            elif isinstance(unit, list):
+                for child_unit in unit:
+                    if isinstance(child_unit, Msg):
+                        prompt.append(
+                            f"{child_unit.name}: "
+                            f"{_convert_to_str(child_unit.content)}",
+                        )
+                    else:
+                        raise TypeError(
+                            f"The input should be a Msg object or a list "
+                            f"of Msg objects, got {type(child_unit)}.",
+                        )
+            else:
+                raise TypeError(
+                    f"The input should be a Msg object or a list "
+                    f"of Msg objects, got {type(unit)}.",
+                )
+
+        prompt_str = "\n".join(prompt)
+
+        return [{"role": "system", "content": prompt_str}]
 
     def _preprocess_role(self, messages: list) -> list:
         """preprocess role rules for DashScope"""
@@ -243,7 +385,7 @@ class DashScopeChatWrapper(DashScopeWrapper):
         return messages
 
 
-class DashScopeImageSynthesisWrapper(DashScopeWrapper):
+class DashScopeImageSynthesisWrapper(DashScopeWrapperBase):
     """The model wrapper for DashScope Image Synthesis API."""
 
     model_type: str = "dashscope_image_synthesis"
@@ -251,9 +393,12 @@ class DashScopeImageSynthesisWrapper(DashScopeWrapper):
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
         # TODO: set quota to the following metrics
-        self.monitor = MonitorFactory.get_monitor()
         self.monitor.register(
-            self._metric("image_count", self.model),
+            self._metric("call_counter"),
+            metric_unit="times",
+        )
+        self.monitor.register(
+            self._metric("image_count"),
             metric_unit="image",
         )
 
@@ -300,7 +445,7 @@ class DashScopeImageSynthesisWrapper(DashScopeWrapper):
 
         # step2: forward to generate response
         response = dashscope.ImageSynthesis.call(
-            model=self.model,
+            model=self.model_name,
             prompt=prompt,
             n=1,
             **kwargs,
@@ -317,7 +462,7 @@ class DashScopeImageSynthesisWrapper(DashScopeWrapper):
         # step3: record the model api invocation if needed
         self._save_model_invocation(
             arguments={
-                "model": self.model,
+                "model": self.model_name,
                 "prompt": prompt,
                 **kwargs,
             },
@@ -325,13 +470,10 @@ class DashScopeImageSynthesisWrapper(DashScopeWrapper):
         )
 
         # step4: update monitor accordingly
-        try:
-            self.monitor.update(
-                response.usage,
-                prefix=self.model,
-            )
-        except Exception as e:
-            logger.error(e)
+        self.update_monitor(
+            call_counter=1,
+            **response.usage,
+        )
 
         # step5: return response
         images = response.output["results"]
@@ -344,7 +486,7 @@ class DashScopeImageSynthesisWrapper(DashScopeWrapper):
         return ModelResponse(image_urls=urls, raw=response)
 
 
-class DashScopeTextEmbeddingWrapper(DashScopeWrapper):
+class DashScopeTextEmbeddingWrapper(DashScopeWrapperBase):
     """The model wrapper for DashScope Text Embedding API."""
 
     model_type: str = "dashscope_text_embedding"
@@ -352,9 +494,12 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapper):
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
         # TODO: set quota to the following metrics
-        self.monitor = MonitorFactory.get_monitor()
         self.monitor.register(
-            self._metric("total_tokens", self.model),
+            self._metric("call_counter"),
+            metric_unit="times",
+        )
+        self.monitor.register(
+            self._metric("total_tokens"),
             metric_unit="token",
         )
 
@@ -398,7 +543,7 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapper):
         # step2: forward to generate response
         response = dashscope.TextEmbedding.call(
             input=texts,
-            model=self.model,
+            model=self.model_name,
             **kwargs,
         )
 
@@ -414,7 +559,7 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapper):
         # step3: record the model api invocation if needed
         self._save_model_invocation(
             arguments={
-                "model": self.model,
+                "model": self.model_name,
                 "input": texts,
                 **kwargs,
             },
@@ -422,13 +567,10 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapper):
         )
 
         # step4: update monitor accordingly
-        try:
-            self.monitor.update(
-                response.usage,
-                prefix=self.model,
-            )
-        except Exception as e:
-            logger.error(e)
+        self.update_monitor(
+            call_counter=1,
+            **response.usage,
+        )
 
         # step5: return response
         if len(response.output["embeddings"]) == 0:

@@ -31,13 +31,13 @@ class TestRetrieval(unittest.TestCase):
 
         dummy_model = DummyModel()
 
-        query = Msg(name="Lora", content="test query")
+        query = Msg(name="Lora", content="test query", role="assistant")
         query.embedding = [0, 1]
         query.timestamp = "2023-12-18 21:40:59"
-        m1 = Msg(name="env", content="test")
+        m1 = Msg(name="env", content="test", role="assistant")
         m1.embedding = [1, 0]
         m1.timestamp = "2023-12-18 21:45:59"
-        m2 = Msg(name="env", content="test2")
+        m2 = Msg(name="env", content="test2", role="assistant")
         m2.embedding = [0.5, 0.5]
         m2.timestamp = "2023-12-18 21:50:59"
         m3 = Tht(content="test3")

@@ -5,14 +5,14 @@ from typing import Union, Type
 
 from loguru import logger
 
-from .config import ModelConfig
+from .config import _ModelConfig
 from .model import ModelWrapperBase, ModelResponse
 from .post_model import (
     PostAPIModelWrapperBase,
     PostAPIChatWrapper,
 )
 from .openai_model import (
-    OpenAIWrapper,
+    OpenAIWrapperBase,
     OpenAIChatWrapper,
     OpenAIDALLEWrapper,
     OpenAIEmbeddingWrapper,
@@ -38,7 +38,7 @@ __all__ = [
     "ModelResponse",
     "PostAPIModelWrapperBase",
     "PostAPIChatWrapper",
-    "OpenAIWrapper",
+    "OpenAIWrapperBase",
     "OpenAIChatWrapper",
     "OpenAIDALLEWrapper",
     "OpenAIEmbeddingWrapper",
@@ -156,7 +156,7 @@ def read_model_configs(
             )
         cfgs = configs
 
-    format_configs = ModelConfig.format_configs(configs=cfgs)
+    format_configs = _ModelConfig.format_configs(configs=cfgs)
 
     # check if name is unique
     for cfg in format_configs:

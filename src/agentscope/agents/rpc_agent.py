@@ -487,6 +487,7 @@ class RpcServerSideWrapper(RpcAgentServicer):
                 value=Msg(
                     name=self.agent.name,
                     content=f"Unsupported method {request.target_func}",
+                    role="assistant",
                 ).serialize(),
             )
 
@@ -512,6 +513,7 @@ class RpcServerSideWrapper(RpcAgentServicer):
             value=Msg(
                 name=self.agent.name,
                 content=None,
+                role="assistant",
                 host=self.host,
                 port=self.port,
                 task_id=task_id,

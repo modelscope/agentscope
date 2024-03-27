@@ -5,7 +5,7 @@ from typing import Union, Sequence, Any
 from loguru import logger
 
 
-class ModelConfig(dict):
+class _ModelConfig(dict):
     """Base class for model config."""
 
     __getattr__ = dict.__getitem__
@@ -46,14 +46,14 @@ class ModelConfig(dict):
         cls,
         configs: Union[Sequence[dict], dict],
     ) -> Sequence:
-        """Covert config dicts into a list of ModelConfig.
+        """Covert config dicts into a list of _ModelConfig.
 
         Args:
             configs (Union[Sequence[dict], dict]): configs in dict format.
 
         Returns:
-            Sequence[ModelConfig]: converted ModelConfig list.
+            Sequence[_ModelConfig]: converted ModelConfig list.
         """
         if isinstance(configs, dict):
-            return [ModelConfig(**configs)]
-        return [ModelConfig(**cfg) for cfg in configs]
+            return [_ModelConfig(**configs)]
+        return [_ModelConfig(**cfg) for cfg in configs]
