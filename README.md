@@ -108,6 +108,7 @@ the following libraries.
   - [Basic Conversation with LangChain library](./examples/conversation_with_langchain)
 
 - Game
+  - [Gomoku](./examples/game_gomoku)
   - [Werewolf](./examples/game_werewolf)
 
 - Distribution
