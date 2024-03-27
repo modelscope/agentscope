@@ -144,7 +144,7 @@ def log_studio(message: dict, uid: str, **kwargs: Any) -> None:
 
         msg = message["content"]
         flushing = True
-        if "url" in message:
+        if "url" in message and message["url"]:
             flushing = False
             for i in range(len(message["url"])):
                 msg += "\n" + f"""<img src="{message['url'][i]}"/>"""
