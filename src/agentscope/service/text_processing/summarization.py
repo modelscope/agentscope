@@ -50,6 +50,8 @@ def summarization(
 
     The default message with `text` to be summarized:
 
+    .. code-block:: python
+
         [
             {
                 "role": "system",
@@ -64,7 +66,8 @@ def summarization(
                 "content": text
             },
         ]
-        Messages will be processed by model.format() before feeding to models.
+
+    Messages will be processed by model.format() before feeding to models.
     """
     if max_return_token > 0:
         system_prompt += token_limit_prompt.format(max_return_token)
