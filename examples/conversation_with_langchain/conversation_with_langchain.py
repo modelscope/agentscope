@@ -61,7 +61,7 @@ class LangChainAgent(AgentBase):
         # [END] BY LANGCHAIN
 
         # Wrap the response in a message object in AgentScope
-        return Msg(name=self.name, content=response_str)
+        return Msg(name=self.name, content=response_str, role="assistant")
 
 
 # Build a conversation between user and assistant agent
