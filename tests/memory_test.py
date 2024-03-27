@@ -17,12 +17,28 @@ class TemporaryMemoryTest(unittest.TestCase):
 
     def setUp(self) -> None:
         self.memory = TemporaryMemory()
-        self.msg_1 = Msg("user", "Hello")
-        self.msg_2 = Msg("agent", "Hello! How can I help you?")
-        self.msg_3 = Msg("user", "Translate the following sentence")
+        self.msg_1 = Msg("user", "Hello", role="user")
+        self.msg_2 = Msg(
+            "agent",
+            "Hello! How can I help you?",
+            role="assistant",
+        )
+        self.msg_3 = Msg(
+            "user",
+            "Translate the following sentence",
+            role="assistant",
+        )
 
-        self.dict_1 = {"name": "dict1", "content": "dict 1"}
-        self.dict_2 = {"name": "dict2", "content": "dict 2"}
+        self.dict_1 = {
+            "name": "dict1",
+            "content": "dict 1",
+            "role": "assistant",
+        }
+        self.dict_2 = {
+            "name": "dict2",
+            "content": "dict 2",
+            "role": "assistant",
+        }
 
         self.invalid = {"invalid_key": "invalid_value"}
 

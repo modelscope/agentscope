@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for OpenAI models"""
 from abc import ABC
-from typing import Union, Any
+from typing import Union, Any, List, Sequence
 
 from loguru import logger
 
 from .model import ModelWrapperBase, ModelResponse
 from ..file_manager import file_manager
+from ..message import Msg
+from ..utils.tools import _convert_to_str
 
 try:
     import openai
@@ -86,6 +88,16 @@ class OpenAIWrapperBase(ModelWrapperBase, ABC):
         # Set monitor accordingly
         self._register_budget(model_name, budget)
         self._register_default_metrics()
+
+    def format(
+        self,
+        *args: Union[Msg, Sequence[Msg]],
+    ) -> Union[List[dict], str]:
+        raise RuntimeError(
+            f"Model Wrapper [{type(self).__name__}] doesn't "
+            f"need to format the input. Please try to use the "
+            f"model wrapper directly.",
+        )
 
 
 class OpenAIChatWrapper(OpenAIWrapperBase):
@@ -199,6 +211,46 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
             text=response.choices[0].message.content,
             raw=response.model_dump(),
         )
+
+    def format(
+        self,
+        *args: Union[Msg, Sequence[Msg]],
+    ) -> List[dict]:
+        """Format the input string and dictionary into the format that
+        OpenAI Chat API required.
+
+        Args:
+            *args (`Union[Msg, Sequence[Msg]]`):
+                The input strings, dictionaries, or list of string and
+                dictionaries to format.
+
+        Returns:
+            `List[dict]`:
+                The formatted messages in the format that OpenAI Chat API
+                required.
+        """
+
+        messages = []
+        for arg in args:
+            if arg is None:
+                continue
+            if isinstance(arg, Msg):
+                messages.append(
+                    {
+                        "role": arg.role,
+                        "name": arg.name,
+                        "content": _convert_to_str(arg.content),
+                    },
+                )
+            elif isinstance(arg, list):
+                messages.extend(self.format(*arg))
+            else:
+                raise TypeError(
+                    f"The input should be a Msg object or a list "
+                    f"of Msg objects, got {type(arg)}.",
+                )
+
+        return messages
 
 
 class OpenAIDALLEWrapper(OpenAIWrapperBase):

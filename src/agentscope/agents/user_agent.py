@@ -3,6 +3,7 @@
 import time
 from typing import Union
 from typing import Optional
+from loguru import logger
 
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
@@ -84,14 +85,24 @@ class UserAgent(AgentBase):
 
         # Add additional keys
         msg = Msg(
-            self.name,
+            name=self.name,
+            role="user",
             content=content,
             url=url,
             **kwargs,  # type: ignore[arg-type]
         )
+
+        self.speak(msg)
 
         # Add to memory
         if self.memory:
             self.memory.add(msg)
 
         return msg
+
+    def speak(
+        self,
+        content: Union[str, dict],
+    ) -> None:
+        """Speak the content to the audience."""
+        logger.chat(content, disable_studio=True)

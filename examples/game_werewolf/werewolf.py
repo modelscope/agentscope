@@ -20,7 +20,7 @@ import agentscope
 def main() -> None:
     """werewolf game"""
     # default settings
-    HostMsg = partial(Msg, name="Moderator", echo=True)
+    HostMsg = partial(Msg, name="Moderator", role="assistant", echo=True)
     healing, poison = True, True
     MAX_WEREWOLF_DISCUSSION_ROUND = 3
     MAX_GAME_ROUND = 6

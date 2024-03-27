@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """The base class for message unit"""
 
-from typing import Any, Optional, Union, Sequence
+from typing import Any, Optional, Union, Sequence, Literal
 from uuid import uuid4
 import json
 
@@ -30,9 +30,6 @@ class MessageBase(dict):
             name (`str`):
                 The name of who send the message. It's often used in
                 role-playing scenario to tell the name of the sender.
-                However, you can also only use `role` when calling openai api.
-                The usage of `name` refers to
-                https://cookbook.openai.com/examples/how_to_format_inputs_to_chatgpt_models.
             content (`Any`):
                 The content of the message.
             url (`Optional[Union[list[str], str]]`, defaults to None):
@@ -41,10 +38,7 @@ class MessageBase(dict):
                 The timestamp of the message, if None, it will be set to
                 current time.
             **kwargs (`Any`):
-                Other attributes of the message. For OpenAI API, you should
-                add "role" from `["system", "user", "assistant", "function"]`.
-                When calling OpenAI API, `"role": "assistant"` will be added
-                to the messages that don't have "role" attribute.
+                Other attributes of the message.
 
         """
         # id and timestamp will be added to the object as its attributes
@@ -60,6 +54,8 @@ class MessageBase(dict):
 
         if url:
             self.url = url
+        else:
+            self.url = None
 
         self.update(kwargs)
 
@@ -94,14 +90,44 @@ class Msg(MessageBase):
         self,
         name: str,
         content: Any,
+        role: Literal["system", "user", "assistant"] = None,
         url: Optional[Union[Sequence[str], str]] = None,
         timestamp: Optional[str] = None,
         echo: bool = False,
         **kwargs: Any,
     ) -> None:
+        """Initialize the message object
+
+        Args:
+            name (`str`):
+                The name of who send the message.
+            content (`Any`):
+                The content of the message.
+            role (`Literal["system", "user", "assistant"]`):
+                Used to identify the source of the message, e.g. the system
+                information, the user input, or the model response. This
+                argument is used to accommodate most Chat API formats.
+            url (`Optional[Union[list[str], str]]`, defaults to None):
+                A url to file, image, video, audio or website.
+            timestamp (`Optional[str]`, defaults to None):
+                The timestamp of the message, if None, it will be set to
+                current time.
+            **kwargs (`Any`):
+                Other attributes of the message.
+
+        """
+
+        if role is None:
+            logger.warning(
+                "A new field `role` is newly added to the message. "
+                "Please specify the role of the message. Currently we use "
+                'a default "assistant" value.',
+            )
+
         super().__init__(
             name=name,
             content=content,
+            role=role or "assistant",
             url=url,
             timestamp=timestamp,
             **kwargs,
@@ -166,6 +192,7 @@ class Tht(MessageBase):
         super().__init__(
             name="thought",
             content=content,
+            role="assistant",
             timestamp=timestamp,
         )
 
@@ -216,6 +243,10 @@ class PlaceholderMessage(MessageBase):
                 https://cookbook.openai.com/examples/how_to_format_inputs_to_chatgpt_models.
             content (`Any`):
                 The content of the message.
+            role (`Literal["system", "user", "assistant"]`, defaults to
+            "assistant"):
+                The role of the message, which can be one of the `"system"`,
+                `"user"`, or `"assistant"`.
             url (`Optional[Union[list[str], str]]`, defaults to None):
                 A url to file, image, video, audio or website.
             timestamp (`Optional[str]`, defaults to None):
