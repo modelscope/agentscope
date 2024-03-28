@@ -4,17 +4,15 @@ A simple example for conversation between user and
 an agent with RAG capability.
 """
 import os
-import argparse
-from loguru import logger
 
 import agentscope
 from agentscope.agents import UserAgent
+from agentscope.message import Msg
 
 
 def main() -> None:
-    """A conversation demo"""
-
-    agentscope.init(
+    """A RAG multi-agent demo"""
+    agents = agentscope.init(
         model_configs=[
             {
                 "model_type": "dashscope_chat",
@@ -29,39 +27,11 @@ def main() -> None:
                 "api_key": f"{os.environ.get('DASHSCOPE_API_KEY')}",
             },
         ],
+        agent_configs="./agent_config.json",
     )
 
-    if args.module == "llamaindex":
-        try:
-            from rag_agents import LlamaIndexAgent
-        except ImportError as exc:
-            raise ImportError(
-                "Please install llamaindex packages.",
-            ) from exc
-        AgentClass = LlamaIndexAgent
-    else:
-        try:
-            from rag_agents import LangChainRAGAgent
-        except ImportError as exc:
-            raise ImportError(
-                "Please install LangChain RAG packages.",
-            ) from exc
-        AgentClass = LangChainRAGAgent
-    rag_agent = AgentClass(
-        name="Assistant",
-        sys_prompt="You're a helpful assistant. You need to generate"
-        " answers based on the provided context.",
-        model_config_name="qwen_config",  # your model config name
-        emb_model_config_name="qwen_emb_config",
-        config={
-            "data_path": args.data_path,
-            "chunk_size": 2048,
-            "chunk_overlap": 40,
-            "similarity_top_k": 10,
-            "log_retrieval": True,
-            "recent_n_mem": 1,
-        },
-    )
+    tutorial_agent, code_explain_agent, summarize_agent = agents
+
     user_agent = UserAgent()
     # start the conversation between user and assistant
     while True:
@@ -69,27 +39,19 @@ def main() -> None:
         x.role = "user"  # to enforce dashscope requirement on roles
         if len(x["content"]) == 0 or str(x["content"]).startswith("exit"):
             break
-        rag_agent(x)
+        tutorial_response = tutorial_agent(x)
+        code_explain = code_explain_agent(x)
+        msg = Msg(
+            name="user",
+            role="user",
+            content=tutorial_response["content"]
+            + "\n"
+            + code_explain["content"]
+            + "\n"
+            + x["content"],
+        )
+        summarize_agent(msg)
 
 
 if __name__ == "__main__":
-    # The default parameters can set a AgentScope consultant to
-    # answer question about agentscope based on tutorial.
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--module",
-        choices=["llamaindex", "langchain"],
-        default="llamaindex",
-    )
-    parser.add_argument(
-        "--data_path",
-        type=str,
-        default="../../docs/sphinx_doc/en/source/tutorial",
-    )
-    args = parser.parse_args()
-    if args.module == "langchain":
-        logger.warning(
-            "LangChain RAG Chosen. May require install pandoc in advanced.",
-            "For example, run ` brew install pandoc` on MacOS.",
-        )
     main()
