@@ -4,11 +4,10 @@
 from typing import Any, Optional, Union, Sequence, Literal
 from uuid import uuid4
 import json
-import threading
 
 from loguru import logger
 
-from .rpc import RpcAgentClient
+from .rpc import RpcAgentClient, ResponseStub, call_in_thread
 from .utils.tools import _get_timestamp
 
 
@@ -205,27 +204,6 @@ class Tht(MessageBase):
         return json.dumps({"__type": "Tht", **self})
 
 
-class _MsgStub:
-    """A stub for messages in multi-threading scenarios."""
-
-    def __init__(self) -> None:
-        self.msg = None
-        self.condition = threading.Condition()
-
-    def set_msg(self, msg: dict) -> None:
-        """Set the message."""
-        with self.condition:
-            self.msg = msg
-            self.condition.notify_all()
-
-    def get_msg(self) -> dict:
-        """Get the message."""
-        with self.condition:
-            while self.msg is None:
-                self.condition.wait()
-            return self.msg
-
-
 class PlaceholderMessage(MessageBase):
     """A placeholder for the return message of RpcAgent."""
 
@@ -285,9 +263,10 @@ class PlaceholderMessage(MessageBase):
             task_id (`int`, defaults to `None`):
                 The task id of the real message in the rpc server.
             client (`RpcAgentClient`, defaults to `None`):
-                pass
+                An RpcAgentClient instance used to connect to the generator of
+                this placeholder.
             x (`dict`, defaults to `None`):
-                pass
+                Input parameters used to call rpc methods on the client.
         """
         super().__init__(
             name=name,
@@ -299,29 +278,15 @@ class PlaceholderMessage(MessageBase):
         # placeholder indicates whether the real message is still in rpc server
         self._is_placeholder = True
         if client is None:
+            self._stub: ResponseStub = None
             self._host: str = host
             self._port: int = port
             self._task_id: int = task_id
-            self._stub: _MsgStub = None
         else:
-            self._stub = self.__get_task(client, x)
+            self._stub = call_in_thread(client, x, "_reply")
             self._host = client.host
             self._port = client.port
             self._task_id = None
-
-    def __get_task(self, client: RpcAgentClient, x: dict) -> _MsgStub:
-        stub = _MsgStub()
-
-        def wrapper() -> None:
-            msg = client.call_func(
-                func_name="_reply",
-                value=x.serialize() if x is not None else "",
-            )
-            stub.set_msg(deserialize(msg))  # type: ignore[arg-type]
-
-        thread = threading.Thread(target=wrapper)
-        thread.start()
-        return stub
 
     def __is_local(self, key: Any) -> bool:
         return (
@@ -372,7 +337,8 @@ class PlaceholderMessage(MessageBase):
 
     def __update_task_id(self) -> None:
         if self._stub is not None:
-            self._task_id = self._stub.get_msg()["task_id"]
+            resp = deserialize(self._stub.get_response())
+            self._task_id = resp["task_id"]  # type: ignore[call-overload]
             self._stub = None
 
     def serialize(self) -> str:
