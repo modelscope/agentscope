@@ -1,0 +1,439 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.agents.react_agent &mdash; AgentScope  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../../../en/_modules/agentscope/agents/react_agent.html">English</a></li> |
+    <a href="../../../../zh_CN/_modules/agentscope/agents/react_agent.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/quick_start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/advance.html">Advanced Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/contribute.html">Get Involved</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">Agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">Memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">Models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">Pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">Service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">RPC package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">Utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">Web UI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">Module contents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">agentscope.agents.react_agent</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for agentscope.agents.react_agent</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;An agent class that implements the ReAct algorithm. The agent will reason</span>
+<span class="sd">and act iteratively to solve problems. More details can be found in the paper</span>
+<span class="sd">https://arxiv.org/abs/2210.03629.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="kn">from</span> <span class="nn">agentscope.agents</span> <span class="kn">import</span> <span class="n">AgentBase</span>
+<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ModelResponse</span>
+<span class="kn">from</span> <span class="nn">agentscope.service</span> <span class="kn">import</span> <span class="n">ServiceResponse</span><span class="p">,</span> <span class="n">ServiceExecStatus</span>
+
+
+<span class="n">DEFAULT_TOOL_PROMPT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">The following tool functions are available in the format of</span>
+<span class="s2">```</span>
+<span class="s2">{{index}}. {{function name}}: {{function description}}</span>
+<span class="s2">    {{argument name}} ({{argument type}}): {{argument description}}</span>
+<span class="s2">    ...</span>
+<span class="s2">```</span>
+
+<span class="s2">Tool Functions:</span>
+<span class="si">{function_prompt}</span>
+
+<span class="s2">Notice:</span>
+<span class="s2">1. Fully understand the tool function and its arguments before using it.</span>
+<span class="s2">2. Only use the tool function when it&#39;s necessary.</span>
+<span class="s2">3. Check if the arguments you provided to the tool function is correct in type and value.</span>
+<span class="s2">4. You can&#39;t take some problems for granted. For example, where you are, what&#39;s the time now, etc. But you can try to use the tool function to solve the problem.</span>
+<span class="s2">5. If the function execution fails, you should analyze the error and try to solve it.</span>
+
+<span class="s2">&quot;&quot;&quot;</span>  <span class="c1"># noqa</span>
+
+<span class="n">TOOL_HINT_PROMPT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Generate a response in the following format:</span>
+
+<span class="s2">Response Format:</span>
+<span class="s2">You should respond in the following format, which can be loaded by `json.loads` in Python:</span>
+<span class="s2">{{</span>
+<span class="s2">    &quot;thought&quot;: &quot;what you thought&quot;,</span>
+<span class="s2">    &quot;speak&quot;: &quot;what you said&quot;,</span>
+<span class="s2">    &quot;function&quot;: [{{&quot;name&quot;: &quot;{{function name}}&quot;, &quot;arguments&quot;: {{&quot;{{argument name}}&quot;: {{argument_value}}, ...}}}}, ...]</span>
+<span class="s2">}}</span>
+
+<span class="s2">Taking using web_search function as an example, the response should be like this:</span>
+<span class="s2">{{</span>
+<span class="s2">    &quot;thought&quot;: &quot;xxx&quot;,</span>
+<span class="s2">    &quot;speak&quot;: &quot;xxx&quot;,</span>
+<span class="s2">    &quot;function&quot;: [{{&quot;name&quot;: &quot;web_search&quot;, &quot;arguments&quot;: {{&quot;query&quot;: &quot;what&#39;s the weather today?&quot;}}}}]</span>
+<span class="s2">}}</span>
+<span class="s2">&quot;&quot;&quot;</span>  <span class="c1"># noqa</span>
+
+<span class="n">FUNCTION_RESULT_TITLE_PROMPT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Execution Results:</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">FUNCTION_RESULT_PROMPT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="si">{index}</span><span class="s2">. </span><span class="si">{function_name}</span><span class="s2">:</span>
+<span class="s2">    [EXECUTE STATUS]: </span><span class="si">{status}</span>
+<span class="s2">    [EXECUTE RESULT]: </span><span class="si">{result}</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="parse_func">
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.react_agent.parse_func">[docs]</a>
+<span class="k">def</span> <span class="nf">parse_func</span><span class="p">(</span><span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parsing the response into a dict object.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span><span class="n">raw</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="ReActAgent">
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.react_agent.ReActAgent">[docs]</a>
+<span class="k">class</span> <span class="nc">ReActAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An agent class that implements the ReAct algorithm. More details refer</span>
+<span class="sd">    to https://arxiv.org/abs/2210.03629.</span>
+
+<span class="sd">    Note this is an example implementation of ReAct algorithm in AgentScope.</span>
+<span class="sd">    We follow the idea within the paper, but the detailed prompt engineering</span>
+<span class="sd">    maybe different. Developers are encouraged to modify the prompt to fit</span>
+<span class="sd">    their own needs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">model_config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">tools</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">],</span>
+        <span class="n">sys_prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;You&#39;re a helpful assistant.&quot;</span><span class="p">,</span>
+        <span class="n">max_iters</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the ReAct agent with the given name, model config name</span>
+<span class="sd">        and tools.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (`str`):</span>
+<span class="sd">                The name of the agent.</span>
+<span class="sd">            sys_prompt (`str`):</span>
+<span class="sd">                The system prompt of the agent.</span>
+<span class="sd">            model_config_name (`str`):</span>
+<span class="sd">                The name of the model config, which is used to load model from</span>
+<span class="sd">                configuration.</span>
+<span class="sd">            tools (`List[Tuple]`):</span>
+<span class="sd">                A list of tuples, each containing the name of a tool and the</span>
+<span class="sd">                tool&#39;s description in JSON schema format.</span>
+<span class="sd">            max_iters (`int`, defaults to `10`):</span>
+<span class="sd">                The maximum number of iterations of the reasoning-acting loops.</span>
+<span class="sd">            verbose (`bool`, defaults to `True`):</span>
+<span class="sd">                Whether to print the output of the tools.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">sys_prompt</span><span class="o">=</span><span class="n">sys_prompt</span><span class="p">,</span>
+            <span class="n">model_config_name</span><span class="o">=</span><span class="n">model_config_name</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">tools</span> <span class="o">=</span> <span class="n">tools</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_iters</span> <span class="o">=</span> <span class="n">max_iters</span>
+
+        <span class="n">func_prompt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_name_mapping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_funcs_prompt</span><span class="p">(</span><span class="n">tools</span><span class="p">)</span>
+
+        <span class="c1"># Prepare system prompt</span>
+        <span class="n">tools_prompt</span> <span class="o">=</span> <span class="n">DEFAULT_TOOL_PROMPT</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">function_prompt</span><span class="o">=</span><span class="n">func_prompt</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sys_prompt</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sys_prompt</span> <span class="o">=</span> <span class="n">sys_prompt</span> <span class="o">+</span> <span class="n">tools_prompt</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sys_prompt</span> <span class="o">=</span> <span class="n">sys_prompt</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">tools_prompt</span>
+
+        <span class="c1"># Put sys prompt into memory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sys_prompt</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">))</span>
+
+<div class="viewcode-block" id="ReActAgent.reply">
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.react_agent.ReActAgent.reply">[docs]</a>
+    <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The reply function that achieves the ReAct algorithm.</span>
+<span class="sd">        The more details please refer to https://arxiv.org/abs/2210.03629&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_iters</span><span class="p">):</span>
+            <span class="c1"># Step 1: Thought</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; ITER </span><span class="si">{</span><span class="n">_</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">, STEP 1: REASONING &quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">70</span><span class="p">,</span> <span class="s2">&quot;#&quot;</span><span class="p">))</span>
+
+            <span class="c1"># Generate LLM response</span>
+            <span class="n">prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">get_memory</span><span class="p">(),</span>
+                <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="n">TOOL_HINT_PROMPT</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">),</span>
+            <span class="p">)</span>
+
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span>
+                <span class="n">prompt</span><span class="p">,</span>
+                <span class="n">parse_func</span><span class="o">=</span><span class="n">parse_func</span><span class="p">,</span>
+                <span class="n">max_retries</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">raw</span>
+
+            <span class="c1"># Record the response in memory</span>
+            <span class="n">msg_thought</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">)</span>
+
+            <span class="c1"># To better display the response, we reformat it by json.dumps here</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span>
+                <span class="n">Msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">),</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">),</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">msg_thought</span><span class="p">)</span>
+
+            <span class="c1"># Skip the next steps if no need to call tools</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;function&quot;</span><span class="p">,</span> <span class="p">[]))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">msg_thought</span>
+
+            <span class="c1"># Step 2: Action</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; ITER </span><span class="si">{</span><span class="n">_</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">, STEP 2: ACTION &quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">70</span><span class="p">,</span> <span class="s2">&quot;#&quot;</span><span class="p">))</span>
+
+            <span class="c1"># Execute functions</span>
+            <span class="n">execute_results</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;function&quot;</span><span class="p">]):</span>
+                <span class="c1"># Execute the function</span>
+                <span class="n">func_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_func</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span>
+                <span class="n">execute_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func_res</span><span class="p">)</span>
+
+            <span class="c1"># Prepare prompt for execution results</span>
+            <span class="n">execute_results_prompt</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">FUNCTION_RESULT_PROMPT</span><span class="o">.</span><span class="n">format_map</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">execute_results</span>
+                <span class="p">],</span>
+            <span class="p">)</span>
+            <span class="c1"># Add title</span>
+            <span class="n">execute_results_prompt</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">FUNCTION_RESULT_TITLE_PROMPT</span> <span class="o">+</span> <span class="n">execute_results_prompt</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Note: Observing the execution results and generate response are</span>
+            <span class="c1"># finished in the next loop. We just put the execution results</span>
+            <span class="c1"># into memory, and wait for the next loop to generate response.</span>
+
+            <span class="c1"># Record execution results into memory as a message from the system</span>
+            <span class="n">msg_res</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">,</span>
+                <span class="n">content</span><span class="o">=</span><span class="n">execute_results_prompt</span><span class="p">,</span>
+                <span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="n">msg_res</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">msg_res</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Msg</span><span class="p">(</span>
+            <span class="s2">&quot;system&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;The agent has reached the maximum iterations.&quot;</span><span class="p">,</span>
+            <span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ReActAgent.execute_func">
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.react_agent.ReActAgent.execute_func">[docs]</a>
+    <span class="k">def</span> <span class="nf">execute_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">func_call</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the tool function and return the result.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            index (`int`):</span>
+<span class="sd">                The index of the tool function.</span>
+<span class="sd">            func_call (`dict`):</span>
+<span class="sd">                The function call dictionary with keys &#39;name&#39; and &#39;arguments&#39;.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `ServiceResponse`: The execution results.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Extract the function name and arguments</span>
+        <span class="n">func_name</span> <span class="o">=</span> <span class="n">func_call</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+        <span class="n">func_args</span> <span class="o">=</span> <span class="n">func_call</span><span class="p">[</span><span class="s2">&quot;arguments&quot;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&gt;&gt;&gt; Executing function </span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2"> ...&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">func_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_name_mapping</span><span class="p">[</span><span class="n">func_name</span><span class="p">](</span><span class="o">**</span><span class="n">func_args</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">func_res</span> <span class="o">=</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+                <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+                <span class="n">content</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="s2">&quot;&gt;&gt;&gt; END &quot;</span><span class="p">)</span>
+
+        <span class="n">status</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;SUCCESS&quot;</span>
+            <span class="k">if</span> <span class="n">func_res</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span>
+            <span class="k">else</span> <span class="s2">&quot;FAILED&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># return the result of the function</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;function_name&quot;</span><span class="p">:</span> <span class="n">func_name</span><span class="p">,</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">status</span><span class="p">,</span>
+            <span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="n">func_res</span><span class="o">.</span><span class="n">content</span><span class="p">,</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="ReActAgent.prepare_funcs_prompt">
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.react_agent.ReActAgent.prepare_funcs_prompt">[docs]</a>
+    <span class="k">def</span> <span class="nf">prepare_funcs_prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tools</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert function descriptions from json schema format to</span>
+<span class="sd">        string prompt format.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tools (`List[Tuple]`):</span>
+<span class="sd">                The list of tool functions and their descriptions in JSON</span>
+<span class="sd">                schema format.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `Tuple[str, dict]`:</span>
+<span class="sd">                The string prompt for the tool functions and a function name</span>
+<span class="sd">                mapping dict.</span>
+
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                {index}. {function name}: {function description}</span>
+<span class="sd">                    {argument name} ({argument type}): {argument description}</span>
+<span class="sd">                    ...</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tools_prompt</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">func_name_mapping</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">desc</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tools</span><span class="p">):</span>
+            <span class="n">func_name</span> <span class="o">=</span> <span class="n">desc</span><span class="p">[</span><span class="s2">&quot;function&quot;</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+            <span class="n">func_name_mapping</span><span class="p">[</span><span class="n">func_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span>
+
+            <span class="n">func_desc</span> <span class="o">=</span> <span class="n">desc</span><span class="p">[</span><span class="s2">&quot;function&quot;</span><span class="p">][</span><span class="s2">&quot;description&quot;</span><span class="p">]</span>
+            <span class="n">args_desc</span> <span class="o">=</span> <span class="n">desc</span><span class="p">[</span><span class="s2">&quot;function&quot;</span><span class="p">][</span><span class="s2">&quot;parameters&quot;</span><span class="p">][</span><span class="s2">&quot;properties&quot;</span><span class="p">]</span>
+
+            <span class="n">args_list</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">func_desc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">args_name</span><span class="p">,</span> <span class="n">args_info</span> <span class="ow">in</span> <span class="n">args_desc</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="s2">&quot;type&quot;</span> <span class="ow">in</span> <span class="n">args_info</span><span class="p">:</span>
+                    <span class="n">args_line</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="si">{</span><span class="n">args_name</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="n">args_info</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">): &#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">args_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">args_line</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="si">{</span><span class="n">args_name</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">args_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+                    <span class="p">)</span>
+                <span class="n">args_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">args_line</span><span class="p">)</span>
+
+            <span class="n">func_prompt</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args_list</span><span class="p">)</span>
+            <span class="n">tools_prompt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func_prompt</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tools_prompt</span><span class="p">),</span> <span class="n">func_name_mapping</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Alibaba Tongyi Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

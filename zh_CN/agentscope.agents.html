@@ -136,6 +136,16 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#module-agentscope.agents.react_agent">react_agent module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.react_agent.ReActAgent"><code class="docutils literal notranslate"><span class="pre">ReActAgent</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.agents.react_agent.ReActAgent.execute_func"><code class="docutils literal notranslate"><span class="pre">ReActAgent.execute_func()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.agents.react_agent.ReActAgent.prepare_funcs_prompt"><code class="docutils literal notranslate"><span class="pre">ReActAgent.prepare_funcs_prompt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.agents.react_agent.ReActAgent.reply"><code class="docutils literal notranslate"><span class="pre">ReActAgent.reply()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.react_agent.parse_func"><code class="docutils literal notranslate"><span class="pre">parse_func()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">Memory package</a></li>
@@ -655,6 +665,85 @@ their input doesn’t include the thoughts of other agents.</p>
 </div>
 </dd></dl>
 
+</dd></dl>
+
+</section>
+<section id="module-agentscope.agents.react_agent">
+<span id="react-agent-module"></span><h2>react_agent module<a class="headerlink" href="#module-agentscope.agents.react_agent" title="Link to this heading"></a></h2>
+<p>An agent class that implements the ReAct algorithm. The agent will reason
+and act iteratively to solve problems. More details can be found in the paper
+<a class="reference external" href="https://arxiv.org/abs/2210.03629">https://arxiv.org/abs/2210.03629</a>.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.agents.react_agent.ReActAgent">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.agents.react_agent.</span></span><span class="sig-name descname"><span class="pre">ReActAgent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/agents/react_agent.html#ReActAgent"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.agents.react_agent.ReActAgent" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#agentscope.agents.agent.AgentBase" title="agentscope.agents.agent.AgentBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AgentBase</span></code></a></p>
+<p>An agent class that implements the ReAct algorithm. More details refer
+to <a class="reference external" href="https://arxiv.org/abs/2210.03629">https://arxiv.org/abs/2210.03629</a>.</p>
+<p>Note this is an example implementation of ReAct algorithm in AgentScope.
+We follow the idea within the paper, but the detailed prompt engineering
+maybe different. Developers are encouraged to modify the prompt to fit
+their own needs.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.agents.react_agent.ReActAgent.execute_func">
+<span class="sig-name descname"><span class="pre">execute_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_call</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/agents/react_agent.html#ReActAgent.execute_func"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.agents.react_agent.ReActAgent.execute_func" title="Link to this definition"></a></dt>
+<dd><p>Execute the tool function and return the result.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> (<cite>int</cite>) – The index of the tool function.</p></li>
+<li><p><strong>func_call</strong> (<cite>dict</cite>) – The function call dictionary with keys ‘name’ and ‘arguments’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>The execution results.</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.agents.react_agent.ReActAgent.prepare_funcs_prompt">
+<span class="sig-name descname"><span class="pre">prepare_funcs_prompt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tools</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/agents/react_agent.html#ReActAgent.prepare_funcs_prompt"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.agents.react_agent.ReActAgent.prepare_funcs_prompt" title="Link to this definition"></a></dt>
+<dd><p>Convert function descriptions from json schema format to
+string prompt format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tools</strong> (<cite>List[Tuple]</cite>) – The list of tool functions and their descriptions in JSON
+schema format.</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>The string prompt for the tool functions and a function name</dt><dd><p>mapping dict.</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="n">index</span><span class="p">}</span><span class="o">.</span> <span class="p">{</span><span class="n">function</span> <span class="n">name</span><span class="p">}:</span> <span class="p">{</span><span class="n">function</span> <span class="n">description</span><span class="p">}</span>
+    <span class="p">{</span><span class="n">argument</span> <span class="n">name</span><span class="p">}</span> <span class="p">({</span><span class="n">argument</span> <span class="nb">type</span><span class="p">}):</span> <span class="p">{</span><span class="n">argument</span> <span class="n">description</span><span class="p">}</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>Tuple[str, dict]</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.agents.react_agent.ReActAgent.reply">
+<span class="sig-name descname"><span class="pre">reply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/agents/react_agent.html#ReActAgent.reply"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.agents.react_agent.ReActAgent.reply" title="Link to this definition"></a></dt>
+<dd><p>The reply function that achieves the ReAct algorithm.
+The more details please refer to <a class="reference external" href="https://arxiv.org/abs/2210.03629">https://arxiv.org/abs/2210.03629</a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.agents.react_agent.parse_func">
+<span class="sig-prename descclassname"><span class="pre">agentscope.agents.react_agent.</span></span><span class="sig-name descname"><span class="pre">parse_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.models.html#agentscope.models.model.ModelResponse" title="agentscope.models.model.ModelResponse"><span class="pre">ModelResponse</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.models.html#agentscope.models.model.ModelResponse" title="agentscope.models.model.ModelResponse"><span class="pre">ModelResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/agents/react_agent.html#parse_func"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.agents.react_agent.parse_func" title="Link to this definition"></a></dt>
+<dd><p>Parsing the response into a dict object.</p>
 </dd></dl>
 
 </section>
