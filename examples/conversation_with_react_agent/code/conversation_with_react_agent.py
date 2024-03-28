@@ -82,6 +82,6 @@ user = UserAgent(name="User")
 x = None
 while True:
     x = user(x)
-    if x is None:
+    if x.content == "exit":
         break
     x = agent(x)
