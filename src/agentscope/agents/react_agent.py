@@ -4,6 +4,7 @@ and act iteratively to solve problems. More details can be found in the paper
 https://arxiv.org/abs/2210.03629.
 """
 import json
+import re
 from typing import Tuple, List
 
 from agentscope.agents import AgentBase
@@ -37,18 +38,40 @@ Generate a response in the following format:
 
 Response Format:
 You should respond in the following format, which can be loaded by `json.loads` in Python:
-{{
+```json
+{
     "thought": "what you thought",
     "speak": "what you said",
     "function": [{{"name": "{{function name}}", "arguments": {{"{{argument name}}": {{argument_value}}, ...}}}}, ...]
-}}
+}
+```
 
-Taking using web_search function as an example, the response should be like this:
-{{
+If you already know the answer and do not need to call any functions, you can simply return an empty function list like this:
+```json
+{
     "thought": "xxx",
     "speak": "xxx",
+    "function": []
+}
+```
+
+Taking using the web_search function as an example, the response should be like this:
+```json
+{
+    "thought": "I need to search for the weather today",
+    "speak": "Let me check the weather for you.",
     "function": [{{"name": "web_search", "arguments": {{"query": "what's the weather today?"}}}}]
-}}
+}
+```
+Taking the example of a known arithmetic problem, if you already know the answer to 1+1 without performing any calculations, your response should be like this:
+```json
+{  
+    "thought": "I remember that 1+1 equals 2",  
+    "speak": "The answer to 1+1 is 2.",  
+    "function": []  
+}
+```
+Please ensure that your response follows the specified format and includes the necessary fields.
 """  # noqa
 
 FUNCTION_RESULT_TITLE_PROMPT = """Execution Results:
@@ -60,9 +83,36 @@ FUNCTION_RESULT_PROMPT = """{index}. {function_name}:
 """
 
 
+def extract_json_content(input_string: str) -> str:
+    """Extract JSON content from a string.
+
+    Args:
+        input_string (`str`):
+            A string containing JSON content, typically surrounded by triple backticks and labeledwith 'json'.
+
+    Returns:
+        `str`:
+            The extracted JSON string. If no matching JSON content is found, the original input_string is returned.
+    """
+    # Define a regular expression to match the content between ```json and ```
+    pattern = r"```json\n(.*?)```"
+
+    # Enable DOTALL mode so that '.' matches any character, including newline characters
+    flags = re.DOTALL
+
+    # Search for the matching content
+    match = re.search(pattern, input_string, flags=flags)
+
+    # If a match is found, return the matched content; otherwise, return the input_string
+    if match:
+        return match.group(1)
+    else:
+        return input_string
+
+
 def parse_func(response: ModelResponse) -> ModelResponse:
     """Parsing the response into a dict object."""
-    return ModelResponse(raw=json.loads(response.text))
+    return ModelResponse(raw=json.loads(extract_json_content(response.text)))
 
 
 class ReActAgent(AgentBase):
