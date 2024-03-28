@@ -291,7 +291,7 @@ openai_chat_config = {
     "model_type": "ollama_chat",
 
     # Required parameters
-    "model": "{model_name}",                    # The model name used in ollama API, e.g. llama2
+    "model_name": "{model_name}",               # The model name used in ollama API, e.g. llama2
 
     # Optional parameters
     "options": {                                # Parameters passed to the model when calling
@@ -312,7 +312,7 @@ openai_chat_config = {
     "model_type": "ollama_generate",
 
     # Required parameters
-    "model": "{model_name}",                    # The model name used in ollama API, e.g. llama2
+    "model_name": "{model_name}",               # The model name used in ollama API, e.g. llama2
 
     # Optional parameters
     "options": {                                # Parameters passed to the model when calling
@@ -333,7 +333,7 @@ openai_chat_config = {
     "model_type": "ollama_embedding",
 
     # Required parameters
-    "model": "{model_name}",                    # The model name used in ollama API, e.g. llama2
+    "model_name": "{model_name}",               # The model name used in ollama API, e.g. llama2
 
     # Optional parameters
     "options": {                                # Parameters passed to the model when calling
