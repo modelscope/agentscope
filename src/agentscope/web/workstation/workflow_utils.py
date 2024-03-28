@@ -273,9 +273,9 @@ class SwitchPipelineNode(WorkflowNode):
         for key, value in zip(kwargs["cases"], deps):
             case_operators[key] = value
         kwargs.pop("cases")
-        self.pipeline = SwitchPipeline(  # type: ignore
+        self.pipeline = SwitchPipeline(
             case_operators=case_operators,
-            default_operators=default_operators,
+            default_operators=default_operators,  # type: ignore[arg-type]
             **kwargs,
         )
 
