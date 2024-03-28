@@ -53,20 +53,20 @@ AgentScope是一个创新的多智能体开发平台，旨在赋予开发人员�
 
 AgentScope提供了一系列`ModelWrapper`来支持本地模型服务和第三方模型API。
 
-| API                    | Task            | Model Wrapper                                                                                                                   |
-|------------------------|-----------------|---------------------------------------------------------------------------------------------------------------------------------|
-| OpenAI API             | Chat            | [`OpenAIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)                 |
-|                        | Embedding       | [`OpenAIEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)            |
-|                        | DALL·E          | [`OpenAIDALLEWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)                |
-| DashScope API          | Chat            | [`DashScopeChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py)           |
-|                        | Image Synthesis | [`DashScopeImageSynthesisWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py) |
-|                        | Text Embedding  | [`DashScopeTextEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py)  |
-| Gemini API             | Chat            | [`GeminiChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py)                 |
-|                        | Embedding       | [`GeminiEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py)            |
-| ollama                 | Chat            | [`OllamaChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)                 |
-|                        | Embedding       | [`OllamaEmbedding`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)                   |
-|                        | Generation      | [`OllamaGenerationWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)           |
-| Post Request based API | -               | [`PostAPIModelWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)                 |
+| API                    | Task            | Model Wrapper                                                                                                                   | Example Configuration                                                               |
+|------------------------|-----------------|---------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------|
+| OpenAI API             | Chat            | [`OpenAIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)                 | [link](https://modelscope.github.io/agentscope/zh_CN/tutorial/203-model.html#openai-api) |
+|                        | Embedding       | [`OpenAIEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)            | [link](https://modelscope.github.io/agentscope/zh_CN/tutorial/203-model.html#openai-api) |
+|                        | DALL·E          | [`OpenAIDALLEWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)                | [link](https://modelscope.github.io/agentscope/zh_CN/tutorial/203-model.html#openai-api) |
+| DashScope API          | Chat            | [`DashScopeChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py)           | [link](https://modelscope.github.io/agentscope/zh_CN/tutorial/203-model.html#dashscope-api) |
+|                        | Image Synthesis | [`DashScopeImageSynthesisWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py) | [link](https://modelscope.github.io/agentscope/zh_CN/tutorial/203-model.html#dashscope-api) |
+|                        | Text Embedding  | [`DashScopeTextEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py)  | [link](https://modelscope.github.io/agentscope/zh_CN/tutorial/203-model.html#dashscope-api) |
+| Gemini API             | Chat            | [`GeminiChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py)                 | [link](https://modelscope.github.io/agentscope/zh_CN/tutorial/203-model.html#gemini-api) |
+|                        | Embedding       | [`GeminiEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py)            | [link](https://modelscope.github.io/agentscope/zh_CN/tutorial/203-model.html#gemini-api) |
+| ollama                 | Chat            | [`OllamaChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)                 | [link](https://modelscope.github.io/agentscope/zh_CN/tutorial/203-model.html#ollama-api) |
+|                        | Embedding       | [`OllamaEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)                   | [link](https://modelscope.github.io/agentscope/zh_CN/tutorial/203-model.html#ollama-api) |
+|                        | Generation      | [`OllamaGenerationWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)           | [link](https://modelscope.github.io/agentscope/zh_CN/tutorial/203-model.html#ollama-api) |
+| Post Request based API | -               | [`PostAPIModelWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)                 | [link](https://modelscope.github.io/agentscope/zh_CN/tutorial/203-model.html#post-request-api) |
 
 **支持的本地模型部署**
 
@@ -94,6 +94,7 @@ AgentScope支持使用以下库快速部署本地模型服务。
   - [带有@功能的自主对话](./examples/conversation_with_mentions)
   - [智能体自组织的对话](./examples/conversation_self_organizing)
   - [兼容LangChain的基础对话](./examples/conversation_with_langchain)
+  - [与ReAct智能体对话](./examples/conversation_with_react_agent)
 
 - 游戏
   - [五子棋](./examples/game_gomoku)
@@ -218,16 +219,20 @@ while True:
 
 AgentScope
 提供了一个易于使用的运行时用户界面，能够在前端显示多模态输出，包括文本、图像、音频和视频。要启动前端，需要先安装AgentScope完整版本。
+
 ```
 # On windows
 pip install -e .[full]
 # On mac
 pip install -e .\[full\]
 ```
+
 然后运行
+
 ```
 as_studio  path/to/your/script.py
 ```
+
 前端就会在端口 `localhost:xxxx`上启动，打开后就能看到类似下图的界面：
 ![](https://gw.alicdn.com/imgextra/i3/O1CN01X673v81WaHV1oCxEN_!!6000000002804-0-tps-2992-1498.jpg)
 为了能使用该前端功能，你需要在代码中实现`main`函数。更多详情请参见 [src/agentscope/web/README.md](src/agentscope/web/README.md)。

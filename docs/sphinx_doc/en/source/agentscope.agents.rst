@@ -57,3 +57,12 @@ text_to_image_agent module
    :members:
    :undoc-members:
    :show-inheritance:
+
+
+react_agent module
+-------------------------------
+
+.. automodule:: agentscope.agents.react_agent
+   :members:
+   :undoc-members:
+   :show-inheritance:
