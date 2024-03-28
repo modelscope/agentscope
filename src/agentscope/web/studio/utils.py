@@ -183,6 +183,8 @@ def audio2text(audio_path: str) -> str:
     )
 
     result = rec.call(audio_path)
+    if not result["output"]:
+        return ""
     return " ".join([s["text"] for s in result["output"]["sentence"]])
 
 
