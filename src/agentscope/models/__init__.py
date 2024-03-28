@@ -68,11 +68,11 @@ def _get_model_wrapper(model_type: str) -> Type[ModelWrapperBase]:
         `Type[ModelWrapperBase]`: The corresponding model wrapper class.
     """
     if model_type in ModelWrapperBase.type_registry:
-        return ModelWrapperBase.type_registry[  # type: ignore [return-value]
+        return ModelWrapperBase.type_registry[  # type: ignore[return-value]
             model_type
         ]
     elif model_type in ModelWrapperBase.registry:
-        return ModelWrapperBase.registry[  # type: ignore [return-value]
+        return ModelWrapperBase.registry[  # type: ignore[return-value]
             model_type
         ]
     elif model_type in ModelWrapperBase.deprecated_type_registry:
@@ -81,7 +81,7 @@ def _get_model_wrapper(model_type: str) -> Type[ModelWrapperBase]:
             f"Model type [{model_type}] will be deprecated in future releases,"
             f" please use [{cls.model_type}] instead.",
         )
-        return cls  # type: ignore [return-value]
+        return cls  # type: ignore[return-value]
     else:
         logger.warning(
             f"Unsupported model_type [{model_type}],"

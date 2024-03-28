@@ -648,7 +648,7 @@ class MonitorFactory:
                 raise NotImplementedError(
                     "Monitor with type [{type}] is not implemented.",
                 )
-        return cls._instance  # type: ignore [return-value]
+        return cls._instance  # type: ignore[return-value]
 
     @classmethod
     def flush(cls) -> None:

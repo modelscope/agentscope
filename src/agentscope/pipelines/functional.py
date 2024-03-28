@@ -147,7 +147,7 @@ def forlooppipeline(
         # check condition
         if break_func(x):
             break
-    return x  # type: ignore [return-value]
+    return x  # type: ignore[return-value]
 
 
 def whilelooppipeline(
@@ -176,4 +176,4 @@ def whilelooppipeline(
         x = _operators(loop_body_operators, x)
         # check condition
         i += 1
-    return x  # type: ignore [return-value]
+    return x  # type: ignore[return-value]

@@ -73,8 +73,8 @@ class MonitorTestBase(unittest.TestCase):
         # metric content
         metric = self.monitor.get_metric("token_num")
         self.assertIsNotNone(metric)
-        self.assertEqual(metric["unit"], "token")  # type: ignore [index]
-        self.assertEqual(metric["quota"], 1000)  # type: ignore [index]
+        self.assertEqual(metric["unit"], "token")  # type: ignore[index]
+        self.assertEqual(metric["quota"], 1000)  # type:ignore[index]
         # remove a registered metric
         self.assertTrue(self.monitor.remove("token_num"))
         self.assertFalse(self.monitor.exists("token_num"))
@@ -155,9 +155,9 @@ class MonitorTestBase(unittest.TestCase):
         self.assertIsNone(self.monitor.get_metric("token_num"))
         metric = self.monitor.get_metric("agentB.token_num")
         self.assertIsNotNone(metric)
-        self.assertEqual(metric["value"], 0)  # type: ignore [index]
-        self.assertEqual(metric["unit"], "token")  # type: ignore [index]
-        self.assertEqual(metric["quota"], 100)  # type: ignore [index]
+        self.assertEqual(metric["value"], 0)  # type: ignore[index]
+        self.assertEqual(metric["unit"], "token")  # type: ignore[index]
+        self.assertEqual(metric["quota"], 100)  # type: ignore[index]
         self.assertEqual(self.monitor.get_metrics(r"cost"), {})
         agenta_metrics = self.monitor.get_metrics("agentA")
         self.assertEqual(len(agenta_metrics.keys()), 2)
@@ -213,7 +213,7 @@ class SqliteMonitorTest(MonitorTestBase):
             "agent_A.gpt-4",
         )
         self.assertLess(
-            self.monitor.get_value(  # type: ignore [arg-type]
+            self.monitor.get_value(  # type: ignore[arg-type]
                 "agent_A.gpt-4.cost",
             ),
             5,
@@ -227,7 +227,7 @@ class SqliteMonitorTest(MonitorTestBase):
             ),
         )
         self.assertEqual(
-            self.monitor.get_value(  # type: ignore [arg-type]
+            self.monitor.get_value(  # type: ignore[arg-type]
                 "agent_A.gpt-4.cost",
             ),
             3,
