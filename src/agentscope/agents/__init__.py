@@ -9,6 +9,11 @@ from .text_to_image_agent import TextToImageAgent
 from .rpc_agent import RpcAgentServerLauncher
 from .react_agent import ReActAgent
 
+try:
+    from .rag_agents import RAGAgentBase, LlamaIndexAgent
+except Exception:
+    RAGAgentBase, LlamaIndexAgent = None, None  # type: ignore # NOQA
+
 
 __all__ = [
     "AgentBase",
@@ -19,4 +24,6 @@ __all__ = [
     "UserAgent",
     "RpcAgentServerLauncher",
     "ReActAgent",
+    "RAGAgentBase",
+    "LlamaIndexAgent",
 ]
