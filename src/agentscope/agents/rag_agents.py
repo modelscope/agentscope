@@ -14,7 +14,13 @@ from agentscope.agents.agent import AgentBase
 from agentscope.message import Msg
 from agentscope.prompt import PromptEngine
 from agentscope.models import load_model_by_config_name
-from agentscope.rag import RAGBase, LlamaIndexRAG
+
+try:
+    from agentscope.rag import RAGBase, LlamaIndexRAG
+except ImportError as exc:
+    raise ImportError(
+        "Need to install llama index for RAG agents.",
+    ) from exc
 
 
 class RAGAgentBase(AgentBase, ABC):
@@ -105,12 +111,15 @@ class RAGAgentBase(AgentBase, ABC):
                     f"load and build object{cur_module, cur_class, init_args}",
                 )
                 return cur_class(**init_args)
-            except ImportError as exc:
+            except ImportError as exc_inner:
                 logger.error(
                     f"Fail to load class {class_name} "
                     f"from module {module_name}",
                 )
-                raise ImportError from exc
+                raise ImportError(
+                    f"Fail to load class {class_name} "
+                    f"from module {module_name}",
+                ) from exc_inner
         else:
             prepared_args = {}
             for key, value in config.items():
@@ -305,11 +314,11 @@ class LlamaIndexAgent(RAGAgentBase):
         else:
             try:
                 from llama_index.core import SimpleDirectoryReader
-            except ImportError as exc:
+            except ImportError as exc_inner:
                 raise ImportError(
                     " LlamaIndexAgent requires llama-index to be install."
                     "Please run `pip install llama-index`",
-                ) from exc
+                ) from exc_inner
             load_data_args = {
                 "loader": SimpleDirectoryReader(self.config["data_path"]),
             }

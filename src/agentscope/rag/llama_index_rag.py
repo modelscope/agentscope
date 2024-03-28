@@ -21,7 +21,6 @@ try:
     from llama_index.core.node_parser import SentenceSplitter
     from llama_index.core import (
         VectorStoreIndex,
-        SimpleDirectoryReader,
     )
 except ImportError:
     BaseReader, BaseRetriever, BaseEmbedding, Embedding = (
@@ -32,7 +31,7 @@ except ImportError:
     )
     IngestionPipeline, BasePydanticVectorStore, VectorStore = None, None, None
     PrivateAttr, NodeParser, SentenceSplitter = None, None, None
-    VectorStoreIndex, SimpleDirectoryReader = None, None
+    VectorStoreIndex = None
 
 from agentscope.rag import RAGBase
 from agentscope.rag.rag import (
@@ -156,7 +155,7 @@ class LlamaIndexRAG(RAGBase):
 
     def load_data(
         self,
-        loader: BaseReader = SimpleDirectoryReader("./data/"),
+        loader: BaseReader,
         query: Optional[str] = None,
         **kwargs: Any,
     ) -> Any:
