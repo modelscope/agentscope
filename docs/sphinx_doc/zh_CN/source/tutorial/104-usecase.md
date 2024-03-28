@@ -18,7 +18,7 @@
 
 ### 第一步: 准备模型API和设定模型配置
 
-就像我们在上一节教程中展示的，您需要为了您选择的OpenAI chat API, FastChat, 或vllm 准备一个JSON样式的模型配置文件。更多细节和高阶永达，比如用POST API配置本地模型，可以参考[关于模型](203-model)。
+就像我们在上一节教程中展示的，您需要为了您选择的OpenAI chat API, FastChat, 或vllm 准备一个JSON样式的模型配置文件。更多细节和高阶用法，比如用POST API配置本地模型，可以参考[关于模型](203-model)。
 
 ```json
 [
