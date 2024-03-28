@@ -311,7 +311,7 @@ openai_chat_config = {
     "model_type": "ollama_chat",
 
     # 必要参数
-    "model": "{model_name}",                    # ollama Chat API中的模型名, 例如：llama2
+    "model_name": "{model_name}",               # ollama Chat API中的模型名, 例如：llama2
 
     # 可选参数
     "options": {                                # 模型API接口被调用时传入的参数
@@ -332,7 +332,7 @@ openai_chat_config = {
     "model_type": "ollama_generate",
 
     # 必要参数
-    "model": "{model_name}",                    # ollama Generate API, 例如：llama2
+    "model_name": "{model_name}",               # ollama Generate API, 例如：llama2
 
     # 可选参数
     "options": {                                # 模型API接口被调用时传入的参数
@@ -353,7 +353,7 @@ openai_chat_config = {
     "model_type": "ollama_embedding",
 
     # 必要参数
-    "model": "{model_name}",                    # ollama Embedding API, 例如：llama2
+    "model_name": "{model_name}",               # ollama Embedding API, 例如：llama2
 
     # 可选参数
     "options": {                                # 模型API接口被调用时传入的参数
