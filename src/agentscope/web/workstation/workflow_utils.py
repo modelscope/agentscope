@@ -22,7 +22,7 @@ from agentscope.agents import (
     TextToImageAgent,
     DictDialogAgent,
 )
-from agentscope.pipelines.functional import placeholder
+from agentscope.pipelines.functional import placeholder, Operators
 from agentscope.pipelines import (
     PipelineBase,
     IfElsePipeline,
@@ -264,6 +264,10 @@ class SwitchPipelineNode(WorkflowNode):
         elif len(deps) == len(kwargs["cases"]) + 1:
             # No default_operators provided
             default_operators = deps.pop(-1)
+            assert isinstance(
+                default_operators,
+                Operators,
+            ), "default_operators must be Operators!"
         else:
             raise ValueError(
                 f"SwitchPipelineNode node {deps} not matches "
@@ -273,7 +277,6 @@ class SwitchPipelineNode(WorkflowNode):
         for key, value in zip(kwargs["cases"], deps):
             case_operators[key] = value
         kwargs.pop("cases")
-        print(kwargs, case_operators)
         self.pipeline = SwitchPipeline(
             case_operators=case_operators,
             default_operators=default_operators,
