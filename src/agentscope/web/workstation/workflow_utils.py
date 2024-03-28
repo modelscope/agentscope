@@ -45,18 +45,18 @@ class WorkflowNode(ABC):
     execution of operations when the node is called.
     """
 
-    def __init__(self, *args, **kwargs):  # type: ignore [no-untyped-def]
+    def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__()
         self.initialize(*args, **kwargs)
 
-    def initialize(self, *args, **kwargs):  # type: ignore [no-untyped-def]
+    def initialize(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         """
         Initialize nodes. Implement specific initialization logic in
         subclasses.
         """
 
     @abstractmethod
-    def __call__(self, *args, **kwargs):  # type: ignore [no-untyped-def]
+    def __call__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         """
         Performs the operations of the node. Implement specific logic in
         subclasses.
@@ -72,10 +72,10 @@ class ModelNode(WorkflowNode):
     model-related operations when called.
     """
 
-    def initialize(self, **kwargs):  # type: ignore [no-untyped-def]
+    def initialize(self, **kwargs):  # type: ignore[no-untyped-def]
         read_model_configs([kwargs])
 
-    def __call__(self, *args, **kwargs):  # type: ignore [no-untyped-def]
+    def __call__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         return None
 
 
@@ -87,10 +87,10 @@ class MsgNode(WorkflowNode):
     and performing message-related operations when the node is invoked.
     """
 
-    def initialize(self, *args, **kwargs):  # type: ignore [no-untyped-def]
+    def initialize(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         self.msg = Msg(*args, **kwargs)
 
-    def __call__(self, *args, **kwargs):  # type: ignore [no-untyped-def]
+    def __call__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         return self.msg
 
 
@@ -114,7 +114,7 @@ class MsgHubNode(WorkflowNode):
     and managing the flow of messages within a workflow's pipeline.
     """
 
-    def initialize(  # type: ignore [no-untyped-def]
+    def initialize(  # type: ignore[no-untyped-def]
         self,
         deps: List,
         **kwargs,
@@ -153,7 +153,7 @@ class SequentialPipelineNode(WorkflowNode):
     sequence, where the output of one node is the input to the next.
     """
 
-    def initialize(  # type: ignore [no-untyped-def]
+    def initialize(  # type: ignore[no-untyped-def]
         self,
         deps: List,
         **kwargs,
@@ -172,7 +172,7 @@ class ForLoopPipelineNode(WorkflowNode):
     iterating over a given set of inputs or a specified range.
     """
 
-    def initialize(  # type: ignore [no-untyped-def]
+    def initialize(  # type: ignore[no-untyped-def]
         self,
         deps: List,
         **kwargs,
@@ -194,7 +194,7 @@ class WhileLoopPipelineNode(WorkflowNode):
     node based on a specified condition.
     """
 
-    def initialize(  # type: ignore [no-untyped-def]
+    def initialize(  # type: ignore[no-untyped-def]
         self,
         deps: List,
         **kwargs,
@@ -219,7 +219,7 @@ class IfElsePipelineNode(WorkflowNode):
     nodes based on a specified condition.
     """
 
-    def initialize(  # type: ignore [no-untyped-def]
+    def initialize(  # type: ignore[no-untyped-def]
         self,
         deps: List,
         **kwargs,
@@ -248,7 +248,7 @@ class SwitchPipelineNode(WorkflowNode):
     based on the evaluation of a specified key or condition.
     """
 
-    def initialize(  # type: ignore [no-untyped-def]
+    def initialize(  # type: ignore[no-untyped-def]
         self,
         deps: List,
         **kwargs,
@@ -273,7 +273,7 @@ class SwitchPipelineNode(WorkflowNode):
         for key, value in zip(kwargs["cases"], deps):
             case_operators[key] = value
         kwargs.pop("cases")
-        self.pipeline = SwitchPipeline(  # type: ignore[arg-type]
+        self.pipeline = SwitchPipeline(  # type: ignore
             case_operators=case_operators,
             default_operators=default_operators,
             **kwargs,
@@ -292,7 +292,7 @@ class CopyNode(WorkflowNode):
     subsequent operations.
     """
 
-    def initialize(  # type: ignore [no-untyped-def]
+    def initialize(  # type: ignore[no-untyped-def]
         self,
         deps: List,
         **kwargs,
@@ -300,7 +300,7 @@ class CopyNode(WorkflowNode):
         assert len(deps) == 1, "Copy Node can only have one parent!"
         self.pipeline = deps[0]
 
-    def __call__(  # type: ignore [no-untyped-def]
+    def __call__(  # type: ignore[no-untyped-def]
         self,
         *args,
         **kwargs,
@@ -352,7 +352,7 @@ class ASDiGraph(nx.DiGraph):
         the computation graph.
     """
 
-    def __init__(self, *args, **kwargs):  # type: ignore [no-untyped-def]
+    def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         """
         Initialize the ASDiGraph instance.
         """
