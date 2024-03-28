@@ -263,10 +263,13 @@ class ReActAgent(AgentBase):
             `Tuple[str, dict]`:
                 The string prompt for the tool functions and a function name
                 mapping dict.
+
             .. code-block:: python
+
                 {index}. {function name}: {function description}
                     {argument name} ({argument type}): {argument description}
                     ...
+
         """
         tools_prompt = []
         func_name_mapping = {}
