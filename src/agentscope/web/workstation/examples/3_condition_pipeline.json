@@ -1,0 +1,191 @@
+{
+  "2": {
+    "name": "IfElsePipeline",
+    "data": {
+      "elements": [
+        "6",
+        "5"
+      ],
+      "args": {
+        "condition_func": "lambda x: \"user\" in x.get(\"content\", \"\")"
+      }
+    },
+    "inputs": {
+      "input_1": {
+        "connections": [
+          {
+            "node": "4",
+            "input": "output_1"
+          }
+        ]
+      }
+    },
+    "outputs": {
+      "output_1": {
+        "connections": [
+          {
+            "node": "7",
+            "output": "input_1"
+          }
+        ]
+      }
+    },
+    "pos_x": 84,
+    "pos_y": -23
+  },
+  "4": {
+    "name": "Message",
+    "data": {
+      "args": {
+        "name": "Host",
+        "content": "Hello!"
+      }
+    },
+    "inputs": {
+      "input_1": {
+        "connections": []
+      }
+    },
+    "outputs": {
+      "output_1": {
+        "connections": [
+          {
+            "node": "2",
+            "output": "input_1"
+          }
+        ]
+      }
+    },
+    "pos_x": -224,
+    "pos_y": -15
+  },
+  "5": {
+    "name": "UserAgent",
+    "data": {
+      "args": {
+        "name": "User"
+      }
+    },
+    "inputs": {
+      "input_1": {
+        "connections": []
+      }
+    },
+    "outputs": {
+      "output_1": {
+        "connections": []
+      }
+    },
+    "pos_x": 122,
+    "pos_y": 153
+  },
+  "6": {
+    "name": "DialogAgent",
+    "data": {
+      "args": {
+        "name": "Alice",
+        "sys_prompt": "You are Alice.",
+        "model_config_name": "qwen"
+      }
+    },
+    "inputs": {
+      "input_1": {
+        "connections": []
+      }
+    },
+    "outputs": {
+      "output_1": {
+        "connections": []
+      }
+    },
+    "pos_x": 339,
+    "pos_y": 295
+  },
+  "7": {
+    "name": "SwitchPipeline",
+    "data": {
+      "elements": [
+        "9",
+        "10"
+      ],
+      "args": {
+        "condition_func": "lambda x: x.get('content', None)",
+        "cases": [
+          "hi",
+          "bye"
+        ]
+      }
+    },
+    "inputs": {
+      "input_1": {
+        "connections": [
+          {
+            "node": "2",
+            "input": "output_1"
+          }
+        ]
+      }
+    },
+    "outputs": {
+      "output_1": {
+        "connections": []
+      }
+    },
+    "pos_x": 637,
+    "pos_y": 4
+  },
+  "8": {
+    "name": "dashscope_chat",
+    "data": {
+      "args": {
+        "config_name": "qwen",
+        "model_name": "qwen-max",
+        "api_key": "************",
+        "temperature": "0.1",
+        "seed": "1",
+        "model_type": "dashscope_chat",
+        "messages_key": "input"
+      }
+    },
+    "inputs": {},
+    "outputs": {},
+    "pos_x": -167.33333333333334,
+    "pos_y": 317
+  },
+  "9": {
+    "name": "Placeholder",
+    "data": {},
+    "inputs": {
+      "input_1": {
+        "connections": []
+      }
+    },
+    "outputs": {
+      "output_1": {
+        "connections": []
+      }
+    },
+    "pos_x": 751,
+    "pos_y": 395
+  },
+  "10": {
+    "name": "UserAgent",
+    "data": {
+      "args": {
+        "name": "User"
+      }
+    },
+    "inputs": {
+      "input_1": {
+        "connections": []
+      }
+    },
+    "outputs": {
+      "output_1": {
+        "connections": []
+      }
+    },
+    "pos_x": 730,
+    "pos_y": 259
+  }
+}

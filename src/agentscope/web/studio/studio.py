@@ -175,7 +175,18 @@ def run_app() -> None:
     def start_game(uid: str) -> None:
         """Start the main game loop."""
         thread_local_data.uid = uid
-        main = import_function_from_path(script_path, "main")
+        if script_path.endswith(".py"):
+            main = import_function_from_path(script_path, "main")
+        elif script_path.endswith(".json"):
+            from agentscope.web.workstation.workflow import (
+                start_workflow,
+                load_config,
+            )
+
+            config = load_config(script_path)
+            main = lambda: start_workflow(config)
+        else:
+            raise ValueError(f"Unrecognized file formats: {script_path}")
 
         while True:
             try:
