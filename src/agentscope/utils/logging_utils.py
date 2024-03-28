@@ -82,10 +82,10 @@ def _chat(
             "content" keys, and the message will be logged as "<name/role>:
             <content>".
     """
-    # Save message into file
+    # Save message into file, add default to ignore not serializable objects
     logger.log(
         LEVEL_CHAT_SAVE,
-        json.dumps(message, ensure_ascii=False),
+        json.dumps(message, ensure_ascii=False, default=lambda _: None),
         *args,
         **kwargs,
     )

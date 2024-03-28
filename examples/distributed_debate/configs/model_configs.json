@@ -1,0 +1,21 @@
+[
+    {
+        "config_name": "gpt-4",
+        "model_type": "openai",
+        "model_name": "gpt-4",
+        "api_key": "xxx",
+        "organization": "xxx",
+        "generate_args": {
+            "temperature": 0.5
+        }
+    },
+    {
+        "config_name": "qwen",
+        "model_type": "dashscope_chat",
+        "model_name": "qwen-max",
+        "api_key": "xxx",
+        "generate_args": {
+            "temperature": 0.5
+        }
+    }
+]

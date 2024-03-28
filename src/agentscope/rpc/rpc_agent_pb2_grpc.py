@@ -10,7 +10,7 @@ import agentscope.rpc.rpc_agent_pb2 as rpc__agent__pb2
 
 
 class RpcAgentStub(object):
-    """Rpc agent Server Stub"""
+    """Servicer for rpc agent server"""
 
     def __init__(self, channel):
         """Constructor.

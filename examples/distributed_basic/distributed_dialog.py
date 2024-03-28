@@ -41,7 +41,7 @@ def setup_assistant_server(assistant_host: str, assistant_port: int) -> None:
         agent_kwargs={
             "name": "Assitant",
             "sys_prompt": "You are a helpful assistant.",
-            "model_config_name": "gpt-3.5-turbo",
+            "model_config_name": "qwen",
             "use_memory": True,
         },
         host=assistant_host,
@@ -59,7 +59,7 @@ def run_main_process(assistant_host: str, assistant_port: int) -> None:
     assistant_agent = DialogAgent(
         name="Assistant",
         sys_prompt="You are a helpful assistant.",
-        model_config_name="gpt-3.5-turbo",
+        model_config_name="qwen",
         use_memory=True,
     ).to_dist(
         host=assistant_host,
