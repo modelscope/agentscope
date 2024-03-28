@@ -8,7 +8,11 @@ from .user_agent import UserAgent
 from .text_to_image_agent import TextToImageAgent
 from .rpc_agent import RpcAgentServerLauncher
 from .react_agent import ReActAgent
-from .rag_agents import RAGAgentBase, LlamaIndexAgent
+
+try:
+    from .rag_agents import RAGAgentBase, LlamaIndexAgent
+except Exception:
+    RAGAgentBase, LlamaIndexAgent = None, None  # type: ignore # NOQA
 
 
 __all__ = [

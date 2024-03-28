@@ -23,15 +23,12 @@ try:
         VectorStoreIndex,
     )
 except ImportError:
-    BaseReader, BaseRetriever, BaseEmbedding, Embedding = (
-        None,
-        None,
-        None,
-        None,
-    )
+    BaseReader, BaseRetriever = None, None
+    BaseEmbedding, Embedding = None, None
     IngestionPipeline, BasePydanticVectorStore, VectorStore = None, None, None
-    PrivateAttr, NodeParser, SentenceSplitter = None, None, None
+    NodeParser, SentenceSplitter = None, None
     VectorStoreIndex = None
+    PrivateAttr = None
 
 from agentscope.rag import RAGBase
 from agentscope.rag.rag import (
