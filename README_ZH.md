@@ -94,6 +94,7 @@ AgentScope支持使用以下库快速部署本地模型服务。
   - [带有@功能的自主对话](./examples/conversation_with_mentions)
   - [智能体自组织的对话](./examples/conversation_self_organizing)
   - [兼容LangChain的基础对话](./examples/conversation_with_langchain)
+  - [与ReAct智能体对话](./examples/conversation_with_react_agent)
 
 - 游戏
   - [狼人杀](./examples/game_werewolf)
