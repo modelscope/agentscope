@@ -187,12 +187,11 @@ class RpcAgent(AgentBase):
     def reply(self, x: dict = None) -> dict:
         if self.client is None:
             self._launch_server()
-        res_msg = self.client.call_func(
-            func_name="_reply",
-            value=x.serialize() if x is not None else "",
-        )
         return PlaceholderMessage(
-            **deserialize(res_msg),  # type: ignore [arg-type]
+            name=self.name,
+            content=None,
+            client=self.client,
+            x=x,
         )
 
     def observe(self, x: Union[dict, Sequence[dict]]) -> None:

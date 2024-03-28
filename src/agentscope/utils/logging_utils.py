@@ -85,7 +85,7 @@ def _chat(
     # Save message into file
     logger.log(
         LEVEL_CHAT_SAVE,
-        json.dumps(message, ensure_ascii=False),
+        json.dumps(message, ensure_ascii=False, default=lambda _: None),
         *args,
         **kwargs,
     )
