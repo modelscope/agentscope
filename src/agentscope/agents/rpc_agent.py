@@ -48,14 +48,14 @@ from agentscope.rpc import (
 )
 
 
-def rpc_servicer_method(  # type: ignore [no-untyped-def]
+def rpc_servicer_method(  # type: ignore[no-untyped-def]
     func,
 ):
     """A decorator used to identify that the specific method is an rpc agent
     servicer method, which can only be run in the rpc server process.
     """
 
-    def inner(rpc_agent, msg):  # type: ignore [no-untyped-def]
+    def inner(rpc_agent, msg):  # type: ignore[no-untyped-def]
         if not rpc_agent.is_servicer:
             error_msg = f"Detect main process try to use rpc servicer method \
                  [{func.__name__}]"
@@ -139,7 +139,7 @@ class RpcAgent(AgentBase):
             value=x.serialize() if x is not None else "",
         )
         return PlaceholderMessage(
-            **deserialize(res_msg),  # type: ignore [arg-type]
+            **deserialize(res_msg),  # type: ignore[arg-type]
         )
 
     def observe(self, x: Union[dict, Sequence[dict]]) -> None:
@@ -147,7 +147,7 @@ class RpcAgent(AgentBase):
             self._launch_server()
         self.client.call_func(
             func_name="_observe",
-            value=serialize(x),  # type: ignore [arg-type]
+            value=serialize(x),  # type: ignore[arg-type]
         )
 
     def stop(self) -> None:
