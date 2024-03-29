@@ -11,12 +11,11 @@ from typing import Optional, Any
 import importlib
 from loguru import logger
 
+from rag import RAGBase, LlamaIndexRAG
 
 from agentscope.agents.agent import AgentBase
 from agentscope.message import Msg
 from agentscope.models import load_model_by_config_name
-
-from agentscope.rag import RAGBase, LlamaIndexRAG
 
 
 class RAGAgentBase(AgentBase, ABC):

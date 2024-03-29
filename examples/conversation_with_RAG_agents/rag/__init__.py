@@ -2,10 +2,8 @@
 """ Import all pipeline related modules in the package. """
 from .rag import RAGBase
 
-try:
-    from .llama_index_rag import LlamaIndexRAG
-except Exception:
-    LlamaIndexRAG = None  # type: ignore # NOQA
+from .llama_index_rag import LlamaIndexRAG
+
 
 try:
     from .langchain_rag import LangChainRAG

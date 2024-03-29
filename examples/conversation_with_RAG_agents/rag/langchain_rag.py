@@ -23,8 +23,11 @@ except ImportError:
     TextSplitter = None
     CharacterTextSplitter = None
 
-from agentscope.rag import RAGBase
-from agentscope.rag.rag import DEFAULT_CHUNK_OVERLAP, DEFAULT_CHUNK_SIZE
+from examples.conversation_with_RAG_agents.rag import RAGBase
+from examples.conversation_with_RAG_agents.rag.rag import (
+    DEFAULT_CHUNK_OVERLAP,
+    DEFAULT_CHUNK_SIZE,
+)
 from agentscope.models import ModelWrapperBase
 
 
@@ -135,6 +138,7 @@ class LangChainRAG(RAGBase):
         splitter: Optional[TextSplitter] = None,
         **kwargs: Any,
     ) -> Any:
+        # pylint: disable=unused-argument
         """
         Preprocessing the loaded documents.
         Args:

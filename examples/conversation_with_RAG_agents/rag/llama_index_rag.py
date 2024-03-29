@@ -30,8 +30,8 @@ except ImportError:
     VectorStoreIndex = None
     PrivateAttr = None
 
-from agentscope.rag import RAGBase
-from agentscope.rag.rag import (
+from rag import RAGBase
+from rag.rag import (
     DEFAULT_CHUNK_SIZE,
     DEFAULT_CHUNK_OVERLAP,
     DEFAULT_TOP_K,
@@ -136,7 +136,7 @@ class LlamaIndexRAG(RAGBase):
         super().__init__(model, emb_model, config, **kwargs)
         self.retriever = None
         self.index = None
-        self.persist_dir = kwargs.get("persist_dir", "./")
+        self.persist_dir = kwargs.get("persist_dir", "/")
         self.emb_model = emb_model
         print(self.config)
 
