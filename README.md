@@ -116,7 +116,7 @@ the following libraries.
 - Distribution
   - [Distributed Conversation](./examples/distributed_basic)
   - [Distributed Debate](./examples/distributed_debate)
-  - [Distributed Search](./examples/distributed_search)
+  - [Distributed Parallel Search](./examples/distributed_search)
 
 More models, services and examples are coming soon!
 
