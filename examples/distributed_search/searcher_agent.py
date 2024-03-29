@@ -48,22 +48,23 @@ class SearcherAgent(AgentBase):
                 cse_id is not None
             ), "google search requires 'api_key' and 'cse_id'"
             self.search = partial(
-                google_search, api_key=api_key, cse_id=cse_id
+                google_search,
+                api_key=api_key,
+                cse_id=cse_id,
             )
         elif search_engine_type == "bing":
             assert api_key is not None, "bing search requires 'api_key'"
             self.search = partial(bing_search, api_key=api_key)
 
     def reply(self, x: dict = None) -> dict:
-
         prompt = self.model.format(
             Msg(name="system", role="system", content=self.sys_prompt),
             x,
             Msg(
                 name="user",
                 role="user",
-                content="Please convert the question into keywords. The return "
-                "format is:\nKeyword1 Keyword2...",
+                content="Please convert the question into keywords. The return"
+                " format is:\nKeyword1 Keyword2...",
             ),
         )
         query = self.model(prompt).text

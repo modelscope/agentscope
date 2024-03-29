@@ -29,6 +29,7 @@ repos:
                 pb2\.py$
                 | grpc\.py$
                 | ^docs
+                | ^examples
             )
         args: [ --disallow-untyped-defs,
                 --disallow-incomplete-defs,

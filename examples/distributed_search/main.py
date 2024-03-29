@@ -72,6 +72,6 @@ if __name__ == "__main__":
                 name="system",
                 role="system",
                 content=f"Finish in [{end_time - start_time}]s",
-            )
+            ),
         )
         msg = user_agent()
