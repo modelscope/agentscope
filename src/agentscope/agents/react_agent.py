@@ -46,21 +46,21 @@ You should respond in the following format, which can be loaded by `json.loads` 
 }
 ```
 
-If you already know the answer and do not need to call any functions, you can simply return an empty function list like this:
-```json
-{
-    "thought": "xxx",
-    "speak": "xxx",
-    "function": []
-}
-```
-
 Taking using the web_search function as an example, the response should be like this:
 ```json
 {
     "thought": "I need to search for the weather today",
     "speak": "Let me check the weather for you.",
     "function": [{{"name": "web_search", "arguments": {{"query": "what's the weather today?"}}}}]
+}
+```
+
+If you already know the answer and do not need to call any functions, you can simply return an empty function list like this:
+```json
+{
+    "thought": "xxx",
+    "speak": "xxx",
+    "function": []
 }
 ```
 Please ensure that your response follows the specified format and includes the necessary fields.
