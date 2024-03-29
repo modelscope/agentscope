@@ -21,7 +21,7 @@
             "chunk_size": 2048,
             "chunk_overlap": 40,
             "similarity_top_k": 10,
-            "log_retrieval": true,
+            "log_retrieval": false,
             "recent_n_mem": 1
       }
     }
@@ -62,7 +62,7 @@
             "chunk_size": 2048,
             "chunk_overlap": 40,
             "similarity_top_k": 10,
-            "log_retrieval": true,
+            "log_retrieval": false,
             "recent_n_mem": 1
       }
     }
