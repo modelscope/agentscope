@@ -107,6 +107,7 @@ the following libraries.
   - [Self-Organizing Conversation](./examples/conversation_self_organizing)
   - [Basic Conversation with LangChain library](./examples/conversation_with_langchain)
   - [Conversation with ReAct Agent](./examples/conversation_with_react_agent)
+  - [Conversation with RAG Agent](./examples/conversation_with_RAG_agents)
 
 - Game
   - [Gomoku](./examples/game_gomoku)
