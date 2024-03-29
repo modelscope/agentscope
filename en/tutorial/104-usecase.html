@@ -121,7 +121,7 @@
 <section id="getting-started">
 <h2>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h2>
 <p>Firstly, ensure that you have installed and configured AgentScope properly. Besides, we will involve the basic concepts of <code class="docutils literal notranslate"><span class="pre">Model</span> <span class="pre">API</span></code>,  <code class="docutils literal notranslate"><span class="pre">Agent</span></code>, <code class="docutils literal notranslate"><span class="pre">Msg</span></code>, and <code class="docutils literal notranslate"><span class="pre">Pipeline,</span></code> as described in <a class="reference internal" href="101-agentscope.html"><span class="doc std std-doc">Tutorial-Concept</span></a>.</p>
-<p><strong>Note</strong>: all the configurations and code for this tutorial can be found in <code class="docutils literal notranslate"><span class="pre">examples/werewolf</span></code>.</p>
+<p><strong>Note</strong>: all the configurations and code for this tutorial can be found in <code class="docutils literal notranslate"><span class="pre">examples/game_werewolf</span></code>.</p>
 <section id="step-1-prepare-model-api-and-set-model-configs">
 <h3>Step 1: Prepare Model API and Set Model Configs<a class="headerlink" href="#step-1-prepare-model-api-and-set-model-configs" title="Link to this heading"></a></h3>
 <p>As we discussed in the last tutorial, you need to prepare your model configurations into a JSON file for standard OpenAI chat API, FastChat, and vllm. More details and advanced usages such as configuring local models with POST API are presented in <a class="reference internal" href="203-model.html"><span class="doc std std-doc">Tutorial-Model-API</span></a>.</p>
@@ -172,7 +172,7 @@
 </pre></div>
 </div>
 <p>In this configuration, <code class="docutils literal notranslate"><span class="pre">Player1</span></code> is designated as a <code class="docutils literal notranslate"><span class="pre">DictDialogAgent</span></code>. The parameters include a system prompt (<code class="docutils literal notranslate"><span class="pre">sys_prompt</span></code>) that can guide the agent’s behavior, a model config name (<code class="docutils literal notranslate"><span class="pre">model_config_name</span></code>) that determines the name of the model configuration, and a flag (<code class="docutils literal notranslate"><span class="pre">use_memory</span></code>) indicating whether the agent should remember past interactions.</p>
-<p>For other players, configurations can be customized based on their roles. Each role may have different prompts, models, or memory settings. You can refer to the JSON file located at <code class="docutils literal notranslate"><span class="pre">examples/werewolf/configs/agent_configs.json</span></code> within the AgentScope examples directory.</p>
+<p>For other players, configurations can be customized based on their roles. Each role may have different prompts, models, or memory settings. You can refer to the JSON file located at <code class="docutils literal notranslate"><span class="pre">examples/game_werewolf/configs/agent_configs.json</span></code> within the AgentScope examples directory.</p>
 </section>
 <section id="step-3-initialize-agentscope-and-the-agents">
 <h3>Step 3: Initialize AgentScope and the Agents<a class="headerlink" href="#step-3-initialize-agentscope-and-the-agents" title="Link to this heading"></a></h3>
@@ -247,7 +247,7 @@
 </pre></div>
 </div>
 <p>After the discussion, werewolves proceed to vote for their target, and the majority’s choice is determined.  The result of the vote is then broadcast to all werewolves.</p>
-<p><strong>Note</strong>: the detailed prompts and utility functions can be found in <code class="docutils literal notranslate"><span class="pre">examples/werewolf</span></code>.</p>
+<p><strong>Note</strong>: the detailed prompts and utility functions can be found in <code class="docutils literal notranslate"><span class="pre">examples/game_werewolf</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>        <span class="c1"># werewolves vote</span>
         <span class="n">hint</span> <span class="o">=</span> <span class="n">HostMsg</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">Prompts</span><span class="o">.</span><span class="n">to_wolves_vote</span><span class="p">)</span>
         <span class="n">votes</span> <span class="o">=</span> <span class="p">[</span><span class="n">extract_name_and_id</span><span class="p">(</span><span class="n">wolf</span><span class="p">(</span><span class="n">hint</span><span class="p">)</span><span class="o">.</span><span class="n">content</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">wolf</span> <span class="ow">in</span> <span class="n">wolves</span><span class="p">]</span>
@@ -347,7 +347,7 @@
 <section id="step-5-run-the-application">
 <h3>Step 5: Run the Application<a class="headerlink" href="#step-5-run-the-application" title="Link to this heading"></a></h3>
 <p>With the game logic and agents set up, you’re ready to run the Werewolf game. By executing the <code class="docutils literal notranslate"><span class="pre">pipeline</span></code>, the game will proceed through the predefined phases, with agents interacting based on their roles and the strategies coded above:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>examples/werewolf
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>examples/game_werewolf
 python<span class="w"> </span>main.py<span class="w">  </span><span class="c1"># Assuming the pipeline is implemented in main.py</span>
 </pre></div>
 </div>

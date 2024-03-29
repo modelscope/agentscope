@@ -1,0 +1,391 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.service.web_search.web_digest &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=7d86a446"></script>
+        <script src="../../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../../_static/translations.js?v=beaddf03"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../../../../en/_modules/agentscope/service/web_search/web_digest.html">English</a></li> |
+    <a href="../../../../../zh_CN/_modules/agentscope/service/web_search/web_digest.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/quick_start.html">快速上手</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/advance.html">进阶使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.agents.html">Agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.memory.html">Memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.models.html">Models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.pipelines.html">Pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.service.html">Service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.rpc.html">RPC package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.utils.html">Utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.web.html">Web UI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.html">Module contents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">模块代码</a></li>
+      <li class="breadcrumb-item active">agentscope.service.web_search.web_digest</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>agentscope.service.web_search.web_digest 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;parsing and digesting the web pages&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">urlparse</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+
+
+<span class="kn">from</span> <span class="nn">agentscope.service.service_response</span> <span class="kn">import</span> <span class="n">ServiceResponse</span>
+<span class="kn">from</span> <span class="nn">agentscope.service.service_status</span> <span class="kn">import</span> <span class="n">ServiceExecStatus</span>
+<span class="kn">from</span> <span class="nn">agentscope.models.model</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span>
+<span class="kn">from</span> <span class="nn">agentscope.service</span> <span class="kn">import</span> <span class="n">summarization</span>
+
+
+<span class="n">DEFAULT_WEB_SYS_PROMPT</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;You&#39;re a web page analyser. You job is to extract important&quot;</span>
+    <span class="s2">&quot;and useful information from html or webpage description.</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="is_valid_url">
+<a class="viewcode-back" href="../../../../agentscope.service.web_search.html#agentscope.service.web_search.web_digest.is_valid_url">[文档]</a>
+<span class="k">def</span> <span class="nf">is_valid_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Use urlparse to check if a URL is valid</span>
+<span class="sd">    Args:</span>
+<span class="sd">        url (str): string to be checked</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: True if url is valid, False otherwise</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="c1"># Check if the URL has both a scheme</span>
+        <span class="c1"># (e.g., &quot;http&quot; or &quot;https&quot;) and a netloc (domain).</span>
+        <span class="k">return</span> <span class="nb">all</span><span class="p">([</span><span class="n">result</span><span class="o">.</span><span class="n">scheme</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">netloc</span><span class="p">])</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>  <span class="c1"># A ValueError indicates that the URL is not valid.</span></div>
+
+
+
+<div class="viewcode-block" id="load_web">
+<a class="viewcode-back" href="../../../../agentscope.service.web_search.html#agentscope.service.web_search.web_digest.load_web">[文档]</a>
+<span class="k">def</span> <span class="nf">load_web</span><span class="p">(</span>
+    <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">keep_raw</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">html_selected_tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">self_parse_func</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function for parsing and digesting the web page.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        url (str): the url of the web page</span>
+<span class="sd">        keep_raw (bool):</span>
+<span class="sd">            Whether to keep raw HTML. If True, the content is</span>
+<span class="sd">            stored with key &quot;raw&quot;.</span>
+<span class="sd">        html_selected_tags (Optional[Sequence[str]]):</span>
+<span class="sd">            the text in elements of `html_selected_tags` will</span>
+<span class="sd">            be extracted and stored with &quot;html_to_text&quot;</span>
+<span class="sd">            key in return.</span>
+<span class="sd">        self_parse_func (Optional[Callable]):</span>
+<span class="sd">            if &quot;self_parse_func&quot; is not None, then the</span>
+<span class="sd">            function will be invoked with the</span>
+<span class="sd">            requests.Response as input.</span>
+<span class="sd">            The result is stored with `self_define_func`</span>
+<span class="sd">            key</span>
+<span class="sd">        timeout (int): timeout parameter for requests.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `ServiceResponse`: If successful, `ServiceResponse` object is returned</span>
+<span class="sd">        with `content` field is a dict, where keys are subset of:</span>
+
+<span class="sd">            &quot;raw&quot;: exists if `keep_raw` is True, store raw HTML content`;</span>
+
+<span class="sd">            &quot;self_define_func&quot;: exists if `self_parse_func` is provided,</span>
+<span class="sd">            store the return of self_define_func;</span>
+
+<span class="sd">            &quot;html_to_text&quot;: exists if `html_selected_tags` is provided</span>
+<span class="sd">            and not empty;</span>
+
+<span class="sd">            &quot;json&quot;: exists if url links to a json webpage, then it is</span>
+<span class="sd">            parsed as json.</span>
+
+<span class="sd">         For example, `ServiceResponse.content` field is</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;raw&quot;: xxxxx,</span>
+<span class="sd">                &quot;selected_tags_text&quot;: xxxxx</span>
+<span class="sd">            }</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Accept-Language&quot;</span><span class="p">:</span> <span class="s2">&quot;zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Cache-Control&quot;</span><span class="p">:</span> <span class="s2">&quot;max-age=0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Upgrade-Insecure-Requests&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (X11; Linux x86_64)&quot;</span>
+        <span class="s2">&quot; AppleWebKit/537.36 (KHTML, like Gecko) &quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">if</span> <span class="n">keep_raw</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="s2">&quot;raw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+
+            <span class="k">if</span> <span class="n">self_parse_func</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="s2">&quot;self_define_func&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">self_parse_func</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+            <span class="n">content_type</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="k">if</span> <span class="s2">&quot;html&quot;</span> <span class="ow">in</span> <span class="n">content_type</span> <span class="ow">and</span> <span class="n">html_selected_tags</span><span class="p">:</span>
+                <span class="n">html_clean_text</span> <span class="o">=</span> <span class="n">parse_html_to_text</span><span class="p">(</span>
+                    <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+                    <span class="n">html_selected_tags</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">results</span><span class="p">[</span><span class="s2">&quot;html_to_text&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">html_clean_text</span>
+            <span class="k">elif</span> <span class="s2">&quot;pdf&quot;</span> <span class="ow">in</span> <span class="n">content_type</span><span class="p">:</span>
+                <span class="c1"># TODO: support pdf in the future</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;Current version does not parse url with pdf &quot;</span>
+                    <span class="s2">&quot;Content-Types&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="s2">&quot;json&quot;</span> <span class="ow">in</span> <span class="n">content_type</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="s2">&quot;json&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="s2">&quot;image&quot;</span> <span class="ow">in</span> <span class="n">content_type</span><span class="p">:</span>
+                <span class="c1"># TODO: to support image (gif, jpeg, png) data</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;Current implementation returns binary &quot;</span>
+                    <span class="s2">&quot;response.content for url with image Content-Types&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Unsupported content type (</span><span class="si">{</span><span class="n">content_type</span><span class="si">}</span><span class="s2">) &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;with url: (</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+                <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
+                <span class="n">content</span><span class="o">=</span><span class="n">results</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Fail to load web page, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;status code </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+                <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+                <span class="n">content</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="parse_html_to_text">
+<a class="viewcode-back" href="../../../../agentscope.service.web_search.html#agentscope.service.web_search.web_digest.parse_html_to_text">[文档]</a>
+<span class="k">def</span> <span class="nf">parse_html_to_text</span><span class="p">(</span>
+    <span class="n">html_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">html_selected_tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse the obtained HTML file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        html_text (str):</span>
+<span class="sd">            HTML source code</span>
+<span class="sd">        html_selected_tags (Optional[Sequence[str]]):</span>
+<span class="sd">            the text in elements of `html_selected_tags` will</span>
+<span class="sd">            be extracted and returned.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `ServiceResponse`: If successful, `ServiceResponse` object is returned</span>
+<span class="sd">        with `content` field is processed text content of the selected tags,</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">html_selected_tags</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;extracting text information from tags: &quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">html_selected_tags</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span><span class="p">,</span> <span class="n">NavigableString</span><span class="p">,</span> <span class="n">Tag</span>
+        <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="s2">&quot;BeautifulSoup4 is required for processing the &quot;</span>
+                <span class="s2">&quot;web page without model.&quot;</span>
+                <span class="s2">&quot;Please install with `pip install bs4` .&quot;</span><span class="p">,</span>
+            <span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
+
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">html_text</span><span class="p">,</span> <span class="s2">&quot;html.parser&quot;</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">get_navigable_strings</span><span class="p">(</span>
+            <span class="n">e</span><span class="p">:</span> <span class="n">Tag</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="c1"># pylint: disable=cell-var-from-loop</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">e</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">Tag</span><span class="p">):</span>
+                    <span class="c1"># pylint: disable=cell-var-from-loop</span>
+                    <span class="n">text</span> <span class="o">+=</span> <span class="n">get_navigable_strings</span><span class="p">(</span><span class="n">child</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot; </span><span class="se">\n\t</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">NavigableString</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">href</span> <span class="o">:=</span> <span class="n">e</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;href&quot;</span><span class="p">)):</span>
+                        <span class="k">if</span> <span class="n">is_valid_url</span><span class="p">(</span><span class="n">href</span><span class="p">):</span>
+                            <span class="n">text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">child</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">](</span><span class="si">{</span><span class="n">href</span><span class="si">}</span><span class="s2">)&quot;</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">text</span> <span class="o">+=</span> <span class="n">child</span><span class="o">.</span><span class="n">text</span>
+            <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+
+        <span class="n">text_parts</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">element</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">html_selected_tags</span><span class="p">:</span>
+                <span class="n">text_parts</span> <span class="o">+=</span> <span class="n">get_navigable_strings</span><span class="p">(</span><span class="n">element</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot; </span><span class="se">\n\t</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">element</span><span class="o">.</span><span class="n">decompose</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">text_parts</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">text_parts</span></div>
+
+
+
+<div class="viewcode-block" id="digest_webpage">
+<a class="viewcode-back" href="../../../../agentscope.service.web_search.html#agentscope.service.web_search.web_digest.digest_webpage">[文档]</a>
+<span class="k">def</span> <span class="nf">digest_webpage</span><span class="p">(</span>
+    <span class="n">web_text_or_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">ModelWrapperBase</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">html_selected_tags</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;li&quot;</span><span class="p">,</span> <span class="s2">&quot;div&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">),</span>
+    <span class="n">digest_prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_WEB_SYS_PROMPT</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        web_text_or_url (str): preprocessed web text or url to the web page</span>
+<span class="sd">        model (ModelWrapperBase): the model to digest the web content</span>
+<span class="sd">        html_selected_tags (Sequence[str]):</span>
+<span class="sd">            the text in elements of `html_selected_tags` will</span>
+<span class="sd">            be extracted and feed to the model</span>
+<span class="sd">        digest_prompt (str): system prompt for the model to digest</span>
+<span class="sd">            the web content</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `ServiceResponse`: If successful, `ServiceResponse` object is returned</span>
+<span class="sd">        with `content` field filled with the model output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">is_valid_url</span><span class="p">(</span><span class="n">web_text_or_url</span><span class="p">):</span>
+        <span class="c1"># if an url is provided, then</span>
+        <span class="c1"># load the content of the url first</span>
+        <span class="k">if</span> <span class="n">html_selected_tags</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">html_selected_tags</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">html_selected_tags</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;li&quot;</span><span class="p">,</span> <span class="s2">&quot;div&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">]</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">load_web</span><span class="p">(</span>
+            <span class="n">url</span><span class="o">=</span><span class="n">web_text_or_url</span><span class="p">,</span>
+            <span class="n">html_selected_tags</span><span class="o">=</span><span class="n">html_selected_tags</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">:</span>
+            <span class="n">web_text</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="s2">&quot;html_to_text&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">web_text</span> <span class="o">=</span> <span class="n">web_text_or_url</span>
+    <span class="k">return</span> <span class="n">summarization</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+        <span class="n">text</span><span class="o">=</span><span class="n">web_text</span><span class="p">,</span>
+        <span class="n">system_prompt</span><span class="o">=</span><span class="n">digest_prompt</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

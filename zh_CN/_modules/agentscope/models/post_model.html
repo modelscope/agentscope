@@ -319,7 +319,9 @@
 <span class="k">class</span> <span class="nc">PostAPIDALLEWrapper</span><span class="p">(</span><span class="n">PostAPIModelWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A post api model wrapper compatible with openai dalle&quot;&quot;&quot;</span>
 
-    <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;post_api_dalle&quot;</span>
+    <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;post_api_dall_e&quot;</span>
+
+    <span class="n">deprecated_model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;post_api_dalle&quot;</span>
 
     <span class="k">def</span> <span class="nf">_parse_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
         <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="n">img</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;response&quot;</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">]]</span>

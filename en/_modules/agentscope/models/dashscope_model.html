@@ -1,0 +1,734 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.models.dashscope_model &mdash; AgentScope  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../../../en/_modules/agentscope/models/dashscope_model.html">English</a></li> |
+    <a href="../../../../zh_CN/_modules/agentscope/models/dashscope_model.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/quick_start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/advance.html">Advanced Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/contribute.html">Get Involved</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">Agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">Memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">Models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">Pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">Service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">RPC package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">Utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">Web UI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">Module contents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../models.html">agentscope.models</a></li>
+      <li class="breadcrumb-item active">agentscope.models.dashscope_model</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for agentscope.models.dashscope_model</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Model wrapper for DashScope models&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span>
+<span class="kn">from</span> <span class="nn">http</span> <span class="kn">import</span> <span class="n">HTTPStatus</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+
+<span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">from</span> <span class="nn">..utils.tools</span> <span class="kn">import</span> <span class="n">to_openai_dict</span><span class="p">,</span> <span class="n">_convert_to_str</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">dashscope</span>
+<span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+    <span class="n">dashscope</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="kn">from</span> <span class="nn">.model</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ModelResponse</span>
+
+<span class="kn">from</span> <span class="nn">..file_manager</span> <span class="kn">import</span> <span class="n">file_manager</span>
+
+
+<div class="viewcode-block" id="DashScopeWrapperBase">
+<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.dashscope_model.DashScopeWrapperBase">[docs]</a>
+<span class="k">class</span> <span class="nc">DashScopeWrapperBase</span><span class="p">(</span><span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for DashScope API.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">generate_args</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the DashScope wrapper.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            config_name (`str`):</span>
+<span class="sd">                The name of the model config.</span>
+<span class="sd">            model_name (`str`, default `None`):</span>
+<span class="sd">                The name of the model to use in DashScope API.</span>
+<span class="sd">            api_key (`str`, default `None`):</span>
+<span class="sd">                The API key for DashScope API.</span>
+<span class="sd">            generate_args (`dict`, default `None`):</span>
+<span class="sd">                The extra keyword arguments used in DashScope api generation,</span>
+<span class="sd">                e.g. `temperature`, `seed`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">model_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">model_name</span> <span class="o">=</span> <span class="n">config_name</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;model_name is not set, use config_name instead.&quot;</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_name</span><span class="o">=</span><span class="n">config_name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">dashscope</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot find dashscope package in current python environment.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="n">model_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_args</span> <span class="o">=</span> <span class="n">generate_args</span> <span class="ow">or</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">api_key</span>
+        <span class="n">dashscope</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_length</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Set monitor accordingly</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_default_metrics</span><span class="p">()</span>
+
+<div class="viewcode-block" id="DashScopeWrapperBase.format">
+<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.dashscope_model.DashScopeWrapperBase.format">[docs]</a>
+    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Model Wrapper [</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">] doesn&#39;t &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;need to format the input. Please try to use the &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;model wrapper directly.&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="DashScopeChatWrapper">
+<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.dashscope_model.DashScopeChatWrapper">[docs]</a>
+<span class="k">class</span> <span class="nc">DashScopeChatWrapper</span><span class="p">(</span><span class="n">DashScopeWrapperBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for DashScope&#39;s chat API.&quot;&quot;&quot;</span>
+
+    <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;dashscope_chat&quot;</span>
+
+    <span class="n">deprecated_model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;tongyi_chat&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_register_default_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Set monitor accordingly</span>
+        <span class="c1"># TODO: set quota to the following metrics</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;call_counter&quot;</span><span class="p">),</span>
+            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;times&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;prompt_tokens&quot;</span><span class="p">),</span>
+            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;completion_tokens&quot;</span><span class="p">),</span>
+            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;total_tokens&quot;</span><span class="p">),</span>
+            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Processes a list of messages to construct a payload for the</span>
+<span class="sd">        DashScope API call. It then makes a request to the DashScope API</span>
+<span class="sd">        and returns the response. This method also updates monitoring</span>
+<span class="sd">        metrics based on the API response.</span>
+
+<span class="sd">        Each message in the &#39;messages&#39; list can contain text content and</span>
+<span class="sd">        optionally an &#39;image_urls&#39; key. If &#39;image_urls&#39; is provided,</span>
+<span class="sd">        it is expected to be a list of strings representing URLs to images.</span>
+<span class="sd">        These URLs will be transformed to a suitable format for the DashScope</span>
+<span class="sd">        API, which might involve converting local file paths to data URIs.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            messages (`list`):</span>
+<span class="sd">                A list of messages to process.</span>
+<span class="sd">            **kwargs (`Any`):</span>
+<span class="sd">                The keyword arguments to DashScope chat completions API,</span>
+<span class="sd">                e.g. `temperature`, `max_tokens`, `top_p`, etc. Please</span>
+<span class="sd">                refer to</span>
+<span class="sd">                https://help.aliyun.com/zh/dashscope/developer-reference/api-details</span>
+<span class="sd">                for more detailed arguments.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `ModelResponse`:</span>
+<span class="sd">                The response text in text field, and the raw response in</span>
+<span class="sd">                raw field.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            `parse_func`, `fault_handler` and `max_retries` are reserved for</span>
+<span class="sd">            `_response_parse_decorator` to parse and check the response</span>
+<span class="sd">            generated by model wrapper. Their usages are listed as follows:</span>
+<span class="sd">                - `parse_func` is a callable function used to parse and check</span>
+<span class="sd">                the response generated by the model, which takes the response</span>
+<span class="sd">                as input.</span>
+<span class="sd">                - `max_retries` is the maximum number of retries when the</span>
+<span class="sd">                `parse_func` raise an exception.</span>
+<span class="sd">                - `fault_handler` is a callable function which is called</span>
+<span class="sd">                when the response generated by the model is invalid after</span>
+<span class="sd">                `max_retries` retries.</span>
+<span class="sd">            The rule of roles in messages for DashScope is very rigid,</span>
+<span class="sd">            for more details, please refer to</span>
+<span class="sd">            https://help.aliyun.com/zh/dashscope/developer-reference/api-details</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># step1: prepare keyword arguments</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">generate_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">}</span>
+
+        <span class="c1"># step2: checking messages</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Dashscope `messages` field expected type `list`, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;got `</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span><span class="si">}</span><span class="s2">` instead.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="s2">&quot;role&quot;</span> <span class="ow">in</span> <span class="n">msg</span> <span class="ow">and</span> <span class="s2">&quot;content&quot;</span> <span class="ow">in</span> <span class="n">msg</span> <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">messages</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Each message in the &#39;messages&#39; list must contain a &#39;role&#39; &quot;</span>
+                <span class="s2">&quot;and &#39;content&#39; key for DashScope API.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># TODO: move is to prompt engineering</span>
+        <span class="n">messages</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_preprocess_role</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span>
+        <span class="c1"># step3: forward to generate response</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">dashscope</span><span class="o">.</span><span class="n">Generation</span><span class="o">.</span><span class="n">call</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+            <span class="n">messages</span><span class="o">=</span><span class="n">messages</span><span class="p">,</span>
+            <span class="n">result_format</span><span class="o">=</span><span class="s2">&quot;message&quot;</span><span class="p">,</span>  <span class="c1"># set the result to be &quot;message&quot; format.</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="n">HTTPStatus</span><span class="o">.</span><span class="n">OK</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot; Request id: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">request_id</span><span class="si">}</span><span class="s2">,&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; Status code: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">,&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; error code: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">code</span><span class="si">}</span><span class="s2">,&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; error message: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="c1"># step4: record the api invocation if needed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_model_invocation</span><span class="p">(</span>
+            <span class="n">arguments</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+                <span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="n">messages</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># step5: update monitor accordingly</span>
+        <span class="c1"># The metric names are unified for comparison</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_monitor</span><span class="p">(</span>
+            <span class="n">call_counter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">prompt_tokens</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="p">[</span><span class="s2">&quot;input_tokens&quot;</span><span class="p">],</span>
+            <span class="n">completion_tokens</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="p">[</span><span class="s2">&quot;output_tokens&quot;</span><span class="p">],</span>
+            <span class="n">total_tokens</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="p">[</span><span class="s2">&quot;total_tokens&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+
+        <span class="c1"># step6: return response</span>
+        <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
+            <span class="n">text</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;message&quot;</span><span class="p">][</span><span class="s2">&quot;content&quot;</span><span class="p">],</span>
+            <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="DashScopeChatWrapper.format">
+<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.dashscope_model.DashScopeChatWrapper.format">[docs]</a>
+    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the messages for DashScope Chat API.</span>
+
+<span class="sd">        In this format function, the input messages are converted into</span>
+<span class="sd">        dictionaries with `role` and `content` fields. This conversation may</span>
+<span class="sd">        not meet the requirement that `user` and `assistant` speak</span>
+<span class="sd">        alternatively. This requirement can be enforced by calling</span>
+<span class="sd">        `preprocess_role` function..</span>
+
+<span class="sd">        # TODO: We will merge these two functions into one `format` function</span>
+<span class="sd">        soon.</span>
+
+<span class="sd">        The following is an example:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            prompt = model.format(</span>
+<span class="sd">                Msg(&quot;system&quot;, &quot;You&#39;re a helpful assistant&quot;, role=&quot;system&quot;),</span>
+<span class="sd">                Msg(&quot;Bob&quot;, &quot;Hi, how can I help you?&quot;, role=&quot;assistant&quot;),</span>
+<span class="sd">                Msg(&quot;user&quot;, &quot;What&#39;s the date today?&quot;, role=&quot;user&quot;)</span>
+<span class="sd">            )</span>
+
+<span class="sd">        The prompt will be as follows:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            [</span>
+<span class="sd">                {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant&quot;},</span>
+<span class="sd">                {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;Hi, how can I help you&quot;},</span>
+<span class="sd">                {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;What&#39;s the date today?&quot;}</span>
+<span class="sd">            ]</span>
+
+
+<span class="sd">        Args:</span>
+<span class="sd">            *args (`Union[Msg, Sequence[Msg]]`):</span>
+<span class="sd">                The input arguments to be formatted, where each argument</span>
+<span class="sd">                should be a `Msg` object, or a list of `Msg` objects</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `List[dict]`:</span>
+<span class="sd">                The formatted messages.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: This function only convert agentscope msgs into qwen</span>
+        <span class="c1">#  messages, the re-range is executed in _preprocess_role function.</span>
+
+        <span class="c1"># TODO: This strategy will be replaced by a new strategy in the future.</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">unit</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
+                <span class="n">prompt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">to_openai_dict</span><span class="p">(</span><span class="n">unit</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">child_unit</span> <span class="ow">in</span> <span class="n">unit</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child_unit</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
+                        <span class="n">prompt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">to_openai_dict</span><span class="p">(</span><span class="n">child_unit</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;The input should be a Msg object or a list &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;of Msg objects, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">child_unit</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+                        <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;The input should be a Msg object or a list &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;of Msg objects, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">prompt</span></div>
+
+
+<div class="viewcode-block" id="DashScopeChatWrapper.advanced_format">
+<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.dashscope_model.DashScopeChatWrapper.advanced_format">[docs]</a>
+    <span class="k">def</span> <span class="nf">advanced_format</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the messages for DashScope Chat API.</span>
+
+<span class="sd">        In this format function, the input messages are formatted into a</span>
+<span class="sd">        single system messages with format &quot;{name}: {content}&quot; for each</span>
+<span class="sd">        message. Note this strategy maybe not suitable for all scenarios,</span>
+<span class="sd">        and developers are encouraged to implement their own prompt</span>
+<span class="sd">        engineering strategies.</span>
+
+<span class="sd">        The following is an example:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            prompt = model.format(</span>
+<span class="sd">                Msg(&quot;system&quot;, &quot;You&#39;re a helpful assistant&quot;, role=&quot;system&quot;),</span>
+<span class="sd">                Msg(&quot;Bob&quot;, &quot;Hi, how can I help you?&quot;, role=&quot;assistant&quot;),</span>
+<span class="sd">                Msg(&quot;user&quot;, &quot;What&#39;s the date today?&quot;, role=&quot;user&quot;)</span>
+<span class="sd">            )</span>
+
+<span class="sd">        The prompt will be as follows:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            [</span>
+<span class="sd">                {</span>
+<span class="sd">                    &quot;role&quot;: &quot;system&quot;,</span>
+<span class="sd">                    &quot;content&quot;: (</span>
+<span class="sd">                       &quot;system: You&#39;re a helpful assistant\\n&quot;,</span>
+<span class="sd">                       &quot;Bob: Hi, how can I help you?\\n&quot;,</span>
+<span class="sd">                       &quot;user: What&#39;s the date today?&quot;</span>
+<span class="sd">                    )</span>
+<span class="sd">                }</span>
+<span class="sd">            ]</span>
+
+
+<span class="sd">        Args:</span>
+<span class="sd">            *args (`Union[Msg, Sequence[Msg]]`):</span>
+<span class="sd">                The input arguments to be formatted, where each argument</span>
+<span class="sd">                should be a `Msg` object, or a list of `Msg` objects</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `List[dict]`:</span>
+<span class="sd">                The formatted messages.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: This function only convert agentscope msgs into qwen</span>
+        <span class="c1">#  messages, the re-range is executed in _preprocess_role function.</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
+                <span class="n">prompt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">unit</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">_convert_to_str</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">content</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">child_unit</span> <span class="ow">in</span> <span class="n">unit</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child_unit</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
+                        <span class="n">prompt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">child_unit</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_convert_to_str</span><span class="p">(</span><span class="n">child_unit</span><span class="o">.</span><span class="n">content</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;The input should be a Msg object or a list &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;of Msg objects, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">child_unit</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+                        <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;The input should be a Msg object or a list &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;of Msg objects, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="n">prompt_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">[{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">prompt_str</span><span class="p">}]</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_preprocess_role</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;preprocess role rules for DashScope&quot;&quot;&quot;</span>
+        <span class="c1"># The models in this list require that the roles of messages must</span>
+        <span class="c1"># alternate between &quot;user&quot; and &quot;assistant&quot;.</span>
+        <span class="n">message_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">message_length</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># If the length of the message list is odd, roles will</span>
+            <span class="c1"># alternate, starting with &quot;user&quot;</span>
+            <span class="n">roles</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="s2">&quot;user&quot;</span> <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;assistant&quot;</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">message_length</span><span class="p">)</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># If the length of the message list is even, the first role</span>
+            <span class="c1"># will be &quot;system&quot;, followed by alternating &quot;user&quot; and</span>
+            <span class="c1"># &quot;assistant&quot;</span>
+            <span class="n">roles</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;system&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span>
+                <span class="s2">&quot;user&quot;</span> <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;assistant&quot;</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">message_length</span><span class="p">)</span>
+            <span class="p">]</span>
+
+        <span class="c1"># Assign the roles list to the &quot;role&quot; key for each message in</span>
+        <span class="c1"># the messages list</span>
+        <span class="k">for</span> <span class="n">message</span><span class="p">,</span> <span class="n">role</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span> <span class="n">roles</span><span class="p">):</span>
+            <span class="n">message</span><span class="p">[</span><span class="s2">&quot;role&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">role</span>
+
+        <span class="k">return</span> <span class="n">messages</span></div>
+
+
+
+<div class="viewcode-block" id="DashScopeImageSynthesisWrapper">
+<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.dashscope_model.DashScopeImageSynthesisWrapper">[docs]</a>
+<span class="k">class</span> <span class="nc">DashScopeImageSynthesisWrapper</span><span class="p">(</span><span class="n">DashScopeWrapperBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for DashScope Image Synthesis API.&quot;&quot;&quot;</span>
+
+    <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;dashscope_image_synthesis&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_register_default_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Set monitor accordingly</span>
+        <span class="c1"># TODO: set quota to the following metrics</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;call_counter&quot;</span><span class="p">),</span>
+            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;times&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;image_count&quot;</span><span class="p">),</span>
+            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;image&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">save_local</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">         Args:</span>
+<span class="sd">             prompt (`str`):</span>
+<span class="sd">                 The prompt string to generate images from.</span>
+<span class="sd">             save_local: (`bool`, default `False`):</span>
+<span class="sd">                 Whether to save the generated images locally, and replace</span>
+<span class="sd">                 the returned image url with the local path.</span>
+<span class="sd">             **kwargs (`Any`):</span>
+<span class="sd">                 The keyword arguments to DashScope Image Synthesis API,</span>
+<span class="sd">                 e.g. `n`, `size`, etc. Please refer to</span>
+<span class="sd">                 https://help.aliyun.com/zh/dashscope/developer-reference/api-details-9</span>
+<span class="sd">        for more detailed arguments.</span>
+
+<span class="sd">         Returns:</span>
+<span class="sd">             `ModelResponse`:</span>
+<span class="sd">                 A list of image urls in image_urls field and the</span>
+<span class="sd">                 raw response in raw field.</span>
+
+<span class="sd">         Note:</span>
+<span class="sd">             `parse_func`, `fault_handler` and `max_retries` are reserved</span>
+<span class="sd">             for `_response_parse_decorator` to parse and check the</span>
+<span class="sd">             response generated by model wrapper. Their usages are listed</span>
+<span class="sd">             as follows:</span>
+<span class="sd">                 - `parse_func` is a callable function used to parse and</span>
+<span class="sd">                 check the response generated by the model, which takes</span>
+<span class="sd">                 the response as input.</span>
+<span class="sd">                 - `max_retries` is the maximum number of retries when the</span>
+<span class="sd">                 `parse_func` raise an exception.</span>
+<span class="sd">                 - `fault_handler` is a callable function which is called</span>
+<span class="sd">                 when the response generated by the model is invalid after</span>
+<span class="sd">                 `max_retries` retries.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># step1: prepare keyword arguments</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">generate_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">}</span>
+
+        <span class="c1"># step2: forward to generate response</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">dashscope</span><span class="o">.</span><span class="n">ImageSynthesis</span><span class="o">.</span><span class="n">call</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+            <span class="n">prompt</span><span class="o">=</span><span class="n">prompt</span><span class="p">,</span>
+            <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="n">HTTPStatus</span><span class="o">.</span><span class="n">OK</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot; Request id: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">request_id</span><span class="si">}</span><span class="s2">,&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; Status code: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">,&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; error code: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">code</span><span class="si">}</span><span class="s2">,&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; error message: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="c1"># step3: record the model api invocation if needed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_model_invocation</span><span class="p">(</span>
+            <span class="n">arguments</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+                <span class="s2">&quot;prompt&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># step4: update monitor accordingly</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_monitor</span><span class="p">(</span>
+            <span class="n">call_counter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># step5: return response</span>
+        <span class="n">images</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">]</span>
+        <span class="c1"># Get image urls as a list</span>
+        <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="n">_</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">images</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">save_local</span><span class="p">:</span>
+            <span class="c1"># Return local url if save_local is True</span>
+            <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="n">file_manager</span><span class="o">.</span><span class="n">save_image</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span><span class="n">image_urls</span><span class="o">=</span><span class="n">urls</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="DashScopeTextEmbeddingWrapper">
+<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.dashscope_model.DashScopeTextEmbeddingWrapper">[docs]</a>
+<span class="k">class</span> <span class="nc">DashScopeTextEmbeddingWrapper</span><span class="p">(</span><span class="n">DashScopeWrapperBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for DashScope Text Embedding API.&quot;&quot;&quot;</span>
+
+    <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;dashscope_text_embedding&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_register_default_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Set monitor accordingly</span>
+        <span class="c1"># TODO: set quota to the following metrics</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;call_counter&quot;</span><span class="p">),</span>
+            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;times&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;total_tokens&quot;</span><span class="p">),</span>
+            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">texts</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Embed the messages with DashScope Text Embedding API.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            texts (`list[str]` or `str`):</span>
+<span class="sd">                The messages used to embed.</span>
+<span class="sd">            **kwargs (`Any`):</span>
+<span class="sd">                The keyword arguments to DashScope Text Embedding API,</span>
+<span class="sd">                e.g. `text_type`. Please refer to</span>
+<span class="sd">                https://help.aliyun.com/zh/dashscope/developer-reference/api-details-15</span>
+<span class="sd">                for more detailed arguments.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `ModelResponse`:</span>
+<span class="sd">                A list of embeddings in embedding field and the raw</span>
+<span class="sd">                response in raw field.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            `parse_func`, `fault_handler` and `max_retries` are reserved</span>
+<span class="sd">            for `_response_parse_decorator` to parse and check the response</span>
+<span class="sd">            generated by model wrapper. Their usages are listed as follows:</span>
+<span class="sd">                - `parse_func` is a callable function used to parse and</span>
+<span class="sd">                check the response generated by the model, which takes the</span>
+<span class="sd">                response as input.</span>
+<span class="sd">                - `max_retries` is the maximum number of retries when the</span>
+<span class="sd">                `parse_func` raise an exception.</span>
+<span class="sd">                - `fault_handler` is a callable function which is called</span>
+<span class="sd">                when the response generated by the model is invalid after</span>
+<span class="sd">                `max_retries` retries.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># step1: prepare keyword arguments</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">generate_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">}</span>
+
+        <span class="c1"># step2: forward to generate response</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">dashscope</span><span class="o">.</span><span class="n">TextEmbedding</span><span class="o">.</span><span class="n">call</span><span class="p">(</span>
+            <span class="nb">input</span><span class="o">=</span><span class="n">texts</span><span class="p">,</span>
+            <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="n">HTTPStatus</span><span class="o">.</span><span class="n">OK</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot; Request id: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">request_id</span><span class="si">}</span><span class="s2">,&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; Status code: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">,&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; error code: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">code</span><span class="si">}</span><span class="s2">,&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; error message: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="c1"># step3: record the model api invocation if needed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_model_invocation</span><span class="p">(</span>
+            <span class="n">arguments</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+                <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">texts</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># step4: update monitor accordingly</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_monitor</span><span class="p">(</span>
+            <span class="n">call_counter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># step5: return response</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">&quot;embeddings&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
+                <span class="n">embedding</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">&quot;embedding&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
+                <span class="n">embedding</span><span class="o">=</span><span class="p">[</span>
+                    <span class="n">_</span><span class="p">[</span><span class="s2">&quot;embedding&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">&quot;embeddings&quot;</span><span class="p">]</span>
+                <span class="p">],</span>
+                <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Alibaba Tongyi Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -104,6 +104,7 @@
  | <a href="#G"><strong>G</strong></a>
  | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
+ | <a href="#K"><strong>K</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
@@ -131,6 +132,8 @@
 </li>
       </ul></li>
       <li><a href="agentscope.rpc.html#agentscope.rpc.rpc_agent_pb2_grpc.add_RpcAgentServicer_to_server">add_RpcAgentServicer_to_server() (in module agentscope.rpc.rpc_agent_pb2_grpc)</a>
+</li>
+      <li><a href="agentscope.models.html#agentscope.models.dashscope_model.DashScopeChatWrapper.advanced_format">advanced_format() (agentscope.models.dashscope_model.DashScopeChatWrapper method)</a>
 </li>
       <li><a href="agentscope.agents.html#agentscope.agents.agent.AgentBase">AgentBase (class in agentscope.agents.agent)</a>
 </li>
@@ -219,10 +222,31 @@
 </li>
       </ul></li>
       <li>
+    agentscope.models.dashscope_model
+
+      <ul>
+        <li><a href="agentscope.models.html#module-agentscope.models.dashscope_model">module</a>
+</li>
+      </ul></li>
+      <li>
+    agentscope.models.gemini_model
+
+      <ul>
+        <li><a href="agentscope.models.html#module-agentscope.models.gemini_model">module</a>
+</li>
+      </ul></li>
+      <li>
     agentscope.models.model
 
       <ul>
         <li><a href="agentscope.models.html#module-agentscope.models.model">module</a>
+</li>
+      </ul></li>
+      <li>
+    agentscope.models.ollama_model
+
+      <ul>
+        <li><a href="agentscope.models.html#module-agentscope.models.ollama_model">module</a>
 </li>
       </ul></li>
       <li>
@@ -239,6 +263,8 @@
         <li><a href="agentscope.models.html#module-agentscope.models.post_model">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     agentscope.pipelines.functional
 
@@ -253,8 +279,6 @@
         <li><a href="agentscope.pipelines.html#module-agentscope.pipelines.pipeline">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     agentscope.rpc.rpc_agent_client
 
@@ -347,6 +371,13 @@
 </li>
       </ul></li>
       <li>
+    agentscope.service.web_search.web_digest
+
+      <ul>
+        <li><a href="agentscope.service.web_search.html#module-agentscope.service.web_search.web_digest">module</a>
+</li>
+      </ul></li>
+      <li>
     agentscope.utils.common
 
       <ul>
@@ -432,9 +463,13 @@
 </li>
       <li><a href="agentscope.models.html#agentscope.models.clear_model_configs">clear_model_configs() (in module agentscope.models)</a>
 </li>
-      <li><a href="agentscope.models.html#agentscope.models.model.ModelWrapperBase.config_name">config_name (agentscope.models.model.ModelWrapperBase attribute)</a>
+      <li><a href="agentscope.models.html#agentscope.models.dashscope_model.DashScopeWrapperBase.config_name">config_name (agentscope.models.dashscope_model.DashScopeWrapperBase attribute)</a>
 
       <ul>
+        <li><a href="agentscope.models.html#agentscope.models.gemini_model.GeminiWrapperBase.config_name">(agentscope.models.gemini_model.GeminiWrapperBase attribute)</a>
+</li>
+        <li><a href="agentscope.models.html#agentscope.models.model.ModelWrapperBase.config_name">(agentscope.models.model.ModelWrapperBase attribute)</a>
+</li>
         <li><a href="agentscope.models.html#agentscope.models.openai_model.OpenAIWrapperBase.config_name">(agentscope.models.openai_model.OpenAIWrapperBase attribute)</a>
 </li>
       </ul></li>
@@ -454,6 +489,14 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.models.html#agentscope.models.dashscope_model.DashScopeChatWrapper">DashScopeChatWrapper (class in agentscope.models.dashscope_model)</a>
+</li>
+      <li><a href="agentscope.models.html#agentscope.models.dashscope_model.DashScopeImageSynthesisWrapper">DashScopeImageSynthesisWrapper (class in agentscope.models.dashscope_model)</a>
+</li>
+      <li><a href="agentscope.models.html#agentscope.models.dashscope_model.DashScopeTextEmbeddingWrapper">DashScopeTextEmbeddingWrapper (class in agentscope.models.dashscope_model)</a>
+</li>
+      <li><a href="agentscope.models.html#agentscope.models.dashscope_model.DashScopeWrapperBase">DashScopeWrapperBase (class in agentscope.models.dashscope_model)</a>
+</li>
       <li><a href="agentscope.agents.html#agentscope.agents.dict_dialog_agent.default_response">default_response() (in module agentscope.agents.dict_dialog_agent)</a>
 </li>
       <li><a href="agentscope.memory.html#agentscope.memory.memory.MemoryBase.delete">delete() (agentscope.memory.memory.MemoryBase method)</a>
@@ -468,13 +511,21 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.service.file.html#agentscope.service.file.common.delete_file">delete_file() (in module agentscope.service.file.common)</a>
 </li>
-      <li><a href="agentscope.models.html#agentscope.models.openai_model.OpenAIChatWrapper.deprecated_model_type">deprecated_model_type (agentscope.models.openai_model.OpenAIChatWrapper attribute)</a>
+      <li><a href="agentscope.models.html#agentscope.models.dashscope_model.DashScopeChatWrapper.deprecated_model_type">deprecated_model_type (agentscope.models.dashscope_model.DashScopeChatWrapper attribute)</a>
+
+      <ul>
+        <li><a href="agentscope.models.html#agentscope.models.openai_model.OpenAIChatWrapper.deprecated_model_type">(agentscope.models.openai_model.OpenAIChatWrapper attribute)</a>
 </li>
+        <li><a href="agentscope.models.html#agentscope.models.post_model.PostAPIDALLEWrapper.deprecated_model_type">(agentscope.models.post_model.PostAPIDALLEWrapper attribute)</a>
+</li>
+      </ul></li>
       <li><a href="agentscope.models.html#agentscope.models.model.ModelWrapperBase.deprecated_type_registry">deprecated_type_registry (agentscope.models.model.ModelWrapperBase attribute)</a>
 </li>
       <li><a href="agentscope.agents.html#agentscope.agents.dialog_agent.DialogAgent">DialogAgent (class in agentscope.agents.dialog_agent)</a>
 </li>
       <li><a href="agentscope.agents.html#agentscope.agents.dict_dialog_agent.DictDialogAgent">DictDialogAgent (class in agentscope.agents.dict_dialog_agent)</a>
+</li>
+      <li><a href="agentscope.service.web_search.html#agentscope.service.web_search.web_digest.digest_webpage">digest_webpage() (in module agentscope.service.web_search.web_digest)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -518,11 +569,21 @@
 </li>
       <li><a href="agentscope.pipelines.html#agentscope.pipelines.functional.forlooppipeline">forlooppipeline() (in module agentscope.pipelines.functional)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="agentscope.models.html#agentscope.models.model.ModelWrapperBase.format">format() (agentscope.models.model.ModelWrapperBase method)</a>
+      <li><a href="agentscope.models.html#agentscope.models.dashscope_model.DashScopeChatWrapper.format">format() (agentscope.models.dashscope_model.DashScopeChatWrapper method)</a>
 
       <ul>
+        <li><a href="agentscope.models.html#agentscope.models.dashscope_model.DashScopeWrapperBase.format">(agentscope.models.dashscope_model.DashScopeWrapperBase method)</a>
+</li>
+        <li><a href="agentscope.models.html#agentscope.models.gemini_model.GeminiChatWrapper.format">(agentscope.models.gemini_model.GeminiChatWrapper method)</a>
+</li>
+        <li><a href="agentscope.models.html#agentscope.models.model.ModelWrapperBase.format">(agentscope.models.model.ModelWrapperBase method)</a>
+</li>
+        <li><a href="agentscope.models.html#agentscope.models.ollama_model.OllamaChatWrapper.format">(agentscope.models.ollama_model.OllamaChatWrapper method)</a>
+</li>
+        <li><a href="agentscope.models.html#agentscope.models.ollama_model.OllamaEmbeddingWrapper.format">(agentscope.models.ollama_model.OllamaEmbeddingWrapper method)</a>
+</li>
+        <li><a href="agentscope.models.html#agentscope.models.ollama_model.OllamaGenerationWrapper.format">(agentscope.models.ollama_model.OllamaGenerationWrapper method)</a>
+</li>
         <li><a href="agentscope.models.html#agentscope.models.openai_model.OpenAIChatWrapper.format">(agentscope.models.openai_model.OpenAIChatWrapper method)</a>
 </li>
         <li><a href="agentscope.models.html#agentscope.models.openai_model.OpenAIWrapperBase.format">(agentscope.models.openai_model.OpenAIWrapperBase method)</a>
@@ -538,6 +599,14 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.models.html#agentscope.models.gemini_model.GeminiChatWrapper">GeminiChatWrapper (class in agentscope.models.gemini_model)</a>
+</li>
+      <li><a href="agentscope.models.html#agentscope.models.gemini_model.GeminiEmbeddingWrapper">GeminiEmbeddingWrapper (class in agentscope.models.gemini_model)</a>
+</li>
+      <li><a href="agentscope.models.html#agentscope.models.gemini_model.GeminiWrapperBase">GeminiWrapperBase (class in agentscope.models.gemini_model)</a>
+</li>
+      <li><a href="agentscope.models.html#agentscope.models.gemini_model.GeminiChatWrapper.generation_method">generation_method (agentscope.models.gemini_model.GeminiChatWrapper attribute)</a>
+</li>
       <li><a href="agentscope.memory.html#agentscope.memory.temporary_memory.TemporaryMemory.get_embeddings">get_embeddings() (agentscope.memory.temporary_memory.TemporaryMemory method)</a>
 </li>
       <li><a href="agentscope.utils.html#agentscope.utils.monitor.get_full_name">get_full_name() (in module agentscope.utils.monitor)</a>
@@ -560,10 +629,10 @@
         <li><a href="agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.get_metrics">(agentscope.utils.monitor.SqliteMonitor method)</a>
 </li>
       </ul></li>
-      <li><a href="agentscope.utils.html#agentscope.utils.monitor.MonitorFactory.get_monitor">get_monitor() (agentscope.utils.monitor.MonitorFactory class method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.utils.html#agentscope.utils.monitor.MonitorFactory.get_monitor">get_monitor() (agentscope.utils.monitor.MonitorFactory class method)</a>
+</li>
       <li><a href="agentscope.utils.html#agentscope.utils.token_utils.get_openai_max_length">get_openai_max_length() (in module agentscope.utils.token_utils)</a>
 </li>
       <li><a href="agentscope.web.html#agentscope.web._app.get_projects">get_projects() (in module agentscope.web._app)</a>
@@ -608,13 +677,23 @@
 </li>
       <li><a href="agentscope.pipelines.html#agentscope.pipelines.pipeline.IfElsePipeline">IfElsePipeline (class in agentscope.pipelines.pipeline)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.pipelines.html#agentscope.pipelines.functional.ifelsepipeline">ifelsepipeline() (in module agentscope.pipelines.functional)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.models.html#agentscope.models.model.ModelResponse.image_urls">image_urls (agentscope.models.model.ModelResponse property)</a>
 </li>
       <li><a href="agentscope.web.html#agentscope.web._app.init">init() (in module agentscope.web._app)</a>
+</li>
+      <li><a href="agentscope.service.web_search.html#agentscope.service.web_search.web_digest.is_valid_url">is_valid_url() (in module agentscope.service.web_search.web_digest)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="K">K</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.models.html#agentscope.models.ollama_model.OllamaWrapperBase.keep_alive">keep_alive (agentscope.models.ollama_model.OllamaWrapperBase attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -623,6 +702,8 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgentServerLauncher.launch">launch() (agentscope.agents.rpc_agent.RpcAgentServerLauncher method)</a>
+</li>
+      <li><a href="agentscope.models.html#agentscope.models.gemini_model.GeminiWrapperBase.list_models">list_models() (agentscope.models.gemini_model.GeminiWrapperBase method)</a>
 </li>
       <li><a href="agentscope.memory.html#agentscope.memory.memory.MemoryBase.load">load() (agentscope.memory.memory.MemoryBase method)</a>
 
@@ -638,6 +719,8 @@
 </li>
       <li><a href="agentscope.models.html#agentscope.models.load_model_by_config_name">load_model_by_config_name() (in module agentscope.models)</a>
 </li>
+      <li><a href="agentscope.service.web_search.html#agentscope.service.web_search.web_digest.load_web">load_web() (in module agentscope.service.web_search.web_digest)</a>
+</li>
       <li><a href="agentscope.utils.html#agentscope.utils.logging_utils.log_studio">log_studio() (in module agentscope.utils.logging_utils)</a>
 </li>
   </ul></td>
@@ -648,15 +731,43 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.memory.html#agentscope.memory.memory.MemoryBase">MemoryBase (class in agentscope.memory.memory)</a>
 </li>
-      <li><a href="agentscope.models.html#agentscope.models.model.ModelWrapperBase.model_name">model_name (agentscope.models.model.ModelWrapperBase attribute)</a>
+      <li><a href="agentscope.models.html#agentscope.models.dashscope_model.DashScopeWrapperBase.model_name">model_name (agentscope.models.dashscope_model.DashScopeWrapperBase attribute)</a>
 
       <ul>
+        <li><a href="agentscope.models.html#agentscope.models.gemini_model.GeminiWrapperBase.model_name">(agentscope.models.gemini_model.GeminiWrapperBase attribute)</a>
+</li>
+        <li><a href="agentscope.models.html#agentscope.models.model.ModelWrapperBase.model_name">(agentscope.models.model.ModelWrapperBase attribute)</a>
+</li>
+        <li><a href="agentscope.models.html#agentscope.models.ollama_model.OllamaWrapperBase.model_name">(agentscope.models.ollama_model.OllamaWrapperBase attribute)</a>
+</li>
         <li><a href="agentscope.models.html#agentscope.models.openai_model.OpenAIWrapperBase.model_name">(agentscope.models.openai_model.OpenAIWrapperBase attribute)</a>
 </li>
       </ul></li>
-      <li><a href="agentscope.models.html#agentscope.models.model.ModelWrapperBase.model_type">model_type (agentscope.models.model.ModelWrapperBase attribute)</a>
+      <li><a href="agentscope.models.html#agentscope.models.dashscope_model.DashScopeChatWrapper.model_type">model_type (agentscope.models.dashscope_model.DashScopeChatWrapper attribute)</a>
 
       <ul>
+        <li><a href="agentscope.models.html#agentscope.models.dashscope_model.DashScopeImageSynthesisWrapper.model_type">(agentscope.models.dashscope_model.DashScopeImageSynthesisWrapper attribute)</a>
+</li>
+        <li><a href="agentscope.models.html#agentscope.models.dashscope_model.DashScopeTextEmbeddingWrapper.model_type">(agentscope.models.dashscope_model.DashScopeTextEmbeddingWrapper attribute)</a>
+</li>
+        <li><a href="agentscope.models.html#agentscope.models.dashscope_model.DashScopeWrapperBase.model_type">(agentscope.models.dashscope_model.DashScopeWrapperBase attribute)</a>
+</li>
+        <li><a href="agentscope.models.html#agentscope.models.gemini_model.GeminiChatWrapper.model_type">(agentscope.models.gemini_model.GeminiChatWrapper attribute)</a>
+</li>
+        <li><a href="agentscope.models.html#agentscope.models.gemini_model.GeminiEmbeddingWrapper.model_type">(agentscope.models.gemini_model.GeminiEmbeddingWrapper attribute)</a>
+</li>
+        <li><a href="agentscope.models.html#agentscope.models.gemini_model.GeminiWrapperBase.model_type">(agentscope.models.gemini_model.GeminiWrapperBase attribute)</a>
+</li>
+        <li><a href="agentscope.models.html#agentscope.models.model.ModelWrapperBase.model_type">(agentscope.models.model.ModelWrapperBase attribute)</a>
+</li>
+        <li><a href="agentscope.models.html#agentscope.models.ollama_model.OllamaChatWrapper.model_type">(agentscope.models.ollama_model.OllamaChatWrapper attribute)</a>
+</li>
+        <li><a href="agentscope.models.html#agentscope.models.ollama_model.OllamaEmbeddingWrapper.model_type">(agentscope.models.ollama_model.OllamaEmbeddingWrapper attribute)</a>
+</li>
+        <li><a href="agentscope.models.html#agentscope.models.ollama_model.OllamaGenerationWrapper.model_type">(agentscope.models.ollama_model.OllamaGenerationWrapper attribute)</a>
+</li>
+        <li><a href="agentscope.models.html#agentscope.models.ollama_model.OllamaWrapperBase.model_type">(agentscope.models.ollama_model.OllamaWrapperBase attribute)</a>
+</li>
         <li><a href="agentscope.models.html#agentscope.models.openai_model.OpenAIChatWrapper.model_type">(agentscope.models.openai_model.OpenAIChatWrapper attribute)</a>
 </li>
         <li><a href="agentscope.models.html#agentscope.models.openai_model.OpenAIDALLEWrapper.model_type">(agentscope.models.openai_model.OpenAIDALLEWrapper attribute)</a>
@@ -704,7 +815,13 @@
 </li>
         <li><a href="agentscope.models.html#module-agentscope.models.config">agentscope.models.config</a>
 </li>
+        <li><a href="agentscope.models.html#module-agentscope.models.dashscope_model">agentscope.models.dashscope_model</a>
+</li>
+        <li><a href="agentscope.models.html#module-agentscope.models.gemini_model">agentscope.models.gemini_model</a>
+</li>
         <li><a href="agentscope.models.html#module-agentscope.models.model">agentscope.models.model</a>
+</li>
+        <li><a href="agentscope.models.html#module-agentscope.models.ollama_model">agentscope.models.ollama_model</a>
 </li>
         <li><a href="agentscope.models.html#module-agentscope.models.openai_model">agentscope.models.openai_model</a>
 </li>
@@ -739,6 +856,8 @@
         <li><a href="agentscope.service.text_processing.html#module-agentscope.service.text_processing.summarization">agentscope.service.text_processing.summarization</a>
 </li>
         <li><a href="agentscope.service.web_search.html#module-agentscope.service.web_search.search">agentscope.service.web_search.search</a>
+</li>
+        <li><a href="agentscope.service.web_search.html#module-agentscope.service.web_search.web_digest">agentscope.service.web_search.web_digest</a>
 </li>
         <li><a href="agentscope.utils.html#module-agentscope.utils.common">agentscope.utils.common</a>
 </li>
@@ -783,12 +902,20 @@
         <li><a href="agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgent.observe">(agentscope.agents.rpc_agent.RpcAgent method)</a>
 </li>
       </ul></li>
-      <li><a href="agentscope.web.html#agentscope.web._app.on_connect">on_connect() (in module agentscope.web._app)</a>
+      <li><a href="agentscope.models.html#agentscope.models.ollama_model.OllamaChatWrapper">OllamaChatWrapper (class in agentscope.models.ollama_model)</a>
 </li>
-      <li><a href="agentscope.web.html#agentscope.web._app.on_disconnect">on_disconnect() (in module agentscope.web._app)</a>
+      <li><a href="agentscope.models.html#agentscope.models.ollama_model.OllamaEmbeddingWrapper">OllamaEmbeddingWrapper (class in agentscope.models.ollama_model)</a>
+</li>
+      <li><a href="agentscope.models.html#agentscope.models.ollama_model.OllamaGenerationWrapper">OllamaGenerationWrapper (class in agentscope.models.ollama_model)</a>
+</li>
+      <li><a href="agentscope.models.html#agentscope.models.ollama_model.OllamaWrapperBase">OllamaWrapperBase (class in agentscope.models.ollama_model)</a>
+</li>
+      <li><a href="agentscope.web.html#agentscope.web._app.on_connect">on_connect() (in module agentscope.web._app)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.web.html#agentscope.web._app.on_disconnect">on_disconnect() (in module agentscope.web._app)</a>
+</li>
       <li><a href="agentscope.models.html#agentscope.models.openai_model.OpenAIChatWrapper">OpenAIChatWrapper (class in agentscope.models.openai_model)</a>
 </li>
       <li><a href="agentscope.models.html#agentscope.models.openai_model.OpenAIDALLEWrapper">OpenAIDALLEWrapper (class in agentscope.models.openai_model)</a>
@@ -799,6 +926,8 @@
 </li>
       <li><a href="agentscope.agents.html#agentscope.agents.operator.Operator">Operator (class in agentscope.agents.operator)</a>
 </li>
+      <li><a href="agentscope.models.html#agentscope.models.ollama_model.OllamaWrapperBase.options">options (agentscope.models.ollama_model.OllamaWrapperBase attribute)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -808,6 +937,8 @@
       <li><a href="agentscope.agents.html#agentscope.agents.dict_dialog_agent.parse_dict">parse_dict() (in module agentscope.agents.dict_dialog_agent)</a>
 </li>
       <li><a href="agentscope.agents.html#agentscope.agents.react_agent.parse_func">parse_func() (in module agentscope.agents.react_agent)</a>
+</li>
+      <li><a href="agentscope.service.web_search.html#agentscope.service.web_search.web_digest.parse_html_to_text">parse_html_to_text() (in module agentscope.service.web_search.web_digest)</a>
 </li>
       <li><a href="agentscope.pipelines.html#agentscope.pipelines.pipeline.PipelineBase">PipelineBase (class in agentscope.pipelines.pipeline)</a>
 </li>

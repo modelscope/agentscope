@@ -122,7 +122,7 @@
 <section id="id2">
 <h2>开始<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
 <p>首先，确保您已经正确安装和配置好AgentScope。除此之外，本节内容会涉及到<code class="docutils literal notranslate"><span class="pre">Model</span> <span class="pre">API</span></code>,  <code class="docutils literal notranslate"><span class="pre">Agent</span></code>, <code class="docutils literal notranslate"><span class="pre">Msg</span></code>和 <code class="docutils literal notranslate"><span class="pre">Pipeline</span></code>这几个概念（详情可以参考<a class="reference internal" href="101-agentscope.html"><span class="doc std std-doc">关于AgentScope</span></a>）。以下是本节教程内容概览。</p>
-<p><strong>提示</strong>：本教程中的所有配置和代码文件均可以在<code class="docutils literal notranslate"><span class="pre">examples/werewolf</span></code>中找到。</p>
+<p><strong>提示</strong>：本教程中的所有配置和代码文件均可以在<code class="docutils literal notranslate"><span class="pre">examples/game_werewolf</span></code>中找到。</p>
 <section id="api">
 <h3>第一步: 准备模型API和设定模型配置<a class="headerlink" href="#api" title="Link to this heading"></a></h3>
 <p>就像我们在上一节教程中展示的，您需要为了您选择的OpenAI chat API, FastChat, 或vllm 准备一个JSON样式的模型配置文件。更多细节和高阶用法，比如用POST API配置本地模型，可以参考<a class="reference internal" href="203-model.html"><span class="doc std std-doc">关于模型</span></a>。</p>
@@ -173,7 +173,7 @@
 </pre></div>
 </div>
 <p>在这个配置中，Player1被指定为一个DictDialogAgent。参数包括一个系统提示（sys_prompt），它可以指导agent的行为；一个模型配置名（model_config_name），它决定了模型配置的名称；以及一个标志（use_memory），指示agent是否应该记住过去的互动。</p>
-<p>对于其他玩家，大家可以根据他们的角色进行定制。每个角色可能有不同的提示、模型或记忆设置。你可以参考位于AgentScope示例目录下的<code class="docutils literal notranslate"><span class="pre">examples/werewolf/configs/agent_configs.json</span></code>文件。</p>
+<p>对于其他玩家，大家可以根据他们的角色进行定制。每个角色可能有不同的提示、模型或记忆设置。你可以参考位于AgentScope示例目录下的<code class="docutils literal notranslate"><span class="pre">examples/game_werewolf/configs/agent_configs.json</span></code>文件。</p>
 </section>
 <section id="agentscopeagents">
 <h3>第三步：初始化AgentScope和Agents<a class="headerlink" href="#agentscopeagents" title="Link to this heading"></a></h3>
@@ -248,7 +248,7 @@
 </pre></div>
 </div>
 <p>讨论结束后，根据少数服从多数，狼人进行投票选出他们的目标。然后，投票的结果将广播给所有狼人。</p>
-<p>注意：具体的提示和实用函数可以在<code class="docutils literal notranslate"><span class="pre">examples/werewolf</span></code>中找到。</p>
+<p>注意：具体的提示和实用函数可以在<code class="docutils literal notranslate"><span class="pre">examples/game_werewolf</span></code>中找到。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>        <span class="c1"># werewolves vote</span>
         <span class="n">hint</span> <span class="o">=</span> <span class="n">HostMsg</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">Prompts</span><span class="o">.</span><span class="n">to_wolves_vote</span><span class="p">)</span>
         <span class="n">votes</span> <span class="o">=</span> <span class="p">[</span><span class="n">extract_name_and_id</span><span class="p">(</span><span class="n">wolf</span><span class="p">(</span><span class="n">hint</span><span class="p">)</span><span class="o">.</span><span class="n">content</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">wolf</span> <span class="ow">in</span> <span class="n">wolves</span><span class="p">]</span>

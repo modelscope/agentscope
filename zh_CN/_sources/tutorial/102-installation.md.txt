@@ -44,7 +44,7 @@ source agentscope/bin/activate  # 在Windows上使用`agentscope\Scripts\activat
 ```bash
 # 从GitHub上拉取AgentScope的源代码
 git clone https://github.com/modelscope/agentscope.git
-cd AgentScope
+cd agentscope
 
 # 针对本地化的multi-agent应用
 pip install -e .

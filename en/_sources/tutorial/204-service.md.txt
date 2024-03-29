@@ -12,25 +12,27 @@ AgentScope and how to use them to enhance the capabilities of your agents.
 
 The following table outlines the various Service functions by type. These functions can be called using `agentscope.service.{function_name}`.
 
-| Service Scene | Service Function Name | Description                                                |
-| -------------- | --------------------- | ------------------------------------------------------------ |
-| Code           | `execute_python_code` | Execute a piece of Python code, optionally inside a Docker container. |
-| Retrieval      | `retrieve_from_list`  | Retrieve a specific item from a list based on given criteria. |
-| SQL Query      | `query_mysql`         | Execute SQL queries on a MySQL database and return results. |
-|                | `query_sqlite`        | Execute SQL queries on a SQLite database and return results. |
-|                | `query_mongodb`       | Perform queries or operations on a MongoDB collection. |
-| Text Processing | `summarization`       | Summarize a piece of text using a large language model to highlight its main points. |
-| Web Search      | `web_search`          | Perform a web search using a specified search engine (currently supports Google and Bing). |
-| File           | `create_file`         | Create a new file at a specified path, optionally with initial content. |
-|                | `delete_file`         | Delete a file specified by a file path.       |
-|                | `move_file`           | Move or rename a file from one path to another. |
-|                | `create_directory`    | Create a new directory at a specified path. |
-|                | `delete_directory`    | Delete a directory and all its contents.     |
-|                | `move_directory`      | Move or rename a directory from one path to another. |
-|                | `read_text_file`      | Read and return the content of a text file.    |
-|                | `write_text_file`     | Write text content to a file at a specified path. |
-|                | `read_json_file`      | Read and parse the content of a JSON file. |
-|                | `write_json_file`     | Serialize a Python object to JSON and write to a file. |
+| Service Scene               | Service Function Name | Description                                                                                                    |
+| --------------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Code                        | `execute_python_code` | Execute a piece of Python code, optionally inside a Docker container.                                          |
+| Retrieval                   | `retrieve_from_list`  | Retrieve a specific item from a list based on given criteria.                                                  |
+| SQL Query                   | `query_mysql`         | Execute SQL queries on a MySQL database and return results.                                                    |
+|                             | `query_sqlite`        | Execute SQL queries on a SQLite database and return results.                                                   |
+|                             | `query_mongodb`       | Perform queries or operations on a MongoDB collection.                                                         |
+| Text Processing             | `summarization`       | Summarize a piece of text using a large language model to highlight its main points.                           |
+| Web Search                  | `web_search`          | Perform a web search using a specified search engine (currently supports Google and Bing).                     |
+|                             | `load_web`            | Load and parse the web page of the specificed url (currently only supports HTML).                              |
+|                             | `digest_webpage`      | Digest the content of a already loaded web page (currently only supports HTML).                                |
+| File                        | `create_file`         | Create a new file at a specified path, optionally with initial content.                                        |
+|                             | `delete_file`         | Delete a file specified by a file path.                                                                        |
+|                             | `move_file`           | Move or rename a file from one path to another.                                                                |
+|                             | `create_directory`    | Create a new directory at a specified path.                                                                    |
+|                             | `delete_directory`    | Delete a directory and all its contents.                                                                       |
+|                             | `move_directory`      | Move or rename a directory from one path to another.                                                           |
+|                             | `read_text_file`      | Read and return the content of a text file.                                                                    |
+|                             | `write_text_file`     | Write text content to a file at a specified path.                                                              |
+|                             | `read_json_file`      | Read and parse the content of a JSON file.                                                                     |
+|                             | `write_json_file`     | Serialize a Python object to JSON and write to a file.                                                         |
 | *More services coming soon* |                       | More service functions are in development and will be added to AgentScope to further enhance its capabilities. |
 
 About each service function, you can find detailed information in the
