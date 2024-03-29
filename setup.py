@@ -25,7 +25,6 @@ rpc_requires = [
 ]
 
 service_requires = [
-    "docstring_parser",
     "docker",
     "pymongo",
     "pymysql",
@@ -46,6 +45,7 @@ gradio_requires = ["gradio==4.19.1", "modelscope_studio==0.0.5"]
 
 # released requires
 minimal_requires = [
+    "docstring_parser",
     "loguru",
     "tiktoken",
     "Pillow",

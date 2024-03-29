@@ -98,6 +98,13 @@ class ServiceFactory:
         argsspec = inspect.getfullargspec(service_func)
 
         # Construct the mapping from arguments to their typings
+        if parse is None:
+            raise ImportError(
+                "Missing required package `docstring_parser`"
+                "Please install it by "
+                "`pip install docstring_parser`.",
+            )
+
         docstring = parse(service_func.__doc__)
 
         # Function description
