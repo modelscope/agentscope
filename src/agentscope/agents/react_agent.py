@@ -80,22 +80,26 @@ def extract_json_content(input_string: str) -> str:
 
     Args:
         input_string (`str`):
-            A string containing JSON content, typically surrounded by triple backticks and labeledwith 'json'.
+            A string containing JSON content,
+            typically surrounded by triple backticks and labeledwith 'json'.
 
     Returns:
         `str`:
-            The extracted JSON string. If no matching JSON content is found, the original input_string is returned.
+            The extracted JSON string. If no matching JSON content is found,
+            the original input_string is returned.
     """
     # Define a regular expression to match the content between ```json and ```
     pattern = r"```json\n(.*?)```"
 
-    # Enable DOTALL mode so that '.' matches any character, including newline characters
+    # Enable DOTALL mode so that '.' matches any character,
+    # including newline characters
     flags = re.DOTALL
 
     # Search for the matching content
     match = re.search(pattern, input_string, flags=flags)
 
-    # If a match is found, return the matched content; otherwise, return the input_string
+    # If a match is found, return the matched content;
+    # otherwise, return the input_string
     if match:
         return match.group(1)
     else:
