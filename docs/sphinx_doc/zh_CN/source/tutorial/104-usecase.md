@@ -14,7 +14,7 @@
 
 首先，确保您已经正确安装和配置好AgentScope。除此之外，本节内容会涉及到`Model API`,  `Agent`, `Msg`和 `Pipeline`这几个概念（详情可以参考[关于AgentScope](101-agentscope)）。以下是本节教程内容概览。
 
-**提示**：本教程中的所有配置和代码文件均可以在`examples/werewolf`中找到。
+**提示**：本教程中的所有配置和代码文件均可以在`examples/game_werewolf`中找到。
 
 ### 第一步: 准备模型API和设定模型配置
 
@@ -72,7 +72,7 @@ AgentScope提供了几种开箱即用的agent实现，作为一个agent样例池
 
 在这个配置中，Player1被指定为一个DictDialogAgent。参数包括一个系统提示（sys_prompt），它可以指导agent的行为；一个模型配置名（model_config_name），它决定了模型配置的名称；以及一个标志（use_memory），指示agent是否应该记住过去的互动。
 
-对于其他玩家，大家可以根据他们的角色进行定制。每个角色可能有不同的提示、模型或记忆设置。你可以参考位于AgentScope示例目录下的`examples/werewolf/configs/agent_configs.json`文件。
+对于其他玩家，大家可以根据他们的角色进行定制。每个角色可能有不同的提示、模型或记忆设置。你可以参考位于AgentScope示例目录下的`examples/game_werewolf/configs/agent_configs.json`文件。
 
 ### 第三步：初始化AgentScope和Agents
 
@@ -153,7 +153,7 @@ for i in range(1, MAX_GAME_ROUND + 1):
 
 讨论结束后，根据少数服从多数，狼人进行投票选出他们的目标。然后，投票的结果将广播给所有狼人。
 
-注意：具体的提示和实用函数可以在`examples/werewolf`中找到。
+注意：具体的提示和实用函数可以在`examples/game_werewolf`中找到。
 
 ```python
         # werewolves vote

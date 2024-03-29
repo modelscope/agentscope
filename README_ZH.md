@@ -104,7 +104,7 @@ AgentScope支持使用以下库快速部署本地模型服务。
 - 分布式
   - [分布式对话](./examples/distributed_basic)
   - [分布式辩论](./examples/distributed_debate)
-  - [分布式搜索](./examples/distributed_search)
+  - [分布式并行搜索](./examples/distributed_search)
 
 更多模型API、服务和示例即将推出！
 
@@ -122,7 +122,7 @@ AgentScope需要Python 3.9或更高版本。
 # 从github拉取源代码
 git clone https://github.com/modelscope/agentscope.git
 # 以编辑模式安装包
-cd AgentScope
+cd agentscope
 pip install -e .
 ```
 

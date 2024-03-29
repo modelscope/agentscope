@@ -211,7 +211,9 @@ class PostAPIChatWrapper(PostAPIModelWrapperBase):
 class PostAPIDALLEWrapper(PostAPIModelWrapperBase):
     """A post api model wrapper compatible with openai dalle"""
 
-    model_type: str = "post_api_dalle"
+    model_type: str = "post_api_dall_e"
+
+    deprecated_model_type: str = "post_api_dalle"
 
     def _parse_response(self, response: dict) -> ModelResponse:
         urls = [img["url"] for img in response["data"]["response"]["data"]]
