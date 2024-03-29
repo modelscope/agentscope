@@ -311,8 +311,8 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                 {
                     "role": "system",
                     "content": (
-                       "system: You're a helpful assistant\n",
-                       "Bob: Hi, how can I help you?\n",
+                       "system: You're a helpful assistant\\n",
+                       "Bob: Hi, how can I help you?\\n",
                        "user: What's the date today?"
                     )
                 }
