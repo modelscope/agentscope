@@ -63,14 +63,6 @@ Taking using the web_search function as an example, the response should be like 
     "function": [{{"name": "web_search", "arguments": {{"query": "what's the weather today?"}}}}]
 }
 ```
-Taking the example of a known arithmetic problem, if you already know the answer to 1+1 without performing any calculations, your response should be like this:
-```json
-{  
-    "thought": "I remember that 1+1 equals 2",  
-    "speak": "The answer to 1+1 is 2.",  
-    "function": []  
-}
-```
 Please ensure that your response follows the specified format and includes the necessary fields.
 """  # noqa
 
