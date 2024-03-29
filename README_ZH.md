@@ -122,7 +122,7 @@ AgentScope需要Python 3.9或更高版本。
 # 从github拉取源代码
 git clone https://github.com/modelscope/agentscope.git
 # 以编辑模式安装包
-cd AgentScope
+cd agentscope
 pip install -e .
 ```
 

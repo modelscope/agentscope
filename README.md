@@ -136,7 +136,7 @@ install AgentScope from source._**
 git clone https://github.com/modelscope/agentscope.git
 
 # Install the package in editable mode
-cd AgentScope
+cd agentscope
 pip install -e .
 ```
 
