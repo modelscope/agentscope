@@ -101,8 +101,9 @@ AgentScope支持使用以下库快速部署本地模型服务。
   - [狼人杀](./examples/game_werewolf)
 
 - 分布式
-  - [分布式对话](./examples/distribution_conversation)
-  - [分布式辩论](./examples/distribution_debate)
+  - [分布式对话](./examples/distributed_basic)
+  - [分布式辩论](./examples/distributed_debate)
+  - [分布式搜索](./examples/distributed_search)
 
 更多模型API、服务和示例即将推出！
 
