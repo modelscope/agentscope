@@ -116,7 +116,7 @@ the following libraries.
 - Distribution
   - [Distributed Conversation](./examples/distributed_basic)
   - [Distributed Debate](./examples/distributed_debate)
-  - [Distributed Search](./examples/distributed_search)
+  - [Distributed Parallel Search](./examples/distributed_search)
 
 More models, services and examples are coming soon!
 
@@ -136,7 +136,7 @@ install AgentScope from source._**
 git clone https://github.com/modelscope/agentscope.git
 
 # Install the package in editable mode
-cd AgentScope
+cd agentscope
 pip install -e .
 ```
 
