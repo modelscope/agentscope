@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 This example shows how to build an agent with RAG
-(with LlamaIndex or Langchain)
+with LlamaIndex.
+
+Notice, this is a Beta version of RAG agent.
 """
 
 from abc import ABC, abstractmethod
@@ -12,15 +14,9 @@ from loguru import logger
 
 from agentscope.agents.agent import AgentBase
 from agentscope.message import Msg
-from agentscope.prompt import PromptEngine
 from agentscope.models import load_model_by_config_name
 
-try:
-    from agentscope.rag import RAGBase, LlamaIndexRAG
-except ImportError as exc:
-    raise ImportError(
-        "Need to install llama index for RAG agents.",
-    ) from exc
+from agentscope.rag import RAGBase, LlamaIndexRAG
 
 
 class RAGAgentBase(AgentBase, ABC):
@@ -63,8 +59,6 @@ class RAGAgentBase(AgentBase, ABC):
             use_memory=True,
             memory_config=memory_config,
         )
-        # init prompt engine
-        self.engine = PromptEngine(self.model)
         # setup embedding model used in RAG
         self.emb_model = load_model_by_config_name(emb_model_config_name)
 
@@ -163,10 +157,8 @@ class RAGAgentBase(AgentBase, ABC):
             self.memory.add(x)
             # in case no input is provided (e.g., in msghub),
             # use the memory as query
-            history = self.engine.join(
-                self.memory.get_memory(
-                    recent_n=self.rag_config.get("recent_n_mem", 1),
-                ),
+            history = self.memory.get_memory(
+                recent_n=self.rag_config.get("recent_n_mem", 1),
             )
             query = (
                 "/n".join(
@@ -255,6 +247,7 @@ class LlamaIndexAgent(RAGAgentBase):
                  If not provided, the default setting will be used.
                 An example of the config for retrieving code files
                 is as following:
+
                 "rag_config": {
                     "load_data": {
                       "loader": {
@@ -262,8 +255,9 @@ class LlamaIndexAgent(RAGAgentBase):
                         "module": "llama_index.core",
                         "class": "SimpleDirectoryReader",
                         "init_args": {
-                          "input_dir": "../../src/agentscope/models",
+                          "input_dir": "path/to/data",
                           "recursive": true
+                          ...
                         }
                       }
                     },

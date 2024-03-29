@@ -67,11 +67,3 @@ react_agent module
    :undoc-members:
    :show-inheritance:
 
-
-rag_agent module
--------------------------------
-
-.. automodule:: agentscope.agents.rag_agents
-   :members:
-   :undoc-members:
-   :show-inheritance:

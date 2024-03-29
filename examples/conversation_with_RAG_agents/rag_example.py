@@ -3,16 +3,20 @@
 A simple example for conversation between user and
 an agent with RAG capability.
 """
+import json
 import os
+
+from rag_agents import LlamaIndexAgent
 
 import agentscope
 from agentscope.agents import UserAgent
 from agentscope.message import Msg
+from agentscope.agents import DialogAgent
 
 
 def main() -> None:
     """A RAG multi-agent demo"""
-    agents = agentscope.init(
+    agentscope.init(
         model_configs=[
             {
                 "model_type": "dashscope_chat",
@@ -27,10 +31,13 @@ def main() -> None:
                 "api_key": f"{os.environ.get('DASHSCOPE_API_KEY')}",
             },
         ],
-        agent_configs="./agent_config.json",
     )
 
-    tutorial_agent, code_explain_agent, summarize_agent = agents
+    with open("./agent_config.json", "r", encoding="utf-8") as f:
+        agent_configs = json.load(f)
+    tutorial_agent = LlamaIndexAgent(**agent_configs[0]["args"])
+    code_explain_agent = LlamaIndexAgent(**agent_configs[1]["args"])
+    summarize_agent = DialogAgent(**agent_configs[2]["args"])
 
     user_agent = UserAgent()
     # start the conversation between user and assistant
