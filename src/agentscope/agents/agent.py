@@ -7,6 +7,7 @@ from typing import Optional
 from typing import Sequence
 from typing import Union
 from typing import Any
+import uuid
 from loguru import logger
 
 from agentscope.agents.operator import Operator
@@ -39,6 +40,7 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
         model_config_name: str = None,
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
+        agent_id: Optional[str] = None,
     ) -> None:
         r"""Initialize an agent from the given arguments.
 
@@ -56,7 +58,6 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
             memory_config (`Optional[dict]`):
                 The config of memory.
         """
-
         self.name = name
         self.memory_config = memory_config
 
@@ -72,9 +73,20 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
         else:
             self.memory = None
 
+        if agent_id is None:
+            self.agent_id = self.__class__.generate_agent_id()
+        else:
+            self.agent_id = agent_id
+
         # The audience of this agent, which means if this agent generates a
         # response, it will be passed to all agents in the audience.
         self._audience = None
+
+    @classmethod
+    def generate_agent_id(cls) -> str:
+        """Generate the agent_id of this agent instance"""
+        # TODO: change cls.__name__ into a global unique agent_type
+        return f"{cls.__name__}_{uuid.uuid4().hex}"
 
     def reply(self, x: dict = None) -> dict:
         """Define the actions taken by this agent.
