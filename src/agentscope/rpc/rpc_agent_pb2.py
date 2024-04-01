@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(
-    b'\n\x0frpc_agent.proto">\n\x06RpcMsg\x12\r\n\x05value\x18\x01 \x01(\t\x12\x13\n\x0btarget_func\x18\x02 \x01(\t\x12\x10\n\x08\x61gent_id\x18\x03 \x01(\t2+\n\x08RpcAgent\x12\x1f\n\tcall_func\x12\x07.RpcMsg\x1a\x07.RpcMsg"\x00\x62\x06proto3'
+    b'\n\x0frpc_agent.proto">\n\x06RpcMsg\x12\r\n\x05value\x18\x01 \x01(\t\x12\x13\n\x0btarget_func\x18\x02 \x01(\t\x12\x10\n\x08\x61gent_id\x18\x03 \x01(\t2+\n\x08RpcAgent\x12\x1f\n\tcall_func\x12\x07.RpcMsg\x1a\x07.RpcMsg"\x00\x62\x06proto3',
 )
 
 _globals = globals()
