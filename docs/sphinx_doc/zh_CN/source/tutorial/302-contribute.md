@@ -21,8 +21,8 @@
 要处理一个问题或新功能，首先要Fork AgentScope仓库，然后将你的Fork克隆到本地。
 
 ```bash
-git clone https://github.com/your-username/AgentScope.git
-cd AgentScope
+git clone https://github.com/your-username/agentscope.git
+cd agentscope
 ```
 
 ### 创建一个新分支

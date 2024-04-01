@@ -20,8 +20,8 @@ development.
 It features
 
 - **usability**,
-- **robustness**, and
-- **the support of multi-modal data** and
+- **robustness**,
+- **the support of multi-modal data**,
 - **distributed deployment**.
 
 ## Key Concepts
@@ -94,7 +94,7 @@ AgentScope
 │   |   ├── agents               # Core components and implementations pertaining to agents.
 │   |   ├── memory               # Structures for agent memory.
 │   |   ├── models               # Interfaces for integrating diverse model APIs.
-│   |   ├── pipeline             # Fundamental components and implementations for running pipelines.
+│   |   ├── pipelines            # Fundamental components and implementations for running pipelines.
 │   |   ├── rpc                  # Rpc module for agent distributed deployment.
 │   |   ├── service              # Services offering functions independent of memory and state.
 |   |   ├── web                  # WebUI used to show dialogs.

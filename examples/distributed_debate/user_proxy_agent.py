@@ -9,7 +9,7 @@ from agentscope.agents import UserAgent
 class UserProxyAgent(UserAgent):
     """User proxy agent class"""
 
-    def reply(  # type: ignore [override]
+    def reply(  # type: ignore[override]
         self,
         x: dict = None,
         required_keys: Optional[Union[list[str], str]] = None,

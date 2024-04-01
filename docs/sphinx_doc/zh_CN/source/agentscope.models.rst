@@ -17,10 +17,34 @@ model module
    :undoc-members:
    :show-inheritance:
 
+dashscope\_model module
+---------------------------------------
+
+.. automodule:: agentscope.models.dashscope_model
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 openai\_model module
 ---------------------------------------
 
 .. automodule:: agentscope.models.openai_model
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+ollama\_model module
+---------------------------------------
+
+.. automodule:: agentscope.models.ollama_model
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+gemini\_model module
+---------------------------------------
+
+.. automodule:: agentscope.models.gemini_model
    :members:
    :undoc-members:
    :show-inheritance:

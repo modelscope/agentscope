@@ -260,6 +260,8 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         # TODO: This strategy will be replaced by a new strategy in the future.
         prompt = []
         for unit in args:
+            if unit is None:
+                continue
             if isinstance(unit, Msg):
                 prompt.append(to_openai_dict(unit))
             elif isinstance(unit, list):
@@ -309,8 +311,8 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                 {
                     "role": "system",
                     "content": (
-                       "system: You're a helpful assistant\n",
-                       "Bob: Hi, how can I help you?\n",
+                       "system: You're a helpful assistant\\n",
+                       "Bob: Hi, how can I help you?\\n",
                        "user: What's the date today?"
                     )
                 }

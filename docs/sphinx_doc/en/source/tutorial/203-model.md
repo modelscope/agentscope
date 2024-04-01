@@ -81,7 +81,7 @@ In the current AgentScope, the supported `model_type` types, the corresponding
 | Gemini API             | Chat            | [`GeminiChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py)                 | `"gemini_chat"`               |
 |                        | Embedding       | [`GeminiEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py)            | `"gemini_embedding"`          |
 | ollama                 | Chat            | [`OllamaChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)                 | `"ollama_chat"`               |
-|                        | Embedding       | [`OllamaEmbedding`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)                   | `"ollama_embedding"`          |
+|                        | Embedding       | [`OllamaEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)                   | `"ollama_embedding"`          |
 |                        | Generation      | [`OllamaGenerationWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)           | `"ollama_generate"`           |
 | Post Request based API | -               | [`PostAPIModelWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)                 | `"post_api"`                  |
 
@@ -291,7 +291,7 @@ openai_chat_config = {
     "model_type": "ollama_chat",
 
     # Required parameters
-    "model": "{model_name}",                    # The model name used in ollama API, e.g. llama2
+    "model_name": "{model_name}",               # The model name used in ollama API, e.g. llama2
 
     # Optional parameters
     "options": {                                # Parameters passed to the model when calling
@@ -312,7 +312,7 @@ openai_chat_config = {
     "model_type": "ollama_generate",
 
     # Required parameters
-    "model": "{model_name}",                    # The model name used in ollama API, e.g. llama2
+    "model_name": "{model_name}",               # The model name used in ollama API, e.g. llama2
 
     # Optional parameters
     "options": {                                # Parameters passed to the model when calling
@@ -333,7 +333,7 @@ openai_chat_config = {
     "model_type": "ollama_embedding",
 
     # Required parameters
-    "model": "{model_name}",                    # The model name used in ollama API, e.g. llama2
+    "model_name": "{model_name}",               # The model name used in ollama API, e.g. llama2
 
     # Optional parameters
     "options": {                                # Parameters passed to the model when calling
@@ -393,6 +393,7 @@ About how to quickly start these model services, users can refer to the [README.
 
 AgentScope allows developers to customize their own model wrappers.
 The new model wrapper class should
+
 - inherit from `ModelWrapperBase` class,
 - provide a `model_type` field to identify this model wrapper in the model configuration, and
 - implement its `__init__` and `__call__` functions.
