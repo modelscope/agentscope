@@ -44,7 +44,7 @@ The detailed parameters will be fed into the corresponding model class's constru
 {
     # Basic parameters
     "config_name": "gpt-4-temperature-0.0",  # Model configuration name
-    "model_type": "openai",  # Correspond to `ModelWrapper` type
+    "model_type": "openai_chat",             # Correspond to `ModelWrapper` type
 
     # Detailed parameters
     # ...
@@ -63,7 +63,7 @@ It corresponds to the `model_type` field in the `ModelWrapper` class in the sour
 class OpenAIChatWrapper(OpenAIWrapperBase):
     """The model wrapper for OpenAI's chat API."""
 
-    model_type: str = "openai"
+    model_type: str = "openai_chat"
     # ...
 ```
 
@@ -72,7 +72,7 @@ In the current AgentScope, the supported `model_type` types, the corresponding
 
 | API                    | Task            | Model Wrapper                                                                                                                   | `model_type`                  |
 |------------------------|-----------------|---------------------------------------------------------------------------------------------------------------------------------|-------------------------------|
-| OpenAI API             | Chat            | [`OpenAIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)                 | `"openai"`                    |
+| OpenAI API             | Chat            | [`OpenAIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)                 | `"openai_chat"`                    |
 |                        | Embedding       | [`OpenAIEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)            | `"openai_embedding"`          |
 |                        | DALL·E          | [`OpenAIDALLEWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)                | `"openai_dall_e"`             |
 | DashScope API          | Chat            | [`DashScopeChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py)           | `"dashscope_chat"`            |
@@ -99,7 +99,7 @@ Here we provide example configurations for different model wrappers.
 ```python
 openai_chat_config = {
     "config_name": "{your_config_name}",
-    "model_type": "openai",
+    "model_type": "openai_chat",
 
     # Required parameters
     "model_name": "gpt-4",

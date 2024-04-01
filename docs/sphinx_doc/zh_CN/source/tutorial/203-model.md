@@ -32,7 +32,7 @@ agentscope.init(model_configs=MODEL_CONFIG_OR_PATH)
 model_configs = [
     {
         "config_name": "gpt-4-temperature-0.0",
-        "model_type": "openai",
+        "model_type": "openai_chat",
         "model_name": "gpt-4",
         "api_key": "xxx",
         "organization": "xxx",
@@ -65,7 +65,7 @@ AgentScope中，模型配置是一个字典，用于指定模型的类型以及�
 {
     # 基础参数
     "config_name": "gpt-4-temperature-0.0",     # 模型配置名称
-    "model_type": "openai",                     # 对应`ModelWrapper`类型
+    "model_type": "openai_chat",                # 对应`ModelWrapper`类型
 
     # 详细参数
     # ...
@@ -83,7 +83,7 @@ AgentScope中，模型配置是一个字典，用于指定模型的类型以及�
 class OpenAIChatWrapper(OpenAIWrapper):
     """The model wrapper for OpenAI's chat API."""
 
-    model_type: str = "openai"
+    model_type: str = "openai_chat"
     # ...
 ```
 
@@ -92,7 +92,7 @@ API如下：
 
 | API                    | Task            | Model Wrapper                                                                                                                   | `model_type`                  |
 |------------------------|-----------------|---------------------------------------------------------------------------------------------------------------------------------|-------------------------------|
-| OpenAI API             | Chat            | [`OpenAIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)                 | `"openai"`                    |
+| OpenAI API             | Chat            | [`OpenAIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)                 | `"openai_chat"`                    |
 |                        | Embedding       | [`OpenAIEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)            | `"openai_embedding"`          |
 |                        | DALL·E          | [`OpenAIDALLEWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)                | `"openai_dall_e"`             |
 | DashScope API          | Chat            | [`DashScopeChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py)           | `"dashscope_chat"`            |
@@ -119,7 +119,7 @@ API如下：
 ```python
 openai_chat_config = {
     "config_name": "{your_config_name}",
-    "model_type": "openai",
+    "model_type": "openai_chat",
 
     # 必要参数
     "model_name": "gpt-4",

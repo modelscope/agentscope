@@ -183,7 +183,7 @@ Taking OpenAI Chat API as an example, the model configuration is as follows:
 ```python
 openai_model_config = {
     "config_name": "my_openai_config",             # The name to identify the config
-    "model_type": "openai",                        # The type to identify the model wrapper
+    "model_type": "openai_chat",                   # The type to identify the model wrapper
 
     # Detailed parameters into initialize the model wrapper
     "model_name": "gpt-4",                         # The used model in openai API, e.g. gpt-4, gpt-3.5-turbo, etc.

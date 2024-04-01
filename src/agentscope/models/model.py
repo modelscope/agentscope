@@ -6,7 +6,7 @@ and each model config should follow the following format.
 
     {
         "config_name": "{config_name}",
-        "model_type": "openai" | "post_api" | ...,
+        "model_type": "openai_chat" | "post_api" | ...,
         ...
     }
 
@@ -20,7 +20,7 @@ Note:
 
             {
                 "config_name": "{id of your model}",
-                "model_type": "openai",
+                "model_type": "openai_chat",
                 "model_name": "{model_name_for_openai, e.g. gpt-3.5-turbo}",
                 "api_key": "{your_api_key}",
                 "organization": "{your_organization, if needed}",

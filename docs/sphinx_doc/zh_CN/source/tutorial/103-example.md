@@ -15,7 +15,7 @@ AgentScope内置了灵活的通信机制。在本教程中，我们将通过一�
 ```python
 model_config = {
     "config_name": "{config_name}", # A unique name for the model config.
-    "model_type": "openai",         # Choose from "openai", "openai_dall_e", or "openai_embedding".
+    "model_type": "openai_chat",    # Choose from "openai_chat", "openai_dall_e", or "openai_embedding".
 
     "model_name": "{model_name}",   # The model identifier used in the OpenAI API, such as "gpt-3.5-turbo", "gpt-4", or "text-embedding-ada-002".
     "api_key": "xxx",               # Your OpenAI API key. If unset, the environment variable OPENAI_API_KEY is used.

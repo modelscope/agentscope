@@ -167,7 +167,7 @@ model_config = {
 ```python
 openai_model_config = {
     "config_name": "my_openai_config",             # 模型配置的名称
-    "model_type": "openai",                        # 模型wrapper的类型
+    "model_type": "openai_chat",                   # 模型wrapper的类型
 
     # 用以初始化模型wrapper的详细参数
     "model_name": "gpt-4",                         # OpenAI API中的模型名
