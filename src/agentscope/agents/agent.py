@@ -57,6 +57,8 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
                 Whether the agent has memory.
             memory_config (`Optional[dict]`):
                 The config of memory.
+            agent_id (`Optional[str]`, defaults to None):
+                The id of this agent. If None, Generate a random id.
         """
         self.name = name
         self.memory_config = memory_config
