@@ -9,5 +9,5 @@ service RpcAgent {
 message RpcMsg {
     string value = 1;
     string target_func = 2;
-    string session_id = 3;
+    string agent_id = 3;
 }

@@ -107,8 +107,8 @@ class RpcAgent(AgentBase):
         max_timeout_seconds: int = 1800,
         local_mode: bool = True,
         lazy_launch: bool = True,
-        session_id: str = None,
-        create_session_with_agent_configs: bool = True,
+        agent_id: str = None,
+        create_with_agent_configs: bool = True,
     ) -> None:
         """Initialize a RpcAgent instance.
 
@@ -133,12 +133,12 @@ class RpcAgent(AgentBase):
                 requests.
             lazy_launch (`bool`, defaults to `True`):
                 Only launch the server when the agent is called.
-            session_id (`str`, defaults to `None`):
-                The session id of this instance. If `None`, it will
+            agent_id (`str`, defaults to `None`):
+                The agent id of this instance. If `None`, it will
                 be generated randomly.
-            create_session_with_agent_configs (`bool`, defaults to `True`):
+            create_with_agent_configs (`bool`, defaults to `True`):
                 Only takes effect when `agent_configs` is provided.
-                If true, create the agent instance for the session with
+                If true, create the agent instance for the agent with
                 provided `agent_configs`, otherwise uses the agent server's
                 default parameters.
         """
@@ -147,9 +147,7 @@ class RpcAgent(AgentBase):
         self.port = port
         self.server_launcher = None
         self.client = None
-        self.session_id = (
-            generate_session_id() if session_id is None else session_id
-        )
+        self.agent_id = generate_agent_id() if agent_id is None else agent_id
         if launch_server:
             self.server_launcher = RpcAgentServerLauncher(
                 agent_class=agent_class,
@@ -169,10 +167,10 @@ class RpcAgent(AgentBase):
             self.client = RpcAgentClient(
                 host=self.host,
                 port=self.port,
-                session_id=self.session_id,
+                agent_id=self.agent_id,
             )
-            if create_session_with_agent_configs:
-                self.client.create_session(agent_configs)
+            if create_with_agent_configs:
+                self.client.create_agent(agent_configs)
 
     def _launch_server(self) -> None:
         """Launch a rpc server and update the port and the client"""
@@ -181,7 +179,7 @@ class RpcAgent(AgentBase):
         self.client = RpcAgentClient(
             host=self.host,
             port=self.port,
-            session_id=self.session_id,
+            agent_id=self.agent_id,
         )
 
     def reply(self, x: dict = None) -> dict:
@@ -208,7 +206,7 @@ class RpcAgent(AgentBase):
         including_self: bool = True,
     ) -> Sequence[AgentBase]:
         """
-        Clone a series of this instance with different session_id and
+        Clone a series of this instance with different agent_id and
         return them as a list.
 
         Args:
@@ -241,7 +239,7 @@ class RpcAgent(AgentBase):
                     host=self.host,
                     port=self.port,
                     launch_server=False,
-                    create_session_with_agent_configs=False,
+                    create_with_agent_configs=False,
                 ),
             )
         return generated_instances
@@ -256,8 +254,8 @@ class RpcAgent(AgentBase):
             self.server_launcher.shutdown()
 
 
-def generate_session_id() -> str:
-    """Generate a uuid as session id"""
+def generate_agent_id() -> str:
+    """Generate a uuid as agent id"""
     return uuid.uuid4().hex
 
 
@@ -576,7 +574,7 @@ class RpcServerSideWrapper(RpcAgentServicer):
         )
         self.executor = futures.ThreadPoolExecutor(max_workers=cpu_count())
         self.task_id_lock = threading.Lock()
-        self.session_id_lock = threading.Lock()
+        self.agent_id_lock = threading.Lock()
         self.task_id_counter = 0
         self.agent_pool: dict[str, AgentBase] = {}
 
@@ -586,55 +584,55 @@ class RpcServerSideWrapper(RpcAgentServicer):
             self.task_id_counter += 1
             return self.task_id_counter
 
-    def check_and_generate_session(
+    def check_and_generate_agent(
         self,
-        session_id: str,
+        agent_id: str,
         agent_configs: dict = None,
     ) -> None:
         """
-        Check whether the session exists, and create new agent instance
-        for new session.
+        Check whether the agent exists, and create new agent instance
+        for new agent.
 
         Args:
-            session_id (`str`): the session id.
+            agent_id (`str`): the agent id.
         """
-        with self.session_id_lock:
-            if session_id not in self.agent_pool:
+        with self.agent_id_lock:
+            if agent_id not in self.agent_pool:
                 if agent_configs is not None:
-                    self.agent_pool[session_id] = self.agent_class(
+                    self.agent_pool[agent_id] = self.agent_class(
                         *agent_configs["args"],
                         **agent_configs["kwargs"],
                     )
                 else:
-                    self.agent_pool[session_id] = self.agent_class(
+                    self.agent_pool[agent_id] = self.agent_class(
                         *self.agent_args,
                         **self.agent_kwargs,
                     )
 
-    def check_and_delete_session(self, session_id: str) -> None:
+    def check_and_delete_agent(self, agent_id: str) -> None:
         """
-        Check whether the session exists, and delete the agent instance
-        for the session_id.
+        Check whether the agent exists, and delete the agent instance
+        for the agent_id.
 
         Args:
-            session_id (`str`): the session id.
+            agent_id (`str`): the agent id.
         """
-        with self.session_id_lock:
-            if session_id in self.agent_pool:
-                self.agent_pool.pop(session_id)
+        with self.agent_id_lock:
+            if agent_id in self.agent_pool:
+                self.agent_pool.pop(agent_id)
 
     def call_func(self, request: RpcMsg, _: ServicerContext) -> RpcMsg:
         """Call the specific servicer function."""
         if hasattr(self, request.target_func):
-            if request.target_func != "_create_session":
-                self.check_and_generate_session(request.session_id)
+            if request.target_func != "_create_agent":
+                self.check_and_generate_agent(request.agent_id)
             return getattr(self, request.target_func)(request)
         else:
             # TODO: support other user defined method
             logger.error(f"Unsupported method {request.target_func}")
             return RpcMsg(
                 value=Msg(
-                    name=self.agent_pool[request.session_id].name,
+                    name=self.agent_pool[request.agent_id].name,
                     content=f"Unsupported method {request.target_func}",
                     role="assistant",
                 ).serialize(),
@@ -661,12 +659,12 @@ class RpcServerSideWrapper(RpcAgentServicer):
         self.executor.submit(
             self.process_messages,
             task_id,
-            request.session_id,
+            request.agent_id,
             msg,  # type: ignore[arg-type]
         )
         return RpcMsg(
             value=Msg(
-                name=self.agent_pool[request.session_id].name,
+                name=self.agent_pool[request.agent_id].name,
                 content=None,
                 task_id=task_id,
             ).serialize(),
@@ -710,41 +708,41 @@ class RpcServerSideWrapper(RpcAgentServicer):
         for msg in msgs:
             if isinstance(msg, PlaceholderMessage):
                 msg.update_value()
-        self.agent_pool[request.session_id].observe(msgs)
+        self.agent_pool[request.agent_id].observe(msgs)
         return RpcMsg()
 
-    def _create_session(self, request: RpcMsg) -> RpcMsg:
-        """Create a new agent instance for the session_id.
+    def _create_agent(self, request: RpcMsg) -> RpcMsg:
+        """Create a new agent instance for the agent_id.
 
         Args:
-            request (RpcMsg): request message with a `session_id` field.
+            request (RpcMsg): request message with a `agent_id` field.
         """
-        self.check_and_generate_session(
-            request.session_id,
+        self.check_and_generate_agent(
+            request.agent_id,
             agent_configs=json.loads(request.value) if request.value else None,
         )
         return RpcMsg()
 
-    def _delete_session(self, request: RpcMsg) -> RpcMsg:
+    def _delete_agent(self, request: RpcMsg) -> RpcMsg:
         """Delete the agent instance of the specific sesssion_id.
 
         Args:
-            request (RpcMsg): request message with a `session_id` field.
+            request (RpcMsg): request message with a `agent_id` field.
         """
-        self.check_and_delete_session(request.session_id)
+        self.check_and_delete_agent(request.agent_id)
         return RpcMsg()
 
     def process_messages(
         self,
         task_id: int,
-        session_id: str,
+        agent_id: str,
         task_msg: dict = None,
     ) -> None:
         """Task processing."""
         if isinstance(task_msg, PlaceholderMessage):
             task_msg.update_value()
         cond = self.result_pool[task_id]
-        result = self.agent_pool[session_id].reply(task_msg)
+        result = self.agent_pool[agent_id].reply(task_msg)
         self.result_pool[task_id] = result
         with cond:
             cond.notify_all()

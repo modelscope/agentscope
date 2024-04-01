@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(
-    b'\n\x0frpc_agent.proto"@\n\x06RpcMsg\x12\r\n\x05value\x18\x01 \x01(\t\x12\x13\n\x0btarget_func\x18\x02 \x01(\t\x12\x12\n\nsession_id\x18\x03 \x01(\t2+\n\x08RpcAgent\x12\x1f\n\tcall_func\x12\x07.RpcMsg\x1a\x07.RpcMsg"\x00\x62\x06proto3',
+    b'\n\x0frpc_agent.proto">\n\x06RpcMsg\x12\r\n\x05value\x18\x01 \x01(\t\x12\x13\n\x0btarget_func\x18\x02 \x01(\t\x12\x10\n\x08\x61gent_id\x18\x03 \x01(\t2+\n\x08RpcAgent\x12\x1f\n\tcall_func\x12\x07.RpcMsg\x1a\x07.RpcMsg"\x00\x62\x06proto3'
 )
 
 _globals = globals()
@@ -23,7 +23,7 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, "rpc_agent_pb2", _globals)
 if _descriptor._USE_C_DESCRIPTORS == False:
     DESCRIPTOR._options = None
     _globals["_RPCMSG"]._serialized_start = 19
-    _globals["_RPCMSG"]._serialized_end = 83
-    _globals["_RPCAGENT"]._serialized_start = 85
-    _globals["_RPCAGENT"]._serialized_end = 128
+    _globals["_RPCMSG"]._serialized_end = 81
+    _globals["_RPCAGENT"]._serialized_start = 83
+    _globals["_RPCAGENT"]._serialized_end = 126
 # @@protoc_insertion_point(module_scope)

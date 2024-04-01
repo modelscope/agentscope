@@ -22,7 +22,7 @@ except ModuleNotFoundError:
 class RpcAgentClient:
     """A client of Rpc agent server"""
 
-    def __init__(self, host: str, port: int, session_id: str = "") -> None:
+    def __init__(self, host: str, port: int, agent_id: str = "") -> None:
         """Init a rpc agent client
 
         Args:
@@ -30,11 +30,11 @@ class RpcAgentClient:
             client is connected.
             port (`int`): the port of the rpc agent server which the client
             is connected.
-            session_id (`str`): the session id of the agent being called.
+            agent_id (`str`): the agent id of the agent being called.
         """
         self.host = host
         self.port = port
-        self.session_id = session_id
+        self.agent_id = agent_id
 
     def call_func(self, func_name: str, value: Optional[str] = None) -> str:
         """Call the specific function of rpc server.
@@ -52,18 +52,18 @@ class RpcAgentClient:
                 RpcMsg(
                     value=value,
                     target_func=func_name,
-                    session_id=self.session_id,
+                    agent_id=self.agent_id,
                 ),
             )
             return result_msg.value
 
-    def create_session(self, agent_configs: Optional[dict]) -> None:
-        """Create a new session for this client."""
+    def create_agent(self, agent_configs: Optional[dict]) -> None:
+        """Create a new agent for this client."""
         try:
-            if self.session_id is None or len(self.session_id) == 0:
+            if self.agent_id is None or len(self.agent_id) == 0:
                 return
             self.call_func(
-                func_name="_create_session",
+                func_name="_create_agent",
                 value=(
                     None
                     if agent_configs is None
@@ -73,16 +73,16 @@ class RpcAgentClient:
         except Exception as e:
             logger.warning(e)
             logger.warning(
-                f"Fail to create session with id [{self.session_id}]",
+                f"Fail to create agent with id [{self.agent_id}]",
             )
 
-    def delete_session(self) -> None:
+    def delete_agent(self) -> None:
         """
-        Delete the session created by this client.
+        Delete the agent created by this client.
         """
         try:
-            if self.session_id is not None and len(self.session_id) > 0:
-                self.call_func("_delete_session")
+            if self.agent_id is not None and len(self.agent_id) > 0:
+                self.call_func("_delete_agent")
         except Exception:
             return
 

@@ -44,8 +44,7 @@ def add_RpcAgentServicer_to_server(servicer, server):
         ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-        "RpcAgent",
-        rpc_method_handlers,
+        "RpcAgent", rpc_method_handlers
     )
     server.add_generic_rpc_handlers((generic_handler,))
 
