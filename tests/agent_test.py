@@ -41,7 +41,7 @@ class BasicAgentTest(unittest.TestCase):
     """Test cases for basic agents"""
 
     def test_agent_init(self) -> None:
-        """Test the automatic registration mechanism of model wrapper."""
+        """Test the init of agentbase sub-class."""
         a1 = TestAgent(
             "a",
             "Hi",
