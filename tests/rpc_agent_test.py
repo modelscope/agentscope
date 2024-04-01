@@ -21,7 +21,7 @@ from agentscope.utils import MonitorFactory, QuotaExceededError
 class DemoRpcAgent(AgentBase):
     """A demo Rpc agent for test usage."""
 
-    def __init__(self, **kwargs) -> None:  # type: ignore [no-untyped-def]
+    def __init__(self, **kwargs) -> None:  # type: ignore[no-untyped-def]
         super().__init__(**kwargs)
         self.id = 0
 
@@ -138,7 +138,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertTrue(isinstance(placeholder_result, PlaceholderMessage))
         self.assertEqual(placeholder_result.name, "a")
         self.assertEqual(
-            placeholder_result["name"],  # type: ignore [call-overload]
+            placeholder_result["name"],  # type: ignore[call-overload]
             "a",
         )
         self.assertTrue(
@@ -163,7 +163,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertEqual(msg_result.content, msg.content)
         self.assertEqual(msg_result.id, 0)
         # check id increase
-        msg = agent_a(msg_result)  # type: ignore [arg-type]
+        msg = agent_a(msg_result)  # type: ignore[arg-type]
         self.assertEqual(msg.id, 1)
 
     def test_connect_to_an_existing_rpc_server(self) -> None:

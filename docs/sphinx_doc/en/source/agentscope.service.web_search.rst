@@ -9,3 +9,10 @@ search module
    :undoc-members:
    :show-inheritance:
 
+web\_digest module
+---------------------------------------------
+
+.. automodule:: agentscope.service.web_search.web_digest
+   :members:
+   :undoc-members:
+   :show-inheritance:

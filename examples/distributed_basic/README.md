@@ -1,8 +1,8 @@
-# Distributed Basic (`distributed_dialog.py`)
+# Distributed Basic
 
 This example run a assistant agent and a user agent as seperate processes and use rpc to communicate between them.
 
-Before running the example, please fill in your model configuration correctly in `configs/model_configs.json`, and modify the `model_config_name` field in `distributed_dialog.py` accordingly.
+Before running the example, please install the distributed version of Agentscope, fill in your model configuration correctly in `configs/model_configs.json`, and modify the `model_config_name` field in `distributed_dialog.py` accordingly.
 
 Then, use the following command to start the assistant agent.
 

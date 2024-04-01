@@ -1,0 +1,12 @@
+[
+    {
+        "model_type": "tongyi_chat",
+        "config_name": "my_model",
+        "model_name": "qwen-max",
+        "api_key": "your_api_key",
+        "generate_args": {
+            "temperature": 0.5
+        },
+        "messages_key": "input"
+    }
+]

@@ -138,7 +138,8 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
             x (`Union[dict, Sequence[dict]]`):
                 The input message to be recorded in memory.
         """
-        self.memory.add(x)
+        if self.memory:
+            self.memory.add(x)
 
     def reset_audience(self, audience: Sequence[AgentBase]) -> None:
         """Set the audience of this agent, which means if this agent

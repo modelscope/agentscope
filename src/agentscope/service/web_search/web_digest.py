@@ -45,6 +45,7 @@ def load_web(
     timeout: int = 5,
 ) -> ServiceResponse:
     """Function for parsing and digesting the web page.
+
     Args:
         url (str): the url of the web page
         keep_raw (bool):
@@ -62,22 +63,29 @@ def load_web(
             key
         timeout (int): timeout parameter for requests.
 
-
     Returns:
         `ServiceResponse`: If successful, `ServiceResponse` object is returned
         with `content` field is a dict, where keys are subset of:
+
             "raw": exists if `keep_raw` is True, store raw HTML content`;
+
             "self_define_func": exists if `self_parse_func` is provided,
-                store the return of self_define_func;
+            store the return of self_define_func;
+
             "html_to_text": exists if `html_selected_tags` is provided
-                and not empty;
+            and not empty;
+
             "json": exists if url links to a json webpage, then it is
-                parsed as json.
+            parsed as json.
+
          For example, `ServiceResponse.content` field is
-        {
-            "raw": xxxxx,
-            "selected_tags_text": xxxxx
-        }
+
+        .. code-block:: python
+
+            {
+                "raw": xxxxx,
+                "selected_tags_text": xxxxx
+            }
     """
     header = {
         "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
@@ -148,12 +156,14 @@ def parse_html_to_text(
 ) -> str:
     """
     Parse the obtained HTML file.
+
     Args:
         html_text (str):
             HTML source code
         html_selected_tags (Optional[Sequence[str]]):
             the text in elements of `html_selected_tags` will
             be extracted and returned.
+
     Returns:
         `ServiceResponse`: If successful, `ServiceResponse` object is returned
         with `content` field is processed text content of the selected tags,
