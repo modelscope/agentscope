@@ -77,3 +77,5 @@ class BasicAgentTest(unittest.TestCase):
         self.assertTrue(a2.agent_id.startswith("TestAgent"))
         a3 = TestAgentCopy("c")
         self.assertTrue(a3.agent_id.startswith("TestAgentCopy"))
+        a4 = TestAgent("d", agent_id="agent_id_for_d")
+        self.assertEqual(a4.agent_id, "agent_id_for_d")
