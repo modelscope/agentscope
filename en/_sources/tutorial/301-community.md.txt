@@ -23,10 +23,6 @@ Becoming a part of the AgentScope community allows you to connect with other use
 
   Our DingTalk group invitation: [AgentScope DingTalk Group](https://qr.dingtalk.com/action/joingroup?code=v1,k1,20IUyRX5XZQ2vWjKDsjvI9dhcXjGZi3bq1pFfDZINCM=&_dt_no_comment=1&origin=11)
 
-## Wechat
-
-Scan the QR code below on Wechat to join:  <img width="150" src="https://img.alicdn.com/imgextra/i3/O1CN01UyfWfx1CYBM3WqlBy_!!6000000000092-2-tps-400-400.png" alt="AgentScope-wechat">
-
 ---
 
 We welcome everyone interested in AgentScope to join our community and contribute to the growth of the platform!
