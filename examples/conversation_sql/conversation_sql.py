@@ -42,12 +42,13 @@ class SQLAgent(AgentBase):
         self.db_path = db_path
         self.max_retries = 3
         self.prompt_helper = DailSQLPromptGenerator(self.db_id, self.db_path)
+
         self.self_intro = f"""Hi, I am an agent able to preform SQL querys
         base on natual language instructions.
         Below is a description of the database {self.db_id} provided."""
-        self.start_intro = (
-            f"Is there any you want to ask about the database {self.db_id}?"
-        )
+
+        self.start_intro = f"""Is there any you want to
+        ask about the database {self.db_id}?"""
 
     def get_response_from_prompt(self, prompt: dict) -> str:
         """
@@ -67,7 +68,7 @@ class SQLAgent(AgentBase):
             response = "SELECT " + sql + "\n"
         return response
 
-    def answer_question_given_execution_result(
+    def answer_from_result(
         self,
         question: str,
         response_text: str,
@@ -76,9 +77,21 @@ class SQLAgent(AgentBase):
         prompt = f"""Given the sql query and and the result,
         answer the user's question.
         \n User question: {question} \n {response_text}"""
+
         messages = [{"role": "user", "content": prompt}]
         answer = self.model(messages).text
         return answer
+
+    def is_question_related(self, question: str) -> str:
+        """
+        Whether the question is sql related.
+        Return "YES" if is related.
+        Return chat answer if is not.
+        """
+        is_sql_prompt = self.prompt_helper.is_sql_question_prompt(question)
+        messages = [{"role": "user", "content": is_sql_prompt}]
+        is_sql_response = self.model(messages).text
+        return is_sql_response
 
     def reply(self, x: dict = None) -> dict:
         # this means that here is the first call
@@ -96,9 +109,8 @@ class SQLAgent(AgentBase):
             self.speak(msg)
             return msg
 
-        is_sql_prompt = self.prompt_helper.is_sql_question_prompt(x["content"])
-        messages = [{"role": "user", "content": is_sql_prompt}]
-        is_sql_response = self.model(messages).text
+        is_sql_response = self.is_question_related(x["content"])
+
         if is_sql_response.lower() != "yes":
             response_text = is_sql_response
             result = response_text
@@ -116,17 +128,12 @@ class SQLAgent(AgentBase):
                 sql_response = self.get_response_from_prompt(
                     prepared_prompt["prompt"],
                 )
-                # msg = Msg(self.name, response, role="sql assistant")
-                # self.speak(msg)
                 exec_result = execute_query(sql_response, path_db=self.db_path)
                 response_text = f"""Generated SQL query is: {sql_response} \n
                 The execution result is: {exec_result}"""
-                response_text += (
-                    "\n\n"
-                    + self.answer_question_given_execution_result(
-                        x["content"],
-                        response_text,
-                    )
+                response_text += "\n\n" + self.answer_from_result(
+                    x["content"],
+                    response_text,
                 )
                 result = response_text
                 msg = Msg(self.name, result, role="sql assistant")
