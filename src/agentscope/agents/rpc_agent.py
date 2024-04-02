@@ -138,7 +138,7 @@ class RpcAgent(AgentBase):
                 agent_id=self.agent_id,
             )
             self.client.create_agent(
-                agent_configs if create_with_agent_configs else None
+                agent_configs if create_with_agent_configs else None,
             )
 
     def _launch_server(self) -> None:
@@ -591,10 +591,7 @@ class RpcServerSideWrapper(RpcAgentServicer):
     def call_func(self, request: RpcMsg, _: ServicerContext) -> RpcMsg:
         """Call the specific servicer function."""
         if hasattr(self, request.target_func):
-            if not (
-                request.target_func == "_create_agent"
-                or request.target_func == "_get"
-            ):
+            if request.target_func not in ["_create_agent", "_get"]:
                 self.check_and_generate_agent(request.agent_id)
             return getattr(self, request.target_func)(request)
         else:

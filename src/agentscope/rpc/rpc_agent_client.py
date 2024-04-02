@@ -37,7 +37,10 @@ class RpcAgentClient:
         self.agent_id = agent_id
 
     def call_func(
-        self, func_name: str, value: Optional[str] = None, timeout: int = 300
+        self,
+        func_name: str,
+        value: Optional[str] = None,
+        timeout: int = 300,
     ) -> str:
         """Call the specific function of rpc server.
 
