@@ -40,7 +40,6 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
         model_config_name: str = None,
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
-        agent_id: Optional[str] = None,
     ) -> None:
         r"""Initialize an agent from the given arguments.
 
@@ -57,8 +56,6 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
                 Whether the agent has memory.
             memory_config (`Optional[dict]`):
                 The config of memory.
-            agent_id (`Optional[str]`, defaults to None):
-                The id of this agent. If None, Generate a random id.
         """
         self.name = name
         self.memory_config = memory_config
@@ -75,10 +72,8 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
         else:
             self.memory = None
 
-        if agent_id is None:
-            self.agent_id = self.__class__.generate_agent_id()
-        else:
-            self.agent_id = agent_id
+        # The global unique id of this agent
+        self._agent_id = self.__class__.generate_agent_id()
 
         # The audience of this agent, which means if this agent generates a
         # response, it will be passed to all agents in the audience.
@@ -195,6 +190,15 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
         """Broadcast the input to all audiences."""
         for agent in self._audience:
             agent.observe(x)
+
+    @property
+    def agent_id(self) -> str:
+        """The unique id of this agent.
+
+        Returns:
+            str: agent_id
+        """
+        return self._agent_id
 
     def to_dist(
         self,

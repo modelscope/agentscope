@@ -29,7 +29,6 @@ class TestAgent(AgentBase):
             memory_config=(
                 kwargs["memory_config"] if "memory_config" in kwargs else None
             ),
-            agent_id=(kwargs["agent_id"] if "agent_id" in kwargs else None),
         )
 
 
@@ -79,6 +78,6 @@ class BasicAgentTest(unittest.TestCase):
         self.assertTrue(a3.agent_id.startswith("TestAgentCopy"))
         a4 = TestAgent(
             "d",
-            agent_id="agent_id_for_d",  # type: ignore[arg-type]
         )
+        a4._agent_id = "agent_id_for_d"  # pylint: disable=W0212
         self.assertEqual(a4.agent_id, "agent_id_for_d")
