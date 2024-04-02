@@ -6,7 +6,7 @@ from .rpc_agent_client import RpcAgentClient
 try:
     from .rpc_agent_pb2 import RpcMsg  # pylint: disable=E0611
 except ModuleNotFoundError:
-    RpcMsg = Any
+    RpcMsg = Any  # type: ignore[misc]
 try:
     from .rpc_agent_pb2_grpc import RpcAgentServicer
     from .rpc_agent_pb2_grpc import RpcAgentStub
