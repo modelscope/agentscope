@@ -23,10 +23,6 @@
 
   我们的钉钉群邀请链接：[AgentScope 钉钉群](https://qr.dingtalk.com/action/joingroup?code=v1,k1,20IUyRX5XZQ2vWjKDsjvI9dhcXjGZi3bq1pFfDZINCM=&_dt_no_comment=1&origin=11)
 
-## 微信
-
-扫描下方的二维码加入微信：<img width="150" src="https://img.alicdn.com/imgextra/i3/O1CN01UyfWfx1CYBM3WqlBy_!!6000000000092-2-tps-400-400.png" alt="AgentScope-wechat">
-
 ---
 
 我们欢迎所有对AgentScope感兴趣的人加入我们的社区，并为平台的发展做出贡献！
