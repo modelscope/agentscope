@@ -89,9 +89,15 @@ class SQLPrompt:
         SQL querys base on natual language instructions.
         Please describe the database schema provided
         in a simple and understandable manner. """
-        self.template_display = (
-            "Now the existing database data structure using natural language."
-        )
+        self.is_sql_prompt = """Please read the user's question below and
+          determine whether the question is an appropriate
+          query for the given SQL schema. \n
+          If the question is indeed a query pertaining to the SQL schema,
+          respond with "YES".
+          If the question is not a query related to the SQL schema,
+          provide a brief explanation to the user explaining why their
+          question does not correspond to a SQL query within the
+          context of the schema. """
 
     def format_target(self, example: dict) -> str:
         """Format sql prompt"""
@@ -114,7 +120,18 @@ class SQLPrompt:
             self.template_agent_prompt,
             "DB schema info: ",
             prompt_info,
-            self.template_display,
+        ]
+        prompt = "\n\n".join(prompt_components)
+        return prompt
+
+    def is_sql_question(self, example: dict) -> str:
+        """whether the input is a sql question or not"""
+        sqls = get_sql_for_database(example["path_db"])
+        prompt_info = self.template_info.format("\n\n".join(sqls))
+        prompt_components = [
+            prompt_info,
+            self.is_sql_prompt,
+            example["question"],
         ]
         prompt = "\n\n".join(prompt_components)
         return prompt
@@ -230,6 +247,17 @@ class DailSQLPromptGenerator:
             "path_db": self.db_path,
         }
         return self.sql_prompt.describe_sql(target)
+
+    def is_sql_question_prompt(self, question: str) -> str:
+        """
+        prompt for LLM to judge whether the question is appropriate
+        """
+        target = {
+            "db_id": self.db_id,
+            "path_db": self.db_path,
+            "question": question,
+        }
+        return self.sql_prompt.is_sql_question(target)
 
     def generate_prompt(self, x: dict = None) -> dict:
         """

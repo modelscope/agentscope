@@ -96,6 +96,16 @@ class SQLAgent(AgentBase):
             self.speak(msg)
             return msg
 
+        is_sql_prompt = self.prompt_helper.is_sql_question_prompt(x["content"])
+        messages = [{"role": "user", "content": is_sql_prompt}]
+        is_sql_response = self.model(messages).text
+        if is_sql_response.lower() != "yes":
+            response_text = is_sql_response
+            result = response_text
+            msg = Msg(self.name, result, role="sql assistant")
+            self.speak(msg)
+            return msg
+
         prepared_prompt = self.prompt_helper.generate_prompt(x)
 
         attempt = 0
@@ -124,6 +134,7 @@ class SQLAgent(AgentBase):
                 break
             except Exception:
                 print(
+                    f"We fail to execute the generated query."
                     f"Attempt {attempt+1} of {self.max_retries} "
                     f"failed. Retrying!",
                 )
@@ -131,7 +142,7 @@ class SQLAgent(AgentBase):
 
         if result is None:
             print(
-                "Failed to execute query after",
+                "Sorry, the agent failed to execute query after",
                 self.max_retries,
                 "attempts",
             )
