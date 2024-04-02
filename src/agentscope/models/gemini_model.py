@@ -233,33 +233,54 @@ class GeminiChatWrapper(GeminiWrapperBase):
             `List[dict]`:
                 A list with one user message.
         """
-        prompt = []
-        for unit in args:
-            if unit is None:
-                continue
-            if isinstance(unit, Msg):
-                prompt.append(f"{unit.name}: {_convert_to_str(unit.content)}")
-            elif isinstance(unit, list):
-                for child_unit in unit:
-                    if isinstance(child_unit, Msg):
-                        prompt.append(
-                            f"{child_unit.name}: "
-                            f"{_convert_to_str(child_unit.content)}",
-                        )
-                    else:
-                        raise TypeError(
-                            f"The input should be a Msg object or a list "
-                            f"of Msg objects, got {type(child_unit)}.",
-                        )
+        input_msgs = []
+        for _ in args:
+            if isinstance(_, Msg):
+                input_msgs.append(_)
+            elif isinstance(_, list):
+                input_msgs.extend(_)
             else:
                 raise TypeError(
                     f"The input should be a Msg object or a list "
-                    f"of Msg objects, got {type(unit)}.",
+                    f"of Msg objects, got {type(_)}.",
                 )
 
-        prompt_str = "\n".join(prompt)
+        # record dialog history as a list of strings
+        sys_prompt = None
+        dialogue = []
+        for i, unit in enumerate(input_msgs):
+            if i == 0 and unit.role == "system":
+                # system prompt
+                sys_prompt = _convert_to_str(unit.content)
+            else:
+                # Merge all messages into a dialogue history prompt
+                dialogue.append(
+                    f"{unit.name}: {_convert_to_str(unit.content)}",
+                )
 
-        return [{"role": "user", "parts": [prompt_str]}]
+        dialogue_history = "\n".join(dialogue)
+
+        if sys_prompt is None:
+            user_content_template = "## Dialogue History\n{dialogue_history}"
+        else:
+            user_content_template = (
+                "{system_prompt}\n"
+                "\n"
+                "## Dialogue History\n"
+                "{dialogue_history}"
+            )
+
+        messages = [
+            {
+                "role": "user",
+                "content": user_content_template.format(
+                    sys_prompt=sys_prompt,
+                    dialogue_history=dialogue_history,
+                ),
+            },
+        ]
+
+        return messages
 
 
 class GeminiEmbeddingWrapper(GeminiWrapperBase):

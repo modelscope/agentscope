@@ -8,22 +8,22 @@ from typing import Tuple, List
 
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
-from agentscope.models import ModelResponse
+from agentscope.models import ResponseParser, ResponseParsingError
 from agentscope.service import ServiceResponse, ServiceExecStatus
 
 
-DEFAULT_TOOL_PROMPT = """
-The following tool functions are available in the format of
+DEFAULT_TOOL_PROMPT = """The following tool functions are available in the format of
 ```
 {{index}}. {{function name}}: {{function description}}
-    {{argument name}} ({{argument type}}): {{argument description}}
+    {{argument1 name}} ({{argument type}}): {{argument description}}
+    {{argument2 name}} ({{argument type}}): {{argument description}}
     ...
 ```
 
-Tool Functions:
+## Tool Functions:
 {function_prompt}
 
-Notice:
+## Notice:
 1. Fully understand the tool function and its arguments before using it.
 2. Only use the tool function when it's necessary.
 3. Check if the arguments you provided to the tool function is correct in type and value.
@@ -33,23 +33,19 @@ Notice:
 """  # noqa
 
 TOOL_HINT_PROMPT = """
-Generate a response in the following format:
-
-Response Format:
-You should respond in the following format, which can be loaded by `json.loads` in Python:
-{{
+## Response Format:
+You should respond in the following format, which can be loaded by `json.loads` in Python directly:
+{
     "thought": "what you thought",
     "speak": "what you said",
-    "function": [{{"name": "{{function name}}", "arguments": {{"{{argument name}}": {{argument_value}}, ...}}}}, ...]
-}}
-
+    "function": [{"name": "{function name}", "arguments": {"{argument1 name}": xxx, "{argument2 name}": xxx}}]
+}
 Taking using web_search function as an example, the response should be like this:
-{{
+{
     "thought": "xxx",
     "speak": "xxx",
-    "function": [{{"name": "web_search", "arguments": {{"query": "what's the weather today?"}}}}]
-}}
-"""  # noqa
+    "function": [{"name": "web_search", "arguments": {"query": "what's the weather today?"}}]
+}"""  # noqa
 
 FUNCTION_RESULT_TITLE_PROMPT = """Execution Results:
 """
@@ -59,10 +55,23 @@ FUNCTION_RESULT_PROMPT = """{index}. {function_name}:
     [EXECUTE RESULT]: {result}
 """
 
+ERROR_INFO_PROMPT = """Your response cannot be parsed by the `json.loads` in parse function:
+## Your Response:
+[YOUR RESPONSE BEGIN]
+{response}
+[YOUR RESPONSE END]
 
-def parse_func(response: ModelResponse) -> ModelResponse:
-    """Parsing the response into a dict object."""
-    return ModelResponse(raw=json.loads(response.text))
+## Parse Function:
+{parse_func}
+
+## Error Information:
+{error_info}
+
+Analyze the reason, and re-correct your response in the correct format.
+"""  # noqa
+
+PARSE_FUNC = """def parse_func(response: str) -> dict:
+    return json.loads(response)"""
 
 
 class ReActAgent(AgentBase):
@@ -138,17 +147,39 @@ class ReActAgent(AgentBase):
 
             self.speak(f" ITER {_+1}, STEP 1: REASONING ".center(70, "#"))
 
-            # Generate LLM response
-            prompt = self.model.format(
-                self.memory.get_memory(),
-                Msg("system", TOOL_HINT_PROMPT, role="system"),
-            )
+            try:
+                hint_msg = Msg("system", TOOL_HINT_PROMPT, role="system")
+                self.memory.add(hint_msg)
 
-            res = self.model(
-                prompt,
-                parse_func=parse_func,
-                max_retries=3,
-            ).raw
+                # Generate LLM response
+                prompt = self.model.advanced_format(self.memory.get_memory())
+                res = self.model(
+                    prompt,
+                    parse_func=ResponseParser.to_dict,
+                    max_retries=1,
+                ).json
+
+            except ResponseParsingError as e:
+                # Record the wrong response from the model
+                response_msg = Msg(self.name, e.response.text, "assistant")
+                self.speak(response_msg)
+
+                # Re-correct by model itself
+                error_msg = Msg(
+                    "system",
+                    ERROR_INFO_PROMPT.format(
+                        parse_func=PARSE_FUNC,
+                        error_info=e.error_info,
+                        response=e.response.text,
+                    ),
+                    "system",
+                )
+                self.speak(error_msg)
+
+                self.memory.add([response_msg, error_msg])
+
+                # Skip acting step to re-correct the response
+                continue
 
             # Record the response in memory
             msg_thought = Msg(self.name, res, role="assistant")

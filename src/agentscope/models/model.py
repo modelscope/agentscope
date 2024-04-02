@@ -58,74 +58,19 @@ import time
 from abc import ABCMeta
 from functools import wraps
 from typing import Sequence, Any, Callable, Union, List
-import json
 
 from loguru import logger
 
 from agentscope.utils import QuotaExceededError
-
+from .response import ResponseParsingError, ModelResponse
 
 from ..file_manager import file_manager
 from ..message import Msg
 from ..utils import MonitorFactory
 from ..utils.monitor import get_full_name
-from ..utils.tools import _get_timestamp, _is_json_serializable
+from ..utils.tools import _get_timestamp
 from ..constants import _DEFAULT_MAX_RETRIES
 from ..constants import _DEFAULT_RETRY_INTERVAL
-
-
-class ModelResponse:
-    """Encapsulation of data returned by the model.
-
-    The main purpose of this class is to align the return formats of different
-    models and act as a bridge between models and agents.
-    """
-
-    def __init__(
-        self,
-        text: str = None,
-        embedding: Sequence = None,
-        image_urls: Sequence[str] = None,
-        raw: Any = None,
-    ) -> None:
-        self._text = text
-        self._embedding = embedding
-        self._image_urls = image_urls
-        self._raw = raw
-
-    @property
-    def text(self) -> str:
-        """Text field."""
-        return self._text
-
-    @property
-    def embedding(self) -> Sequence:
-        """Embedding field."""
-        return self._embedding
-
-    @property
-    def image_urls(self) -> Sequence[str]:
-        """Image URLs field."""
-        return self._image_urls
-
-    @property
-    def raw(self) -> Any:
-        """Raw response field."""
-        return self._raw
-
-    def __str__(self) -> str:
-        if _is_json_serializable(self._raw):
-            raw = self._raw
-        else:
-            raw = str(self._raw)
-
-        serialized_fields = {
-            "text": self.text,
-            "embedding": self.embedding,
-            "image_urls": self.image_urls,
-            "raw": raw,
-        }
-        return json.dumps(serialized_fields, indent=4, ensure_ascii=False)
 
 
 def _response_parse_decorator(
@@ -170,7 +115,6 @@ def _response_parse_decorator(
             return model_call(self, *args, **kwargs)
 
         # Otherwise, try to parse the response
-        response = None
         for itr in range(1, max_retries + 1):
             # Call the model
             response = model_call(self, *args, **kwargs)
@@ -179,21 +123,25 @@ def _response_parse_decorator(
             try:
                 return parse_func(response)
             except Exception as e:
-                logger.warning(
-                    f"Fail to parsing response: "
-                    f"{response}.\n Exception: {e}, "
-                    f"\t Attempt {itr} / {max_retries}",
-                )
-                time.sleep(_DEFAULT_RETRY_INTERVAL * itr)
-
-        if fault_handler is not None and callable(fault_handler):
-            return fault_handler(response)
-        else:
-            raise ValueError(
-                f"fail to parsing response with: "
-                f"{parse_func.__name__}. \n  "
-                f"\t Attempts fails {max_retries} times",
-            )
+                if itr < max_retries:
+                    logger.warning(
+                        f"Fail to parse response ({itr}/{max_retries}):\n"
+                        f"{response}.\n"
+                        f"{e.__class__.__name__}: {e}",
+                    )
+                    time.sleep(_DEFAULT_RETRY_INTERVAL * itr)
+                else:
+                    if fault_handler is not None and callable(fault_handler):
+                        return fault_handler(response)
+                    else:
+                        parse_func = inspect.getsource(parse_func)
+                        error_info = f"{e.__class__.__name__}: {e}"
+                        raise ResponseParsingError(
+                            parse_func=parse_func,
+                            error_info=error_info,
+                            response=response,
+                        ) from None
+        return {}
 
     return checking_wrapper
 

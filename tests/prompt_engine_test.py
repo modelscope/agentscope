@@ -3,9 +3,9 @@
 import unittest
 from typing import Any
 
-from agentscope.models import read_model_configs
+from agentscope.models import read_model_configs, ModelResponse
 from agentscope.models import load_model_by_config_name
-from agentscope.models import ModelResponse, OpenAIWrapperBase
+from agentscope.models import OpenAIWrapperBase
 from agentscope.prompt import PromptEngine
 
 
