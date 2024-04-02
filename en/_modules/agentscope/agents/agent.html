@@ -102,6 +102,7 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">import</span> <span class="nn">uuid</span>
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
 <span class="kn">from</span> <span class="nn">agentscope.agents.operator</span> <span class="kn">import</span> <span class="n">Operator</span>
@@ -153,7 +154,6 @@
 <span class="sd">            memory_config (`Optional[dict]`):</span>
 <span class="sd">                The config of memory.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">memory_config</span> <span class="o">=</span> <span class="n">memory_config</span>
 
@@ -169,9 +169,21 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">memory</span> <span class="o">=</span> <span class="kc">None</span>
 
+        <span class="c1"># The global unique id of this agent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_agent_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">generate_agent_id</span><span class="p">()</span>
+
         <span class="c1"># The audience of this agent, which means if this agent generates a</span>
         <span class="c1"># response, it will be passed to all agents in the audience.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_audience</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="AgentBase.generate_agent_id">
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.agent.AgentBase.generate_agent_id">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">generate_agent_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the agent_id of this agent instance&quot;&quot;&quot;</span>
+        <span class="c1"># TODO: change cls.__name__ into a global unique agent_type</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
 
 <div class="viewcode-block" id="AgentBase.reply">
 <a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.agent.AgentBase.reply">[docs]</a>
@@ -305,6 +317,15 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Broadcast the input to all audiences.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_audience</span><span class="p">:</span>
             <span class="n">agent</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">agent_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The unique id of this agent.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: agent_id</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_id</span>
 
 <div class="viewcode-block" id="AgentBase.to_dist">
 <a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.agent.AgentBase.to_dist">[docs]</a>

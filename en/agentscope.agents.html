@@ -65,8 +65,10 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-agentscope.agents.agent">agent module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.agent.AgentBase"><code class="docutils literal notranslate"><span class="pre">AgentBase</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.agents.agent.AgentBase.agent_id"><code class="docutils literal notranslate"><span class="pre">AgentBase.agent_id</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#agentscope.agents.agent.AgentBase.clear_audience"><code class="docutils literal notranslate"><span class="pre">AgentBase.clear_audience()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#agentscope.agents.agent.AgentBase.export_config"><code class="docutils literal notranslate"><span class="pre">AgentBase.export_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.agents.agent.AgentBase.generate_agent_id"><code class="docutils literal notranslate"><span class="pre">AgentBase.generate_agent_id()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#agentscope.agents.agent.AgentBase.load_from_config"><code class="docutils literal notranslate"><span class="pre">AgentBase.load_from_config()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#agentscope.agents.agent.AgentBase.load_memory"><code class="docutils literal notranslate"><span class="pre">AgentBase.load_memory()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#agentscope.agents.agent.AgentBase.observe"><code class="docutils literal notranslate"><span class="pre">AgentBase.observe()</span></code></a></li>
@@ -207,6 +209,20 @@ method that specifies the execution logic for the operator.</p>
 <p>Base class for all agents.</p>
 <p>All agents should inherit from this class and implement the <cite>reply</cite>
 function.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="agentscope.agents.agent.AgentBase.agent_id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">agent_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.agents.agent.AgentBase.agent_id" title="Link to this definition"></a></dt>
+<dd><p>The unique id of this agent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>agent_id</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.agents.agent.AgentBase.clear_audience">
 <span class="sig-name descname"><span class="pre">clear_audience</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/agents/agent.html#AgentBase.clear_audience"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.agent.AgentBase.clear_audience" title="Link to this definition"></a></dt>
@@ -222,6 +238,12 @@ function.</p>
 <dd class="field-odd"><p>The configuration of current agent.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.agents.agent.AgentBase.generate_agent_id">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_agent_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/agents/agent.html#AgentBase.generate_agent_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.agent.AgentBase.generate_agent_id" title="Link to this definition"></a></dt>
+<dd><p>Generate the agent_id of this agent instance</p>
 </dd></dl>
 
 <dl class="py method">
