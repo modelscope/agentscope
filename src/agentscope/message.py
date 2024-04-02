@@ -337,7 +337,15 @@ class PlaceholderMessage(MessageBase):
 
     def __update_task_id(self) -> None:
         if self._stub is not None:
-            resp = deserialize(self._stub.get_response())
+            try:
+                resp = deserialize(self._stub.get_response())
+            except json.decoder.JSONDecodeError as e:
+                logger.error(
+                    f"Failed to get task_id: {self._stub.get_response()}",
+                )
+                raise ValueError(
+                    f"Failed to get task_id: {self._stub.get_response()}",
+                ) from e
             self._task_id = resp["task_id"]  # type: ignore[call-overload]
             self._stub = None
 

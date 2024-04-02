@@ -63,18 +63,14 @@ class RpcAgentClient:
             )
             return result_msg.value
 
-    def create_agent(self, agent_configs: Optional[dict]) -> None:
+    def create_agent(self, agent_configs: dict) -> None:
         """Create a new agent for this client."""
         try:
             if self.agent_id is None or len(self.agent_id) == 0:
                 return
             self.call_func(
                 func_name="_create_agent",
-                value=(
-                    None
-                    if agent_configs is None
-                    else json.dumps(agent_configs)
-                ),
+                value=(json.dumps(agent_configs)),
             )
         except Exception as e:
             logger.error(

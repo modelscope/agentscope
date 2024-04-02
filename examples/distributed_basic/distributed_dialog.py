@@ -7,7 +7,7 @@ from loguru import logger
 import agentscope
 from agentscope.agents.user_agent import UserAgent
 from agentscope.agents.dialog_agent import DialogAgent
-from agentscope.agents.rpc_agent import RpcAgentServerLauncher
+from agentscope.agents.rpc_agent import AgentPlatformLauncher
 
 
 def parse_args() -> argparse.Namespace:
@@ -36,14 +36,7 @@ def setup_assistant_server(assistant_host: str, assistant_port: int) -> None:
     agentscope.init(
         model_configs="configs/model_configs.json",
     )
-    assistant_server_launcher = RpcAgentServerLauncher(
-        agent_class=DialogAgent,
-        agent_kwargs={
-            "name": "Assitant",
-            "sys_prompt": "You are a helpful assistant.",
-            "model_config_name": "qwen",
-            "use_memory": True,
-        },
+    assistant_server_launcher = AgentPlatformLauncher(
         host=assistant_host,
         port=assistant_port,
     )

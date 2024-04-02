@@ -9,7 +9,7 @@ from loguru import logger
 
 import agentscope
 from agentscope.agents import AgentBase
-from agentscope.agents.rpc_agent import RpcAgentServerLauncher
+from agentscope.agents.rpc_agent import AgentPlatformLauncher
 from agentscope.message import Msg
 from agentscope.message import PlaceholderMessage
 from agentscope.message import deserialize
@@ -168,15 +168,12 @@ class BasicRpcAgentTest(unittest.TestCase):
 
     def test_connect_to_an_existing_rpc_server(self) -> None:
         """test connecting to an existing server"""
-        launcher = RpcAgentServerLauncher(
+        launcher = AgentPlatformLauncher(
             # choose port automatically
-            agent_class=DemoRpcAgent,
-            agent_kwargs={
-                "name": "a",
-            },
-            local_mode=False,
             host="127.0.0.1",
             port=12010,
+            local_mode=False,
+            custom_agents=[DemoRpcAgent],
         )
         launcher.launch()
         agent_a = DemoRpcAgent(
@@ -398,15 +395,11 @@ class BasicRpcAgentTest(unittest.TestCase):
 
     def test_multi_agent(self) -> None:
         """test agent server with multi agent"""
-        launcher = RpcAgentServerLauncher(
-            # choose port automatically
-            agent_class=DemoRpcAgentWithMemory,
-            agent_kwargs={
-                "name": "a",
-            },
-            local_mode=False,
+        launcher = AgentPlatformLauncher(
             host="127.0.0.1",
             port=12010,
+            local_mode=False,
+            custom_agents=[DemoRpcAgentWithMemory],
         )
         launcher.launch()
         # although agent1 and agent2 connect to the same server
@@ -451,7 +444,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         agent2.client.delete_agent()
         msg2 = Msg(name="System", content="First Msg for agent2")
         res2 = agent2(msg2)
-        self.assertEqual(res2.content["mem_size"], 1)
+        self.assertRaises(ValueError, res2.__getattr__, "content")
 
         # should override remote default parameter(e.g. name field)
         agent4 = DemoRpcAgentWithMemory(

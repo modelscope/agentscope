@@ -7,6 +7,7 @@ from typing import Optional
 from typing import Sequence
 from typing import Union
 from typing import Any
+from typing import Type
 import uuid
 from loguru import logger
 
@@ -15,16 +16,54 @@ from agentscope.models import load_model_by_config_name
 from agentscope.memory import TemporaryMemory
 
 
-class _RecordInitSettingMeta(ABCMeta):
-    """A wrapper to record the init args into `_init_settings` field."""
+class _AgentMeta(ABCMeta):
+    """The meta-class for agent.
+
+    1. record the init args into `_init_settings` field.
+    2. register class name into `registry` field.
+    """
+
+    def __init__(cls, name: Any, bases: Any, attrs: Any) -> None:
+        if not hasattr(cls, "registry"):
+            cls.registry = {}
+        else:
+            if name in cls.registry:
+                logger.warning(
+                    f"Agent class with name [{name}] already exists.",
+                )
+            else:
+                cls.registry[name] = cls
+        super().__init__(name, bases, attrs)
 
     def __call__(cls, *args: tuple, **kwargs: dict) -> Any:
         instance = super().__call__(*args, **kwargs)
-        instance._init_settings = {"args": args, "kwargs": kwargs}
+        instance._init_settings = {
+            "args": args,
+            "kwargs": kwargs,
+            "class_name": cls.__name__,
+        }
         return instance
 
 
-class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
+# todo: add a unique agent_type field to distinguish different agent class
+def get_agent_class(agent_class_name: str) -> Type[AgentBase]:
+    """Get the agent class based on the specific agent class name.
+
+    Args:
+        agent_class_name (`str`): the name of the agent class.
+
+    Raises:
+        ValueError: Agent class name not exits.
+
+    Returns:
+        Type[AgentBase]: the AgentBase sub-class.
+    """
+    if agent_class_name not in AgentBase.registry:
+        raise ValueError()
+    return AgentBase.registry[agent_class_name]
+
+
+class AgentBase(Operator, metaclass=_AgentMeta):
     """Base class for all agents.
 
     All agents should inherit from this class and implement the `reply`
@@ -236,9 +275,9 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
         if issubclass(self.__class__, RpcAgent):
             return self
         return RpcAgent(
+            name=self.name,
             agent_class=self.__class__,
             agent_configs=self._init_settings,
-            name=self.name,
             host=host,
             port=port,
             max_pool_size=max_pool_size,
@@ -246,4 +285,5 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
             launch_server=launch_server,
             local_mode=local_mode,
             lazy_launch=lazy_launch,
+            agent_id=self.agent_id,
         )
