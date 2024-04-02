@@ -36,7 +36,9 @@ class RpcAgentClient:
         self.port = port
         self.agent_id = agent_id
 
-    def call_func(self, func_name: str, value: Optional[str] = None) -> str:
+    def call_func(
+        self, func_name: str, value: Optional[str] = None, timeout: int = 300
+    ) -> str:
         """Call the specific function of rpc server.
 
         Args:
@@ -54,6 +56,7 @@ class RpcAgentClient:
                     target_func=func_name,
                     agent_id=self.agent_id,
                 ),
+                timeout=timeout,
             )
             return result_msg.value
 
@@ -71,9 +74,8 @@ class RpcAgentClient:
                 ),
             )
         except Exception as e:
-            logger.warning(e)
-            logger.warning(
-                f"Fail to create agent with id [{self.agent_id}]",
+            logger.error(
+                f"Fail to create agent with id [{self.agent_id}]: {e}",
             )
 
     def delete_agent(self) -> None:
@@ -82,9 +84,11 @@ class RpcAgentClient:
         """
         try:
             if self.agent_id is not None and len(self.agent_id) > 0:
-                self.call_func("_delete_agent")
+                self.call_func("_delete_agent", timeout=5)
         except Exception:
-            return
+            logger.warning(
+                f"Fail to delete agent with id [{self.agent_id}]",
+            )
 
 
 class ResponseStub:

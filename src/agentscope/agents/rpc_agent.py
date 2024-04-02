@@ -137,8 +137,9 @@ class RpcAgent(AgentBase):
                 port=self.port,
                 agent_id=self.agent_id,
             )
-            if create_with_agent_configs:
-                self.client.create_agent(agent_configs)
+            self.client.create_agent(
+                agent_configs if create_with_agent_configs else None
+            )
 
     def _launch_server(self) -> None:
         """Launch a rpc server and update the port and the client"""
@@ -214,16 +215,15 @@ class RpcAgent(AgentBase):
         return generated_instances
 
     def stop(self) -> None:
-        """Stop the RpcAgent and the launched rpc server."""
+        """Stop the RpcAgent and the rpc server."""
         if self.server_launcher is not None:
             self.server_launcher.shutdown()
 
     def __del__(self) -> None:
-        if self.server_launcher is not None:
-            self.server_launcher.shutdown()
+        self.stop()
 
 
-def setup_rcp_agent_server(
+def setup_rpc_agent_server(
     agent_class: Type[AgentBase],
     agent_args: tuple,
     agent_kwargs: dict,
@@ -310,12 +310,12 @@ def setup_rcp_agent_server(
         pipe.send(port)
         start_event.set()
         stop_event.wait()
+        logger.info(
+            f"Stopping rpc server [{agent_class.__name__}] at port [{port}]",
+        )
+        server.stop(1.0).wait()
     else:
         server.wait_for_termination()
-    logger.info(
-        f"Stopping rpc server [{agent_class.__name__}] at port [{port}]",
-    )
-    server.stop(0)
     logger.info(
         f"rpc server [{agent_class.__name__}] at port [{port}] stopped "
         "successfully",
@@ -408,7 +408,7 @@ class RpcAgentServerLauncher:
     def _launch_in_main(self) -> None:
         """Launch gRPC server in main-process"""
         server_thread = threading.Thread(
-            target=setup_rcp_agent_server,
+            target=setup_rpc_agent_server,
             kwargs={
                 "agent_class": self.agent_class,
                 "agent_args": self.agent_args,
@@ -433,7 +433,7 @@ class RpcAgentServerLauncher:
         self.parent_con, child_con = Pipe()
         start_event = Event()
         server_process = Process(
-            target=setup_rcp_agent_server,
+            target=setup_rpc_agent_server,
             kwargs={
                 "agent_class": self.agent_class,
                 "agent_args": self.agent_args,
@@ -482,8 +482,7 @@ class RpcAgentServerLauncher:
             if self.stop_event is not None:
                 self.stop_event.set()
                 self.stop_event = None
-            self.server.join(timeout=5)
-            self.server.terminate()
+            self.server.join()
             if self.server.is_alive():
                 self.server.kill()
                 logger.info(
@@ -574,6 +573,7 @@ class RpcServerSideWrapper(RpcAgentServicer):
                     )
                 agent_instance._agent_id = agent_id  # pylint: disable=W0212
                 self.agent_pool[agent_id] = agent_instance
+                logger.info(f"create agent instance [{agent_id}]")
 
     def check_and_delete_agent(self, agent_id: str) -> None:
         """
@@ -586,11 +586,15 @@ class RpcServerSideWrapper(RpcAgentServicer):
         with self.agent_id_lock:
             if agent_id in self.agent_pool:
                 self.agent_pool.pop(agent_id)
+                logger.info(f"delete agent instance [{agent_id}]")
 
     def call_func(self, request: RpcMsg, _: ServicerContext) -> RpcMsg:
         """Call the specific servicer function."""
         if hasattr(self, request.target_func):
-            if request.target_func != "_create_agent":
+            if not (
+                request.target_func == "_create_agent"
+                or request.target_func == "_get"
+            ):
                 self.check_and_generate_agent(request.agent_id)
             return getattr(self, request.target_func)(request)
         else:
