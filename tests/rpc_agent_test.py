@@ -479,6 +479,17 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertEqual(len(agents), 2)
         agent1 = agents[0]
         agent2 = agents[1]
+        self.assertTrue(agent1.agent_id.startswith("DemoRpcAgentWithMemory"))
+        self.assertTrue(agent2.agent_id.startswith("DemoRpcAgentWithMemory"))
+        self.assertTrue(
+            agent1.client.agent_id.startswith("DemoRpcAgentWithMemory"),
+        )
+        self.assertTrue(
+            agent2.client.agent_id.startswith("DemoRpcAgentWithMemory"),
+        )
+        self.assertNotEqual(agent1.agent_id, agent2.agent_id)
+        self.assertEqual(agent1.agent_id, agent1.client.agent_id)
+        self.assertEqual(agent2.agent_id, agent2.client.agent_id)
         # clone instance will init client
         self.assertIsNotNone(agent.client)
         self.assertEqual(agent.agent_id, agent1.agent_id)

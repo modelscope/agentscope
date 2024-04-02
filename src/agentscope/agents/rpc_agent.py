@@ -56,52 +56,17 @@ def rpc_servicer_method(  # type: ignore[no-untyped-def]
     return inner
 
 
-class PlaceholderAgent(AgentBase):
-    """
-    An agent used as a placeholder in the main process.
-    Only used to connect to a already running Agent Server
-    (`launch_server=False`).
-    """
-
-    def __init__(self, name: str):
-        super().__init__(name=name)
-
-    def to_dist(
-        self,
-        host: str = "localhost",
-        port: int = None,
-        max_pool_size: int = 8192,
-        max_timeout_seconds: int = 1800,
-        launch_server: bool = True,
-        local_mode: bool = True,
-        lazy_launch: bool = True,
-    ) -> AgentBase:
-        assert not launch_server, (
-            "'PlaceholderAgent' can only connect to "
-            "an already running agent server."
-        )
-        return super().to_dist(
-            host,
-            port,
-            max_pool_size,
-            max_timeout_seconds,
-            launch_server,
-            local_mode,
-            lazy_launch,
-        )
-
-
 class RpcAgent(AgentBase):
     """A wrapper to extend an AgentBase into a gRPC Client."""
 
     def __init__(
         self,
         name: str,
+        agent_class: Type[AgentBase],
+        agent_configs: Optional[dict] = None,
         host: str = "localhost",
         port: int = None,
         launch_server: bool = True,
-        agent_class: Type[AgentBase] = PlaceholderAgent,
-        agent_configs: Optional[dict] = None,
         max_pool_size: int = 8192,
         max_timeout_seconds: int = 1800,
         local_mode: bool = True,
@@ -113,16 +78,16 @@ class RpcAgent(AgentBase):
 
         Args:
             name (`str`): Name of the agent.
+            agent_class (`Type[AgentBase]`):
+                The AgentBase subclass encapsulated by this wrapper.
+            agent_configs (`dict`, defaults to `None`): The args used to
+                initialize the agent_class.
             host (`str`, defaults to `"localhost"`):
                 Hostname of the rpc agent server.
             port (`int`, defaults to `None`):
                 Port of the rpc agent server.
             launch_server (`bool`, defaults to `True`):
                 Whether to launch the gRPC agent server.
-            agent_class (`Type[AgentBase]`, defaults to `PlaceholderAgent`):
-                The AgentBase subclass encapsulated by this wrapper.
-            agent_configs (`dict`, defaults to `None`): The args used to
-                initialize the agent_class.
             max_pool_size (`int`, defaults to `8192`):
                 Max number of task results that the server can accommodate.
             max_timeout_seconds (`int`, defaults to `1800`):
@@ -148,6 +113,9 @@ class RpcAgent(AgentBase):
         self.client = None
         if agent_id is not None:
             self._agent_id = agent_id
+        else:
+            self._agent_id = agent_class.generate_agent_id()
+        self.agent_class = agent_class
         if launch_server:
             self.server_launcher = RpcAgentServerLauncher(
                 agent_class=agent_class,
@@ -236,6 +204,7 @@ class RpcAgent(AgentBase):
             generated_instances.append(
                 RpcAgent(
                     name=self.name,
+                    agent_class=self.agent_class,
                     host=self.host,
                     port=self.port,
                     launch_server=False,
