@@ -1,4 +1,4 @@
 # -*- coding: utf-8 -*-
 """ Version of AgentScope."""
 
-__version__ = "0.0.2"
+__version__ = "0.0.3-alpha"
