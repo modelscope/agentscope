@@ -6,7 +6,6 @@ from multiprocessing.synchronize import Event as EventClass
 import socket
 import threading
 import json
-import uuid
 from typing import Any, Optional, Union, Type, Sequence
 from concurrent import futures
 from loguru import logger
@@ -147,7 +146,8 @@ class RpcAgent(AgentBase):
         self.port = port
         self.server_launcher = None
         self.client = None
-        self.agent_id = generate_agent_id() if agent_id is None else agent_id
+        if agent_id is not None:
+            self._agent_id = agent_id
         if launch_server:
             self.server_launcher = RpcAgentServerLauncher(
                 agent_class=agent_class,
@@ -252,11 +252,6 @@ class RpcAgent(AgentBase):
     def __del__(self) -> None:
         if self.server_launcher is not None:
             self.server_launcher.shutdown()
-
-
-def generate_agent_id() -> str:
-    """Generate a uuid as agent id"""
-    return uuid.uuid4().hex
 
 
 def setup_rcp_agent_server(
@@ -599,15 +594,17 @@ class RpcServerSideWrapper(RpcAgentServicer):
         with self.agent_id_lock:
             if agent_id not in self.agent_pool:
                 if agent_configs is not None:
-                    self.agent_pool[agent_id] = self.agent_class(
+                    agent_instance = self.agent_class(
                         *agent_configs["args"],
                         **agent_configs["kwargs"],
                     )
                 else:
-                    self.agent_pool[agent_id] = self.agent_class(
+                    agent_instance = self.agent_class(
                         *self.agent_args,
                         **self.agent_kwargs,
                     )
+                agent_instance._agent_id = agent_id  # pylint: disable=W0212
+                self.agent_pool[agent_id] = agent_instance
 
     def check_and_delete_agent(self, agent_id: str) -> None:
         """

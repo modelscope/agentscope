@@ -121,7 +121,7 @@ def call_in_thread(
         func_name (`str`): the name of the function being called.
 
     Returns:
-        _type_: _description_
+        `ResponseStub`: a stub to get the response.
     """
     stub = ResponseStub()
 
