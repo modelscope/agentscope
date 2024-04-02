@@ -164,11 +164,11 @@ if __name__ == "__main__":
         model_config_name="gpt-4",
     )
     user_agent = UserAgent()
-    x = None
+    mss = None
     while True:
-        x = sql_agent(x)
-        x = user_agent(x)
+        mss = sql_agent(mss)
+        mss = user_agent(mss)
 
-        if x.content == "exit":
+        if mss.content == "exit":
             print("Exiting the conversation.")
             break

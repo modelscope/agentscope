@@ -83,9 +83,7 @@ class SQLPrompt:
     """SQL prompt helper"""
 
     def __init__(self) -> None:
-        self.template_info = (
-            "/* Given the following database schema: */\n" "{}"
-        )
+        self.template_info = "/* Given the following database schema: */\n{}"
         self.template_question = "/* Answer the following: {} */"
 
     def format_target(self, example: dict) -> str:
@@ -122,7 +120,8 @@ class EuclideanDistanceExampleSelector:
 
     def __init__(self) -> None:
         self.train_json_path = "./database/train.json"
-        self.train_json = json.load(open(self.train_json_path, "r"))
+        with open(self.train_json_path, "r", encoding="utf-8") as file:
+            self.train_json = json.load(file)
         self.db_ids = [d["db_id"] for d in self.train_json]
         self.train_questions = [_["question"] for _ in self.train_json]
 
@@ -172,8 +171,7 @@ class EuclideanDistanceExampleSelector:
             euclidean_distances(target_embedding, self.train_embeddings),
         ).tolist()
         pairs = list(zip(distances, range(len(distances))))
-        datas = json.load(open(self.train_json_path, "r"))
-        train_json = datas
+        train_json = self.train_json
         pairs_sorted = sorted(pairs, key=lambda x: x[0])
         top_pairs = []
         for d, index in pairs_sorted:
