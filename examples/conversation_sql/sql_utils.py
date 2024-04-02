@@ -85,6 +85,13 @@ class SQLPrompt:
     def __init__(self) -> None:
         self.template_info = "/* Given the following database schema: */\n{}"
         self.template_question = "/* Answer the following: {} */"
+        self.template_agent_prompt = """You are a helpful agent that preform
+        SQL querys base on natual language instructions.
+        Please describe the database schema provided
+        in a simple and understandable manner. """
+        self.template_display = (
+            "Now the existing database data structure using natural language."
+        )
 
     def format_target(self, example: dict) -> str:
         """Format sql prompt"""
@@ -96,6 +103,19 @@ class SQLPrompt:
         prompt_info = self.template_info.format("\n\n".join(sqls))
         prompt_question = self.template_question.format(example["question"])
         prompt_components = [prompt_info, prompt_question]
+        prompt = "\n\n".join(prompt_components)
+        return prompt
+
+    def describe_sql(self, example: dict) -> str:
+        """Describe SQL"""
+        sqls = get_sql_for_database(example["path_db"])
+        prompt_info = self.template_info.format("\n\n".join(sqls))
+        prompt_components = [
+            self.template_agent_prompt,
+            "DB schema info: ",
+            prompt_info,
+            self.template_display,
+        ]
         prompt = "\n\n".join(prompt_components)
         return prompt
 
@@ -183,3 +203,78 @@ class EuclideanDistanceExampleSelector:
                 break
 
         return [train_json[index] for (index, d) in top_pairs]
+
+
+class DailSQLPromptGenerator:
+    """Generate prompt given the dataset and question"""
+
+    def __init__(
+        self,
+        db_id: str,
+        db_path: str,
+    ) -> None:
+        self.db_id = db_id
+        self.db_path = db_path
+        self.sql_prompt = SQLPrompt()
+        self.question_selector = EuclideanDistanceExampleSelector()
+        self.question_style = QuestionSqlExampleStyle()
+        self.SEP_EXAMPLE = "\n\n"
+        self.scope_factor = 100
+        self.NUM_EXAMPLE = 9
+        self.cross_domain = False
+
+    def describe_sql(self) -> str:
+        """Describe the sql"""
+        target = {
+            "db_id": self.db_id,
+            "path_db": self.db_path,
+        }
+        return self.sql_prompt.describe_sql(target)
+
+    def generate_prompt(self, x: dict = None) -> dict:
+        """
+        Generate prompt given input question
+        """
+        question = x["content"]
+        target = {
+            "db_id": self.db_id,
+            "path_db": self.db_path,
+            "question": question,
+        }
+        prompt_target = self.sql_prompt.format_target(target)
+        if self.NUM_EXAMPLE != 0:
+            examples = self.question_selector.get_examples(
+                target,
+                self.NUM_EXAMPLE * self.scope_factor,
+                cross_domain=self.cross_domain,
+            )
+            prompt_example = []
+            question = target["question"]
+            example_prefix = self.question_style.get_example_prefix()
+            for example in examples:
+                if self.cross_domain:
+                    assert target["db_id"] != example["db_id"]
+
+                example_format = self.question_style.format_example(example)
+
+                prompt_example.append(example_format)
+
+                if len(prompt_example) >= self.NUM_EXAMPLE:
+                    break
+            n_valid_example = len(prompt_example)
+            if len(prompt_example) > 0:
+                prompt = example_prefix + self.SEP_EXAMPLE.join(
+                    prompt_example + [prompt_target],
+                )
+            else:
+                prompt = self.SEP_EXAMPLE.join(
+                    prompt_example + [prompt_target],
+                )
+        else:
+            n_valid_example = 0
+            prompt = prompt_target
+        return {
+            "prompt": prompt,
+            "n_examples": n_valid_example,
+            "db_id": target["db_id"],
+        }

@@ -3,9 +3,7 @@
 SQL queries through natural language conversation.
 """
 from sql_utils import (
-    SQLPrompt,
-    EuclideanDistanceExampleSelector,
-    QuestionSqlExampleStyle,
+    DailSQLPromptGenerator,
     execute_query,
 )
 
@@ -31,8 +29,8 @@ class SQLAgent(AgentBase):
     def __init__(
         self,
         name: str,
-        db_id: str,
-        db_path: str,
+        db_id: str = None,
+        db_path: str = None,
         model_config_name: str = "gpt-4",
     ) -> None:
         super().__init__(
@@ -42,62 +40,14 @@ class SQLAgent(AgentBase):
         )
         self.db_id = db_id
         self.db_path = db_path
-        self.sql_prompt = SQLPrompt()
-        self.question_selector = EuclideanDistanceExampleSelector()
-        self.question_style = QuestionSqlExampleStyle()
-        self.SEP_EXAMPLE = "\n\n"
-        self.scope_factor = 100
-        self.NUM_EXAMPLE = 9
-        self.cross_domain = False
         self.max_retries = 3
-
-    def generate_prompt(self, x: dict = None) -> dict:
-        """
-        Generate prompt given input question
-        """
-        question = x["content"]
-        target = {
-            "db_id": self.db_id,
-            "path_db": self.db_path,
-            "question": question,
-        }
-        prompt_target = self.sql_prompt.format_target(target)
-        if self.NUM_EXAMPLE != 0:
-            examples = self.question_selector.get_examples(
-                target,
-                self.NUM_EXAMPLE * self.scope_factor,
-                cross_domain=self.cross_domain,
-            )
-            prompt_example = []
-            question = target["question"]
-            example_prefix = self.question_style.get_example_prefix()
-            for example in examples:
-                if self.cross_domain:
-                    assert target["db_id"] != example["db_id"]
-
-                example_format = self.question_style.format_example(example)
-
-                prompt_example.append(example_format)
-
-                if len(prompt_example) >= self.NUM_EXAMPLE:
-                    break
-            n_valid_example = len(prompt_example)
-            if len(prompt_example) > 0:
-                prompt = example_prefix + self.SEP_EXAMPLE.join(
-                    prompt_example + [prompt_target],
-                )
-            else:
-                prompt = self.SEP_EXAMPLE.join(
-                    prompt_example + [prompt_target],
-                )
-        else:
-            n_valid_example = 0
-            prompt = prompt_target
-        return {
-            "prompt": prompt,
-            "n_examples": n_valid_example,
-            "db_id": target["db_id"],
-        }
+        self.prompt_helper = DailSQLPromptGenerator(self.db_id, self.db_path)
+        self.self_intro = f"""Hi, I am an agent able to preform SQL querys
+        base on natual language instructions.
+        Below is a description of the database {self.db_id} provided."""
+        self.start_intro = (
+            f"Is there any you want to ask about the database {self.db_id}?"
+        )
 
     def get_response_from_prompt(self, prompt: dict) -> str:
         """
@@ -117,23 +67,60 @@ class SQLAgent(AgentBase):
             response = "SELECT " + sql + "\n"
         return response
 
-    def reply(self, x: dict = None) -> dict:
-        if x is None:
-            return {}
+    def answer_question_given_execution_result(
+        self,
+        question: str,
+        response_text: str,
+    ) -> str:
+        """Answer the user question in natural language"""
+        prompt = f"""Given the sql query and and the result,
+        answer the user's question.
+        \n User question: {question} \n {response_text}"""
+        messages = [{"role": "user", "content": prompt}]
+        answer = self.model(messages).text
+        return answer
 
-        prepared_prompt = self.generate_prompt(x)
+    def reply(self, x: dict = None) -> dict:
+        # this means that here is the first call
+        # and we should describe the database for user
+        if x is None:
+            describe_prompt = self.prompt_helper.describe_sql()
+            messages = [{"role": "user", "content": describe_prompt}]
+            response = [
+                self.self_intro,
+                self.model(messages).text,
+                self.start_intro,
+            ]
+            response = "\n\n".join(response)
+            msg = Msg(self.name, response, role="sql assistant")
+            self.speak(msg)
+            return msg
+
+        prepared_prompt = self.prompt_helper.generate_prompt(x)
 
         attempt = 0
         result = None
 
         while attempt < self.max_retries:
             try:
-                response = self.get_response_from_prompt(
+                sql_response = self.get_response_from_prompt(
                     prepared_prompt["prompt"],
                 )
-                msg = Msg(self.name, response, role="sql assistant")
+                # msg = Msg(self.name, response, role="sql assistant")
+                # self.speak(msg)
+                exec_result = execute_query(sql_response, path_db=self.db_path)
+                response_text = f"""Generated SQL query is: {sql_response} \n
+                The execution result is: {exec_result}"""
+                response_text += (
+                    "\n\n"
+                    + self.answer_question_given_execution_result(
+                        x["content"],
+                        response_text,
+                    )
+                )
+                result = response_text
+                msg = Msg(self.name, result, role="sql assistant")
                 self.speak(msg)
-                result = execute_query(response, path_db=self.db_path)
                 break
             except Exception:
                 print(
@@ -142,9 +129,7 @@ class SQLAgent(AgentBase):
                 )
                 attempt += 1
 
-        if result is not None:
-            print(f"Query result is: {result}")
-        else:
+        if result is None:
             print(
                 "Failed to execute query after",
                 self.max_retries,
