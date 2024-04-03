@@ -102,7 +102,12 @@
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
 <span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">_ModelConfig</span>
-<span class="kn">from</span> <span class="nn">.model</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ModelResponse</span>
+<span class="kn">from</span> <span class="nn">.model</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span>
+<span class="kn">from</span> <span class="nn">.response</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ModelResponse</span><span class="p">,</span>
+    <span class="n">ResponseParsingError</span><span class="p">,</span>
+    <span class="n">ResponseParser</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.post_model</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">PostAPIModelWrapperBase</span><span class="p">,</span>
     <span class="n">PostAPIChatWrapper</span><span class="p">,</span>
@@ -132,6 +137,8 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;ModelWrapperBase&quot;</span><span class="p">,</span>
     <span class="s2">&quot;ModelResponse&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ResponseParser&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ResponseParsingError&quot;</span><span class="p">,</span>
     <span class="s2">&quot;PostAPIModelWrapperBase&quot;</span><span class="p">,</span>
     <span class="s2">&quot;PostAPIChatWrapper&quot;</span><span class="p">,</span>
     <span class="s2">&quot;OpenAIWrapperBase&quot;</span><span class="p">,</span>

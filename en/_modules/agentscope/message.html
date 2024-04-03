@@ -117,6 +117,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">content</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">role</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;assistant&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
         <span class="n">url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
@@ -129,6 +130,11 @@
 <span class="sd">                role-playing scenario to tell the name of the sender.</span>
 <span class="sd">            content (`Any`):</span>
 <span class="sd">                The content of the message.</span>
+<span class="sd">            role (`Literal[&quot;system&quot;, &quot;user&quot;, &quot;assistant&quot;]`,</span>
+<span class="sd">            defaults to &quot;assistant&quot;):</span>
+<span class="sd">                The role of who send the message. It can be one of the</span>
+<span class="sd">                `&quot;system&quot;`, `&quot;user&quot;`, or `&quot;assistant&quot;`. Default to</span>
+<span class="sd">                `&quot;assistant&quot;`.</span>
 <span class="sd">            url (`Optional[Union[list[str], str]]`, defaults to None):</span>
 <span class="sd">                A url to file, image, video, audio or website.</span>
 <span class="sd">            timestamp (`Optional[str]`, defaults to None):</span>
@@ -148,6 +154,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">content</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">role</span> <span class="o">=</span> <span class="n">role</span>
 
         <span class="k">if</span> <span class="n">url</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">url</span>

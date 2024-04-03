@@ -104,48 +104,43 @@
 
 <span class="kn">from</span> <span class="nn">agentscope.agents</span> <span class="kn">import</span> <span class="n">AgentBase</span>
 <span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
-<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ModelResponse</span>
+<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ResponseParser</span><span class="p">,</span> <span class="n">ResponseParsingError</span>
 <span class="kn">from</span> <span class="nn">agentscope.service</span> <span class="kn">import</span> <span class="n">ServiceResponse</span><span class="p">,</span> <span class="n">ServiceExecStatus</span>
 
 
-<span class="n">DEFAULT_TOOL_PROMPT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">The following tool functions are available in the format of</span>
+<span class="n">DEFAULT_TOOL_PROMPT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;The following tool functions are available in the format of</span>
 <span class="s2">```</span>
 <span class="s2">{{index}}. {{function name}}: {{function description}}</span>
-<span class="s2">    {{argument name}} ({{argument type}}): {{argument description}}</span>
+<span class="s2">    {{argument1 name}} ({{argument type}}): {{argument description}}</span>
+<span class="s2">    {{argument2 name}} ({{argument type}}): {{argument description}}</span>
 <span class="s2">    ...</span>
 <span class="s2">```</span>
 
-<span class="s2">Tool Functions:</span>
+<span class="s2">## Tool Functions:</span>
 <span class="si">{function_prompt}</span>
 
-<span class="s2">Notice:</span>
-<span class="s2">1. Fully understand the tool function and its arguments before using it.</span>
-<span class="s2">2. Only use the tool function when it&#39;s necessary.</span>
-<span class="s2">3. Check if the arguments you provided to the tool function is correct in type and value.</span>
-<span class="s2">4. You can&#39;t take some problems for granted. For example, where you are, what&#39;s the time now, etc. But you can try to use the tool function to solve the problem.</span>
+<span class="s2">## What You Should Do:</span>
+<span class="s2">1. First, analyze the current situation, and determine your goal.</span>
+<span class="s2">2. Then, check if your goal is already achieved. If so, try to generate a response. Otherwise, think about how to achieve it with the help of provided tool functions.</span>
+<span class="s2">3. Respond in the required format.</span>
+
+<span class="s2">## Note:</span>
+<span class="s2">1. Fully understand the tool functions and their arguments before using them.</span>
+<span class="s2">2. You should decide if you need to use the tool functions, if not then return an empty list in &quot;function&quot; field.</span>
+<span class="s2">3. Make sure the types and values of the arguments you provided to the tool functions are correct.</span>
+<span class="s2">4. Don&#39;t take things for granted. For example, where you are, what&#39;s the time now, etc. You can try to use the tool functions to get information.</span>
 <span class="s2">5. If the function execution fails, you should analyze the error and try to solve it.</span>
 
 <span class="s2">&quot;&quot;&quot;</span>  <span class="c1"># noqa</span>
 
 <span class="n">TOOL_HINT_PROMPT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">Generate a response in the following format:</span>
-
-<span class="s2">Response Format:</span>
-<span class="s2">You should respond in the following format, which can be loaded by `json.loads` in Python:</span>
-<span class="s2">{{</span>
+<span class="s2">## Response Format:</span>
+<span class="s2">You should respond with a JSON object in the following format, which can be loaded by `json.loads` in Python directly. If no tool function is used, the &quot;function&quot; field should be an empty list.</span>
+<span class="s2">{</span>
 <span class="s2">    &quot;thought&quot;: &quot;what you thought&quot;,</span>
 <span class="s2">    &quot;speak&quot;: &quot;what you said&quot;,</span>
-<span class="s2">    &quot;function&quot;: [{{&quot;name&quot;: &quot;{{function name}}&quot;, &quot;arguments&quot;: {{&quot;{{argument name}}&quot;: {{argument_value}}, ...}}}}, ...]</span>
-<span class="s2">}}</span>
-
-<span class="s2">Taking using web_search function as an example, the response should be like this:</span>
-<span class="s2">{{</span>
-<span class="s2">    &quot;thought&quot;: &quot;xxx&quot;,</span>
-<span class="s2">    &quot;speak&quot;: &quot;xxx&quot;,</span>
-<span class="s2">    &quot;function&quot;: [{{&quot;name&quot;: &quot;web_search&quot;, &quot;arguments&quot;: {{&quot;query&quot;: &quot;what&#39;s the weather today?&quot;}}}}]</span>
-<span class="s2">}}</span>
-<span class="s2">&quot;&quot;&quot;</span>  <span class="c1"># noqa</span>
+<span class="s2">    &quot;function&quot;: [{&quot;name&quot;: &quot;{function name}&quot;, &quot;arguments&quot;: {&quot;{argument1 name}&quot;: xxx, &quot;{argument2 name}&quot;: xxx}}]</span>
+<span class="s2">}&quot;&quot;&quot;</span>  <span class="c1"># noqa</span>
 
 <span class="n">FUNCTION_RESULT_TITLE_PROMPT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Execution Results:</span>
 <span class="s2">&quot;&quot;&quot;</span>
@@ -155,13 +150,16 @@
 <span class="s2">    [EXECUTE RESULT]: </span><span class="si">{result}</span>
 <span class="s2">&quot;&quot;&quot;</span>
 
+<span class="n">ERROR_INFO_PROMPT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Your response is not a JSON object, and cannot be parsed by `json.loads` in parse function:</span>
+<span class="s2">## Your Response:</span>
+<span class="s2">[YOUR RESPONSE BEGIN]</span>
+<span class="si">{response}</span>
+<span class="s2">[YOUR RESPONSE END]</span>
 
-<div class="viewcode-block" id="parse_func">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.react_agent.parse_func">[文档]</a>
-<span class="k">def</span> <span class="nf">parse_func</span><span class="p">(</span><span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parsing the response into a dict object.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span><span class="n">raw</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">))</span></div>
+<span class="s2">## Error Information:</span>
+<span class="si">{error_info}</span>
 
+<span class="s2">Analyze the reason, and re-correct your response in the correct format.&quot;&quot;&quot;</span>  <span class="c1"># pylint: disable=all  # noqa</span>
 
 
 <div class="viewcode-block" id="ReActAgent">
@@ -181,7 +179,7 @@
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">model_config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">tools</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">],</span>
-        <span class="n">sys_prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;You&#39;re a helpful assistant.&quot;</span><span class="p">,</span>
+        <span class="n">sys_prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;You&#39;re a helpful assistant. Your name is </span><span class="si">{name}</span><span class="s2">.&quot;</span><span class="p">,</span>
         <span class="n">max_iters</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -220,9 +218,11 @@
         <span class="n">tools_prompt</span> <span class="o">=</span> <span class="n">DEFAULT_TOOL_PROMPT</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">function_prompt</span><span class="o">=</span><span class="n">func_prompt</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">sys_prompt</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sys_prompt</span> <span class="o">=</span> <span class="n">sys_prompt</span> <span class="o">+</span> <span class="n">tools_prompt</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sys_prompt</span> <span class="o">=</span> <span class="n">sys_prompt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">+</span> <span class="n">tools_prompt</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sys_prompt</span> <span class="o">=</span> <span class="n">sys_prompt</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">tools_prompt</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sys_prompt</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">sys_prompt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">tools_prompt</span>
+            <span class="p">)</span>
 
         <span class="c1"># Put sys prompt into memory</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sys_prompt</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">))</span>
@@ -241,17 +241,39 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; ITER </span><span class="si">{</span><span class="n">_</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">, STEP 1: REASONING &quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">70</span><span class="p">,</span> <span class="s2">&quot;#&quot;</span><span class="p">))</span>
 
-            <span class="c1"># Generate LLM response</span>
-            <span class="n">prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">get_memory</span><span class="p">(),</span>
-                <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="n">TOOL_HINT_PROMPT</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">),</span>
-            <span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">hint_msg</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="n">TOOL_HINT_PROMPT</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">hint_msg</span><span class="p">)</span>
 
-            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span>
-                <span class="n">prompt</span><span class="p">,</span>
-                <span class="n">parse_func</span><span class="o">=</span><span class="n">parse_func</span><span class="p">,</span>
-                <span class="n">max_retries</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">raw</span>
+                <span class="c1"># Generate LLM response</span>
+                <span class="n">prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">get_memory</span><span class="p">())</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span>
+                    <span class="n">prompt</span><span class="p">,</span>
+                    <span class="n">parse_func</span><span class="o">=</span><span class="n">ResponseParser</span><span class="o">.</span><span class="n">to_dict</span><span class="p">,</span>
+                    <span class="n">max_retries</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">json</span>
+
+            <span class="k">except</span> <span class="n">ResponseParsingError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="c1"># Record the wrong response from the model</span>
+                <span class="n">response_msg</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s2">&quot;assistant&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="n">response_msg</span><span class="p">)</span>
+
+                <span class="c1"># Re-correct by model itself</span>
+                <span class="n">error_msg</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span>
+                    <span class="s2">&quot;system&quot;</span><span class="p">,</span>
+                    <span class="n">ERROR_INFO_PROMPT</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">parse_func</span><span class="o">=</span><span class="n">ResponseParser</span><span class="o">.</span><span class="n">to_dict</span><span class="p">,</span>
+                        <span class="n">error_info</span><span class="o">=</span><span class="n">e</span><span class="o">.</span><span class="n">error_info</span><span class="p">,</span>
+                        <span class="n">response</span><span class="o">=</span><span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+                    <span class="p">),</span>
+                    <span class="s2">&quot;system&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">([</span><span class="n">response_msg</span><span class="p">,</span> <span class="n">error_msg</span><span class="p">])</span>
+
+                <span class="c1"># Skip acting step to re-correct the response</span>
+                <span class="k">continue</span>
 
             <span class="c1"># Record the response in memory</span>
             <span class="n">msg_thought</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">)</span>
@@ -273,6 +295,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; ITER </span><span class="si">{</span><span class="n">_</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">, STEP 2: ACTION &quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">70</span><span class="p">,</span> <span class="s2">&quot;#&quot;</span><span class="p">))</span>
 
             <span class="c1"># Execute functions</span>
+            <span class="c1"># TODO: check the provided arguments and re-correct them if needed</span>
             <span class="n">execute_results</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;function&quot;</span><span class="p">]):</span>
                 <span class="c1"># Execute the function</span>
