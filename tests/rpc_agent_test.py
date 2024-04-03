@@ -406,11 +406,15 @@ class BasicRpcAgentTest(unittest.TestCase):
         # they are different instances with different memories
         agent1 = DemoRpcAgentWithMemory(
             name="a",
-        ).to_dist(
+        )
+        oid = agent1.agent_id
+        agent1 = agent1.to_dist(
             host="127.0.0.1",
             port=launcher.port,
             launch_server=False,
         )
+        self.assertEqual(oid, agent1.agent_id)
+        self.assertEqual(oid, agent1.client.agent_id)
         agent2 = DemoRpcAgentWithMemory(
             name="a",
         ).to_dist(
@@ -427,6 +431,7 @@ class BasicRpcAgentTest(unittest.TestCase):
             port=launcher.port,
             launch_server=False,
         )
+        agent3._agent_id = agent1.agent_id  # pylint: disable=W0212
         agent3.client.agent_id = agent1.client.agent_id
         msg1 = Msg(name="System", content="First Msg for agent1")
         res1 = agent1(msg1)
