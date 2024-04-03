@@ -237,7 +237,7 @@ class GeminiChatWrapper(GeminiWrapperBase):
         for _ in args:
             if isinstance(_, Msg):
                 input_msgs.append(_)
-            elif isinstance(_, list):
+            elif isinstance(_, list) and all(isinstance(__, Msg) for __ in _):
                 input_msgs.extend(_)
             else:
                 raise TypeError(
@@ -264,7 +264,7 @@ class GeminiChatWrapper(GeminiWrapperBase):
             user_content_template = "## Dialogue History\n{dialogue_history}"
         else:
             user_content_template = (
-                "{system_prompt}\n"
+                "{sys_prompt}\n"
                 "\n"
                 "## Dialogue History\n"
                 "{dialogue_history}"
@@ -273,10 +273,12 @@ class GeminiChatWrapper(GeminiWrapperBase):
         messages = [
             {
                 "role": "user",
-                "content": user_content_template.format(
-                    sys_prompt=sys_prompt,
-                    dialogue_history=dialogue_history,
-                ),
+                "parts": [
+                    user_content_template.format(
+                        sys_prompt=sys_prompt,
+                        dialogue_history=dialogue_history,
+                    ),
+                ],
             },
         ]
 

@@ -403,7 +403,7 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
         for _ in args:
             if isinstance(_, Msg):
                 input_msgs.append(_)
-            elif isinstance(_, list):
+            elif isinstance(_, list) and all(isinstance(__, Msg) for __ in _):
                 input_msgs.extend(_)
             else:
                 raise TypeError(
