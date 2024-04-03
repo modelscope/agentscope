@@ -110,19 +110,24 @@ class SQLPrompt:
     def __init__(self) -> None:
         self.template_info = "/* Given the following database schema: */\n{}"
         self.template_question = "/* Answer the following: {} */"
-        self.template_agent_prompt = """You are a helpful agent that preform
-        SQL querys base on natual language instructions.
-        Please describe the database schema provided
-        in a simple and understandable manner. """
-        self.is_sql_prompt = """Please read the user's question below and
-          determine whether the question is an appropriate
-          query for the given SQL schema. \n
-          If the question is indeed a query pertaining to the SQL schema,
-          respond with "YES".
-          If the question is not a query related to the SQL schema,
-          provide a brief explanation to the user explaining why their
-          question does not correspond to a SQL query within the
-          context of the schema. """
+        self.template_agent_prompt = (
+            "You are a helpful agent that preform"
+            "SQL querys base on natual language instructions."
+            "Please describe the database schema provided"
+            "in a simple and understandable manner. "
+        )
+        self.is_sql_prompt = (
+            "Please read the user's question below and "
+            "determine whether the question is an appropriate "
+            "query for the given SQL schema. \n"
+            "If the question is indeed a query pertaining to the SQL schema, "
+            'respond with "YES". '
+            "If the question is not a query related to the SQL schema, "
+            "provide a brief explanation to the user explaining why their "
+            "question does not correspond to a SQL query within the "
+            "context of the schema. "
+            "The user's question is: "
+        )
 
     def format_target(self, example: dict) -> str:
         """Format sql prompt"""
@@ -158,7 +163,7 @@ class SQLPrompt:
             self.is_sql_prompt,
             example["question"],
         ]
-        prompt = "\n\n".join(prompt_components)
+        prompt = "\n".join(prompt_components)
         return prompt
 
 

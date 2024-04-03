@@ -44,12 +44,16 @@ class SQLAgent(AgentBase):
         self.max_retries = 3
         self.prompt_helper = DailSQLPromptGenerator(self.db_id, self.db_path)
 
-        self.self_intro = f"""Hi, I am an agent able to preform SQL querys
-        base on natual language instructions.
-        Below is a description of the database {self.db_id} provided."""
+        self.self_intro = (
+            f"Hi, I am an agent able to preform SQL querys "
+            f"base on natual language instructions. "
+            f"Below is a description of the database {self.db_id} provided."
+        )
 
-        self.start_intro = f"""Is there any you want to
-        ask about the database {self.db_id}?"""
+        self.start_intro = (
+            f"Is there any you want to "
+            f"ask about the database {self.db_id}?"
+        )
 
     def get_response_from_prompt(self, prompt: dict) -> str:
         """
@@ -128,9 +132,11 @@ class SQLAgent(AgentBase):
                     prepared_prompt["prompt"],
                 )
                 exec_result = query_sqlite(sql_response, path_db=self.db_path)
-                response_text = f"""Generated SQL query is: {sql_response} \n
-                The execution result is: {exec_result}"""
-                response_text += "\n\n" + self.answer_from_result(
+                response_text = (
+                    f"""Generated SQL query is: {sql_response} """
+                    f"""The execution result is: {exec_result}"""
+                )
+                response_text += "\n" + self.answer_from_result(
                     x["content"],
                     response_text,
                 )
@@ -164,7 +170,7 @@ if __name__ == "__main__":
     db_sqlite_path = "./database/concert_singer/concert_singer.sqlite"
     create_sqlite_db_from_schema(db_schema_path, db_sqlite_path)
     sql_agent = SQLAgent(
-        name="sql agent",
+        name="SQL Agent",
         db_id=example_db_id,
         db_path=db_sqlite_path,
         model_config_name="gpt-4",
