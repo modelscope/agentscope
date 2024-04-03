@@ -195,7 +195,8 @@ class OllamaChatWrapper(OllamaWrapperBase):
                         "In ollama chat API, the content field cannot be "
                         "empty string. To avoid error, the empty string is "
                         "replaced by a blank space automatically, but the "
-                        "model may not work as expected.")
+                        "model may not work as expected.",
+                    )
                     msg.content = " "
 
                 ollama_msg = {
