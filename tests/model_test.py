@@ -7,7 +7,7 @@ from typing import Any, Union, List, Sequence
 import unittest
 from unittest.mock import patch, MagicMock
 
-from agentscope.message import Msg
+from agentscope.message import MessageBase
 from agentscope.models import (
     ModelResponse,
     ModelWrapperBase,
@@ -28,7 +28,7 @@ class TestModelWrapperSimple(ModelWrapperBase):
 
     def format(
         self,
-        *args: Union[Msg, Sequence[Msg]],
+        *args: Union[MessageBase, Sequence[MessageBase]],
     ) -> Union[List[dict], str]:
         return ""
 
