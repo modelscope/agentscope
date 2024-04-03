@@ -46,7 +46,7 @@ gradio_requires = ["gradio==4.19.1", "modelscope_studio==0.0.5"]
 # released requires
 minimal_requires = [
     "docstring_parser",
-    "loguru=0.6.0",
+    "loguru==0.6.0",
     "tiktoken",
     "Pillow",
     "requests",
