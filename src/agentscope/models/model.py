@@ -134,7 +134,6 @@ def _response_parse_decorator(
                     if fault_handler is not None and callable(fault_handler):
                         return fault_handler(response)
                     else:
-                        parse_func = inspect.getsource(parse_func)
                         error_info = f"{e.__class__.__name__}: {e}"
                         raise ResponseParsingError(
                             parse_func=parse_func,

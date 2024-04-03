@@ -60,16 +60,10 @@ ERROR_INFO_PROMPT = """Your response is not a JSON object, and cannot be parsed 
 {response}
 [YOUR RESPONSE END]
 
-## Parse Function:
-{parse_func}
-
 ## Error Information:
 {error_info}
 
 Analyze the reason, and re-correct your response in the correct format."""  # pylint: disable=all  # noqa
-
-PARSE_FUNC = """def parse_func(response: str) -> dict:
-    return json.loads(response)"""
 
 
 class ReActAgent(AgentBase):
@@ -168,7 +162,7 @@ class ReActAgent(AgentBase):
                 error_msg = Msg(
                     "system",
                     ERROR_INFO_PROMPT.format(
-                        parse_func=PARSE_FUNC,
+                        parse_func=ResponseParser.to_dict,
                         error_info=e.error_info,
                         response=e.response.text,
                     ),
@@ -201,6 +195,7 @@ class ReActAgent(AgentBase):
             self.speak(f" ITER {_+1}, STEP 2: ACTION ".center(70, "#"))
 
             # Execute functions
+            # TODO: check the provided arguments and re-correct them if needed
             execute_results = []
             for i, func in enumerate(res["function"]):
                 # Execute the function

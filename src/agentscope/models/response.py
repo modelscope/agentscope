@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """Parser for model response."""
+import inspect
 import json
-from typing import Optional, Sequence, Any
+from typing import Optional, Sequence, Any, Callable
 
 from loguru import logger
 
@@ -126,7 +127,7 @@ class ResponseParsingError(Exception):
     def __init__(
         self,
         *args: Any,
-        parse_func: str,
+        parse_func: Callable,
         error_info: str,
         response: ModelResponse,
         **kwargs: Any,
@@ -143,7 +144,7 @@ class ResponseParsingError(Exception):
         """
         super().__init__(*args, **kwargs)
 
-        self.parse_func = parse_func
+        self.parse_func_code = inspect.getsource(parse_func)
         self.error_info = error_info
         self.response = response
 
@@ -152,7 +153,7 @@ class ResponseParsingError(Exception):
             f"Fail to parse response with the following parsing function:\n"
             f"## PARSE FUNCTION: \n"
             f"```python\n"
-            f"{self.parse_func}"
+            f"{self.parse_func_code}"
             f"```\n\n"
             f"## ERROR INFO: \n"
             f"{self.error_info}\n\n"
