@@ -23,28 +23,27 @@ DEFAULT_TOOL_PROMPT = """The following tool functions are available in the forma
 ## Tool Functions:
 {function_prompt}
 
-## Notice:
-1. Fully understand the tool function and its arguments before using it.
-2. Only use the tool function when it's necessary.
-3. Check if the arguments you provided to the tool function is correct in type and value.
-4. You can't take some problems for granted. For example, where you are, what's the time now, etc. But you can try to use the tool function to solve the problem.
+## What You Should Do:
+1. First, analyze the current situation, and determine your goal.
+2. Then, check if your goal is already achieved. If so, try to generate a response. Otherwise, think about how to achieve it with the help of provided tool functions.
+3. Respond in the required format.
+
+## Note:
+1. Fully understand the tool functions and their arguments before using them.
+2. You should decide if you need to use the tool functions, if not then return an empty list in "function" field.
+3. Make sure the types and values of the arguments you provided to the tool functions are correct.
+4. Don't take things for granted. For example, where you are, what's the time now, etc. You can try to use the tool functions to get information.
 5. If the function execution fails, you should analyze the error and try to solve it.
 
 """  # noqa
 
 TOOL_HINT_PROMPT = """
 ## Response Format:
-You should respond in the following format, which can be loaded by `json.loads` in Python directly:
+You should respond with a JSON object in the following format, which can be loaded by `json.loads` in Python directly. If no tool function is used, the "function" field should be an empty list.
 {
     "thought": "what you thought",
     "speak": "what you said",
     "function": [{"name": "{function name}", "arguments": {"{argument1 name}": xxx, "{argument2 name}": xxx}}]
-}
-Taking using web_search function as an example, the response should be like this:
-{
-    "thought": "xxx",
-    "speak": "xxx",
-    "function": [{"name": "web_search", "arguments": {"query": "what's the weather today?"}}]
 }"""  # noqa
 
 FUNCTION_RESULT_TITLE_PROMPT = """Execution Results:
@@ -55,7 +54,7 @@ FUNCTION_RESULT_PROMPT = """{index}. {function_name}:
     [EXECUTE RESULT]: {result}
 """
 
-ERROR_INFO_PROMPT = """Your response cannot be parsed by the `json.loads` in parse function:
+ERROR_INFO_PROMPT = """Your response is not a JSON object, and cannot be parsed by `json.loads` in parse function:
 ## Your Response:
 [YOUR RESPONSE BEGIN]
 {response}
@@ -67,8 +66,7 @@ ERROR_INFO_PROMPT = """Your response cannot be parsed by the `json.loads` in par
 ## Error Information:
 {error_info}
 
-Analyze the reason, and re-correct your response in the correct format.
-"""  # noqa
+Analyze the reason, and re-correct your response in the correct format."""  # pylint: disable=all  # noqa
 
 PARSE_FUNC = """def parse_func(response: str) -> dict:
     return json.loads(response)"""
@@ -89,7 +87,7 @@ class ReActAgent(AgentBase):
         name: str,
         model_config_name: str,
         tools: List[Tuple],
-        sys_prompt: str = "You're a helpful assistant.",
+        sys_prompt: str = "You're a helpful assistant. Your name is {name}.",
         max_iters: int = 10,
         verbose: bool = True,
     ) -> None:
@@ -128,9 +126,11 @@ class ReActAgent(AgentBase):
         tools_prompt = DEFAULT_TOOL_PROMPT.format(function_prompt=func_prompt)
 
         if sys_prompt.endswith("\n"):
-            self.sys_prompt = sys_prompt + tools_prompt
+            self.sys_prompt = sys_prompt.format(name=self.name) + tools_prompt
         else:
-            self.sys_prompt = sys_prompt + "\n" + tools_prompt
+            self.sys_prompt = (
+                sys_prompt.format(name=self.name) + "\n" + tools_prompt
+            )
 
         # Put sys prompt into memory
         self.memory.add(Msg("system", self.sys_prompt, role="system"))
@@ -152,7 +152,7 @@ class ReActAgent(AgentBase):
                 self.memory.add(hint_msg)
 
                 # Generate LLM response
-                prompt = self.model.advanced_format(self.memory.get_memory())
+                prompt = self.model.format(self.memory.get_memory())
                 res = self.model(
                     prompt,
                     parse_func=ResponseParser.to_dict,
