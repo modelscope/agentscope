@@ -589,7 +589,7 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
         messages: list,
         **kwargs: Any,
     ) -> ModelResponse:
-        """Embed the messages with DashScope MultiModal API.
+        """Model call for DashScope MultiModal API.
 
         Args:
             messages (`list`):
