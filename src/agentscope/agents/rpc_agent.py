@@ -110,7 +110,7 @@ class RpcAgent(AgentBase):
         if agent_id is not None:
             self._agent_id = agent_id
         if launch_server:
-            self.server_launcher = AgentPlatformLauncher(
+            self.server_launcher = RpcAgentServerLauncher(
                 host=host,
                 port=port,
                 max_pool_size=max_pool_size,
@@ -339,8 +339,8 @@ def check_port(port: Optional[int] = None) -> int:
     return port
 
 
-class AgentPlatformLauncher:
-    """Launcher of AgentPlaform."""
+class RpcAgentServerLauncher:
+    """The launcher of AgentPlatform (formerly RpcAgentServer)."""
 
     def __init__(
         self,
@@ -460,7 +460,7 @@ class AgentPlatformLauncher:
 
 
 class AgentPlatform(RpcAgentServicer):
-    """A platform for agent to run on"""
+    """A platform for agent to run on (formerly RpcServerSideWrapper)"""
 
     def __init__(
         self,
@@ -469,15 +469,9 @@ class AgentPlatform(RpcAgentServicer):
         max_pool_size: int = 8192,
         max_timeout_seconds: int = 1800,
     ):
-        """Init the service side wrapper.
+        """Init the AgentPlatform.
 
         Args:
-            agent_class (`Type[AgentBase]`): The AgentBase subclass
-                encapsulated by this wrapper.
-            agent_args (`tuple`): The args tuple used to initialize the
-                agent_class.
-            agent_kwargs (`dict`): The args dict used to initialize the
-                agent_class.
             host (`str`, defaults to "localhost"):
                 Hostname of the rpc agent server.
             port (`int`, defaults to `None`):

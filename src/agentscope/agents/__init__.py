@@ -6,7 +6,7 @@ from .dialog_agent import DialogAgent
 from .dict_dialog_agent import DictDialogAgent
 from .user_agent import UserAgent
 from .text_to_image_agent import TextToImageAgent
-from .rpc_agent import AgentPlatformLauncher
+from .rpc_agent import RpcAgentServerLauncher
 from .react_agent import ReActAgent
 
 
@@ -18,6 +18,6 @@ __all__ = [
     "DictDialogAgent",
     "TextToImageAgent",
     "UserAgent",
-    "AgentPlatformLauncher",
+    "RpcAgentServerLauncher",
     "ReActAgent",
 ]

@@ -7,7 +7,7 @@ from loguru import logger
 import agentscope
 from agentscope.agents.user_agent import UserAgent
 from agentscope.agents.dialog_agent import DialogAgent
-from agentscope.agents.rpc_agent import AgentPlatformLauncher
+from agentscope.agents.rpc_agent import RpcAgentServerLauncher
 
 
 def parse_args() -> argparse.Namespace:
@@ -36,7 +36,7 @@ def setup_assistant_server(assistant_host: str, assistant_port: int) -> None:
     agentscope.init(
         model_configs="configs/model_configs.json",
     )
-    assistant_server_launcher = AgentPlatformLauncher(
+    assistant_server_launcher = RpcAgentServerLauncher(
         host=assistant_host,
         port=assistant_port,
     )
