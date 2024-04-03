@@ -268,7 +268,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         for _ in args:
             if isinstance(_, Msg):
                 input_msgs.append(_)
-            elif isinstance(_, list):
+            elif isinstance(_, list) and all(isinstance(__, Msg) for __ in _):
                 input_msgs.extend(_)
             else:
                 raise TypeError(
@@ -301,7 +301,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
 
         messages.append(
             {
-                "role": "system",
+                "role": "user",
                 "content": user_content_template.format(
                     dialogue_history=dialogue_history,
                 ),
