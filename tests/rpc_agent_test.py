@@ -395,3 +395,124 @@ class BasicRpcAgentTest(unittest.TestCase):
         msg = agent_b(msg)
         logger.chat(msg)
         self.assertTrue(msg["content"]["quota_exceeded"])
+
+    def test_multi_agent(self) -> None:
+        """test agent server with multi agent"""
+        launcher = RpcAgentServerLauncher(
+            # choose port automatically
+            agent_class=DemoRpcAgentWithMemory,
+            agent_kwargs={
+                "name": "a",
+            },
+            local_mode=False,
+            host="127.0.0.1",
+            port=12010,
+        )
+        launcher.launch()
+        # although agent1 and agent2 connect to the same server
+        # they are different instances with different memories
+        agent1 = DemoRpcAgentWithMemory(
+            name="a",
+        )
+        oid = agent1.agent_id
+        agent1 = agent1.to_dist(
+            host="127.0.0.1",
+            port=launcher.port,
+            launch_server=False,
+        )
+        self.assertEqual(oid, agent1.agent_id)
+        self.assertEqual(oid, agent1.client.agent_id)
+        agent2 = DemoRpcAgentWithMemory(
+            name="a",
+        ).to_dist(
+            host="127.0.0.1",
+            port=launcher.port,
+            launch_server=False,
+        )
+        # agent3 has the same agent id as agent1
+        # so it share the same memory with agent1
+        agent3 = DemoRpcAgentWithMemory(
+            name="a",
+        ).to_dist(
+            host="127.0.0.1",
+            port=launcher.port,
+            launch_server=False,
+        )
+        agent3._agent_id = agent1.agent_id  # pylint: disable=W0212
+        agent3.client.agent_id = agent1.client.agent_id
+        msg1 = Msg(name="System", content="First Msg for agent1")
+        res1 = agent1(msg1)
+        self.assertEqual(res1.content["mem_size"], 1)
+        msg2 = Msg(name="System", content="First Msg for agent2")
+        res2 = agent2(msg2)
+        self.assertEqual(res2.content["mem_size"], 1)
+        msg3 = Msg(name="System", content="First Msg for agent3")
+        res3 = agent3(msg3)
+        self.assertEqual(res3.content["mem_size"], 3)
+        msg4 = Msg(name="System", content="Second Msg for agent2")
+        res4 = agent2(msg4)
+        self.assertEqual(res4.content["mem_size"], 3)
+        # delete existing agent
+        agent2.client.delete_agent()
+        msg2 = Msg(name="System", content="First Msg for agent2")
+        res2 = agent2(msg2)
+        self.assertEqual(res2.content["mem_size"], 1)
+
+        # should override remote default parameter(e.g. name field)
+        agent4 = DemoRpcAgentWithMemory(
+            name="b",
+        ).to_dist(
+            host="127.0.0.1",
+            port=launcher.port,
+            launch_server=False,
+        )
+        msg5 = Msg(name="System", content="Second Msg for agent4")
+        res5 = agent4(msg5)
+        self.assertEqual(res5.name, "b")
+        self.assertEqual(res5.content["mem_size"], 1)
+        launcher.shutdown()
+
+    def test_clone_instances(self) -> None:
+        """Test the clone_instances method of RpcAgent"""
+        agent = DemoRpcAgentWithMemory(
+            name="a",
+        ).to_dist()
+        # lazy launch will not init client
+        self.assertIsNone(agent.client)
+        # generate two agents (the first is it self)
+        agents = agent.clone_instances(2)
+        self.assertEqual(len(agents), 2)
+        agent1 = agents[0]
+        agent2 = agents[1]
+        self.assertTrue(agent1.agent_id.startswith("DemoRpcAgentWithMemory"))
+        self.assertTrue(agent2.agent_id.startswith("DemoRpcAgentWithMemory"))
+        self.assertTrue(
+            agent1.client.agent_id.startswith("DemoRpcAgentWithMemory"),
+        )
+        self.assertTrue(
+            agent2.client.agent_id.startswith("DemoRpcAgentWithMemory"),
+        )
+        self.assertNotEqual(agent1.agent_id, agent2.agent_id)
+        self.assertEqual(agent1.agent_id, agent1.client.agent_id)
+        self.assertEqual(agent2.agent_id, agent2.client.agent_id)
+        # clone instance will init client
+        self.assertIsNotNone(agent.client)
+        self.assertEqual(agent.agent_id, agent1.agent_id)
+        self.assertNotEqual(agent1.agent_id, agent2.agent_id)
+        self.assertIsNotNone(agent.server_launcher)
+        self.assertIsNotNone(agent1.server_launcher)
+        self.assertIsNone(agent2.server_launcher)
+        msg1 = Msg(name="System", content="First Msg for agent1")
+        res1 = agent1(msg1)
+        self.assertEqual(res1.content["mem_size"], 1)
+        msg2 = Msg(name="System", content="First Msg for agent2")
+        res2 = agent2(msg2)
+        self.assertEqual(res2.content["mem_size"], 1)
+        new_agents = agent.clone_instances(2, including_self=False)
+        agent3 = new_agents[0]
+        agent4 = new_agents[1]
+        self.assertEqual(len(new_agents), 2)
+        self.assertNotEqual(agent3.agent_id, agent.agent_id)
+        self.assertNotEqual(agent4.agent_id, agent.agent_id)
+        self.assertIsNone(agent3.server_launcher)
+        self.assertIsNone(agent4.server_launcher)

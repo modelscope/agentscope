@@ -7,7 +7,7 @@ import json
 
 from loguru import logger
 
-from .rpc import RpcAgentClient
+from .rpc import RpcAgentClient, ResponseStub, call_in_thread
 from .utils.tools import _get_timestamp
 
 
@@ -219,6 +219,7 @@ class PlaceholderMessage(MessageBase):
         "_port",
         "_client",
         "_task_id",
+        "_stub",
         "_is_placeholder",
     }
 
@@ -237,6 +238,8 @@ class PlaceholderMessage(MessageBase):
         host: str = None,
         port: int = None,
         task_id: int = None,
+        client: Optional[RpcAgentClient] = None,
+        x: dict = None,
         **kwargs: Any,
     ) -> None:
         """A placeholder message, records the address of the real message.
@@ -266,6 +269,11 @@ class PlaceholderMessage(MessageBase):
                 The port of the rpc server where the real message is located.
             task_id (`int`, defaults to `None`):
                 The task id of the real message in the rpc server.
+            client (`RpcAgentClient`, defaults to `None`):
+                An RpcAgentClient instance used to connect to the generator of
+                this placeholder.
+            x (`dict`, defaults to `None`):
+                Input parameters used to call rpc methods on the client.
         """
         super().__init__(
             name=name,
@@ -276,9 +284,16 @@ class PlaceholderMessage(MessageBase):
         )
         # placeholder indicates whether the real message is still in rpc server
         self._is_placeholder = True
-        self._host = host
-        self._port = port
-        self._task_id = task_id
+        if client is None:
+            self._stub: ResponseStub = None
+            self._host: str = host
+            self._port: int = port
+            self._task_id: int = task_id
+        else:
+            self._stub = call_in_thread(client, x, "_reply")
+            self._host = client.host
+            self._port = client.port
+            self._task_id = None
 
     def __is_local(self, key: Any) -> bool:
         return (
@@ -316,6 +331,7 @@ class PlaceholderMessage(MessageBase):
         """Get attribute values from rpc agent server immediately"""
         if self._is_placeholder:
             # retrieve real message from rpc agent server
+            self.__update_task_id()
             client = RpcAgentClient(self._host, self._port)
             result = client.call_func(
                 func_name="_get",
@@ -326,8 +342,15 @@ class PlaceholderMessage(MessageBase):
             self._is_placeholder = False
         return self
 
+    def __update_task_id(self) -> None:
+        if self._stub is not None:
+            resp = deserialize(self._stub.get_response())
+            self._task_id = resp["task_id"]  # type: ignore[call-overload]
+            self._stub = None
+
     def serialize(self) -> str:
         if self._is_placeholder:
+            self.__update_task_id()
             return json.dumps(
                 {
                     "__type": "PlaceholderMessage",

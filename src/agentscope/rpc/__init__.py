@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Import all rpc related modules in the package."""
 from typing import Any
-from .rpc_agent_client import RpcAgentClient
+from .rpc_agent_client import RpcAgentClient, ResponseStub, call_in_thread
 
 try:
     from .rpc_agent_pb2 import RpcMsg  # pylint: disable=E0611
@@ -19,6 +19,8 @@ except ImportError:
 
 __all__ = [
     "RpcAgentClient",
+    "ResponseStub",
+    "call_in_thread",
     "RpcMsg",
     "RpcAgentServicer",
     "RpcAgentStub",
