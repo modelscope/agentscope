@@ -438,7 +438,7 @@ class BasicRpcAgentTest(unittest.TestCase):
             port=launcher.port,
             launch_server=False,
         )
-        agent3._agent_id = agent1.agent_id
+        agent3._agent_id = agent1.agent_id  # pylint: disable=W0212
         agent3.client.agent_id = agent1.client.agent_id
         msg1 = Msg(name="System", content="First Msg for agent1")
         res1 = agent1(msg1)
