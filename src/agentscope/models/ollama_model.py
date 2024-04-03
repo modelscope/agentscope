@@ -3,7 +3,7 @@
 from abc import ABC
 from typing import Sequence, Any, Optional, List, Union
 
-from agentscope.message import Msg
+from agentscope.message import MessageBase
 from agentscope.models import ModelWrapperBase, ModelResponse
 from agentscope.utils.tools import _convert_to_str
 
@@ -165,25 +165,26 @@ class OllamaChatWrapper(OllamaWrapperBase):
 
     def format(
         self,
-        *msgs: Union[Msg, Sequence[Msg]],
+        *args: Union[MessageBase, Sequence[MessageBase]],
     ) -> List[dict]:
         """A basic strategy to format the input into the required format of
         Ollama Chat API.
 
         Args:
-            *args (`Union[Msg, Sequence[Msg]]`):
+            args (`Union[MessageBase, Sequence[MessageBase]]`):
                 The input arguments to be formatted, where each argument
-                should be a `Msg` object or a list of `Msg` objects
+                should be a `Msg` object, or a list of `Msg` objects.
+                In distribution, placeholder is also allowed.
 
         Returns:
             `List[dict]`:
                 The formatted messages.
         """
         ollama_msgs = []
-        for msg in msgs:
+        for msg in args:
             if msg is None:
                 continue
-            if isinstance(msg, Msg):
+            if isinstance(msg, MessageBase):
                 ollama_msg = {
                     "role": msg.role,
                     "content": _convert_to_str(msg.content),
@@ -283,7 +284,7 @@ class OllamaEmbeddingWrapper(OllamaWrapperBase):
 
     def format(
         self,
-        *args: Union[Msg, Sequence[Msg]],
+        *args: Union[MessageBase, Sequence[MessageBase]],
     ) -> Union[List[dict], str]:
         raise RuntimeError(
             f"Model Wrapper [{type(self).__name__}] doesn't "
@@ -387,13 +388,14 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
             metric_unit="token",
         )
 
-    def format(self, *args: Union[Msg, Sequence[Msg]]) -> str:
+    def format(self, *args: Union[MessageBase, Sequence[MessageBase]]) -> str:
         """Forward the input to the model.
 
         Args:
-            *args (`Union[Msg, Sequence[Msg]]`):
+            args (`Union[MessageBase, Sequence[MessageBase]]`):
                 The input arguments to be formatted, where each argument
-                should be a string or a dict or a list of strings or dicts.
+                should be a `Msg` object, or a list of `Msg` objects.
+                In distribution, placeholder is also allowed.
 
         Returns:
             `str`:
@@ -401,9 +403,11 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
         """
         input_msgs = []
         for _ in args:
-            if isinstance(_, Msg):
+            if isinstance(_, MessageBase):
                 input_msgs.append(_)
-            elif isinstance(_, list) and all(isinstance(__, Msg) for __ in _):
+            elif isinstance(_, list) and all(
+                isinstance(__, MessageBase) for __ in _
+            ):
                 input_msgs.extend(_)
             else:
                 raise TypeError(

@@ -5,7 +5,7 @@ from http import HTTPStatus
 from typing import Any, Union, List, Sequence
 from loguru import logger
 
-from ..message import Msg
+from ..message import MessageBase
 from ..utils.tools import _convert_to_str
 
 try:
@@ -65,7 +65,7 @@ class DashScopeWrapperBase(ModelWrapperBase, ABC):
 
     def format(
         self,
-        *args: Union[Msg, Sequence[Msg]],
+        *args: Union[MessageBase, Sequence[MessageBase]],
     ) -> Union[List[dict], str]:
         raise RuntimeError(
             f"Model Wrapper [{type(self).__name__}] doesn't "
@@ -211,7 +211,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
 
     def format(
         self,
-        *args: Union[Msg, Sequence[Msg]],
+        *args: Union[MessageBase, Sequence[MessageBase]],
     ) -> List:
         """Format the messages for DashScope Chat API.
 
@@ -252,9 +252,10 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
 
 
         Args:
-            *args (`Union[Msg, Sequence[Msg]]`):
+            args (`Union[MessageBase, Sequence[MessageBase]]`):
                 The input arguments to be formatted, where each argument
-                should be a `Msg` object, or a list of `Msg` objects
+                should be a `Msg` object, or a list of `Msg` objects.
+                In distribution, placeholder is also allowed.
 
         Returns:
             `List[dict]`:
@@ -266,9 +267,11 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         # Parse all information into a list of messages
         input_msgs = []
         for _ in args:
-            if isinstance(_, Msg):
+            if isinstance(_, MessageBase):
                 input_msgs.append(_)
-            elif isinstance(_, list) and all(isinstance(__, Msg) for __ in _):
+            elif isinstance(_, list) and all(
+                isinstance(__, MessageBase) for __ in _
+            ):
                 input_msgs.extend(_)
             else:
                 raise TypeError(

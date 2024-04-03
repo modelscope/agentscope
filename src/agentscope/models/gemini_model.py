@@ -7,7 +7,7 @@ from typing import Sequence, Union, Any, List
 
 from loguru import logger
 
-from agentscope.message import Msg
+from agentscope.message import Msg, MessageBase
 from agentscope.models import ModelWrapperBase, ModelResponse
 from agentscope.utils.tools import _convert_to_str
 
@@ -197,7 +197,10 @@ class GeminiChatWrapper(GeminiWrapperBase):
             metric_unit="token",
         )
 
-    def format(self, *args: Union[Msg, Sequence[Msg]]) -> List[dict]:
+    def format(
+        self,
+        *args: Union[MessageBase, Sequence[MessageBase]],
+    ) -> List[dict]:
         """This function provide a basic prompting strategy for Gemini Chat
         API in multi-party conversation, which combines all input into a
         single string, and wrap it into a user message.
@@ -225,9 +228,10 @@ class GeminiChatWrapper(GeminiWrapperBase):
         https://github.com/agentscope/agentscope!
 
         Args:
-            args (`Union[Msg, Sequence[Msg]]`):
-                The items in `args` should be `Msg` objects or a list of
-                `Msg` objects.
+            args (`Union[MessageBase, Sequence[MessageBase]]`):
+                The input arguments to be formatted, where each argument
+                should be a `Msg` object, or a list of `Msg` objects.
+                In distribution, placeholder is also allowed.
 
         Returns:
             `List[dict]`:
@@ -235,9 +239,11 @@ class GeminiChatWrapper(GeminiWrapperBase):
         """
         input_msgs = []
         for _ in args:
-            if isinstance(_, Msg):
+            if isinstance(_, MessageBase):
                 input_msgs.append(_)
-            elif isinstance(_, list) and all(isinstance(__, Msg) for __ in _):
+            elif isinstance(_, list) and all(
+                isinstance(__, MessageBase) for __ in _
+            ):
                 input_msgs.extend(_)
             else:
                 raise TypeError(
