@@ -246,4 +246,5 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
             launch_server=launch_server,
             local_mode=local_mode,
             lazy_launch=lazy_launch,
+            agent_id=self.agent_id,
         )
