@@ -3,6 +3,8 @@
 from abc import ABC
 from typing import Sequence, Any, Optional, List, Union
 
+from loguru import logger
+
 from agentscope.message import MessageBase
 from agentscope.models import ModelWrapperBase, ModelResponse
 from agentscope.utils.tools import _convert_to_str
@@ -170,6 +172,8 @@ class OllamaChatWrapper(OllamaWrapperBase):
         """A basic strategy to format the input into the required format of
         Ollama Chat API.
 
+        Note for ollama chat api, the content field shouldn't be empty string.
+
         Args:
             args (`Union[MessageBase, Sequence[MessageBase]]`):
                 The input arguments to be formatted, where each argument
@@ -185,6 +189,15 @@ class OllamaChatWrapper(OllamaWrapperBase):
             if msg is None:
                 continue
             if isinstance(msg, MessageBase):
+                # content shouldn't be empty string
+                if msg.content == "":
+                    logger.warning(
+                        "In ollama chat API, the content field cannot be "
+                        "empty string. To avoid error, the empty string is "
+                        "replaced by a blank space automatically, but the "
+                        "model may not work as expected.")
+                    msg.content = " "
+
                 ollama_msg = {
                     "role": msg.role,
                     "content": _convert_to_str(msg.content),
