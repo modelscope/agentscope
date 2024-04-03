@@ -9,7 +9,7 @@ from sqlite3 import Connection
 import numpy as np
 
 
-def execute_query(
+def query_sqlite(
     queries: Union[list[str], str],
     path_db: str = None,
     cur: str = None,
@@ -41,11 +41,28 @@ def execute_query(
 
     return results
 
+def create_sqlite_db_from_schema(schema_path: str, db_path: str) -> None:
+    """Create a SQLite database file from a schema SQL file.
+    
+    Args:
+        schema_path: The file path to the schema SQL file.
+        db_path: The file path for the SQLite database to be created.
+    """
+    conn = sqlite3.connect(db_path)
+    
+    with open(schema_path, 'r') as schema_file:
+        schema_sql = schema_file.read()
+    
+    cursor = conn.cursor()
+    cursor.executescript(schema_sql)
+    
+    conn.commit()
+    conn.close()
 
 def get_table_names(path_db: str = None, cur: str = None) -> list:
     """Get names of all tables within the database,
     and reuse cur if it's not None"""
-    table_names = execute_query(
+    table_names = query_sqlite(
         queries="SELECT name FROM sqlite_master WHERE type='table'",
         path_db=path_db,
         cur=cur,
@@ -71,7 +88,7 @@ def get_sql_for_database(path_db: str = None, cur: str = None) -> list:
         for name in table_names
     ]
 
-    sqls = execute_query(queries, path_db, cur)
+    sqls = query_sqlite(queries, path_db, cur)
 
     if close_in_func:
         cur.close()

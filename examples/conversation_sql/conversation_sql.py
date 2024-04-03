@@ -4,13 +4,14 @@ SQL queries through natural language conversation.
 """
 from sql_utils import (
     DailSQLPromptGenerator,
-    execute_query,
+    query_sqlite,
+    create_sqlite_db_from_schema
 )
 
 import agentscope
 from agentscope.agents.user_agent import UserAgent
 
-from agentscope.agents.agent import AgentBase
+from agentscope.agents import AgentBase
 from agentscope.message import Msg
 
 
@@ -29,9 +30,9 @@ class SQLAgent(AgentBase):
     def __init__(
         self,
         name: str,
-        db_id: str = None,
-        db_path: str = None,
-        model_config_name: str = "gpt-4",
+        db_id: str,
+        db_path: str,
+        model_config_name: str,
     ) -> None:
         super().__init__(
             name=name,
@@ -54,12 +55,10 @@ class SQLAgent(AgentBase):
         """
         Generate response from prompt using LLM
         """
-        messages = [{"role": "user", "content": prompt}]
+        messages = [{"role": "assistant", "content": prompt}]
         sql = self.model(messages).text
-        # remove \n and extra spaces
         sql = " ".join(sql.replace("\n", " ").split())
         sql = process_duplication(sql)
-        # python version should >= 3.8
         if sql.startswith("SELECT"):
             response = sql + "\n"
         elif sql.startswith(" "):
@@ -78,7 +77,7 @@ class SQLAgent(AgentBase):
         answer the user's question.
         \n User question: {question} \n {response_text}"""
 
-        messages = [{"role": "user", "content": prompt}]
+        messages = [{"role": "assistant", "content": prompt}]
         answer = self.model(messages).text
         return answer
 
@@ -89,7 +88,7 @@ class SQLAgent(AgentBase):
         Return chat answer if is not.
         """
         is_sql_prompt = self.prompt_helper.is_sql_question_prompt(question)
-        messages = [{"role": "user", "content": is_sql_prompt}]
+        messages = [{"role": "assistant", "content": is_sql_prompt}]
         is_sql_response = self.model(messages).text
         return is_sql_response
 
@@ -98,7 +97,7 @@ class SQLAgent(AgentBase):
         # and we should describe the database for user
         if x is None:
             describe_prompt = self.prompt_helper.describe_sql()
-            messages = [{"role": "user", "content": describe_prompt}]
+            messages = [{"role": "assistant", "content": describe_prompt}]
             response = [
                 self.self_intro,
                 self.model(messages).text,
@@ -108,6 +107,7 @@ class SQLAgent(AgentBase):
             msg = Msg(self.name, response, role="sql assistant")
             self.speak(msg)
             return msg
+            return {}
 
         is_sql_response = self.is_question_related(x["content"])
 
@@ -128,7 +128,7 @@ class SQLAgent(AgentBase):
                 sql_response = self.get_response_from_prompt(
                     prepared_prompt["prompt"],
                 )
-                exec_result = execute_query(sql_response, path_db=self.db_path)
+                exec_result = query_sqlite(sql_response, path_db=self.db_path)
                 response_text = f"""Generated SQL query is: {sql_response} \n
                 The execution result is: {exec_result}"""
                 response_text += "\n\n" + self.answer_from_result(
@@ -160,10 +160,14 @@ if __name__ == "__main__":
     agentscope.init(
         model_configs="./configs/model_configs.json",
     )
+    db_id = "concert_singer"
+    db_schema_path = "./database/concert_singer/schema.sql"
+    db_sqlite_path = "./database/concert_singer/concert_singer.sqlite"
+    create_sqlite_db_from_schema(db_schema_path, db_sqlite_path)
     sql_agent = SQLAgent(
         name="sql agent",
-        db_id="concert_singer",
-        db_path="./database/concert_singer/concert_singer.sqlite",
+        db_id=db_id,
+        db_path=db_sqlite_path,
         model_config_name="gpt-4",
     )
     user_agent = UserAgent()
