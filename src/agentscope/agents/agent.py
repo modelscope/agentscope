@@ -204,7 +204,7 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
         self,
         host: str = "localhost",
         port: int = None,
-        max_pool_size: int = 100,
+        max_pool_size: int = 8192,
         max_timeout_seconds: int = 1800,
         launch_server: bool = True,
         local_mode: bool = True,
@@ -217,7 +217,7 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
                 Hostname of the rpc agent server.
             port (`int`, defaults to `None`):
                 Port of the rpc agent server.
-            max_pool_size (`int`, defaults to `100`):
+            max_pool_size (`int`, defaults to `8192`):
                 Max number of task results that the server can accommodate.
             max_timeout_seconds (`int`, defaults to `1800`):
                 Timeout for task results.
@@ -246,4 +246,5 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
             launch_server=launch_server,
             local_mode=local_mode,
             lazy_launch=lazy_launch,
+            agent_id=self.agent_id,
         )
