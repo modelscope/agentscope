@@ -6,6 +6,7 @@ import sqlite3
 import json
 from typing import Union
 from sqlite3 import Connection
+import os
 import numpy as np
 
 
@@ -49,6 +50,11 @@ def create_sqlite_db_from_schema(schema_path: str, db_path: str) -> None:
         schema_path: The file path to the schema SQL file.
         db_path: The file path for the SQLite database to be created.
     """
+    if os.path.exists(db_path):
+        print(
+            f"Database file '{db_path}' already exists. ",
+        )
+        return
     conn = sqlite3.connect(db_path)
 
     with open(schema_path, "r", encoding="utf-8") as schema_file:
