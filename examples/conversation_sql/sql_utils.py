@@ -41,23 +41,25 @@ def query_sqlite(
 
     return results
 
+
 def create_sqlite_db_from_schema(schema_path: str, db_path: str) -> None:
     """Create a SQLite database file from a schema SQL file.
-    
+
     Args:
         schema_path: The file path to the schema SQL file.
         db_path: The file path for the SQLite database to be created.
     """
     conn = sqlite3.connect(db_path)
-    
-    with open(schema_path, 'r') as schema_file:
+
+    with open(schema_path, "r", encoding="utf-8") as schema_file:
         schema_sql = schema_file.read()
-    
+
     cursor = conn.cursor()
     cursor.executescript(schema_sql)
-    
+
     conn.commit()
     conn.close()
+
 
 def get_table_names(path_db: str = None, cur: str = None) -> list:
     """Get names of all tables within the database,

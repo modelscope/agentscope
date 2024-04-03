@@ -5,7 +5,7 @@ SQL queries through natural language conversation.
 from sql_utils import (
     DailSQLPromptGenerator,
     query_sqlite,
-    create_sqlite_db_from_schema
+    create_sqlite_db_from_schema,
 )
 
 import agentscope
@@ -107,7 +107,6 @@ class SQLAgent(AgentBase):
             msg = Msg(self.name, response, role="sql assistant")
             self.speak(msg)
             return msg
-            return {}
 
         is_sql_response = self.is_question_related(x["content"])
 
@@ -160,13 +159,13 @@ if __name__ == "__main__":
     agentscope.init(
         model_configs="./configs/model_configs.json",
     )
-    db_id = "concert_singer"
+    example_db_id = "concert_singer"
     db_schema_path = "./database/concert_singer/schema.sql"
     db_sqlite_path = "./database/concert_singer/concert_singer.sqlite"
     create_sqlite_db_from_schema(db_schema_path, db_sqlite_path)
     sql_agent = SQLAgent(
         name="sql agent",
-        db_id=db_id,
+        db_id=example_db_id,
         db_path=db_sqlite_path,
         model_config_name="gpt-4",
     )
