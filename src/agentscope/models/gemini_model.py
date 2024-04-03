@@ -9,6 +9,7 @@ from loguru import logger
 
 from agentscope.message import Msg
 from agentscope.models import ModelWrapperBase, ModelResponse
+from agentscope.utils.tools import _convert_to_str
 
 try:
     import google.generativeai as genai
@@ -234,13 +235,16 @@ class GeminiChatWrapper(GeminiWrapperBase):
         """
         prompt = []
         for unit in args:
+            if unit is None:
+                continue
             if isinstance(unit, Msg):
-                prompt.append(f"{unit.name}: {unit.content}")
+                prompt.append(f"{unit.name}: {_convert_to_str(unit.content)}")
             elif isinstance(unit, list):
                 for child_unit in unit:
                     if isinstance(child_unit, Msg):
                         prompt.append(
-                            f"{child_unit.name}: " f"{child_unit.content}",
+                            f"{child_unit.name}: "
+                            f"{_convert_to_str(child_unit.content)}",
                         )
                     else:
                         raise TypeError(

@@ -13,6 +13,7 @@ from ..constants import _DEFAULT_MAX_RETRIES
 from ..constants import _DEFAULT_MESSAGES_KEY
 from ..constants import _DEFAULT_RETRY_INTERVAL
 from ..message import Msg
+from ..utils.tools import _convert_to_str
 
 
 class PostAPIModelWrapperBase(ModelWrapperBase, ABC):
@@ -155,8 +156,7 @@ class PostAPIModelWrapperBase(ModelWrapperBase, ABC):
         else:
             logger.error(json.dumps(request_kwargs, indent=4))
             raise RuntimeError(
-                f"Failed to call the model with "
-                f"requests.codes == {response.status_code}",
+                f"Failed to call the model with {response.json()}",
             )
 
 
@@ -187,12 +187,14 @@ class PostAPIChatWrapper(PostAPIModelWrapperBase):
         """
         messages = []
         for arg in args:
+            if arg is None:
+                continue
             if isinstance(arg, Msg):
                 messages.append(
                     {
                         "role": arg.role,
                         "name": arg.name,
-                        "content": arg.content,
+                        "content": _convert_to_str(arg.content),
                     },
                 )
             elif isinstance(arg, list):
@@ -209,7 +211,9 @@ class PostAPIChatWrapper(PostAPIModelWrapperBase):
 class PostAPIDALLEWrapper(PostAPIModelWrapperBase):
     """A post api model wrapper compatible with openai dalle"""
 
-    model_type: str = "post_api_dalle"
+    model_type: str = "post_api_dall_e"
+
+    deprecated_model_type: str = "post_api_dalle"
 
     def _parse_response(self, response: dict) -> ModelResponse:
         urls = [img["url"] for img in response["data"]["response"]["data"]]

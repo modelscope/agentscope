@@ -6,7 +6,7 @@ from typing import Any, Union, List, Sequence
 from loguru import logger
 
 from ..message import Msg
-from ..utils.tools import to_openai_dict
+from ..utils.tools import to_openai_dict, _convert_to_str
 
 try:
     import dashscope
@@ -260,6 +260,8 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         # TODO: This strategy will be replaced by a new strategy in the future.
         prompt = []
         for unit in args:
+            if unit is None:
+                continue
             if isinstance(unit, Msg):
                 prompt.append(to_openai_dict(unit))
             elif isinstance(unit, list):
@@ -309,8 +311,8 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                 {
                     "role": "system",
                     "content": (
-                       "system: You're a helpful assistant\n",
-                       "Bob: Hi, how can I help you?\n",
+                       "system: You're a helpful assistant\\n",
+                       "Bob: Hi, how can I help you?\\n",
                        "user: What's the date today?"
                     )
                 }
@@ -331,12 +333,13 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         prompt = []
         for unit in args:
             if isinstance(unit, Msg):
-                prompt.append(f"{unit.name}: {unit.content}")
+                prompt.append(f"{unit.name}: {_convert_to_str(unit.content)}")
             elif isinstance(unit, list):
                 for child_unit in unit:
                     if isinstance(child_unit, Msg):
                         prompt.append(
-                            f"{child_unit.name}: " f"{child_unit.content}",
+                            f"{child_unit.name}: "
+                            f"{_convert_to_str(child_unit.content)}",
                         )
                     else:
                         raise TypeError(
@@ -557,7 +560,7 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapperBase):
 
 
 class DashScopeMultiModalWrapper(DashScopeWrapperBase):
-    """The model wrapper for DashScope Text Embedding API."""
+    """The model wrapper for DashScope Multimodal API."""
 
     model_type: str = "dashscope_multimodal"
 
@@ -605,6 +608,9 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
         Note:
             If involving image links, then the messages should be of the
             following form:
+
+            .. code-block:: python
+
                 messages = [
                     {
                         "role": "system",
@@ -620,6 +626,7 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
                         ],
                     },
                 ]
+
             Therefore, you should input a list matching the content value
             above.
             If only involving words, just input them.

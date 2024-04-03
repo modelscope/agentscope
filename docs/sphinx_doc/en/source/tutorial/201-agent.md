@@ -62,12 +62,15 @@ The *AgentPool* within AgentScope is a curated ensemble of ready-to-use, special
 
 Below is a table summarizing the functionality of some of the key agents available in the Agent Pool:
 
-| Agent Type     | Description                                                  | Typical Use Cases                                            |
-| -------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| `AgentBase`    | Serves as the superclass for all agents, providing essential attributes and methods. | The foundation for building any custom agent.                |
-| `DialogAgent`  | Manages dialogues by understanding context and generating coherent responses. | Customer service bots, virtual assistants.                   |
-| `UserAgent`    | Interacts with the user to collect input, generating messages that may include URLs or additional specifics based on required keys. | Collecting user input for agents                             |
-| *More to Come* | AgentScope is continuously expanding its pool with more specialized agents for diverse applications. |                                                              |
+| Agent Type         | Description                                                                                                                         | Typical Use Cases                             |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| `AgentBase`        | Serves as the superclass for all agents, providing essential attributes and methods.                                                | The foundation for building any custom agent. |
+| `DialogAgent`      | Manages dialogues by understanding context and generating coherent responses.                                                       | Customer service bots, virtual assistants.    |
+| `DictDialogAgent`  | Manages dialogues by understanding context and generating coherent responses, and the responses are in json format.                 | Customer service bots, virtual assistants.    |
+| `UserAgent`        | Interacts with the user to collect input, generating messages that may include URLs or additional specifics based on required keys. | Collecting user input for agents              |
+| `TextToImageAgent` | An agent that convert user input text to image.                                                                                     | Converting text to image                      |
+| `ReActAgent`       | An agent class that implements the ReAct algorithm.                                                                                 | Solving complex tasks                         |
+| *More to Come*     | AgentScope is continuously expanding its pool with more specialized agents for diverse applications.                                |                                               |
 
 ## Customizing Agents from the AgentPool
 
