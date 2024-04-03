@@ -3,7 +3,9 @@
 from abc import ABC
 from typing import Sequence, Any, Optional, List, Union
 
-from agentscope.message import Msg
+from loguru import logger
+
+from agentscope.message import MessageBase
 from agentscope.models import ModelWrapperBase, ModelResponse
 from agentscope.utils.tools import _convert_to_str
 
@@ -165,25 +167,38 @@ class OllamaChatWrapper(OllamaWrapperBase):
 
     def format(
         self,
-        *msgs: Union[Msg, Sequence[Msg]],
+        *args: Union[MessageBase, Sequence[MessageBase]],
     ) -> List[dict]:
         """A basic strategy to format the input into the required format of
         Ollama Chat API.
 
+        Note for ollama chat api, the content field shouldn't be empty string.
+
         Args:
-            *args (`Union[Msg, Sequence[Msg]]`):
+            args (`Union[MessageBase, Sequence[MessageBase]]`):
                 The input arguments to be formatted, where each argument
-                should be a `Msg` object or a list of `Msg` objects
+                should be a `Msg` object, or a list of `Msg` objects.
+                In distribution, placeholder is also allowed.
 
         Returns:
             `List[dict]`:
                 The formatted messages.
         """
         ollama_msgs = []
-        for msg in msgs:
+        for msg in args:
             if msg is None:
                 continue
-            if isinstance(msg, Msg):
+            if isinstance(msg, MessageBase):
+                # content shouldn't be empty string
+                if msg.content == "":
+                    logger.warning(
+                        "In ollama chat API, the content field cannot be "
+                        "empty string. To avoid error, the empty string is "
+                        "replaced by a blank space automatically, but the "
+                        "model may not work as expected.",
+                    )
+                    msg.content = " "
+
                 ollama_msg = {
                     "role": msg.role,
                     "content": _convert_to_str(msg.content),
@@ -283,7 +298,7 @@ class OllamaEmbeddingWrapper(OllamaWrapperBase):
 
     def format(
         self,
-        *args: Union[Msg, Sequence[Msg]],
+        *args: Union[MessageBase, Sequence[MessageBase]],
     ) -> Union[List[dict], str]:
         raise RuntimeError(
             f"Model Wrapper [{type(self).__name__}] doesn't "
@@ -387,42 +402,58 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
             metric_unit="token",
         )
 
-    def format(self, *args: Union[Msg, Sequence[Msg]]) -> str:
+    def format(self, *args: Union[MessageBase, Sequence[MessageBase]]) -> str:
         """Forward the input to the model.
 
         Args:
-            *args (`Union[Msg, Sequence[Msg]]`):
+            args (`Union[MessageBase, Sequence[MessageBase]]`):
                 The input arguments to be formatted, where each argument
-                should be a string or a dict or a list of strings or dicts.
+                should be a `Msg` object, or a list of `Msg` objects.
+                In distribution, placeholder is also allowed.
 
         Returns:
             `str`:
                 The formatted string prompt.
         """
-
-        prompt = []
-
-        for arg in args:
-            if arg is None:
-                continue
-            if isinstance(arg, Msg):
-                prompt.append(f"{arg.name}: {_convert_to_str(arg.content)}")
-            elif isinstance(arg, list):
-                for child_arg in arg:
-                    if isinstance(child_arg, Msg):
-                        prompt.append(
-                            f"{child_arg.name}: "
-                            f"{_convert_to_str(child_arg.content)}",
-                        )
-                    else:
-                        raise TypeError(
-                            f"The input should be a Msg object or a list "
-                            f"of Msg objects, got {type(child_arg)}.",
-                        )
+        input_msgs = []
+        for _ in args:
+            if isinstance(_, MessageBase):
+                input_msgs.append(_)
+            elif isinstance(_, list) and all(
+                isinstance(__, MessageBase) for __ in _
+            ):
+                input_msgs.extend(_)
             else:
                 raise TypeError(
                     f"The input should be a Msg object or a list "
-                    f"of Msg objects, got {type(arg)}.",
+                    f"of Msg objects, got {type(_)}.",
                 )
 
-        return "\n".join(prompt)
+        sys_prompt = None
+        dialogue = []
+        for i, unit in enumerate(input_msgs):
+            if i == 0 and unit.role == "system":
+                # system prompt
+                sys_prompt = _convert_to_str(unit.content)
+            else:
+                # Merge all messages into a dialogue history prompt
+                dialogue.append(
+                    f"{unit.name}: {_convert_to_str(unit.content)}",
+                )
+
+        dialogue_history = "\n".join(dialogue)
+
+        if sys_prompt is None:
+            prompt_template = "## Dialogue History\n{dialogue_history}"
+        else:
+            prompt_template = (
+                "{system_prompt}\n"
+                "\n"
+                "## Dialogue History\n"
+                "{dialogue_history}"
+            )
+
+        return prompt_template.format(
+            system_prompt=sys_prompt,
+            dialogue_history=dialogue_history,
+        )
