@@ -15,7 +15,7 @@ def query_sqlite(
     path_db: str = None,
     cur: str = None,
 ) -> Union[list, str]:
-    """Execute queries and return results. Reuse cur if it's not None."""
+    """Execute queries and return results."""
     assert not (
         path_db is None and cur is None
     ), "path_db and cur cannot be NoneType at the same time"
@@ -81,7 +81,7 @@ def get_table_names(path_db: str = None, cur: str = None) -> list:
 
 def get_sql_for_database(path_db: str = None, cur: str = None) -> list:
     """
-    get sql table from database
+    Get sql table from database
     """
     close_in_func = False
     if cur is None:
@@ -142,9 +142,9 @@ class SQLPrompt:
         prompt = "\n\n".join(prompt_components)
         return prompt
 
-    def describe_sql(self, example: dict) -> str:
-        """Describe SQL"""
-        sqls = get_sql_for_database(example["path_db"])
+    def describe_schema(self, db_path: str) -> str:
+        """Describe SQL schema"""
+        sqls = get_sql_for_database(db_path)
         prompt_info = self.template_info.format("\n\n".join(sqls))
         prompt_components = [
             self.template_agent_prompt,
@@ -189,7 +189,6 @@ class EuclideanDistanceExampleSelector:
         self.train_json_path = "./database/train.json"
         with open(self.train_json_path, "r", encoding="utf-8") as file:
             self.train_json = json.load(file)
-        self.db_ids = [d["db_id"] for d in self.train_json]
         self.train_questions = [_["question"] for _ in self.train_json]
 
         self.SELECT_MODEL = "sentence-transformers/all-mpnet-base-v2"
@@ -205,28 +204,10 @@ class EuclideanDistanceExampleSelector:
             )
             np.save("./.cache/train_embeddings.npy", self.train_embeddings)
 
-    def domain_mask(self, candidates: list, db_id: str) -> list:
-        """Get domain mask"""
-        cross_domain_candidates = [
-            candidates[i]
-            for i in range(len(self.db_ids))
-            if self.db_ids[i] != db_id
-        ]
-        return cross_domain_candidates
-
-    def retrieve_index(self, indexes: list, db_id: str) -> list:
-        """Retrieve index"""
-        cross_domain_indexes = [
-            i for i in range(len(self.db_ids)) if self.db_ids[i] != db_id
-        ]
-        retrieved_indexes = [cross_domain_indexes[i] for i in indexes]
-        return retrieved_indexes
-
     def get_examples(
         self,
         target: dict,
         num_example: int,
-        cross_domain: bool = False,
     ) -> list:
         """Get similar question examples for few shot"""
         target_embedding = self.bert_model.encode([target["question"]])
@@ -242,9 +223,6 @@ class EuclideanDistanceExampleSelector:
         pairs_sorted = sorted(pairs, key=lambda x: x[0])
         top_pairs = []
         for d, index in pairs_sorted:
-            similar_db_id = train_json[index]["db_id"]
-            if cross_domain and similar_db_id == target["db_id"]:
-                continue
             top_pairs.append((index, d))
             if len(top_pairs) >= num_example:
                 break
@@ -257,10 +235,8 @@ class DailSQLPromptGenerator:
 
     def __init__(
         self,
-        db_id: str,
         db_path: str,
     ) -> None:
-        self.db_id = db_id
         self.db_path = db_path
         self.sql_prompt = SQLPrompt()
         self.question_selector = EuclideanDistanceExampleSelector()
@@ -270,20 +246,15 @@ class DailSQLPromptGenerator:
         self.NUM_EXAMPLE = 9
         self.cross_domain = False
 
-    def describe_sql(self) -> str:
+    def describe_schema(self) -> str:
         """Describe the sql"""
-        target = {
-            "db_id": self.db_id,
-            "path_db": self.db_path,
-        }
-        return self.sql_prompt.describe_sql(target)
+        return self.sql_prompt.describe_schema(self.db_path)
 
     def is_sql_question_prompt(self, question: str) -> str:
         """
         prompt for LLM to judge whether the question is appropriate
         """
         target = {
-            "db_id": self.db_id,
             "path_db": self.db_path,
             "question": question,
         }
@@ -295,7 +266,6 @@ class DailSQLPromptGenerator:
         """
         question = x["content"]
         target = {
-            "db_id": self.db_id,
             "path_db": self.db_path,
             "question": question,
         }
@@ -304,15 +274,11 @@ class DailSQLPromptGenerator:
             examples = self.question_selector.get_examples(
                 target,
                 self.NUM_EXAMPLE * self.scope_factor,
-                cross_domain=self.cross_domain,
             )
             prompt_example = []
             question = target["question"]
             example_prefix = self.question_style.get_example_prefix()
             for example in examples:
-                if self.cross_domain:
-                    assert target["db_id"] != example["db_id"]
-
                 example_format = self.question_style.format_example(example)
 
                 prompt_example.append(example_format)
@@ -334,5 +300,4 @@ class DailSQLPromptGenerator:
         return {
             "prompt": prompt,
             "n_examples": n_valid_example,
-            "db_id": target["db_id"],
         }

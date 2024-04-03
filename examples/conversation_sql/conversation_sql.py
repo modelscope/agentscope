@@ -42,7 +42,7 @@ class SQLAgent(AgentBase):
         self.db_id = db_id
         self.db_path = db_path
         self.max_retries = 3
-        self.prompt_helper = DailSQLPromptGenerator(self.db_id, self.db_path)
+        self.prompt_helper = DailSQLPromptGenerator(self.db_path)
 
         self.self_intro = (
             f"Hi, I am an agent able to preform SQL querys "
@@ -100,7 +100,7 @@ class SQLAgent(AgentBase):
         # this means that here is the first call
         # and we should describe the database for user
         if x is None:
-            describe_prompt = self.prompt_helper.describe_sql()
+            describe_prompt = self.prompt_helper.describe_schema()
             messages = [{"role": "assistant", "content": describe_prompt}]
             response = [
                 self.self_intro,
