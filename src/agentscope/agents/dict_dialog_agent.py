@@ -7,7 +7,7 @@ from loguru import logger
 
 from ..message import Msg
 from .agent import AgentBase
-from ..models.model import ModelResponse
+from ..models import ModelResponse
 from ..prompt import PromptType
 from ..utils.tools import _convert_to_str
 
@@ -15,7 +15,12 @@ from ..utils.tools import _convert_to_str
 def parse_dict(response: ModelResponse) -> ModelResponse:
     """Parse function for DictDialogAgent"""
     try:
-        response_dict = json.loads(response.text)
+        if response.text is not None:
+            response_dict = json.loads(response.text)
+        else:
+            raise ValueError(
+                f"The text field of the response s None: {response}",
+            )
     except json.decoder.JSONDecodeError:
         # Sometimes LLM may return a response with single quotes, which is not
         # a valid JSON format. We replace single quotes with double quotes and

@@ -7,7 +7,7 @@ Before running the example, please install the distributed version of Agentscope
 Then, use the following command to start the assistant agent.
 
 ```
-cd examples/distributed
+cd examples/distributed_basic
 python distributed_dialog.py --role assistant --assistant-host localhost --assistant-port 12010
 # Please make sure the port is available.
 # If the assistant agent and the user agent are started on different machines,
