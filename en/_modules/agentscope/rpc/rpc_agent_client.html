@@ -96,7 +96,10 @@
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot; Client of rpc agent server &quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">grpc</span>
@@ -107,7 +110,7 @@
     <span class="kn">from</span> <span class="nn">agentscope.rpc.rpc_agent_pb2</span> <span class="kn">import</span> <span class="n">RpcMsg</span>  <span class="c1"># pylint: disable=E0611</span>
     <span class="kn">from</span> <span class="nn">agentscope.rpc.rpc_agent_pb2_grpc</span> <span class="kn">import</span> <span class="n">RpcAgentStub</span>
 <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
-    <span class="n">RpcMsg</span> <span class="o">=</span> <span class="n">Any</span>
+    <span class="n">RpcMsg</span> <span class="o">=</span> <span class="n">Any</span>  <span class="c1"># type: ignore[misc]</span>
     <span class="n">RpcAgentStub</span> <span class="o">=</span> <span class="n">Any</span>
 
 
@@ -116,26 +119,33 @@
 <span class="k">class</span> <span class="nc">RpcAgentClient</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A client of Rpc agent server&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Init a rpc agent client</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            host (str): the hostname of the rpc agent server which the</span>
+<span class="sd">            host (`str`): the hostname of the rpc agent server which the</span>
 <span class="sd">            client is connected.</span>
-<span class="sd">            port (int): the port of the rpc agent server which the client</span>
+<span class="sd">            port (`int`): the port of the rpc agent server which the client</span>
 <span class="sd">            is connected.</span>
+<span class="sd">            agent_id (`str`): the agent id of the agent being called.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent_id</span> <span class="o">=</span> <span class="n">agent_id</span>
 
 <div class="viewcode-block" id="RpcAgentClient.call_func">
 <a class="viewcode-back" href="../../../agentscope.rpc.html#agentscope.rpc.rpc_agent_client.RpcAgentClient.call_func">[docs]</a>
-    <span class="k">def</span> <span class="nf">call_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">call_func</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Call the specific function of rpc server.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            func_name (str): the name of the function being called.</span>
-<span class="sd">            x (str, optional): the seralized input value. Defaults to None.</span>
+<span class="sd">            func_name (`str`): the name of the function being called.</span>
+<span class="sd">            x (`str`, optional): the seralized input value. Defaults to None.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            str: serialized return data.</span>
@@ -143,10 +153,113 @@
         <span class="k">with</span> <span class="n">grpc</span><span class="o">.</span><span class="n">insecure_channel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">channel</span><span class="p">:</span>
             <span class="n">stub</span> <span class="o">=</span> <span class="n">RpcAgentStub</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
             <span class="n">result_msg</span> <span class="o">=</span> <span class="n">stub</span><span class="o">.</span><span class="n">call_func</span><span class="p">(</span>
-                <span class="n">RpcMsg</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">target_func</span><span class="o">=</span><span class="n">func_name</span><span class="p">),</span>
+                <span class="n">RpcMsg</span><span class="p">(</span>
+                    <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                    <span class="n">target_func</span><span class="o">=</span><span class="n">func_name</span><span class="p">,</span>
+                    <span class="n">agent_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_id</span><span class="p">,</span>
+                <span class="p">),</span>
+                <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="k">return</span> <span class="n">result_msg</span><span class="o">.</span><span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="RpcAgentClient.create_agent">
+<a class="viewcode-back" href="../../../agentscope.rpc.html#agentscope.rpc.rpc_agent_client.RpcAgentClient.create_agent">[docs]</a>
+    <span class="k">def</span> <span class="nf">create_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_configs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new agent for this client.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_id</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">call_func</span><span class="p">(</span>
+                <span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;_create_agent&quot;</span><span class="p">,</span>
+                <span class="n">value</span><span class="o">=</span><span class="p">(</span>
+                    <span class="kc">None</span>
+                    <span class="k">if</span> <span class="n">agent_configs</span> <span class="ow">is</span> <span class="kc">None</span>
+                    <span class="k">else</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">agent_configs</span><span class="p">)</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Fail to create agent with id [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_id</span><span class="si">}</span><span class="s2">]: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RpcAgentClient.delete_agent">
+<a class="viewcode-back" href="../../../agentscope.rpc.html#agentscope.rpc.rpc_agent_client.RpcAgentClient.delete_agent">[docs]</a>
+    <span class="k">def</span> <span class="nf">delete_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete the agent created by this client.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_id</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">call_func</span><span class="p">(</span><span class="s2">&quot;_delete_agent&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Fail to delete agent with id [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_id</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span>
+            <span class="p">)</span></div>
 </div>
+
+
+
+<div class="viewcode-block" id="ResponseStub">
+<a class="viewcode-back" href="../../../agentscope.rpc.html#agentscope.rpc.rpc_agent_client.ResponseStub">[docs]</a>
+<span class="k">class</span> <span class="nc">ResponseStub</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A stub used to save the response of an rpc call in a sub-thread.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">response</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">condition</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Condition</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ResponseStub.set_response">
+<a class="viewcode-back" href="../../../agentscope.rpc.html#agentscope.rpc.rpc_agent_client.ResponseStub.set_response">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the message.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">response</span> <span class="o">=</span> <span class="n">response</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="o">.</span><span class="n">notify_all</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ResponseStub.get_response">
+<a class="viewcode-back" href="../../../agentscope.rpc.html#agentscope.rpc.rpc_agent_client.ResponseStub.get_response">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_response</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the message.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="p">:</span>
+            <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">response</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">response</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="call_in_thread">
+<a class="viewcode-back" href="../../../agentscope.rpc.html#agentscope.rpc.rpc_agent_client.call_in_thread">[docs]</a>
+<span class="k">def</span> <span class="nf">call_in_thread</span><span class="p">(</span>
+    <span class="n">client</span><span class="p">:</span> <span class="n">RpcAgentClient</span><span class="p">,</span>
+    <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ResponseStub</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Call rpc function in a sub-thread.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        client (`RpcAgentClient`): the rpc client.</span>
+<span class="sd">        x (`dict`): the value of the reqeust.</span>
+<span class="sd">        func_name (`str`): the name of the function being called.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `ResponseStub`: a stub to get the response.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">stub</span> <span class="o">=</span> <span class="n">ResponseStub</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">call_func</span><span class="p">(</span>
+            <span class="n">func_name</span><span class="o">=</span><span class="n">func_name</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">stub</span><span class="o">.</span><span class="n">set_response</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>  <span class="c1"># type: ignore[arg-type]</span>
+
+    <span class="n">thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">wrapper</span><span class="p">)</span>
+    <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">stub</span></div>
 
 </pre></div>
 

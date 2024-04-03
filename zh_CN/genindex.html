@@ -440,7 +440,13 @@
 </li>
       <li><a href="agentscope.rpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.call_func">call_func()（agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent 静态方法）</a>
 </li>
+      <li><a href="agentscope.rpc.html#agentscope.rpc.rpc_agent_client.call_in_thread">call_in_thread()（在 agentscope.rpc.rpc_agent_client 模块中）</a>
+</li>
       <li><a href="agentscope.utils.html#agentscope.utils.common.chdir">chdir()（在 agentscope.utils.common 模块中）</a>
+</li>
+      <li><a href="agentscope.agents.html#agentscope.agents.rpc_agent.RpcServerSideWrapper.check_and_delete_agent">check_and_delete_agent() （agentscope.agents.rpc_agent.RpcServerSideWrapper 方法）</a>
+</li>
+      <li><a href="agentscope.agents.html#agentscope.agents.rpc_agent.RpcServerSideWrapper.check_and_generate_agent">check_and_generate_agent() （agentscope.agents.rpc_agent.RpcServerSideWrapper 方法）</a>
 </li>
       <li><a href="agentscope.agents.html#agentscope.agents.rpc_agent.check_port">check_port()（在 agentscope.agents.rpc_agent 模块中）</a>
 </li>
@@ -458,6 +464,8 @@
 </li>
       <li><a href="agentscope.models.html#agentscope.models.clear_model_configs">clear_model_configs()（在 agentscope.models 模块中）</a>
 </li>
+      <li><a href="agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgent.clone_instances">clone_instances() （agentscope.agents.rpc_agent.RpcAgent 方法）</a>
+</li>
       <li><a href="agentscope.models.html#agentscope.models.dashscope_model.DashScopeWrapperBase.config_name">config_name（agentscope.models.dashscope_model.DashScopeWrapperBase 属性）</a>
 </li>
       <li><a href="agentscope.models.html#agentscope.models.gemini_model.GeminiWrapperBase.config_name">config_name（agentscope.models.gemini_model.GeminiWrapperBase 属性）</a>
@@ -469,6 +477,8 @@
       <li><a href="agentscope.service.retrieval.html#agentscope.service.retrieval.similarity.cos_sim">cos_sim()（在 agentscope.service.retrieval.similarity 模块中）</a>
 </li>
       <li><a href="agentscope.utils.html#agentscope.utils.token_utils.count_openai_token">count_openai_token()（在 agentscope.utils.token_utils 模块中）</a>
+</li>
+      <li><a href="agentscope.rpc.html#agentscope.rpc.rpc_agent_client.RpcAgentClient.create_agent">create_agent() （agentscope.rpc.rpc_agent_client.RpcAgentClient 方法）</a>
 </li>
       <li><a href="agentscope.service.file.html#agentscope.service.file.common.create_directory">create_directory()（在 agentscope.service.file.common 模块中）</a>
 </li>
@@ -496,10 +506,12 @@
 </li>
       <li><a href="agentscope.memory.html#agentscope.memory.temporary_memory.TemporaryMemory.delete">delete() （agentscope.memory.temporary_memory.TemporaryMemory 方法）</a>
 </li>
-      <li><a href="agentscope.service.file.html#agentscope.service.file.common.delete_directory">delete_directory()（在 agentscope.service.file.common 模块中）</a>
+      <li><a href="agentscope.rpc.html#agentscope.rpc.rpc_agent_client.RpcAgentClient.delete_agent">delete_agent() （agentscope.rpc.rpc_agent_client.RpcAgentClient 方法）</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.service.file.html#agentscope.service.file.common.delete_directory">delete_directory()（在 agentscope.service.file.common 模块中）</a>
+</li>
       <li><a href="agentscope.service.file.html#agentscope.service.file.common.delete_file">delete_file()（在 agentscope.service.file.common 模块中）</a>
 </li>
       <li><a href="agentscope.models.html#agentscope.models.dashscope_model.DashScopeChatWrapper.deprecated_model_type">deprecated_model_type（agentscope.models.dashscope_model.DashScopeChatWrapper 属性）</a>
@@ -619,6 +631,8 @@
       <li><a href="agentscope.utils.html#agentscope.utils.monitor.MonitorBase.get_quota">get_quota() （agentscope.utils.monitor.MonitorBase 方法）</a>
 </li>
       <li><a href="agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.get_quota">get_quota() （agentscope.utils.monitor.SqliteMonitor 方法）</a>
+</li>
+      <li><a href="agentscope.rpc.html#agentscope.rpc.rpc_agent_client.ResponseStub.get_response">get_response() （agentscope.rpc.rpc_agent_client.ResponseStub 方法）</a>
 </li>
       <li><a href="agentscope.agents.html#agentscope.agents.rpc_agent.RpcServerSideWrapper.get_task_id">get_task_id() （agentscope.agents.rpc_agent.RpcServerSideWrapper 方法）</a>
 </li>
@@ -913,7 +927,7 @@
 </li>
       <li><a href="agentscope.agents.html#agentscope.agents.react_agent.ReActAgent.prepare_funcs_prompt">prepare_funcs_prompt() （agentscope.agents.react_agent.ReActAgent 方法）</a>
 </li>
-      <li><a href="agentscope.agents.html#agentscope.agents.rpc_agent.RpcServerSideWrapper.process_tasks">process_tasks() （agentscope.agents.rpc_agent.RpcServerSideWrapper 方法）</a>
+      <li><a href="agentscope.agents.html#agentscope.agents.rpc_agent.RpcServerSideWrapper.process_messages">process_messages() （agentscope.agents.rpc_agent.RpcServerSideWrapper 方法）</a>
 </li>
   </ul></td>
 </tr></table>
@@ -979,6 +993,8 @@
 </li>
       <li><a href="agentscope.agents.html#agentscope.agents.agent.AgentBase.reset_audience">reset_audience() （agentscope.agents.agent.AgentBase 方法）</a>
 </li>
+      <li><a href="agentscope.rpc.html#agentscope.rpc.rpc_agent_client.ResponseStub">ResponseStub（agentscope.rpc.rpc_agent_client 中的类）</a>
+</li>
       <li><a href="agentscope.memory.html#agentscope.memory.temporary_memory.TemporaryMemory.retrieve_by_embedding">retrieve_by_embedding() （agentscope.memory.temporary_memory.TemporaryMemory 方法）</a>
 </li>
       <li><a href="agentscope.service.retrieval.html#agentscope.service.retrieval.retrieval_from_list.retrieve_from_list">retrieve_from_list()（在 agentscope.service.retrieval.retrieval_from_list 模块中）</a>
@@ -1017,9 +1033,11 @@
 </li>
       <li><a href="agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.set_quota">set_quota() （agentscope.utils.monitor.SqliteMonitor 方法）</a>
 </li>
+      <li><a href="agentscope.rpc.html#agentscope.rpc.rpc_agent_client.ResponseStub.set_response">set_response() （agentscope.rpc.rpc_agent_client.ResponseStub 方法）</a>
+</li>
       <li><a href="agentscope.utils.html#agentscope.utils.logging_utils.setup_logger">setup_logger()（在 agentscope.utils.logging_utils 模块中）</a>
 </li>
-      <li><a href="agentscope.agents.html#agentscope.agents.rpc_agent.setup_rcp_agent_server">setup_rcp_agent_server()（在 agentscope.agents.rpc_agent 模块中）</a>
+      <li><a href="agentscope.agents.html#agentscope.agents.rpc_agent.setup_rpc_agent_server">setup_rpc_agent_server()（在 agentscope.agents.rpc_agent 模块中）</a>
 </li>
       <li><a href="agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgentServerLauncher.shutdown">shutdown() （agentscope.agents.rpc_agent.RpcAgentServerLauncher 方法）</a>
 </li>

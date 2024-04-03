@@ -333,7 +333,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
         <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">max_pool_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">max_pool_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8192</span><span class="p">,</span>
         <span class="n">max_timeout_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1800</span><span class="p">,</span>
         <span class="n">launch_server</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">local_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -346,7 +346,7 @@
 <span class="sd">                Hostname of the rpc agent server.</span>
 <span class="sd">            port (`int`, defaults to `None`):</span>
 <span class="sd">                Port of the rpc agent server.</span>
-<span class="sd">            max_pool_size (`int`, defaults to `100`):</span>
+<span class="sd">            max_pool_size (`int`, defaults to `8192`):</span>
 <span class="sd">                Max number of task results that the server can accommodate.</span>
 <span class="sd">            max_timeout_seconds (`int`, defaults to `1800`):</span>
 <span class="sd">                Timeout for task results.</span>
@@ -375,6 +375,7 @@
             <span class="n">launch_server</span><span class="o">=</span><span class="n">launch_server</span><span class="p">,</span>
             <span class="n">local_mode</span><span class="o">=</span><span class="n">local_mode</span><span class="p">,</span>
             <span class="n">lazy_launch</span><span class="o">=</span><span class="n">lazy_launch</span><span class="p">,</span>
+            <span class="n">agent_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_id</span><span class="p">,</span>
         <span class="p">)</span></div>
 </div>
 

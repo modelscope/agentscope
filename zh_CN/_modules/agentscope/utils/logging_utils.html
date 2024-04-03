@@ -178,10 +178,10 @@
 <span class="sd">            &quot;content&quot; keys, and the message will be logged as &quot;&lt;name/role&gt;:</span>
 <span class="sd">            &lt;content&gt;&quot;.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Save message into file</span>
+    <span class="c1"># Save message into file, add default to ignore not serializable objects</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
         <span class="n">LEVEL_CHAT_SAVE</span><span class="p">,</span>
-        <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="kc">None</span><span class="p">),</span>
         <span class="o">*</span><span class="n">args</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span>
