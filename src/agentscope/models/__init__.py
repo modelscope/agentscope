@@ -6,7 +6,12 @@ from typing import Union, Type
 from loguru import logger
 
 from .config import _ModelConfig
-from .model import ModelWrapperBase, ModelResponse
+from .model import ModelWrapperBase
+from .response import (
+    ModelResponse,
+    ResponseParsingError,
+    ResponseParser,
+)
 from .post_model import (
     PostAPIModelWrapperBase,
     PostAPIChatWrapper,
@@ -37,6 +42,8 @@ from .gemini_model import (
 __all__ = [
     "ModelWrapperBase",
     "ModelResponse",
+    "ResponseParser",
+    "ResponseParsingError",
     "PostAPIModelWrapperBase",
     "PostAPIChatWrapper",
     "OpenAIWrapperBase",

@@ -68,7 +68,7 @@ Use the `main.py` script to run the example. The following are the parameters re
 - `--api-key`: API key for google or bing.
 - `--cse-id`: CSE id for google (If you use bing, ignore this parameter).
 
-For example, if you want to start the example application in distribtued mode with 10 AnswererAgents and use the bing search engine, you can use the following command
+For example, if you want to start the example application in distributed mode with 10 AnswererAgents and use the bing search engine, you can use the following command
 
 ```shell
 python main.py --num-workers 10 --search-engine bing --api-key xxxxx --use-dist
