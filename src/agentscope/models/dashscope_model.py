@@ -6,7 +6,7 @@ from typing import Any, Union, List, Sequence
 from loguru import logger
 
 from ..message import MessageBase
-from ..utils.tools import _convert_to_str
+from ..utils.tools import _convert_to_str, _guess_type_by_extension
 
 try:
     import dashscope
@@ -164,8 +164,6 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                 "and 'content' key for DashScope API.",
             )
 
-        # TODO: move is to prompt engineering
-        messages = _preprocess_role(messages)
         # step3: forward to generate response
         response = dashscope.Generation.call(
             model=self.model_name,
@@ -261,8 +259,6 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             `List[dict]`:
                 The formatted messages.
         """
-        # TODO: This function only convert agentscope msgs into qwen
-        #  messages, the re-range is executed in _preprocess_role function.
 
         # Parse all information into a list of messages
         input_msgs = []
@@ -603,11 +599,6 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
         # step1: prepare keyword arguments
         kwargs = {**self.generate_args, **kwargs}
 
-        for message in messages:
-            if not isinstance(message["content"], list):
-                message["content"] = [{"text": message["content"]}]
-        messages = _preprocess_role(messages)
-
         # step2: forward to generate response
         response = dashscope.MultiModalConversation.call(
             model=self.model_name,
@@ -653,26 +644,52 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
 
     def format(
         self,
-        *args: Union[Msg, Sequence[Msg]],
+        *args: Union[MessageBase, Sequence[MessageBase]],
     ) -> List:
         """Format the messages for DashScope Multimodal API.
 
-        In this format function, the input messages are converted into
-        dictionaries with `role` and `content` fields. This conversation may
-        not meet the requirement that `user` and `assistant` speak
-        alternatively. This requirement can be enforced by calling
-        `preprocess_role` function..
+        Note:
+            The multimodal API has the following requirements:
+            - The roles of messages must alternate between "user" and
+            "assistant".
+            - The message with the role "system" should be the first message
+            in the list.
+                - If the system message exists, then the second message must
+                have the role "user".
+            - The last message in the list should have the role "user".
+            - In each message, more than one figure is allowed.
 
+        With the above requirements, we format the messages as follows:
+        - If the first message is a system message, then we will keep it as
+        system prompt.
+        - We merge all messages into a dialogue history prompt in a single
+        message with the role "user".
+        - When there are multiple figures in the given messages, we will
+        attach it to the user message by order. Note if there are multiple
+        figures, this strategy may cause misunderstanding for the model. For
+        advanced solutions, developers are encouraged to implement their own
+        prompt engineering strategies.
 
         The following is an example:
 
         .. code-block:: python
 
             prompt = model.format(
-                Msg("system", "You're a helpful assistant", role="system"),
-                Msg("Bob", "Hi, how can I help you?", role="assistant"),
-                Msg("user", "What's in the image?", image="http://xxxx.com"
-                    role="user")
+                Msg(
+                    "system",
+                    "You're a helpful assistant",
+                    role="system", url="figure1"
+                ),
+                Msg(
+                    "Bob",
+                    "How about this picture?",
+                    role="assistant", url="figure2"
+                ),
+                Msg(
+                    "user",
+                    "It's wonderful! How about mine?",
+                    role="user", image="figure3"
+                )
             )
 
         The prompt will be as follows:
@@ -680,98 +697,105 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
         .. code-block:: python
 
             [
-                {"role": "system", "content": [{"text": "You are a helpful
-                assistant"}]},
-                {"role": "assistant", "content": [{"text": "Hi, how can I help
-                you"}]},
-                {"role": "user", "content": [{"text": "What's in the
-                image?"}, {"image": "http://xxxx.com"}]},
+                {
+                    "role": "system",
+                    "content": [
+                        {"text": "You are a helpful assistant"},
+                        {"image": "figure1"}
+                    ]
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {"text": "## Dialogue History\nBob: How about this picture?\nuser: It's wonderful! How about mine?"},
+                        {"image": "figure2"},
+                        {"image": "figure3"},
+                    ]
+                }
             ]
 
         Args:
-            *args (`Union[Msg, Sequence[Msg]]`):
+            args (`Union[MessageBase, Sequence[MessageBase]]`):
                 The input arguments to be formatted, where each argument
-                should be a `Msg` object, or a list of `Msg` objects
+                should be a `Msg` object, or a list of `Msg` objects.
+                In distribution, placeholder is also allowed.
 
         Returns:
             `List[dict]`:
                 The formatted messages.
         """
 
-        prompt = []
-        for unit in args:
-            if unit is None:
-                continue
-            if isinstance(unit, Msg):
-                prompt.append(self.to_multimodal_dict(unit))
-            elif isinstance(unit, list):
-                for child_unit in unit:
-                    if isinstance(child_unit, Msg):
-                        prompt.append(self.to_multimodal_dict(child_unit))
-                    else:
-                        raise TypeError(
-                            f"The input should be a Msg object or a list "
-                            f"of Msg objects, got {type(child_unit)}.",
-                        )
+        # Parse all information into a list of messages
+        input_msgs = []
+        for _ in args:
+            if isinstance(_, MessageBase):
+                input_msgs.append(_)
+            elif isinstance(_, list) and all(
+                    isinstance(__, MessageBase) for __ in _
+            ):
+                input_msgs.extend(_)
             else:
                 raise TypeError(
                     f"The input should be a Msg object or a list "
-                    f"of Msg objects, got {type(unit)}.",
+                    f"of Msg objects, got {type(_)}.",
                 )
-        return prompt
 
-    def to_multimodal_dict(self, item: dict) -> dict:
-        """Convert `Msg` to `dict` for OpenAI API."""
-        clean_dict = {}
-        if "name" in item:
-            clean_dict["name"] = item["name"]
-        if "role" in item:
-            clean_dict["role"] = item["role"]
-        else:
-            clean_dict["role"] = "assistant"
+        messages = []
 
-        clean_dict["content"] = []
-        if "content" in item:
-            if isinstance(item["content"], list):
-                clean_dict["content"] = item["content"]
-                return clean_dict
-            clean_dict["content"].append({"text": item["content"]})
-        else:
-            logger.warning(
-                f"Message {item} doesn't have `content` field for Multimodal "
-                f"API.",
-            )
-        if "image" in item:
-            clean_dict["content"].append({"image": item["image"]})
-        if "audio" in item:
-            clean_dict["content"].append({"audio": item["audio"]})
-        return clean_dict
+        # record dialog history as a list of strings
+        dialogue = []
+        images = []
+        audios = []
+        for i, unit in enumerate(input_msgs):
+            if i == 0 and unit.role == "system":
+                # system prompt
+                content = [{"text": _convert_to_str(unit.content)}]
+                if unit.url is not None:
+                    url_type = _guess_type_by_extension(unit.url)
+                    if url_type == "image":
+                        content.append({"image": unit.url})
+                    elif url_type == "audio":
+                        content.append({"audio": unit.url})
+                    else:
+                        # skip unsupported url
+                        logger.warning(f"Skip unsupported url ({unit.url}), expect image or audio.")
 
+                messages.append(
+                    {
+                        "role": unit.role,
+                        "content": content,
+                    },
+                )
+            else:
+                # text message
+                dialogue.append(
+                    f"{unit.name}: {_convert_to_str(unit.content)}"
+                )
+                # image and audio
+                if unit.url is not None:
+                    url_type = _guess_type_by_extension(unit.url)
+                    if url_type == "image":
+                        images.append(unit.url)
+                    elif url_type == "audio":
+                        audios.append(unit.url)
+                    else:
+                        # skip unsupported url
+                        logger.warning(
+                            f"Skip unsupported url ({unit.url}), expect image or audio.")
 
-def _preprocess_role(messages: list) -> list:
-    """preprocess role rules for DashScope"""
-    # The models in this list require that the roles of messages must
-    # alternate between "user" and "assistant".
-    message_length = len(messages)
-    if message_length % 2 == 1:
-        # If the length of the message list is odd, roles will
-        # alternate, starting with "user"
-        roles = [
-            "user" if i % 2 == 0 else "assistant"
-            for i in range(message_length)
-        ]
-    else:
-        # If the length of the message list is even, the first role
-        # will be "system", followed by alternating "user" and
-        # "assistant"
-        roles = ["system"] + [
-            "user" if i % 2 == 1 else "assistant"
-            for i in range(1, message_length)
-        ]
+        dialogue_history = "\n".join(dialogue)
+        images = [{"image": _} for _ in images]
+        audios = [{"audio": _} for _ in audios]
 
-    # Assign the roles list to the "role" key for each message in
-    # the messages list
-    for message, role in zip(messages, roles):
-        message["role"] = role
+        user_content_template = "## Dialogue History\n{dialogue_history}"
 
-    return messages
+        messages.append({
+            "role": "user",
+            "content": [
+                {"text": user_content_template.format(dialogue_history=dialogue_history)},
+                *images,
+                *audios,
+            ]
+        })
+
+        return messages

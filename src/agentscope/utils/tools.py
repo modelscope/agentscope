@@ -5,7 +5,7 @@ import datetime
 import json
 import secrets
 import string
-from typing import Any
+from typing import Any, Literal
 
 from urllib.parse import urlparse
 
@@ -58,6 +58,20 @@ def to_dialog_str(item: dict) -> str:
         return content
     else:
         return f"{speaker}: {content}"
+
+
+def _guess_type_by_extension(url: str) -> Literal["image", "audio", "video", "file"]:
+    """Guess the type of the file by its extension."""
+    extension = url.split(".")[-1].lower()
+
+    if extension in ["bmp", "dib", "icns", "ico", "jfif", "jpe", "jpeg", "jpg", "j2c", "j2k", "jp2", "jpc", "jpf", "jpx", "apng", "png", "bw", "rgb", "rgba", "sgi", "tif", "tiff", "webp"]:
+        return "image"
+    elif extension in ["amr", "wav", "3gp", "3gpp", "aac", "mp3", "flac", "ogg"]:
+        return "audio"
+    elif extension in ["mp4", "webm", "mkv", "flv", "avi", "mov", "wmv", "rmvb"]:
+        return "video"
+    else:
+        return "file"
 
 
 def _to_openai_image_url(url: str) -> str:
