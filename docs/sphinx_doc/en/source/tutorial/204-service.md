@@ -20,7 +20,9 @@ The following table outlines the various Service functions by type. These functi
 |                             | `query_sqlite`        | Execute SQL queries on a SQLite database and return results.                                                   |
 |                             | `query_mongodb`       | Perform queries or operations on a MongoDB collection.                                                         |
 | Text Processing             | `summarization`       | Summarize a piece of text using a large language model to highlight its main points.                           |
-| Web Search                  | `web_search`          | Perform a web search using a specified search engine (currently supports Google and Bing).                     |
+| Web                         | `bing_search`         | Perform bing search                                                                                          |
+|                             | `google_search`       | Perform google search                                                                                        |
+|                             | `download_from_url`   | Download file from given URL.                                                                                |
 |                             | `load_web`            | Load and parse the web page of the specificed url (currently only supports HTML).                              |
 |                             | `digest_webpage`      | Digest the content of a already loaded web page (currently only supports HTML).                                |
 | File                        | `create_file`         | Create a new file at a specified path, optionally with initial content.                                        |

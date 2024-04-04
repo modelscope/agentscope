@@ -17,7 +17,9 @@
 |                    | `query_sqlite`        | 在 SQLite 数据库上执行 SQL 查询并返回结果。                      |
 |                    | `query_mongodb`       | 对 MongoDB 集合执行查询或操作。                                  |
 | 文本处理           | `summarization`       | 使用大型语言模型总结一段文字以突出其主要要点。                   |
-| 网络搜索           | `web_search`          | 使用指定的搜索引擎（当前支持 Google 和 Bing）执行网络搜索。      |
+| 网络         | `bing_search`         | 使用bing搜索。                               |
+|            | `google_search`       | 使用google搜索。                             |
+|            | `download_from_url` | 从指定的 URL 下载文件。                                         |
 |                    | `load_web`            | 爬取并解析指定的网页链接 （目前仅支持爬取 HTML 页面）            |
 |                    | `digest_webpage`      | 对已经爬取好的网页生成摘要信息（目前仅支持 HTML 页面）           |
 | 文件处理           | `create_file`         | 在指定路径创建一个新文件，并可选择添加初始内容。                 |
