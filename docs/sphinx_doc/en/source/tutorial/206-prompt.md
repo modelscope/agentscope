@@ -47,9 +47,9 @@ generation model APIs.
 
 These strategies are implemented in the `format` functions of the model
 wrapper classes.
-It accepts `Msg` objects, a list of `Msg` objects, or their mixture as input. 
-However, `format` function will first reorganize them into a list of `Msg` 
-objects, so for simplicity in the following sections we treat the input as a 
+It accepts `Msg` objects, a list of `Msg` objects, or their mixture as input.
+However, `format` function will first reorganize them into a list of `Msg`
+objects, so for simplicity in the following sections we treat the input as a
 list of `Msg` objects.
 
 ### OpenAIChatWrapper
@@ -157,19 +157,19 @@ print(prompt)
 ```python
 [
     {
-        "role": "user", 
+        "role": "user",
         "content": [
-            {"text": "What's the difference between these two pictures?"}, 
-            {"image": "https://xxx1.png"}, 
+            {"text": "What's the difference between these two pictures?"},
+            {"image": "https://xxx1.png"},
             {"image": "https://xxx2.png"}
         ]
     },
     {
-        "role": "assistant", 
+        "role": "assistant",
         "content": [{"text": "The first picture is a cat, and the second picture is a dog."}]
     },
     {
-        "role": "user", 
+        "role": "user",
         "content": [{"text": "I see, thanks!"}]
     }
 ]

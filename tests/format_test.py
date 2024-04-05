@@ -9,7 +9,8 @@ from agentscope.models import (
     OllamaChatWrapper,
     OllamaGenerationWrapper,
     GeminiChatWrapper,
-    DashScopeChatWrapper, DashScopeMultiModalWrapper,
+    DashScopeChatWrapper,
+    DashScopeMultiModalWrapper,
 )
 
 
@@ -182,10 +183,25 @@ class ExampleTest(unittest.TestCase):
         )
 
         multimodal_input = [
-            Msg("system", "You are a helpful assistant", role="system", url="url1.png"),
+            Msg(
+                "system",
+                "You are a helpful assistant",
+                role="system",
+                url="url1.png",
+            ),
             [
-                Msg("user", "What is the weather today?", role="user", url="url2.png"),
-                Msg("assistant", "It is sunny today", role="assistant", url="url3.png"),
+                Msg(
+                    "user",
+                    "What is the weather today?",
+                    role="user",
+                    url="url2.png",
+                ),
+                Msg(
+                    "assistant",
+                    "It is sunny today",
+                    role="assistant",
+                    url="url3.png",
+                ),
             ],
         ]
 
@@ -195,8 +211,7 @@ class ExampleTest(unittest.TestCase):
                 "content": [
                     {"text": "You are a helpful assistant"},
                     {"image": "url1.png"},
-                ]
-
+                ],
             },
             {
                 "role": "user",
@@ -206,7 +221,7 @@ class ExampleTest(unittest.TestCase):
                             "## Dialogue History\n"
                             "user: What is the weather today?\n"
                             "assistant: It is sunny today"
-                        )
+                        ),
                     },
                     {"image": "url2.png"},
                     {"image": "url3.png"},
@@ -231,10 +246,25 @@ class ExampleTest(unittest.TestCase):
         )
 
         multimodal_input = [
-            Msg("system", "You are a helpful assistant", role="system", url="url1.mp3"),
+            Msg(
+                "system",
+                "You are a helpful assistant",
+                role="system",
+                url="url1.mp3",
+            ),
             [
-                Msg("user", "What is the weather today?", role="user", url="url2.mp3"),
-                Msg("assistant", "It is sunny today", role="assistant", url="url3.mp3"),
+                Msg(
+                    "user",
+                    "What is the weather today?",
+                    role="user",
+                    url="url2.mp3",
+                ),
+                Msg(
+                    "assistant",
+                    "It is sunny today",
+                    role="assistant",
+                    url="url3.mp3",
+                ),
             ],
         ]
 
@@ -244,8 +274,7 @@ class ExampleTest(unittest.TestCase):
                 "content": [
                     {"text": "You are a helpful assistant"},
                     {"audio": "url1.mp3"},
-                ]
-
+                ],
             },
             {
                 "role": "user",
@@ -255,7 +284,7 @@ class ExampleTest(unittest.TestCase):
                             "## Dialogue History\n"
                             "user: What is the weather today?\n"
                             "assistant: It is sunny today"
-                        )
+                        ),
                     },
                     {"audio": "url2.mp3"},
                     {"audio": "url3.mp3"},
@@ -269,6 +298,7 @@ class ExampleTest(unittest.TestCase):
         # wrong format
         with self.assertRaises(TypeError):
             model.format(*self.wrong_inputs)
+
 
 if __name__ == "__main__":
     unittest.main()

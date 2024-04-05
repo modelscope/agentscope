@@ -707,7 +707,13 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
                 {
                     "role": "user",
                     "content": [
-                        {"text": "## Dialogue History\nBob: How about this picture?\nuser: It's wonderful! How about mine?"},
+                        {
+                            "text": (
+                                "## Dialogue History\n"
+                                "Bob: How about this picture?\n"
+                                "user: It's wonderful! How about mine?"
+                            )
+                        },
                         {"image": "figure2"},
                         {"image": "figure3"},
                     ]
@@ -731,7 +737,7 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
             if isinstance(_, MessageBase):
                 input_msgs.append(_)
             elif isinstance(_, list) and all(
-                    isinstance(__, MessageBase) for __ in _
+                isinstance(__, MessageBase) for __ in _
             ):
                 input_msgs.extend(_)
             else:
@@ -744,21 +750,12 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
 
         # record dialog history as a list of strings
         dialogue = []
-        images = []
-        audios = []
+        image_or_audio_dicts = []
         for i, unit in enumerate(input_msgs):
             if i == 0 and unit.role == "system":
                 # system prompt
                 content = [{"text": _convert_to_str(unit.content)}]
-                if unit.url is not None:
-                    url_type = _guess_type_by_extension(unit.url)
-                    if url_type == "image":
-                        content.append({"image": unit.url})
-                    elif url_type == "audio":
-                        content.append({"audio": unit.url})
-                    else:
-                        # skip unsupported url
-                        logger.warning(f"Skip unsupported url ({unit.url}), expect image or audio.")
+                content.extend(self._convert_url(unit.url))
 
                 messages.append(
                     {
@@ -769,33 +766,63 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
             else:
                 # text message
                 dialogue.append(
-                    f"{unit.name}: {_convert_to_str(unit.content)}"
+                    f"{unit.name}: {_convert_to_str(unit.content)}",
                 )
                 # image and audio
-                if unit.url is not None:
-                    url_type = _guess_type_by_extension(unit.url)
-                    if url_type == "image":
-                        images.append(unit.url)
-                    elif url_type == "audio":
-                        audios.append(unit.url)
-                    else:
-                        # skip unsupported url
-                        logger.warning(
-                            f"Skip unsupported url ({unit.url}), expect image or audio.")
+                image_or_audio_dicts.extend(self._convert_url(unit.url))
 
         dialogue_history = "\n".join(dialogue)
-        images = [{"image": _} for _ in images]
-        audios = [{"audio": _} for _ in audios]
 
         user_content_template = "## Dialogue History\n{dialogue_history}"
 
-        messages.append({
-            "role": "user",
-            "content": [
-                {"text": user_content_template.format(dialogue_history=dialogue_history)},
-                *images,
-                *audios,
-            ]
-        })
+        messages.append(
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "text": user_content_template.format(
+                            dialogue_history=dialogue_history,
+                        ),
+                    },
+                    *image_or_audio_dicts,
+                ],
+            },
+        )
 
         return messages
+
+    def _convert_url(self, url: Union[str, Sequence[str], None]) -> List[dict]:
+        """Convert the url to the format of DashScope API.
+
+        Args:
+            url (`Union[str, Sequence[str], None]`):
+                A string of url of a list of urls to be converted.
+
+        Returns:
+            `List[dict]`:
+                A list of dictionaries with key as the type of the url
+                and value as the url. Only "image" and "audio" are supported.
+        """
+        if url is None:
+            return []
+
+        if isinstance(url, str):
+            url_type = _guess_type_by_extension(url)
+            if url_type in ["audio", "image"]:
+                return [{url_type: url}]
+            else:
+                # skip unsupported url
+                logger.warning(
+                    f"Skip unsupported url ({url_type}), "
+                    f"expect image or audio.",
+                )
+                return []
+        elif isinstance(url, list):
+            dicts = []
+            for _ in url:
+                dicts.extend(self._convert_url(_))
+            return dicts
+        else:
+            raise TypeError(
+                f"Unsupported url type {type(url)}, " f"str or list expected.",
+            )

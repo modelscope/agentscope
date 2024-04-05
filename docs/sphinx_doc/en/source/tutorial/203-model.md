@@ -80,7 +80,7 @@ In the current AgentScope, the supported `model_type` types, the corresponding
 |                        | Text Embedding           | [`DashScopeTextEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py)  | `"dashscope_text_embedding"`  | text-embedding-v1, text-embedding-v2, ...        |
 |                        | Multi Modal Conversation | [`DashScopeMultiModalWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py)     | `"dashscope_multimodal"`      | qwen-vl-plus, qwen-vl-max, qwen-audio-turbo, ... |
 | Gemini API             | Chat                     | [`GeminiChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py)                 | `"gemini_chat"`               | gemini-pro, ...                                  |
-|                        | Embedding                | [`GeminiEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py)            | `"gemini_embedding"`          | models/embedding-001, ...                        | 
+|                        | Embedding                | [`GeminiEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py)            | `"gemini_embedding"`          | models/embedding-001, ...                        |
 | ollama                 | Chat                     | [`OllamaChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)                 | `"ollama_chat"`               | llama2, ...                                      |
 |                        | Embedding                | [`OllamaEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)            | `"ollama_embedding"`          | llama2, ...                                      |
 |                        | Generation               | [`OllamaGenerationWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)           | `"ollama_generate"`           | llama2, ...                                      |
@@ -246,10 +246,10 @@ openai_chat_config = {
 {
     "config_name": "my_dashscope_multimodal_config",
     "model_type": "dashscope_multimodal",
-  
+
     # Required parameters
     "model_name": "{model_name}",              # The model name in DashScope Multi Modal Conversation API, e.g. qwen-vl-plus
-  
+
     # Optional parameters
     "api_key": "{your_api_key}",
     "generate_args": {

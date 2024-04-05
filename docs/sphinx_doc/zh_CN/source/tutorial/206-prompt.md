@@ -131,19 +131,19 @@ print(prompt)
 ```python
 [
     {
-        "role": "user", 
+        "role": "user",
         "content": [
-            {"text": "What's the difference between these two pictures?"}, 
-            {"image": "https://xxx1.png"}, 
+            {"text": "What's the difference between these two pictures?"},
+            {"image": "https://xxx1.png"},
             {"image": "https://xxx2.png"}
         ]
     },
     {
-        "role": "assistant", 
+        "role": "assistant",
         "content": [{"text": "The first picture is a cat, and the second picture is a dog."}]
     },
     {
-        "role": "user", 
+        "role": "user",
         "content": [{"text": "I see, thanks!"}]
     }
 ]
