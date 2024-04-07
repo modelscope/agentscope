@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Utils and helpers for performing sql querys
+Utils and helpers for performing sql querys.
+Referenced from https://github.com/BeachWang/DAIL-SQL.
 """
 import sqlite3
 import json
