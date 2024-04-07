@@ -27,7 +27,7 @@ Welcome to join our community on
 
 ## News
 
-- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-04-06]** We release **AgentScope** v0.0.3 now! 
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-04-06]** We release **AgentScope** v0.0.3 now!
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-04-06]** New examples [Gomoku](./examples/game_gomoku), [Conversation with ReAct Agent](./examples/conversation_with_react_agent), [Conversation with RAG Agent](./examples/conversation_with_RAG_agents) and [Distributed Parallel Search](./examples/distributed_search) are available now!
 
