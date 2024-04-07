@@ -15,7 +15,7 @@ Before running the example, please install the distributed version of AgentScope
 ### Step 1: setup Pro, Con agent servers
 
 ```shell
-cd examples/distributed
+cd examples/distributed_debate
 # setup LLM-based Pro
 python distributed_debate.py --role pro --pro-host localhost --pro-port 12011
 # or join the debate as Pro by yourself
@@ -23,7 +23,6 @@ python distributed_debate.py --role pro --pro-host localhost --pro-port 12011
 ```
 
 ```shell
-cd examples/distributed
 # setup LLM-base Con
 python distributed_debate.py --role con --con-host localhost --con-port 12012
 # or join the debate as Con by yourself
@@ -37,10 +36,7 @@ python distributed_debate.py --role con --con-host localhost --con-port 12012
 
 ```shell
 # setup main (Judge is in it)
-cd example/distributed
-python distributed_debate.py --role main \
-    --pro-host localhost --pro-port 12011 \
-    --con-host localhost --con-port 12012
+python distributed_debate.py --role main --pro-host localhost --pro-port 12011 --con-host localhost --con-port 12012
 ```
 
 ### step 3: watch or join in the debate in your terminal

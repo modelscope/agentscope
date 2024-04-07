@@ -85,7 +85,7 @@ print(prompt)
 
 #### 提示的构建策略
 
-目前，AgentScope简单地将`Msg`对象修改成包含`role`和`content`两个字段的字典。我们将很快为`DashScopeChatWrapper`更新一个更加灵活的提示构建策略。
+如果第一条消息的`role`字段是`"system"`，它将被转换为一条消息，其中`role`字段为`"system"`，`content`字段为系统消息。其余的消息将被转换为一条消息，其中`role`字段为`"user"`，`content`字段为对话历史。
 
 样例如下：
 
@@ -101,7 +101,7 @@ model = DashScopeChatWrapper(
 prompt = model.format(
    Msg("system", "You're a helpful assistant", role="system"),   # Msg对象
    [                                                             # Msg对象的列表
-      Msg(name="Bob", content="Hi.", role="assistant"),
+      Msg(name="Bob", content="Hi!", role="assistant"),
       Msg(name="Alice", content="Nice to meet you!", role="assistant"),
    ],
 )
@@ -111,13 +111,9 @@ print(prompt)
 ```bash
 [
   {"role": "system", "content": "You are a helpful assistant"},
-  {"role": "assistant", "content": "Hi."},
-  {"role": "assistant", "content": "Nice to meet you!}
+  {"role": "user", "content": "## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!"},
 ]
 ```
-
-请注意上述策略产生的提示没有遵循第三条要求：`user`和`assistant`交替发言，这个问题会在`DashScopeChatWrapper`的`preprocess`函数中纠正。
-在未来的版本中，我们会将`format`和`preprocess`函数合在一处。
 
 ### `OllamaChatWrapper`
 
@@ -166,7 +162,7 @@ print(prompt)
 
 #### 提示的构建策略
 
-我们将忽略`role`字段，并将提示组合成一个对话的单个字符串。
+如果第一条消息的`role`字段是`"system"`，那么它将会被转化成一条系统提示。其余消息会被拼接成对话历史。
 
 ```python
 from agentscope.models import OllamaGenerationWrapper
@@ -189,7 +185,9 @@ print(prompt)
 ```
 
 ```bash
-system: You are a helpful assistant
+You are a helpful assistant
+
+## Dialogue History
 Bob: Hi.
 Alice: Nice to meet you!
 ```
@@ -207,10 +205,7 @@ Alice: Nice to meet you!
 
 #### 提示的构建策略
 
-我们将按照以下规则将消息列表转换为字符串提示：
-
-- `Msg`: 将`name`和`content`字段合成`"{name}: {content}"`格式
-- `List`: 按照上述规则解析列表中的每一个`Msg`对象。
+如果第一条消息的`role`字段是`"system"`，那么它将会被转化成一条系统提示。其余消息会被拼接成对话历史。
 
 **注意**Gemini Chat API中`parts`字段可以包含图片的url，由于我们将消息转换成字符串格式
 的输入，因此图片url在目前的`format`函数中是不支持的。
@@ -241,7 +236,7 @@ print(prompt)
   {
     "role": "user",
     "parts": [
-      "system: You are a helpful assistant\nBob: Hi.\nAlice: Nice to meet you!"
+      "You are a helpful assistant\n## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!"
     ]
   }
 ]

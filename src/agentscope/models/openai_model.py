@@ -7,7 +7,7 @@ from loguru import logger
 
 from .model import ModelWrapperBase, ModelResponse
 from ..file_manager import file_manager
-from ..message import Msg
+from ..message import MessageBase
 from ..utils.tools import _convert_to_str
 
 try:
@@ -91,7 +91,7 @@ class OpenAIWrapperBase(ModelWrapperBase, ABC):
 
     def format(
         self,
-        *args: Union[Msg, Sequence[Msg]],
+        *args: Union[MessageBase, Sequence[MessageBase]],
     ) -> Union[List[dict], str]:
         raise RuntimeError(
             f"Model Wrapper [{type(self).__name__}] doesn't "
@@ -214,15 +214,16 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
 
     def format(
         self,
-        *args: Union[Msg, Sequence[Msg]],
+        *args: Union[MessageBase, Sequence[MessageBase]],
     ) -> List[dict]:
         """Format the input string and dictionary into the format that
         OpenAI Chat API required.
 
         Args:
-            *args (`Union[Msg, Sequence[Msg]]`):
-                The input strings, dictionaries, or list of string and
-                dictionaries to format.
+            args (`Union[MessageBase, Sequence[MessageBase]]`):
+                The input arguments to be formatted, where each argument
+                should be a `Msg` object, or a list of `Msg` objects.
+                In distribution, placeholder is also allowed.
 
         Returns:
             `List[dict]`:
@@ -234,7 +235,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
         for arg in args:
             if arg is None:
                 continue
-            if isinstance(arg, Msg):
+            if isinstance(arg, MessageBase):
                 messages.append(
                     {
                         "role": arg.role,
