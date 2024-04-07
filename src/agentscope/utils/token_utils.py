@@ -9,7 +9,7 @@ except ImportError:
     tiktoken = None
 
 # TODO: obtain from web API and store it in `~/.cache`
-OPENAI_MAX_LENGTH = {
+OPENAI_max_new_tokens = {
     "update": 20231212,
     # gpt-4
     "gpt-4-1106-preview": 128000,
@@ -42,14 +42,14 @@ OPENAI_MAX_LENGTH = {
 }
 
 
-def get_openai_max_length(model_name: str) -> int:
+def get_openai_max_new_tokens(model_name: str) -> int:
     """Get the max length of the OpenAi models."""
     try:
-        return OPENAI_MAX_LENGTH[model_name]
+        return OPENAI_max_new_tokens[model_name]
     except KeyError as exc:
         raise KeyError(
-            f"Model [{model_name}] not found in OPENAI_MAX_LENGTH. "
-            f"The last updated date is {OPENAI_MAX_LENGTH['update']}",
+            f"Model [{model_name}] not found in OPENAI_max_new_tokens. "
+            f"The last updated date is {OPENAI_max_new_tokens['update']}",
         ) from exc
 
 

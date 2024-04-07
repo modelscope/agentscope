@@ -26,7 +26,7 @@ class PostAPIModelWrapperBase(ModelWrapperBase, ABC):
         config_name: str,
         api_url: str,
         headers: dict = None,
-        max_length: int = 2048,
+        max_new_tokens: int = 2048,
         timeout: int = 30,
         json_args: dict = None,
         post_args: dict = None,
@@ -44,7 +44,7 @@ class PostAPIModelWrapperBase(ModelWrapperBase, ABC):
                 The url of the post request api.
             headers (`dict`, defaults to `None`):
                 The headers of the api. Defaults to None.
-            max_length (`int`, defaults to `2048`):
+            max_new_tokens (`int`, defaults to `2048`):
                 The maximum length of the model.
             timeout (`int`, defaults to `30`):
                 The timeout of the api. Defaults to 30.
@@ -80,7 +80,7 @@ class PostAPIModelWrapperBase(ModelWrapperBase, ABC):
 
         self.api_url = api_url
         self.headers = headers
-        self.max_length = max_length
+        self.max_new_tokens = max_new_tokens
         self.timeout = timeout
         self.json_args = json_args or {}
         self.post_args = post_args or {}

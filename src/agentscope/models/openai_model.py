@@ -15,7 +15,7 @@ try:
 except ImportError:
     openai = None
 
-from ..utils.token_utils import get_openai_max_length
+from ..utils.token_utils import get_openai_max_new_tokens
 from ..constants import _DEFAULT_API_BUDGET
 
 
@@ -78,12 +78,12 @@ class OpenAIWrapperBase(ModelWrapperBase, ABC):
 
         # Set the max length of OpenAI model
         try:
-            self.max_length = get_openai_max_length(self.model_name)
+            self.max_new_tokens = get_openai_max_new_tokens(self.model_name)
         except Exception as e:
             logger.warning(
-                f"fail to get max_length for {self.model_name}: " f"{e}",
+                f"fail to get max_new_tokens for {self.model_name}: " f"{e}",
             )
-            self.max_length = None
+            self.max_new_tokens = None
 
         # Set monitor accordingly
         self._register_budget(model_name, budget)
