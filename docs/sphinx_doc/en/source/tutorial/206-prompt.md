@@ -108,8 +108,7 @@ print(prompt)
 
 #### Prompt Strategy
 
-Currently, we simply convert `Msg` objects into a dictionary with `role` and `content` fields.
-We will update a more flexible strategy in the future.
+If the role field of the first message is `"system"`, it will be converted into a single message with the `role` field as `"system"` and the `content` field as the system message. The rest of the messages will be converted into a message with the `role` field as `"user"` and the `content` field as the dialogue history.
 
 An example is shown below:
 
@@ -125,7 +124,7 @@ model = DashScopeChatWrapper(
 prompt = model.format(
    Msg("system", "You're a helpful assistant", role="system"),   # Msg object
    [                                                             # a list of Msg objects
-      Msg(name="Bob", content="Hi.", role="assistant"),
+      Msg(name="Bob", content="Hi!", role="assistant"),
       Msg(name="Alice", content="Nice to meet you!", role="assistant"),
    ],
 )
@@ -135,15 +134,9 @@ print(prompt)
 ```bash
 [
   {"role": "system", "content": "You are a helpful assistant"},
-  {"role": "assistant", "content": "Hi."},
-  {"role": "assistant", "content": "Nice to meet you!}
+  {"role": "user", "content": "## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!"},
 ]
 ```
-
-Note the output prompt doesn't follow the third requirement, which requires
-`user` and `assistant` to speak alternatively.
-It will be corrected within the model wrapper by a `preprocess` function,
-we will merge `format` and `preprocess` function soon.
 
 ### `OllamaChatWrapper`
 
@@ -197,8 +190,7 @@ takes a string prompt as input without any constraints (updated to 2024/03/22).
 
 #### Prompt Strategy
 
-We will ignore the `role` field and combine the prompt into a single string
-of conversation.
+If the role field of the first message is `"system"`, a system prompt will be created. The rest of the messages will be combined into dialogue history in string format.
 
 ```python
 from agentscope.models import OllamaGenerationWrapper
@@ -221,7 +213,9 @@ print(prompt)
 ```
 
 ```bash
-system: You are a helpful assistant
+You are a helpful assistant
+
+## Dialogue History
 Bob: Hi.
 Alice: Nice to meet you!
 ```
@@ -244,11 +238,7 @@ in our built-in `format` function.
 
 #### Prompt Strategy
 
-We will convert the list of messages into a string prompt as follows:
-
-- `Msg`: Combine `name` and `content` fields into `"{name}: {content}"`
-  format.
-- `List`: Parse each element in the list according to the above rules.
+If the role field of the first message is `"system"`, a system prompt will be added in the beginning. The other messages will be combined into dialogue history.
 
 **Note** sometimes the `parts` field may contain image urls, which is not
 supported in `format` function. We recommend developers to customize the
@@ -266,8 +256,8 @@ model = GeminiChatWrapper(
 prompt = model.format(
    Msg("system", "You're a helpful assistant", role="system"),   # Msg object
    [                                                             # a list of Msg objects
-      Msg(name="Bob", content="Hi.", role="model"),
-      Msg(name="Alice", content="Nice to meet you!", role="model"),
+      Msg(name="Bob", content="Hi!", role="assistant"),
+      Msg(name="Alice", content="Nice to meet you!", role="assistant"),
    ],
 )
 
@@ -279,7 +269,7 @@ print(prompt)
   {
     "role": "user",
     "parts": [
-      "system: You are a helpful assistant\nBob: Hi.\nAlice: Nice to meet you!"
+      "You are a helpful assistant\n## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!"
     ]
   }
 ]

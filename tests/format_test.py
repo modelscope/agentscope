@@ -102,8 +102,8 @@ class ExampleTest(unittest.TestCase):
 
         # correct format
         ground_truth = (
-            "system: You are a helpful assistant\nuser: What is "
-            "the weather today?\nassistant: It is sunny today"
+            "You are a helpful assistant\n\n## Dialogue History\nuser: "
+            "What is the weather today?\nassistant: It is sunny today"
         )
         prompt = model.format(*self.inputs)  # type: ignore[arg-type]
         self.assertEqual(prompt, ground_truth)
@@ -128,8 +128,9 @@ class ExampleTest(unittest.TestCase):
             {
                 "role": "user",
                 "parts": [
-                    "system: You are a helpful assistant\nuser: What is the "
-                    "weather today?\nassistant: It is sunny today",
+                    "You are a helpful assistant\n\n## Dialogue History\n"
+                    "user: What is the weather today?\nassistant: It is "
+                    "sunny today",
                 ],
             },
         ]
@@ -151,49 +152,20 @@ class ExampleTest(unittest.TestCase):
 
         ground_truth = [
             {
-                "role": "system",
-                "name": "system",
                 "content": "You are a helpful assistant",
-            },
-            {
-                "role": "user",
-                "name": "user",
-                "content": "What is the weather today?",
-            },
-            {
-                "role": "assistant",
-                "name": "assistant",
-                "content": "It is sunny today",
-            },
-        ]
-
-        prompt = model.format(*self.inputs)  # type: ignore[arg-type]
-        self.assertListEqual(prompt, ground_truth)
-
-        # wrong format
-        with self.assertRaises(TypeError):
-            model.format(*self.wrong_inputs)  # type: ignore[arg-type]
-
-    def test_dashscope_advance_format(self) -> None:
-        """Unit test for the advanced format function in dashscope chat api
-        wrapper."""
-        model = DashScopeChatWrapper(
-            config_name="",
-            model_name="qwen-max",
-            api_key="xxx",
-        )
-
-        # correct format
-        ground_truth = [
-            {
                 "role": "system",
-                "content": "system: You are a helpful assistant\nuser: "
-                "What is the weather today?\nassistant: It "
-                "is sunny today",
+            },
+            {
+                "content": (
+                    "## Dialogue History\n"
+                    "user: What is the weather today?\n"
+                    "assistant: It is sunny today"
+                ),
+                "role": "user",
             },
         ]
 
-        prompt = model.advanced_format(*self.inputs)  # type: ignore[arg-type]
+        prompt = model.format(*self.inputs)
         self.assertListEqual(prompt, ground_truth)
 
         # wrong format

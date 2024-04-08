@@ -20,6 +20,7 @@ class MessageBase(dict):
         self,
         name: str,
         content: Any,
+        role: Literal["user", "system", "assistant"] = "assistant",
         url: Optional[Union[Sequence[str], str]] = None,
         timestamp: Optional[str] = None,
         **kwargs: Any,
@@ -32,6 +33,11 @@ class MessageBase(dict):
                 role-playing scenario to tell the name of the sender.
             content (`Any`):
                 The content of the message.
+            role (`Literal["system", "user", "assistant"]`,
+            defaults to "assistant"):
+                The role of who send the message. It can be one of the
+                `"system"`, `"user"`, or `"assistant"`. Default to
+                `"assistant"`.
             url (`Optional[Union[list[str], str]]`, defaults to None):
                 A url to file, image, video, audio or website.
             timestamp (`Optional[str]`, defaults to None):
@@ -51,6 +57,7 @@ class MessageBase(dict):
 
         self.name = name
         self.content = content
+        self.role = role
 
         if url:
             self.url = url
