@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for DashScope models"""
 import os
-import platform
 from abc import ABC
 from http import HTTPStatus
 from typing import Any, Union, List, Sequence
@@ -729,9 +728,8 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
             ]
 
         Note:
-            For local files, the url must have a prefix "file://" or "file:///"
-            according to the system. In this format function, we add "file://"
-            before url for Windows and "file:///" for Unix-like systems.
+            In multimodal API, the url of local files should be prefixed with
+            "file://", which will be attached in this format function.
 
         Args:
             args (`Union[MessageBase, Sequence[MessageBase]]`):
@@ -807,8 +805,7 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
 
     def _convert_url(self, url: Union[str, Sequence[str], None]) -> List[dict]:
         """Convert the url to the format of DashScope API. Note for local
-        files, a prefix "file://" (Windows) or "file:///" (Linux or Mac) is
-        added to the url according to the system.
+        files, a prefix "file://" will be added.
 
         Args:
             url (`Union[str, Sequence[str], None]`):
@@ -824,14 +821,10 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
 
         if isinstance(url, str):
             url_type = _guess_type_by_extension(url)
-            system = platform.system()
             if url_type in ["audio", "image"]:
                 # Add prefix for local files
                 if os.path.exists(url):
-                    if system == "Windows":
-                        url = "file://" + url
-                    else:
-                        url = "file:///" + url
+                    url = "file://" + url
                 return [{url_type: url}]
             else:
                 # skip unsupported url
