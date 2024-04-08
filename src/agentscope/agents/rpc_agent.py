@@ -709,7 +709,15 @@ class RpcServerSideWrapper(RpcAgentServicer):
         if isinstance(task_msg, PlaceholderMessage):
             task_msg.update_value()
         cond = self.result_pool[task_id]
-        result = self.agent_pool[agent_id].reply(task_msg)
-        self.result_pool[task_id] = result
+        try:
+            result = self.agent_pool[agent_id].reply(task_msg)
+            self.result_pool[task_id] = result
+        except Exception as e:
+            logger.error(f"Error in agent [{agent_id}]: {e}")
+            self.result_pool[task_id] = Msg(
+                name="ERROR",
+                role="assistant",
+                content=f"Error in agent [{agent_id}]: {e}",
+            )
         with cond:
             cond.notify_all()

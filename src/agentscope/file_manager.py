@@ -46,8 +46,7 @@ class _FileManager:
         """Get the path of the subdir and create the subdir if it does not
         exist."""
         path = os.path.join(self.dir, _runtime.runtime_id, subdir)
-        if not os.path.exists(path):
-            os.makedirs(path)
+        os.makedirs(path, exist_ok=True)
         return path
 
     def _get_file_path(self, file_name: str) -> str:
@@ -89,8 +88,7 @@ class _FileManager:
         """Set the directory for saving files."""
         self.dir = save_dir
         runtime_dir = os.path.join(save_dir, _runtime.runtime_id)
-        if not os.path.exists(runtime_dir):
-            os.makedirs(runtime_dir)
+        os.makedirs(runtime_dir, exist_ok=True)
 
         self.save_api_invoke = save_api_invoke
 
