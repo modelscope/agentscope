@@ -192,6 +192,7 @@ def user_input(
 ) -> str:
     """get user input"""
     if hasattr(thread_local_data, "uid"):
+        get_reset_msg(uid=thread_local_data.uid)
         content = get_player_input(
             timeout=timeout,
             uid=thread_local_data.uid,
