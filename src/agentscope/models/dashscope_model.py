@@ -198,9 +198,9 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         # The metric names are unified for comparison
         self.update_monitor(
             call_counter=1,
-            prompt_tokens=response.usage("input_tokens", 0),
+            prompt_tokens=response.usage.get("input_tokens", 0),
             completion_tokens=response.usage.get("output_tokens", 0),
-            total_tokens=response.usage("input_tokens", 0)
+            total_tokens=response.usage.get("input_tokens", 0)
             + response.usage.get("output_tokens", 0),
         )
 
