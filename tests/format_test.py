@@ -209,13 +209,15 @@ class ExampleTest(unittest.TestCase):
             {
                 "role": "system",
                 "content": [
-                    {"text": "You are a helpful assistant"},
                     {"image": "url1.png"},
+                    {"text": "You are a helpful assistant"},
                 ],
             },
             {
                 "role": "user",
                 "content": [
+                    {"image": "url2.png"},
+                    {"image": "url3.png"},
                     {
                         "text": (
                             "## Dialogue History\n"
@@ -223,8 +225,6 @@ class ExampleTest(unittest.TestCase):
                             "assistant: It is sunny today"
                         ),
                     },
-                    {"image": "url2.png"},
-                    {"image": "url3.png"},
                 ],
             },
         ]
@@ -272,13 +272,15 @@ class ExampleTest(unittest.TestCase):
             {
                 "role": "system",
                 "content": [
-                    {"text": "You are a helpful assistant"},
                     {"audio": "url1.mp3"},
+                    {"text": "You are a helpful assistant"},
                 ],
             },
             {
                 "role": "user",
                 "content": [
+                    {"audio": "url2.mp3"},
+                    {"audio": "url3.mp3"},
                     {
                         "text": (
                             "## Dialogue History\n"
@@ -286,8 +288,6 @@ class ExampleTest(unittest.TestCase):
                             "assistant: It is sunny today"
                         ),
                     },
-                    {"audio": "url2.mp3"},
-                    {"audio": "url3.mp3"},
                 ],
             },
         ]

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for DashScope models"""
+import os
+import platform
 from abc import ABC
 from http import HTTPStatus
 from typing import Any, Union, List, Sequence
@@ -75,7 +77,9 @@ class DashScopeWrapperBase(ModelWrapperBase, ABC):
 
 
 class DashScopeChatWrapper(DashScopeWrapperBase):
-    """The model wrapper for DashScope's chat API."""
+    """The model wrapper for DashScope's chat API, refer to
+    https://help.aliyun.com/zh/dashscope/developer-reference/api-details?spm=a2c4g.11186623.0.0.3bbc4393n1BV1n
+    """
 
     model_type: str = "dashscope_chat"
 
@@ -312,7 +316,9 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
 
 
 class DashScopeImageSynthesisWrapper(DashScopeWrapperBase):
-    """The model wrapper for DashScope Image Synthesis API."""
+    """The model wrapper for DashScope Image Synthesis API, refer to
+    https://help.aliyun.com/zh/dashscope/developer-reference/quick-start-1?spm=a2c4g.11186623.0.0.74ea23edcoyWhY
+    """
 
     model_type: str = "dashscope_image_synthesis"
 
@@ -514,7 +520,9 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapperBase):
 
 
 class DashScopeMultiModalWrapper(DashScopeWrapperBase):
-    """The model wrapper for DashScope Multimodal API."""
+    """The model wrapper for DashScope Multimodal API, refer to
+    https://help.aliyun.com/zh/dashscope/developer-reference/tongyi-qianwen-vl-api?spm=a2c4g.11186623.0.0.c77e23edWgUD86
+    """
 
     model_type: str = "dashscope_multimodal"
 
@@ -649,16 +657,15 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
     ) -> List:
         """Format the messages for DashScope Multimodal API.
 
-        Note:
-            The multimodal API has the following requirements:
-            - The roles of messages must alternate between "user" and
-            "assistant".
-            - The message with the role "system" should be the first message
-            in the list.
-                - If the system message exists, then the second message must
-                have the role "user".
-            - The last message in the list should have the role "user".
-            - In each message, more than one figure is allowed.
+        The multimodal API has the following requirements:
+        - The roles of messages must alternate between "user" and
+        "assistant".
+        - The message with the role "system" should be the first message
+        in the list.
+            - If the system message exists, then the second message must
+            have the role "user".
+        - The last message in the list should have the role "user".
+        - In each message, more than one figure is allowed.
 
         With the above requirements, we format the messages as follows:
         - If the first message is a system message, then we will keep it as
@@ -708,6 +715,8 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
                 {
                     "role": "user",
                     "content": [
+                        {"image": "figure2"},
+                        {"image": "figure3"},
                         {
                             "text": (
                                 "## Dialogue History\n"
@@ -715,11 +724,14 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
                                 "user: It's wonderful! How about mine?"
                             )
                         },
-                        {"image": "figure2"},
-                        {"image": "figure3"},
                     ]
                 }
             ]
+
+        Note:
+            For local files, the url must have a prefix "file://" or "file:///"
+            according to the system. In this format function, we add "file://"
+            before url for Windows and "file:///" for Unix-like systems.
 
         Args:
             args (`Union[MessageBase, Sequence[MessageBase]]`):
@@ -755,8 +767,8 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
         for i, unit in enumerate(input_msgs):
             if i == 0 and unit.role == "system":
                 # system prompt
-                content = [{"text": _convert_to_str(unit.content)}]
-                content.extend(self._convert_url(unit.url))
+                content = self._convert_url(unit.url)
+                content.append({"text": _convert_to_str(unit.content)})
 
                 messages.append(
                     {
@@ -780,12 +792,13 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
             {
                 "role": "user",
                 "content": [
+                    # Place the image or audio before the dialogue history
+                    *image_or_audio_dicts,
                     {
                         "text": user_content_template.format(
                             dialogue_history=dialogue_history,
                         ),
                     },
-                    *image_or_audio_dicts,
                 ],
             },
         )
@@ -793,7 +806,9 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
         return messages
 
     def _convert_url(self, url: Union[str, Sequence[str], None]) -> List[dict]:
-        """Convert the url to the format of DashScope API.
+        """Convert the url to the format of DashScope API. Note for local
+        files, a prefix "file://" (Windows) or "file:///" (Linux or Mac) is
+        added to the url according to the system.
 
         Args:
             url (`Union[str, Sequence[str], None]`):
@@ -809,7 +824,14 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
 
         if isinstance(url, str):
             url_type = _guess_type_by_extension(url)
+            system = platform.system()
             if url_type in ["audio", "image"]:
+                # Add prefix for local files
+                if os.path.exists(url):
+                    if system == "Windows":
+                        url = "file://" + url
+                    else:
+                        url = "file:///" + url
                 return [{url_type: url}]
             else:
                 # skip unsupported url
