@@ -6,6 +6,7 @@ from multiprocessing.synchronize import Event as EventClass
 import socket
 import threading
 import json
+import traceback
 from typing import Any, Optional, Union, Type, Sequence
 from concurrent import futures
 from loguru import logger
@@ -712,12 +713,13 @@ class RpcServerSideWrapper(RpcAgentServicer):
         try:
             result = self.agent_pool[agent_id].reply(task_msg)
             self.result_pool[task_id] = result
-        except Exception as e:
-            logger.error(f"Error in agent [{agent_id}]: {e}")
+        except Exception:
+            error_msg = traceback.format_exc()
+            logger.error(f"Error in agent [{agent_id}]: {error_msg}")
             self.result_pool[task_id] = Msg(
                 name="ERROR",
                 role="assistant",
-                content=f"Error in agent [{agent_id}]: {e}",
+                content=f"Error in agent [{agent_id}]: {error_msg}",
             )
         with cond:
             cond.notify_all()
