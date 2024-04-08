@@ -303,9 +303,10 @@
         <span class="c1"># The metric names are unified for comparison</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_monitor</span><span class="p">(</span>
             <span class="n">call_counter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-            <span class="n">prompt_tokens</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="p">[</span><span class="s2">&quot;input_tokens&quot;</span><span class="p">],</span>
-            <span class="n">completion_tokens</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="p">[</span><span class="s2">&quot;output_tokens&quot;</span><span class="p">],</span>
-            <span class="n">total_tokens</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="p">[</span><span class="s2">&quot;total_tokens&quot;</span><span class="p">],</span>
+            <span class="n">prompt_tokens</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input_tokens&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="n">completion_tokens</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;output_tokens&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="n">total_tokens</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input_tokens&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;output_tokens&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
         <span class="p">)</span>
 
         <span class="c1"># step6: return response</span>
