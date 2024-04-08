@@ -3,7 +3,7 @@
 import unittest
 from unittest.mock import Mock, patch, MagicMock
 
-from agentscope.service import ServiceResponse
+from agentscope.service import ServiceResponse, arxiv_search
 from agentscope.service import bing_search, google_search
 from agentscope.service.service_status import ServiceExecStatus
 
@@ -123,6 +123,18 @@ class TestWebSearches(unittest.TestCase):
             params=params,
         )
         self.assertEqual(results, expected_result)
+
+    def test_arxiv_search(self) -> None:
+        """test arxiv search"""
+        res = arxiv_search(
+            search_query="ti:Agentscope",
+            id_list=["2402.14034"],
+            max_results=1,
+        )
+        self.assertEqual(
+            res.content["entries"][0]["title"],
+            "AgentScope: A Flexible yet Robust Multi-Agent Platform",
+        )
 
 
 # This allows the tests to be run from the command line
