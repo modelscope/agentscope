@@ -7,7 +7,10 @@ from calendar import timegm
 from datetime import datetime, timezone
 from typing import List, Optional, Union
 
-import feedparser
+try:
+    import feedparser
+except ImportError:
+    feedparser = None
 from loguru import logger
 
 from agentscope.service.service_response import (
@@ -113,7 +116,7 @@ def _parse_timestamp(timestamp: time.struct_time) -> str:
     return timestamp.strftime("%Y-%m-%d %H:%M:%S")
 
 
-def _clean_arxiv_search_results(result: feedparser.FeedParserDict) -> dict:
+def _clean_arxiv_search_results(result: dict) -> dict:
     """Clean the arXiv search results, and remove unnecessary information."""
     feed = result.feed
 
@@ -193,6 +196,12 @@ def arxiv_search(
         and `content` is a list of search results or error information,
         which depends on the `status` variable.
     """
+
+    if feedparser is None:
+        raise ImportError(
+            "The `feedparser` module is not installed. Please install it by "
+            "running `pip install feedparser`.",
+        )
 
     # construct url
     search_query = search_query.replace(" ", "+")
