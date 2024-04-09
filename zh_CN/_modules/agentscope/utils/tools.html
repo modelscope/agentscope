@@ -101,7 +101,7 @@
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">secrets</span>
 <span class="kn">import</span> <span class="nn">string</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Literal</span>
 
 <span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">urlparse</span>
 
@@ -160,6 +160,64 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">speaker</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">content</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
+
+
+<span class="k">def</span> <span class="nf">_guess_type_by_extension</span><span class="p">(</span>
+    <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="s2">&quot;audio&quot;</span><span class="p">,</span> <span class="s2">&quot;video&quot;</span><span class="p">,</span> <span class="s2">&quot;file&quot;</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Guess the type of the file by its extension.&quot;&quot;&quot;</span>
+    <span class="n">extension</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">extension</span> <span class="ow">in</span> <span class="p">[</span>
+        <span class="s2">&quot;bmp&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;dib&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;icns&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ico&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;jfif&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;jpe&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;jpeg&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;jpg&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;j2c&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;j2k&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;jp2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;jpc&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;jpf&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;jpx&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;apng&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;png&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bw&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;rgb&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;rgba&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;sgi&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;tif&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;tiff&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;webp&quot;</span><span class="p">,</span>
+    <span class="p">]:</span>
+        <span class="k">return</span> <span class="s2">&quot;image&quot;</span>
+    <span class="k">elif</span> <span class="n">extension</span> <span class="ow">in</span> <span class="p">[</span>
+        <span class="s2">&quot;amr&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;wav&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;3gp&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;3gpp&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;aac&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mp3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;flac&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ogg&quot;</span><span class="p">,</span>
+    <span class="p">]:</span>
+        <span class="k">return</span> <span class="s2">&quot;audio&quot;</span>
+    <span class="k">elif</span> <span class="n">extension</span> <span class="ow">in</span> <span class="p">[</span>
+        <span class="s2">&quot;mp4&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;webm&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mkv&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;flv&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;avi&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mov&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;wmv&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;rmvb&quot;</span><span class="p">,</span>
+    <span class="p">]:</span>
+        <span class="k">return</span> <span class="s2">&quot;video&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;file&quot;</span>
 
 
 <span class="k">def</span> <span class="nf">_to_openai_image_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>

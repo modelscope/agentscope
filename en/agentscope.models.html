@@ -87,6 +87,11 @@
 <li class="toctree-l4"><a class="reference internal" href="#agentscope.models.dashscope_model.DashScopeImageSynthesisWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">DashScopeImageSynthesisWrapper.model_type</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.models.dashscope_model.DashScopeMultiModalWrapper"><code class="docutils literal notranslate"><span class="pre">DashScopeMultiModalWrapper</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.models.dashscope_model.DashScopeMultiModalWrapper.format"><code class="docutils literal notranslate"><span class="pre">DashScopeMultiModalWrapper.format()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.models.dashscope_model.DashScopeMultiModalWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">DashScopeMultiModalWrapper.model_type</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.models.dashscope_model.DashScopeTextEmbeddingWrapper"><code class="docutils literal notranslate"><span class="pre">DashScopeTextEmbeddingWrapper</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#agentscope.models.dashscope_model.DashScopeTextEmbeddingWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">DashScopeTextEmbeddingWrapper.model_type</span></code></a></li>
 </ul>
@@ -324,12 +329,12 @@ class in model configuration.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.model.ModelWrapperBase.registry">
-<span class="sig-name descname"><span class="pre">registry</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'DashScopeChatWrapper':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.dashscope_model.DashScopeChatWrapper'&gt;,</span> <span class="pre">'DashScopeImageSynthesisWrapper':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.dashscope_model.DashScopeImageSynthesisWrapper'&gt;,</span> <span class="pre">'DashScopeTextEmbeddingWrapper':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.dashscope_model.DashScopeTextEmbeddingWrapper'&gt;,</span> <span class="pre">'DashScopeWrapperBase':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.dashscope_model.DashScopeWrapperBase'&gt;,</span> <span class="pre">'GeminiChatWrapper':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.gemini_model.GeminiChatWrapper'&gt;,</span> <span class="pre">'GeminiEmbeddingWrapper':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.gemini_model.GeminiEmbeddingWrapper'&gt;,</span> <span class="pre">'GeminiWrapperBase':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.gemini_model.GeminiWrapperBase'&gt;,</span> <span class="pre">'OllamaChatWrapper':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.ollama_model.OllamaChatWrapper'&gt;,</span> <span class="pre">'OllamaEmbeddingWrapper':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.ollama_model.OllamaEmbeddingWrapper'&gt;,</span> <span class="pre">'OllamaGenerationWrapper':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.ollama_model.OllamaGenerationWrapper'&gt;,</span> <span class="pre">'OllamaWrapperBase':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.ollama_model.OllamaWrapperBase'&gt;,</span> <span class="pre">'OpenAIChatWrapper':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.openai_model.OpenAIChatWrapper'&gt;,</span> <span class="pre">'OpenAIDALLEWrapper':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.openai_model.OpenAIDALLEWrapper'&gt;,</span> <span class="pre">'OpenAIEmbeddingWrapper':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.openai_model.OpenAIEmbeddingWrapper'&gt;,</span> <span class="pre">'OpenAIWrapperBase':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.openai_model.OpenAIWrapperBase'&gt;,</span> <span class="pre">'PostAPIChatWrapper':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.post_model.PostAPIChatWrapper'&gt;,</span> <span class="pre">'PostAPIDALLEWrapper':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.post_model.PostAPIDALLEWrapper'&gt;,</span> <span class="pre">'PostAPIModelWrapperBase':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.post_model.PostAPIModelWrapperBase'&gt;}</span></em><a class="headerlink" href="#agentscope.models.model.ModelWrapperBase.registry" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">registry</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'DashScopeChatWrapper':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.dashscope_model.DashScopeChatWrapper'&gt;,</span> <span class="pre">'DashScopeImageSynthesisWrapper':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.dashscope_model.DashScopeImageSynthesisWrapper'&gt;,</span> <span class="pre">'DashScopeMultiModalWrapper':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.dashscope_model.DashScopeMultiModalWrapper'&gt;,</span> <span class="pre">'DashScopeTextEmbeddingWrapper':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.dashscope_model.DashScopeTextEmbeddingWrapper'&gt;,</span> <span class="pre">'DashScopeWrapperBase':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.dashscope_model.DashScopeWrapperBase'&gt;,</span> <span class="pre">'GeminiChatWrapper':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.gemini_model.GeminiChatWrapper'&gt;,</span> <span class="pre">'GeminiEmbeddingWrapper':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.gemini_model.GeminiEmbeddingWrapper'&gt;,</span> <span class="pre">'GeminiWrapperBase':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.gemini_model.GeminiWrapperBase'&gt;,</span> <span class="pre">'OllamaChatWrapper':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.ollama_model.OllamaChatWrapper'&gt;,</span> <span class="pre">'OllamaEmbeddingWrapper':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.ollama_model.OllamaEmbeddingWrapper'&gt;,</span> <span class="pre">'OllamaGenerationWrapper':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.ollama_model.OllamaGenerationWrapper'&gt;,</span> <span class="pre">'OllamaWrapperBase':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.ollama_model.OllamaWrapperBase'&gt;,</span> <span class="pre">'OpenAIChatWrapper':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.openai_model.OpenAIChatWrapper'&gt;,</span> <span class="pre">'OpenAIDALLEWrapper':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.openai_model.OpenAIDALLEWrapper'&gt;,</span> <span class="pre">'OpenAIEmbeddingWrapper':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.openai_model.OpenAIEmbeddingWrapper'&gt;,</span> <span class="pre">'OpenAIWrapperBase':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.openai_model.OpenAIWrapperBase'&gt;,</span> <span class="pre">'PostAPIChatWrapper':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.post_model.PostAPIChatWrapper'&gt;,</span> <span class="pre">'PostAPIDALLEWrapper':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.post_model.PostAPIDALLEWrapper'&gt;,</span> <span class="pre">'PostAPIModelWrapperBase':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.post_model.PostAPIModelWrapperBase'&gt;}</span></em><a class="headerlink" href="#agentscope.models.model.ModelWrapperBase.registry" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.model.ModelWrapperBase.type_registry">
-<span class="sig-name descname"><span class="pre">type_registry</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'dashscope_chat':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.dashscope_model.DashScopeChatWrapper'&gt;,</span> <span class="pre">'dashscope_image_synthesis':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.dashscope_model.DashScopeImageSynthesisWrapper'&gt;,</span> <span class="pre">'dashscope_text_embedding':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.dashscope_model.DashScopeTextEmbeddingWrapper'&gt;,</span> <span class="pre">'gemini_chat':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.gemini_model.GeminiChatWrapper'&gt;,</span> <span class="pre">'gemini_embedding':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.gemini_model.GeminiEmbeddingWrapper'&gt;,</span> <span class="pre">'ollama_chat':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.ollama_model.OllamaChatWrapper'&gt;,</span> <span class="pre">'ollama_embedding':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.ollama_model.OllamaEmbeddingWrapper'&gt;,</span> <span class="pre">'ollama_generate':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.ollama_model.OllamaGenerationWrapper'&gt;,</span> <span class="pre">'openai_chat':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.openai_model.OpenAIChatWrapper'&gt;,</span> <span class="pre">'openai_dall_e':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.openai_model.OpenAIDALLEWrapper'&gt;,</span> <span class="pre">'openai_embedding':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.openai_model.OpenAIEmbeddingWrapper'&gt;,</span> <span class="pre">'post_api':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.post_model.PostAPIModelWrapperBase'&gt;,</span> <span class="pre">'post_api_chat':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.post_model.PostAPIChatWrapper'&gt;,</span> <span class="pre">'post_api_dall_e':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.post_model.PostAPIDALLEWrapper'&gt;}</span></em><a class="headerlink" href="#agentscope.models.model.ModelWrapperBase.type_registry" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">type_registry</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'dashscope_chat':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.dashscope_model.DashScopeChatWrapper'&gt;,</span> <span class="pre">'dashscope_image_synthesis':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.dashscope_model.DashScopeImageSynthesisWrapper'&gt;,</span> <span class="pre">'dashscope_multimodal':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.dashscope_model.DashScopeMultiModalWrapper'&gt;,</span> <span class="pre">'dashscope_text_embedding':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.dashscope_model.DashScopeTextEmbeddingWrapper'&gt;,</span> <span class="pre">'gemini_chat':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.gemini_model.GeminiChatWrapper'&gt;,</span> <span class="pre">'gemini_embedding':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.gemini_model.GeminiEmbeddingWrapper'&gt;,</span> <span class="pre">'ollama_chat':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.ollama_model.OllamaChatWrapper'&gt;,</span> <span class="pre">'ollama_embedding':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.ollama_model.OllamaEmbeddingWrapper'&gt;,</span> <span class="pre">'ollama_generate':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.ollama_model.OllamaGenerationWrapper'&gt;,</span> <span class="pre">'openai_chat':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.openai_model.OpenAIChatWrapper'&gt;,</span> <span class="pre">'openai_dall_e':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.openai_model.OpenAIDALLEWrapper'&gt;,</span> <span class="pre">'openai_embedding':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.openai_model.OpenAIEmbeddingWrapper'&gt;,</span> <span class="pre">'post_api':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.post_model.PostAPIModelWrapperBase'&gt;,</span> <span class="pre">'post_api_chat':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.post_model.PostAPIChatWrapper'&gt;,</span> <span class="pre">'post_api_dall_e':</span> <span class="pre">&lt;class</span> <span class="pre">'agentscope.models.post_model.PostAPIDALLEWrapper'&gt;}</span></em><a class="headerlink" href="#agentscope.models.model.ModelWrapperBase.type_registry" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -353,7 +358,8 @@ class in model configuration.</p>
 <dt class="sig sig-object py" id="agentscope.models.dashscope_model.DashScopeChatWrapper">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.models.dashscope_model.</span></span><span class="sig-name descname"><span class="pre">DashScopeChatWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generate_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/models/dashscope_model.html#DashScopeChatWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.dashscope_model.DashScopeChatWrapper" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#agentscope.models.dashscope_model.DashScopeWrapperBase" title="agentscope.models.dashscope_model.DashScopeWrapperBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DashScopeWrapperBase</span></code></a></p>
-<p>The model wrapper for DashScope’s chat API.</p>
+<p>The model wrapper for DashScope’s chat API, refer to
+<a class="reference external" href="https://help.aliyun.com/zh/dashscope/developer-reference/api-details">https://help.aliyun.com/zh/dashscope/developer-reference/api-details</a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.dashscope_model.DashScopeChatWrapper.deprecated_model_type">
 <span class="sig-name descname"><span class="pre">deprecated_model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tongyi_chat'</span></em><a class="headerlink" href="#agentscope.models.dashscope_model.DashScopeChatWrapper.deprecated_model_type" title="Link to this definition"></a></dt>
@@ -438,10 +444,140 @@ class in model configuration.</p>
 <dt class="sig sig-object py" id="agentscope.models.dashscope_model.DashScopeImageSynthesisWrapper">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.models.dashscope_model.</span></span><span class="sig-name descname"><span class="pre">DashScopeImageSynthesisWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generate_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/models/dashscope_model.html#DashScopeImageSynthesisWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.dashscope_model.DashScopeImageSynthesisWrapper" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#agentscope.models.dashscope_model.DashScopeWrapperBase" title="agentscope.models.dashscope_model.DashScopeWrapperBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DashScopeWrapperBase</span></code></a></p>
-<p>The model wrapper for DashScope Image Synthesis API.</p>
+<p>The model wrapper for DashScope Image Synthesis API, refer to
+<a class="reference external" href="https://help.aliyun.com/zh/dashscope/developer-reference/quick-start-1">https://help.aliyun.com/zh/dashscope/developer-reference/quick-start-1</a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.dashscope_model.DashScopeImageSynthesisWrapper.model_type">
 <span class="sig-name descname"><span class="pre">model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dashscope_image_synthesis'</span></em><a class="headerlink" href="#agentscope.models.dashscope_model.DashScopeImageSynthesisWrapper.model_type" title="Link to this definition"></a></dt>
+<dd><p>The type of the model wrapper, which is to identify the model wrapper
+class in model configuration.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.models.dashscope_model.DashScopeMultiModalWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.models.dashscope_model.</span></span><span class="sig-name descname"><span class="pre">DashScopeMultiModalWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generate_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/models/dashscope_model.html#DashScopeMultiModalWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.dashscope_model.DashScopeMultiModalWrapper" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#agentscope.models.dashscope_model.DashScopeWrapperBase" title="agentscope.models.dashscope_model.DashScopeWrapperBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DashScopeWrapperBase</span></code></a></p>
+<p>The model wrapper for DashScope Multimodal API, refer to
+<a class="reference external" href="https://help.aliyun.com/zh/dashscope/developer-reference/tongyi-qianwen-vl-api">https://help.aliyun.com/zh/dashscope/developer-reference/tongyi-qianwen-vl-api</a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.models.dashscope_model.DashScopeMultiModalWrapper.format">
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MessageBase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">MessageBase</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span></span></span><a class="reference internal" href="_modules/agentscope/models/dashscope_model.html#DashScopeMultiModalWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.dashscope_model.DashScopeMultiModalWrapper.format" title="Link to this definition"></a></dt>
+<dd><p>Format the messages for DashScope Multimodal API.</p>
+<blockquote>
+<div><p>The multimodal API has the following requirements:
+- The roles of messages must alternate between “user” and
+“assistant”.
+- The message with the role “system” should be the first message
+in the list.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>If the system message exists, then the second message must</p></li>
+</ul>
+<p>have the role “user”.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>The last message in the list should have the role “user”.</p></li>
+<li><p>In each message, more than one figure is allowed.</p></li>
+</ul>
+<p>With the above requirements, we format the messages as follows:
+- If the first message is a system message, then we will keep it as
+system prompt.
+- We merge all messages into a dialogue history prompt in a single
+message with the role “user”.
+- When there are multiple figures in the given messages, we will
+attach it to the user message by order. Note if there are multiple
+figures, this strategy may cause misunderstanding for the model. For
+advanced solutions, developers are encouraged to implement their own
+prompt engineering strategies.</p>
+<p>The following is an example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">prompt</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">Msg</span><span class="p">(</span>
+        <span class="s2">&quot;system&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;You&#39;re a helpful assistant&quot;</span><span class="p">,</span>
+        <span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="s2">&quot;figure1&quot;</span>
+    <span class="p">),</span>
+    <span class="n">Msg</span><span class="p">(</span>
+        <span class="s2">&quot;Bob&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;How about this picture?&quot;</span><span class="p">,</span>
+        <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="s2">&quot;figure2&quot;</span>
+    <span class="p">),</span>
+    <span class="n">Msg</span><span class="p">(</span>
+        <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;It&#39;s wonderful! How about mine?&quot;</span><span class="p">,</span>
+        <span class="n">role</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">image</span><span class="o">=</span><span class="s2">&quot;figure3&quot;</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The prompt will be as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;You are a helpful assistant&quot;</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="s2">&quot;figure1&quot;</span><span class="p">}</span>
+        <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="s2">&quot;figure2&quot;</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="s2">&quot;figure3&quot;</span><span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="p">(</span>
+                    <span class="s2">&quot;## Dialogue History</span>
+</pre></div>
+</div>
+</div></blockquote>
+<dl class="simple">
+<dt>“</dt><dd><p>“Bob: How about this picture?</p>
+</dd>
+</dl>
+<dl>
+<dt>“</dt><dd><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><p>“user: It’s wonderful! How about mine?”</p>
+</div></blockquote>
+<p>)</p>
+</div></blockquote>
+<p>},</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Note:</dt><dd><p>In multimodal API, the url of local files should be prefixed with
+“<a class="reference external" href="file://">file://</a>”, which will be attached in this format function.</p>
+</dd>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>args (<cite>Union[MessageBase, Sequence[MessageBase]]</cite>):</dt><dd><p>The input arguments to be formatted, where each argument
+should be a <cite>Msg</cite> object, or a list of <cite>Msg</cite> objects.
+In distribution, placeholder is also allowed.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt><cite>List[dict]</cite>:</dt><dd><p>The formatted messages.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.models.dashscope_model.DashScopeMultiModalWrapper.model_type">
+<span class="sig-name descname"><span class="pre">model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dashscope_multimodal'</span></em><a class="headerlink" href="#agentscope.models.dashscope_model.DashScopeMultiModalWrapper.model_type" title="Link to this definition"></a></dt>
 <dd><p>The type of the model wrapper, which is to identify the model wrapper
 class in model configuration.</p>
 </dd></dl>

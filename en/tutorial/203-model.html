@@ -180,6 +180,7 @@ It corresponds to the <code class="docutils literal notranslate"><span class="pr
 <th class="head"><p>Task</p></th>
 <th class="head"><p>Model Wrapper</p></th>
 <th class="head"><p><code class="docutils literal notranslate"><span class="pre">model_type</span></code></p></th>
+<th class="head"><p>Some Supported Models</p></th>
 </tr>
 </thead>
 <tbody>
@@ -187,61 +188,79 @@ It corresponds to the <code class="docutils literal notranslate"><span class="pr
 <td><p>Chat</p></td>
 <td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper</span></code></a></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;openai&quot;</span></code></p></td>
+<td><p>gpt-4, gpt-3.5-turbo, …</p></td>
 </tr>
 <tr class="row-odd"><td><p></p></td>
 <td><p>Embedding</p></td>
 <td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py"><code class="docutils literal notranslate"><span class="pre">OpenAIEmbeddingWrapper</span></code></a></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;openai_embedding&quot;</span></code></p></td>
+<td><p>text-embedding-ada-002, …</p></td>
 </tr>
 <tr class="row-even"><td><p></p></td>
 <td><p>DALL·E</p></td>
 <td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py"><code class="docutils literal notranslate"><span class="pre">OpenAIDALLEWrapper</span></code></a></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;openai_dall_e&quot;</span></code></p></td>
+<td><p>dall-e-2, dall-e-3</p></td>
 </tr>
 <tr class="row-odd"><td><p>DashScope API</p></td>
 <td><p>Chat</p></td>
 <td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper</span></code></a></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;dashscope_chat&quot;</span></code></p></td>
+<td><p>qwen-plus, qwen-max, …</p></td>
 </tr>
 <tr class="row-even"><td><p></p></td>
 <td><p>Image Synthesis</p></td>
 <td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py"><code class="docutils literal notranslate"><span class="pre">DashScopeImageSynthesisWrapper</span></code></a></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;dashscope_image_synthesis&quot;</span></code></p></td>
+<td><p>wanx-v1</p></td>
 </tr>
 <tr class="row-odd"><td><p></p></td>
 <td><p>Text Embedding</p></td>
 <td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py"><code class="docutils literal notranslate"><span class="pre">DashScopeTextEmbeddingWrapper</span></code></a></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;dashscope_text_embedding&quot;</span></code></p></td>
+<td><p>text-embedding-v1, text-embedding-v2, …</p></td>
 </tr>
-<tr class="row-even"><td><p>Gemini API</p></td>
+<tr class="row-even"><td><p></p></td>
+<td><p>Multimodal</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py"><code class="docutils literal notranslate"><span class="pre">DashScopeMultiModalWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;dashscope_multimodal&quot;</span></code></p></td>
+<td><p>qwen-vl-plus, qwen-vl-max, qwen-audio-turbo, …</p></td>
+</tr>
+<tr class="row-odd"><td><p>Gemini API</p></td>
 <td><p>Chat</p></td>
 <td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py"><code class="docutils literal notranslate"><span class="pre">GeminiChatWrapper</span></code></a></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;gemini_chat&quot;</span></code></p></td>
+<td><p>gemini-pro, …</p></td>
 </tr>
-<tr class="row-odd"><td><p></p></td>
+<tr class="row-even"><td><p></p></td>
 <td><p>Embedding</p></td>
 <td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py"><code class="docutils literal notranslate"><span class="pre">GeminiEmbeddingWrapper</span></code></a></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;gemini_embedding&quot;</span></code></p></td>
+<td><p>models/embedding-001, …</p></td>
 </tr>
-<tr class="row-even"><td><p>ollama</p></td>
+<tr class="row-odd"><td><p>ollama</p></td>
 <td><p>Chat</p></td>
 <td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py"><code class="docutils literal notranslate"><span class="pre">OllamaChatWrapper</span></code></a></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;ollama_chat&quot;</span></code></p></td>
+<td><p>llama2, …</p></td>
 </tr>
-<tr class="row-odd"><td><p></p></td>
+<tr class="row-even"><td><p></p></td>
 <td><p>Embedding</p></td>
 <td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py"><code class="docutils literal notranslate"><span class="pre">OllamaEmbeddingWrapper</span></code></a></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;ollama_embedding&quot;</span></code></p></td>
+<td><p>llama2, …</p></td>
 </tr>
-<tr class="row-even"><td><p></p></td>
+<tr class="row-odd"><td><p></p></td>
 <td><p>Generation</p></td>
 <td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py"><code class="docutils literal notranslate"><span class="pre">OllamaGenerationWrapper</span></code></a></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;ollama_generate&quot;</span></code></p></td>
+<td><p>llama2, …</p></td>
 </tr>
-<tr class="row-odd"><td><p>Post Request based API</p></td>
+<tr class="row-even"><td><p>Post Request based API</p></td>
 <td><p>-</p></td>
-<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py"><code class="docutils literal notranslate"><span class="pre">PostAPIModelWrapper</span></code></a></p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py"><code class="docutils literal notranslate"><span class="pre">PostAPIModelWrapperBase</span></code></a></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;post_api&quot;</span></code></p></td>
+<td><p>-</p></td>
 </tr>
 </tbody>
 </table>
@@ -371,6 +390,24 @@ Here we provide example configurations for different model wrappers.</p>
 
     <span class="c1"># Required parameters</span>
     <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{model_name}</span><span class="s2">&quot;</span><span class="p">,</span>               <span class="c1"># The model name in DashScope Text Embedding API, e.g. text-embedding-v1</span>
+
+    <span class="c1"># Optional parameters</span>
+    <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{your_api_key}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;generate_args&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="c1"># ...</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</details>
+<details>
+<summary>DashScope Multimodal Conversation API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py">agentscope.models.DashScopeMultiModalWrapper</a></code>)</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_dashscope_multimodal_config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;dashscope_multimodal&quot;</span><span class="p">,</span>
+
+    <span class="c1"># Required parameters</span>
+    <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{model_name}</span><span class="s2">&quot;</span><span class="p">,</span>              <span class="c1"># The model name in DashScope Multimodal Conversation API, e.g. qwen-vl-plus</span>
 
     <span class="c1"># Optional parameters</span>
     <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{your_api_key}</span><span class="s2">&quot;</span><span class="p">,</span>
