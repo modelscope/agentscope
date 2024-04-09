@@ -634,12 +634,18 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
         )
 
         # step4: update monitor accordingly
+        input_tokens = response.usage.get("input_tokens", 0)
+        image_tokens = response.usage.get("image_tokens", 0)
+        audio_tokens = response.usage.get("audio_tokens", 0)
+        output_tokens = response.usage.get("output_tokens", 0)
         self.update_monitor(
             call_counter=1,
-            prompt_tokens=response.usage["input_tokens"],
-            completion_tokens=response.usage["output_tokens"],
-            total_tokens=response.usage["input_tokens"]
-            + response.usage["output_tokens"],
+            prompt_tokens=input_tokens,
+            completion_tokens=output_tokens,
+            total_tokens=input_tokens
+            + output_tokens
+            + image_tokens
+            + audio_tokens,
         )
 
         # step5: return response
