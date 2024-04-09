@@ -715,11 +715,12 @@ class RpcServerSideWrapper(RpcAgentServicer):
             self.result_pool[task_id] = result
         except Exception:
             error_msg = traceback.format_exc()
-            logger.error(f"Error in agent [{agent_id}]: {error_msg}")
+            logger.error(f"Error in agent [{agent_id}]:\n{error_msg}")
             self.result_pool[task_id] = Msg(
                 name="ERROR",
                 role="assistant",
-                content=f"Error in agent [{agent_id}]: {error_msg}",
+                __status="ERROR",
+                content=f"Error in agent [{agent_id}]:\n{error_msg}",
             )
         with cond:
             cond.notify_all()
