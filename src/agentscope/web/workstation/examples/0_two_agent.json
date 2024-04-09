@@ -13,9 +13,7 @@
       }
     },
     "inputs": {},
-    "outputs": {},
-    "pos_x": -125,
-    "pos_y": -131
+    "outputs": {}
   },
   "5": {
     "name": "Message",
@@ -40,9 +38,7 @@
           }
         ]
       }
-    },
-    "pos_x": 166,
-    "pos_y": -79
+    }
   },
   "6": {
     "name": "UserAgent",
@@ -65,9 +61,7 @@
       "output_1": {
         "connections": []
       }
-    },
-    "pos_x": 961,
-    "pos_y": 143
+    }
   },
   "7": {
     "name": "DialogAgent",
@@ -97,8 +91,6 @@
           }
         ]
       }
-    },
-    "pos_x": 525.3333333333334,
-    "pos_y": -34
+    }
   }
 }

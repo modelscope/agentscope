@@ -27,9 +27,7 @@
           }
         ]
       }
-    },
-    "pos_x": 213,
-    "pos_y": 91
+    }
   },
   "8": {
     "name": "UserAgent",
@@ -57,9 +55,7 @@
           }
         ]
       }
-    },
-    "pos_x": 472,
-    "pos_y": 109
+    }
   },
   "10": {
     "name": "dashscope_chat",
@@ -75,9 +71,7 @@
       }
     },
     "inputs": {},
-    "outputs": {},
-    "pos_x": 91,
-    "pos_y": 14
+    "outputs": {}
   },
   "11": {
     "name": "Message",
@@ -101,9 +95,7 @@
           }
         ]
       }
-    },
-    "pos_x": -9,
-    "pos_y": 133
+    }
   },
   "12": {
     "name": "CopyNode",
@@ -126,8 +118,6 @@
       "output_1": {
         "connections": []
       }
-    },
-    "pos_x": 556,
-    "pos_y": 464
+    }
   }
 }

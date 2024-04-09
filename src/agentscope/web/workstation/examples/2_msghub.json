@@ -13,9 +13,7 @@
       }
     },
     "inputs": {},
-    "outputs": {},
-    "pos_x": 54,
-    "pos_y": 6
+    "outputs": {}
   },
   "3": {
     "name": "MsgHub",
@@ -44,9 +42,7 @@
       "output_1": {
         "connections": []
       }
-    },
-    "pos_x": 392,
-    "pos_y": 58
+    }
   },
   "4": {
     "name": "SequentialPipeline",
@@ -65,9 +61,7 @@
       "output_1": {
         "connections": []
       }
-    },
-    "pos_x": 415,
-    "pos_y": 116
+    }
   },
   "5": {
     "name": "DialogAgent",
@@ -87,9 +81,7 @@
       "output_1": {
         "connections": []
       }
-    },
-    "pos_x": 452,
-    "pos_y": 206
+    }
   },
   "6": {
     "name": "UserAgent",
@@ -107,9 +99,7 @@
       "output_1": {
         "connections": []
       }
-    },
-    "pos_x": 691,
-    "pos_y": 266
+    }
   },
   "7": {
     "name": "Message",
@@ -134,8 +124,6 @@
           }
         ]
       }
-    },
-    "pos_x": 26,
-    "pos_y": 163
+    }
   }
 }

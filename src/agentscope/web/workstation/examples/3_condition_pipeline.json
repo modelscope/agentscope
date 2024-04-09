@@ -29,9 +29,7 @@
           }
         ]
       }
-    },
-    "pos_x": 84,
-    "pos_y": -23
+    }
   },
   "4": {
     "name": "Message",
@@ -55,9 +53,7 @@
           }
         ]
       }
-    },
-    "pos_x": -224,
-    "pos_y": -15
+    }
   },
   "5": {
     "name": "UserAgent",
@@ -75,9 +71,7 @@
       "output_1": {
         "connections": []
       }
-    },
-    "pos_x": 122,
-    "pos_y": 153
+    }
   },
   "6": {
     "name": "DialogAgent",
@@ -97,9 +91,7 @@
       "output_1": {
         "connections": []
       }
-    },
-    "pos_x": 339,
-    "pos_y": 295
+    }
   },
   "7": {
     "name": "SwitchPipeline",
@@ -130,9 +122,7 @@
       "output_1": {
         "connections": []
       }
-    },
-    "pos_x": 637,
-    "pos_y": 4
+    }
   },
   "8": {
     "name": "dashscope_chat",
@@ -148,9 +138,7 @@
       }
     },
     "inputs": {},
-    "outputs": {},
-    "pos_x": -167.33333333333334,
-    "pos_y": 317
+    "outputs": {}
   },
   "9": {
     "name": "Placeholder",
@@ -164,9 +152,7 @@
       "output_1": {
         "connections": []
       }
-    },
-    "pos_x": 751,
-    "pos_y": 395
+    }
   },
   "10": {
     "name": "UserAgent",
@@ -184,8 +170,6 @@
       "output_1": {
         "connections": []
       }
-    },
-    "pos_x": 730,
-    "pos_y": 259
+    }
   }
 }
