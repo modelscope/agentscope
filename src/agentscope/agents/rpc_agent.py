@@ -684,7 +684,17 @@ class AgentPlatform(RpcAgentServicer):
         if isinstance(task_msg, PlaceholderMessage):
             task_msg.update_value()
         cond = self.result_pool[task_id]
-        result = self.agent_pool[agent_id].reply(task_msg)
-        self.result_pool[task_id] = result
+        try:
+            result = self.agent_pool[agent_id].reply(task_msg)
+            self.result_pool[task_id] = result
+        except Exception:
+            error_msg = traceback.format_exc()
+            logger.error(f"Error in agent [{agent_id}]:\n{error_msg}")
+            self.result_pool[task_id] = Msg(
+                name="ERROR",
+                role="assistant",
+                __status="ERROR",
+                content=f"Error in agent [{agent_id}]:\n{error_msg}",
+            )
         with cond:
             cond.notify_all()

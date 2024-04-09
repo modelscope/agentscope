@@ -337,7 +337,11 @@ class PlaceholderMessage(MessageBase):
                 func_name="_get",
                 value=json.dumps({"task_id": self._task_id}),
             )
-            self.update(deserialize(result))
+            msg = deserialize(result)
+            status = msg.pop("__status", "OK")
+            if status == "ERROR":
+                raise RuntimeError(msg.content)
+            self.update(msg)
             # the actual value has been updated, not a placeholder any more
             self._is_placeholder = False
         return self
