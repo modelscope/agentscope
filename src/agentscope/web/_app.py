@@ -10,6 +10,7 @@ from flask_socketio import SocketIO
 app = Flask(__name__)
 socketio = SocketIO(app)
 CORS(app)  # This will enable CORS for all routes
+PORT = 5050
 
 
 PATH_SAVE = ""
@@ -42,7 +43,7 @@ def get_projects() -> Response:
 @app.route("/")
 def home() -> str:
     """Render the home page."""
-    return render_template("home.html")
+    return render_template("home.html", ip="127.0.0.1", prot=PORT)
 
 
 @app.route("/run/<run_dir>")
@@ -88,6 +89,12 @@ def run_detail(run_dir: str) -> str:
     return render_template("run.html", runInfo=logging_and_dialog)
 
 
+@app.route("/workstation")
+def workstation() -> str:
+    """Workstation static html"""
+    return render_template("workstation.html")
+
+
 @socketio.on("connect")
 def on_connect() -> None:
     """Execute when a client is connected."""
@@ -113,6 +120,8 @@ def init(
         raise FileNotFoundError(f"The path {path_save} does not exist.")
 
     PATH_SAVE = path_save
+    global PORT
+    PORT = port
     socketio.run(
         app,
         host=host,
@@ -120,3 +129,7 @@ def init(
         debug=debug,
         allow_unsafe_werkzeug=True,
     )
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=PORT)
