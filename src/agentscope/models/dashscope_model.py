@@ -77,7 +77,7 @@ class DashScopeWrapperBase(ModelWrapperBase, ABC):
 
 class DashScopeChatWrapper(DashScopeWrapperBase):
     """The model wrapper for DashScope's chat API, refer to
-    https://help.aliyun.com/zh/dashscope/developer-reference/api-details?spm=a2c4g.11186623.0.0.3bbc4393n1BV1n
+    https://help.aliyun.com/zh/dashscope/developer-reference/api-details
     """
 
     model_type: str = "dashscope_chat"
@@ -316,7 +316,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
 
 class DashScopeImageSynthesisWrapper(DashScopeWrapperBase):
     """The model wrapper for DashScope Image Synthesis API, refer to
-    https://help.aliyun.com/zh/dashscope/developer-reference/quick-start-1?spm=a2c4g.11186623.0.0.74ea23edcoyWhY
+    https://help.aliyun.com/zh/dashscope/developer-reference/quick-start-1
     """
 
     model_type: str = "dashscope_image_synthesis"
@@ -520,7 +520,7 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapperBase):
 
 class DashScopeMultiModalWrapper(DashScopeWrapperBase):
     """The model wrapper for DashScope Multimodal API, refer to
-    https://help.aliyun.com/zh/dashscope/developer-reference/tongyi-qianwen-vl-api?spm=a2c4g.11186623.0.0.c77e23edWgUD86
+    https://help.aliyun.com/zh/dashscope/developer-reference/tongyi-qianwen-vl-api
     """
 
     model_type: str = "dashscope_multimodal"
