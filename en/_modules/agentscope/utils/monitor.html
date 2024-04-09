@@ -389,16 +389,17 @@
 <div class="viewcode-block" id="sqlite_transaction">
 <a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.sqlite_transaction">[docs]</a>
 <span class="nd">@contextmanager</span>
-<span class="k">def</span> <span class="nf">sqlite_transaction</span><span class="p">(</span><span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">sqlite_transaction</span><span class="p">(</span><span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">30.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a sqlite transaction cursor.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        db_path (`str`): path to the sqlite db file</span>
+<span class="sd">        timeout (`float`): timeout of the connection</span>
 
 <span class="sd">    Yields:</span>
 <span class="sd">        `Generator`: a cursor with transaction</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
     <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;BEGIN&quot;</span><span class="p">)</span>
@@ -416,16 +417,17 @@
 <div class="viewcode-block" id="sqlite_cursor">
 <a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.sqlite_cursor">[docs]</a>
 <span class="nd">@contextmanager</span>
-<span class="k">def</span> <span class="nf">sqlite_cursor</span><span class="p">(</span><span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">sqlite_cursor</span><span class="p">(</span><span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">30.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a sqlite cursor.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        db_path (`str`): path to the sqlite db file</span>
+<span class="sd">        timeout (`float`): timeout of the connection</span>
 
 <span class="sd">    Yields:</span>
 <span class="sd">        `Generator`: a cursor</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
     <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">yield</span> <span class="n">cursor</span>

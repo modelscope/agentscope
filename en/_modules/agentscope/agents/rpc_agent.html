@@ -101,6 +101,7 @@
 <span class="kn">import</span> <span class="nn">socket</span>
 <span class="kn">import</span> <span class="nn">threading</span>
 <span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Sequence</span>
 <span class="kn">from</span> <span class="nn">concurrent</span> <span class="kn">import</span> <span class="n">futures</span>
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
@@ -859,8 +860,18 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">task_msg</span><span class="p">,</span> <span class="n">PlaceholderMessage</span><span class="p">):</span>
             <span class="n">task_msg</span><span class="o">.</span><span class="n">update_value</span><span class="p">()</span>
         <span class="n">cond</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_pool</span><span class="p">[</span><span class="n">task_id</span><span class="p">]</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">[</span><span class="n">agent_id</span><span class="p">]</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="n">task_msg</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">result_pool</span><span class="p">[</span><span class="n">task_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">[</span><span class="n">agent_id</span><span class="p">]</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="n">task_msg</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">result_pool</span><span class="p">[</span><span class="n">task_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error in agent [</span><span class="si">{</span><span class="n">agent_id</span><span class="si">}</span><span class="s2">]:</span><span class="se">\n</span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">result_pool</span><span class="p">[</span><span class="n">task_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ERROR&quot;</span><span class="p">,</span>
+                <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
+                <span class="n">__status</span><span class="o">=</span><span class="s2">&quot;ERROR&quot;</span><span class="p">,</span>
+                <span class="n">content</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error in agent [</span><span class="si">{</span><span class="n">agent_id</span><span class="si">}</span><span class="s2">]:</span><span class="se">\n</span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="k">with</span> <span class="n">cond</span><span class="p">:</span>
             <span class="n">cond</span><span class="o">.</span><span class="n">notify_all</span><span class="p">()</span></div>
 </div>

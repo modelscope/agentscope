@@ -892,11 +892,14 @@ the same <cite>prefix</cite>, only the first time will take effect.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="agentscope.utils.monitor.sqlite_cursor">
-<span class="sig-prename descclassname"><span class="pre">agentscope.utils.monitor.</span></span><span class="sig-name descname"><span class="pre">sqlite_cursor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span></span></span><a class="reference internal" href="_modules/agentscope/utils/monitor.html#sqlite_cursor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.utils.monitor.sqlite_cursor" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">agentscope.utils.monitor.</span></span><span class="sig-name descname"><span class="pre">sqlite_cursor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span></span></span><a class="reference internal" href="_modules/agentscope/utils/monitor.html#sqlite_cursor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.utils.monitor.sqlite_cursor" title="Link to this definition"></a></dt>
 <dd><p>Get a sqlite cursor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>db_path</strong> (<cite>str</cite>) – path to the sqlite db file</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db_path</strong> (<cite>str</cite>) – path to the sqlite db file</p></li>
+<li><p><strong>timeout</strong> (<cite>float</cite>) – timeout of the connection</p></li>
+</ul>
 </dd>
 <dt class="field-even">Yields<span class="colon">:</span></dt>
 <dd class="field-even"><p><cite>Generator</cite> – a cursor</p>
@@ -906,11 +909,14 @@ the same <cite>prefix</cite>, only the first time will take effect.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="agentscope.utils.monitor.sqlite_transaction">
-<span class="sig-prename descclassname"><span class="pre">agentscope.utils.monitor.</span></span><span class="sig-name descname"><span class="pre">sqlite_transaction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span></span></span><a class="reference internal" href="_modules/agentscope/utils/monitor.html#sqlite_transaction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.utils.monitor.sqlite_transaction" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">agentscope.utils.monitor.</span></span><span class="sig-name descname"><span class="pre">sqlite_transaction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span></span></span><a class="reference internal" href="_modules/agentscope/utils/monitor.html#sqlite_transaction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.utils.monitor.sqlite_transaction" title="Link to this definition"></a></dt>
 <dd><p>Get a sqlite transaction cursor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>db_path</strong> (<cite>str</cite>) – path to the sqlite db file</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db_path</strong> (<cite>str</cite>) – path to the sqlite db file</p></li>
+<li><p><strong>timeout</strong> (<cite>float</cite>) – timeout of the connection</p></li>
+</ul>
 </dd>
 <dt class="field-even">Yields<span class="colon">:</span></dt>
 <dd class="field-even"><p><cite>Generator</cite> – a cursor with transaction</p>

@@ -467,7 +467,11 @@
                 <span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;_get&quot;</span><span class="p">,</span>
                 <span class="n">value</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s2">&quot;task_id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_task_id</span><span class="p">}),</span>
             <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">deserialize</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">deserialize</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;__status&quot;</span><span class="p">,</span> <span class="s2">&quot;OK&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;ERROR&quot;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="c1"># the actual value has been updated, not a placeholder any more</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_is_placeholder</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="bp">self</span></div>
