@@ -26,6 +26,7 @@ from .dashscope_model import (
     DashScopeChatWrapper,
     DashScopeImageSynthesisWrapper,
     DashScopeTextEmbeddingWrapper,
+    DashScopeMultiModalWrapper,
 )
 from .ollama_model import (
     OllamaChatWrapper,
@@ -55,6 +56,7 @@ __all__ = [
     "DashScopeChatWrapper",
     "DashScopeImageSynthesisWrapper",
     "DashScopeTextEmbeddingWrapper",
+    "DashScopeMultiModalWrapper",
     "OllamaChatWrapper",
     "OllamaEmbeddingWrapper",
     "OllamaGenerationWrapper",
