@@ -17,39 +17,38 @@ html, body {
 }
 
 header {
-    display: flex; /* 使用flex布局 */
-    justify-content: space-between; /* 将标题和链接分隔开 */
-    align-items: center; /* 垂直居中 */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     height: 66px;
     border-bottom: 1px solid var(--border-color);
-    padding: 0 20px; /* 左右内边距 */
-    background-color: rgba(240, 240, 240, 0.2); /* 半透明的背景颜色 */
+    padding: 0 20px;
+    background-color: rgba(240, 240, 240, 0.2);
 }
 
 header h2 {
-    margin: 0px; /* 保持没有外边距 */
-    font-size: 1.5em; /* 可以调整大小 */
-    font-weight: normal; /* 根据喜好调整字体粗细 */
-    color: black; /* 使用变量或直接指定颜色 */
+    margin: 0px;
+    font-size: 1.5em;
+    font-weight: normal;
+    color: black;
 }
 
 header .header-links {
-    display: flex; /* 链接也使用flex布局 */
-    align-items: center; /* 垂直居中 */
+    display: flex;
+    align-items: center;
 }
 
 header .github-link {
-    color: black; /* 链接颜色 */
-    transition: color 0.3s; /* 平滑过渡颜色变化 */
+    color: black;
+    transition: color 0.3s;
 }
 
 header .github-link:hover {
-    color: black; /* 鼠标悬停时的颜色 */
+    color: black;
 }
 
-/* 如果需要的话，适当调整图标大小 */
 header .github-link i {
-    font-size: 1.5em; /* 调整图标大小 */
+    font-size: 1.5em;
 }
 
 header a {
@@ -222,16 +221,13 @@ header a {
     }
 }
 
-
-/* Editing Drawflow */
-
 .drawflow .drawflow-node {
     background: var(--background-color);
     border: 1px solid var(--border-color);
     -webkit-box-shadow: 0 2px 15px 2px var(--border-color);
     box-shadow: 0 2px 15px 2px var(--border-color);
     padding: 0px;
-    width: 200px;
+    width: 280px;
 }
 
 .drawflow .drawflow-node.selected {
@@ -243,7 +239,6 @@ header a {
 
 .drawflow .drawflow-node.selected .title-box {
     color: #22598c;
-    /*border-bottom: 1px solid #4ea9ff;*/
 }
 
 .drawflow .connection .main-path {
@@ -287,7 +282,6 @@ header a {
 }
 
 .drawflow-node .title-box {
-    /*height: 50px;*/
     height: auto;
     line-height: 50px;
     background: var(--background-box-title);
@@ -384,13 +378,12 @@ header a {
 .modal-content {
     position: relative;
     background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
+    margin: 15% auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 400px; /* Could be more or less, depending on screen size */
+    width: 400px;
 }
 
-/* The Close Button */
 .modal .close {
     color: #aaa;
     float: right;
@@ -413,12 +406,12 @@ header a {
     margin-bottom: 0;
     border: 1px solid #ddd;
     user-select: none;
-    transition: background-color 0.3s ease; /* 动画背景颜色变化 */
+    transition: background-color 0.3s ease;
     text-align: center;
 }
 
 .toggle-title:hover {
-    background-color: #e2e2e2; /* 鼠标悬停时改变背景颜色 */
+    background-color: #e2e2e2;
 }
 
 .toggle-sub-title {
@@ -429,13 +422,13 @@ header a {
     margin-bottom: 0;
     border: 1px solid #ddd;
     user-select: none;
-    transition: background-color 0.3s ease; /* 动画背景颜色变化 */
+    transition: background-color 0.3s ease;
     text-align: center;
-    border-radius: 10px; /* 增加圆角，你可以根据需要调整该值 */
+    border-radius: 10px;
 }
 
 .toggle-sub-title:hover {
-    background-color: #e2e2e2; /* 鼠标悬停时改变背景颜色 */
+    background-color: #e2e2e2;
 }
 
 .draggable-content {
@@ -450,20 +443,16 @@ header a {
 .draggable-content.visible {
     margin-top: 5px;
     padding: 10px;
-    max-height: 1000px; /* 这个值要大于内容的实际高度 */
+    max-height: 1000px;
     opacity: 1;
 }
 
-/* 说明文本样式 */
 .readme {
-    background-color: rgba(173, 216, 230, 0.2); /* 半透明白色背景 */
-    /*font-size: xx-small;*/
+    background-color: rgba(173, 216, 230, 0.2);
     font-size: 0.875em;
     border: 1px solid #ddd;
     border-radius: 5px;
-    /*padding: 15px;*/
     color: #333;
-    /*margin: 10px 10px;*/
     width: calc(80% * var(--scale-factor));
     padding: calc(15px * var(--scale-factor));
     margin: calc(10px * var(--scale-factor)) auto;
@@ -486,26 +475,24 @@ header a {
 
 
 .drawflow .drawflow-node.GROUP.hover-drop {
-    background: hsl(225, 100%, 96%); /* 较淡的蓝色，色相为225度，饱和度100%，亮度75% */
+    background: hsl(225, 100%, 96%);
 }
 
-/*Collapse*/
 .title-box {
-    /* 确保title-box有足够的内间距来放置箭头，根据箭头大小调整 */
     padding-right: 30px;
-    position: relative; /* 便于绝对定位箭头 */
-    white-space: nowrap; /* 防止文本换行 */
-    overflow: hidden; /* 隐藏溢出的文本 */
-    text-overflow: ellipsis; /* 显示省略号 */
+    position: relative;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     min-width: 15px;
 }
 
 .toggle-arrow {
     position: absolute;
-    right: 10px; /* 箭头放在最右边 */
-    top: 50%; /* 垂直居中 */
-    transform: translateY(-50%); /* 精确垂直居中 */
-    cursor: pointer; /* 将鼠标光标变成手形图标 */
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
 }
 
 .hidden {
@@ -513,19 +500,20 @@ header a {
 }
 
 pre[class*="language-"] {
-    font-size: 0.5em; /* 你可以根据需要调整这个值 */
+    font-size: 0.5em;
 }
 
 .swal2-title {
     font-size: 20px;
 }
 
-.box{
-    position: relative; /* 使得 resize handle 能够绝对定位在 box 的底部 */
+.box {
+    position: relative;
     overflow: auto;
     width: auto;
     min-width: 15px;
 }
+
 .box input, .box select, .box textarea {
     width: calc(100% * var(--scale-factor));
     margin-bottom: 10px;
@@ -533,15 +521,15 @@ pre[class*="language-"] {
 
 .box label {
     display: inline-block;
-    margin-bottom: 0.5em; /* 间距可以按需调整 */
-    font-size: calc(1em * var(--scale-factor)); /* 响应式字体大小 */
+    margin-bottom: 0.5em;
+    font-size: calc(1em * var(--scale-factor));
 }
 
 .box input {
-    width: calc(100% * var(--scale-factor)); /* 响应式宽度 */
-    font-size: calc(1em * var(--scale-factor)); /* 响应式字体大小 */
-    height: calc(30px * var(--scale-factor)); /* 响应式高度 */
-    box-sizing: border-box; /* 确保边框和内边距包含在宽度和高度内 */
+    width: calc(100% * var(--scale-factor));
+    font-size: calc(1em * var(--scale-factor));
+    height: calc(30px * var(--scale-factor));
+    box-sizing: border-box;
 }
 
 
@@ -552,35 +540,33 @@ pre[class*="language-"] {
     background: #ccc;
     bottom: 0;
     right: 0;
-    cursor: nwse-resize; /* 双向斜箭头光标 */
+    cursor: nwse-resize;
     z-index: 10;
 }
 
 .if-placeholder, .else-placeholder {
-    border: 1px dashed #ccc; /* 示意性边框 */
-    height: 30%; /* 或者你想要的任何高度 */
-    margin: 5px; /* 保持一些空间 */
+    border: 1px dashed #ccc;
+    height: 30%;
+    margin: 5px;
 }
 
 .cases-container {
     margin-top: 10px;
-    min-height: 50px; /* 可根据需要设置自定义高度 */
+    min-height: 50px;
 }
 
 .case-placeholder {
     border: 1px dashed #ccc;
-    height: 100px; /* 或者你想要的任何高度 */
+    height: 100px;
     padding: 5px;
-    margin-bottom: 5px; /* 为每个 case 分支添加间隔 */
+    margin-bottom: 5px;
 }
 
-/* 最后一个 case （通常是 default case）不需要分隔符 */
 .case-placeholder:last-child {
-    height: 100px; /* 或者你想要的任何高度 */
-    border-bottom: 1px dashed #ccc; /* 底部边框作为分隔符 */
+    height: 100px;
+    border-bottom: 1px dashed #ccc;
 }
 
-/* 通用按钮样式 */
 .button {
     display: inline-block;
     padding: 6px 12px;
@@ -588,34 +574,30 @@ pre[class*="language-"] {
     font-size: 10px;
     font-weight: bold;
     color: #ffffff;
-    background-image: linear-gradient(to right, #6e48aa, #9d50bb); /* 渐变背景 */
-    border: 2px solid transparent; /* 细边框设置为透明 */
-    border-radius: 30px; /* 圆润的角 */
+    background-image: linear-gradient(to right, #6e48aa, #9d50bb);
+    border: 2px solid transparent;
+    border-radius: 30px;
     cursor: pointer;
     text-align: center;
     text-decoration: none;
-    transition: all 0.3s ease; /* 平滑的过渡效果 */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 柔和的阴影效果 */
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* 按钮悬浮效果 */
 .button:hover {
-    background-image: linear-gradient(to left, #6e48aa, #9d50bb); /* 渐变方向反向 */
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* 更大的阴影效果 */
-    transform: translateY(-2px); /* 微小的向上移动效果 */
+    background-image: linear-gradient(to left, #6e48aa, #9d50bb);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
 }
 
-/* 添加按钮专用样式 */
 .add-case {
-    background-image: linear-gradient(to right, #56ab2f, #a8e063); /* 绿色渐变 */
+    background-image: linear-gradient(to right, #56ab2f, #a8e063);
 }
 
-/* 移除按钮专用样式 */
 .remove-case {
-    background-image: linear-gradient(to right, #f85032, #e73827); /* 红色渐变 */
+    background-image: linear-gradient(to right, #f85032, #e73827);
 }
 
-/* 禁用按钮样式 */
 .button:disabled,
 .button:disabled:hover,
 .button:disabled:active {

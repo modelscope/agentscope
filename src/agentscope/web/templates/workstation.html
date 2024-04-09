@@ -24,7 +24,8 @@
         src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"></script>
 <link href="https://cdn.jsdelivr.net/gh/jerosoler/Drawflow@0.0.48/dist/drawflow.min.css"
       rel="stylesheet">
-<link href="workstation.css" rel="stylesheet" type="text/css"/>
+<link href="{{ url_for('static', filename='css/workstation.css') }}"
+      rel="stylesheet" type="text/css"/>
 <link crossorigin="anonymous"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"
       integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ="
@@ -40,14 +41,19 @@
     <div class="github-link"><a href="https://github.com/modelscope/agentscope"
                                 target="_blank"><i
             class="fab fa-github fa-3x"></i></a></div>
-    <!--    <div class="them-edit-link"><a href="https://jerosoler.github.io/drawflow-theme-generator/" target="_blank">🎨</a></div>-->
+    \
+    <a href="https://github.com/{{ user_login }}"
+       style="display: block; margin: 10px 0 10px 0; margin-right: 60px;"
+       target="_blank">
+        {{ user_login }}
+    </a>
 </header>
 <div class="wrapper">
     <div class="col">
-        <h3 class="toggle-title" onclick="toggleDraggable(this)">Examples</h3>
-        <div class="draggable-content">
-            🚧施工中...
-        </div>
+        <!--        <h3 class="toggle-title" onclick="toggleDraggable(this)">Examples</h3>-->
+        <!--        <div class="draggable-content">-->
+        <!--            🚧...-->
+        <!--        </div>-->
         <h3 class="toggle-title" onclick="toggleDraggable(this)">Workflow</h3>
         <div class="draggable-content visible">
             <h4 class="toggle-sub-title" onclick="toggleDraggable(this)">
@@ -127,71 +133,16 @@
                 </span>
                 </div>
             </div>
-            <h4 class="toggle-sub-title" onclick="toggleDraggable(this)">
-                Service</h4>
-            <div class="draggable-content">
-                🚧施工中...
-            </div>
+            <!--            <h4 class="toggle-sub-title" onclick="toggleDraggable(this)">-->
+            <!--                Service</h4>-->
+            <!--            <div class="draggable-content">-->
+            <!--                🚧...-->
+            <!--            </div>-->
         </div>
-        <h3 class="toggle-title" onclick="toggleDraggable(this)">Studio</h3>
-        <div class="draggable-content">
-            🚧施工中...
-        </div>
-        <h3 class="toggle-title" onclick="toggleDraggable(this)">History</h3>
-        <div class="draggable-content">
-            🚧施工中...
-        </div>
-        <h3 class="toggle-title" onclick="toggleDraggable(this)">Templates</h3>
-        <div class="draggable-content">
-            <div class="drag-drawflow" data-node="facebook" draggable="true"
-                 ondragstart="drag(event)">
-                <i class="fab fa-facebook"></i><span> Facebook</span>
-            </div>
-            <div class="drag-drawflow" data-node="slack" draggable="true"
-                 ondragstart="drag(event)">
-                <i class="fab fa-slack"></i><span> Slack receive message</span>
-            </div>
-            <div class="drag-drawflow" data-node="github" draggable="true"
-                 ondragstart="drag(event)">
-                <i class="fab fa-github"></i><span> Github Star</span>
-            </div>
-            <div class="drag-drawflow" data-node="telegram" draggable="true"
-                 ondragstart="drag(event)">
-                <i class="fab fa-telegram"></i><span> Telegram send message</span>
-            </div>
-            <div class="drag-drawflow" data-node="aws" draggable="true"
-                 ondragstart="drag(event)">
-                <i class="fab fa-aws"></i><span> AWS</span>
-            </div>
-            <div class="drag-drawflow" data-node="log" draggable="true"
-                 ondragstart="drag(event)">
-                <i class="fas fa-file-signature"></i><span> File Log</span>
-            </div>
-            <div class="drag-drawflow" data-node="google" draggable="true"
-                 ondragstart="drag(event)">
-                <i class="fab fa-google-drive"></i><span> Google Drive save</span>
-            </div>
-            <div class="drag-drawflow" data-node="email" draggable="true"
-                 ondragstart="drag(event)">
-                <i class="fas fa-at"></i><span> Email send</span>
-            </div>
-            <div class="drag-drawflow" data-node="template" draggable="true"
-                 ondragstart="drag(event)">
-                <i class="fas fa-code"></i><span> Template</span>
-            </div>
-            <div class="drag-drawflow" data-node="multiple" draggable="true"
-                 ondragstart="drag(event)">
-                <i class="fas fa-code-branch"></i><span> Multiple inputs/outputs</span>
-            </div>
-            <div class="drag-drawflow" data-node="personalized"
-                 draggable="true" ondragstart="drag(event)">
-                <i class="fas fa-fill"></i><span> Personalized</span>
-            </div>
-            <div class="drag-drawflow" data-node="dbclick" draggable="true"
-                 ondragstart="drag(event)">
-                <i class="fas fa-mouse"></i><span> DBClick!</span>
-            </div>
-        </div>
+        <!--        <h3 class="toggle-title" onclick="toggleDraggable(this)">Studio</h3>-->
+        <!--        <div class="draggable-content">-->
+        <!--            🚧...-->
+        <!--        </div>-->
 
 
     </div>
@@ -292,12 +243,6 @@
           ✅ High Robustness<br><br>
           🌐 Actor-Based Distribution<br>
 
-<!--          <br>-->
-<!--          <p><b><u>How to use:</u></b></p><br>-->
-<!--           🖱️ Drag and Drop<br><br>-->
-<!--           🔗 Connect Modules<br><br>-->
-<!--           ✍️ Fill in the Blank<br>-->
-
            <br>
            <p><b><u>Documentations:</u></b></p><br>
            🚀 <a href="https://github.com/modelscope/agentscope/blob/main/README.md" target="_blank">Quick Start</a> <a href="https://github.com/modelscope/agentscope/blob/main/README_ZH.md" target="_blank">[CN]</a><br><br>
@@ -322,6 +267,30 @@
 
     editor.on('nodeRemoved', function (id) {
         console.log("Node removed " + id);
+        Object.keys(editor.drawflow.drawflow[editor.module].data).forEach(nodeKey => {
+            var node = editor.drawflow.drawflow[editor.module].data[nodeKey];
+            var nodeData =
+                editor.drawflow.drawflow[editor.module].data[nodeKey].data;
+            console.log("nodeKey", nodeKey);
+            console.log("node", node);
+            console.log("nodeData", nodeData);
+            console.log("id", id);
+
+            if (nodeData && nodeData.copies) {
+                console.log("Array.isArray(nodeData.copies)", Array.isArray(nodeData.copies))
+                if (nodeData.copies.includes(id)) {
+                    console.log("nodeData.copies", nodeData.copies);
+                    console.log("nodeData.copies.includes(id)",
+                        nodeData.copies.includes(id));
+                    var index = nodeData.copies.indexOf(id);
+                    console.log("index", index);
+                    if (index > -1) {
+                        nodeData.copies.splice(index, 1);
+                        editor.updateNodeDataFromId(nodeKey, nodeData);
+                    }
+                }
+            }
+        })
     })
 
     editor.on('nodeSelected', function (id) {
@@ -370,43 +339,77 @@
         console.log("Reroute removed " + id);
     })
 
-    // Refine function for group node
+
+    let last_x = 0;
+    let last_y = 0;
     let dragElementHover = null;
+
     editor.on("mouseMove", ({x, y}) => {
-        if (editor.node_selected && editor.drag && editor.node_selected.classList[1] !== "GROUP") {
-            const eles = document.elementsFromPoint(x, y);
-            const ele = eles.filter(ele => ele.classList[1] === "GROUP");
-            if (ele.length > 0) {
-                dragElementHover = ele[0];
-                dragElementHover.classList.add("hover-drop");
-            } else {
-                if (dragElementHover != null) {
+        const hoverEles = document.elementsFromPoint(x, y);
+        const nextGroup = hoverEles.find(ele => ele.classList.contains('GROUP') && (!editor.node_selected || ele.id !== editor.node_selected.id));
+
+        if (nextGroup) {
+            if (dragElementHover !== nextGroup) {
+                if (dragElementHover) {
                     dragElementHover.classList.remove("hover-drop");
-                    dragElementHover = null;
                 }
+                dragElementHover = nextGroup;
+                dragElementHover.classList.add("hover-drop");
             }
-        } else if (editor.node_selected && editor.drag && editor.node_selected.classList[1] == "GROUP") {
-            const dragNode = editor.node_selected.id.slice(5);
-            const dragNodeInfo = editor.getNodeFromId(dragNode);
-            const elements = dragNodeInfo.data.elements;
-            elements.forEach(eleN => {
-
-                const node = document.getElementById(`node-${eleN}`);
-                var xnew = (last_x - x) * editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom);
-                var ynew = (last_y - y) * editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom);
-
-                node.style.top = (node.offsetTop - ynew) + "px";
-                node.style.left = (node.offsetLeft - xnew) + "px";
-
-                editor.drawflow.drawflow[editor.module].data[eleN].pos_x = (node.offsetLeft - xnew);
-                editor.drawflow.drawflow[editor.module].data[eleN].pos_y = (node.offsetTop - ynew);
-                editor.updateConnectionNodes(`node-${eleN}`);
-
-            });
+        } else if (dragElementHover) {
+            dragElementHover.classList.remove("hover-drop");
+            dragElementHover = null;
         }
+
+        if (editor.node_selected && editor.drag) {
+            const selectedNodeId = editor.node_selected.id.slice(5);
+            var dx = (last_x - x) * editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom);
+            var dy = (last_y - y) * editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom);
+
+            if (editor.node_selected.classList.contains("GROUP")) {
+                moveGroupNodes(selectedNodeId, -dx, -dy);
+            }
+        } else {
+            if (dragElementHover) {
+                dragElementHover.classList.remove("hover-drop");
+                dragElementHover = null;
+            }
+        }
+
         last_x = x;
         last_y = y;
-    })
+    });
+
+    function moveGroupNodes(groupId, dx, dy) {
+        const groupInfo = editor.getNodeFromId(groupId);
+        const elements = groupInfo.data.elements || [];
+        elements.forEach(eleId => {
+            const eleNode = document.getElementById(`node-${eleId}`);
+            const eleNodeInfo = editor.getNodeFromId(eleId);
+
+            if (eleNode) {
+                const nodeData = editor.drawflow.drawflow[editor.module].data[eleId];
+                const newPosX = nodeData.pos_x + dx;
+                const newPosY = nodeData.pos_y + dy;
+
+                eleNode.style.left = newPosX + "px";
+                eleNode.style.top = newPosY + "px";
+
+                if (editor.drawflow.drawflow[editor.module] &&
+                    editor.drawflow.drawflow[editor.module].data &&
+                    editor.drawflow.drawflow[editor.module].data[eleId]) {
+                    editor.drawflow.drawflow[editor.module].data[eleId].pos_x = newPosX;
+                    editor.drawflow.drawflow[editor.module].data[eleId].pos_y = newPosY;
+                }
+
+                editor.updateConnectionNodes(`node-${eleId}`);
+            }
+
+            if (eleNodeInfo.class && eleNodeInfo.class === "GROUP") {
+                moveGroupNodes(eleId, dx, dy);
+            }
+        });
+    }
 
     editor.on("nodeMoved", (id) => {
         const dragNode = id;
@@ -420,13 +423,34 @@
                 if (dropNodeInfoData.elements.indexOf(dragNode) === -1) {
                     dropNodeInfoData.elements.push(dragNode);
                     editor.updateNodeDataFromId(dropNode, dropNodeInfoData);
+                    // remove connections
+                    editor.removeConnectionNodeId('node-' + id);
+                    // Hide the ports when node is inside the group
+                    togglePortsDisplay(dragNode, 'none');
                 }
             }
             dragElementHover = null;
         } else {
+            // If the node is moved outside of any group, show the ports
+            togglePortsDisplay(dragNode, '');
             removeOfGroupNode(dragNode);
         }
     })
+
+    function togglePortsDisplay(nodeId, displayStyle) {
+        const nodeElement = document.querySelector(`#node-${nodeId}`);
+        if (nodeElement) {
+            const inputs = nodeElement.querySelectorAll('.inputs .input');
+            const outputs = nodeElement.querySelectorAll('.outputs .output');
+            inputs.forEach(input => {
+                input.style.display = displayStyle;
+            });
+            outputs.forEach(output => {
+                output.style.display = displayStyle;
+            });
+        }
+    }
+
 
     editor.on("nodeRemoved", (id) => {
         removeOfGroupNode(id);
@@ -487,6 +511,7 @@
         }
 
     }
+
 
     function addNodeToDrawFlow(name, pos_x, pos_y) {
         if (editor.editor_mode === 'fixed') {
@@ -667,12 +692,18 @@
 
             // Workflow-Agent
             case 'DialogAgent':
+                var placeholderId = "ID_PLACEHOLDER";
+
                 var DialogAgent = `
           <div>
             <div class="title-box"><i class="fas fa-robot"></i>DialogAgent
+            <button class="button copy-button">Copy</button>
                       <span class="toggle-arrow">&#x25B2;</span></div>
             <div class="box">
-              <div class="readme">Agent for dialog</div>
+              <div class="readme">
+              <div>Node ID: <span class="node-id">${placeholderId}</span></div>
+              Agent for dialog
+                </div>
               <p>Name</p>
               <input type="text" df-args-name placeholder="Assistant"><br>
               <p>System prompt</p>
@@ -692,32 +723,54 @@
                             "model_config_name": ''
                         }
                     }, DialogAgent);
+                // 替换占位符为真实的 ID
+                var nodeElement = document.querySelector(`#node-${DialogAgentID} .node-id`);
+                if (nodeElement) {
+                    nodeElement.textContent = DialogAgentID;
+                }
                 setupNodeListeners(DialogAgentID);
+                setupNodeCopyListens(DialogAgentID);
                 break;
 
             case 'UserAgent':
+                var placeholderId = "ID_PLACEHOLDER";
                 var UserAgent = `
           <div>
             <div class="title-box"><i class="fas fa-robot"></i>UserAgent
+            <button class="button copy-button">Copy</button>
             <span class="toggle-arrow">&#x25B2;</div>
             <div class="box">
-            <div class="readme">A proxy agent for user</div>
+            <div class="readme">
+            <div>Node ID: <span class="node-id">${placeholderId}</span></div>
+            A proxy agent for user</div>
               <p>Name</p>
               <input type="text" df-args-name placeholder="User"><br>
             </div>
           </div>
           `;
                 const UserAgentID = editor.addNode('UserAgent', 1, 1, pos_x,
-                    pos_y, 'UserAgent', {"args": {"name": 'User'}}, UserAgent);
+                    pos_y, 'UserAgent', {
+                        "args": {"name": 'User'}
+                    }, UserAgent);
+                // 替换占位符为真实的 ID
+                var nodeElement = document.querySelector(`#node-${UserAgentID} .node-id`);
+                if (nodeElement) {
+                    nodeElement.textContent = UserAgentID;
+                }
                 setupNodeListeners(UserAgentID);
+                setupNodeCopyListens(UserAgentID);
                 break;
             case 'TextToImageAgent':
+                var placeholderId = "ID_PLACEHOLDER";
                 var TextToImageAgent = `
           <div>
             <div class="title-box"><i class="fas fa-robot"></i>TextToImageAgent
+            <button class="button copy-button">Copy</button>
                       <span class="toggle-arrow">&#x25B2;</span></div>
             <div class="box">
-            <div class="readme">Agent for text to image generation</div>
+            <div class="readme">
+              <div>Node ID: <span class="node-id">${placeholderId}</span></div>
+              Agent for text to image generation</div>
               <p>Name</p>
               <input type="text" df-args-name placeholder="Assistant"><br>
               <p>System prompt</p>
@@ -737,16 +790,26 @@
                                 "model_config_name": ''
                             }
                         }, TextToImageAgent);
+                // 替换占位符为真实的 ID
+                var nodeElement = document.querySelector(`#node-${TextToImageAgentID} .node-id`);
+                if (nodeElement) {
+                    nodeElement.textContent = TextToImageAgentID;
+                }
                 setupNodeListeners(TextToImageAgentID);
+                setupNodeCopyListens(TextToImageAgentID);
                 break;
 
             case 'DictDialogAgent':
+                var placeholderId = "ID_PLACEHOLDER";
                 var DictDialogAgent = `
           <div>
             <div class="title-box"><i class="fas fa-robot"></i>DictDialogAgent
+                <button class="button copy-button">Copy</button>
                       <span class="toggle-arrow">&#x25B2;</span></div>
             <div class="box">
-            <div class="readme">Agent that generates response in a dict format</div>
+            <div class="readme">
+            <div>Node ID: <span class="node-id">${placeholderId}</span></div>
+            Agent that generates response in a dict format</div>
               <p>Name</p>
               <input type="text" df-args-name placeholder="Assistant"><br>
               <p>System prompt</p>
@@ -774,7 +837,13 @@
                             "max_retries": 3,
                         }
                     }, DictDialogAgent);
+                // 替换占位符为真实的 ID
+                var nodeElement = document.querySelector(`#node-${DictDialogAgentID} .node-id`);
+                if (nodeElement) {
+                    nodeElement.textContent = DictDialogAgentID;
+                }
                 setupNodeListeners(DictDialogAgentID);
+                setupNodeCopyListens(DictDialogAgentID);
                 addEventListenersToNumberInputs(DictDialogAgentID);
                 break;
 
@@ -945,201 +1014,46 @@
                 }, SwitchPipeline);
                 setupNodeListeners(SwitchPipelineID);
                 setupSwitchPipelineListeners(SwitchPipelineID);
-                // 添加默认的 case
                 const caseContainer = document.querySelector(`#node-${SwitchPipelineID} .case-container`);
                 if (caseContainer) {
-                    addDefaultCase(caseContainer); // 调用辅助函数来添加默认 case
+                    addDefaultCase(caseContainer);
                 } else {
                     console.error(`Case container not found in node-${SwitchPipelineID}.`);
                 }
                 break;
 
             // Workflow-Service
-
-            // Official Template
-            case 'facebook':
-                var facebook = `
-          <div>
-            <div class="title-box"><i class="fab fa-facebook"></i> Facebook Message</div>
-          </div>
-          `;
-                editor.addNode('facebook', 0, 1, pos_x, pos_y, 'facebook', {}, facebook);
-                break;
-            case 'slack':
-                var slackchat = `
-          <div>
-            <div class="title-box"><i class="fab fa-slack"></i> Slack chat message</div>
-          </div>
-          `
-                editor.addNode('slack', 1, 0, pos_x, pos_y, 'slack', {}, slackchat);
-                break;
-            case 'github':
-                var githubtemplate = `
-          <div>
-            <div class="title-box"><i class="fab fa-github "></i> Github Stars</div>
-            <div class="box">
-              <p>Enter repository url</p>
-            <input type="text" df-name>
-            </div>
-          </div>
-          `;
-                editor.addNode('github', 0, 1, pos_x, pos_y, 'github', {"name": ''}, githubtemplate);
-                break;
-            case 'telegram':
-                var telegrambot = `
-          <div>
-            <div class="title-box"><i class="fab fa-telegram-plane"></i> Telegram bot</div>
-            <div class="box">
-              <p>Send to telegram</p>
-              <p>select channel</p>
-              <select df-channel>
-                <option value="channel_1">Channel 1</option>
-                <option value="channel_2">Channel 2</option>
-                <option value="channel_3">Channel 3</option>
-                <option value="channel_4">Channel 4</option>
-              </select>
-            </div>
-          </div>
-          `;
-                editor.addNode('telegram', 1, 0, pos_x, pos_y, 'telegram', {"channel": 'channel_3'}, telegrambot);
-                break;
-            case 'aws':
-                var aws = `
-          <div>
-            <div class="title-box"><i class="fab fa-aws"></i> Aws Save </div>
-            <div class="box">
-              <p>Save in aws</p>
-              <input type="text" df-db-dbname placeholder="DB name"><br><br>
-              <input type="text" df-db-key placeholder="DB key">
-              <p>Output Log</p>
-            </div>
-          </div>
-          `;
-                editor.addNode('aws', 1, 1, pos_x, pos_y, 'aws', {
-                    "db": {
-                        "dbname": '',
-                        "key": ''
-                    }
-                }, aws);
-                break;
-            case 'log':
-                var log = `
-            <div>
-              <div class="title-box"><i class="fas fa-file-signature"></i> Save log file </div>
-            </div>
-            `;
-                editor.addNode('log', 1, 0, pos_x, pos_y, 'log', {}, log);
-                break;
-            case 'google':
-                var google = `
-            <div>
-              <div class="title-box"><i class="fab fa-google-drive"></i> Google Drive save </div>
-            </div>
-            `;
-                editor.addNode('google', 1, 0, pos_x, pos_y, 'google', {}, google);
-                break;
-            case 'email':
-                var email = `
-            <div>
-              <div class="title-box"><i class="fas fa-at"></i> Send Email </div>
-            </div>
-            `;
-                editor.addNode('email', 1, 0, pos_x, pos_y, 'email', {}, email);
-                break;
-
-            case 'template':
-                var template = `
-            <div>
-              <div class="title-box"><i class="fas fa-code"></i> Template</div>
-              <div class="box">
-                Ger Vars
-                <textarea df-template></textarea>
-                Output template with vars
-              </div>
-            </div>
-            `;
-                editor.addNode('template', 1, 1, pos_x, pos_y, 'template', {"template": 'Write your template'}, template);
-                break;
-            case 'multiple':
-                var multiple = `
-            <div>
-              <div class="box">
-                Multiple!
-              </div>
-            </div>
-            `;
-                editor.addNode('multiple', 3, 4, pos_x, pos_y, 'multiple', {}, multiple);
-                break;
-            case 'personalized':
-                var personalized = `
-            <div>
-              Personalized
-            </div>
-            `;
-                editor.addNode('personalized', 1, 1, pos_x, pos_y, 'personalized', {}, personalized);
-                break;
-            case 'dbclick':
-                var dbclick = `
-            <div>
-            <div class="title-box"><i class="fas fa-mouse"></i> Db Click</div>
-              <div class="box dbclickbox" ondblclick="showpopup(event)">
-                Db Click here
-                <div class="modal" style="display:none">
-                  <div class="modal-content">
-                    <span class="close" onclick="closemodal(event)">&times;</span>
-                    Change your variable {name} !
-                    <input type="text" df-name>
-                  </div>
-
-                </div>
-              </div>
-            </div>
-            `;
-                editor.addNode('dbclick', 1, 1, pos_x, pos_y, 'dbclick', {name: ''}, dbclick);
-                break;
-
             default:
         }
     }
 
     function handleInputChange(event) {
-        const input = event.target; // 获取触发事件的输入元素
+        const input = event.target;
 
-        // 检查输入类型是否为数字
         if (input.type === 'number') {
             const value = input.value;
-            // 将值转换为数字
             const floatValue = parseFloat(value);
-            // 找到节点的 ID
             const nodeId = input.closest('.drawflow_content_node').parentElement.id.slice(5);
 
-            // 检查转换后是否为有效的数字
             if (!isNaN(floatValue)) {
-                // 获取节点对象并更新数据
                 const node = editor.getNodeFromId(nodeId);
-                // 获取df-*属性名称，例如 'df-args-max_loop'
                 const dataAttributes =
                     Array.from(input.attributes).filter(attr =>
                         attr.name.startsWith('df-args-'));
-                // 对于所有df-*属性，更新节点数据
                 dataAttributes.forEach(attr => {
                     const attrName = attr.name;
-                    // 从 'df-args-' 后开始提取
                     const dataAttribute = attrName.substring(8);
                     if (node.data.args.hasOwnProperty(dataAttribute)) {
                         node.data.args[dataAttribute] = floatValue;
-                        // 更新节点数据
                         editor.updateNodeDataFromId(nodeId, node.data);
                     }
                 });
             } else {
-                // 如果值不是有效的数字，处理错误情况
                 console.error("Invalid input value:", value);
             }
         }
     }
 
-    // 在添加节点后，为所有数字输入添加事件监听器
     function addEventListenersToNumberInputs(nodeId) {
         const nodeElement = document.getElementById(`node-${nodeId}`);
         if (nodeElement) {
@@ -1152,28 +1066,21 @@
 
     document.addEventListener('input', function (event) {
         if (event.target.getAttribute('df-args-temperature') !== null) {
-            const value = event.target.valueAsNumber; // 获取输入框的数字值
+            const value = event.target.valueAsNumber;
             if (isNaN(value) || value < 0 || value >= 2) {
-                // 如果温度值不在0到2之间，显示一条错误消息
                 event.target.setCustomValidity('Temperature must be greater or equal than 0 and less than 2!');
             } else {
-                // 如果输入有效，清除错误消息
                 event.target.setCustomValidity('');
             }
-            // 强制显示验证结果，如果有错误，会显示错误提示
             event.target.reportValidity();
         }
 
         if (event.target.getAttribute('df-args-seed') !== null) {
-            const value = event.target.valueAsNumber; // 获取输入框的数字值
-            // 检查值是否为空，是否为数字，以及是否为非负整数
+            const value = event.target.valueAsNumber;
             if (value === '' || isNaN(value) || parseInt(value) < 0 || !Number.isInteger(parseFloat(value))) {
-                // 如果不是非负整数，显示一条错误消息
                 event.target.setCustomValidity('Seed must be a non-negative integer!');
-                // 通常你需要触发一个表单的验证失败报告，这里强制重新渲染错误消息
                 event.target.reportValidity();
             } else {
-                // 如果输入有效，清除错误消息
                 event.target.setCustomValidity('');
             }
         }
@@ -1199,59 +1106,117 @@
 
     }
 
-    // 公共函数用于为新添加的节点设置事件监听器
+    function createNodeHTML(node, isCopy) {
+        let readOnlyAttr = isCopy ? 'readonly' : '';
+        console.log("node");
+        console.log(node)
+        return `
+            <div>
+                <div class="title-box">${node.name}
+                </div>
+                <div class="box">
+                    <p>Copy from Node ${node.id}</p>
+                </div>
+            </div>
+        `;
+    }
+
+    //copy node
+    function copyNode(originalNodeId) {
+        var originalNode = editor.getNodeFromId(originalNodeId);
+        if (!originalNode.data.copies) {
+            originalNode.data.copies = [];
+        }
+        console.log("Original node data after copying:", originalNode.data);
+        console.log("originalNode", originalNode)
+        console.log("originalNodeData", originalNode.data)
+        var posX = originalNode.pos_x + 30;
+        var posY = originalNode.pos_y + 30;
+
+        var newNode = JSON.parse(JSON.stringify(originalNode));
+        var newNodeData = {
+            elements: [originalNodeId.toString()]
+        };
+        var newNodeHTML = createNodeHTML(newNode, true);
+
+        // console.log(newNodeData);
+        // console.log(newNodeHTML);
+        var inputCount = Object.keys(originalNode.inputs).length;
+        var outputCount = Object.keys(originalNode.outputs).length;
+
+        const newNodeId = editor.addNode("CopyNode",
+            inputCount, outputCount, posX,
+            posY, 'node-' + originalNode.name, newNodeData,
+            newNodeHTML);
+
+        originalNode.data.copies.push(newNodeId.toString());
+        editor.updateNodeDataFromId(originalNodeId, originalNode.data)
+        console.log("originalNode", originalNode);
+        console.log("originalNode.data.copies", originalNode.data.copies)
+        console.log("newNodeId", newNodeId);
+        setupNodeListeners(newNodeId);
+    }
+
+    function setupNodeCopyListens(nodeId) {
+        const newNode = document.getElementById(`node-${nodeId}`);
+        if (newNode) {
+            // copy button
+            const copyButton = newNode.querySelector('.copy-button');
+            if (copyButton) {
+                copyButton.addEventListener('click', function () {
+                    copyNode(nodeId);
+                });
+            }
+        }
+    }
+
+    function hideShowGroupNodes(groupId, show) {
+        const groupInfo = editor.getNodeFromId(groupId);
+        if (groupInfo && groupInfo.class === 'GROUP') {
+            groupInfo.data.elements.forEach(elementNodeId => {
+                const elementNode = document.getElementById(`node-${elementNodeId}`);
+                const childNodeInfo = editor.getNodeFromId(elementNodeId);
+                if (elementNode) {
+                    elementNode.style.display = show ? '' : 'none';
+                }
+                if (childNodeInfo.class === 'GROUP') {
+                    hideShowGroupNodes(elementNodeId, show);
+                }
+            });
+        }
+    }
+
     function setupNodeListeners(nodeId) {
         const newNode = document.getElementById(`node-${nodeId}`);
         if (newNode) {
+
             const titleBox = newNode.querySelector('.title-box');
             const contentBox = newNode.querySelector('.box');
-            // 添加用于 resize 的 handle 元素
-            const resizeHandleSE = document.createElement('div'); // 右下角
+            const resizeHandleSE = document.createElement('div');
             resizeHandleSE.className = 'resize-handle-se';
             contentBox.appendChild(resizeHandleSE);
 
-            const toggleArrow = newNode.querySelector('.toggle-arrow'); // 获取箭头元素
+            const toggleArrow = newNode.querySelector('.toggle-arrow');
 
-            // 只在点击箭头时添加事件监听器
             if (toggleArrow && contentBox && titleBox) {
                 toggleArrow.addEventListener('click', function () {
                     console.log("Arrow clicked");
                     contentBox.classList.toggle('hidden');
-                    titleBox.classList.toggle('collapsed');
 
-                    nodeInfo = editor.getNodeFromId(nodeId);
-                    console.log("nodeInfo", nodeInfo);
-                    // 如果节点是 'GROUP' 类型
-                    if (nodeInfo && nodeInfo.class === 'GROUP') {
-                        // 遍历 data.elements 中的所有节点 ID
-                        nodeInfo.data.elements.forEach(elementNodeId => {
-                            // 获取对应的节点 DOM 元素
-                            const elementNode = document.getElementById(`node-${elementNodeId}`);
-                            // 如果找到节点，并且当前 GROUP 节点是折叠状态，则隐藏该元素
-                            if (elementNode) {
-                                if (contentBox.classList.contains('hidden')) {
-                                    elementNode.style.display = 'none';
-                                } else {
-                                    elementNode.style.display = ''; // 恢复原有显示样式
-                                }
-                            }
-                        });
-                    }
-
-                    // 根据 box 的状态，更改箭头方向
                     if (contentBox.classList.contains('hidden')) {
-                        toggleArrow.textContent = "\u25BC"; // 箭头向下
+                        toggleArrow.textContent = "\u25BC";
+                        hideShowGroupNodes(nodeId, false);
                     } else {
-                        toggleArrow.textContent = "\u25B2"; // 箭头向上
+                        toggleArrow.textContent = "\u25B2";
+                        hideShowGroupNodes(nodeId, true);
                     }
                     editor.updateConnectionNodes('node-' + nodeId);
                 });
 
-                // 监听 resize handle 的鼠标事件
                 let startX, startY, startWidth, startHeight;
 
                 resizeHandleSE.addEventListener('mousedown', function (e) {
-                    e.stopPropagation(); // 阻止事件冒泡
+                    e.stopPropagation();
                     document.addEventListener('mousemove', doDragSE, false);
                     document.addEventListener('mouseup', stopDragSE, false);
 
@@ -1262,7 +1227,7 @@
                 });
 
                 function doDragSE(e) {
-                    newNode.style.width = 'auto';  // 更改宽度为 auto
+                    newNode.style.width = 'auto';
                     const newWidth = (startWidth + e.clientX - startX) + 'px';
                     contentBox.style.width = newWidth;
                     titleBox.style.width = newWidth;
@@ -1282,13 +1247,11 @@
     }
 
     function setupSwitchPipelineListeners(nodeId) {
-        // 确保节点已经添加
         const newNode = document.getElementById(`node-${nodeId}`);
         if (!newNode) {
             console.error(`Node with ID node-${nodeId} not found.`);
             return;
         }
-        // 添加 case 分支功能
         const addCaseButton = newNode.querySelector('.add-case');
         if (!addCaseButton) {
             console.error(`Add Case button not found in node-${nodeId}.`);
@@ -1300,51 +1263,41 @@
                 console.error(`Case container not found in node-${nodeId}.`);
                 return;
             }
-            // 移除默认 case（如果存在）
             var defaultCaseElement = caseContainer.querySelector('.default-case');
             if (defaultCaseElement) {
                 caseContainer.removeChild(defaultCaseElement);
             }
-            // 添加新的 case
             var caseCount = caseContainer.getElementsByClassName('case-placeholder').length;
             var caseElement = document.createElement('div');
             caseElement.classList.add('case-placeholder');
 
-            // 创建文本节点表示 case 编号
             var caseText = document.createTextNode(`Case ${caseCount + 1}: `);
             caseElement.appendChild(caseText);
 
-            // 创建用于用户输入的输入框
             var inputElement = document.createElement('input');
             inputElement.type = 'text';
             inputElement.placeholder = `Case Pattern`;
 
-            // 给 input 元素一个初始的索引值，索引值等于当前的case数量
             inputElement.dataset.caseIndex = caseCount;
 
-            // 将输入框添加到 case 元素中
             caseElement.appendChild(inputElement);
             caseContainer.appendChild(caseElement);
 
-            // 添加事件监听器，以便在用户输入时更新args.cases数组
             inputElement.addEventListener('input', function (e) {
                 var nodeData = editor.getNodeFromId(nodeId).data;
                 console.log("nodeData", nodeData);
-                var index = e.target.dataset.caseIndex; // 从数据属性中获取索引
+                var index = e.target.dataset.caseIndex;
                 console.log("index", index);
-                nodeData.args.cases[index] = e.target.value; // 更新args.cases数组
+                nodeData.args.cases[index] = e.target.value;
                 editor.updateNodeDataFromId(nodeId, nodeData);
             });
 
-            // 将一个空字符串添加到args.cases中，作为新case的初始值
             editor.getNodeFromId(nodeId).data.args.cases.push('');
 
-            // 重新添加默认 case
             addDefaultCase(caseContainer);
             editor.updateConnectionNodes('node-' + nodeId);
         });
 
-        // 删除 case 分支功能
         const removeCaseButton = newNode.querySelector('.remove-case');
         if (!removeCaseButton) {
             console.error(`Remove Case button not found in node-${nodeId}.`);
@@ -1353,8 +1306,8 @@
         removeCaseButton.addEventListener('click', function () {
             var caseContainer = newNode.querySelector('.case-container');
             var cases = caseContainer.getElementsByClassName('case-placeholder');
-            if (cases.length > 1) { // 保证至少有一个 case
-                caseContainer.removeChild(cases[cases.length - 2]); // 移除倒数第二个 case，保留默认 case
+            if (cases.length > 1) {
+                caseContainer.removeChild(cases[cases.length - 2]);
                 var nodeData = editor.getNodeFromId(nodeId).data;
                 nodeData.args.cases.splice(nodeData.args.cases.length - 1, 1);
                 editor.updateNodeDataFromId(nodeId, nodeData);
@@ -1363,7 +1316,6 @@
         });
     }
 
-    // 添加默认 case 的辅助函数
     function addDefaultCase(caseContainer) {
         var defaultCaseElement = document.createElement('div');
         defaultCaseElement.classList.add('case-placeholder', 'default-case');
@@ -1405,9 +1357,9 @@
     function toggleDraggable(element) {
         var content = element.nextElementSibling;
         if (content.classList.contains('visible')) {
-            content.classList.remove('visible'); // 移除类来隐藏内容
+            content.classList.remove('visible');
         } else {
-            content.classList.add('visible'); // 添加类来显示内容
+            content.classList.add('visible');
         }
     }
 
@@ -1426,7 +1378,7 @@
             }
 
             // Create a copy of the node without 'html', 'typenode', 'class', 'id', and 'name' fields
-            const {html, typenode, class: classField, id, ...cleanNode} = node;
+            const {html, typenode, pos_x, pos_y, class: classField, id, ...cleanNode} = node;
 
             // Add the cleaned node to the filteredNodes object using its id as the key
             filteredNodes[key] = cleanNode;
@@ -1439,18 +1391,14 @@
 
     function sortElementsByPosition(inputData) {
         let hasError = false;
-        // 遍历每个模块
+
         Object.keys(inputData.drawflow).forEach((moduleKey) => {
             const moduleData = inputData.drawflow[moduleKey];
-            // 遍历每个节点
             Object.entries(moduleData.data).forEach(([nodeId, node]) => {
                 if (node.class === 'GROUP') {
-                    // 获取节点的 elements 列表
                     let elements = node.data.elements;
-                    // 获取每个元素节点的位置信息
                     let elementsWithPosition = elements.map(elementId => {
                         const elementNode = document.querySelector(`#node-${elementId}`);
-                        // 如果找到节点，返回位置信息和 ID
                         return elementNode ? {
                             id: elementId,
                             position: {
@@ -1458,41 +1406,35 @@
                                 y: elementNode.style.top
                             }
                         } : null;
-                    }).filter(el => el); // 过滤掉未找到的元素
+                    }).filter(el => el);
 
-                    // 根据 y 坐标值排序元素
                     try {
                         elementsWithPosition.sort((a, b) => {
                             let y1 = parseInt(a.position.y, 10);
                             let y2 = parseInt(b.position.y, 10);
                             if (y1 === y2) {
-                                // 抛出一个错误，并显示一个弹窗
                                 throw new Error(`Two elements have the same y position: Element ${a.id} and Element ${b.id}`);
                             }
-                            return y1 - y2; // 从小到大排序
+                            return y1 - y2;
                         });
                     } catch (error) {
-                        // 使用 alert 弹窗显示错误消息
                         alert(error.message);
-                        hasError = true; // 设置发生错误的标志
+                        hasError = true;
                     }
-                    // 更新节点的 elements 列表为排序后的 ID 列表
                     node.data.elements = elementsWithPosition.map(el => el.id);
                 }
             });
         });
-        return hasError; // 返回是否发生错误
+        return hasError;
     }
 
 
     function showExportPopup() {
         const rawData = editor.export();
 
-        // 排序元素
         const hasError = sortElementsByPosition(rawData);
-        // 如果发生错误，则不继续执行导出
         if (hasError) {
-            return; // 直接退出函数
+            return;
         }
 
         const filteredData = reorganizeAndFilterConfigForAgentScope(rawData);
@@ -1526,10 +1468,8 @@
 
     function copyToClipboard(contentToCopy) {
         navigator.clipboard.writeText(contentToCopy).then(() => {
-            // Copy successful
             Swal.fire('Copied!', '', 'success');
         }).catch((error) => {
-            // Copy failed
             Swal.fire('Failed to copy', '', 'error');
         });
     }
