@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-"""Search papers in arXiv API."""
+"""Search papers in arXiv API. This implementation refers to the repository
+https://github.com/lukasschwab/arxiv.py, which is MIT licensed.
+"""
 import json
 import re
 import time
