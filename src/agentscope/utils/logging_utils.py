@@ -226,8 +226,7 @@ def setup_logger(
         )
 
     if path_log is not None:
-        if not os.path.exists(path_log):
-            os.makedirs(path_log)
+        os.makedirs(path_log, exist_ok=True)
         path_log_file = os.path.join(path_log, "logging.log")
         path_chat_file = os.path.join(
             path_log,
