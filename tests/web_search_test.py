@@ -6,6 +6,7 @@ from unittest.mock import Mock, patch, MagicMock
 from agentscope.service import ServiceResponse, arxiv_search
 from agentscope.service import bing_search, google_search
 from agentscope.service.service_status import ServiceExecStatus
+from agentscope.service.web_search.arxiv import _reformat_query
 
 
 class TestWebSearches(unittest.TestCase):
@@ -135,6 +136,20 @@ class TestWebSearches(unittest.TestCase):
             res.content["entries"][0]["title"],
             "AgentScope: A Flexible yet Robust Multi-Agent Platform",
         )
+
+    def test_arxiv_query_format(self) -> None:
+        """Test arxiv query format."""
+        res = _reformat_query(
+            'ti: "Deep Learning" ANDau:LeCun OR (ti: machine learning '
+            "ANDNOT au:John Doe)",
+        )
+
+        ground_truth = (
+            "ti:%22Deep+Learning%22+AND+au:%22LeCun%22+OR+%28ti:"
+            "%22machine+learning%22+ANDNOT+au:%22John+Doe%22%29"
+        )
+
+        self.assertEqual(ground_truth, res)
 
 
 # This allows the tests to be run from the command line

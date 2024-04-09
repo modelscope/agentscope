@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Search papers in arXiv API."""
 import json
+import re
 import time
 import urllib
 from calendar import timegm
@@ -19,6 +20,12 @@ from agentscope.service.service_response import (
 )
 
 ARXIV_SEARCH_URL = "http://export.arxiv.org/api/query?{parameters_str}"
+
+LOGIC_OPERATORS = ["ANDNOT", "AND", "OR"]
+
+SYMBOLS = ["(", ")"]
+
+QUERY_PREFIX = ["all:", "ti:", "au:", "abs:", "co:", "jr:", "cat:", "rn:"]
 
 
 class _Result(dict):
@@ -168,6 +175,41 @@ def _clean_arxiv_search_results(result: dict) -> dict:
     return cleaned_dict
 
 
+def _reformat_query(query: str) -> str:
+    """Reformat the query string for arxiv search, refer to
+    https://info.arxiv.org/help/api/user-manual.html."""
+    delimiter_regex = (
+        "("
+        + "|".join(
+            map(re.escape, LOGIC_OPERATORS + QUERY_PREFIX + SYMBOLS),
+        )
+        + ")"
+    )
+
+    parts = re.split(delimiter_regex, query)
+
+    parts = [part.strip() for part in parts if part.strip()]
+
+    for i, part in enumerate(parts):
+        if part not in LOGIC_OPERATORS + QUERY_PREFIX + SYMBOLS:
+            # Add double quotes if it does not contain double quotes
+            part = part.replace('"', "%22").replace(" ", "+")
+
+            if not part.startswith("%22"):
+                part = f"%22{part}"
+            if not part.endswith("%22"):
+                part = f"{part}%22"
+            parts[i] = part
+        elif part in SYMBOLS:
+            parts[i] = part.replace("(", "%28").replace(")", "%29")
+        elif part in LOGIC_OPERATORS:
+            parts[i] = f"+{part}+"
+
+    refined_query = "".join(parts)
+
+    return refined_query
+
+
 def arxiv_search(
     search_query: str,
     id_list: List[str] = None,
@@ -182,7 +224,7 @@ def arxiv_search(
             "abs:", "co:", "jr:", "cat:", and "rn:", boolean operators "AND",
             "OR" and "ANDNOT". For example, searching for papers with
             title "Deep Learning" and author "LeCun" by a
-            search_query "ti:Deep Learning AND au:LeCun".
+            search_query ti:"Deep Learning" AND "au:LeCun".
         id_list (`List[str]`, defaults to `None`):
             A list of arXiv IDs to search.
         start (`int`, defaults to `0`):
@@ -204,7 +246,7 @@ def arxiv_search(
         )
 
     # construct url
-    search_query = search_query.replace(" ", "+")
+    search_query = _reformat_query(search_query)
 
     parameters = {"search_query": search_query}
 
