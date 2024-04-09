@@ -516,6 +516,13 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertNotEqual(agent4.agent_id, agent.agent_id)
         self.assertIsNone(agent3.server_launcher)
         self.assertIsNone(agent4.server_launcher)
+        msg3 = Msg(name="System", content="First Msg for agent3")
+        res3 = agent3(msg3)
+        self.assertEqual(res1.content["mem_size"], 1)
+        msg4 = Msg(name="System", content="First Msg for agent4")
+        res4 = agent4(msg4)
+        self.assertEqual(res3.content["mem_size"], 1)
+        self.assertEqual(res4.content["mem_size"], 1)
 
     def test_error_handling(self) -> None:
         """Test error handling"""

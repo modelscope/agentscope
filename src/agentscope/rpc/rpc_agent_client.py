@@ -35,6 +35,7 @@ class RpcAgentClient:
         self.host = host
         self.port = port
         self.agent_id = agent_id
+        self._create_agent_stub = None
 
     def call_func(
         self,
@@ -51,6 +52,7 @@ class RpcAgentClient:
         Returns:
             str: serialized return data.
         """
+        self._check_agent()
         with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
             stub = RpcAgentStub(channel)
             result_msg = stub.call_func(
@@ -63,14 +65,18 @@ class RpcAgentClient:
             )
             return result_msg.value
 
+    def _check_agent(self) -> None:
+        if self._create_agent_stub is not None:
+            self._create_agent_stub.get_response()
+            self._create_agent_stub = None
+
     def create_agent(self, agent_configs: dict) -> None:
         """Create a new agent for this client."""
         try:
             if self.agent_id is None or len(self.agent_id) == 0:
                 return
-            self.call_func(
-                func_name="_create_agent",
-                value=(json.dumps(agent_configs)),
+            self._create_agent_stub = call_in_thread(
+                self, json.dumps(agent_configs), "_create_agent"
             )
         except Exception as e:
             logger.error(
@@ -113,14 +119,14 @@ class ResponseStub:
 
 def call_in_thread(
     client: RpcAgentClient,
-    x: dict,
+    value: str,
     func_name: str,
 ) -> ResponseStub:
     """Call rpc function in a sub-thread.
 
     Args:
         client (`RpcAgentClient`): the rpc client.
-        x (`dict`): the value of the reqeust.
+        x (`str`): the value of the reqeust.
         func_name (`str`): the name of the function being called.
 
     Returns:
@@ -131,7 +137,7 @@ def call_in_thread(
     def wrapper() -> None:
         resp = client.call_func(
             func_name=func_name,
-            value=x.serialize() if x is not None else "",
+            value=value,
         )
         stub.set_response(resp)  # type: ignore[arg-type]
 

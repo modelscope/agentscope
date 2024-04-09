@@ -6,6 +6,7 @@ from multiprocessing.synchronize import Event as EventClass
 import socket
 import threading
 import json
+import traceback
 from typing import Any, Type, Optional, Union, Sequence
 from concurrent import futures
 from loguru import logger
