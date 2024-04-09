@@ -240,7 +240,7 @@ openai_chat_config = {
 </details>
 
 <details>
-<summary>DashScope Multi Modal Conversation API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py">agentscope.models.DashScopeMultiModalWrapper</a></code>)</summary>
+<summary>DashScope Multimodal Conversation API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py">agentscope.models.DashScopeMultiModalWrapper</a></code>)</summary>
 
 ```python
 {
@@ -248,7 +248,7 @@ openai_chat_config = {
     "model_type": "dashscope_multimodal",
 
     # Required parameters
-    "model_name": "{model_name}",              # The model name in DashScope Multi Modal Conversation API, e.g. qwen-vl-plus
+    "model_name": "{model_name}",              # The model name in DashScope Multimodal Conversation API, e.g. qwen-vl-plus
 
     # Optional parameters
     "api_key": "{your_api_key}",
