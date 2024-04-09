@@ -94,4 +94,19 @@ If you implement a video agent, `as_studio` will display the video as follows.
 **Principle:** When calling agent's `self.speak(msg)` method, it will
 output `msg.video_path` to the frontend. Here `msg.video_path` is a list of paths of videos.
 
+## AgentScope Workstation
+A draggable interface for building AgentScope workflow, which is a tool for generating config for running with AgentScope.
+![](https://gw.alicdn.com/imgextra/i3/O1CN01uioF2Z1tYCsWgR3Cf_!!6000000005913-1-tps-2156-1080.gif)
 
+### How to Use
+Open AgentScope Web UI, then click Workstation to jump to AgentScope Workstation page. Drag modules to the convas, and fill the blank. Link each module to build a workflow. Then click export to get the final configurations. Then save the configurations as `config.json`. Then run with the following commands:
+
+```bash
+# Run in command line
+as_workflow config.json
+
+# Run in as_studio
+as_studio config.json
+```
+
+More examples about AgentScope Workstation are coming soon!
