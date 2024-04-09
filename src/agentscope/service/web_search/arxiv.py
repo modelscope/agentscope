@@ -224,7 +224,7 @@ def arxiv_search(
             "abs:", "co:", "jr:", "cat:", and "rn:", boolean operators "AND",
             "OR" and "ANDNOT". For example, searching for papers with
             title "Deep Learning" and author "LeCun" by a
-            search_query ti:"Deep Learning" AND "au:LeCun".
+            search_query ti:"Deep Learning" AND au:"LeCun"
         id_list (`List[str]`, defaults to `None`):
             A list of arXiv IDs to search.
         start (`int`, defaults to `0`):
