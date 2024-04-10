@@ -614,17 +614,18 @@ class AgentPlatform(RpcAgentServicer):
                 self.agent_pool.pop(agent_id)
                 logger.info(f"delete agent instance [{agent_id}]")
 
-    async def call_func(
+    async def call_func(  # pylint: disable=W0236
         self,
         request: RpcMsg,
         context: ServicerContext,
     ) -> RpcMsg:
         """Call the specific servicer function."""
-        if hasattr(self, request.target_func):
+        if not hasattr(self, request.target_func):
             if request.target_func not in ["_create_agent", "_get"]:
                 if not self.agent_exists(request.agent_id):
-                    return RpcMsg(
-                        value=f"Agent [{request.agent_id}] not exists.",
+                    await context.abort(
+                        grpc.StatusCode.INVALID_ARGUMENT,
+                        f"Agent [{request.agent_id}] not exists.",
                     )
             return getattr(self, request.target_func)(request)
         else:
