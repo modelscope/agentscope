@@ -620,7 +620,7 @@ class AgentPlatform(RpcAgentServicer):
         context: ServicerContext,
     ) -> RpcMsg:
         """Call the specific servicer function."""
-        if not hasattr(self, request.target_func):
+        if hasattr(self, request.target_func):
             if request.target_func not in ["_create_agent", "_get"]:
                 if not self.agent_exists(request.agent_id):
                     await context.abort(
