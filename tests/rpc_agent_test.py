@@ -400,7 +400,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         logger.chat(msg)
         self.assertTrue(msg["content"]["quota_exceeded"])
 
-    def test_multi_agent(self) -> None:
+    def test_multi_agent_in_same_server(self) -> None:
         """test agent server with multi agent"""
         launcher = RpcAgentServerLauncher(
             host="127.0.0.1",

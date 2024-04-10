@@ -8,8 +8,10 @@ from loguru import logger
 
 try:
     import grpc
+    from grpc import RpcError
 except ImportError:
     grpc = None
+    RpcError = None
 
 try:
     from agentscope.rpc.rpc_agent_pb2 import RpcMsg  # pylint: disable=E0611
@@ -35,7 +37,6 @@ class RpcAgentClient:
         self.host = host
         self.port = port
         self.agent_id = agent_id
-        self._create_agent_stub = None
 
     def call_func(
         self,
@@ -52,7 +53,6 @@ class RpcAgentClient:
         Returns:
             str: serialized return data.
         """
-        self._check_agent()
         with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
             stub = RpcAgentStub(channel)
             result_msg = stub.call_func(
@@ -65,20 +65,14 @@ class RpcAgentClient:
             )
             return result_msg.value
 
-    def _check_agent(self) -> None:
-        if self._create_agent_stub is not None:
-            self._create_agent_stub.get_response()
-            self._create_agent_stub = None
-
     def create_agent(self, agent_configs: dict) -> None:
         """Create a new agent for this client."""
         try:
             if self.agent_id is None or len(self.agent_id) == 0:
                 return
-            self._create_agent_stub = call_in_thread(
-                self,
-                json.dumps(agent_configs),
+            self.call_func(
                 "_create_agent",
+                json.dumps(agent_configs),
             )
         except Exception as e:
             logger.error(
@@ -137,11 +131,15 @@ def call_in_thread(
     stub = ResponseStub()
 
     def wrapper() -> None:
-        resp = client.call_func(
-            func_name=func_name,
-            value=value,
-        )
-        stub.set_response(resp)  # type: ignore[arg-type]
+        try:
+            resp = client.call_func(
+                func_name=func_name,
+                value=value,
+            )
+            stub.set_response(resp)  # type: ignore[arg-type]
+        except RpcError as e:
+            logger.error(f"Fail to call {func_name} in thread: {e}")
+            stub.set_response(str(e))
 
     thread = threading.Thread(target=wrapper)
     thread.start()

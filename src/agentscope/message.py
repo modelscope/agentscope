@@ -354,7 +354,7 @@ class PlaceholderMessage(MessageBase):
         if self._stub is not None:
             try:
                 resp = deserialize(self._stub.get_response())
-            except json.decoder.JSONDecodeError as e:
+            except Exception as e:
                 logger.error(
                     f"Failed to get task_id: {self._stub.get_response()}",
                 )
