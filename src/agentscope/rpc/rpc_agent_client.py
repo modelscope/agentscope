@@ -76,7 +76,9 @@ class RpcAgentClient:
             if self.agent_id is None or len(self.agent_id) == 0:
                 return
             self._create_agent_stub = call_in_thread(
-                self, json.dumps(agent_configs), "_create_agent"
+                self,
+                json.dumps(agent_configs),
+                "_create_agent",
             )
         except Exception as e:
             logger.error(

@@ -291,7 +291,9 @@ class PlaceholderMessage(MessageBase):
             self._task_id: int = task_id
         else:
             self._stub = call_in_thread(
-                client, x.serialize() if x is not None else "", "_reply"
+                client,
+                x.serialize() if x is not None else "",
+                "_reply",
             )
             self._host = client.host
             self._port = client.port

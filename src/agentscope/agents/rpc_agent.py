@@ -7,13 +7,14 @@ import socket
 import threading
 import json
 import traceback
+import asyncio
 from typing import Any, Type, Optional, Union, Sequence
 from concurrent import futures
 from loguru import logger
 
 try:
     import grpc
-    from grpc import ServicerContext
+    from grpc.aio import ServicerContext
 except ImportError:
     grpc = None
     ServicerContext = Any
@@ -251,6 +252,60 @@ def setup_rpc_agent_server(
         custom_agents (`list`, defaults to `None`):
             A list of custom agent classes that are not in `agentscope.agents`.
     """
+    asyncio.run(
+        setup_rpc_agent_server_async(
+            host=host,
+            port=port,
+            init_settings=init_settings,
+            start_event=start_event,
+            stop_event=stop_event,
+            pipe=pipe,
+            local_mode=local_mode,
+            max_pool_size=max_pool_size,
+            max_timeout_seconds=max_timeout_seconds,
+            custom_agents=custom_agents,
+        ),
+    )
+
+
+async def setup_rpc_agent_server_async(
+    host: str,
+    port: int,
+    init_settings: dict = None,
+    start_event: EventClass = None,
+    stop_event: EventClass = None,
+    pipe: int = None,
+    local_mode: bool = True,
+    max_pool_size: int = 8192,
+    max_timeout_seconds: int = 1800,
+    custom_agents: list = None,
+) -> None:
+    """Setup gRPC server rpc agent in an async way.
+
+    Args:
+        host (`str`, defaults to `"localhost"`):
+            Hostname of the rpc agent server.
+        port (`int`):
+            The socket port monitored by grpc server.
+        init_settings (`dict`, defaults to `None`):
+            Init settings for agentscope.init.
+        start_event (`EventClass`, defaults to `None`):
+            An Event instance used to determine whether the child process
+            has been started.
+        stop_event (`EventClass`, defaults to `None`):
+            The stop Event instance used to determine whether the child
+            process has been stopped.
+        pipe (`int`, defaults to `None`):
+            A pipe instance used to pass the actual port of the server.
+        local_mode (`bool`, defaults to `None`):
+            Only listen to local requests.
+        max_pool_size (`int`, defaults to `8192`):
+            Max number of task results that the server can accommodate.
+        max_timeout_seconds (`int`, defaults to `1800`):
+            Timeout for task results.
+        custom_agents (`list`, defaults to `None`):
+            A list of custom agent classes that are not in `agentscope.agents`.
+    """
 
     if init_settings is not None:
         init_process(**init_settings)
@@ -271,7 +326,7 @@ def setup_rpc_agent_server(
             logger.info(
                 f"Starting rpc server at port [{port}]...",
             )
-            server = grpc.server(
+            server = grpc.aio.server(
                 futures.ThreadPoolExecutor(max_workers=cpu_count()),
             )
             add_RpcAgentServicer_to_server(servicer, server)
@@ -279,7 +334,7 @@ def setup_rpc_agent_server(
                 server.add_insecure_port(f"localhost:{port}")
             else:
                 server.add_insecure_port(f"0.0.0.0:{port}")
-            server.start()
+            await server.start()
             break
         except OSError:
             logger.warning(
@@ -292,13 +347,14 @@ def setup_rpc_agent_server(
     if start_event is not None:
         pipe.send(port)
         start_event.set()
-        stop_event.wait()
+        while not stop_event.is_set():
+            await asyncio.sleep(1)
         logger.info(
             f"Stopping rpc server at port [{port}]",
         )
-        server.stop(1.0).wait()
+        await server.stop(10.0)
     else:
-        server.wait_for_termination()
+        await server.wait_for_termination()
     logger.info(
         f"rpc server at port [{port}] stopped successfully",
     )
@@ -382,22 +438,19 @@ class RpcAgentServerLauncher:
 
     def _launch_in_main(self) -> None:
         """Launch gRPC server in main-process"""
-        server_thread = threading.Thread(
-            target=setup_rpc_agent_server,
-            kwargs={
-                "host": self.host,
-                "port": self.port,
-                "max_pool_size": self.max_pool_size,
-                "max_timeout_seconds": self.max_timeout_seconds,
-                "local_mode": self.local_mode,
-                "custom_agents": self.custom_agents,
-            },
-        )
-        server_thread.start()
         logger.info(
-            f"Launch AgentPlatform at [{self.host}:{self.port}] success",
+            f"Launching AgentPlatform at [{self.host}:{self.port}]...",
         )
-        server_thread.join()
+        asyncio.run(
+            setup_rpc_agent_server_async(
+                host=self.host,
+                port=self.port,
+                max_pool_size=self.max_pool_size,
+                max_timeout_seconds=self.max_timeout_seconds,
+                local_mode=self.local_mode,
+                custom_agents=self.custom_agents,
+            ),
+        )
 
     def _launch_in_sub(self) -> None:
         """Launch gRPC server in sub-process."""
@@ -561,7 +614,11 @@ class AgentPlatform(RpcAgentServicer):
                 self.agent_pool.pop(agent_id)
                 logger.info(f"delete agent instance [{agent_id}]")
 
-    def call_func(self, request: RpcMsg, _: ServicerContext) -> RpcMsg:
+    async def call_func(
+        self,
+        request: RpcMsg,
+        context: ServicerContext,
+    ) -> RpcMsg:
         """Call the specific servicer function."""
         if hasattr(self, request.target_func):
             if request.target_func not in ["_create_agent", "_get"]:
@@ -573,12 +630,9 @@ class AgentPlatform(RpcAgentServicer):
         else:
             # TODO: support other user defined method
             logger.error(f"Unsupported method {request.target_func}")
-            return RpcMsg(
-                value=Msg(
-                    name=self.agent_pool[request.agent_id].name,
-                    content=f"Unsupported method {request.target_func}",
-                    role="assistant",
-                ).serialize(),
+            await context.abort(
+                grpc.StatusCode.INVALID_ARGUMENT,
+                f"Unsupported method {request.target_func}",
             )
 
     def _reply(self, request: RpcMsg) -> RpcMsg:
