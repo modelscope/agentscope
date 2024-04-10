@@ -12,58 +12,91 @@ This tutorial will introduce the implementation and usage of AgentScope distribu
 
 ## Usage
 
-In AgentScope, the process that runs the application flow is called the "main process", and all agents will run in separate processes.
-According to the different relationships between the main process and the agent process, AgentScope supports two distributed modes: Master-Slave and Peer-to-Peer mode.
-In the Master-Slave mode, developers can start all agent processes from the main process, while in the Peer-to-Peer mode, the agent process is independent of the main process and developers need to start the agent service on the corresponding machine.
+In AgentScope, the process that runs the application flow is called the "main process", and each agent can run in a separate process named "agent server process".
+According to the different relationships between the main process and the agent server process, AgentScope supports two modes for each agent: **Subprocess** and **Standalone** mode.
+In the Subprocess mode, agent server processes will be automatically started from the main process, while in the Standalone mode, the agent server process is independent of the main process and developers need to start the agent server process on the corresponding machine.
 
-The above concepts may seem complex, but don't worry, for application developers, they only have minor differences when creating agents. Below we introduce how to create distributed agents.
+The above concepts may seem complex, but don't worry, for application developers, you only need to convert your existing agent to its distributed version.
 
-### Step 1: Create a Distributed Agent
+### Step 1: Convert your agent to its distributed version
 
-First, the developer's agent must inherit the `agentscope.agents.AgentBase` class. `AgentBase` provides the `to_dist` method to convert the agent into its distributed version. `to_dist` mainly relies on the following parameters to implement the distributed deployment of the agent:
-
-- `host`: the hostname or IP address of the machine where the agent runs, defaults to `localhost`.
-- `port`: the port of this agent's RPC server, defaults to `80`.
-- `launch_server`: whether to launch an RPC server locally, defaults to `True`.
+All agents in AgentScope can automatically convert to its distributed version by calling its `to_dist` method.
+But note that your agent must inherit from the `agentscope.agents.AgentBase` class, because the `to_dist` method is provided by the `AgentBase` class.
 
 Suppose there are two agent classes `AgentA` and `AgentB`, both of which inherit from `AgentBase`.
-
-#### Master-Slave Mode
-
-In the Master-Slave mode, since all agent processes depend on the main process, all processes actually run on the same machine.
-We can start all agent processes from the main process, that is, the default parameters `launch_server=True` and `host="localhost"`, and we can omit the `port` parameter. AgentScope will automatically find an available local port for the agent process.
 
 ```python
 a = AgentA(
     name="A"
     # ...
+)
+b = AgentB(
+    name="B"
+    # ...
+)
+```
+
+Next we will introduce the conversion details of both modes.
+
+#### Subprocess Mode
+
+To use this mode, you only need to call each agent's `to_dist()` method without any input parameter. AgentScope will automatically start all agent server processes from the main process.
+
+```python
+# Subprocess mode
+a = AgentA(
+    name="A"
+    # ...
+).to_dist()
+b = AgentB(
+    name="B"
+    # ...
 ).to_dist()
 ```
 
-#### Peer-to-Peer Mode
+#### Standalone Mode
 
-In the Peer-to-Peer mode, we need to start the service of the corresponding agent on the target machine first. For example, deploy an instance of `AgentA` on the machine with IP `a.b.c.d`, and its corresponding port is 12001. Run the following code on this target machine:
+In the Standalone mode, we need to start the agent server process on the target machine first.
+For example, start two agent server processes on the two different machines with IP `a.b.c.d` and `e.f.g.h`(called `Machine1` and `Machine2` accrodingly).
+You can run the following code on `Machine1`:
 
 ```python
-from agentscope.agents import RpcAgentServerLauncher
+# import some packages
 
+agentscope.init(
+    ...
+)
 # Create an agent service process
-server_a = RpcAgentServerLauncher(
-    agent_class=AgentA,
-    agent_kwargs={
-        "name": "A"
-        ...
-    },
+server = RpcAgentServerLauncher(
     host="a.b.c.d",
-    port=12001,
+    port=12001,  # choose an available port
 )
 
 # Start the service
-server_a.launch()
-server_a.wait_until_terminate()
+server.launch()
+server.wait_until_terminate()
 ```
 
-Then, we can connect to the agent service in the main process with the following code. At this time, the object `a` created in the main process can be used as a local proxy for the agent, allowing developers to write the application flow in a centralized way in the main process.
+And run the following code on `Machine2`:
+
+```python
+# import some packages
+
+agentscope.init(
+    ...
+)
+# Create an agent service process
+server = RpcAgentServerLauncher(
+    host="e.f.g.h",
+    port=12002, # choose an available port
+)
+
+# Start the service
+server.launch()
+server.wait_until_terminate()
+```
+
+Then, you can connect to the agent servers from the main process with the following code.
 
 ```python
 a = AgentA(
@@ -74,7 +107,18 @@ a = AgentA(
     port=12001,
     launch_server=False,
 )
+b = AgentB(
+    name="B",
+    # ...
+).to_dist(
+    host="e.f.g.h",
+    port=12002,
+    launch_server=False,
+)
 ```
+
+The above code will deploy `AgentA` on the agent server process of `Machine1` and `AgentB` on the agent server process of `Machine2`.
+And developers just need to write the application flow in a centralized way in the main process.
 
 ### Step 2: Orchestrate Distributed Application Flow
 
@@ -83,7 +127,7 @@ At the same time, AgentScope allows the use of a mixture of locally and distribu
 
 The following is the complete code for two agents to communicate with each other in different modes. It can be seen that AgentScope supports zero-cost migration of distributed application flow from centralized to distributed.
 
-- All agents are centralized:
+- All agents are centralized
 
 ```python
 # Create agent objects
@@ -104,7 +148,9 @@ while x is None or x.content == "exit":
     x = b(x)
 ```
 
-- Agents are deployed in a distributed manner (Master-Slave mode):
+- Agents are deployed in a distributed manner
+  - `AgentA` in Subprocess mode
+  - `AgentB` in Standalone mode
 
 ```python
 # Create agent objects
@@ -116,7 +162,11 @@ a = AgentA(
 b = AgentB(
     name="B",
     # ...
-).to_dist()
+).to_dist(
+    host="e.f.g.h",
+    port=12002,
+    launch_server=False,
+)
 
 # Application flow orchestration
 x = None
@@ -152,5 +202,12 @@ Meanwhile, to support centralized application orchestration, AgentScope introduc
 When the input message of the Agent is ready, the Placeholder will be replaced by the real message, and then the actual `reply` method will be executed.
 
 About more detailed technical implementation solutions, please refer to our [paper](https://arxiv.org/abs/2402.14034).
+
+#### Agent Server
+
+In agentscope, the agent server provides a running platform for various types of agents.
+Multiple agents can run in the same agent server and hold independent memory and other local states but they will share the same computation resources.
+As long as the code is not modified, an agent server can provide services for multiple main processes.
+This means that when running mutliple applications, you only need to start the agent server for the first time, and it can be reused subsequently.
 
 [[Back to the top]](#208-distribute-en)
