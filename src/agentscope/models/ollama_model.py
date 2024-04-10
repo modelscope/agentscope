@@ -134,10 +134,10 @@ class OllamaChatWrapper(OllamaWrapperBase):
         # step3: monitor the response
         self.update_monitor(
             call_counter=1,
-            prompt_tokens=response["prompt_eval_count"],
-            completion_tokens=response["eval_count"],
-            total_tokens=response["prompt_eval_count"]
-            + response["eval_count"],
+            prompt_tokens=response.get("prompt_eval_count", 0),
+            completion_tokens=response.get("eval_count", 0),
+            total_tokens=response.get("prompt_eval_count", 0)
+            + response.get("eval_count", 0),
         )
 
         # step4: return response
@@ -371,10 +371,10 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
         # step4: monitor the response
         self.update_monitor(
             call_counter=1,
-            prompt_tokens=response["prompt_eval_count"],
-            completion_tokens=response["eval_count"],
-            total_tokens=response["prompt_eval_count"]
-            + response["eval_count"],
+            prompt_tokens=response.get("prompt_eval_count", 0),
+            completion_tokens=response.get("eval_count", 0),
+            total_tokens=response.get("prompt_eval_count", 0)
+            + response.get("eval_count", 0),
         )
 
         # step5: return response
