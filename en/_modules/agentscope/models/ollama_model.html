@@ -235,10 +235,10 @@
         <span class="c1"># step3: monitor the response</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_monitor</span><span class="p">(</span>
             <span class="n">call_counter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-            <span class="n">prompt_tokens</span><span class="o">=</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;prompt_eval_count&quot;</span><span class="p">],</span>
-            <span class="n">completion_tokens</span><span class="o">=</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;eval_count&quot;</span><span class="p">],</span>
-            <span class="n">total_tokens</span><span class="o">=</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;prompt_eval_count&quot;</span><span class="p">]</span>
-            <span class="o">+</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;eval_count&quot;</span><span class="p">],</span>
+            <span class="n">prompt_tokens</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;prompt_eval_count&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="n">completion_tokens</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;eval_count&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="n">total_tokens</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;prompt_eval_count&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;eval_count&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
         <span class="p">)</span>
 
         <span class="c1"># step4: return response</span>
@@ -484,10 +484,10 @@
         <span class="c1"># step4: monitor the response</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_monitor</span><span class="p">(</span>
             <span class="n">call_counter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-            <span class="n">prompt_tokens</span><span class="o">=</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;prompt_eval_count&quot;</span><span class="p">],</span>
-            <span class="n">completion_tokens</span><span class="o">=</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;eval_count&quot;</span><span class="p">],</span>
-            <span class="n">total_tokens</span><span class="o">=</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;prompt_eval_count&quot;</span><span class="p">]</span>
-            <span class="o">+</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;eval_count&quot;</span><span class="p">],</span>
+            <span class="n">prompt_tokens</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;prompt_eval_count&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="n">completion_tokens</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;eval_count&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="n">total_tokens</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;prompt_eval_count&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;eval_count&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
         <span class="p">)</span>
 
         <span class="c1"># step5: return response</span>
