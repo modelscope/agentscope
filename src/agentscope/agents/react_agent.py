@@ -3,12 +3,16 @@
 and act iteratively to solve problems. More details can be found in the paper
 https://arxiv.org/abs/2210.03629.
 """
-import json
 from typing import Tuple, List
 
+from agentscope._exception import (
+    JsonParsingError,
+    MissingTagError,
+    ResponseParsingError,
+)
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
-from agentscope.models import ResponseParser, ResponseParsingError
+from agentscope.parser import MultiTaggedContentParser, TaggedContent
 from agentscope.service import ServiceResponse, ServiceExecStatus
 
 
@@ -37,33 +41,15 @@ DEFAULT_TOOL_PROMPT = """The following tool functions are available in the forma
 
 """  # noqa
 
-TOOL_HINT_PROMPT = """
-## Response Format:
-You should respond with a JSON object in the following format, which can be loaded by `json.loads` in Python directly. If no tool function is used, the "function" field should be an empty list.
-{
-    "thought": "what you thought",
-    "speak": "what you said",
-    "function": [{"name": "{function name}", "arguments": {"{argument1 name}": xxx, "{argument2 name}": xxx}}]
-}"""  # noqa
-
 FUNCTION_RESULT_TITLE_PROMPT = """Execution Results:
 """
 
-FUNCTION_RESULT_PROMPT = """{index}. {function_name}:
+FUNCTION_RESULT_PROMPT = """{index}. Executing {function_name}
+    [EXECUTE ARGUMENTS]:
+        {arguments}
     [EXECUTE STATUS]: {status}
     [EXECUTE RESULT]: {result}
 """
-
-ERROR_INFO_PROMPT = """Your response is not a JSON object, and cannot be parsed by `json.loads` in parse function:
-## Your Response:
-[YOUR RESPONSE BEGIN]
-{response}
-[YOUR RESPONSE END]
-
-## Error Information:
-{error_info}
-
-Analyze the reason, and re-correct your response in the correct format."""  # pylint: disable=all  # noqa
 
 
 class ReActAgent(AgentBase):
@@ -102,7 +88,9 @@ class ReActAgent(AgentBase):
             max_iters (`int`, defaults to `10`):
                 The maximum number of iterations of the reasoning-acting loops.
             verbose (`bool`, defaults to `True`):
-                Whether to print the output of the tools.
+                Whether to print the detailed information during reasoning and
+                acting steps. If `False`, only the content in speak field will
+                be print out.
         """
         super().__init__(
             name=name,
@@ -129,45 +117,75 @@ class ReActAgent(AgentBase):
         # Put sys prompt into memory
         self.memory.add(Msg("system", self.sys_prompt, role="system"))
 
+        # Initialize a parser object to
+        self.parser = MultiTaggedContentParser(
+            TaggedContent(
+                name="thought",
+                tag_begin="[THOUGHT]",
+                content_hint="what you thought",
+                tag_end="[/THOUGHT]",
+            ),
+            TaggedContent(
+                name="speak",
+                tag_begin="[SPEAK]",
+                content_hint="what you speak",
+                tag_end="[/SPEAK]",
+            ),
+            TaggedContent(
+                name="function",
+                tag_begin="[FUNCTION]",
+                content_hint=(
+                    '[{"name": "{function name}", "arguments": '
+                    '{"{argument1 name}": xxx, "{argument2 name}": xxx}}, ...]'
+                ),
+                tag_end="[/FUNCTION]",
+                parse_json=True,
+            ),
+        )
+
     def reply(self, x: dict = None) -> dict:
         """The reply function that achieves the ReAct algorithm.
         The more details please refer to https://arxiv.org/abs/2210.03629"""
 
-        if self.memory:
-            self.memory.add(x)
+        self.memory.add(x)
 
         for _ in range(self.max_iters):
             # Step 1: Thought
-
-            self.speak(f" ITER {_+1}, STEP 1: REASONING ".center(70, "#"))
+            if self.verbose:
+                self.speak(f" ITER {_+1}, STEP 1: REASONING ".center(70, "#"))
 
             try:
-                hint_msg = Msg("system", TOOL_HINT_PROMPT, role="system")
-                self.memory.add(hint_msg)
+                # Memory won't record hint_msg to save tokens
+                hint_msg = Msg(
+                    "system",
+                    self.parser.format_instruction,
+                    role="system",
+                )
+                if self.verbose:
+                    self.speak(hint_msg)
 
                 # Generate LLM response
-                prompt = self.model.format(self.memory.get_memory())
+                prompt = self.model.format(self.memory.get_memory(), hint_msg)
                 res = self.model(
                     prompt,
-                    parse_func=ResponseParser.to_dict,
+                    parse_func=self.parser.parse,
                     max_retries=1,
-                ).json
+                )
 
-            except ResponseParsingError as e:
-                # Record the wrong response from the model
-                response_msg = Msg(self.name, e.response.text, "assistant")
+            # Only catch the response parsing error and expose runtime
+            # errors to developers for debugging
+            except (
+                ResponseParsingError,
+                MissingTagError,
+                JsonParsingError,
+            ) as e:
+                # Still print out the raw response from models for developers
+                # to debug
+                response_msg = Msg(self.name, e.raw_response, "assistant")
                 self.speak(response_msg)
 
                 # Re-correct by model itself
-                error_msg = Msg(
-                    "system",
-                    ERROR_INFO_PROMPT.format(
-                        parse_func=ResponseParser.to_dict,
-                        error_info=e.error_info,
-                        response=e.response.text,
-                    ),
-                    "system",
-                )
+                error_msg = Msg("system", str(e), "system")
                 self.speak(error_msg)
 
                 self.memory.add([response_msg, error_msg])
@@ -176,28 +194,29 @@ class ReActAgent(AgentBase):
                 continue
 
             # Record the response in memory
-            msg_thought = Msg(self.name, res, role="assistant")
-
-            # To better display the response, we reformat it by json.dumps here
-            self.speak(
-                Msg(self.name, json.dumps(res, indent=4), role="assistant"),
-            )
-
-            if self.memory:
-                self.memory.add(msg_thought)
+            msg_response = Msg(self.name, res.text, "assistant")
+            self.memory.add(msg_response)
+            if self.verbose:
+                self.speak(msg_response)
+            else:
+                self.speak(Msg(self.name, res.parsed["speak"], "assistant"))
 
             # Skip the next steps if no need to call tools
-            if len(res.get("function", [])) == 0:
-                return msg_thought
+            # The parsed field is a dictionary
+            if len(res.parsed.get("function", [])) == 0:
+                # Only the speak field is exposed to users or other agents
+                return Msg(self.name, res.parsed["speak"], "assistant")
 
             # Step 2: Action
+            if self.verbose:
+                self.speak(f" ITER {_+1}, STEP 2: ACTION ".center(70, "#"))
 
-            self.speak(f" ITER {_+1}, STEP 2: ACTION ".center(70, "#"))
+            # Check the format of function calling
 
             # Execute functions
             # TODO: check the provided arguments and re-correct them if needed
             execute_results = []
-            for i, func in enumerate(res["function"]):
+            for i, func in enumerate(res.parsed["function"]):
                 # Execute the function
                 func_res = self.execute_func(i, func)
                 execute_results.append(func_res)
@@ -225,8 +244,7 @@ class ReActAgent(AgentBase):
                 role="system",
             )
             self.speak(msg_res)
-            if self.memory:
-                self.memory.add(msg_res)
+            self.memory.add(msg_res)
 
         return Msg(
             "system",
@@ -250,7 +268,10 @@ class ReActAgent(AgentBase):
         func_name = func_call["name"]
         func_args = func_call["arguments"]
 
-        self.speak(f">>> Executing function {func_name} ...")
+        self.speak(f">>> Executing function {func_name} with arguments:")
+        for key, value in func_args.items():
+            value = value if len(str(value)) < 50 else str(value)[:50] + "..."
+            self.speak(f">>> \t{key}: {value}")
 
         try:
             func_res = self.func_name_mapping[func_name](**func_args)

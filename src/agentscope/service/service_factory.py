@@ -60,7 +60,7 @@ class ServiceFactory:
         service_func: Callable[..., Any],
         **kwargs: Any,
     ) -> Tuple[Callable[..., Any], dict]:
-        """Covnert a service function into a tool function that agent can
+        """Convert a service function into a tool function that agent can
         use, and generate a dictionary in JSON Schema format that can be
         used in OpenAI API directly. While for open-source model, developers
         should handle the conversation from json dictionary to prompt.

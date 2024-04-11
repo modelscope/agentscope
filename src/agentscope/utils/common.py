@@ -9,7 +9,6 @@ import sys
 import tempfile
 import threading
 from typing import Any, Generator, Optional, Union
-from loguru import logger
 import requests
 
 from agentscope.service.service_response import ServiceResponse
@@ -157,7 +156,6 @@ def requests_get(
         # This will raise an exception for HTTP error codes
         response.raise_for_status()
     except requests.RequestException as e:
-        logger.error(e)
         return str(e)
     # Parse the JSON response
     search_results = response.json()

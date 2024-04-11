@@ -10,6 +10,7 @@ from . import service
 from . import message
 from . import prompt
 from . import web
+from . import _exception as exception
 
 # objects or function
 from .msghub import msghub

@@ -62,7 +62,12 @@ from typing import Sequence, Any, Callable, Union, List
 from loguru import logger
 
 from agentscope.utils import QuotaExceededError
-from .response import ResponseParsingError, ModelResponse
+from .response import ModelResponse
+from .._exception import (
+    ResponseParsingError,
+    JsonParsingError,
+    MissingTagError,
+)
 
 from ..file_manager import file_manager
 from ..message import MessageBase
@@ -122,7 +127,11 @@ def _response_parse_decorator(
             # Parse the response if needed
             try:
                 return parse_func(response)
-            except Exception as e:
+            except (
+                ResponseParsingError,
+                JsonParsingError,
+                MissingTagError,
+            ) as e:
                 if itr < max_retries:
                     logger.warning(
                         f"Fail to parse response ({itr}/{max_retries}):\n"
@@ -134,12 +143,7 @@ def _response_parse_decorator(
                     if fault_handler is not None and callable(fault_handler):
                         return fault_handler(response)
                     else:
-                        error_info = f"{e.__class__.__name__}: {e}"
-                        raise ResponseParsingError(
-                            parse_func=parse_func,
-                            error_info=error_info,
-                            response=response,
-                        ) from None
+                        raise
         return {}
 
     return checking_wrapper
@@ -201,7 +205,7 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
         self.monitor = MonitorFactory.get_monitor()
 
         self.config_name = config_name
-        logger.info(f"Initialize model [{config_name}]")
+        logger.info(f"Initialize model by configuration [{config_name}]")
 
     def __call__(self, *args: Any, **kwargs: Any) -> ModelResponse:
         """Processing input with the model."""
