@@ -36,8 +36,9 @@ def main() -> None:
     with open("./agent_config.json", "r", encoding="utf-8") as f:
         agent_configs = json.load(f)
     tutorial_agent = LlamaIndexAgent(**agent_configs[0]["args"])
-    code_explain_agent = LlamaIndexAgent(**agent_configs[1]["args"])
-    summarize_agent = DialogAgent(**agent_configs[2]["args"])
+    code_structure_agent = LlamaIndexAgent(**agent_configs[1]["args"])
+    code_explain_agent = LlamaIndexAgent(**agent_configs[2]["args"])
+    summarize_agent = DialogAgent(**agent_configs[3]["args"])
 
     user_agent = UserAgent()
     # start the conversation between user and assistant
@@ -47,11 +48,14 @@ def main() -> None:
         if len(x["content"]) == 0 or str(x["content"]).startswith("exit"):
             break
         tutorial_response = tutorial_agent(x)
+        code_structure = code_structure_agent(x)
         code_explain = code_explain_agent(x)
         msg = Msg(
             name="user",
             role="user",
             content=tutorial_response["content"]
+            + "\n"
+            + code_structure["structure"]
             + "\n"
             + code_explain["content"]
             + "\n"

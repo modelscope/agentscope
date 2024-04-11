@@ -2,8 +2,8 @@
   {
     "class": "LlamaIndexAgent",
     "args": {
-      "name": "AgentScope Tutorial Assistant",
-      "sys_prompt": "You're a helpful assistant. You need to generate answers based on the provided context.",
+      "name": "Tutorial Assistant",
+      "sys_prompt": "You are a helpful assistant, you provide answers that are most relevant to content in the tutorial. If the question is about what is something, the answers need to be itemized. If the question is about how to do something, give answers step by step. Limit the answer within 100 words.",
       "model_config_name": "qwen_config",
       "emb_model_config_name": "qwen_emb_config",
       "rag_config": {
@@ -29,8 +29,8 @@
   {
     "class": "LlamaIndexAgent",
     "args": {
-      "name": "AgentScope Framework Code Assistant",
-      "sys_prompt": "You're a helpful assistant about coding. You can very familiar with the framework code of AgentScope.",
+      "name": "Code Structure Assistant",
+      "sys_prompt": "You're a helpful assistant about coding. You focus on the heritage structure of functions and classes, return answers about how this function or class is used and where is it used.",
       "model_config_name": "qwen_config",
       "emb_model_config_name": "qwen_emb_config",
       "rag_config": {
@@ -40,7 +40,48 @@
                 "module": "llama_index.core",
                 "class": "SimpleDirectoryReader",
                 "init_args": {
-                  "input_dir": "../../src/agentscope",
+                  "input_dir": "../../examples",
+                  "recursive": true,
+                  "required_exts": [".py"]
+                }
+              }
+            },
+            "store_and_index": {
+              "transformations": [
+                {
+                  "create_object": true,
+                  "module": "llama_index.core.node_parser",
+                  "class": "CodeSplitter",
+                  "init_args": {
+                    "language": "python",
+                    "chunk_lines": 100
+                  }
+                }
+              ]
+            },
+            "chunk_size": 2048,
+            "chunk_overlap": 40,
+            "similarity_top_k": 10,
+            "log_retrieval": false,
+            "recent_n_mem": 1
+      }
+    }
+  },
+  {
+    "class": "LlamaIndexAgent",
+    "args": {
+      "name": "Code Functioning Assistant",
+      "sys_prompt": "You're a helpful assistant about coding. You understand what does this function or class do in the project. Return the answer as a summery indicating the key utility of the function or class, limit the answer within 100 words.",
+      "model_config_name": "qwen_config",
+      "emb_model_config_name": "qwen_emb_config",
+      "rag_config": {
+            "load_data": {
+              "loader": {
+                "create_object": true,
+                "module": "llama_index.core",
+                "class": "SimpleDirectoryReader",
+                "init_args": {
+                  "input_dir": "../../examples",
                   "recursive": true,
                   "required_exts": [".py"]
                 }
@@ -71,7 +112,7 @@
     "class": "DialogAgent",
     "args": {
       "name": "Summarize Assistant",
-      "sys_prompt": "You are a helpful assistant that can summarize the answers of the previous two messages.",
+      "sys_prompt": "You are a helpful assistant that can summarize the answers of the previous two messages. Limit the answer to be less than 100 words.",
       "model_config_name": "qwen_config",
       "use_memory": true
     }
