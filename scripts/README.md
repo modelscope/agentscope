@@ -141,7 +141,7 @@ In AgentScope, you can load the model with the following model configs: `./flask
 ```json
 {
     "model_type": "post_api",
-    "config_name": "flask_llama2-7b-chat",
+    "config_name": "flask_llama2-7b-chat-hf",
     "api_url": "http://127.0.0.1:8000/llm/",
     "json_args": {
         "max_length": 4096,
@@ -166,17 +166,17 @@ Install Flask and modelscope by following command.
 pip install flask torch modelscope
 ```
 
-Taking model `modelscope/Llama-2-7b-ms` and port `8000` as an example,
+Taking model `modelscope/Llama-2-7b-chat-ms` and port `8000` as an example,
 to set up the model API serving, run the following command.
 
 ```bash
 python flask_modelscope/setup_ms_service.py \
-    --model_name_or_path modelscope/Llama-2-7b-ms \
+    --model_name_or_path modelscope/Llama-2-7b-chat-ms \
     --device "cuda:0" \
     --port 8000
 ```
 
-You can replace `modelscope/Llama-2-7b-ms` with any model card in
+You can replace `modelscope/Llama-2-7b-chat-ms` with any model card in
 modelscope model hub.
 
 ##### How to use in AgentScope
@@ -187,7 +187,7 @@ In AgentScope, you can load the model with the following model configs:
 ```json
 {
     "model_type": "post_api",
-    "config_name": "flask_llama2-7b-ms",
+    "config_name": "flask_llama2-7b-chat-ms",
     "api_url": "http://127.0.0.1:8000/llm/",
     "json_args": {
         "max_length": 4096,
@@ -218,7 +218,7 @@ Taking model `meta-llama/Llama-2-7b-chat-hf` and port `8000` as an example,
 to set up model API serving, run the following command to set up model serving.
 
 ```bash
-bash fastchat_script/fastchat_setup.sh -m meta-llama/Llama-2-7b-chat-hf -p 8000
+bash fastchat/fastchat_setup.sh -m meta-llama/Llama-2-7b-chat-hf -p 8000
 ```
 
 #### Supported Models
@@ -229,12 +229,12 @@ of FastChat.
 
 #### How to use in AgentScope
 
-Now you can load the model in AgentScope by the following model config: `fastchat_script/model_config.json`.
+Now you can load the model in AgentScope by the following model config: `fastchat/model_config.json`.
 
 ```json
 {
     "model_type": "openai_chat",
-    "config_name": "meta-llama/Llama-2-7b-chat-hf",
+    "config_name": "fastchat_llama2-7b-chat-hf",
     "api_key": "EMPTY",
     "client_args": {
         "base_url": "http://127.0.0.1:8000/v1/"
@@ -262,7 +262,7 @@ Taking model `meta-llama/Llama-2-7b-chat-hf` and port `8000` as an example,
 to set up model API serving, run
 
 ```bash
-./vllm_script/vllm_setup.sh -m meta-llama/Llama-2-7b-chat-hf -p 8000
+./vllm/vllm_setup.sh -m meta-llama/Llama-2-7b-chat-hf -p 8000
 ```
 
 #### Supported models
@@ -273,7 +273,7 @@ of vllm.
 
 #### How to use in AgentScope
 
-Now you can load the model in AgentScope by the following model config: `vllm_script/model_config.json`.
+Now you can load the model in AgentScope by the following model config: `vllm/model_config.json`.
 
 ```json
 {

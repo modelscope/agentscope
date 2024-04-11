@@ -1,0 +1,13 @@
+[{
+    "config_name": "openai_embedding-text-embedding-ada-002",
+    "model_type": "openai_embedding",
+    "model_name": "text-embedding-ada-002",
+    "api_key": "{your_api_key}",
+    "client_args": {
+        "max_retries": 3
+    },
+    "generate_args": {
+        "temperature": 0.7
+    }
+}
+]

@@ -1,7 +1,6 @@
 {
     "model_type": "openai_chat",
     "config_name": "vllm-llama-2",
-    "model_name": "llama-2",
     "api_key": "EMPTY",
     "client_args": {
         "base_url": "http:localhost:8000/v1/"

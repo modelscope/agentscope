@@ -98,7 +98,7 @@ Here we provide example configurations for different model wrappers.
 <summary>OpenAI Chat API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py">agents.models.OpenAIChatWrapper</a></code>)</summary>
 
 ```python
-openai_chat_config = {
+{
     "config_name": "{your_config_name}",
     "model_type": "openai_chat",
 
@@ -273,7 +273,7 @@ openai_chat_config = {
     "model_type": "gemini_chat",
 
     # Required parameters
-    "model_name": "{model_name}",               # The model name in Gemini API, e.g. gemini-prp
+    "model_name": "{model_name}",               # The model name in Gemini API, e.g. gemini-pro
 
     # Optional parameters
     "api_key": "{your_api_key}",                # If not provided, the API key will be read from the environment variable GEMINI_API_KEY
@@ -291,7 +291,7 @@ openai_chat_config = {
     "model_type": "gemini_embedding",
 
     # Required parameters
-    "model_name": "{model_name}",               # The model name in Gemini API, e.g. gemini-prp
+    "model_name": "{model_name}",               # The model name in Gemini API, e.g. models/embedding-001
 
     # Optional parameters
     "api_key": "{your_api_key}",                # If not provided, the API key will be read from the environment variable GEMINI_API_KEY

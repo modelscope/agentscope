@@ -118,7 +118,7 @@ API如下：
 <summary>OpenAI Chat API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py">agents.models.OpenAIChatWrapper</a></code>)</summary>
 
 ```python
-openai_chat_config = {
+{
     "config_name": "{your_config_name}",
     "model_type": "openai_chat",
 
@@ -293,7 +293,7 @@ openai_chat_config = {
     "model_type": "gemini_chat",
 
     # 必要参数
-    "model_name": "{model_name}",               # Gemini Chat API中的模型名，例如：gemini-prp
+    "model_name": "{model_name}",               # Gemini Chat API中的模型名，例如：gemini-pro
 
     # 可选参数
     "api_key": "{your_api_key}",                # 如果没有提供，将从环境变量GEMINI_API_KEY中读取
@@ -311,7 +311,7 @@ openai_chat_config = {
     "model_type": "gemini_embedding",
 
     # 必要参数
-    "model_name": "{model_name}",               # Gemini Embedding API中的模型名，例如：gemini-prp
+    "model_name": "{model_name}",               # Gemini Embedding API中的模型名，例如：models/embedding-001
 
     # 可选参数
     "api_key": "{your_api_key}",                # 如果没有提供，将从环境变量GEMINI_API_KEY中读取
