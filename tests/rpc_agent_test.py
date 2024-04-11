@@ -95,6 +95,13 @@ class DemoRpcAgentWithMonitor(AgentBase):
         return x
 
 
+class DemoErrorAgent(AgentBase):
+    """A demo Rpc agent that raise Error"""
+
+    def reply(self, x: dict = None) -> dict:
+        raise RuntimeError("Demo Error")
+
+
 class BasicRpcAgentTest(unittest.TestCase):
     "Test cases for Rpc Agent"
 
@@ -516,3 +523,9 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertNotEqual(agent4.agent_id, agent.agent_id)
         self.assertIsNone(agent3.server_launcher)
         self.assertIsNone(agent4.server_launcher)
+
+    def test_error_handling(self) -> None:
+        """Test error handling"""
+        agent = DemoErrorAgent(name="a").to_dist()
+        x = agent()
+        self.assertRaises(RuntimeError, x.__getattr__, "content")

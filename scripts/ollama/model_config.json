@@ -2,7 +2,7 @@
   {
     "config_name": "my_ollama_chat_config",
     "model_type": "ollama_chat",
-    "model": "{model_name}",
+    "model_name": "{model_name}",
     "options": {
       "temperature": 0.5,
       "seed": "123"
@@ -12,7 +12,7 @@
   {
     "config_name": "my_ollama_generate_config",
     "model_type": "ollama_generate",
-    "model": "{model_name}",
+    "model_name": "{model_name}",
     "options": {
       "temperature": 0.5,
       "seed": "123"
@@ -22,7 +22,7 @@
   {
     "config_name": "my_ollama_embedding_config",
     "model_type": "ollama_embedding",
-    "model": "{model_name}",
+    "model_name": "{model_name}",
     "options": {
       "temperature": 0.5,
       "seed": "123"
