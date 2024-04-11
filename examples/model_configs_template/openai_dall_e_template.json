@@ -7,7 +7,7 @@
         "max_retries": 3
     },
     "generate_args": {
-        "n": 1, 
+        "n": 1,
         "size": "512x512"
     }
 },
@@ -20,7 +20,7 @@
         "max_retries": 3
     },
     "generate_args": {
-        "n": 1, 
+        "n": 1,
         "size": "512x512"
     }
 }

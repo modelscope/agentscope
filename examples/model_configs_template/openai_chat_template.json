@@ -2,7 +2,7 @@
     "config_name": "openai_chat_gpt-4",
     "model_type": "openai_chat",
     "model_name": "gpt-4",
-    "api_key": "{your_api_key}",               
+    "api_key": "{your_api_key}",
     "client_args": {
         "max_retries": 3
     },
