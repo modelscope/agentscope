@@ -11,7 +11,7 @@ from typing import (
     Optional,
     Literal,
     get_args,
-    get_origin,
+    get_origin, List,
 )
 
 try:
@@ -53,6 +53,47 @@ def _get_type_str(cls: Any) -> Optional[Union[str, list]]:
 class ServiceFactory:
     """A service factory class that turns service function into string
     prompt format."""
+
+    original_funcs: List[Callable]
+    """The original input service functions."""
+
+    processed_funcs: List[Callable]
+    """The processed functions that can be called by models directly."""
+
+    tools_instruction_template: str = (
+        "## Tool Functions:\n"
+        "The following tool functions are available in the format of\n"
+        "```\n"
+        "{{index}}. {{function name}}: {{function description}}\n"
+        "{{argument1 name}} ({{argument type}}): {{argument description}}\n"
+        "{{argument2 name}} ({{argument type}}): {{argument description}}\n"
+        "...\n"
+        "```\n\n"
+        "{function_prompt}\n"
+    )
+
+    tools_calling_instruction: str = ()
+
+    def __init__(self, *funcs: Callable) -> None:
+        """Initialize the service factory with a list of service functions."""
+
+        if not isinstance(funcs, list):
+            funcs = [funcs]
+        self.original_funcs = funcs
+
+
+    @property
+    def json_schemas(self):
+        """The json schema descriptions of the processed service funcs."""
+        return [_[1] for _ in ServiceFactory.get(*self.processed_funcs)]
+
+    @property
+    def tools_instruction(self):
+        return [_[0] for _ in ServiceFactory.get(*self.original_funcs)]
+
+    def call_func(self, text: str):
+        return [func(text) for func in self.original_funcs]
+
 
     @classmethod
     def get(

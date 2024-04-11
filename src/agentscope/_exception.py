@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 """AgentScope exception classes."""
 
-
-# TODO: move other exception classes here
-
+# - Model Response Parsing Exceptions
 
 class ResponseParsingError(Exception):
     """The exception class for response parsing error with uncertain
@@ -27,3 +25,17 @@ class JsonParsingError(ResponseParsingError):
 
 class MissingTagError(ResponseParsingError):
     """The exception class for missing tagged content in model response."""
+
+# - Function Calling Exceptions
+
+class FunctionCallingFormatError(Exception):
+    """The exception class for function calling format error."""
+
+class FunctionNotFoundError(Exception):
+    """The exception class for function not found error."""
+
+class MissingArgumentError(Exception):
+    """The exception class for missing argument error."""
+
+class ArgumentTypeError(Exception):
+    """The exception class for argument type error."""
