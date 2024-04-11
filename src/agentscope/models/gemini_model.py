@@ -51,7 +51,7 @@ class GeminiWrapperBase(ModelWrapperBase, ABC):
                 "environment variable.",
             )
 
-        genai.configure(api_key=api_key)
+        genai.configure(api_key=api_key, **kwargs)
 
         self.model_name = model_name
 
