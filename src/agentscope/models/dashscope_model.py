@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for DashScope models"""
+import os
 from abc import ABC
 from http import HTTPStatus
 from typing import Any, Union, List, Sequence
 from loguru import logger
 
 from ..message import MessageBase
-from ..utils.tools import _convert_to_str
+from ..utils.tools import _convert_to_str, _guess_type_by_extension
 
 try:
     import dashscope
@@ -75,7 +76,9 @@ class DashScopeWrapperBase(ModelWrapperBase, ABC):
 
 
 class DashScopeChatWrapper(DashScopeWrapperBase):
-    """The model wrapper for DashScope's chat API."""
+    """The model wrapper for DashScope's chat API, refer to
+    https://help.aliyun.com/zh/dashscope/developer-reference/api-details
+    """
 
     model_type: str = "dashscope_chat"
 
@@ -164,8 +167,6 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                 "and 'content' key for DashScope API.",
             )
 
-        # TODO: move is to prompt engineering
-        messages = self._preprocess_role(messages)
         # step3: forward to generate response
         response = dashscope.Generation.call(
             model=self.model_name,
@@ -198,9 +199,10 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         # The metric names are unified for comparison
         self.update_monitor(
             call_counter=1,
-            prompt_tokens=response.usage["input_tokens"],
-            completion_tokens=response.usage["output_tokens"],
-            total_tokens=response.usage["total_tokens"],
+            prompt_tokens=response.usage.get("input_tokens", 0),
+            completion_tokens=response.usage.get("output_tokens", 0),
+            total_tokens=response.usage.get("input_tokens", 0)
+            + response.usage.get("output_tokens", 0),
         )
 
         # step6: return response
@@ -261,8 +263,6 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             `List[dict]`:
                 The formatted messages.
         """
-        # TODO: This function only convert agentscope msgs into qwen
-        #  messages, the re-range is executed in _preprocess_role function.
 
         # Parse all information into a list of messages
         input_msgs = []
@@ -313,37 +313,11 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
 
         return messages
 
-    def _preprocess_role(self, messages: list) -> list:
-        """preprocess role rules for DashScope"""
-        # The models in this list require that the roles of messages must
-        # alternate between "user" and "assistant".
-        message_length = len(messages)
-        if message_length % 2 == 1:
-            # If the length of the message list is odd, roles will
-            # alternate, starting with "user"
-            roles = [
-                "user" if i % 2 == 0 else "assistant"
-                for i in range(message_length)
-            ]
-        else:
-            # If the length of the message list is even, the first role
-            # will be "system", followed by alternating "user" and
-            # "assistant"
-            roles = ["system"] + [
-                "user" if i % 2 == 1 else "assistant"
-                for i in range(1, message_length)
-            ]
-
-        # Assign the roles list to the "role" key for each message in
-        # the messages list
-        for message, role in zip(messages, roles):
-            message["role"] = role
-
-        return messages
-
 
 class DashScopeImageSynthesisWrapper(DashScopeWrapperBase):
-    """The model wrapper for DashScope Image Synthesis API."""
+    """The model wrapper for DashScope Image Synthesis API, refer to
+    https://help.aliyun.com/zh/dashscope/developer-reference/quick-start-1
+    """
 
     model_type: str = "dashscope_image_synthesis"
 
@@ -541,4 +515,336 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapperBase):
                     _["embedding"] for _ in response.output["embeddings"]
                 ],
                 raw=response,
+            )
+
+
+class DashScopeMultiModalWrapper(DashScopeWrapperBase):
+    """The model wrapper for DashScope Multimodal API, refer to
+    https://help.aliyun.com/zh/dashscope/developer-reference/tongyi-qianwen-vl-api
+    """
+
+    model_type: str = "dashscope_multimodal"
+
+    def _register_default_metrics(self) -> None:
+        # Set monitor accordingly
+        # TODO: set quota to the following metrics
+        self.monitor.register(
+            self._metric("call_counter"),
+            metric_unit="times",
+        )
+        self.monitor.register(
+            self._metric("prompt_tokens"),
+            metric_unit="token",
+        )
+        self.monitor.register(
+            self._metric("completion_tokens"),
+            metric_unit="token",
+        )
+        self.monitor.register(
+            self._metric("total_tokens"),
+            metric_unit="token",
+        )
+
+    def __call__(
+        self,
+        messages: list,
+        **kwargs: Any,
+    ) -> ModelResponse:
+        """Model call for DashScope MultiModal API.
+
+        Args:
+            messages (`list`):
+                A list of messages to process.
+            **kwargs (`Any`):
+                The keyword arguments to DashScope MultiModal API,
+                e.g. `stream`. Please refer to
+                https://help.aliyun.com/zh/dashscope/developer-reference/tongyi-qianwen-vl-plus-api
+                for more detailed arguments.
+
+        Returns:
+            `ModelResponse`:
+                The response text in text field, and the raw response in
+                raw field.
+
+        Note:
+            If involving image links, then the messages should be of the
+            following form:
+
+            .. code-block:: python
+
+                messages = [
+                    {
+                        "role": "system",
+                        "content": [
+                            {"text": "You are a helpful assistant."},
+                        ],
+                    },
+                    {
+                        "role": "user",
+                        "content": [
+                            {"text": "What does this picture depict？"},
+                            {"image": "http://example.com/image.jpg"},
+                        ],
+                    },
+                ]
+
+            Therefore, you should input a list matching the content value
+            above.
+            If only involving words, just input them.
+
+            `parse_func`, `fault_handler` and `max_retries` are reserved
+            for `_response_parse_decorator` to parse and check the response
+            generated by model wrapper. Their usages are listed as follows:
+                - `parse_func` is a callable function used to parse and
+                check the response generated by the model, which takes the
+                response as input.
+                - `max_retries` is the maximum number of retries when the
+                `parse_func` raise an exception.
+                - `fault_handler` is a callable function which is called
+                when the response generated by the model is invalid after
+                `max_retries` retries.
+        """
+        # step1: prepare keyword arguments
+        kwargs = {**self.generate_args, **kwargs}
+
+        # step2: forward to generate response
+        response = dashscope.MultiModalConversation.call(
+            model=self.model_name,
+            messages=messages,
+            **kwargs,
+        )
+
+        if response.status_code != HTTPStatus.OK:
+            error_msg = (
+                f" Request id: {response.request_id},"
+                f" Status code: {response.status_code},"
+                f" error code: {response.code},"
+                f" error message: {response.message}."
+            )
+            raise RuntimeError(error_msg)
+
+        # step3: record the model api invocation if needed
+        self._save_model_invocation(
+            arguments={
+                "model": self.model_name,
+                "messages": messages,
+                **kwargs,
+            },
+            response=response,
+        )
+
+        # step4: update monitor accordingly
+        input_tokens = response.usage.get("input_tokens", 0)
+        image_tokens = response.usage.get("image_tokens", 0)
+        audio_tokens = response.usage.get("audio_tokens", 0)
+        output_tokens = response.usage.get("output_tokens", 0)
+        self.update_monitor(
+            call_counter=1,
+            prompt_tokens=input_tokens,
+            completion_tokens=output_tokens,
+            total_tokens=input_tokens
+            + output_tokens
+            + image_tokens
+            + audio_tokens,
+        )
+
+        # step5: return response
+        return ModelResponse(
+            text=response.output["choices"][0]["message"]["content"][0][
+                "text"
+            ],
+            raw=response,
+        )
+
+    def format(
+        self,
+        *args: Union[MessageBase, Sequence[MessageBase]],
+    ) -> List:
+        """Format the messages for DashScope Multimodal API.
+
+        The multimodal API has the following requirements:
+        - The roles of messages must alternate between "user" and
+        "assistant".
+        - The message with the role "system" should be the first message
+        in the list.
+            - If the system message exists, then the second message must
+            have the role "user".
+        - The last message in the list should have the role "user".
+        - In each message, more than one figure is allowed.
+
+        With the above requirements, we format the messages as follows:
+        - If the first message is a system message, then we will keep it as
+        system prompt.
+        - We merge all messages into a dialogue history prompt in a single
+        message with the role "user".
+        - When there are multiple figures in the given messages, we will
+        attach it to the user message by order. Note if there are multiple
+        figures, this strategy may cause misunderstanding for the model. For
+        advanced solutions, developers are encouraged to implement their own
+        prompt engineering strategies.
+
+        The following is an example:
+
+        .. code-block:: python
+
+            prompt = model.format(
+                Msg(
+                    "system",
+                    "You're a helpful assistant",
+                    role="system", url="figure1"
+                ),
+                Msg(
+                    "Bob",
+                    "How about this picture?",
+                    role="assistant", url="figure2"
+                ),
+                Msg(
+                    "user",
+                    "It's wonderful! How about mine?",
+                    role="user", image="figure3"
+                )
+            )
+
+        The prompt will be as follows:
+
+        .. code-block:: python
+
+            [
+                {
+                    "role": "system",
+                    "content": [
+                        {"text": "You are a helpful assistant"},
+                        {"image": "figure1"}
+                    ]
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {"image": "figure2"},
+                        {"image": "figure3"},
+                        {
+                            "text": (
+                                "## Dialogue History\n"
+                                "Bob: How about this picture?\n"
+                                "user: It's wonderful! How about mine?"
+                            )
+                        },
+                    ]
+                }
+            ]
+
+        Note:
+            In multimodal API, the url of local files should be prefixed with
+            "file://", which will be attached in this format function.
+
+        Args:
+            args (`Union[MessageBase, Sequence[MessageBase]]`):
+                The input arguments to be formatted, where each argument
+                should be a `Msg` object, or a list of `Msg` objects.
+                In distribution, placeholder is also allowed.
+
+        Returns:
+            `List[dict]`:
+                The formatted messages.
+        """
+
+        # Parse all information into a list of messages
+        input_msgs = []
+        for _ in args:
+            if isinstance(_, MessageBase):
+                input_msgs.append(_)
+            elif isinstance(_, list) and all(
+                isinstance(__, MessageBase) for __ in _
+            ):
+                input_msgs.extend(_)
+            else:
+                raise TypeError(
+                    f"The input should be a Msg object or a list "
+                    f"of Msg objects, got {type(_)}.",
+                )
+
+        messages = []
+
+        # record dialog history as a list of strings
+        dialogue = []
+        image_or_audio_dicts = []
+        for i, unit in enumerate(input_msgs):
+            if i == 0 and unit.role == "system":
+                # system prompt
+                content = self._convert_url(unit.url)
+                content.append({"text": _convert_to_str(unit.content)})
+
+                messages.append(
+                    {
+                        "role": unit.role,
+                        "content": content,
+                    },
+                )
+            else:
+                # text message
+                dialogue.append(
+                    f"{unit.name}: {_convert_to_str(unit.content)}",
+                )
+                # image and audio
+                image_or_audio_dicts.extend(self._convert_url(unit.url))
+
+        dialogue_history = "\n".join(dialogue)
+
+        user_content_template = "## Dialogue History\n{dialogue_history}"
+
+        messages.append(
+            {
+                "role": "user",
+                "content": [
+                    # Place the image or audio before the dialogue history
+                    *image_or_audio_dicts,
+                    {
+                        "text": user_content_template.format(
+                            dialogue_history=dialogue_history,
+                        ),
+                    },
+                ],
+            },
+        )
+
+        return messages
+
+    def _convert_url(self, url: Union[str, Sequence[str], None]) -> List[dict]:
+        """Convert the url to the format of DashScope API. Note for local
+        files, a prefix "file://" will be added.
+
+        Args:
+            url (`Union[str, Sequence[str], None]`):
+                A string of url of a list of urls to be converted.
+
+        Returns:
+            `List[dict]`:
+                A list of dictionaries with key as the type of the url
+                and value as the url. Only "image" and "audio" are supported.
+        """
+        if url is None:
+            return []
+
+        if isinstance(url, str):
+            url_type = _guess_type_by_extension(url)
+            if url_type in ["audio", "image"]:
+                # Add prefix for local files
+                if os.path.exists(url):
+                    url = "file://" + url
+                return [{url_type: url}]
+            else:
+                # skip unsupported url
+                logger.warning(
+                    f"Skip unsupported url ({url_type}), "
+                    f"expect image or audio.",
+                )
+                return []
+        elif isinstance(url, list):
+            dicts = []
+            for _ in url:
+                dicts.extend(self._convert_url(_))
+            return dicts
+        else:
+            raise TypeError(
+                f"Unsupported url type {type(url)}, " f"str or list expected.",
             )
