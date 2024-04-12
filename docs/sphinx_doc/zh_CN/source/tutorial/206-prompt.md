@@ -23,13 +23,14 @@ AgentScope内置策略的目标是**使初学者能够顺利调用模型API ，�
 
 AgentScope为以下的模型API提供了内置的提示构建策略。
 
-- [`OpenAIChatWrapper`](#openaichatwrapper)
-- [`DashScopeChatWrapper`](#dashscopechatwrapper)
-- [`OllamaChatWrapper`](#ollamachatwrapper)
-- [`OllamaGenerationWrapper`](ollamagenerationwrapper)
-- [`GeminiChatWrapper`](#geminiwrapper)
+- [OpenAIChatWrapper](#openaichatwrapper)
+- [DashScopeChatWrapper](#dashscopechatwrapper)
+- [DashScopeMultiModalWrapper](#dashscopemultimodalwrapper)
+- [OllamaChatWrapper](#ollamachatwrapper)
+- [OllamaGenerationWrapper](#ollamagenerationwrapper)
+- [GeminiChatWrapper](#geminichatwrapper)
 
-这些策略是在对应Model Wrapper类的`format`函数中实现的。它接受`Msg`对象，`Msg`对象的列表或它们的混合作为输入。
+这些策略是在对应Model Wrapper类的`format`函数中实现的。它接受`Msg`对象，`Msg`对象的列表或它们的混合作为输入。在`format`函数将会把输入重新组织成一个`Msg`对象的列表，因此为了方便解释，我们在下面的章节中认为`format`函数的输入是`Msg`对象的列表。
 
 ### `OpenAIChatWrapper`
 
@@ -112,6 +113,89 @@ print(prompt)
 [
   {"role": "system", "content": "You are a helpful assistant"},
   {"role": "user", "content": "## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!"},
+]
+```
+
+### `DashScopeMultiModalWrapper`
+
+`DashScopeMultiModalWrapper`封装了多模态模型的API，它接受消息列表作为输入，并且必须遵循以下的规则(更新于2024/04/04):
+
+- 每个消息是一个字段，并且包含`role`和`content`字段。
+  - 其中`role`字段取值必须是`"user"`，`"system"`，`"assistant"`之一。
+  - `content`字段对应的值必须是字典的列表
+    - 每个字典只包含`text`，`image`或`audio`中的一个键值对
+    - `text`域对应的值是一个字符串，表示文本内容
+    - `image`域对应的值是一个字符串，表示图片的url
+    - `audio`域对应的值是一个字符串，表示音频的url
+    - `content`中可以同时包含多个key为`image`的字典或者多个key为`audio`的字典。例如
+```python
+[
+    {
+        "role": "user",
+        "content": [
+            {"text": "What's the difference between these two pictures?"},
+            {"image": "https://xxx1.png"},
+            {"image": "https://xxx2.png"}
+        ]
+    },
+    {
+        "role": "assistant",
+        "content": [{"text": "The first picture is a cat, and the second picture is a dog."}]
+    },
+    {
+        "role": "user",
+        "content": [{"text": "I see, thanks!"}]
+    }
+]
+```
+- 如果一条信息的`role`字段是`"system"`，那么这条信息必须也只能出现在消息列表的开头。
+- 消息列表中最后一条消息的`role`字段必须是`"user"`。
+- 消息列表中`user`和`assistant`必须交替发言。
+
+#### 提示的构建策略
+
+基于上述API的限制，构建策略如下：
+- 如果输入的消息列表中第一条消息的`role`字段的值是`"system"`，它将被转换为一条系统消息，其中`role`字段为`"system"`，`content`字段为系统消息，如果输入`Msg`对象中`url`属性不为`None`，则根据其类型在`content`中增加一个键值为`"image"`或者`"audio"`的字典。
+- 其余的消息将被转换为一条消息，其中`role`字段为`"user"`，`content`字段为对话历史。并且所有`Msg`对象中`url`属性不为`None`的消息，都会根据`url`指向的文件类型在`content`中增加一个键值为`"image"`或者`"audio"`的字典。
+
+样例如下：
+
+```python
+from agentscope.models import DashScopeMultiModalWrapper
+from agentscope.message import Msg
+
+model = DashScopeMultiModalWrapper(
+    config_name="", # 我们直接初始化model wrapper，因此不需要填入config_name
+    model_name="qwen-vl-plus",
+)
+
+prompt = model.format(
+   Msg("system", "You're a helpful assistant", role="system", url="url_to_png1"),   # Msg对象
+   [                                                                                # Msg对象的列表
+      Msg(name="Bob", content="Hi!", role="assistant", url="url_to_png2"),
+      Msg(name="Alice", content="Nice to meet you!", role="assistant", url="url_to_png3"),
+   ],
+)
+print(prompt)
+```
+
+```bash
+[
+  {
+    "role": "system",
+    "content": [
+      {"text": "You are a helpful assistant"},
+      {"image": "url_to_png1"}
+    ]
+  },
+  {
+    "role": "user",
+    "content": [
+      {"text": "## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!"},
+      {"image": "url_to_png2"},
+      {"image": "url_to_png3"},
+    ]
+  }
 ]
 ```
 
