@@ -603,7 +603,7 @@ class BasicRpcAgentTest(unittest.TestCase):
                         host=host,
                         port=launcher1.port,
                         launch_server=False,
-                    )
+                    ),
                 )
             else:
                 agents.append(
@@ -611,7 +611,7 @@ class BasicRpcAgentTest(unittest.TestCase):
                         host=host,
                         port=launcher2.port,
                         launch_server=False,
-                    )
+                    ),
                 )
         gather1 = DemoGatherAgent(name="g1", agents=agents[:4])
         gather2 = DemoGatherAgent(name="g2", agents=agents[4:])
