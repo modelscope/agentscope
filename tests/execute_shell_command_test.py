@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """ Python code execution test."""
 import unittest
-import sys
 
 from agentscope.service import execute_shell_command
 from agentscope.service import ServiceExecStatus
