@@ -95,6 +95,52 @@ class DemoRpcAgentWithMonitor(AgentBase):
         return x
 
 
+class DemoGeneratorAgent(AgentBase):
+    """A demo agent to generate a number"""
+
+    def __init__(self, name: str, value: int) -> None:
+        super().__init__(name)
+        self.value = value
+
+    def reply(self, _: dict = None) -> dict:
+        time.sleep(1)
+        return Msg(
+            name=self.name,
+            role="assistant",
+            content={
+                "value": self.value,
+            },
+        )
+
+
+class DemoGatherAgent(AgentBase):
+    """A demo agent to gather value"""
+
+    def __init__(self, name: str, agents: list[DemoGeneratorAgent]) -> None:
+        super().__init__(
+            name,
+        )
+        self.agents = agents
+
+    def reply(self, _: dict = None) -> dict:
+        result = []
+        stime = time.time()
+        for agent in self.agents:
+            result.append(agent())
+        value = 0
+        for r in result:
+            value += r.content["value"]
+        etime = time.time()
+        return Msg(
+            name=self.name,
+            role="assistant",
+            content={
+                "value": value,
+                "time": etime - stime,
+            },
+        )
+
+
 class DemoErrorAgent(AgentBase):
     """A demo Rpc agent that raise Error"""
 
@@ -529,3 +575,51 @@ class BasicRpcAgentTest(unittest.TestCase):
         agent = DemoErrorAgent(name="a").to_dist()
         x = agent()
         self.assertRaises(RuntimeError, x.__getattr__, "content")
+
+    def test_agent_nesting(self) -> None:
+        """Test agent nesting"""
+        host = "localhost"
+        launcher1 = RpcAgentServerLauncher(
+            # choose port automatically
+            host=host,
+            port=12010,
+            local_mode=False,
+            custom_agents=[DemoRpcAgent],
+        )
+        launcher2 = RpcAgentServerLauncher(
+            # choose port automatically
+            host=host,
+            port=12011,
+            local_mode=False,
+            custom_agents=[DemoRpcAgent],
+        )
+        launcher1.launch()
+        launcher2.launch()
+        agents = []
+        for i in range(8):
+            if i % 2:
+                agents.append(
+                    DemoGeneratorAgent(name=f"a_{i}", value=i).to_dist(
+                        host=host,
+                        port=launcher1.port,
+                        launch_server=False,
+                    )
+                )
+            else:
+                agents.append(
+                    DemoGeneratorAgent(name=f"a_{i}", value=i).to_dist(
+                        host=host,
+                        port=launcher2.port,
+                        launch_server=False,
+                    )
+                )
+        gather1 = DemoGatherAgent(name="g1", agents=agents[:4])
+        gather2 = DemoGatherAgent(name="g2", agents=agents[4:])
+        r1 = gather1()
+        r2 = gather2()
+        self.assertEqual(r1.content["value"], 6)
+        self.assertEqual(r2.content["value"], 22)
+        self.assertTrue(r1.content["time"] < 2.5)
+        self.assertTrue(r2.content["time"] < 2.5)
+        launcher1.shutdown()
+        launcher2.shutdown()
