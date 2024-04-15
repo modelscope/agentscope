@@ -105,7 +105,6 @@ a = AgentA(
 ).to_dist(
     host="a.b.c.d",
     port=12001,
-    launch_server=False,
 )
 b = AgentB(
     name="B",
@@ -113,12 +112,52 @@ b = AgentB(
 ).to_dist(
     host="e.f.g.h",
     port=12002,
-    launch_server=False,
 )
 ```
 
 The above code will deploy `AgentA` on the agent server process of `Machine1` and `AgentB` on the agent server process of `Machine2`.
 And developers just need to write the application flow in a centralized way in the main process.
+
+#### Advanced Usage of `to_dist`
+
+All examples described above convert initialized agents into its distributed version through the `to_dist()` method. For those agents whose initialization is time-consuming, the above method is equivalent to performing the initialization operation twice. If the `to_dist` method is used directly, it will seriously affect efficiency. Therefore, AgentScope also provides a method to convert the Agent instance into its distributed version while initializing it, that is, passing in `to_dist=True` and other necessary parameters when the original agent instance is initialized.
+
+In Subprocess mode, the initialization of distribtued agent can be simplified to the following code:
+
+```python
+# Subprocess mode
+a = AgentA(
+    name="A",
+    # ...
+    to_dist=True
+)
+b = AgentB(
+    name="B",
+    # ...
+    to_dist=True
+)
+```
+
+In Standalone mode, it is as follows:
+
+```python
+a = AgentA(
+    name="A",
+    # ...
+    to_dist=True,
+    host="a.b.c.d",
+    port=12001,
+)
+b = AgentB(
+    name="B",
+    # ...
+    to_dist=True,
+    host="e.f.g.h",
+    port=12002,
+)
+```
+
+Compared with the original `to_dist()` function call, this method only needs to pass in `to_dist=True` in the original agent's initialization function, and pass other parameters originally passed in the `to_dist()` method into the Agent's initialization function in the form of key-value pairs.
 
 ### Step 2: Orchestrate Distributed Application Flow
 
@@ -165,7 +204,6 @@ b = AgentB(
 ).to_dist(
     host="e.f.g.h",
     port=12002,
-    launch_server=False,
 )
 
 # Application flow orchestration

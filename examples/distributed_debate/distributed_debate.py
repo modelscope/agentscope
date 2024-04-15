@@ -92,12 +92,10 @@ def run_main_process(parsed_args: argparse.Namespace) -> None:
     pro_agent = pro_agent.to_dist(
         host=parsed_args.pro_host,
         port=parsed_args.pro_port,
-        launch_server=False,
     )
     con_agent = con_agent.to_dist(
         host=parsed_args.con_host,
         port=parsed_args.con_port,
-        launch_server=False,
     )
     participants = [pro_agent, con_agent, judge_agent]
     announcements = [

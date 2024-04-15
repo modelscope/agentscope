@@ -66,7 +66,6 @@ class RpcAgent(AgentBase):
         name: str,
         host: str = "localhost",
         port: int = None,
-        launch_server: bool = True,
         agent_class: Type[AgentBase] = None,
         agent_configs: Optional[dict] = None,
         max_pool_size: int = 8192,
@@ -74,18 +73,16 @@ class RpcAgent(AgentBase):
         local_mode: bool = True,
         lazy_launch: bool = True,
         agent_id: str = None,
-        connect_existing_agent: bool = False,
+        connect_existing: bool = False,
     ) -> None:
         """Initialize a RpcAgent instance.
 
         Args:
             name (`str`): the name of the agent.
-            host (`str`, defaults to `"localhost"`):
+            host (`str`, defaults to `localhost`):
                 Hostname of the rpc agent server.
             port (`int`, defaults to `None`):
                 Port of the rpc agent server.
-            launch_server (`bool`, defaults to `True`):
-                Whether to launch the gRPC agent server.
             agent_class (`Type[AgentBase]`):
                 the AgentBase subclass of the source agent.
             agent_configs (`dict`): The args used to
@@ -102,7 +99,7 @@ class RpcAgent(AgentBase):
             agent_id (`str`, defaults to `None`):
                 The agent id of this instance. If `None`, it will
                 be generated randomly.
-            connect_existing_agent (`bool`, defaults to `False`):
+            connect_existing (`bool`, defaults to `False`):
                 Set to `True`, if the agent is already running on the agent
                 server.
         """
@@ -113,9 +110,11 @@ class RpcAgent(AgentBase):
         self.port = port
         self.server_launcher = None
         self.client = None
-        self.connect_existing_agent = connect_existing_agent
+        self.connect_existing = connect_existing
         if agent_id is not None:
             self._agent_id = agent_id
+        # if host and port are not provided, launch server locally
+        launch_server = port is None
         if launch_server:
             self.server_launcher = RpcAgentServerLauncher(
                 host=host,
@@ -133,7 +132,7 @@ class RpcAgent(AgentBase):
                 port=self.port,
                 agent_id=self.agent_id,
             )
-            if not self.connect_existing_agent:
+            if not self.connect_existing:
                 self.client.create_agent(agent_configs)
 
     def _launch_server(self) -> None:
@@ -204,9 +203,8 @@ class RpcAgent(AgentBase):
                     name=self.name,
                     host=self.host,
                     port=self.port,
-                    launch_server=False,
                     agent_id=new_agent_id,
-                    connect_existing_agent=True,
+                    connect_existing=True,
                 ),
             )
         return generated_instances

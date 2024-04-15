@@ -106,7 +106,6 @@ a = AgentA(
 ).to_dist(
     host="a.b.c.d",
     port=12001,
-    launch_server=False,
 )
 b = AgentB(
     name="B",
@@ -114,12 +113,52 @@ b = AgentB(
 ).to_dist(
     host="e.f.g.h",
     port=12002,
-    launch_server=False,
 )
 ```
 
 上述代码将会把 `AgentA` 部署到 `Machine1` 的智能体服务进程上，并将 `AgentB` 部署到 `Machine2` 的智能体服务进程上。
 开发者在这之后只需要用中心化的方法编排各智能体的交互逻辑即可。
+
+#### `to_dist` 进阶用法
+
+上面介绍的案例都是将一个已经初始化的 Agent 通过 `to_dist` 方法转化为其分布式版本。对于那些初始化耗时的 Agent 上述方法相当于要执行两次初始化操作，如果直接使用 `to_dist` 方法会严重影响运行效率。为此 AgentScope 也提供了在初始化 Agent 实例的同时将其转化为其分布式版本的方法，即在原 Agent 实例初始化时传入 `to_dist=True` 以及其他必要参数。
+
+子进程模式下 Agent 的初始化可简化为如下代码：
+
+```python
+# Subprocess mode
+a = AgentA(
+    name="A",
+    # ...
+    to_dist=True
+)
+b = AgentB(
+    name="B",
+    # ...
+    to_dist=True
+)
+```
+
+独立模式下 Agent 的初始化可简化为如下代码：
+
+```python
+a = AgentA(
+    name="A",
+    # ...
+    to_dist=True,
+    host="a.b.c.d",
+    port=12001,
+)
+b = AgentB(
+    name="B",
+    # ...
+    to_dist=True,
+    host="e.f.g.h",
+    port=12002,
+)
+```
+
+相较于原有的 `to_dist()` 函数调用，该方法只需要在原 Agent 的初始化函数中传入 `to_dist=True`，并将其他原来在 `to_dist()` 方法中传入的参数以键值对的形式传入 Agent 的初始化函数即可。
 
 ### 步骤2: 编排分布式应用流程
 
@@ -163,7 +202,10 @@ a = AgentA(
 b = AgentB(
     name="B",
     # ...
-).to_dist()
+).to_dist(
+    host="e.f.g.h",
+    port=12002,
+)
 
 # 应用流程编排
 x = None

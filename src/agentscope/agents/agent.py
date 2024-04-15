@@ -36,6 +36,54 @@ class _AgentMeta(ABCMeta):
         super().__init__(name, bases, attrs)
 
     def __call__(cls, *args: tuple, **kwargs: dict) -> Any:
+        if len(args) > 0:
+            logger.warning(
+                "Please only use keywords arguments to initialize your agents."
+                "\ne.g.\nagent = YourAgentClass(name='agent_name', ...)",
+            )
+        if "to_dist" in kwargs:
+            from .rpc_agent import RpcAgent
+
+            kwargs.pop("to_dist")
+            if cls is not RpcAgent and not issubclass(cls, RpcAgent):
+                return RpcAgent(
+                    name=kwargs["name"],  # type: ignore[arg-type]
+                    host=kwargs.pop(  # type: ignore[arg-type]
+                        "host",
+                        "localhost",
+                    ),
+                    port=kwargs.pop("port", None),  # type: ignore[arg-type]
+                    max_pool_size=kwargs.pop(  # type: ignore[arg-type]
+                        "max_pool_size",
+                        8192,
+                    ),
+                    max_timeout_seconds=kwargs.pop(  # type: ignore[arg-type]
+                        "max_timeout_seconds",
+                        1800,
+                    ),
+                    local_mode=kwargs.pop(  # type: ignore[arg-type]
+                        "local_mode",
+                        True,
+                    ),
+                    lazy_launch=kwargs.pop(  # type: ignore[arg-type]
+                        "lazy_launch",
+                        True,
+                    ),
+                    agent_id=kwargs.pop(  # type: ignore[arg-type]
+                        "agent_id",
+                        cls.generate_agent_id(),
+                    ),
+                    connect_existing=kwargs.pop(  # type: ignore[arg-type]
+                        "connect_existing",
+                        False,
+                    ),
+                    agent_class=cls,
+                    agent_configs={
+                        "args": args,
+                        "kwargs": kwargs,
+                        "class_name": cls.__name__,
+                    },
+                )
         instance = super().__call__(*args, **kwargs)
         instance._init_settings = {
             "args": args,
@@ -245,9 +293,9 @@ class AgentBase(Operator, metaclass=_AgentMeta):
         port: int = None,
         max_pool_size: int = 8192,
         max_timeout_seconds: int = 1800,
-        launch_server: bool = True,
         local_mode: bool = True,
         lazy_launch: bool = True,
+        launch_server: bool = None,
     ) -> AgentBase:
         """Convert current agent instance into a distributed version.
 
@@ -265,6 +313,9 @@ class AgentBase(Operator, metaclass=_AgentMeta):
                 requests.
             lazy_launch (`bool`, defaults to `True`):
                 Only launch the server when the agent is called.
+            launch_server(`bool`, defaults to `None`):
+                This field has been deprecated and will be removed in
+                future releases.
 
         Returns:
             `AgentBase`: the wrapped agent instance with distributed
@@ -274,6 +325,12 @@ class AgentBase(Operator, metaclass=_AgentMeta):
 
         if issubclass(self.__class__, RpcAgent):
             return self
+        if launch_server is not None:
+            logger.warning(
+                "`launch_server` has been deprecated and will be removed in "
+                "future releases. When `host` and `port` is not provided, the "
+                "agent server will be launched automatically.",
+            )
         return RpcAgent(
             name=self.name,
             agent_class=self.__class__,
@@ -282,7 +339,6 @@ class AgentBase(Operator, metaclass=_AgentMeta):
             port=port,
             max_pool_size=max_pool_size,
             max_timeout_seconds=max_timeout_seconds,
-            launch_server=launch_server,
             local_mode=local_mode,
             lazy_launch=lazy_launch,
             agent_id=self.agent_id,

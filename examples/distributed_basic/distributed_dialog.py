@@ -57,7 +57,6 @@ def run_main_process(assistant_host: str, assistant_port: int) -> None:
     ).to_dist(
         host=assistant_host,
         port=assistant_port,
-        launch_server=False,
     )
     user_agent = UserAgent(
         name="User",

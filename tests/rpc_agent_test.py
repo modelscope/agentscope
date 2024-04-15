@@ -167,14 +167,9 @@ class BasicRpcAgentTest(unittest.TestCase):
 
     def test_single_rpc_agent_server(self) -> None:
         """test setup a single rpc agent"""
-        host = "localhost"
-        port = 12001
         agent_a = DemoRpcAgent(
             name="a",
-        ).to_dist(
-            host=host,
-            port=port,
-        )
+        ).to_dist()
         self.assertIsNotNone(agent_a)
         msg = Msg(
             name="System",
@@ -234,7 +229,6 @@ class BasicRpcAgentTest(unittest.TestCase):
         ).to_dist(
             host="127.0.0.1",
             port=launcher.port,
-            launch_server=False,
         )
         msg = Msg(
             name="System",
@@ -269,29 +263,19 @@ class BasicRpcAgentTest(unittest.TestCase):
 
     def test_multi_rpc_agent(self) -> None:
         """test setup multi rpc agent"""
-        host = "localhost"
-        port1 = 12001
-        port2 = 12002
-        port3 = 12003
         agent_a = DemoRpcAgentAdd(
             name="a",
         ).to_dist(
-            host=host,
-            port=port1,
             lazy_launch=False,
         )
         agent_b = DemoRpcAgentAdd(
             name="b",
         ).to_dist(
-            host=host,
-            port=port2,
             lazy_launch=False,
         )
         agent_c = DemoRpcAgentAdd(
             name="c",
         ).to_dist(
-            host=host,
-            port=port3,
             lazy_launch=False,
         )
 
@@ -335,17 +319,9 @@ class BasicRpcAgentTest(unittest.TestCase):
 
     def test_mix_rpc_agent_and_local_agent(self) -> None:
         """test to use local and rpc agent simultaneously"""
-        host = "localhost"
-        # use the same port, agents should choose available ports
-        # automatically
-        port1 = 12001
-        port2 = 12001
-        # rpc agent a
         agent_a = DemoRpcAgentAdd(
             name="a",
         ).to_dist(
-            host=host,
-            port=port1,
             lazy_launch=False,
         )
         # local agent b
@@ -353,11 +329,9 @@ class BasicRpcAgentTest(unittest.TestCase):
             name="b",
         )
         # rpc agent c
-        agent_c = DemoRpcAgentAdd(
+        agent_c = DemoRpcAgentAdd(  # pylint: disable=E1123
             name="c",
-        ).to_dist(
-            host=host,
-            port=port2,
+            to_dist=True,
             lazy_launch=False,
         )
         msg = Msg(
@@ -411,24 +385,16 @@ class BasicRpcAgentTest(unittest.TestCase):
         """test compatibility with agentscope.init"""
         monitor = MonitorFactory.get_monitor()
         monitor.register("msg_num", quota=10)
-        host = "localhost"
-        # automatically
-        port1 = 12001
-        port2 = 12002
         # rpc agent a
         agent_a = DemoRpcAgentWithMonitor(
             name="a",
         ).to_dist(
-            host=host,
-            port=port1,
             lazy_launch=False,
         )
         # local agent b
         agent_b = DemoRpcAgentWithMonitor(
             name="b",
         ).to_dist(
-            host=host,
-            port=port2,
             lazy_launch=False,
         )
         msg = Msg(name="System", content={"msg_num": 0}, role="system")
@@ -464,7 +430,6 @@ class BasicRpcAgentTest(unittest.TestCase):
         agent1 = agent1.to_dist(
             host="127.0.0.1",
             port=launcher.port,
-            launch_server=False,
         )
         self.assertEqual(oid, agent1.agent_id)
         self.assertEqual(oid, agent1.client.agent_id)
@@ -473,7 +438,6 @@ class BasicRpcAgentTest(unittest.TestCase):
         ).to_dist(
             host="127.0.0.1",
             port=launcher.port,
-            launch_server=False,
         )
         # agent3 has the same agent id as agent1
         # so it share the same memory with agent1
@@ -482,7 +446,6 @@ class BasicRpcAgentTest(unittest.TestCase):
         ).to_dist(
             host="127.0.0.1",
             port=launcher.port,
-            launch_server=False,
         )
         agent3._agent_id = agent1.agent_id  # pylint: disable=W0212
         agent3.client.agent_id = agent1.client.agent_id
@@ -510,7 +473,6 @@ class BasicRpcAgentTest(unittest.TestCase):
         ).to_dist(
             host="127.0.0.1",
             port=launcher.port,
-            launch_server=False,
         )
         msg5 = Msg(name="System", content="Second Msg for agent4")
         res5 = agent4(msg5)
@@ -602,7 +564,6 @@ class BasicRpcAgentTest(unittest.TestCase):
                     DemoGeneratorAgent(name=f"a_{i}", value=i).to_dist(
                         host=host,
                         port=launcher1.port,
-                        launch_server=False,
                     ),
                 )
             else:
@@ -610,7 +571,6 @@ class BasicRpcAgentTest(unittest.TestCase):
                     DemoGeneratorAgent(name=f"a_{i}", value=i).to_dist(
                         host=host,
                         port=launcher2.port,
-                        launch_server=False,
                     ),
                 )
         gather1 = DemoGatherAgent(name="g1", agents=agents[:4])
