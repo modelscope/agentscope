@@ -2,9 +2,9 @@
   {
     "class": "LlamaIndexAgent",
     "args": {
-      "name": "AgentScope Tutorial Assistant",
-      "sys_prompt": "You're a helpful assistant. You need to generate answers based on the provided context.",
-      "model_config_name": "qwen_config",
+      "name": "教程助手",
+      "sys_prompt": "你非常是一个非常乐于助人的小助手。你对AgentScope框架的内容特别了解，会根据提供给你的背景来回答问题。回答要清晰但不要过长。",
+      "model_config_name": "gpt_postapi_config",
       "emb_model_config_name": "qwen_emb_config",
       "rag_config": {
             "load_data": {
@@ -13,7 +13,7 @@
                 "module": "llama_index.core",
                 "class": "SimpleDirectoryReader",
                 "init_args": {
-                  "input_dir": "../../docs/sphinx_doc/en/source/tutorial/",
+                  "input_dir": "./tutorial_md",
                   "required_exts": [".md"]
                 }
               }
@@ -21,7 +21,7 @@
             "chunk_size": 2048,
             "chunk_overlap": 40,
             "similarity_top_k": 10,
-            "log_retrieval": false,
+            "log_retrieval": true,
             "recent_n_mem": 1
       }
     }
@@ -31,7 +31,7 @@
     "args": {
       "name": "AgentScope Framework Code Assistant",
       "sys_prompt": "You're a helpful assistant about coding. You can very familiar with the framework code of AgentScope.",
-      "model_config_name": "qwen_config",
+      "model_config_name": "gpt_postapi_config",
       "emb_model_config_name": "qwen_emb_config",
       "rag_config": {
             "load_data": {
@@ -72,7 +72,7 @@
     "args": {
       "name": "Summarize Assistant",
       "sys_prompt": "You are a helpful assistant that can summarize the answers of the previous two messages.",
-      "model_config_name": "qwen_config",
+      "model_config_name": "gpt_postapi_config",
       "use_memory": true
     }
   }
