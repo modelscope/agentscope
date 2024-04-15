@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 """ Base class for Rpc Agent """
 
-from multiprocessing import Process, Event, Pipe, cpu_count
+from multiprocessing import Process, Event, Pipe
 from multiprocessing.synchronize import Event as EventClass
 import socket
 import threading
 import json
+import pickle
+import base64
 import traceback
 import asyncio
 from typing import Any, Type, Optional, Union, Sequence
@@ -14,7 +16,7 @@ from loguru import logger
 
 try:
     import grpc
-    from grpc.aio import ServicerContext
+    from grpc import ServicerContext
 except ImportError:
     grpc = None
     ServicerContext = Any
@@ -331,7 +333,7 @@ async def setup_rpc_agent_server_async(
                 f"Starting rpc server at port [{port}]...",
             )
             server = grpc.aio.server(
-                futures.ThreadPoolExecutor(max_workers=cpu_count()),
+                futures.ThreadPoolExecutor(max_workers=None),
             )
             add_RpcAgentServicer_to_server(servicer, server)
             if local_mode:
@@ -548,7 +550,7 @@ class AgentPlatform(RpcAgentServicer):
             max_len=max_pool_size,
             max_age_seconds=max_timeout_seconds,
         )
-        self.executor = futures.ThreadPoolExecutor(max_workers=cpu_count())
+        self.executor = futures.ThreadPoolExecutor(max_workers=None)
         self.task_id_lock = threading.Lock()
         self.agent_id_lock = threading.Lock()
         self.task_id_counter = 0
@@ -618,7 +620,7 @@ class AgentPlatform(RpcAgentServicer):
                 self.agent_pool.pop(agent_id)
                 logger.info(f"delete agent instance [{agent_id}]")
 
-    async def call_func(  # pylint: disable=W0236
+    def call_func(  # pylint: disable=W0236
         self,
         request: RpcMsg,
         context: ServicerContext,
@@ -627,7 +629,7 @@ class AgentPlatform(RpcAgentServicer):
         if hasattr(self, request.target_func):
             if request.target_func not in ["_create_agent", "_get"]:
                 if not self.agent_exists(request.agent_id):
-                    await context.abort(
+                    return context.abort(
                         grpc.StatusCode.INVALID_ARGUMENT,
                         f"Agent [{request.agent_id}] not exists.",
                     )
@@ -635,7 +637,7 @@ class AgentPlatform(RpcAgentServicer):
         else:
             # TODO: support other user defined method
             logger.error(f"Unsupported method {request.target_func}")
-            await context.abort(
+            return context.abort(
                 grpc.StatusCode.INVALID_ARGUMENT,
                 f"Unsupported method {request.target_func}",
             )
@@ -721,7 +723,11 @@ class AgentPlatform(RpcAgentServicer):
         """
         self.check_and_generate_agent(
             request.agent_id,
-            agent_configs=json.loads(request.value) if request.value else None,
+            agent_configs=(
+                pickle.loads(base64.b64decode(request.value))
+                if request.value
+                else None
+            ),
         )
         return RpcMsg()
 

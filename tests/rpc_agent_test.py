@@ -433,9 +433,9 @@ class BasicRpcAgentTest(unittest.TestCase):
         )
         self.assertEqual(oid, agent1.agent_id)
         self.assertEqual(oid, agent1.client.agent_id)
-        agent2 = DemoRpcAgentWithMemory(
+        agent2 = DemoRpcAgentWithMemory(  # pylint: disable=E1123
             name="a",
-        ).to_dist(
+            to_dist=True,
             host="127.0.0.1",
             port=launcher.port,
         )
@@ -573,8 +573,20 @@ class BasicRpcAgentTest(unittest.TestCase):
                         port=launcher2.port,
                     ),
                 )
-        gather1 = DemoGatherAgent(name="g1", agents=agents[:4])
-        gather2 = DemoGatherAgent(name="g2", agents=agents[4:])
+        gather1 = DemoGatherAgent(  # pylint: disable=E1123
+            name="g1",
+            agents=agents[:4],
+            to_dist=True,  # type: ignore[call-arg]
+            host=host,  # type: ignore[call-arg]
+            port=launcher1.port,  # type: ignore[call-arg]
+        )
+        gather2 = DemoGatherAgent(  # pylint: disable=E1123
+            name="g2",
+            agents=agents[4:],
+            to_dist=True,  # type: ignore[call-arg]
+            host=host,  # type: ignore[call-arg]
+            port=launcher2.port,  # type: ignore[call-arg]
+        )
         r1 = gather1()
         r2 = gather2()
         self.assertEqual(r1.content["value"], 6)

@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """ Client of rpc agent server """
 
-import json
 import threading
+import pickle
+import base64
 from typing import Any, Optional
 from loguru import logger
 
@@ -72,7 +73,7 @@ class RpcAgentClient:
                 return
             self.call_func(
                 "_create_agent",
-                json.dumps(agent_configs),
+                base64.b64encode(pickle.dumps(agent_configs)).decode("utf-8"),
             )
         except Exception as e:
             logger.error(
