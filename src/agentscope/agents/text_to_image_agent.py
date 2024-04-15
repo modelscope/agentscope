@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""A agent that convert text to image."""
+"""An agent that convert text to image."""
 
 from typing import Optional
 

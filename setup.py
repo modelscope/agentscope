@@ -25,11 +25,11 @@ rpc_requires = [
 ]
 
 service_requires = [
-    "docstring_parser",
     "docker",
     "pymongo",
     "pymysql",
     "beautifulsoup4",
+    "feedparser",
 ]
 
 doc_requires = [
@@ -46,7 +46,8 @@ gradio_requires = ["networkx", "gradio==4.19.1", "modelscope_studio==0.0.5"]
 
 # released requires
 minimal_requires = [
-    "loguru",
+    "docstring_parser",
+    "loguru==0.6.0",
     "tiktoken",
     "Pillow",
     "requests",
@@ -93,6 +94,7 @@ setuptools.setup(
     keywords=["deep-learning", "multi agents", "agents"],
     package_dir={"": "src"},
     packages=setuptools.find_packages("src"),
+    package_data={"agentscope.web": ["static/**/*"]},
     install_requires=minimal_requires,
     extras_require={
         "distribute": distribute_requires,

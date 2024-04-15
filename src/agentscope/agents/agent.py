@@ -7,6 +7,7 @@ from typing import Optional
 from typing import Sequence
 from typing import Union
 from typing import Any
+import uuid
 from loguru import logger
 
 from agentscope.agents.operator import Operator
@@ -56,7 +57,6 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
             memory_config (`Optional[dict]`):
                 The config of memory.
         """
-
         self.name = name
         self.memory_config = memory_config
 
@@ -72,9 +72,18 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
         else:
             self.memory = None
 
+        # The global unique id of this agent
+        self._agent_id = self.__class__.generate_agent_id()
+
         # The audience of this agent, which means if this agent generates a
         # response, it will be passed to all agents in the audience.
         self._audience = None
+
+    @classmethod
+    def generate_agent_id(cls) -> str:
+        """Generate the agent_id of this agent instance"""
+        # TODO: change cls.__name__ into a global unique agent_type
+        return f"{cls.__name__}_{uuid.uuid4().hex}"
 
     def reply(self, x: dict = None) -> dict:
         """Define the actions taken by this agent.
@@ -182,11 +191,20 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
         for agent in self._audience:
             agent.observe(x)
 
+    @property
+    def agent_id(self) -> str:
+        """The unique id of this agent.
+
+        Returns:
+            str: agent_id
+        """
+        return self._agent_id
+
     def to_dist(
         self,
         host: str = "localhost",
         port: int = None,
-        max_pool_size: int = 100,
+        max_pool_size: int = 8192,
         max_timeout_seconds: int = 1800,
         launch_server: bool = True,
         local_mode: bool = True,
@@ -199,7 +217,7 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
                 Hostname of the rpc agent server.
             port (`int`, defaults to `None`):
                 Port of the rpc agent server.
-            max_pool_size (`int`, defaults to `100`):
+            max_pool_size (`int`, defaults to `8192`):
                 Max number of task results that the server can accommodate.
             max_timeout_seconds (`int`, defaults to `1800`):
                 Timeout for task results.
@@ -228,4 +246,5 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
             launch_server=launch_server,
             local_mode=local_mode,
             lazy_launch=lazy_launch,
+            agent_id=self.agent_id,
         )

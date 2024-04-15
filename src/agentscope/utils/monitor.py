@@ -244,16 +244,17 @@ class QuotaExceededError(Exception):
 
 
 @contextmanager
-def sqlite_transaction(db_path: str) -> Generator:
+def sqlite_transaction(db_path: str, timeout: float = 30.0) -> Generator:
     """Get a sqlite transaction cursor.
 
     Args:
         db_path (`str`): path to the sqlite db file
+        timeout (`float`): timeout of the connection
 
     Yields:
         `Generator`: a cursor with transaction
     """
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(db_path, timeout=timeout)
     cursor = conn.cursor()
     try:
         conn.execute("BEGIN")
@@ -268,16 +269,17 @@ def sqlite_transaction(db_path: str) -> Generator:
 
 
 @contextmanager
-def sqlite_cursor(db_path: str) -> Generator:
+def sqlite_cursor(db_path: str, timeout: float = 30.0) -> Generator:
     """Get a sqlite cursor.
 
     Args:
         db_path (`str`): path to the sqlite db file
+        timeout (`float`): timeout of the connection
 
     Yields:
         `Generator`: a cursor
     """
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(db_path, timeout=timeout)
     cursor = conn.cursor()
     try:
         yield cursor
@@ -648,7 +650,7 @@ class MonitorFactory:
                 raise NotImplementedError(
                     "Monitor with type [{type}] is not implemented.",
                 )
-        return cls._instance  # type: ignore [return-value]
+        return cls._instance  # type: ignore[return-value]
 
     @classmethod
     def flush(cls) -> None:

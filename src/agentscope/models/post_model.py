@@ -12,7 +12,7 @@ from .model import ModelWrapperBase, ModelResponse
 from ..constants import _DEFAULT_MAX_RETRIES
 from ..constants import _DEFAULT_MESSAGES_KEY
 from ..constants import _DEFAULT_RETRY_INTERVAL
-from ..message import Msg
+from ..message import MessageBase
 from ..utils.tools import _convert_to_str
 
 
@@ -156,8 +156,7 @@ class PostAPIModelWrapperBase(ModelWrapperBase, ABC):
         else:
             logger.error(json.dumps(request_kwargs, indent=4))
             raise RuntimeError(
-                f"Failed to call the model with "
-                f"requests.codes == {response.status_code}",
+                f"Failed to call the model with {response.json()}",
             )
 
 
@@ -174,13 +173,18 @@ class PostAPIChatWrapper(PostAPIModelWrapperBase):
             ],
         )
 
-    def format(self, *args: Union[Msg, Sequence[Msg]]) -> Union[List[dict]]:
+    def format(
+        self,
+        *args: Union[MessageBase, Sequence[MessageBase]],
+    ) -> Union[List[dict]]:
         """Format the input messages into a list of dict, which is
         compatible to OpenAI Chat API.
 
         Args:
-            args (`Union[Msg, Sequence[Msg]]`):
-                The input messages.
+            args (`Union[MessageBase, Sequence[MessageBase]]`):
+                The input arguments to be formatted, where each argument
+                should be a `Msg` object, or a list of `Msg` objects.
+                In distribution, placeholder is also allowed.
 
         Returns:
             `Union[List[dict]]`:
@@ -190,7 +194,7 @@ class PostAPIChatWrapper(PostAPIModelWrapperBase):
         for arg in args:
             if arg is None:
                 continue
-            if isinstance(arg, Msg):
+            if isinstance(arg, MessageBase):
                 messages.append(
                     {
                         "role": arg.role,
@@ -212,7 +216,9 @@ class PostAPIChatWrapper(PostAPIModelWrapperBase):
 class PostAPIDALLEWrapper(PostAPIModelWrapperBase):
     """A post api model wrapper compatible with openai dalle"""
 
-    model_type: str = "post_api_dalle"
+    model_type: str = "post_api_dall_e"
+
+    deprecated_model_type: str = "post_api_dalle"
 
     def _parse_response(self, response: dict) -> ModelResponse:
         urls = [img["url"] for img in response["data"]["response"]["data"]]
@@ -220,7 +226,7 @@ class PostAPIDALLEWrapper(PostAPIModelWrapperBase):
 
     def format(
         self,
-        *args: Union[Msg, Sequence[Msg]],
+        *args: Union[MessageBase, Sequence[MessageBase]],
     ) -> Union[List[dict], str]:
         raise RuntimeError(
             f"Model Wrapper [{type(self).__name__}] doesn't "

@@ -10,6 +10,7 @@ from agentscope.models import (
     OllamaGenerationWrapper,
     GeminiChatWrapper,
     DashScopeChatWrapper,
+    DashScopeMultiModalWrapper,
 )
 
 
@@ -102,8 +103,8 @@ class ExampleTest(unittest.TestCase):
 
         # correct format
         ground_truth = (
-            "system: You are a helpful assistant\nuser: What is "
-            "the weather today?\nassistant: It is sunny today"
+            "You are a helpful assistant\n\n## Dialogue History\nuser: "
+            "What is the weather today?\nassistant: It is sunny today"
         )
         prompt = model.format(*self.inputs)  # type: ignore[arg-type]
         self.assertEqual(prompt, ground_truth)
@@ -128,8 +129,9 @@ class ExampleTest(unittest.TestCase):
             {
                 "role": "user",
                 "parts": [
-                    "system: You are a helpful assistant\nuser: What is the "
-                    "weather today?\nassistant: It is sunny today",
+                    "You are a helpful assistant\n\n## Dialogue History\n"
+                    "user: What is the weather today?\nassistant: It is "
+                    "sunny today",
                 ],
             },
         ]
@@ -151,54 +153,151 @@ class ExampleTest(unittest.TestCase):
 
         ground_truth = [
             {
-                "role": "system",
-                "name": "system",
                 "content": "You are a helpful assistant",
+                "role": "system",
             },
             {
+                "content": (
+                    "## Dialogue History\n"
+                    "user: What is the weather today?\n"
+                    "assistant: It is sunny today"
+                ),
                 "role": "user",
-                "name": "user",
-                "content": "What is the weather today?",
-            },
-            {
-                "role": "assistant",
-                "name": "assistant",
-                "content": "It is sunny today",
             },
         ]
 
-        prompt = model.format(*self.inputs)  # type: ignore[arg-type]
+        prompt = model.format(*self.inputs)
         self.assertListEqual(prompt, ground_truth)
 
         # wrong format
         with self.assertRaises(TypeError):
             model.format(*self.wrong_inputs)  # type: ignore[arg-type]
 
-    def test_dashscope_advance_format(self) -> None:
-        """Unit test for the advanced format function in dashscope chat api
-        wrapper."""
-        model = DashScopeChatWrapper(
+    def test_dashscope_multimodal_image(self) -> None:
+        """Unit test for the format function in dashscope multimodal
+        conversation api wrapper for image."""
+        model = DashScopeMultiModalWrapper(
             config_name="",
-            model_name="qwen-max",
+            model_name="qwen-vl-plus",
             api_key="xxx",
         )
 
-        # correct format
+        multimodal_input = [
+            Msg(
+                "system",
+                "You are a helpful assistant",
+                role="system",
+                url="url1.png",
+            ),
+            [
+                Msg(
+                    "user",
+                    "What is the weather today?",
+                    role="user",
+                    url="url2.png",
+                ),
+                Msg(
+                    "assistant",
+                    "It is sunny today",
+                    role="assistant",
+                    url="url3.png",
+                ),
+            ],
+        ]
+
         ground_truth = [
             {
                 "role": "system",
-                "content": "system: You are a helpful assistant\nuser: "
-                "What is the weather today?\nassistant: It "
-                "is sunny today",
+                "content": [
+                    {"image": "url1.png"},
+                    {"text": "You are a helpful assistant"},
+                ],
+            },
+            {
+                "role": "user",
+                "content": [
+                    {"image": "url2.png"},
+                    {"image": "url3.png"},
+                    {
+                        "text": (
+                            "## Dialogue History\n"
+                            "user: What is the weather today?\n"
+                            "assistant: It is sunny today"
+                        ),
+                    },
+                ],
             },
         ]
 
-        prompt = model.advanced_format(*self.inputs)  # type: ignore[arg-type]
+        prompt = model.format(*multimodal_input)
         self.assertListEqual(prompt, ground_truth)
 
         # wrong format
         with self.assertRaises(TypeError):
-            model.format(*self.wrong_inputs)  # type: ignore[arg-type]
+            model.format(*self.wrong_inputs)
+
+    def test_dashscope_multimodal_audio(self) -> None:
+        """Unit test for the format function in dashscope multimodal
+        conversation api wrapper for audio."""
+        model = DashScopeMultiModalWrapper(
+            config_name="",
+            model_name="qwen-audio-turbo",
+            api_key="xxx",
+        )
+
+        multimodal_input = [
+            Msg(
+                "system",
+                "You are a helpful assistant",
+                role="system",
+                url="url1.mp3",
+            ),
+            [
+                Msg(
+                    "user",
+                    "What is the weather today?",
+                    role="user",
+                    url="url2.mp3",
+                ),
+                Msg(
+                    "assistant",
+                    "It is sunny today",
+                    role="assistant",
+                    url="url3.mp3",
+                ),
+            ],
+        ]
+
+        ground_truth = [
+            {
+                "role": "system",
+                "content": [
+                    {"audio": "url1.mp3"},
+                    {"text": "You are a helpful assistant"},
+                ],
+            },
+            {
+                "role": "user",
+                "content": [
+                    {"audio": "url2.mp3"},
+                    {"audio": "url3.mp3"},
+                    {
+                        "text": (
+                            "## Dialogue History\n"
+                            "user: What is the weather today?\n"
+                            "assistant: It is sunny today"
+                        ),
+                    },
+                ],
+            },
+        ]
+
+        prompt = model.format(*multimodal_input)
+        self.assertListEqual(prompt, ground_truth)
+
+        # wrong format
+        with self.assertRaises(TypeError):
+            model.format(*self.wrong_inputs)
 
 
 if __name__ == "__main__":

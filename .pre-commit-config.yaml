@@ -41,6 +41,7 @@ repos:
                 --disable-error-code=import-untyped,
                 --disable-error-code=truthy-function,
                 --follow-imports=skip,
+                --explicit-package-bases,
                 ]
   # - repo: https://github.com/numpy/numpydoc
   #   rev: v1.6.0

@@ -9,25 +9,27 @@
 
 下面的表格按照类型概述了各种Service函数。以下函数可以通过`agentscope.service.{函数名}`进行调用。
 
-| Service场景  | Service函数名称           | 描述                                                |
-|------------|-----------------------| ------------------------------------------------------------ |
-| 代码         | `execute_python_code` | 执行一段 Python 代码，可选择在 Docker <br/>容器内部执行。 |
-| 检索         | `retrieve_from_list`  | 根据给定的标准从列表中检索特定项目。 |
-| SQL查询      | `query_mysql`         | 在 MySQL 数据库上执行 SQL 查询并返回结果。 |
-|            | `query_sqlite`        | 在 SQLite 数据库上执行 SQL 查询并返回结果。 |
-|            | `query_mongodb`       | 对 MongoDB 集合执行查询或操作。 |
-| 文本处理       | `summarization`       | 使用大型语言模型总结一段文字以突出其主要要点。 |
-| 网络搜索       | `web_search`          | 使用指定的搜索引擎（当前支持 Google 和 Bing）执行网络搜索。 |
-| 文件处理       | `create_file`         | 在指定路径创建一个新文件，并可选择添加初始内容。 |
-|            | `delete_file`         | 删除由文件路径指定的文件。       |
-|            | `move_file`           | 将文件从一个路径移动或重命名到另一个路径。 |
-|            | `create_directory`    | 在指定路径创建一个新的目录。 |
-|            | `delete_directory`    | 删除一个目录及其所有内容。     |
-|            | `move_directory`      | 将目录从一个路径移动或重命名到另一个路径。 |
-|            | `read_text_file`      | 读取并返回文本文件的内容。    |
-|            | `write_text_file`     | 向指定路径的文件写入文本内容。 |
-|            | `read_json_file`      | 读取并解析 JSON 文件的内容。 |
-|            | `write_json_file`     | 将 Python 对象序列化为 JSON 并写入到文件。 |
+| Service场景        | Service函数名称       | 描述                                                             |
+| ------------------ | --------------------- | ---------------------------------------------------------------- |
+| 代码               | `execute_python_code` | 执行一段 Python 代码，可选择在 Docker <br/>容器内部执行。        |
+| 检索               | `retrieve_from_list`  | 根据给定的标准从列表中检索特定项目。                             |
+| SQL查询            | `query_mysql`         | 在 MySQL 数据库上执行 SQL 查询并返回结果。                       |
+|                    | `query_sqlite`        | 在 SQLite 数据库上执行 SQL 查询并返回结果。                      |
+|                    | `query_mongodb`       | 对 MongoDB 集合执行查询或操作。                                  |
+| 文本处理           | `summarization`       | 使用大型语言模型总结一段文字以突出其主要要点。                   |
+| 网络搜索           | `web_search`          | 使用指定的搜索引擎（当前支持 Google 和 Bing）执行网络搜索。      |
+|                    | `load_web`            | 爬取并解析指定的网页链接 （目前仅支持爬取 HTML 页面）            |
+|                    | `digest_webpage`      | 对已经爬取好的网页生成摘要信息（目前仅支持 HTML 页面）           |
+| 文件处理           | `create_file`         | 在指定路径创建一个新文件，并可选择添加初始内容。                 |
+|                    | `delete_file`         | 删除由文件路径指定的文件。                                       |
+|                    | `move_file`           | 将文件从一个路径移动或重命名到另一个路径。                       |
+|                    | `create_directory`    | 在指定路径创建一个新的目录。                                     |
+|                    | `delete_directory`    | 删除一个目录及其所有内容。                                       |
+|                    | `move_directory`      | 将目录从一个路径移动或重命名到另一个路径。                       |
+|                    | `read_text_file`      | 读取并返回文本文件的内容。                                       |
+|                    | `write_text_file`     | 向指定路径的文件写入文本内容。                                   |
+|                    | `read_json_file`      | 读取并解析 JSON 文件的内容。                                     |
+|                    | `write_json_file`     | 将 Python 对象序列化为 JSON 并写入到文件。                       |
 | *更多服务即将推出* |                       | 正在开发更多服务功能，并将添加到 AgentScope 以进一步增强其能力。 |
 
 关于详细的参数、预期输入格式、返回类型，请参阅[API文档](https://modelscope.github.io/agentscope/)。

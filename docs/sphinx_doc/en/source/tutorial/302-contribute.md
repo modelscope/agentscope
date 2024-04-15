@@ -21,8 +21,8 @@ Did you find a bug or have a feature request? Please first check the issue track
 To work on an issue or a new feature, start by forking the AgentScope repository and then cloning your fork locally.
 
 ```bash
-git clone https://github.com/your-username/AgentScope.git
-cd AgentScope
+git clone https://github.com/your-username/agentscope.git
+cd agentscope
 ```
 
 ### Create a New Branch

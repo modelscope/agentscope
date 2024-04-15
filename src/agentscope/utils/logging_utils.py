@@ -82,10 +82,10 @@ def _chat(
             "content" keys, and the message will be logged as "<name/role>:
             <content>".
     """
-    # Save message into file
+    # Save message into file, add default to ignore not serializable objects
     logger.log(
         LEVEL_CHAT_SAVE,
-        json.dumps(message, ensure_ascii=False),
+        json.dumps(message, ensure_ascii=False, default=lambda _: None),
         *args,
         **kwargs,
     )
@@ -226,8 +226,7 @@ def setup_logger(
         )
 
     if path_log is not None:
-        if not os.path.exists(path_log):
-            os.makedirs(path_log)
+        os.makedirs(path_log, exist_ok=True)
         path_log_file = os.path.join(path_log, "logging.log")
         path_chat_file = os.path.join(
             path_log,

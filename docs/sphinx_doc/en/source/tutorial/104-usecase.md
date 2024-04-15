@@ -14,7 +14,7 @@ Let the adventure begin to unlock the potential of multi-agent applications with
 
 Firstly, ensure that you have installed and configured AgentScope properly. Besides, we will involve the basic concepts of `Model API`,  `Agent`, `Msg`, and `Pipeline,` as described in [Tutorial-Concept](101-agentscope).
 
-**Note**: all the configurations and code for this tutorial can be found in `examples/werewolf`.
+**Note**: all the configurations and code for this tutorial can be found in `examples/game_werewolf`.
 
 ### Step 1: Prepare Model API and Set Model Configs
 
@@ -72,7 +72,7 @@ AgentScope provides several out-of-the-box Agents implements and organizes them 
 
 In this configuration, `Player1` is designated as a `DictDialogAgent`. The parameters include a system prompt (`sys_prompt`) that can guide the agent's behavior, a model config name (`model_config_name`) that determines the name of the model configuration, and a flag (`use_memory`) indicating whether the agent should remember past interactions.
 
-For other players, configurations can be customized based on their roles. Each role may have different prompts, models, or memory settings. You can refer to the JSON file located at `examples/werewolf/configs/agent_configs.json` within the AgentScope examples directory.
+For other players, configurations can be customized based on their roles. Each role may have different prompts, models, or memory settings. You can refer to the JSON file located at `examples/game_werewolf/configs/agent_configs.json` within the AgentScope examples directory.
 
 ### Step 3: Initialize AgentScope and the Agents
 
@@ -153,7 +153,7 @@ for i in range(1, MAX_GAME_ROUND + 1):
 
 After the discussion, werewolves proceed to vote for their target, and the majority's choice is determined.  The result of the vote is then broadcast to all werewolves.
 
-**Note**: the detailed prompts and utility functions can be found in `examples/werewolf`.
+**Note**: the detailed prompts and utility functions can be found in `examples/game_werewolf`.
 
 ```python
         # werewolves vote
@@ -262,7 +262,7 @@ These code blocks outline the core game loop for Werewolf using AgentScope's `ms
 With the game logic and agents set up, you're ready to run the Werewolf game. By executing the `pipeline`, the game will proceed through the predefined phases, with agents interacting based on their roles and the strategies coded above:
 
 ```bash
-cd examples/werewolf
+cd examples/game_werewolf
 python main.py  # Assuming the pipeline is implemented in main.py
 ```
 
@@ -307,6 +307,5 @@ Moderator: The day is coming, all the players open your eyes. Last night is peac
 ## Next step
 
 Now you've grasped how to conveniently set up a multi-agent application with AgentScope. Feel free to tailor the game to include additional roles and introduce more sophisticated strategies. For more advanced tutorials that delve deeper into more capabilities of AgentScope, such as *memory management* and *service functions* utilized by agents, please refer to the tutorials in the **Advanced Exploration** section and look up the API references.
-
 
 [[Return to the top]](#104-usecase-en)
