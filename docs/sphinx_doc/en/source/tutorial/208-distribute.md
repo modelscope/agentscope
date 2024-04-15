@@ -120,7 +120,7 @@ And developers just need to write the application flow in a centralized way in t
 
 #### Advanced Usage of `to_dist`
 
-All examples described above convert initialized agents into its distributed version through the `to_dist()` method. For those agents whose initialization is time-consuming, the above method is equivalent to performing the initialization operation twice. If the `to_dist` method is used directly, it will seriously affect efficiency. Therefore, AgentScope also provides a method to convert the Agent instance into its distributed version while initializing it, that is, passing in `to_dist=True` and other necessary parameters when the original agent instance is initialized.
+All examples described above convert initialized agents into their distributed version through the `to_dist()` method, which is equivalent to initialize the agent twice. For agents whose initialization process is time-consuming, the `to_dist` method is inefficient. Therefore, AgentScope also provides a method to convert the Agent instance into its distributed version while initializing it, that is, passing in `to_dist=True` and other necessary parameters when the original agent instance is initialized.
 
 In Subprocess mode, the initialization of distribtued agent can be simplified to the following code:
 
