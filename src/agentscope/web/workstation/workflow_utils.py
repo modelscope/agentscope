@@ -552,15 +552,18 @@ def build_dag(config: dict) -> ASDiGraph:
     """
     dag = ASDiGraph()
 
+    for node_id, node_info in config.items():
+        config[node_id] = sanitize_node_data(node_info)
+
     # Add and init model nodes first
     for node_id, node_info in config.items():
         if NODE_NAME_MAPPING[node_info["name"]][1] == WorkflowNodeType.MODEL:
-            dag.add_as_node(node_id, sanitize_node_data(node_info), config)
+            dag.add_as_node(node_id, node_info, config)
 
     # Add and init non-model nodes
     for node_id, node_info in config.items():
         if NODE_NAME_MAPPING[node_info["name"]][1] != WorkflowNodeType.MODEL:
-            dag.add_as_node(node_id, sanitize_node_data(node_info), config)
+            dag.add_as_node(node_id, node_info, config)
 
     # Add edges
     for node_id, node_info in config.items():
