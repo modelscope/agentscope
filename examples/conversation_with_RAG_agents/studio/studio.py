@@ -246,7 +246,7 @@ def run_app() -> None:
                 agent_args = config["args"]
                 button_value = (
                     f'{agent_args["name"]}: '
-                    f'\n {agent_args.get("description", "No description.")}'
+                    f'\n 🔥{agent_args.get("description", "No description.")}'
                 )
                 with gr.Row():
                     agent_buttons.append(

@@ -225,6 +225,7 @@ class LlamaIndexAgent(RAGAgentBase):
         emb_model_config_name: str = None,
         memory_config: Optional[dict] = None,
         rag_config: Optional[dict] = None,
+        **kwargs: Any,
     ) -> None:
         """
         Initialize the RAG LlamaIndexAgent
@@ -288,6 +289,7 @@ class LlamaIndexAgent(RAGAgentBase):
             memory_config=memory_config,
             rag_config=rag_config,
         )
+        self.description = kwargs.get("description", "")
 
     def init_rag(self) -> LlamaIndexRAG:
         # dynamic loading loader
