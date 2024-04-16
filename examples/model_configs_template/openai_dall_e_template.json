@@ -1,0 +1,27 @@
+[{
+    "config_name": "openai_dall_e-dall-e-2",
+    "model_type": "openai_dall_e",
+    "model_name": "dall-e-2",
+    "api_key": "{your_api_key}",
+    "client_args": {
+        "max_retries": 3
+    },
+    "generate_args": {
+        "n": 1,
+        "size": "512x512"
+    }
+},
+{
+    "config_name": "openai_dall_e-dall-e-3",
+    "model_type": "openai_dall_e",
+    "model_name": "dall-e-3",
+    "api_key": "{your_api_key}",
+    "client_args": {
+        "max_retries": 3
+    },
+    "generate_args": {
+        "n": 1,
+        "size": "512x512"
+    }
+}
+]
