@@ -1,7 +1,7 @@
 [
     {
         "config_name": "gpt-3.5-turbo",
-        "model_type": "openai",
+        "model_type": "openai-chat",
         "model_name": "gpt-3.5-turbo",
         "api_key": "xxx",
         "organization": "xxx",
@@ -11,7 +11,7 @@
     },
     {
         "config_name": "gpt-4",
-        "model_type": "openai",
+        "model_type": "openai-chat",
         "model_name": "gpt-4",
         "api_key": "xxx",
         "organization": "xxx",

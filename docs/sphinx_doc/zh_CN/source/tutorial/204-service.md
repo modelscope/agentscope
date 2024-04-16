@@ -13,6 +13,7 @@
 | ------------------ | --------------------- | ---------------------------------------------------------------- |
 | 代码               | `execute_python_code` | 执行一段 Python 代码，可选择在 Docker <br/>容器内部执行。        |
 | 检索               | `retrieve_from_list`  | 根据给定的标准从列表中检索特定项目。                             |
+|                   | `cos_sim`             | 计算2个embedding的余弦相似度。                                 |
 | SQL查询            | `query_mysql`         | 在 MySQL 数据库上执行 SQL 查询并返回结果。                       |
 |                    | `query_sqlite`        | 在 SQLite 数据库上执行 SQL 查询并返回结果。                      |
 |                    | `query_mongodb`       | 对 MongoDB 集合执行查询或操作。                                  |
