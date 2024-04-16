@@ -3,7 +3,7 @@
     "class": "LlamaIndexAgent",
     "args": {
       "name": "AgentScope Tutorial Assistant",
-      "sys_prompt": "You're a helpful assistant. You need to generate answers based on the provided context.",
+      "sys_prompt": "You're an assistant helping new users to use AgentScope. You need to generate answers based on the provided context. You only provide the most relevant information. The answer is limited to be less than 100 words. If the key words of the question can be found in the provided context, the answer should contain the section which contains the answer, for example, saying 'You may refer to SECTION_NAME for more details.' The answers must to be itemized.",
       "model_config_name": "qwen_config",
       "emb_model_config_name": "qwen_emb_config",
       "rag_config": {
@@ -31,7 +31,7 @@
     "class": "LlamaIndexAgent",
     "args": {
       "name": "AgentScope Framework Code Assistant",
-      "sys_prompt": "You're a helpful assistant about coding. You can very familiar with the framework code of AgentScope.",
+      "sys_prompt": "You're an assistant answering coding questions about AgentScope. The answer is sturucted as follows. (1) the key features, (2) an example showing how to use it, (3) where to find the example, and source codes.",
       "model_config_name": "qwen_config",
       "emb_model_config_name": "qwen_emb_config",
       "rag_config": {
@@ -73,7 +73,7 @@
     "class": "DialogAgent",
     "args": {
       "name": "Summarize Assistant",
-      "sys_prompt": "You are a helpful assistant that can summarize the answers of the previous two messages.",
+      "sys_prompt": "You summarize the answers of the previous two messages and remove the redundant information. The answer need to be simple and itemized. The answer needs to be less than 100 words.ex .",
       "model_config_name": "qwen_config",
       "use_memory": true
     }
