@@ -56,7 +56,10 @@ def download_from_url(
 
         return ServiceResponse(
             status=ServiceExecStatus.SUCCESS,
-            content=f"Downloaded file from {url} to {filepath}",
+            content={
+                "url": url,
+                "file_path": filepath,
+            }
         )
     except requests.exceptions.RequestException as e:
         if retries > 0:
