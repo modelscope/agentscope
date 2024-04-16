@@ -58,7 +58,7 @@ def download_from_url(
             status=ServiceExecStatus.SUCCESS,
             content={
                 "url": url,
-                "file_path": filepath,
+                "saved_file_path": filepath,
             },
         )
     except requests.exceptions.RequestException as e:
