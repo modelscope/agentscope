@@ -17,7 +17,6 @@ try:
         BasePydanticVectorStore,
         VectorStore,
     )
-
     from llama_index.core.bridge.pydantic import PrivateAttr
     from llama_index.core.node_parser.interface import NodeParser
     from llama_index.core.node_parser import SentenceSplitter
