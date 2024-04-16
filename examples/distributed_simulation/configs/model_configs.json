@@ -1,0 +1,98 @@
+[
+    {
+        "model_type": "openai_chat",
+        "config_name": "model_1",
+        "model_name": "path-to-your-model-dir",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8010/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "model_2",
+        "model_name": "path-to-your-model-dir",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8011/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "model_3",
+        "model_name": "path-to-your-model-dir",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8012/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "model_4",
+        "model_name": "path-to-your-model-dir",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8013/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "model_5",
+        "model_name": "path-to-your-model-dir",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8014/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "model_6",
+        "model_name": "path-to-your-model-dir",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8015/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "model_7",
+        "model_name": "path-to-your-model-dir",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8016/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "model_8",
+        "model_name": "path-to-your-model-dir",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8017/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0
+        }
+    }
+]
