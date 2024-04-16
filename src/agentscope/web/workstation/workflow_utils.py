@@ -389,6 +389,7 @@ class ASDiGraph(nx.DiGraph):
             if not inputs:
                 values[node_id] = self.exec_node(node_id)
             elif len(inputs):
+                # Note: only support exec with the first predecessor now
                 values[node_id] = self.exec_node(node_id, inputs[0])
             else:
                 raise ValueError("Too many predecessors!")
