@@ -13,8 +13,8 @@ This tutorial will introduce the implementation and usage of AgentScope distribu
 ## Usage
 
 In AgentScope, the process that runs the application flow is called the "main process", and each agent can run in a separate process named "agent server process".
-According to the different relationships between the main process and the agent server process, AgentScope supports two modes for each agent: **Subprocess** and **Standalone** mode.
-In the Subprocess mode, agent server processes will be automatically started from the main process, while in the Standalone mode, the agent server process is independent of the main process and developers need to start the agent server process on the corresponding machine.
+According to the different relationships between the main process and the agent server process, AgentScope supports two modes for each agent: **Subprocess** and **Independent** mode.
+In the Subprocess mode, agent server processes will be automatically started from the main process, while in the Independent mode, the agent server process is independent of the main process and developers need to start the agent server process on the corresponding machine.
 
 The above concepts may seem complex, but don't worry, for application developers, you only need to convert your existing agent to its distributed version.
 
@@ -54,9 +54,9 @@ b = AgentB(
 ).to_dist()
 ```
 
-#### Standalone Mode
+#### Independent Mode
 
-In the Standalone mode, we need to start the agent server process on the target machine first.
+In the Independent mode, we need to start the agent server process on the target machine first.
 For example, start two agent server processes on the two different machines with IP `a.b.c.d` and `e.f.g.h`(called `Machine1` and `Machine2` accrodingly).
 You can run the following code on `Machine1`:
 
@@ -138,7 +138,7 @@ b = AgentB(
 )
 ```
 
-In Standalone mode, it is as follows:
+In Independent mode, it is as follows:
 
 ```python
 a = AgentA(
@@ -189,7 +189,7 @@ while x is None or x.content == "exit":
 
 - Agents are deployed in a distributed manner
   - `AgentA` in Subprocess mode
-  - `AgentB` in Standalone mode
+  - `AgentB` in Independent mode
 
 ```python
 # Create agent objects
