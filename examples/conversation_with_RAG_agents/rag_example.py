@@ -58,6 +58,11 @@ def main() -> None:
             # if no agent is @ (mentioned), default invoke all rag agents and
             # summarize agents
             speak_list = rag_agents + summarize_agents
+        for agent in speak_list:
+            if agent.name in summarize_agent_names:
+                # if summarize agent is mentioned, then also call rag agents
+                # TODO: let summarize agent choose which agent to call
+                speak_list = rag_agents + summarize_agents
 
         agent_name_list = [agent.name for agent in speak_list]
         rag_agent_responses = []
