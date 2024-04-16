@@ -1,0 +1,40 @@
+[{
+    "config_name": "dashscope_multimodal-qwen-vl-plus",
+    "model_type": "dashscope_multimodal",
+    "model_name": "qwen-vl-plus",
+    "api_key": "{your_api_key}",
+    "generate_args": {
+    }
+},
+{
+    "config_name": "dashscope_multimodal-qwen-vl-max",
+    "model_type": "dashscope_multimodal",
+    "model_name": "qwen-vl-max",
+    "api_key": "{your_api_key}",
+    "generate_args": {
+    }
+},
+{
+    "config_name": "dashscope_multimodal-qwen-audio-turbo",
+    "model_type": "dashscope_multimodal",
+    "model_name": "qwen-audio-turbo",
+    "api_key": "{your_api_key}",
+    "generate_args": {
+    }
+},
+{
+    "config_name": "dashscope_multimodal-qwen-vl-chat-v1",
+    "model_type": "dashscope_multimodal",
+    "model_name": "qwen-vl-chat-v1",
+    "api_key": "{your_api_key}",
+    "generate_args": {
+    }
+},{
+    "config_name": "dashscope_multimodal-qwen-audio-chat-v1",
+    "model_type": "dashscope_multimodal",
+    "model_name": "qwen-vl-chat-v1",
+    "api_key": "{your_api_key}",
+    "generate_args": {
+    }
+}
+]

@@ -9,7 +9,7 @@ from agentscope.message import Msg
 
 model_configs = [
     {
-        "model_type": "openai",
+        "model_type": "openai_chat",
         "config_name": "gpt-3.5-turbo",
         "model_name": "gpt-3.5-turbo",
         "api_key": "xxx",  # Load from env if not provided

@@ -24,9 +24,9 @@ def get_response() -> dict:
 
     prompt = json.pop("inputs")
 
-    global model, tokenizer, device
+    global model, tokenizer
 
-    prompt_tokenized = tokenizer(prompt, return_tensors="pt").to(device)
+    prompt_tokenized = tokenizer(prompt, return_tensors="pt").to(model.device)
 
     response_ids = model.generate(
         prompt_tokenized.input_ids,
@@ -57,16 +57,11 @@ def get_response() -> dict:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_name_or_path", type=str, required=True)
-    parser.add_argument("--device", type=str, default="cuda")
+    parser.add_argument("--device", type=str, default="auto")
     parser.add_argument("--port", type=int, default=8000)
     args = parser.parse_args()
 
-    global model, tokenizer, device
-
-    if args.device == "auto":
-        device = "cuda"
-    else:
-        device = args.device
+    global model, tokenizer
 
     model = modelscope.AutoModelForCausalLM.from_pretrained(
         args.model_name_or_path,
