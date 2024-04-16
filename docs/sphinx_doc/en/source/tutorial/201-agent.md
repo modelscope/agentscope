@@ -94,7 +94,9 @@ def reply(self, x: dict = None) -> dict:
     # Generate a prompt for the language model using the system prompt and memory
     prompt = self.model.format(
         Msg("system", self.sys_prompt, role="system"),
-        self.memory and self.memory.get_memory(),  # type: ignore[arg-type]
+        self.memory
+        and self.memory.get_memory()
+        or x,  # type: ignore[arg-type]
     )
 
     # Invoke the language model with the prepared prompt
