@@ -1,0 +1,422 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.service.web.arxiv &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=7d86a446"></script>
+        <script src="../../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../../_static/translations.js?v=beaddf03"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../../../../en/_modules/agentscope/service/web/arxiv.html">English</a></li> |
+    <a href="../../../../../zh_CN/_modules/agentscope/service/web/arxiv.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/quick_start.html">快速上手</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/advance.html">进阶使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.agents.html">Agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.memory.html">Memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.models.html">Models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.pipelines.html">Pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.service.html">Service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.rpc.html">RPC package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.utils.html">Utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.web.html">Web UI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.html">Module contents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">模块代码</a></li>
+      <li class="breadcrumb-item active">agentscope.service.web.arxiv</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>agentscope.service.web.arxiv 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Search papers in arXiv API. This implementation refers to the repository</span>
+<span class="sd">https://github.com/lukasschwab/arxiv.py, which is MIT licensed.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">urllib</span>
+<span class="kn">from</span> <span class="nn">calendar</span> <span class="kn">import</span> <span class="n">timegm</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">feedparser</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">feedparser</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+
+<span class="kn">from</span> <span class="nn">agentscope.service.service_response</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ServiceResponse</span><span class="p">,</span>
+    <span class="n">ServiceExecStatus</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ARXIV_SEARCH_URL</span> <span class="o">=</span> <span class="s2">&quot;http://export.arxiv.org/api/query?</span><span class="si">{parameters_str}</span><span class="s2">&quot;</span>
+
+<span class="n">LOGIC_OPERATORS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ANDNOT&quot;</span><span class="p">,</span> <span class="s2">&quot;AND&quot;</span><span class="p">,</span> <span class="s2">&quot;OR&quot;</span><span class="p">]</span>
+
+<span class="n">SYMBOLS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;(&quot;</span><span class="p">,</span> <span class="s2">&quot;)&quot;</span><span class="p">]</span>
+
+<span class="n">QUERY_PREFIX</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;all:&quot;</span><span class="p">,</span> <span class="s2">&quot;ti:&quot;</span><span class="p">,</span> <span class="s2">&quot;au:&quot;</span><span class="p">,</span> <span class="s2">&quot;abs:&quot;</span><span class="p">,</span> <span class="s2">&quot;co:&quot;</span><span class="p">,</span> <span class="s2">&quot;jr:&quot;</span><span class="p">,</span> <span class="s2">&quot;cat:&quot;</span><span class="p">,</span> <span class="s2">&quot;rn:&quot;</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">_Result</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The class for arXiv search results.&quot;&quot;&quot;</span>
+
+    <span class="fm">__getattr__</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="fm">__getitem__</span>
+    <span class="fm">__setattr__</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="fm">__setitem__</span>
+
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A url of the form `https://arxiv.org/abs/{id}`.&quot;&quot;&quot;</span>
+
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The title of the result.&quot;&quot;&quot;</span>
+
+    <span class="n">updated</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;When the result was last updated.&quot;&quot;&quot;</span>
+
+    <span class="n">published</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;When the result was published.&quot;&quot;&quot;</span>
+
+    <span class="n">summary</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The summary of the search result.&quot;&quot;&quot;</span>
+
+    <span class="n">authors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The authors of the search result.&quot;&quot;&quot;</span>
+
+    <span class="n">comment</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The authors&#39; comment if present.&quot;&quot;&quot;</span>
+
+    <span class="n">primary_category</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The result&#39;s primary arXiv category. See [arXiv: Category</span>
+<span class="sd">    Taxonomy](https://arxiv.org/category_taxonomy).&quot;&quot;&quot;</span>
+
+    <span class="n">tags</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;All of the result&#39;s tags. See [arXiv: Category</span>
+<span class="sd">    Taxonomy](https://arxiv.org/category_taxonomy).&quot;&quot;&quot;</span>
+
+    <span class="n">journal_ref</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A journal reference if present.&quot;&quot;&quot;</span>
+
+    <span class="n">doi</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A URL for the resolved DOI to an external resource if present.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">entry_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">updated</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">published</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">summary</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">authors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">pdf_url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">comment</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">primary_category</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">tags</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">journal_ref</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">doi</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The class for arXiv search results.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entry_id</span> <span class="o">=</span> <span class="n">entry_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">title</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updated</span> <span class="o">=</span> <span class="n">updated</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">published</span> <span class="o">=</span> <span class="n">published</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">summary</span> <span class="o">=</span> <span class="n">summary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">authors</span> <span class="o">=</span> <span class="n">authors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pdf_url</span> <span class="o">=</span> <span class="n">pdf_url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="n">comment</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">primary_category</span> <span class="o">=</span> <span class="n">primary_category</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="n">tags</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">journal_ref</span> <span class="o">=</span> <span class="n">journal_ref</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">doi</span> <span class="o">=</span> <span class="n">doi</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">cleaned_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">cleaned_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">cleaned_dict</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_parse_pdf_url</span><span class="p">(</span><span class="n">links</span><span class="p">:</span> <span class="n">List</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse the pdf url from the links.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">links</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">link</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;title&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;pdf&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">link</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;href&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span> <span class="nf">_parse_timestamp</span><span class="p">(</span><span class="n">timestamp</span><span class="p">:</span> <span class="n">time</span><span class="o">.</span><span class="n">struct_time</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse the timestamp to a string.&quot;&quot;&quot;</span>
+    <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">timegm</span><span class="p">(</span><span class="n">timestamp</span><span class="p">),</span> <span class="n">tz</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_clean_arxiv_search_results</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clean the arXiv search results, and remove unnecessary information.&quot;&quot;&quot;</span>
+    <span class="n">feed</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">feed</span>
+
+    <span class="c1"># Basic information</span>
+    <span class="n">cleaned_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;updated&quot;</span><span class="p">:</span> <span class="n">_parse_timestamp</span><span class="p">(</span><span class="n">feed</span><span class="o">.</span><span class="n">updated_parsed</span><span class="p">),</span>
+        <span class="s2">&quot;opensearch_total_results&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">feed</span><span class="o">.</span><span class="n">opensearch_totalresults</span><span class="p">),</span>
+        <span class="s2">&quot;opensearch_start_index&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">feed</span><span class="o">.</span><span class="n">opensearch_startindex</span><span class="p">),</span>
+        <span class="s2">&quot;opensearch_itemsperpage&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">feed</span><span class="o">.</span><span class="n">opensearch_itemsperpage</span><span class="p">),</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Entries</span>
+    <span class="n">entries</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">entries</span><span class="p">:</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="s2">&quot;title&quot;</span><span class="p">):</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">title</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Result </span><span class="si">%s</span><span class="s2"> is missing title attribute; defaulting to &#39;0&#39;&quot;</span><span class="p">,</span>
+                <span class="n">entry</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">tags</span> <span class="o">=</span> <span class="p">[</span><span class="n">tag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;term&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">entry</span><span class="o">.</span><span class="n">tags</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tags</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">tags</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">entry_dict</span> <span class="o">=</span> <span class="n">_Result</span><span class="p">(</span>
+            <span class="c1"># Basic properties</span>
+            <span class="n">entry_id</span><span class="o">=</span><span class="n">entry</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
+            <span class="n">updated</span><span class="o">=</span><span class="n">_parse_timestamp</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">updated_parsed</span><span class="p">),</span>
+            <span class="n">published</span><span class="o">=</span><span class="n">_parse_timestamp</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">published_parsed</span><span class="p">),</span>
+            <span class="n">summary</span><span class="o">=</span><span class="n">entry</span><span class="o">.</span><span class="n">summary</span><span class="p">,</span>
+            <span class="n">authors</span><span class="o">=</span><span class="p">[</span><span class="n">author</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">author</span> <span class="ow">in</span> <span class="n">entry</span><span class="o">.</span><span class="n">authors</span><span class="p">],</span>
+            <span class="c1"># Optional properties</span>
+            <span class="n">pdf_url</span><span class="o">=</span><span class="n">_parse_pdf_url</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">links</span><span class="p">),</span>
+            <span class="n">comment</span><span class="o">=</span><span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;arxiv_comment&quot;</span><span class="p">),</span>
+            <span class="n">primary_category</span><span class="o">=</span><span class="n">entry</span><span class="o">.</span><span class="n">arxiv_primary_category</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;term&quot;</span><span class="p">),</span>
+            <span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span>
+            <span class="n">journal_ref</span><span class="o">=</span><span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;arxiv_journal_ref&quot;</span><span class="p">),</span>
+            <span class="n">doi</span><span class="o">=</span><span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;arxiv_doi&quot;</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="n">entries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry_dict</span><span class="p">)</span>
+
+    <span class="n">cleaned_dict</span><span class="p">[</span><span class="s2">&quot;entries&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">entries</span>
+
+    <span class="k">return</span> <span class="n">cleaned_dict</span>
+
+
+<span class="k">def</span> <span class="nf">_reformat_query</span><span class="p">(</span><span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reformat the query string for arxiv search, refer to</span>
+<span class="sd">    https://info.arxiv.org/help/api/user-manual.html.&quot;&quot;&quot;</span>
+    <span class="n">delimiter_regex</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;(&quot;</span>
+        <span class="o">+</span> <span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="nb">map</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">,</span> <span class="n">LOGIC_OPERATORS</span> <span class="o">+</span> <span class="n">QUERY_PREFIX</span> <span class="o">+</span> <span class="n">SYMBOLS</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">parts</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">delimiter_regex</span><span class="p">,</span> <span class="n">query</span><span class="p">)</span>
+
+    <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="n">part</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts</span> <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">part</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parts</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">part</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">LOGIC_OPERATORS</span> <span class="o">+</span> <span class="n">QUERY_PREFIX</span> <span class="o">+</span> <span class="n">SYMBOLS</span><span class="p">:</span>
+            <span class="c1"># Add double quotes if it does not contain double quotes</span>
+            <span class="n">part</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s2">&quot;%22&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">part</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;%22&quot;</span><span class="p">):</span>
+                <span class="n">part</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;%22</span><span class="si">{</span><span class="n">part</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">part</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;%22&quot;</span><span class="p">):</span>
+                <span class="n">part</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">part</span><span class="si">}</span><span class="s2">%22&quot;</span>
+            <span class="n">parts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">part</span>
+        <span class="k">elif</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">SYMBOLS</span><span class="p">:</span>
+            <span class="n">parts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">,</span> <span class="s2">&quot;%28&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;)&quot;</span><span class="p">,</span> <span class="s2">&quot;%29&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">LOGIC_OPERATORS</span><span class="p">:</span>
+            <span class="n">parts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;+</span><span class="si">{</span><span class="n">part</span><span class="si">}</span><span class="s2">+&quot;</span>
+
+    <span class="n">refined_query</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">refined_query</span>
+
+
+<div class="viewcode-block" id="arxiv_search">
+<a class="viewcode-back" href="../../../../agentscope.service.web.html#agentscope.service.web.arxiv.arxiv_search">[文档]</a>
+<span class="k">def</span> <span class="nf">arxiv_search</span><span class="p">(</span>
+    <span class="n">search_query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">id_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">max_results</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Search arXiv paper by a given query string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        search_query (`str`):</span>
+<span class="sd">            The query string, supporting prefixes &quot;all:&quot;, &quot;ti:&quot;, &quot;au:&quot;,</span>
+<span class="sd">            &quot;abs:&quot;, &quot;co:&quot;, &quot;jr:&quot;, &quot;cat:&quot;, and &quot;rn:&quot;, boolean operators &quot;AND&quot;,</span>
+<span class="sd">            &quot;OR&quot; and &quot;ANDNOT&quot;. For example, searching for papers with</span>
+<span class="sd">            title &quot;Deep Learning&quot; and author &quot;LeCun&quot; by a</span>
+<span class="sd">            search_query ti:&quot;Deep Learning&quot; AND au:&quot;LeCun&quot;</span>
+<span class="sd">        id_list (`List[str]`, defaults to `None`):</span>
+<span class="sd">            A list of arXiv IDs to search.</span>
+<span class="sd">        start (`int`, defaults to `0`):</span>
+<span class="sd">            The index of the first search result to return.</span>
+<span class="sd">        max_results (`Optional[int]`, defaults to `None`):</span>
+<span class="sd">            The maximum number of search results to return.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `ServiceResponse`: A dictionary with two variables: `status` and</span>
+<span class="sd">        `content`. The `status` variable is from the ServiceExecStatus enum,</span>
+<span class="sd">        and `content` is a list of search results or error information,</span>
+<span class="sd">        which depends on the `status` variable.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">feedparser</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+            <span class="s2">&quot;The `feedparser` module is not installed. Please install it by &quot;</span>
+            <span class="s2">&quot;running `pip install feedparser`.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="c1"># construct url</span>
+    <span class="n">search_query</span> <span class="o">=</span> <span class="n">_reformat_query</span><span class="p">(</span><span class="n">search_query</span><span class="p">)</span>
+
+    <span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;search_query&quot;</span><span class="p">:</span> <span class="n">search_query</span><span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">id_list</span><span class="p">:</span>
+        <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;id_list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">id_list</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">start</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">max_results</span><span class="p">:</span>
+        <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;max_results&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">max_results</span><span class="p">)</span>
+
+    <span class="n">parameters_str</span> <span class="o">=</span> <span class="s2">&quot;&amp;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
+
+    <span class="n">url</span> <span class="o">=</span> <span class="n">ARXIV_SEARCH_URL</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">parameters_str</span><span class="o">=</span><span class="n">parameters_str</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Searching arXiv by url: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">as</span> <span class="n">data</span><span class="p">:</span>
+            <span class="c1"># Parse the results by feedparser</span>
+            <span class="n">feedparser_dict</span> <span class="o">=</span> <span class="n">feedparser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+
+        <span class="c1"># Remove unnecessary information</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">_clean_arxiv_search_results</span><span class="p">(</span><span class="n">feedparser_dict</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="c1"># Return the searching results</span>
+            <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+                <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
+                <span class="n">content</span><span class="o">=</span><span class="n">results</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+                <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+                <span class="n">content</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">code</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">data</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

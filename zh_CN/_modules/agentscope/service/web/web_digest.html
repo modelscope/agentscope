@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>agentscope.service.web_search.web_digest &mdash; AgentScope  文档</title>
+  <title>agentscope.service.web.web_digest &mdash; AgentScope  文档</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=c9484b72" />
@@ -46,8 +46,8 @@
   </form>
 </div> <!-- language_selector.html -->
 <div class="language-selector">
-    <a href="../../../../../en/_modules/agentscope/service/web_search/web_digest.html">English</a></li> |
-    <a href="../../../../../zh_CN/_modules/agentscope/service/web_search/web_digest.html">中文</a></li>
+    <a href="../../../../../en/_modules/agentscope/service/web/web_digest.html">English</a></li> |
+    <a href="../../../../../zh_CN/_modules/agentscope/service/web/web_digest.html">中文</a></li>
 </div> 
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
               <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
@@ -84,7 +84,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../../index.html">模块代码</a></li>
-      <li class="breadcrumb-item active">agentscope.service.web_search.web_digest</li>
+      <li class="breadcrumb-item active">agentscope.service.web.web_digest</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -93,7 +93,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>agentscope.service.web_search.web_digest 源代码</h1><div class="highlight"><pre>
+  <h1>agentscope.service.web.web_digest 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;parsing and digesting the web pages&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">json</span>
@@ -116,7 +116,7 @@
 
 
 <div class="viewcode-block" id="is_valid_url">
-<a class="viewcode-back" href="../../../../agentscope.service.web_search.html#agentscope.service.web_search.web_digest.is_valid_url">[文档]</a>
+<a class="viewcode-back" href="../../../../agentscope.service.web.html#agentscope.service.web.web_digest.is_valid_url">[文档]</a>
 <span class="k">def</span> <span class="nf">is_valid_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Use urlparse to check if a URL is valid</span>
@@ -137,7 +137,7 @@
 
 
 <div class="viewcode-block" id="load_web">
-<a class="viewcode-back" href="../../../../agentscope.service.web_search.html#agentscope.service.web_search.web_digest.load_web">[文档]</a>
+<a class="viewcode-back" href="../../../../agentscope.service.web.html#agentscope.service.web.web_digest.load_web">[文档]</a>
 <span class="k">def</span> <span class="nf">load_web</span><span class="p">(</span>
     <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">keep_raw</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -253,7 +253,7 @@
 
 
 <div class="viewcode-block" id="parse_html_to_text">
-<a class="viewcode-back" href="../../../../agentscope.service.web_search.html#agentscope.service.web_search.web_digest.parse_html_to_text">[文档]</a>
+<a class="viewcode-back" href="../../../../agentscope.service.web.html#agentscope.service.web.web_digest.parse_html_to_text">[文档]</a>
 <span class="k">def</span> <span class="nf">parse_html_to_text</span><span class="p">(</span>
     <span class="n">html_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">html_selected_tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -317,7 +317,7 @@
 
 
 <div class="viewcode-block" id="digest_webpage">
-<a class="viewcode-back" href="../../../../agentscope.service.web_search.html#agentscope.service.web_search.web_digest.digest_webpage">[文档]</a>
+<a class="viewcode-back" href="../../../../agentscope.service.web.html#agentscope.service.web.web_digest.digest_webpage">[文档]</a>
 <span class="k">def</span> <span class="nf">digest_webpage</span><span class="p">(</span>
     <span class="n">web_text_or_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">model</span><span class="p">:</span> <span class="n">ModelWrapperBase</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
