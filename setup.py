@@ -29,6 +29,7 @@ service_requires = [
     "pymongo",
     "pymysql",
     "beautifulsoup4",
+    "feedparser",
 ]
 
 doc_requires = [
@@ -46,7 +47,7 @@ gradio_requires = ["gradio==4.19.1", "modelscope_studio==0.0.5"]
 # released requires
 minimal_requires = [
     "docstring_parser",
-    "loguru",
+    "loguru==0.6.0",
     "tiktoken",
     "Pillow",
     "requests",

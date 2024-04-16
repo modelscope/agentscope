@@ -38,17 +38,21 @@ following built-in strategies for most chat and generation related model APIs.
 In AgentScope, we provide built-in strategies for the following chat and
 generation model APIs.
 
-- [`OpenAIChatWrapper`](#openaichatwrapper)
-- [`DashScopeChatWrapper`](#dashscopechatwrapper)
-- [`OllamaChatWrapper`](#ollamachatwrapper)
-- [`OllamaGenerationWrapper`](ollamagenerationwrapper)
-- [`GeminiChatWrapper`](#geminiwrapper)
+- [OpenAIChatWrapper](#openaichatwrapper)
+- [DashScopeChatWrapper](#dashscopechatwrapper)
+- [DashScopeMultiModalWrapper](#dashscopemultimodalwrapper)
+- [OllamaChatWrapper](#ollamachatwrapper)
+- [OllamaGenerationWrapper](#ollamagenerationwrapper)
+- [GeminiChatWrapper](#geminichatwrapper)
 
 These strategies are implemented in the `format` functions of the model
 wrapper classes.
 It accepts `Msg` objects, a list of `Msg` objects, or their mixture as input.
+However, `format` function will first reorganize them into a list of `Msg`
+objects, so for simplicity in the following sections we treat the input as a
+list of `Msg` objects.
 
-### `OpenAIChatWrapper`
+### OpenAIChatWrapper
 
 `OpenAIChatWrapper` encapsulates the OpenAI chat API, it takes a list of
 dictionaries as input, where the dictionary must obey the following rules
@@ -95,7 +99,7 @@ print(prompt)
 ]
 ```
 
-### `DashScopeChatWrapper`
+### DashScopeChatWrapper
 
 `DashScopeChatWrapper` encapsulates the DashScope chat API, which takes a list of messages as input. The message must obey the following rules (updated in 2024/03/22):
 
@@ -138,7 +142,91 @@ print(prompt)
 ]
 ```
 
-### `OllamaChatWrapper`
+### DashScopeMultiModalWrapper
+
+`DashScopeMultiModalWrapper` encapsulates the DashScope multimodal conversation API, which takes a list of messages as input. The message must obey the following rules (updated in 2024/04/04):
+
+- Each message is a dictionary with `role` and `content` fields.
+  - The `role` field must be either `"user"`, `"system"`, or `"assistant"`.
+  - The `content` field must be a list of dictionaries, where
+    - Each dictionary only contains one key-value pair, whose key must be `text`, `image` or `audio`.
+    - `text` field is a string, representing the text content.
+    - `image` field is a string, representing the image url.
+    - `audio` field is a string, representing the audio url.
+    - The `content` field can contain multiple dictionaries with the key `image` or multiple dictionaries with the key `audio` at the same time. For example:
+```python
+[
+    {
+        "role": "user",
+        "content": [
+            {"text": "What's the difference between these two pictures?"},
+            {"image": "https://xxx1.png"},
+            {"image": "https://xxx2.png"}
+        ]
+    },
+    {
+        "role": "assistant",
+        "content": [{"text": "The first picture is a cat, and the second picture is a dog."}]
+    },
+    {
+        "role": "user",
+        "content": [{"text": "I see, thanks!"}]
+    }
+]
+```
+- The message with the `role` field as `"system"` must and can only be the first message in the list.
+- The last message must have the `role` field as `"user"`.
+- The `user` and `assistant` messages must alternate.
+
+#### Prompt Strategy
+
+Based on the above rules, the `format` function in `DashScopeMultiModalWrapper` will parse the input messages as follows:
+
+- If the first message in the input message list has a `role` field with the value `"system"`, it will be converted into a system message with the `role` field as `"system"` and the `content` field as the system message. If the `url` field in the input `Msg` object is not `None`, a dictionary with the key `"image"` or `"audio"` will be added to the `content` based on its type.
+- The rest of the messages will be converted into a message with the `role` field as `"user"` and the `content` field as the dialogue history. For each message, if their `url` field is not `None`, it will add a dictionary with the key `"image"` or `"audio"` to the `content` based on the file type that the `url` points to.
+
+An example:
+
+```python
+from agentscope.models import DashScopeMultiModalWrapper
+from agentscope.message import Msg
+
+model = DashScopeMultiModalWrapper(
+    config_name="", # empty since we directly initialize the model wrapper
+    model_name="qwen-vl-plus",
+)
+
+prompt = model.format(
+   Msg("system", "You're a helpful assistant", role="system", url="url_to_png1"),   # Msg object
+   [                                                                                # a list of Msg objects
+      Msg(name="Bob", content="Hi!", role="assistant", url="url_to_png2"),
+      Msg(name="Alice", content="Nice to meet you!", role="assistant", url="url_to_png3"),
+   ],
+)
+print(prompt)
+```
+
+```bash
+[
+  {
+    "role": "system",
+    "content": [
+      {"text": "You are a helpful assistant"},
+      {"image": "url_to_png1"}
+    ]
+  },
+  {
+    "role": "user",
+    "content": [
+      {"text": "## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!"},
+      {"image": "url_to_png2"},
+      {"image": "url_to_png3"},
+    ]
+  }
+]
+```
+
+### OllamaChatWrapper
 
 `OllamaChatWrapper` encapsulates the Ollama chat API, which takes a list of
 messages as input. The message must obey the following rules (updated in
@@ -183,7 +271,7 @@ print(prompt)
 ]
 ```
 
-### `OllamaGenerationWrapper`
+### OllamaGenerationWrapper
 
 `OllamaGenerationWrapper` encapsulates the Ollama generation API, which
 takes a string prompt as input without any constraints (updated to 2024/03/22).

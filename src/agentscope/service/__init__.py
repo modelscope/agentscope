@@ -17,6 +17,7 @@ from .sql_query.mysql import query_mysql
 from .sql_query.sqlite import query_sqlite
 from .sql_query.mongodb import query_mongodb
 from .web.search import bing_search, google_search
+from .web.arxiv import arxiv_search
 from .service_response import ServiceResponse
 from .service_factory import ServiceFactory
 from .retrieval.similarity import cos_sim
@@ -47,6 +48,7 @@ __all__ = [
     "write_json_file",
     "bing_search",
     "google_search",
+    "arxiv_search",
     "query_mysql",
     "query_sqlite",
     "query_mongodb",
