@@ -13,17 +13,18 @@ AgentScope and how to use them to enhance the capabilities of your agents.
 The following table outlines the various Service functions by type. These functions can be called using `agentscope.service.{function_name}`.
 
 | Service Scene               | Service Function Name | Description                                                                                                    |
-| --------------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------- |
+|-----------------------------|-----------------------|----------------------------------------------------------------------------------------------------------------|
 | Code                        | `execute_python_code` | Execute a piece of Python code, optionally inside a Docker container.                                          |
 | Retrieval                   | `retrieve_from_list`  | Retrieve a specific item from a list based on given criteria.                                                  |
 | SQL Query                   | `query_mysql`         | Execute SQL queries on a MySQL database and return results.                                                    |
 |                             | `query_sqlite`        | Execute SQL queries on a SQLite database and return results.                                                   |
 |                             | `query_mongodb`       | Perform queries or operations on a MongoDB collection.                                                         |
 | Text Processing             | `summarization`       | Summarize a piece of text using a large language model to highlight its main points.                           |
-| Web                         | `bing_search`         | Perform bing search                                                                                          |
-|                             | `google_search`       | Perform google search                                                                                        |
-|                             | `download_from_url`   | Download file from given URL.                                                                                |
-|                             | `load_web`            | Load and parse the web page of the specificed url (currently only supports HTML).                              |
+| Web                         | `bing_search`         | Perform bing search                                                                                            |
+|                             | `google_search`       | Perform google search                                                                                          |
+|                             | `arxiv_search`        | Perform arXiv search                                                                                           |
+|                             | `download_from_url`   | Download file from given URL.                                                                                  |
+|                             | `load_web`            | Load and parse the web page of the specified url (currently only supports HTML).                              |
 |                             | `digest_webpage`      | Digest the content of a already loaded web page (currently only supports HTML).                                |
 | File                        | `create_file`         | Create a new file at a specified path, optionally with initial content.                                        |
 |                             | `delete_file`         | Delete a file specified by a file path.                                                                        |
