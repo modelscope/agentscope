@@ -38,7 +38,7 @@ class PromptEngineTest(unittest.TestCase):
                     },
                 },
                 {
-                    "model_type": "openai",
+                    "model_type": "openai_chat",
                     "config_name": "gpt-4",
                     "model_name": "gpt-4",
                     "api_key": "xxx",

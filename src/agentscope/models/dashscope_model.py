@@ -378,7 +378,6 @@ class DashScopeImageSynthesisWrapper(DashScopeWrapperBase):
         response = dashscope.ImageSynthesis.call(
             model=self.model_name,
             prompt=prompt,
-            n=1,
             **kwargs,
         )
         if response.status_code != HTTPStatus.OK:
@@ -649,10 +648,12 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
         )
 
         # step5: return response
+        content = response.output["choices"][0]["message"]["content"]
+        if isinstance(content, list):
+            content = content[0]["text"]
+
         return ModelResponse(
-            text=response.output["choices"][0]["message"]["content"][0][
-                "text"
-            ],
+            text=content,
             raw=response,
         )
 

@@ -24,7 +24,7 @@
 [
     {
         "config_name": "gpt-4-temperature-0.0",
-        "model_type": "openai",
+        "model_type": "openai_chat",
         "model_name": "gpt-4",
         "api_key": "xxx",
         "organization": "xxx",
