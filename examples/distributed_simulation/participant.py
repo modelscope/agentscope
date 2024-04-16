@@ -10,7 +10,7 @@ from agentscope.agents import AgentBase
 
 
 class RandomParticipant(AgentBase):
-    """A fake participant who generate number randomly."""
+    """A fake participant who generates number randomly."""
 
     def __init__(
         self,
@@ -39,7 +39,7 @@ class RandomParticipant(AgentBase):
 
 
 class LLMParticipant(AgentBase):
-    """A participant agent with LLM."""
+    """A participant agent who generates number using LLM."""
 
     def __init__(
         self,
@@ -97,7 +97,7 @@ class LLMParticipant(AgentBase):
 
 
 class Moderator(AgentBase):
-    """A Moderator to collect responses from participants."""
+    """A Moderator to collect values from participants."""
 
     def __init__(
         self,

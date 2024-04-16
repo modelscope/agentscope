@@ -3,7 +3,7 @@
 # default values
 base_port=12330
 hosts="localhost" # or "server1 server2 server3 ..."
-moderator_per_host=5
+moderator_per_host=4
 model_per_host=8
 agent_type="random" # or "llm"
 max_value=100
