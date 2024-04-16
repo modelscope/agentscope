@@ -1,0 +1,12 @@
+{
+    "model_type": "openai_chat",
+    "config_name": "fastchat_llama2-7b-chat-hf",
+    "model_name": "meta-llama/Llama-2-7b-chat-hf",
+    "api_key": "EMPTY",
+    "client_args": {
+        "base_url": "http://localhost:8000/v1/"
+    },
+    "generate_args": {
+        "temperature": 0.5
+    }
+}
