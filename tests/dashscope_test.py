@@ -168,7 +168,7 @@ class TestDashScopeImageSynthesisWrapper(unittest.TestCase):
         # Call the wrapper with prompt and expect a RuntimeError
         prompt = "Generate an image of a sunset"
         with self.assertRaises(RuntimeError) as context:
-            self.wrapper(prompt, save_local=False)
+            self.wrapper(prompt, save_local=False, n=1)
 
         # Assert the expected exception message
         self.assertIn("Error Code", str(context.exception))

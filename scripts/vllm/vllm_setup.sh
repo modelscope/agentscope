@@ -2,7 +2,7 @@
 
 # pip3 install vllm
 
-model_name_or_path="llama-2"
+model_name_or_path="meta-llama/Llama-2-7b-chat-hf"
 port=8000
 
 while getopts "m:p:" flag
