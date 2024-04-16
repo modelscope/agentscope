@@ -1,0 +1,28 @@
+[{
+    "config_name": "ollama_generate-llama2",
+    "model_type": "ollama_generate",
+    "model_name": "llama2",
+    "options": {
+        "temperature": 0.7
+    },
+    "keep_alive": "5m"
+},
+{
+    "config_name": "ollama_generate-mistral",
+    "model_type": "ollama_generate",
+    "model_name": "mistral",
+    "options": {
+        "temperature": 0.7
+    },
+    "keep_alive": "5m"
+},
+{
+    "config_name": "ollama_generate-qwen:0.5b",
+    "model_type": "ollama_generate",
+    "model_name": "qwen:0.5b",
+    "options": {
+        "temperature": 0.7
+    },
+    "keep_alive": "5m"
+}
+]

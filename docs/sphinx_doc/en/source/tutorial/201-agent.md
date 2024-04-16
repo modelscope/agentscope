@@ -42,7 +42,8 @@ class AgentBase(Operator):
         # messages it has observed. This method can be used to enrich the
         # agent's understanding and memory without producing an immediate
         # response.
-        self.memory.add(x)
+        if self.memory:
+            self.memory.add(x)
 
     def reply(self, x: dict = None) -> dict:
         # The core method to be implemented by custom agents. It defines the
@@ -86,23 +87,31 @@ Below, we provide usages of how to configure various agents from the AgentPool:
 def reply(self, x: dict = None) -> dict:
     # Additional processing steps can occur here
 
+    # Record the input if needed
     if self.memory:
-        self.memory.add(x)  # Update the memory with the input
+        self.memory.add(x)
 
     # Generate a prompt for the language model using the system prompt and memory
-    prompt = self.engine.join(
-        self.sys_prompt,
-        self.memory and self.memory.get_memory(),
+    prompt = self.model.format(
+        Msg("system", self.sys_prompt, role="system"),
+        self.memory
+        and self.memory.get_memory()
+        or x,  # type: ignore[arg-type]
     )
 
     # Invoke the language model with the prepared prompt
     response = self.model(prompt).text
 
-    # Format the response and create a message object
-    msg = Msg(self.name, response)
+    #Format the response and create a message object
+    msg = Msg(self.name, response, role="assistant")
+
+    # Print/speak the message in this agent's voice
+    self.speak(msg)
 
     # Record the message to memory and return it
-    self.memory.add(msg)
+    if self.memory:
+        self.memory.add(msg)
+
     return msg
 ```
 

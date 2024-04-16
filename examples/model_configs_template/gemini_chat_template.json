@@ -1,0 +1,7 @@
+[{
+    "config_name": "gemini_chat-gemini-pro",
+    "model_type": "gemini_chat",
+    "model_name": "gemini-pro",
+    "api_key": "{your_api_key}"
+}
+]

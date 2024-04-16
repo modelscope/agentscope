@@ -6,6 +6,7 @@ into AgentScope package
 
 from typing import Any, Optional, List, Union
 from loguru import logger
+import os.path
 
 try:
     from llama_index.core.readers.base import BaseReader
@@ -21,6 +22,8 @@ try:
     from llama_index.core.node_parser import SentenceSplitter
     from llama_index.core import (
         VectorStoreIndex,
+        StorageContext,
+        load_index_from_storage,
     )
 except ImportError:
     BaseReader, BaseRetriever = None, None
@@ -136,9 +139,8 @@ class LlamaIndexRAG(RAGBase):
         super().__init__(model, emb_model, config, **kwargs)
         self.retriever = None
         self.index = None
-        self.persist_dir = kwargs.get("persist_dir", "/")
+        self.persist_dir = self.config.get("persist_dir", "/")
         self.emb_model = emb_model
-        print(self.config)
 
         # ensure the emb_model is compatible with LlamaIndex
         if isinstance(emb_model, ModelWrapperBase):
@@ -251,21 +253,39 @@ class LlamaIndexRAG(RAGBase):
         # https://docs.llamaindex.ai/en/stable/module_guides/loading/ingestion_pipeline/root.html
         transformations.append(self.emb_model)
 
-        if vector_store is not None:
-            pipeline = IngestionPipeline(
-                transformations=transformations,
-                vector_store=vector_store,
-            )
-            _ = pipeline.run(docs)
-            self.index = VectorStoreIndex.from_vector_store(vector_store)
+        if not os.path.exists(self.persist_dir):
+            # check if index is persisted, if not, calculate the index
+            if vector_store is None:
+                # No vector_store is provide,
+                # use in memory to construct an index
+                pipeline = IngestionPipeline(
+                    transformations=transformations,
+                )
+                nodes = pipeline.run(documents=docs)
+                self.index = VectorStoreIndex(
+                    nodes=nodes,
+                    embed_model=self.emb_model,
+                )
+            else:
+                # use vector_store to construct an index
+                pipeline = IngestionPipeline(
+                    transformations=transformations,
+                    vector_store=vector_store,
+                )
+                _ = pipeline.run(docs)
+                self.index = VectorStoreIndex.from_vector_store(
+                    vector_store=vector_store,
+                )
+            # persist the calculated index
+            self.index.storage_context.persist(persist_dir=self.persist_dir)
         else:
-            # No vector store is provide, use simple in memory
-            pipeline = IngestionPipeline(
-                transformations=transformations,
-            )
-            nodes = pipeline.run(documents=docs)
-            self.index = VectorStoreIndex(
-                nodes=nodes,
+            # load the storage_context
+            storage_context = StorageContext.from_defaults(
+                persist_dir=self.persist_dir,
+                )
+            # construct index from
+            self.index = load_index_from_storage(
+                storage_context=storage_context,
                 embed_model=self.emb_model,
             )
 
