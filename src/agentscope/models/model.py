@@ -63,11 +63,7 @@ from loguru import logger
 
 from agentscope.utils import QuotaExceededError
 from .response import ModelResponse
-from .._exception import (
-    ResponseParsingError,
-    JsonParsingError,
-    MissingTagError,
-)
+from .._exception import ResponseParsingError
 
 from ..file_manager import file_manager
 from ..message import MessageBase
@@ -127,11 +123,7 @@ def _response_parse_decorator(
             # Parse the response if needed
             try:
                 return parse_func(response)
-            except (
-                ResponseParsingError,
-                JsonParsingError,
-                MissingTagError,
-            ) as e:
+            except ResponseParsingError as e:
                 if itr < max_retries:
                     logger.warning(
                         f"Fail to parse response ({itr}/{max_retries}):\n"

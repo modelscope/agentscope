@@ -3,9 +3,12 @@
 
 from abc import ABC, abstractmethod
 import json
+from copy import deepcopy
 from typing import Optional, Any
 
-from agentscope._exception import JsonParsingError, MissingTagError
+from loguru import logger
+
+from agentscope._exception import JsonParsingError, TagNotFoundError
 from agentscope.models import ModelResponse
 
 
@@ -39,8 +42,13 @@ class ParserBase(ABC):
         """
         text = response.text
 
-        index_start = text.find(tag_start) + len(tag_start)
-        index_end = text.find(tag_end, index_start)
+        index_start = text.find(tag_start)
+
+        # Avoid the case that tag_begin contains tag_end, e.g. ```json and ```
+        if index_start == -1:
+            index_end = text.find(tag_end, 0)
+        else:
+            index_end = text.find(tag_end, index_start + len(tag_start))
 
         if index_start == -1 or index_end == -1:
             missing_tags = []
@@ -49,14 +57,18 @@ class ParserBase(ABC):
             if index_end == -1:
                 missing_tags.append(tag_end)
 
-            raise MissingTagError(
+            raise TagNotFoundError(
                 f"Missing "
                 f"tag{'' if len(missing_tags)==1 else 's'} "
                 f"{' and '.join(missing_tags)} in response.",
                 raw_response=text,
+                missing_begin_tag=index_start == -1,
+                missing_end_tag=index_end == -1,
             )
 
-        extract_text = text[index_start:index_end]
+        extract_text = text[
+            index_start + len(tag_start) : index_end  # noqa: E203
+        ]
 
         return extract_text
 
@@ -91,12 +103,44 @@ class MarkdownJsonBlockParser(ParserBase):
 
     def parse(self, response: ModelResponse) -> ModelResponse:
         """Parse the response text to a json object."""
-        extract_text = self._extract_first_content_by_tag(
-            response,
-            self.tag_begin,
-            self.tag_end,
-        )
 
+        # extract the content and try to fix the missing tags by hand
+        try:
+            extract_text = self._extract_first_content_by_tag(
+                response,
+                self.tag_begin,
+                self.tag_end,
+            )
+        except TagNotFoundError as e:
+            # Try to fix the missing tag error by adding the tag
+            try:
+                response_copy = deepcopy(response)
+
+                # Fix the missing tags
+                if e.missing_begin_tag:
+                    response_copy.text = (
+                        self.tag_begin + "\n" + response_copy.text
+                    )
+                if e.missing_end_tag:
+                    response_copy.text = response_copy.text + self.tag_end
+
+                # Try again to extract the content
+                extract_text = self._extract_first_content_by_tag(
+                    response_copy,
+                    self.tag_begin,
+                    self.tag_end,
+                )
+
+                # replace the response with the fixed one
+                response.text = response_copy.text
+
+                logger.debug("Fix the missing tags by adding them manually.")
+
+            except TagNotFoundError:
+                # Raise the original error if the missing tags cannot be fixed
+                raise e from None
+
+        # Parse the content into JSON object
         try:
             parsed_json = json.loads(extract_text)
             response.parsed = parsed_json
@@ -116,7 +160,7 @@ class MarkdownJsonBlockParser(ParserBase):
         format_example is provided, it will be used as the example.
         """
         return self._format_instruction.format(
-            your_json_object=self.content_hint,
+            content_hint=self.content_hint,
         )
 
 
