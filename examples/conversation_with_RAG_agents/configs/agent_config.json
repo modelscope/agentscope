@@ -13,7 +13,7 @@
                 "module": "llama_index.core",
                 "class": "SimpleDirectoryReader",
                 "init_args": {
-                  "input_dir": "../../docs/sphinx_doc/zh_CN",
+                  "input_dir": "../../docs/sphinx_doc/en/source/tutorial",
                   "required_exts": [".md"]
                 }
               }
