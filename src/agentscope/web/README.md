@@ -105,7 +105,7 @@ Go to the [AgentScope Workstation website](http://39.103.132.84:8080/) and log i
 # Run in command line
 as_workflow config.json
 
-# Run in as_studio
+# Run in as_studio (gradio ui)
 as_studio config.json
 ```
 
