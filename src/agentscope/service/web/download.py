@@ -59,7 +59,7 @@ def download_from_url(
             content={
                 "url": url,
                 "file_path": filepath,
-            }
+            },
         )
     except requests.exceptions.RequestException as e:
         if retries > 0:
