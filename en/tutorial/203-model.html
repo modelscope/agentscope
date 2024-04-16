@@ -152,7 +152,7 @@ The detailed parameters will be fed into the corresponding model class’s const
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="c1"># Basic parameters</span>
     <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-4-temperature-0.0&quot;</span><span class="p">,</span>  <span class="c1"># Model configuration name</span>
-    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;openai&quot;</span><span class="p">,</span>  <span class="c1"># Correspond to `ModelWrapper` type</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;openai_chat&quot;</span><span class="p">,</span>             <span class="c1"># Correspond to `ModelWrapper` type</span>
 
     <span class="c1"># Detailed parameters</span>
     <span class="c1"># ...</span>
@@ -168,7 +168,7 @@ It corresponds to the <code class="docutils literal notranslate"><span class="pr
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">OpenAIChatWrapper</span><span class="p">(</span><span class="n">OpenAIWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for OpenAI&#39;s chat API.&quot;&quot;&quot;</span>
 
-    <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;openai&quot;</span>
+    <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;openai_chat&quot;</span>
     <span class="c1"># ...</span>
 </pre></div>
 </div>
@@ -187,7 +187,7 @@ It corresponds to the <code class="docutils literal notranslate"><span class="pr
 <tr class="row-even"><td><p>OpenAI API</p></td>
 <td><p>Chat</p></td>
 <td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper</span></code></a></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">&quot;openai&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;openai_chat&quot;</span></code></p></td>
 <td><p>gpt-4, gpt-3.5-turbo, …</p></td>
 </tr>
 <tr class="row-odd"><td><p></p></td>
@@ -274,9 +274,9 @@ Here we provide example configurations for different model wrappers.</p>
 <h5>OpenAI API<a class="headerlink" href="#openai-api" title="Link to this heading"></a></h5>
 <details>
 <summary>OpenAI Chat API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py">agents.models.OpenAIChatWrapper</a></code>)</summary>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">openai_chat_config</span> <span class="o">=</span> <span class="p">{</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{your_config_name}</span><span class="s2">&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;openai&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;openai_chat&quot;</span><span class="p">,</span>
 
     <span class="c1"># Required parameters</span>
     <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-4&quot;</span><span class="p">,</span>
@@ -429,7 +429,7 @@ Here we provide example configurations for different model wrappers.</p>
     <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;gemini_chat&quot;</span><span class="p">,</span>
 
     <span class="c1"># Required parameters</span>
-    <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{model_name}</span><span class="s2">&quot;</span><span class="p">,</span>               <span class="c1"># The model name in Gemini API, e.g. gemini-prp</span>
+    <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{model_name}</span><span class="s2">&quot;</span><span class="p">,</span>               <span class="c1"># The model name in Gemini API, e.g. gemini-pro</span>
 
     <span class="c1"># Optional parameters</span>
     <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{your_api_key}</span><span class="s2">&quot;</span><span class="p">,</span>                <span class="c1"># If not provided, the API key will be read from the environment variable GEMINI_API_KEY</span>
@@ -444,7 +444,7 @@ Here we provide example configurations for different model wrappers.</p>
     <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;gemini_embedding&quot;</span><span class="p">,</span>
 
     <span class="c1"># Required parameters</span>
-    <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{model_name}</span><span class="s2">&quot;</span><span class="p">,</span>               <span class="c1"># The model name in Gemini API, e.g. gemini-prp</span>
+    <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{model_name}</span><span class="s2">&quot;</span><span class="p">,</span>               <span class="c1"># The model name in Gemini API, e.g. models/embedding-001</span>
 
     <span class="c1"># Optional parameters</span>
     <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{your_api_key}</span><span class="s2">&quot;</span><span class="p">,</span>                <span class="c1"># If not provided, the API key will be read from the environment variable GEMINI_API_KEY</span>

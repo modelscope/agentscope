@@ -489,7 +489,6 @@
         <span class="n">response</span> <span class="o">=</span> <span class="n">dashscope</span><span class="o">.</span><span class="n">ImageSynthesis</span><span class="o">.</span><span class="n">call</span><span class="p">(</span>
             <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
             <span class="n">prompt</span><span class="o">=</span><span class="n">prompt</span><span class="p">,</span>
-            <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="n">HTTPStatus</span><span class="o">.</span><span class="n">OK</span><span class="p">:</span>
@@ -766,10 +765,12 @@
         <span class="p">)</span>
 
         <span class="c1"># step5: return response</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;message&quot;</span><span class="p">][</span><span class="s2">&quot;content&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;text&quot;</span><span class="p">]</span>
+
         <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
-            <span class="n">text</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;message&quot;</span><span class="p">][</span><span class="s2">&quot;content&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span>
-                <span class="s2">&quot;text&quot;</span>
-            <span class="p">],</span>
+            <span class="n">text</span><span class="o">=</span><span class="n">content</span><span class="p">,</span>
             <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
         <span class="p">)</span>
 
