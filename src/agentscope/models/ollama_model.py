@@ -46,6 +46,7 @@ class OllamaWrapperBase(ModelWrapperBase, ABC):
         model_name: str,
         options: dict = None,
         keep_alive: str = "5m",
+        **kwargs: Any,
     ) -> None:
         """Initialize the model wrapper for Ollama API.
 

@@ -1,0 +1,7 @@
+[{
+    "config_name": "gemini_chat-embedding-001",
+    "model_type": "gemini_embedding",
+    "model_name": "models/embedding-001",
+    "api_key": "{your_api_key}"
+}
+]
