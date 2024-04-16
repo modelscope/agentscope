@@ -17,9 +17,6 @@ try:
         BasePydanticVectorStore,
         VectorStore,
     )
-    from llama_index.core.storage.docstore import SimpleDocumentStore
-    from llama_index.core.storage.index_store import SimpleIndexStore
-    from llama_index.core.vector_stores import SimpleVectorStore
 
     from llama_index.core.bridge.pydantic import PrivateAttr
     from llama_index.core.node_parser.interface import NodeParser
@@ -27,9 +24,7 @@ try:
     from llama_index.core import (
         VectorStoreIndex,
         StorageContext,
-        ServiceContext,
         load_index_from_storage,
-        load_indices_from_storage,
     )
 except ImportError:
     BaseReader, BaseRetriever = None, None
