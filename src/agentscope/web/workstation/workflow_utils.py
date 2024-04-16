@@ -524,8 +524,8 @@ def sanitize_node_data(raw_info: dict) -> dict:
         except Exception:
             return False
 
-    cleaned_info = copy.deepcopy(raw_info)
-    for key, value in cleaned_info["data"].get("args", {}).items():
+    copied_info = copy.deepcopy(raw_info)
+    for key, value in copied_info["data"].get("args", {}).items():
         if not value:
             raw_info["data"]["args"].pop(key)
         elif is_callable_expression(value):
