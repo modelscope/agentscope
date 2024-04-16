@@ -234,7 +234,8 @@ Now you can load the model in AgentScope by the following model config: `fastcha
 ```json
 {
     "model_type": "openai",
-    "config_name": "meta-llama/Llama-2-7b-chat-hf",
+    "config_name": "fs-llama-2",
+    "model_name": "meta-llama/Llama-2-7b-chat-hf",
     "api_key": "EMPTY",
     "client_args": {
         "base_url": "http://127.0.0.1:8000/v1/"
@@ -278,7 +279,8 @@ Now you can load the model in AgentScope by the following model config: `vllm_sc
 ```json
 {
     "model_type": "openai",
-    "config_name": "meta-llama/Llama-2-7b-chat-hf",
+    "config_name": "vllm-llama-2",
+    "model_name": "meta-llama/Llama-2-7b-chat-hf",
     "api_key": "EMPTY",
     "client_args": {
         "base_url": "http://127.0.0.1:8000/v1/"
