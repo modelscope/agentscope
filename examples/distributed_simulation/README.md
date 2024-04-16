@@ -84,3 +84,16 @@ The command below will run a simulation with 1000 participant agents and evenly 
 ```shell
 ./run_simulation.sh 10 1000
 ```
+
+The following is sample output from a single-machine simulation scenario:
+
+```log
+2024-04-16 10:31:53.786 | INFO     | agentscope.models:read_model_configs:178 - Load configs for model wrapper: model_1, model_2, model_3, model_4, model_5, model_6, model_7, model_8
+2024-04-16 10:31:53.822 | INFO     | agentscope.utils.monitor:_create_monitor_table:343 - Init [monitor_metrics] as the monitor table
+2024-04-16 10:31:53.822 | INFO     | agentscope.utils.monitor:_create_monitor_table:344 - Init [monitor_metrics_quota_exceeded] as the monitor trigger
+2024-04-16 10:31:53.822 | INFO     | agentscope.utils.monitor:__init__:313 - SqliteMonitor initialization completed at [./runs/run_20240416-103153_h0xuo5/agentscope.db]
+2024-04-16 10:31:53.829 | INFO     | __main__:run_main_process_new:106 - init 1000 random participant agents...
+2024-04-16 10:31:53.829 | INFO     | __main__:run_main_process_new:139 - init 4 moderator agents...
+2024-04-16 10:31:54.211 | INFO     | __main__:run_main_process_new:163 - [init takes 0.38274645805358887 s]
+Moderator: The average value is 49.561 [takes 4.197571277618408 s]
+```
