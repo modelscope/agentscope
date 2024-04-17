@@ -465,6 +465,31 @@ class ASDiGraph(nx.DiGraph):
         )
         return out_values
 
+    def compile(self, compiled_filename: str) -> None:
+        """Compile DAG to a runnable python code"""
+        # Collect the nodes in topological order, which will determine
+        # execution order
+        # sorted_nodes = list(nx.topological_sort(self))
+
+        # Prepare the header of the file with necessary imports and any
+        # global definitions
+        imports = [
+            "import agentscope",
+        ]
+
+        header = "\n".join(imports)
+
+        body = f'def main():\n    {"a = 10"}'
+
+        # Combine header and body to form the full script
+        script = (
+            f"{header}\n\n\n{body}\n\nif __name__ == '__main__':\n    main()\n"
+        )
+
+        # Write the script to file
+        with open(compiled_filename, "w", encoding="utf-8") as file:
+            file.write(script)
+
 
 def get_all_agents(
     pipeline: PipelineBase,
