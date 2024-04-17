@@ -33,6 +33,8 @@ jobs:
       name: Build Documentation
       run: |
         cd docs/sphinx_doc
+        sphinx-apidoc -f -o en/source ../../src/agentscope -t template
+        sphinx-apidoc -f -o zh_CN/source ../../src/agentscope -t template
         make clean all
     - name: Upload Documentation
       uses: actions/upload-artifact@v3

@@ -50,9 +50,6 @@ __all__ = [
     "OpenAIChatWrapper",
     "OpenAIDALLEWrapper",
     "OpenAIEmbeddingWrapper",
-    "load_model_by_config_name",
-    "read_model_configs",
-    "clear_model_configs",
     "DashScopeChatWrapper",
     "DashScopeImageSynthesisWrapper",
     "DashScopeTextEmbeddingWrapper",
@@ -62,6 +59,9 @@ __all__ = [
     "OllamaGenerationWrapper",
     "GeminiChatWrapper",
     "GeminiEmbeddingWrapper",
+    "load_model_by_config_name",
+    "read_model_configs",
+    "clear_model_configs",
 ]
 
 _MODEL_CONFIGS: dict[str, dict] = {}
