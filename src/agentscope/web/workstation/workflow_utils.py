@@ -465,6 +465,18 @@ class ASDiGraph(nx.DiGraph):
         super().__init__(*args, **kwargs)
         self.nodes_not_in_graph = set()
 
+        # Prepare the header of the file with necessary imports and any
+        # global definitions
+        self.imports = [
+            "import agentscope",
+        ]
+
+        self.inits = [
+            """agentscope.init(logger_level="DEBUG")""",
+        ]
+
+        self.execs = ["\n"]
+
     def run(self) -> None:
         """
         Execute the computations associated with each node in the graph.
@@ -509,54 +521,13 @@ class ASDiGraph(nx.DiGraph):
             if node_id not in self.nodes_not_in_graph
         ]
 
-        # Prepare the header of the file with necessary imports and any
-        # global definitions
-        imports = [
-            "import agentscope",
-        ]
-
-        inits = [
-            """agentscope.init(logger_level="DEBUG")""",
-        ]
-
-        execs = [
-            "\n",
-        ]
-
-        for node_idx in self.nodes:
-            logger.debug(self.nodes[node_idx])
-            node = self.nodes[node_idx]
-            if isinstance(node["opt"], WorkflowNode):
-                var_name = node["opt"].node_type.name.lower()
-                compile_dict = node["opt"].compile(var=f"{var_name}{node_idx}")
-            elif isinstance(node["opt"], AgentBase):
-                compile_dict = {
-                    "imports": f"from agentscope.agents import {node['name']}",
-                    "inits": f"agent{node_idx} = {node['name']}"
-                    f"({kwarg_converter(node['data']['args'])})",
-                    "execs": f"x = agent{node_idx}(x)",
-                }
-            else:
-                raise TypeError
-            node["compile_dict"] = compile_dict
-
-            imports.append(compile_dict["imports"])
-
-            if (
-                hasattr(node["opt"], "node_type")
-                and node["opt"].node_type == WorkflowNodeType.MODEL
-            ):
-                inits.insert(1, compile_dict["inits"])
-            else:
-                inits.append(compile_dict["inits"])
-
         for node_id in sorted_nodes:
             node = self.nodes[node_id]
-            execs.append(node["compile_dict"]["execs"])
+            self.execs.append(node["compile_dict"]["execs"])
 
-        header = "\n".join(imports)
+        header = "\n".join(self.imports)
 
-        body = "\n    ".join(inits + execs)
+        body = "\n    ".join(self.inits + self.execs)
 
         main_body = f"def main():\n    {body}"
 
@@ -570,7 +541,13 @@ class ASDiGraph(nx.DiGraph):
         with open(compiled_filename, "w", encoding="utf-8") as file:
             file.write(script)
 
-    def add_as_node(self, node_id: str, node_info: dict, config: dict) -> Any:
+    # pylint: disable=R0912
+    def add_as_node(
+        self,
+        node_id: str,
+        node_info: dict,
+        config: dict,
+    ) -> Any:
         """
         Add a node to the graph based on provided node information and
         configuration.
@@ -627,7 +604,38 @@ class ASDiGraph(nx.DiGraph):
             value = node_cls(**node_info["data"].get("args", {}))
         else:
             value = node_cls(dep_opts, **node_info["data"].get("args", {}))
-        self.add_node(node_id, opt=value, **node_info)
+
+        # Add build compiled python code
+        if isinstance(value, WorkflowNode):
+            var_name = value.node_type.name.lower()
+            compile_dict = value.compile(var=f"{var_name}{node_id}")
+        elif isinstance(value, AgentBase):
+            compile_dict = {
+                "imports": f"from agentscope.agents import"
+                f" {node_info['name']}",
+                "inits": f"agent{node_id} = {node_info['name']}"
+                f"({kwarg_converter(node_info['data']['args'])})",
+                "execs": f"x = agent{node_id}(x)",
+            }
+        else:
+            raise TypeError
+
+        self.add_node(
+            node_id,
+            opt=value,
+            compile_dict=compile_dict,
+            **node_info,
+        )
+        # Insert to imports and inits
+        self.imports.append(compile_dict["imports"])
+
+        if (
+            hasattr(value, "node_type")
+            and value.node_type == WorkflowNodeType.MODEL
+        ):
+            self.inits.insert(1, compile_dict["inits"])
+        else:
+            self.inits.append(compile_dict["inits"])
         return value
 
     def exec_node(self, node_id: str, x_in: Any = None) -> Any:
