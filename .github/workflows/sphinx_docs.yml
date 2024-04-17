@@ -33,7 +33,7 @@ jobs:
       name: Build Documentation
       run: |
         cd docs/sphinx_doc
-        make clean all
+        ./build_sphinx_doc.sh
     - name: Upload Documentation
       uses: actions/upload-artifact@v3
       with:

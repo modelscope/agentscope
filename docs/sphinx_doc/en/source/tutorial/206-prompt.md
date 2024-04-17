@@ -154,6 +154,7 @@ print(prompt)
     - `image` field is a string, representing the image url.
     - `audio` field is a string, representing the audio url.
     - The `content` field can contain multiple dictionaries with the key `image` or multiple dictionaries with the key `audio` at the same time. For example:
+
 ```python
 [
     {
@@ -174,6 +175,7 @@ print(prompt)
     }
 ]
 ```
+
 - The message with the `role` field as `"system"` must and can only be the first message in the list.
 - The last message must have the `role` field as `"user"`.
 - The `user` and `assistant` messages must alternate.
