@@ -49,13 +49,26 @@ class WorkflowNodeType(IntEnum):
 
 def kwarg_converter(kwargs: dict) -> str:
     """Convert a kwarg dict to a string."""
-    kwarg_parts = [f"{key}={repr(value)}" for key, value in kwargs.items()]
+    kwarg_parts = []
+    for key, value in kwargs.items():
+        if is_callable_expression(value):
+            kwarg_parts.append(f"{key}={value}")
+        else:
+            kwarg_parts.append(f"{key}={repr(value)}")
     return ", ".join(kwarg_parts)
 
 
 def deps_converter(dep_vars: list) -> str:
     """Convert a dep_vars list to a string."""
     return f"[{', '.join(dep_vars)}]"
+
+
+def dict_converter(dictionary: dict) -> str:
+    """Convert a dictionary to a string."""
+    result_parts = []
+    for key, value in dictionary.items():
+        result_parts.append(f'"{key}": {value}')
+    return "{" + ", ".join(result_parts) + "}"
 
 
 class WorkflowNode(ABC):
@@ -85,17 +98,6 @@ class WorkflowNode(ABC):
         Performs the operations of the node. Implement specific logic in
         subclasses.
         """
-
-    # @abstractmethod
-    # def compile(self, var: str):
-    #     """
-    #     Compile workflow node to python executable code dict
-    #     """
-    #     return {
-    #         "imports": None,
-    #         "inits": None,
-    #         "execs": None,
-    #     }
 
 
 class ModelNode(WorkflowNode):
@@ -168,6 +170,17 @@ class PlaceHolderNode(WorkflowNode):
     def __call__(self, x: dict = None) -> dict:
         return placeholder(x)
 
+    def compile(self, var):  # type: ignore[no-untyped-def]
+        """
+        Compile PlaceHolderNode to python executable code dict
+        """
+        return {
+            "imports": "from agentscope.pipelines.functional import "
+            "placeholder",
+            "inits": f"{var} = placeholder",
+            "execs": f"x = {var}(x)",
+        }
+
 
 class MsgHubNode(WorkflowNode):
     """
@@ -182,8 +195,10 @@ class MsgHubNode(WorkflowNode):
     def initialize(  # type: ignore[no-untyped-def]
         self,
         deps: List,
+        source: dict,
         **kwargs,
     ) -> None:
+        self.source = source
         self.dep_vars = [x[1] for x in deps]
         deps = [x[0] for x in deps]
         self.announcement = Msg(
@@ -211,6 +226,18 @@ class MsgHubNode(WorkflowNode):
             x = self.pipeline(x)
         return x
 
+    def compile(self, var: str) -> dict:
+        """
+        Compile SequentialPipelineNode to python executable code dict
+        """
+        return {
+            "imports": "from agentscope.msghub import msghub",
+            "inits": "",
+            "execs": f"""with msghub(self.participants,
+            announcement=self.announcement):\n        x = {1}(x)
+            """,
+        }
+
 
 class SequentialPipelineNode(WorkflowNode):
     """
@@ -225,8 +252,10 @@ class SequentialPipelineNode(WorkflowNode):
     def initialize(  # type: ignore[no-untyped-def]
         self,
         deps: List,
+        source: dict,
         **kwargs,
     ) -> None:
+        self.source = source
         self.dep_vars = [x[1] for x in deps]
         self.deps = deps
         deps = [x[0] for x in deps]
@@ -260,8 +289,10 @@ class ForLoopPipelineNode(WorkflowNode):
     def initialize(  # type: ignore[no-untyped-def]
         self,
         deps: List,
+        source: dict,
         **kwargs,
     ) -> None:
+        self.source = source
         self.dep_vars = [x[1] for x in deps]
         deps = [x[0] for x in deps]
         assert (
@@ -275,14 +306,14 @@ class ForLoopPipelineNode(WorkflowNode):
 
     def compile(self, var: str) -> dict:
         """
-        Compile SequentialPipelineNode to python executable code dict
+        Compile ForLoopPipelineNode to python executable code dict
         """
         return {
             "imports": "from agentscope.pipelines import ForLoopPipeline",
             "inits": f"{var} = ForLoopPipeline("
             f"loop_body_operators="
             f"{deps_converter(self.dep_vars)},"
-            f" {kwarg_converter(self.kwargs)})",
+            f" {kwarg_converter(self.source)})",
             "execs": f"x = {var}(x)",
         }
 
@@ -300,8 +331,10 @@ class WhileLoopPipelineNode(WorkflowNode):
     def initialize(  # type: ignore[no-untyped-def]
         self,
         deps: List,
+        source: dict,
         **kwargs,
     ) -> None:
+        self.source = source
         self.dep_vars = [x[1] for x in deps]
         deps = [x[0] for x in deps]
         assert (
@@ -311,9 +344,23 @@ class WhileLoopPipelineNode(WorkflowNode):
             loop_body_operators=deps[0],
             **kwargs,
         )
+        self.kwargs = kwargs
 
     def __call__(self, x: dict = None) -> dict:
         return self.pipeline(x)
+
+    def compile(self, var: str) -> dict:
+        """
+        Compile WhileLoopPipeline to python executable code dict
+        """
+        return {
+            "imports": "from agentscope.pipelines import WhileLoopPipeline",
+            "inits": f"{var} = WhileLoopPipeline("
+            f"loop_body_operators="
+            f"{deps_converter(self.dep_vars)},"
+            f" {kwarg_converter(self.source)})",
+            "execs": f"x = {var}(x)",
+        }
 
 
 class IfElsePipelineNode(WorkflowNode):
@@ -329,8 +376,10 @@ class IfElsePipelineNode(WorkflowNode):
     def initialize(  # type: ignore[no-untyped-def]
         self,
         deps: List,
+        source: dict,
         **kwargs,
     ) -> None:
+        self.source = source
         self.dep_vars = [x[1] for x in deps]
         deps = [x[0] for x in deps]
         assert (
@@ -348,6 +397,29 @@ class IfElsePipelineNode(WorkflowNode):
     def __call__(self, x: dict = None) -> dict:
         return self.pipeline(x)
 
+    def compile(self, var: str) -> dict:
+        """
+        Compile IfElsePipelineNode to python executable code dict
+        """
+        imports = "from agentscope.pipelines import IfElsePipeline"
+        execs = f"x = {var}(x)"
+        if len(self.dep_vars) == 1:
+            return {
+                "imports": imports,
+                "inits": f"{var} = IfElsePipeline("
+                f"if_body_operators={self.dep_vars[0]})",
+                "execs": execs,
+            }
+        elif len(self.dep_vars) == 2:
+            return {
+                "imports": imports,
+                "inits": f"{var} = IfElsePipeline("
+                f"if_body_operators={self.dep_vars[0]}, "
+                f"else_body_operators={self.dep_vars[1]})",
+                "execs": execs,
+            }
+        raise ValueError
+
 
 class SwitchPipelineNode(WorkflowNode):
     """
@@ -362,38 +434,65 @@ class SwitchPipelineNode(WorkflowNode):
     def initialize(  # type: ignore[no-untyped-def]
         self,
         deps: List,
+        source: dict,
         **kwargs,
     ) -> None:
+        self.source = source
         self.dep_vars = [x[1] for x in deps]
+
         deps = [x[0] for x in deps]
         assert 0 < len(deps), (
             "SwitchPipelineNode must contain at least " "one Pipeline Node."
         )
         case_operators = {}
+        self.case_operators_var = {}
 
         if len(deps) == len(kwargs["cases"]):
             # No default_operators provided
             default_operators = placeholder
+            self.default_var_name = "placeholder"
         elif len(deps) == len(kwargs["cases"]) + 1:
-            # No default_operators provided
+            # default_operators provided
             default_operators = deps.pop(-1)
+            self.default_var_name = self.dep_vars.pop(-1)
         else:
             raise ValueError(
                 f"SwitchPipelineNode node {deps} not matches "
                 f"cases {kwargs['cases']}.",
             )
 
-        for key, value in zip(kwargs["cases"], deps):
+        for key, value, var in zip(kwargs["cases"], deps, self.dep_vars):
             case_operators[key] = value
+            self.case_operators_var[key] = var
         kwargs.pop("cases")
+        self.source.pop("cases")
         self.pipeline = SwitchPipeline(
             case_operators=case_operators,
             default_operators=default_operators,  # type: ignore[arg-type]
             **kwargs,
         )
+        self.kwargs = kwargs
 
     def __call__(self, x: dict = None) -> dict:
         return self.pipeline(x)
+
+    def compile(self, var: str) -> dict:
+        """
+        Compile SwitchPipelineNode to python executable code dict
+        """
+        imports = (
+            "from agentscope.pipelines import SwitchPipeline\n"
+            "from agentscope.pipelines.functional import placeholder"
+        )
+        execs = f"x = {var}(x)"
+        return {
+            "imports": imports,
+            "inits": f"{var} = SwitchPipeline(case_operators="
+            f"{dict_converter(self.case_operators_var)}, "
+            f"default_operators={self.default_var_name},"
+            f" {kwarg_converter(self.source)})",
+            "execs": execs,
+        }
 
 
 class CopyNode(WorkflowNode):
@@ -423,6 +522,16 @@ class CopyNode(WorkflowNode):
         **kwargs,
     ) -> Any:
         return self.pipeline(*args, **kwargs)
+
+    def compile(self, var: str) -> dict:
+        """
+        Compile CopyNode to python executable code dict
+        """
+        return {
+            "imports": "",
+            "inits": "",
+            "execs": f"x = {self.dep_vars[0]}(x)",
+        }
 
 
 NODE_NAME_MAPPING = {
@@ -603,7 +712,14 @@ class ASDiGraph(nx.DiGraph):
         if len(deps) == 0:
             value = node_cls(**node_info["data"].get("args", {}))
         else:
-            value = node_cls(dep_opts, **node_info["data"].get("args", {}))
+            value = node_cls(
+                dep_opts,
+                source=node_info["data"].get(
+                    "source",
+                    {},
+                ),
+                **node_info["data"].get("args", {}),
+            )
 
         # Add build compiled python code
         if isinstance(value, WorkflowNode):
@@ -696,6 +812,18 @@ def get_all_agents(
     return all_agents
 
 
+def is_callable_expression(s: str) -> bool:
+    """Check a expression wthether a callable expression"""
+    try:
+        # Do not detect exp like this
+        if s in ["input", "print"]:
+            return False
+        result = eval(s)
+        return callable(result)
+    except Exception:
+        return False
+
+
 def sanitize_node_data(raw_info: dict) -> dict:
     """
     Clean and validate node data, evaluating callable expressions where
@@ -713,20 +841,17 @@ def sanitize_node_data(raw_info: dict) -> dict:
             evaluated.
     """
 
-    def is_callable_expression(s: str) -> bool:
-        try:
-            # Do not detect exp like this
-            if s in ["input", "print"]:
-                return False
-            result = eval(s)
-            return callable(result)
-        except Exception:
-            return False
-
     copied_info = copy.deepcopy(raw_info)
+    raw_info["data"]["source"] = copy.deepcopy(
+        copied_info["data"].get(
+            "args",
+            {},
+        ),
+    )
     for key, value in copied_info["data"].get("args", {}).items():
         if not value:
             raw_info["data"]["args"].pop(key)
+            raw_info["data"]["source"].pop(key)
         elif is_callable_expression(value):
             raw_info["data"]["args"][key] = eval(value)
     return raw_info
