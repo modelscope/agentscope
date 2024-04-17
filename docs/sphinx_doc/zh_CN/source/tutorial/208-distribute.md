@@ -58,7 +58,7 @@ b = AgentB(
 #### 独立模式
 
 在独立模式中，需要首先在目标机器上启动智能体服务进程。
-例如想要将两个智能体服务进程部署在 IP 分别为 `a.b.c.d` 和 `e.f.g.h` 的机器上（假设这两台机器分别为`Machine1` 和 `Machine2`）。
+例如想要将两个智能体服务进程部署在 IP 分别为 `ip_a` 和 `ip_b` 的机器上（假设这两台机器分别为`Machine1` 和 `Machine2`）。
 你可以先在 `Machine1` 上运行如下代码：
 
 ```python
@@ -69,7 +69,7 @@ agentscope.init(
 )
 # Create an agent service process
 server = RpcAgentServerLauncher(
-    host="a.b.c.d",
+    host="ip_a",
     port=12001,  # choose an available port
 )
 
@@ -88,7 +88,7 @@ agentscope.init(
 )
 # Create an agent service process
 server = RpcAgentServerLauncher(
-    host="e.f.g.h",
+    host="ip_b",
     port=12002, # choose an available port
 )
 
@@ -104,14 +104,14 @@ a = AgentA(
     name="A",
     # ...
 ).to_dist(
-    host="a.b.c.d",
+    host="ip_a",
     port=12001,
 )
 b = AgentB(
     name="B",
     # ...
 ).to_dist(
-    host="e.f.g.h",
+    host="ip_b",
     port=12002,
 )
 ```
@@ -146,14 +146,14 @@ a = AgentA(
     name="A",
     # ...
     to_dist=True,
-    host="a.b.c.d",
+    host="ip_a",
     port=12001,
 )
 b = AgentB(
     name="B",
     # ...
     to_dist=True,
-    host="e.f.g.h",
+    host="ip_b",
     port=12002,
 )
 ```
@@ -203,7 +203,7 @@ b = AgentB(
     name="B",
     # ...
 ).to_dist(
-    host="e.f.g.h",
+    host="ip_b",
     port=12002,
 )
 

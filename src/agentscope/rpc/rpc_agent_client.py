@@ -2,15 +2,16 @@
 """ Client of rpc agent server """
 
 import threading
-import pickle
 import base64
 from typing import Any, Optional
 from loguru import logger
 
 try:
+    import dill
     import grpc
     from grpc import RpcError
 except ImportError:
+    dill = None
     grpc = None
     RpcError = None
 
@@ -73,7 +74,7 @@ class RpcAgentClient:
                 return
             self.call_func(
                 "_create_agent",
-                base64.b64encode(pickle.dumps(agent_configs)).decode("utf-8"),
+                base64.b64encode(dill.dumps(agent_configs)).decode("utf-8"),
             )
         except Exception as e:
             logger.error(

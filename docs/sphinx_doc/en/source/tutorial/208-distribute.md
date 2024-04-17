@@ -57,7 +57,7 @@ b = AgentB(
 #### Independent Mode
 
 In the Independent mode, we need to start the agent server process on the target machine first.
-For example, start two agent server processes on the two different machines with IP `a.b.c.d` and `e.f.g.h`(called `Machine1` and `Machine2` accrodingly).
+For example, start two agent server processes on the two different machines with IP `ip_a` and `ip_b`(called `Machine1` and `Machine2` accrodingly).
 You can run the following code on `Machine1`:
 
 ```python
@@ -68,7 +68,7 @@ agentscope.init(
 )
 # Create an agent service process
 server = RpcAgentServerLauncher(
-    host="a.b.c.d",
+    host="ip_a",
     port=12001,  # choose an available port
 )
 
@@ -87,7 +87,7 @@ agentscope.init(
 )
 # Create an agent service process
 server = RpcAgentServerLauncher(
-    host="e.f.g.h",
+    host="ip_b",
     port=12002, # choose an available port
 )
 
@@ -103,14 +103,14 @@ a = AgentA(
     name="A",
     # ...
 ).to_dist(
-    host="a.b.c.d",
+    host="ip_a",
     port=12001,
 )
 b = AgentB(
     name="B",
     # ...
 ).to_dist(
-    host="e.f.g.h",
+    host="ip_b",
     port=12002,
 )
 ```
@@ -145,14 +145,14 @@ a = AgentA(
     name="A",
     # ...
     to_dist=True,
-    host="a.b.c.d",
+    host="ip_a",
     port=12001,
 )
 b = AgentB(
     name="B",
     # ...
     to_dist=True,
-    host="e.f.g.h",
+    host="ip_b",
     port=12002,
 )
 ```
@@ -202,7 +202,7 @@ b = AgentB(
     name="B",
     # ...
 ).to_dist(
-    host="e.f.g.h",
+    host="ip_b",
     port=12002,
 )
 

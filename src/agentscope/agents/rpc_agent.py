@@ -6,7 +6,6 @@ from multiprocessing.synchronize import Event as EventClass
 import socket
 import threading
 import json
-import pickle
 import base64
 import traceback
 import asyncio
@@ -15,15 +14,14 @@ from concurrent import futures
 from loguru import logger
 
 try:
+    import dill
     import grpc
     from grpc import ServicerContext
-except ImportError:
-    grpc = None
-    ServicerContext = Any
-
-try:
     from expiringdict import ExpiringDict
 except ImportError:
+    dill = None
+    grpc = None
+    ServicerContext = Any
     ExpiringDict = None
 
 from agentscope._init import init_process, _INIT_SETTINGS
@@ -724,7 +722,7 @@ class AgentPlatform(RpcAgentServicer):
         self.check_and_generate_agent(
             request.agent_id,
             agent_configs=(
-                pickle.loads(base64.b64decode(request.value))
+                dill.loads(base64.b64decode(request.value))
                 if request.value
                 else None
             ),
