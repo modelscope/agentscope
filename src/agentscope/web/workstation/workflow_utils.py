@@ -36,6 +36,23 @@ from agentscope.message import Msg
 from agentscope.models import read_model_configs
 
 
+class WorkflowNodeType(IntEnum):
+    """Enum for workflow node."""
+
+    MODEL = 0
+    AGENT = 1
+    PIPELINE = 2
+    SERVICE = 3
+    MESSAGE = 4
+    COPY = 5
+
+
+def kwarg_converter(kwargs: dict) -> str:
+    """Convert a kwarg dict to a string."""
+    kwarg_parts = [f"{key}={repr(value)}" for key, value in kwargs.items()]
+    return ", ".join(kwarg_parts)
+
+
 class WorkflowNode(ABC):
     """
     Abstract base class representing a generic node in a workflow.
@@ -44,6 +61,8 @@ class WorkflowNode(ABC):
     in the subclass methods. It provides an interface for initialization and
     execution of operations when the node is called.
     """
+
+    node_type = None
 
     def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__()
@@ -62,6 +81,17 @@ class WorkflowNode(ABC):
         subclasses.
         """
 
+    # @abstractmethod
+    # def compile(self, var: str):
+    #     """
+    #     Compile workflow node to python executable code dict
+    #     """
+    #     return {
+    #         "imports": [],
+    #         "inits": [],
+    #         "execs": [],
+    #     }
+
 
 class ModelNode(WorkflowNode):
     """
@@ -72,11 +102,24 @@ class ModelNode(WorkflowNode):
     model-related operations when called.
     """
 
+    node_type = WorkflowNodeType.MODEL
+
     def initialize(self, **kwargs):  # type: ignore[no-untyped-def]
+        self.kwargs = kwargs
         read_model_configs([kwargs])
 
     def __call__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         return None
+
+    def compile(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+        """
+        Compile ModelNode to python executable code dict
+        """
+        return {
+            "imports": "from agentscope.models import read_model_configs",
+            "inits": f"read_model_configs([{self.kwargs}])",
+            "execs": "",
+        }
 
 
 class MsgNode(WorkflowNode):
@@ -87,11 +130,24 @@ class MsgNode(WorkflowNode):
     and performing message-related operations when the node is invoked.
     """
 
+    node_type = WorkflowNodeType.MESSAGE
+
     def initialize(self, *args, **kwargs):  # type: ignore[no-untyped-def]
-        self.msg = Msg(*args, **kwargs)
+        self.kwargs = kwargs
+        self.msg = Msg(**kwargs)
 
     def __call__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         return self.msg
+
+    def compile(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+        """
+        Compile ModelNode to python executable code dict
+        """
+        return {
+            "imports": "from agentscope.message import Msg",
+            "inits": f"x = Msg({kwarg_converter(self.kwargs)})",
+            "execs": "",
+        }
 
 
 class PlaceHolderNode(WorkflowNode):
@@ -101,6 +157,8 @@ class PlaceHolderNode(WorkflowNode):
     This node acts as a placeholder and can be used to pass through information
     or data without performing any significant operation.
     """
+
+    node_type = WorkflowNodeType.PIPELINE
 
     def __call__(self, x: dict = None) -> dict:
         return placeholder(x)
@@ -113,6 +171,8 @@ class MsgHubNode(WorkflowNode):
     MsgHubNode is responsible for broadcasting announcements to participants
     and managing the flow of messages within a workflow's pipeline.
     """
+
+    node_type = WorkflowNodeType.PIPELINE
 
     def initialize(  # type: ignore[no-untyped-def]
         self,
@@ -153,6 +213,8 @@ class SequentialPipelineNode(WorkflowNode):
     sequence, where the output of one node is the input to the next.
     """
 
+    node_type = WorkflowNodeType.PIPELINE
+
     def initialize(  # type: ignore[no-untyped-def]
         self,
         deps: List,
@@ -171,6 +233,8 @@ class ForLoopPipelineNode(WorkflowNode):
     ForLoopPipelineNode allows the execution of a pipeline node multiple times,
     iterating over a given set of inputs or a specified range.
     """
+
+    node_type = WorkflowNodeType.PIPELINE
 
     def initialize(  # type: ignore[no-untyped-def]
         self,
@@ -193,6 +257,8 @@ class WhileLoopPipelineNode(WorkflowNode):
     WhileLoopPipelineNode enables conditional repeated execution of a pipeline
     node based on a specified condition.
     """
+
+    node_type = WorkflowNodeType.PIPELINE
 
     def initialize(  # type: ignore[no-untyped-def]
         self,
@@ -218,6 +284,8 @@ class IfElsePipelineNode(WorkflowNode):
     IfElsePipelineNode directs the flow of execution to different pipeline
     nodes based on a specified condition.
     """
+
+    node_type = WorkflowNodeType.PIPELINE
 
     def initialize(  # type: ignore[no-untyped-def]
         self,
@@ -247,6 +315,8 @@ class SwitchPipelineNode(WorkflowNode):
     SwitchPipelineNode routes the execution to different pipeline nodes
     based on the evaluation of a specified key or condition.
     """
+
+    node_type = WorkflowNodeType.PIPELINE
 
     def initialize(  # type: ignore[no-untyped-def]
         self,
@@ -292,6 +362,8 @@ class CopyNode(WorkflowNode):
     subsequent operations.
     """
 
+    node_type = WorkflowNodeType.COPY
+
     def initialize(  # type: ignore[no-untyped-def]
         self,
         deps: List,
@@ -306,17 +378,6 @@ class CopyNode(WorkflowNode):
         **kwargs,
     ) -> Any:
         return self.pipeline(*args, **kwargs)
-
-
-class WorkflowNodeType(IntEnum):
-    """Enum for workflow node."""
-
-    MODEL = 0
-    AGENT = 1
-    PIPELINE = 2
-    SERVICE = 3
-    MESSAGE = 4
-    COPY = 5
 
 
 NODE_NAME_MAPPING = {
@@ -394,6 +455,66 @@ class ASDiGraph(nx.DiGraph):
             else:
                 raise ValueError("Too many predecessors!")
 
+    def compile(self, compiled_filename: str) -> None:
+        """Compile DAG to a runnable python code"""
+
+        # Prepare the header of the file with necessary imports and any
+        # global definitions
+        imports = [
+            "import agentscope",
+        ]
+
+        inits = [
+            """agentscope.init(logger_level="DEBUG")""",
+        ]
+
+        execs = [
+            "\n",
+        ]
+
+        for node_idx in self.nodes:
+            logger.debug(self.nodes[node_idx])
+            node = self.nodes[node_idx]
+            if isinstance(node["opt"], WorkflowNode):
+                compile_dict = node["opt"].compile(var=node_idx)
+            elif isinstance(node["opt"], AgentBase):
+                compile_dict = {
+                    "imports": f"from agentscope.agents import {node['name']}",
+                    "inits": f"agent{node_idx} = {node['name']}"
+                    f"({kwarg_converter(node['data']['args'])})",
+                    "execs": f"x = agent{node_idx}(x)",
+                }
+            else:
+                raise TypeError
+
+            imports.append(compile_dict["imports"])
+
+            if (
+                hasattr(node["opt"], "node_type")
+                and node["opt"].node_type == WorkflowNodeType.MODEL
+            ):
+                inits.insert(1, compile_dict["inits"])
+            else:
+                inits.append(compile_dict["inits"])
+
+            execs.append(compile_dict["execs"])
+
+        header = "\n".join(imports)
+
+        body = "\n    ".join(inits + execs)
+
+        main_body = f"def main():\n    {body}"
+
+        # Combine header and body to form the full script
+        script = (
+            f"{header}\n\n\n{main_body}\n\nif __name__ == "
+            f"'__main__':\n    main()\n"
+        )
+
+        # Write the script to file
+        with open(compiled_filename, "w", encoding="utf-8") as file:
+            file.write(script)
+
     def add_as_node(self, node_id: str, node_info: dict, config: dict) -> Any:
         """
         Add a node to the graph based on provided node information and
@@ -465,31 +586,6 @@ class ASDiGraph(nx.DiGraph):
         )
         return out_values
 
-    def compile(self, compiled_filename: str) -> None:
-        """Compile DAG to a runnable python code"""
-        # Collect the nodes in topological order, which will determine
-        # execution order
-        # sorted_nodes = list(nx.topological_sort(self))
-
-        # Prepare the header of the file with necessary imports and any
-        # global definitions
-        imports = [
-            "import agentscope",
-        ]
-
-        header = "\n".join(imports)
-
-        body = f'def main():\n    {"a = 10"}'
-
-        # Combine header and body to form the full script
-        script = (
-            f"{header}\n\n\n{body}\n\nif __name__ == '__main__':\n    main()\n"
-        )
-
-        # Write the script to file
-        with open(compiled_filename, "w", encoding="utf-8") as file:
-            file.write(script)
-
 
 def get_all_agents(
     pipeline: PipelineBase,
@@ -545,6 +641,9 @@ def sanitize_node_data(raw_info: dict) -> dict:
 
     def is_callable_expression(s: str) -> bool:
         try:
+            # Do not detect exp like this
+            if s in ["input", "print"]:
+                return False
             result = eval(s)
             return callable(result)
         except Exception:
