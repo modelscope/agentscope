@@ -17,7 +17,7 @@
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="../../../_static/documentation_options.js?v=7d86a446"></script>
-        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../_static/translations.js?v=beaddf03"></script>
         <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
@@ -58,15 +58,15 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">Agents package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">Memory package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">Models package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">Pipelines package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">Service package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">RPC package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">Utils package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">Web UI package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
 </ul>
 
         </div>
@@ -110,20 +110,17 @@
 <span class="n">Operators</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Operator</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Operator</span><span class="p">]]</span>
 
 
-<div class="viewcode-block" id="placeholder">
-<a class="viewcode-back" href="../../../agentscope.pipelines.html#agentscope.pipelines.functional.placeholder">[文档]</a>
 <span class="k">def</span> <span class="nf">placeholder</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;A placeholder that do nothing.</span>
 
 <span class="sd">    Acts as a placeholder in branches that do not require any operations in</span>
 <span class="sd">    flow control like if-else/switch</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">x</span></div>
-
+    <span class="k">return</span> <span class="n">x</span>
 
 
 <div class="viewcode-block" id="sequentialpipeline">
-<a class="viewcode-back" href="../../../agentscope.pipelines.html#agentscope.pipelines.functional.sequentialpipeline">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.pipelines.html#agentscope.pipelines.sequentialpipeline">[文档]</a>
 <span class="k">def</span> <span class="nf">sequentialpipeline</span><span class="p">(</span>
     <span class="n">operators</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Operator</span><span class="p">],</span>
     <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -159,7 +156,7 @@
 
 
 <div class="viewcode-block" id="ifelsepipeline">
-<a class="viewcode-back" href="../../../agentscope.pipelines.html#agentscope.pipelines.functional.ifelsepipeline">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.pipelines.html#agentscope.pipelines.ifelsepipeline">[文档]</a>
 <span class="k">def</span> <span class="nf">ifelsepipeline</span><span class="p">(</span>
     <span class="n">condition_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
     <span class="n">if_body_operators</span><span class="p">:</span> <span class="n">Operators</span><span class="p">,</span>
@@ -191,7 +188,7 @@
 
 
 <div class="viewcode-block" id="switchpipeline">
-<a class="viewcode-back" href="../../../agentscope.pipelines.html#agentscope.pipelines.functional.switchpipeline">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.pipelines.html#agentscope.pipelines.switchpipeline">[文档]</a>
 <span class="k">def</span> <span class="nf">switchpipeline</span><span class="p">(</span>
     <span class="n">condition_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Any</span><span class="p">],</span>
     <span class="n">case_operators</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Operators</span><span class="p">],</span>
@@ -227,7 +224,7 @@
 
 
 <div class="viewcode-block" id="forlooppipeline">
-<a class="viewcode-back" href="../../../agentscope.pipelines.html#agentscope.pipelines.functional.forlooppipeline">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.pipelines.html#agentscope.pipelines.forlooppipeline">[文档]</a>
 <span class="k">def</span> <span class="nf">forlooppipeline</span><span class="p">(</span>
     <span class="n">loop_body_operators</span><span class="p">:</span> <span class="n">Operators</span><span class="p">,</span>
     <span class="n">max_loop</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -262,7 +259,7 @@
 
 
 <div class="viewcode-block" id="whilelooppipeline">
-<a class="viewcode-back" href="../../../agentscope.pipelines.html#agentscope.pipelines.functional.whilelooppipeline">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.pipelines.html#agentscope.pipelines.whilelooppipeline">[文档]</a>
 <span class="k">def</span> <span class="nf">whilelooppipeline</span><span class="p">(</span>
     <span class="n">loop_body_operators</span><span class="p">:</span> <span class="n">Operators</span><span class="p">,</span>
     <span class="n">condition_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">,</span> <span class="n">__</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>

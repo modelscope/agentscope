@@ -1,0 +1,319 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.service.service_factory &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=7d86a446"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/translations.js?v=beaddf03"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../../../en/_modules/agentscope/service/service_factory.html">English</a></li> |
+    <a href="../../../../zh_CN/_modules/agentscope/service/service_factory.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/quick_start.html">快速上手</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/advance.html">进阶使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">模块代码</a></li>
+          <li class="breadcrumb-item"><a href="../service.html">agentscope.service</a></li>
+      <li class="breadcrumb-item active">agentscope.service.service_factory</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>agentscope.service.service_factory 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Service factory for model prompt.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">collections.abc</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">Any</span><span class="p">,</span>
+    <span class="n">Tuple</span><span class="p">,</span>
+    <span class="n">Union</span><span class="p">,</span>
+    <span class="n">Optional</span><span class="p">,</span>
+    <span class="n">Literal</span><span class="p">,</span>
+    <span class="n">get_args</span><span class="p">,</span>
+    <span class="n">get_origin</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">docstring_parser</span> <span class="kn">import</span> <span class="n">parse</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">parse</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+
+
+<span class="k">def</span> <span class="nf">_get_type_str</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the type string.&quot;&quot;&quot;</span>
+    <span class="n">type_str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;__origin__&quot;</span><span class="p">):</span>
+        <span class="c1"># Typing class</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__origin__</span> <span class="ow">is</span> <span class="n">Union</span><span class="p">:</span>
+            <span class="n">type_str</span> <span class="o">=</span> <span class="p">[</span><span class="n">_get_type_str</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">get_args</span><span class="p">(</span><span class="bp">cls</span><span class="p">)]</span>
+        <span class="k">elif</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__origin__</span> <span class="ow">is</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Sequence</span><span class="p">:</span>
+            <span class="n">type_str</span> <span class="o">=</span> <span class="s2">&quot;array&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">type_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__origin__</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Normal class</span>
+        <span class="k">if</span> <span class="bp">cls</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="n">type_str</span> <span class="o">=</span> <span class="s2">&quot;string&quot;</span>
+        <span class="k">elif</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">complex</span><span class="p">]:</span>
+            <span class="n">type_str</span> <span class="o">=</span> <span class="s2">&quot;number&quot;</span>
+        <span class="k">elif</span> <span class="bp">cls</span> <span class="ow">is</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="n">type_str</span> <span class="o">=</span> <span class="s2">&quot;boolean&quot;</span>
+        <span class="k">elif</span> <span class="bp">cls</span> <span class="ow">is</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Sequence</span><span class="p">:</span>
+            <span class="n">type_str</span> <span class="o">=</span> <span class="s2">&quot;array&quot;</span>
+        <span class="k">elif</span> <span class="bp">cls</span> <span class="ow">is</span> <span class="kc">None</span><span class="o">.</span><span class="vm">__class__</span><span class="p">:</span>
+            <span class="n">type_str</span> <span class="o">=</span> <span class="s2">&quot;null&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">type_str</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span>
+
+    <span class="k">return</span> <span class="n">type_str</span>  <span class="c1"># type: ignore[return-value]</span>
+
+
+<div class="viewcode-block" id="ServiceFactory">
+<a class="viewcode-back" href="../../../agentscope.service.html#agentscope.service.ServiceFactory">[文档]</a>
+<span class="k">class</span> <span class="nc">ServiceFactory</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A service factory class that turns service function into string</span>
+<span class="sd">    prompt format.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ServiceFactory.get">
+<a class="viewcode-back" href="../../../agentscope.service.html#agentscope.service.ServiceFactory.get">[文档]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">service_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Covnert a service function into a tool function that agent can</span>
+<span class="sd">        use, and generate a dictionary in JSON Schema format that can be</span>
+<span class="sd">        used in OpenAI API directly. While for open-source model, developers</span>
+<span class="sd">        should handle the conversation from json dictionary to prompt.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            service_func (`Callable[..., Any]`):</span>
+<span class="sd">                The service function to be called.</span>
+<span class="sd">            kwargs (`Any`):</span>
+<span class="sd">                The arguments to be passed to the service function.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `Tuple(Callable[..., Any], dict)`: A tuple of tool function and</span>
+<span class="sd">            a dict in JSON Schema format to describe the function.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            The description of the function and arguments are extracted from</span>
+<span class="sd">            its docstring automatically, which should be well-formatted in</span>
+<span class="sd">            **Google style**. Otherwise, their descriptions in the returned</span>
+<span class="sd">            dictionary will be empty.</span>
+
+<span class="sd">        Suggestions:</span>
+<span class="sd">            1. The name of the service function should be self-explanatory,</span>
+<span class="sd">            so that the agent can understand the function and use it properly.</span>
+<span class="sd">            2. The typing of the arguments should be provided when defining</span>
+<span class="sd">            the function (e.g. `def func(a: int, b: str, c: bool)`), so that</span>
+<span class="sd">            the agent can specify the arguments properly.</span>
+
+<span class="sd">        Example:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get the function for agent to use</span>
+        <span class="n">tool_func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">service_func</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Obtain all arguments of the service function</span>
+        <span class="n">argsspec</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getfullargspec</span><span class="p">(</span><span class="n">service_func</span><span class="p">)</span>
+
+        <span class="c1"># Construct the mapping from arguments to their typings</span>
+        <span class="k">if</span> <span class="n">parse</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="s2">&quot;Missing required package `docstring_parser`&quot;</span>
+                <span class="s2">&quot;Please install it by &quot;</span>
+                <span class="s2">&quot;`pip install docstring_parser`.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">docstring</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">service_func</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
+
+        <span class="c1"># Function description</span>
+        <span class="n">func_description</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">docstring</span><span class="o">.</span><span class="n">short_description</span> <span class="ow">or</span> <span class="n">docstring</span><span class="o">.</span><span class="n">long_description</span>
+        <span class="p">)</span>
+
+        <span class="c1"># The arguments that requires the agent to specify</span>
+        <span class="n">args_agent</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">argsspec</span><span class="o">.</span><span class="n">args</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="c1"># Check if the arguments from agent have descriptions in docstring</span>
+        <span class="n">args_description</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">_</span><span class="o">.</span><span class="n">arg_name</span><span class="p">:</span> <span class="n">_</span><span class="o">.</span><span class="n">description</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">docstring</span><span class="o">.</span><span class="n">params</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Prepare default values</span>
+        <span class="k">if</span> <span class="n">argsspec</span><span class="o">.</span><span class="n">defaults</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">args_defaults</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">args_defaults</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="nb">zip</span><span class="p">(</span>
+                    <span class="nb">reversed</span><span class="p">(</span><span class="n">argsspec</span><span class="o">.</span><span class="n">args</span><span class="p">),</span>
+                    <span class="nb">reversed</span><span class="p">(</span><span class="n">argsspec</span><span class="o">.</span><span class="n">defaults</span><span class="p">),</span>  <span class="c1"># type: ignore</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+
+        <span class="n">args_required</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">args_agent</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">args_defaults</span><span class="o">.</span><span class="n">keys</span><span class="p">())),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Prepare types of the arguments, remove the return type</span>
+        <span class="n">args_types</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">argsspec</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">&quot;return&quot;</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Prepare argument dictionary</span>
+        <span class="n">properties_field</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">args_agent</span><span class="p">:</span>
+            <span class="n">arg_property</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="c1"># type</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">args_types</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">required_type</span> <span class="o">=</span> <span class="n">_get_type_str</span><span class="p">(</span><span class="n">args_types</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+                    <span class="n">arg_property</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">required_type</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Fail and skip to get the type of the &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;argument `</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">`.&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+                <span class="c1"># For Literal type, add enum field</span>
+                <span class="k">if</span> <span class="n">get_origin</span><span class="p">(</span><span class="n">args_types</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="ow">is</span> <span class="n">Literal</span><span class="p">:</span>
+                    <span class="n">arg_property</span><span class="p">[</span><span class="s2">&quot;enum&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">args_types</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">__args__</span><span class="p">)</span>
+
+            <span class="c1"># description</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">args_description</span><span class="p">:</span>
+                <span class="n">arg_property</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">args_description</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+            <span class="c1"># default</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">args_defaults</span> <span class="ow">and</span> <span class="n">args_defaults</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">arg_property</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">args_defaults</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+            <span class="n">properties_field</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">arg_property</span>
+
+        <span class="c1"># Construct the JSON Schema for the service function</span>
+        <span class="n">func_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;function&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">service_func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">func_description</span><span class="p">,</span>
+                <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="n">properties_field</span><span class="p">,</span>
+                    <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="n">args_required</span><span class="p">,</span>
+                <span class="p">},</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">tool_func</span><span class="p">,</span> <span class="n">func_dict</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

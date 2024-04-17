@@ -17,7 +17,7 @@
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
         <script>mermaid.initialize({startOnLoad:true});</script>
@@ -57,15 +57,15 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../agentscope.agents.html">Agents package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../agentscope.memory.html">Memory package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../agentscope.models.html">Models package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../agentscope.pipelines.html">Pipelines package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../agentscope.service.html">Service package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../agentscope.rpc.html">RPC package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../agentscope.utils.html">Utils package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../agentscope.web.html">Web UI package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../agentscope.html">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.utils.html">agentscope.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.html">agentscope</a></li>
 </ul>
 
         </div>
@@ -104,8 +104,6 @@
 <span class="kn">from</span> <span class="nn">agentscope.agents</span> <span class="kn">import</span> <span class="n">AgentBase</span>
 
 
-<div class="viewcode-block" id="MsgHubManager">
-<a class="viewcode-back" href="../../agentscope.html#agentscope.msghub.MsgHubManager">[docs]</a>
 <span class="k">class</span> <span class="nc">MsgHubManager</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;MsgHub manager class for sharing dialog among a group of agents.&quot;&quot;&quot;</span>
 
@@ -156,8 +154,6 @@
         <span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">participants</span><span class="p">:</span>
             <span class="n">agent</span><span class="o">.</span><span class="n">reset_audience</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">participants</span><span class="p">)</span>
 
-<div class="viewcode-block" id="MsgHubManager.add">
-<a class="viewcode-back" href="../../agentscope.html#agentscope.msghub.MsgHubManager.add">[docs]</a>
     <span class="k">def</span> <span class="nf">add</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">new_participant</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">AgentBase</span><span class="p">],</span> <span class="n">AgentBase</span><span class="p">],</span>
@@ -175,11 +171,8 @@
                     <span class="s2">&quot;already joined in.&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_audience</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_audience</span><span class="p">()</span>
 
-
-<div class="viewcode-block" id="MsgHubManager.delete">
-<a class="viewcode-back" href="../../agentscope.html#agentscope.msghub.MsgHubManager.delete">[docs]</a>
     <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">participant</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">AgentBase</span><span class="p">],</span> <span class="n">AgentBase</span><span class="p">],</span>
@@ -202,11 +195,8 @@
                 <span class="p">)</span>
 
         <span class="c1"># Remove this agent from the audience of other agents</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_audience</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_audience</span><span class="p">()</span>
 
-
-<div class="viewcode-block" id="MsgHubManager.broadcast">
-<a class="viewcode-back" href="../../agentscope.html#agentscope.msghub.MsgHubManager.broadcast">[docs]</a>
     <span class="k">def</span> <span class="nf">broadcast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Broadcast the message to all participants.</span>
 
@@ -216,13 +206,11 @@
 <span class="sd">                participants.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">participants</span><span class="p">:</span>
-            <span class="n">agent</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
-</div>
-
+            <span class="n">agent</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="msghub">
-<a class="viewcode-back" href="../../agentscope.html#agentscope.msghub.msghub">[docs]</a>
+<a class="viewcode-back" href="../../agentscope.html#agentscope.msghub">[docs]</a>
 <span class="k">def</span> <span class="nf">msghub</span><span class="p">(</span>
     <span class="n">participants</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">AgentBase</span><span class="p">],</span>
     <span class="n">announcement</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>

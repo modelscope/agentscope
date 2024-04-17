@@ -17,7 +17,7 @@
         <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="../../../../_static/documentation_options.js?v=7d86a446"></script>
-        <script src="../../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../../_static/translations.js?v=beaddf03"></script>
         <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
@@ -58,15 +58,15 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.agents.html">Agents package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.memory.html">Memory package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.models.html">Models package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.pipelines.html">Pipelines package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.service.html">Service package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.rpc.html">RPC package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.utils.html">Utils package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.web.html">Web UI package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.html">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.utils.html">agentscope.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.html">agentscope</a></li>
 </ul>
 
         </div>
@@ -84,6 +84,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../../index.html">模块代码</a></li>
+          <li class="breadcrumb-item"><a href="../../service.html">agentscope.service</a></li>
       <li class="breadcrumb-item active">agentscope.service.web.web_digest</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -115,8 +116,6 @@
 <span class="p">)</span>
 
 
-<div class="viewcode-block" id="is_valid_url">
-<a class="viewcode-back" href="../../../../agentscope.service.web.html#agentscope.service.web.web_digest.is_valid_url">[文档]</a>
 <span class="k">def</span> <span class="nf">is_valid_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Use urlparse to check if a URL is valid</span>
@@ -132,12 +131,11 @@
         <span class="c1"># (e.g., &quot;http&quot; or &quot;https&quot;) and a netloc (domain).</span>
         <span class="k">return</span> <span class="nb">all</span><span class="p">([</span><span class="n">result</span><span class="o">.</span><span class="n">scheme</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">netloc</span><span class="p">])</span>
     <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">False</span>  <span class="c1"># A ValueError indicates that the URL is not valid.</span></div>
-
+        <span class="k">return</span> <span class="kc">False</span>  <span class="c1"># A ValueError indicates that the URL is not valid.</span>
 
 
 <div class="viewcode-block" id="load_web">
-<a class="viewcode-back" href="../../../../agentscope.service.web.html#agentscope.service.web.web_digest.load_web">[文档]</a>
+<a class="viewcode-back" href="../../../../agentscope.service.html#agentscope.service.load_web">[文档]</a>
 <span class="k">def</span> <span class="nf">load_web</span><span class="p">(</span>
     <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">keep_raw</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -253,7 +251,7 @@
 
 
 <div class="viewcode-block" id="parse_html_to_text">
-<a class="viewcode-back" href="../../../../agentscope.service.web.html#agentscope.service.web.web_digest.parse_html_to_text">[文档]</a>
+<a class="viewcode-back" href="../../../../agentscope.service.html#agentscope.service.parse_html_to_text">[文档]</a>
 <span class="k">def</span> <span class="nf">parse_html_to_text</span><span class="p">(</span>
     <span class="n">html_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">html_selected_tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -317,14 +315,15 @@
 
 
 <div class="viewcode-block" id="digest_webpage">
-<a class="viewcode-back" href="../../../../agentscope.service.web.html#agentscope.service.web.web_digest.digest_webpage">[文档]</a>
+<a class="viewcode-back" href="../../../../agentscope.service.html#agentscope.service.digest_webpage">[文档]</a>
 <span class="k">def</span> <span class="nf">digest_webpage</span><span class="p">(</span>
     <span class="n">web_text_or_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">model</span><span class="p">:</span> <span class="n">ModelWrapperBase</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">html_selected_tags</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;li&quot;</span><span class="p">,</span> <span class="s2">&quot;div&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">),</span>
     <span class="n">digest_prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_WEB_SYS_PROMPT</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Digest the given webpage.</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        web_text_or_url (str): preprocessed web text or url to the web page</span>
 <span class="sd">        model (ModelWrapperBase): the model to digest the web content</span>

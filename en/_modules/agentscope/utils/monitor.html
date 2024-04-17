@@ -17,7 +17,7 @@
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
         <script>mermaid.initialize({startOnLoad:true});</script>
@@ -57,15 +57,15 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">Agents package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">Memory package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">Models package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">Pipelines package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">Service package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">RPC package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">Utils package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">Web UI package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
 </ul>
 
         </div>
@@ -111,12 +111,12 @@
 
 
 <div class="viewcode-block" id="MonitorBase">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorBase">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.MonitorBase">[docs]</a>
 <span class="k">class</span> <span class="nc">MonitorBase</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Base interface of Monitor&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="MonitorBase.register">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorBase.register">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.MonitorBase.register">[docs]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">register</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -141,7 +141,7 @@
 
 
 <div class="viewcode-block" id="MonitorBase.exists">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorBase.exists">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.MonitorBase.exists">[docs]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine whether a metric exists in the monitor.</span>
@@ -156,7 +156,7 @@
 
 
 <div class="viewcode-block" id="MonitorBase.add">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorBase.add">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.MonitorBase.add">[docs]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add value to a specific metric.</span>
@@ -173,7 +173,7 @@
 
 
 <div class="viewcode-block" id="MonitorBase.update">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorBase.update">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.MonitorBase.update">[docs]</a>
     <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Update multiple metrics at once.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
@@ -181,7 +181,7 @@
 
 
 <div class="viewcode-block" id="MonitorBase.clear">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorBase.clear">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.MonitorBase.clear">[docs]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear the values of a specific metric.</span>
@@ -196,7 +196,7 @@
 
 
 <div class="viewcode-block" id="MonitorBase.remove">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorBase.remove">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.MonitorBase.remove">[docs]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove a specific metric from the monitor.</span>
@@ -211,7 +211,7 @@
 
 
 <div class="viewcode-block" id="MonitorBase.get_value">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorBase.get_value">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.MonitorBase.get_value">[docs]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the value of a specific metric.</span>
@@ -226,7 +226,7 @@
 
 
 <div class="viewcode-block" id="MonitorBase.get_unit">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorBase.get_unit">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.MonitorBase.get_unit">[docs]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the unit of a specific metric.</span>
@@ -241,7 +241,7 @@
 
 
 <div class="viewcode-block" id="MonitorBase.get_quota">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorBase.get_quota">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.MonitorBase.get_quota">[docs]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_quota</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the quota of a specific metric.</span>
@@ -256,7 +256,7 @@
 
 
 <div class="viewcode-block" id="MonitorBase.set_quota">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorBase.set_quota">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.MonitorBase.set_quota">[docs]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">set_quota</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">quota</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the quota of a specific metric</span>
@@ -273,7 +273,7 @@
 
 
 <div class="viewcode-block" id="MonitorBase.get_metric">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorBase.get_metric">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.MonitorBase.get_metric">[docs]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the specific metric</span>
@@ -294,7 +294,7 @@
 
 
 <div class="viewcode-block" id="MonitorBase.get_metrics">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorBase.get_metrics">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.MonitorBase.get_metrics">[docs]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_regex</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a dictionary of metrics.</span>
@@ -322,7 +322,7 @@
 
 
 <div class="viewcode-block" id="MonitorBase.register_budget">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorBase.register_budget">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.MonitorBase.register_budget">[docs]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">register_budget</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -347,8 +347,6 @@
 
 
 
-<div class="viewcode-block" id="get_full_name">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.get_full_name">[docs]</a>
 <span class="k">def</span> <span class="nf">get_full_name</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the full name of a metric.</span>
 
@@ -362,12 +360,11 @@
     <span class="k">if</span> <span class="n">prefix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">name</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span></div>
-
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
 
 
 <div class="viewcode-block" id="QuotaExceededError">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.QuotaExceededError">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.QuotaExceededError">[docs]</a>
 <span class="k">class</span> <span class="nc">QuotaExceededError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An Exception used to indicate that a certain metric exceeds quota&quot;&quot;&quot;</span>
 
@@ -386,8 +383,6 @@
 
 
 
-<div class="viewcode-block" id="sqlite_transaction">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.sqlite_transaction">[docs]</a>
 <span class="nd">@contextmanager</span>
 <span class="k">def</span> <span class="nf">sqlite_transaction</span><span class="p">(</span><span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">30.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a sqlite transaction cursor.</span>
@@ -410,12 +405,9 @@
         <span class="k">raise</span> <span class="n">e</span>
     <span class="k">finally</span><span class="p">:</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+        <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 
-
-<div class="viewcode-block" id="sqlite_cursor">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.sqlite_cursor">[docs]</a>
 <span class="nd">@contextmanager</span>
 <span class="k">def</span> <span class="nf">sqlite_cursor</span><span class="p">(</span><span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">30.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a sqlite cursor.</span>
@@ -433,12 +425,9 @@
         <span class="k">yield</span> <span class="n">cursor</span>
     <span class="k">finally</span><span class="p">:</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+        <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 
-
-<div class="viewcode-block" id="SqliteMonitor">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor">[docs]</a>
 <span class="k">class</span> <span class="nc">SqliteMonitor</span><span class="p">(</span><span class="n">MonitorBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A monitor based on sqlite&quot;&quot;&quot;</span>
 
@@ -496,8 +485,6 @@
             <span class="sa">f</span><span class="s2">&quot;Init [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="si">}</span><span class="s2">_quota_exceeded] as the monitor trigger&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="SqliteMonitor.register">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.register">[docs]</a>
     <span class="k">def</span> <span class="nf">register</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -518,8 +505,7 @@
                 <span class="sa">f</span><span class="s2">&quot;Register metric [</span><span class="si">{</span><span class="n">metric_name</span><span class="si">}</span><span class="s2">] to SqliteMonitor with unit &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">metric_unit</span><span class="si">}</span><span class="s2">] and quota [</span><span class="si">{</span><span class="n">quota</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="k">return</span> <span class="kc">True</span></div>
-
+            <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">_add</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -539,18 +525,13 @@
         <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">IntegrityError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">QuotaExceededError</span><span class="p">(</span><span class="n">metric_name</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
 
-<div class="viewcode-block" id="SqliteMonitor.add">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.add">[docs]</a>
     <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">with</span> <span class="n">sqlite_transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">):</span>
                 <span class="k">return</span> <span class="kc">False</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_add</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">True</span></div>
+            <span class="k">return</span> <span class="kc">True</span>
 
-
-<div class="viewcode-block" id="SqliteMonitor.clear">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.clear">[docs]</a>
     <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">with</span> <span class="n">sqlite_transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">):</span>
@@ -563,11 +544,8 @@
 <span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span>
                 <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">),</span>
             <span class="p">)</span>
-            <span class="k">return</span> <span class="kc">True</span></div>
+            <span class="k">return</span> <span class="kc">True</span>
 
-
-<div class="viewcode-block" id="SqliteMonitor.remove">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.remove">[docs]</a>
     <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">with</span> <span class="n">sqlite_transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">):</span>
@@ -578,8 +556,7 @@
 <span class="s2">                WHERE name = ?&quot;&quot;&quot;</span><span class="p">,</span>
                 <span class="p">(</span><span class="n">metric_name</span><span class="p">,),</span>
             <span class="p">)</span>
-        <span class="k">return</span> <span class="kc">True</span></div>
-
+        <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">_get_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cursor</span><span class="p">:</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
@@ -599,28 +576,20 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fail to get metric </span><span class="si">{</span><span class="n">metric_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="SqliteMonitor.get_value">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.get_value">[docs]</a>
     <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
         <span class="k">with</span> <span class="n">sqlite_cursor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">):</span>
                 <span class="k">return</span> <span class="kc">None</span>
             <span class="n">metric</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_metric</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">metric</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span></div>
+            <span class="k">return</span> <span class="n">metric</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
 
-
-<div class="viewcode-block" id="SqliteMonitor.get_quota">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.get_quota">[docs]</a>
     <span class="k">def</span> <span class="nf">get_quota</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
         <span class="k">with</span> <span class="n">sqlite_cursor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">):</span>
                 <span class="k">return</span> <span class="kc">None</span>
             <span class="n">metric</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_metric</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">metric</span><span class="p">[</span><span class="s2">&quot;quota&quot;</span><span class="p">]</span></div>
+            <span class="k">return</span> <span class="n">metric</span><span class="p">[</span><span class="s2">&quot;quota&quot;</span><span class="p">]</span>
 
-
-<div class="viewcode-block" id="SqliteMonitor.set_quota">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.set_quota">[docs]</a>
     <span class="k">def</span> <span class="nf">set_quota</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">quota</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">with</span> <span class="n">sqlite_transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">):</span>
@@ -633,30 +602,21 @@
 <span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span>
                 <span class="p">(</span><span class="n">quota</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">),</span>
             <span class="p">)</span>
-            <span class="k">return</span> <span class="kc">True</span></div>
+            <span class="k">return</span> <span class="kc">True</span>
 
-
-<div class="viewcode-block" id="SqliteMonitor.get_unit">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.get_unit">[docs]</a>
     <span class="k">def</span> <span class="nf">get_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="k">with</span> <span class="n">sqlite_cursor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">):</span>
                 <span class="k">return</span> <span class="kc">None</span>
             <span class="n">metric</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_metric</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">metric</span><span class="p">[</span><span class="s2">&quot;unit&quot;</span><span class="p">]</span></div>
+            <span class="k">return</span> <span class="n">metric</span><span class="p">[</span><span class="s2">&quot;unit&quot;</span><span class="p">]</span>
 
-
-<div class="viewcode-block" id="SqliteMonitor.get_metric">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.get_metric">[docs]</a>
     <span class="k">def</span> <span class="nf">get_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
         <span class="k">with</span> <span class="n">sqlite_cursor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">):</span>
                 <span class="k">return</span> <span class="kc">None</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_metric</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">)</span></div>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_metric</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">)</span>
 
-
-<div class="viewcode-block" id="SqliteMonitor.get_metrics">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.get_metrics">[docs]</a>
     <span class="k">def</span> <span class="nf">get_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_regex</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">with</span> <span class="n">sqlite_cursor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
             <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SELECT * FROM </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -677,8 +637,7 @@
                 <span class="n">key</span><span class="p">:</span> <span class="n">value</span>
                 <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">metrics</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
                 <span class="k">if</span> <span class="n">pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-            <span class="p">}</span></div>
-
+            <span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cursor</span><span class="p">:</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Cursor</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
@@ -690,15 +649,10 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="SqliteMonitor.exists">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.exists">[docs]</a>
     <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">with</span> <span class="n">sqlite_cursor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">)</span></div>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">)</span>
 
-
-<div class="viewcode-block" id="SqliteMonitor.update">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.update">[docs]</a>
     <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">with</span> <span class="n">sqlite_transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">metric_name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -709,8 +663,7 @@
                         <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
                     <span class="p">),</span>
                     <span class="n">value</span><span class="p">,</span>
-                <span class="p">)</span></div>
-
+                <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_create_update_cost_trigger</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -734,8 +687,6 @@
 <span class="s2">                &quot;&quot;&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
-<div class="viewcode-block" id="SqliteMonitor.register_budget">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.SqliteMonitor.register_budget">[docs]</a>
     <span class="k">def</span> <span class="nf">register_budget</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -775,9 +726,7 @@
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Calculate budgets for model [</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">] is not supported&quot;</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="k">return</span> <span class="kc">False</span></div>
-</div>
-
+            <span class="k">return</span> <span class="kc">False</span>
 
 
 <span class="k">def</span> <span class="nf">_get_pricing</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
@@ -808,7 +757,7 @@
 
 
 <div class="viewcode-block" id="MonitorFactory">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorFactory">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.MonitorFactory">[docs]</a>
 <span class="k">class</span> <span class="nc">MonitorFactory</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Factory of Monitor.</span>
 
@@ -821,7 +770,7 @@
     <span class="n">_instance</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="MonitorFactory.get_monitor">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorFactory.get_monitor">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.MonitorFactory.get_monitor">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get_monitor</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -849,7 +798,7 @@
 
 
 <div class="viewcode-block" id="MonitorFactory.flush">
-<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.monitor.MonitorFactory.flush">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.utils.html#agentscope.utils.MonitorFactory.flush">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">flush</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>

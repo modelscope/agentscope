@@ -17,7 +17,7 @@
         <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="../../../../_static/documentation_options.js?v=7d86a446"></script>
-        <script src="../../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../../_static/translations.js?v=beaddf03"></script>
         <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
@@ -58,15 +58,15 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.agents.html">Agents package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.memory.html">Memory package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.models.html">Models package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.pipelines.html">Pipelines package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.service.html">Service package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.rpc.html">RPC package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.utils.html">Utils package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.web.html">Web UI package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.html">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.utils.html">agentscope.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.html">agentscope</a></li>
 </ul>
 
         </div>
@@ -84,6 +84,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../../index.html">模块代码</a></li>
+          <li class="breadcrumb-item"><a href="../../service.html">agentscope.service</a></li>
       <li class="breadcrumb-item active">agentscope.service.file.common</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -105,7 +106,7 @@
 
 
 <div class="viewcode-block" id="create_file">
-<a class="viewcode-back" href="../../../../agentscope.service.file.html#agentscope.service.file.common.create_file">[文档]</a>
+<a class="viewcode-back" href="../../../../agentscope.service.html#agentscope.service.create_file">[文档]</a>
 <span class="k">def</span> <span class="nf">create_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a file and write content to it.</span>
@@ -131,7 +132,7 @@
 
 
 <div class="viewcode-block" id="delete_file">
-<a class="viewcode-back" href="../../../../agentscope.service.file.html#agentscope.service.file.common.delete_file">[文档]</a>
+<a class="viewcode-back" href="../../../../agentscope.service.html#agentscope.service.delete_file">[文档]</a>
 <span class="k">def</span> <span class="nf">delete_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete a file specified by the file path.</span>
 
@@ -160,7 +161,7 @@
 
 
 <div class="viewcode-block" id="move_file">
-<a class="viewcode-back" href="../../../../agentscope.service.file.html#agentscope.service.file.common.move_file">[文档]</a>
+<a class="viewcode-back" href="../../../../agentscope.service.html#agentscope.service.move_file">[文档]</a>
 <span class="k">def</span> <span class="nf">move_file</span><span class="p">(</span><span class="n">source_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">destination_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Move a file from a source path to a destination path.</span>
@@ -202,7 +203,7 @@
 
 
 <div class="viewcode-block" id="create_directory">
-<a class="viewcode-back" href="../../../../agentscope.service.file.html#agentscope.service.file.common.create_directory">[文档]</a>
+<a class="viewcode-back" href="../../../../agentscope.service.html#agentscope.service.create_directory">[文档]</a>
 <span class="k">def</span> <span class="nf">create_directory</span><span class="p">(</span><span class="n">directory_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a directory at the specified path.</span>
@@ -237,7 +238,7 @@
 
 
 <div class="viewcode-block" id="delete_directory">
-<a class="viewcode-back" href="../../../../agentscope.service.file.html#agentscope.service.file.common.delete_directory">[文档]</a>
+<a class="viewcode-back" href="../../../../agentscope.service.html#agentscope.service.delete_directory">[文档]</a>
 <span class="k">def</span> <span class="nf">delete_directory</span><span class="p">(</span><span class="n">directory_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Delete a directory and all of its contents.</span>
@@ -272,7 +273,7 @@
 
 
 <div class="viewcode-block" id="move_directory">
-<a class="viewcode-back" href="../../../../agentscope.service.file.html#agentscope.service.file.common.move_directory">[文档]</a>
+<a class="viewcode-back" href="../../../../agentscope.service.html#agentscope.service.move_directory">[文档]</a>
 <span class="k">def</span> <span class="nf">move_directory</span><span class="p">(</span>
     <span class="n">source_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">destination_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>

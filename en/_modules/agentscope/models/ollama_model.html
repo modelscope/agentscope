@@ -17,7 +17,7 @@
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
         <script>mermaid.initialize({startOnLoad:true});</script>
@@ -57,15 +57,15 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">Agents package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">Memory package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">Models package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">Pipelines package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">Service package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">RPC package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">Utils package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">Web UI package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
 </ul>
 
         </div>
@@ -111,8 +111,6 @@
     <span class="n">ollama</span> <span class="o">=</span> <span class="kc">None</span>
 
 
-<div class="viewcode-block" id="OllamaWrapperBase">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.ollama_model.OllamaWrapperBase">[docs]</a>
 <span class="k">class</span> <span class="nc">OllamaWrapperBase</span><span class="p">(</span><span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The base class for Ollama model wrappers.</span>
 
@@ -165,12 +163,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="o">=</span> <span class="n">options</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">keep_alive</span> <span class="o">=</span> <span class="n">keep_alive</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_register_default_metrics</span><span class="p">()</span></div>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_default_metrics</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="OllamaChatWrapper">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.ollama_model.OllamaChatWrapper">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.OllamaChatWrapper">[docs]</a>
 <span class="k">class</span> <span class="nc">OllamaChatWrapper</span><span class="p">(</span><span class="n">OllamaWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for Ollama chat API.&quot;&quot;&quot;</span>
 
@@ -268,7 +265,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="OllamaChatWrapper.format">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.ollama_model.OllamaChatWrapper.format">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.OllamaChatWrapper.format">[docs]</a>
     <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">]],</span>
@@ -326,7 +323,7 @@
 
 
 <div class="viewcode-block" id="OllamaEmbeddingWrapper">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.ollama_model.OllamaEmbeddingWrapper">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.OllamaEmbeddingWrapper">[docs]</a>
 <span class="k">class</span> <span class="nc">OllamaEmbeddingWrapper</span><span class="p">(</span><span class="n">OllamaWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for Ollama embedding API.&quot;&quot;&quot;</span>
 
@@ -405,7 +402,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="OllamaEmbeddingWrapper.format">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.ollama_model.OllamaEmbeddingWrapper.format">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.OllamaEmbeddingWrapper.format">[docs]</a>
     <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">]],</span>
@@ -420,7 +417,7 @@
 
 
 <div class="viewcode-block" id="OllamaGenerationWrapper">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.ollama_model.OllamaGenerationWrapper">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.OllamaGenerationWrapper">[docs]</a>
 <span class="k">class</span> <span class="nc">OllamaGenerationWrapper</span><span class="p">(</span><span class="n">OllamaWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for Ollama generation API.&quot;&quot;&quot;</span>
 
@@ -517,7 +514,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="OllamaGenerationWrapper.format">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.ollama_model.OllamaGenerationWrapper.format">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.OllamaGenerationWrapper.format">[docs]</a>
     <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward the input to the model.</span>
 

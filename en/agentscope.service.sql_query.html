@@ -5,7 +5,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SQL query package &mdash; AgentScope  documentation</title>
+  <title>agentscope.service.sql_query &mdash; AgentScope  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c9484b72" />
@@ -18,13 +18,11 @@
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Text processing package" href="agentscope.service.text_processing.html" />
-    <link rel="prev" title="Retrieval package" href="agentscope.service.retrieval.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -57,39 +55,16 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorial/contribute.html">Get Involved</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">Agents package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">Memory package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">Models package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">Pipelines package</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="agentscope.service.html">Service package</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="agentscope.service.execute_code.html">Code package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.service.file.html">File package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.service.retrieval.html">Retrieval package</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">SQL query package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#module-agentscope.service.sql_query.mongodb">mongodb module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.service.sql_query.mongodb.query_mongodb"><code class="docutils literal notranslate"><span class="pre">query_mongodb()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#module-agentscope.service.sql_query.mysql">mysql module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.service.sql_query.mysql.query_mysql"><code class="docutils literal notranslate"><span class="pre">query_mysql()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#module-agentscope.service.sql_query.sqlite">sqlite module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.service.sql_query.sqlite.query_sqlite"><code class="docutils literal notranslate"><span class="pre">query_sqlite()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.service.text_processing.html">Text processing package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.service.html#service-status-module">service_status module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.service.html#service-response-module">service_response module</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">RPC package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">Utils package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">Web UI package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.html">Module contents</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope</a></li>
 </ul>
 
         </div>
@@ -106,8 +81,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="agentscope.service.html">Service package</a></li>
-      <li class="breadcrumb-item active">SQL query package</li>
+      <li class="breadcrumb-item active">agentscope.service.sql_query</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/agentscope.service.sql_query.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -117,115 +91,14 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="sql-query-package">
-<h1>SQL query package<a class="headerlink" href="#sql-query-package" title="Link to this heading"></a></h1>
-<section id="module-agentscope.service.sql_query.mongodb">
-<span id="mongodb-module"></span><h2>mongodb module<a class="headerlink" href="#module-agentscope.service.sql_query.mongodb" title="Link to this heading"></a></h2>
-<p>query in MongoDB</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="agentscope.service.sql_query.mongodb.query_mongodb">
-<span class="sig-prename descclassname"><span class="pre">agentscope.service.sql_query.mongodb.</span></span><span class="sig-name descname"><span class="pre">query_mongodb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxcount_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ServiceResponse</span></span></span><a class="reference internal" href="_modules/agentscope/service/sql_query/mongodb.html#query_mongodb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.service.sql_query.mongodb.query_mongodb" title="Link to this definition"></a></dt>
-<dd><p>Execute query within MongoDB database.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>database</strong> (<cite>str</cite>) – The name of the database to use.</p></li>
-<li><p><strong>collection</strong> (<cite>str</cite>) – The name of the collection to use in mongodb.</p></li>
-<li><p><strong>query</strong> (<cite>dict</cite>) – The mongodb query to execute.</p></li>
-<li><p><strong>host</strong> (<cite>str</cite>) – The hostname or IP address of the MongoDB server.</p></li>
-<li><p><strong>port</strong> (<cite>int</cite>) – The port number of MongoDB server.</p></li>
-<li><p><strong>maxcount_results</strong> (<cite>int</cite>, defaults to <cite>None</cite>) – The maximum number of results to return. Defaults to <cite>100</cite> to
-avoid too many results.</p></li>
-<li><p><strong>**kwargs</strong> – </p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A <cite>ServiceResponse</cite> object that contains execution
-results or error message.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>MongoDB is a little different from mysql and sqlite, for its
-operations corresponds to different functions. Now we only support
-<cite>find</cite> query and leave other operations in the future.</p>
-</div>
-</dd></dl>
-
-</section>
-<section id="module-agentscope.service.sql_query.mysql">
-<span id="mysql-module"></span><h2>mysql module<a class="headerlink" href="#module-agentscope.service.sql_query.mysql" title="Link to this heading"></a></h2>
-<p>query in Mysql</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="agentscope.service.sql_query.mysql.query_mysql">
-<span class="sig-prename descclassname"><span class="pre">agentscope.service.sql_query.mysql.</span></span><span class="sig-name descname"><span class="pre">query_mysql</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_change_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxcount_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ServiceResponse</span></span></span><a class="reference internal" href="_modules/agentscope/service/sql_query/mysql.html#query_mysql"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.service.sql_query.mysql.query_mysql" title="Link to this definition"></a></dt>
-<dd><p>Execute query within MySQL database.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>database</strong> (<cite>str</cite>) – The name of the database to use.</p></li>
-<li><p><strong>query</strong> (<cite>str</cite>) – SQL query to execute.</p></li>
-<li><p><strong>host</strong> (<cite>str</cite>) – The host name or IP address of the MySQL server, e.g. “localhost”.</p></li>
-<li><p><strong>user</strong> (<cite>str</cite>) – The username of the MySQL account to use.</p></li>
-<li><p><strong>password</strong> (<cite>str</cite>) – The password of the MySQL account to use.</p></li>
-<li><p><strong>port</strong> (<cite>str</cite>) – The port number of the MySQL server, e.g. 3306.</p></li>
-<li><p><strong>allow_change_data</strong> (<cite>bool</cite>, defaults to <cite>False</cite>) – Whether to allow changing data in the database. Defaults to
-<cite>False</cite> to avoid accidental changes to the database.</p></li>
-<li><p><strong>maxcount_results</strong> (<cite>int</cite>, defaults to <cite>None</cite>) – The maximum number of results to return. Defaults to <cite>100</cite> to
-avoid too many results.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A <cite>ServiceResponse</cite> object that contains
-execution results or error message.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
-</dd>
-</dl>
-</dd></dl>
-
-</section>
-<section id="module-agentscope.service.sql_query.sqlite">
-<span id="sqlite-module"></span><h2>sqlite module<a class="headerlink" href="#module-agentscope.service.sql_query.sqlite" title="Link to this heading"></a></h2>
-<p>Query in sqlite</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="agentscope.service.sql_query.sqlite.query_sqlite">
-<span class="sig-prename descclassname"><span class="pre">agentscope.service.sql_query.sqlite.</span></span><span class="sig-name descname"><span class="pre">query_sqlite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_change_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxcount_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ServiceResponse</span></span></span><a class="reference internal" href="_modules/agentscope/service/sql_query/sqlite.html#query_sqlite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.service.sql_query.sqlite.query_sqlite" title="Link to this definition"></a></dt>
-<dd><p>Executes query within sqlite database.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>database</strong> (<cite>str</cite>) – The name of the database to use.</p></li>
-<li><p><strong>query</strong> (<cite>str</cite>) – The query to execute.</p></li>
-<li><p><strong>allow_change_data</strong> (<cite>bool</cite>, defaults to <cite>False</cite>) – Whether to allow changing data in the database. Defaults to
-<cite>False</cite> to avoid accidental changes to the database.</p></li>
-<li><p><strong>maxcount_results</strong> (<cite>int</cite>, defaults to <cite>None</cite>) – The maximum number of results to return.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A <cite>ServiceResponse</cite> object that contains
-execution results or error message.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
-</dd>
-</dl>
-</dd></dl>
-
-</section>
+  <section id="module-agentscope.service.sql_query">
+<span id="agentscope-service-sql-query"></span><h1>agentscope.service.sql_query<a class="headerlink" href="#module-agentscope.service.sql_query" title="Link to this heading"></a></h1>
 </section>
 
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="agentscope.service.retrieval.html" class="btn btn-neutral float-left" title="Retrieval package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="agentscope.service.text_processing.html" class="btn btn-neutral float-right" title="Text processing package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 

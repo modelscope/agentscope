@@ -17,7 +17,7 @@
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="../../../_static/documentation_options.js?v=7d86a446"></script>
-        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../_static/translations.js?v=beaddf03"></script>
         <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
@@ -58,15 +58,15 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">Agents package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">Memory package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">Models package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">Pipelines package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">Service package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">RPC package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">Utils package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">Web UI package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
 </ul>
 
         </div>
@@ -114,8 +114,6 @@
     <span class="n">genai</span> <span class="o">=</span> <span class="kc">None</span>
 
 
-<div class="viewcode-block" id="GeminiWrapperBase">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.gemini_model.GeminiWrapperBase">[文档]</a>
 <span class="k">class</span> <span class="nc">GeminiWrapperBase</span><span class="p">(</span><span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The base class for Google Gemini model wrapper.&quot;&quot;&quot;</span>
 
@@ -162,8 +160,6 @@
             <span class="s2">&quot;The method `_register_default_metrics` must be implemented.&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="GeminiWrapperBase.list_models">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.gemini_model.GeminiWrapperBase.list_models">[文档]</a>
     <span class="k">def</span> <span class="nf">list_models</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;List all available models for this API calling.&quot;&quot;&quot;</span>
         <span class="n">support_models</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">genai</span><span class="o">.</span><span class="n">list_models</span><span class="p">())</span>
@@ -175,8 +171,7 @@
                 <span class="n">_</span>
                 <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">support_models</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generation_method</span> <span class="ow">in</span> <span class="n">_</span><span class="o">.</span><span class="n">supported_generation_methods</span>
-            <span class="p">]</span></div>
-
+            <span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Processing input with the model.&quot;&quot;&quot;</span>
@@ -184,12 +179,11 @@
             <span class="sa">f</span><span class="s2">&quot;Model Wrapper [</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">]&quot;</span>
             <span class="sa">f</span><span class="s2">&quot; is missing the  the required `__call__`&quot;</span>
             <span class="sa">f</span><span class="s2">&quot; method.&quot;</span><span class="p">,</span>
-        <span class="p">)</span></div>
-
+        <span class="p">)</span>
 
 
 <div class="viewcode-block" id="GeminiChatWrapper">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.gemini_model.GeminiChatWrapper">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.GeminiChatWrapper">[文档]</a>
 <span class="k">class</span> <span class="nc">GeminiChatWrapper</span><span class="p">(</span><span class="n">GeminiWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The wrapper for Google Gemini chat model, e.g. gemini-pro&quot;&quot;&quot;</span>
 
@@ -303,7 +297,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="GeminiChatWrapper.format">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.gemini_model.GeminiChatWrapper.format">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.GeminiChatWrapper.format">[文档]</a>
     <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">]],</span>
@@ -401,7 +395,7 @@
 
 
 <div class="viewcode-block" id="GeminiEmbeddingWrapper">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.gemini_model.GeminiEmbeddingWrapper">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.GeminiEmbeddingWrapper">[文档]</a>
 <span class="k">class</span> <span class="nc">GeminiEmbeddingWrapper</span><span class="p">(</span><span class="n">GeminiWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The wrapper for Google Gemini embedding model,</span>
 <span class="sd">    e.g. models/embedding-001&quot;&quot;&quot;</span>

@@ -17,7 +17,7 @@
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="../../../_static/documentation_options.js?v=7d86a446"></script>
-        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../_static/translations.js?v=beaddf03"></script>
         <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
@@ -58,15 +58,15 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">Agents package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">Memory package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">Models package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">Pipelines package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">Service package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">RPC package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">Utils package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">Web UI package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
 </ul>
 
         </div>
@@ -116,8 +116,6 @@
 <span class="kn">from</span> <span class="nn">..file_manager</span> <span class="kn">import</span> <span class="n">file_manager</span>
 
 
-<div class="viewcode-block" id="DashScopeWrapperBase">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.dashscope_model.DashScopeWrapperBase">[文档]</a>
 <span class="k">class</span> <span class="nc">DashScopeWrapperBase</span><span class="p">(</span><span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for DashScope API.&quot;&quot;&quot;</span>
 
@@ -163,8 +161,6 @@
         <span class="c1"># Set monitor accordingly</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_register_default_metrics</span><span class="p">()</span>
 
-<div class="viewcode-block" id="DashScopeWrapperBase.format">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.dashscope_model.DashScopeWrapperBase.format">[文档]</a>
     <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">]],</span>
@@ -173,13 +169,11 @@
             <span class="sa">f</span><span class="s2">&quot;Model Wrapper [</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">] doesn&#39;t &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;need to format the input. Please try to use the &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;model wrapper directly.&quot;</span><span class="p">,</span>
-        <span class="p">)</span></div>
-</div>
-
+        <span class="p">)</span>
 
 
 <div class="viewcode-block" id="DashScopeChatWrapper">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.dashscope_model.DashScopeChatWrapper">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.DashScopeChatWrapper">[文档]</a>
 <span class="k">class</span> <span class="nc">DashScopeChatWrapper</span><span class="p">(</span><span class="n">DashScopeWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for DashScope&#39;s chat API, refer to</span>
 <span class="sd">    https://help.aliyun.com/zh/dashscope/developer-reference/api-details</span>
@@ -317,7 +311,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="DashScopeChatWrapper.format">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.dashscope_model.DashScopeChatWrapper.format">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.DashScopeChatWrapper.format">[文档]</a>
     <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">]],</span>
@@ -352,8 +346,8 @@
 <span class="sd">                {</span>
 <span class="sd">                    &quot;role&quot;: &quot;user&quot;,</span>
 <span class="sd">                    &quot;content&quot;: (</span>
-<span class="sd">                        &quot;## Dialogue History\n&quot;</span>
-<span class="sd">                        &quot;Bob: Hi, how can I help you?\n&quot;</span>
+<span class="sd">                        &quot;## Dialogue History\\n&quot;</span>
+<span class="sd">                        &quot;Bob: Hi, how can I help you?\\n&quot;</span>
 <span class="sd">                        &quot;user: What&#39;s the date today?&quot;</span>
 <span class="sd">                    )</span>
 <span class="sd">                }</span>
@@ -424,7 +418,7 @@
 
 
 <div class="viewcode-block" id="DashScopeImageSynthesisWrapper">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.dashscope_model.DashScopeImageSynthesisWrapper">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.DashScopeImageSynthesisWrapper">[文档]</a>
 <span class="k">class</span> <span class="nc">DashScopeImageSynthesisWrapper</span><span class="p">(</span><span class="n">DashScopeWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for DashScope Image Synthesis API, refer to</span>
 <span class="sd">    https://help.aliyun.com/zh/dashscope/developer-reference/quick-start-1</span>
@@ -529,7 +523,7 @@
 
 
 <div class="viewcode-block" id="DashScopeTextEmbeddingWrapper">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.dashscope_model.DashScopeTextEmbeddingWrapper">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.DashScopeTextEmbeddingWrapper">[文档]</a>
 <span class="k">class</span> <span class="nc">DashScopeTextEmbeddingWrapper</span><span class="p">(</span><span class="n">DashScopeWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for DashScope Text Embedding API.&quot;&quot;&quot;</span>
 
@@ -633,7 +627,7 @@
 
 
 <div class="viewcode-block" id="DashScopeMultiModalWrapper">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.dashscope_model.DashScopeMultiModalWrapper">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.DashScopeMultiModalWrapper">[文档]</a>
 <span class="k">class</span> <span class="nc">DashScopeMultiModalWrapper</span><span class="p">(</span><span class="n">DashScopeWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for DashScope Multimodal API, refer to</span>
 <span class="sd">    https://help.aliyun.com/zh/dashscope/developer-reference/tongyi-qianwen-vl-api</span>
@@ -775,7 +769,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="DashScopeMultiModalWrapper.format">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.dashscope_model.DashScopeMultiModalWrapper.format">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.DashScopeMultiModalWrapper.format">[文档]</a>
     <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">]],</span>
@@ -783,25 +777,27 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the messages for DashScope Multimodal API.</span>
 
 <span class="sd">        The multimodal API has the following requirements:</span>
-<span class="sd">        - The roles of messages must alternate between &quot;user&quot; and</span>
-<span class="sd">        &quot;assistant&quot;.</span>
-<span class="sd">        - The message with the role &quot;system&quot; should be the first message</span>
-<span class="sd">        in the list.</span>
+
+<span class="sd">            - The roles of messages must alternate between &quot;user&quot; and</span>
+<span class="sd">                &quot;assistant&quot;.</span>
+<span class="sd">            - The message with the role &quot;system&quot; should be the first message</span>
+<span class="sd">                in the list.</span>
 <span class="sd">            - If the system message exists, then the second message must</span>
-<span class="sd">            have the role &quot;user&quot;.</span>
-<span class="sd">        - The last message in the list should have the role &quot;user&quot;.</span>
-<span class="sd">        - In each message, more than one figure is allowed.</span>
+<span class="sd">                have the role &quot;user&quot;.</span>
+<span class="sd">            - The last message in the list should have the role &quot;user&quot;.</span>
+<span class="sd">            - In each message, more than one figure is allowed.</span>
 
 <span class="sd">        With the above requirements, we format the messages as follows:</span>
-<span class="sd">        - If the first message is a system message, then we will keep it as</span>
-<span class="sd">        system prompt.</span>
-<span class="sd">        - We merge all messages into a dialogue history prompt in a single</span>
-<span class="sd">        message with the role &quot;user&quot;.</span>
-<span class="sd">        - When there are multiple figures in the given messages, we will</span>
-<span class="sd">        attach it to the user message by order. Note if there are multiple</span>
-<span class="sd">        figures, this strategy may cause misunderstanding for the model. For</span>
-<span class="sd">        advanced solutions, developers are encouraged to implement their own</span>
-<span class="sd">        prompt engineering strategies.</span>
+
+<span class="sd">            - If the first message is a system message, then we will keep it as</span>
+<span class="sd">                system prompt.</span>
+<span class="sd">            - We merge all messages into a dialogue history prompt in a single</span>
+<span class="sd">                message with the role &quot;user&quot;.</span>
+<span class="sd">            - When there are multiple figures in the given messages, we will</span>
+<span class="sd">                attach it to the user message by order. Note if there are</span>
+<span class="sd">                multiple figures, this strategy may cause misunderstanding for</span>
+<span class="sd">                the model. For advanced solutions, developers are encouraged to</span>
+<span class="sd">                implement their own prompt engineering strategies.</span>
 
 <span class="sd">        The following is an example:</span>
 
@@ -844,8 +840,8 @@
 <span class="sd">                        {&quot;image&quot;: &quot;figure3&quot;},</span>
 <span class="sd">                        {</span>
 <span class="sd">                            &quot;text&quot;: (</span>
-<span class="sd">                                &quot;## Dialogue History\n&quot;</span>
-<span class="sd">                                &quot;Bob: How about this picture?\n&quot;</span>
+<span class="sd">                                &quot;## Dialogue History\\n&quot;</span>
+<span class="sd">                                &quot;Bob: How about this picture?\\n&quot;</span>
 <span class="sd">                                &quot;user: It&#39;s wonderful! How about mine?&quot;</span>
 <span class="sd">                            )</span>
 <span class="sd">                        },</span>

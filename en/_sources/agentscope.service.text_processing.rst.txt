@@ -1,12 +1,7 @@
-Text processing package
-============================================
+agentscope.service.text_processing
+==================================
 
-
-summarization module
----------------------------------------------------------
-
-.. automodule:: agentscope.service.text_processing.summarization
+.. automodule:: agentscope.service.text_processing
    :members:
    :undoc-members:
    :show-inheritance:
-

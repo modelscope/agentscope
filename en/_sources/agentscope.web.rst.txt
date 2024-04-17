@@ -1,10 +1,7 @@
-Web UI package
-==========================
+agentscope.web
+==============
 
-app module
------------------------------
-
-.. automodule:: agentscope.web._app
+.. automodule:: agentscope.web
    :members:
+   :undoc-members:
    :show-inheritance:
-

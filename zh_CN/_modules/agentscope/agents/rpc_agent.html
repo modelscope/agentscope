@@ -17,7 +17,7 @@
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="../../../_static/documentation_options.js?v=7d86a446"></script>
-        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../_static/translations.js?v=beaddf03"></script>
         <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
@@ -58,15 +58,15 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">Agents package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">Memory package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">Models package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">Pipelines package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">Service package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">RPC package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">Utils package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">Web UI package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
 </ul>
 
         </div>
@@ -135,8 +135,6 @@
 <span class="p">)</span>
 
 
-<div class="viewcode-block" id="rpc_servicer_method">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.rpc_servicer_method">[文档]</a>
 <span class="k">def</span> <span class="nf">rpc_servicer_method</span><span class="p">(</span>  <span class="c1"># type: ignore[no-untyped-def]</span>
     <span class="n">func</span><span class="p">,</span>
 <span class="p">):</span>
@@ -152,12 +150,11 @@
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">rpc_agent</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">inner</span></div>
-
+    <span class="k">return</span> <span class="n">inner</span>
 
 
 <div class="viewcode-block" id="RpcAgent">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgent">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.RpcAgent">[文档]</a>
 <span class="k">class</span> <span class="nc">RpcAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A wrapper to extend an AgentBase into a gRPC Client.&quot;&quot;&quot;</span>
 
@@ -254,7 +251,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="RpcAgent.reply">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgent.reply">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.RpcAgent.reply">[文档]</a>
     <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_launch_server</span><span class="p">()</span>
@@ -267,7 +264,7 @@
 
 
 <div class="viewcode-block" id="RpcAgent.observe">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgent.observe">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.RpcAgent.observe">[文档]</a>
     <span class="k">def</span> <span class="nf">observe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_launch_server</span><span class="p">()</span>
@@ -278,7 +275,7 @@
 
 
 <div class="viewcode-block" id="RpcAgent.clone_instances">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgent.clone_instances">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.RpcAgent.clone_instances">[文档]</a>
     <span class="k">def</span> <span class="nf">clone_instances</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">num_instances</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -326,7 +323,7 @@
 
 
 <div class="viewcode-block" id="RpcAgent.stop">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgent.stop">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.RpcAgent.stop">[文档]</a>
     <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Stop the RpcAgent and the rpc server.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">server_launcher</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -338,8 +335,6 @@
 
 
 
-<div class="viewcode-block" id="setup_rpc_agent_server">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.setup_rpc_agent_server">[文档]</a>
 <span class="k">def</span> <span class="nf">setup_rpc_agent_server</span><span class="p">(</span>
     <span class="n">agent_class</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">AgentBase</span><span class="p">],</span>
     <span class="n">agent_args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span>
@@ -436,22 +431,16 @@
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;rpc server [</span><span class="si">{</span><span class="n">agent_class</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">] at port [</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">] stopped &quot;</span>
         <span class="s2">&quot;successfully&quot;</span><span class="p">,</span>
-    <span class="p">)</span></div>
+    <span class="p">)</span>
 
 
-
-<div class="viewcode-block" id="find_available_port">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.find_available_port">[文档]</a>
 <span class="k">def</span> <span class="nf">find_available_port</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get an unoccupied socket port number.&quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span> <span class="k">as</span> <span class="n">s</span><span class="p">:</span>
         <span class="n">s</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">getsockname</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">getsockname</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
 
 
-
-<div class="viewcode-block" id="check_port">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.check_port">[文档]</a>
 <span class="k">def</span> <span class="nf">check_port</span><span class="p">(</span><span class="n">port</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the port is available.</span>
 
@@ -478,12 +467,11 @@
                 <span class="sa">f</span><span class="s2">&quot;Port [</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">] is occupied, use [</span><span class="si">{</span><span class="n">new_port</span><span class="si">}</span><span class="s2">] instead&quot;</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="k">return</span> <span class="n">new_port</span>
-    <span class="k">return</span> <span class="n">port</span></div>
-
+    <span class="k">return</span> <span class="n">port</span>
 
 
 <div class="viewcode-block" id="RpcAgentServerLauncher">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgentServerLauncher">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.RpcAgentServerLauncher">[文档]</a>
 <span class="k">class</span> <span class="nc">RpcAgentServerLauncher</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Launcher of rpc agent server.&quot;&quot;&quot;</span>
 
@@ -585,7 +573,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="RpcAgentServerLauncher.launch">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgentServerLauncher.launch">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.RpcAgentServerLauncher.launch">[文档]</a>
     <span class="k">def</span> <span class="nf">launch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_subprocess</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;launch a rpc agent server.</span>
 
@@ -601,7 +589,7 @@
 
 
 <div class="viewcode-block" id="RpcAgentServerLauncher.wait_until_terminate">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgentServerLauncher.wait_until_terminate">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.RpcAgentServerLauncher.wait_until_terminate">[文档]</a>
     <span class="k">def</span> <span class="nf">wait_until_terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Wait for server process&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -609,7 +597,7 @@
 
 
 <div class="viewcode-block" id="RpcAgentServerLauncher.shutdown">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcAgentServerLauncher.shutdown">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.RpcAgentServerLauncher.shutdown">[文档]</a>
     <span class="k">def</span> <span class="nf">shutdown</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Shutdown the rpc agent server.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -628,8 +616,6 @@
 
 
 
-<div class="viewcode-block" id="RpcServerSideWrapper">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcServerSideWrapper">[文档]</a>
 <span class="k">class</span> <span class="nc">RpcServerSideWrapper</span><span class="p">(</span><span class="n">RpcAgentServicer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A wrapper to extend an AgentBase into a gRPC Servicer.&quot;&quot;&quot;</span>
 
@@ -679,17 +665,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">task_id_counter</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AgentBase</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
-<div class="viewcode-block" id="RpcServerSideWrapper.get_task_id">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcServerSideWrapper.get_task_id">[文档]</a>
     <span class="k">def</span> <span class="nf">get_task_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the auto-increment task id.&quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_id_lock</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">task_id_counter</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_id_counter</span></div>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_id_counter</span>
 
-
-<div class="viewcode-block" id="RpcServerSideWrapper.check_and_generate_agent">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcServerSideWrapper.check_and_generate_agent">[文档]</a>
     <span class="k">def</span> <span class="nf">check_and_generate_agent</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -716,11 +697,8 @@
                     <span class="p">)</span>
                 <span class="n">agent_instance</span><span class="o">.</span><span class="n">_agent_id</span> <span class="o">=</span> <span class="n">agent_id</span>  <span class="c1"># pylint: disable=W0212</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">[</span><span class="n">agent_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">agent_instance</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;create agent instance [</span><span class="si">{</span><span class="n">agent_id</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span></div>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;create agent instance [</span><span class="si">{</span><span class="n">agent_id</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
 
-
-<div class="viewcode-block" id="RpcServerSideWrapper.check_and_delete_agent">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcServerSideWrapper.check_and_delete_agent">[文档]</a>
     <span class="k">def</span> <span class="nf">check_and_delete_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check whether the agent exists, and delete the agent instance</span>
@@ -732,11 +710,8 @@
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_id_lock</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">agent_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">agent_id</span><span class="p">)</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;delete agent instance [</span><span class="si">{</span><span class="n">agent_id</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span></div>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;delete agent instance [</span><span class="si">{</span><span class="n">agent_id</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
 
-
-<div class="viewcode-block" id="RpcServerSideWrapper.call_func">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcServerSideWrapper.call_func">[文档]</a>
     <span class="k">def</span> <span class="nf">call_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">RpcMsg</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="n">ServicerContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RpcMsg</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Call the specific servicer function.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">target_func</span><span class="p">):</span>
@@ -752,8 +727,7 @@
                     <span class="n">content</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Unsupported method </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">target_func</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                     <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
                 <span class="p">)</span><span class="o">.</span><span class="n">serialize</span><span class="p">(),</span>
-            <span class="p">)</span></div>
-
+            <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">RpcMsg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RpcMsg</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Call function of RpcAgentService</span>
@@ -849,8 +823,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">check_and_delete_agent</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">agent_id</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">RpcMsg</span><span class="p">()</span>
 
-<div class="viewcode-block" id="RpcServerSideWrapper.process_messages">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.rpc_agent.RpcServerSideWrapper.process_messages">[文档]</a>
     <span class="k">def</span> <span class="nf">process_messages</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">task_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -874,9 +846,7 @@
                 <span class="n">content</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error in agent [</span><span class="si">{</span><span class="n">agent_id</span><span class="si">}</span><span class="s2">]:</span><span class="se">\n</span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">with</span> <span class="n">cond</span><span class="p">:</span>
-            <span class="n">cond</span><span class="o">.</span><span class="n">notify_all</span><span class="p">()</span></div>
-</div>
-
+            <span class="n">cond</span><span class="o">.</span><span class="n">notify_all</span><span class="p">()</span>
 </pre></div>
 
            </div>

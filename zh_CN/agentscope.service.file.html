@@ -5,7 +5,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>File package &mdash; AgentScope  文档</title>
+  <title>agentscope.service.file &mdash; AgentScope  文档</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c9484b72" />
@@ -18,14 +18,12 @@
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="_static/documentation_options.js?v=7d86a446"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="_static/translations.js?v=beaddf03"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
-    <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="Retrieval package" href="agentscope.service.retrieval.html" />
-    <link rel="prev" title="Code package" href="agentscope.service.execute_code.html" /> 
+    <link rel="search" title="搜索" href="search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -58,46 +56,16 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorial/contribute.html">参与贡献</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">Agents package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">Memory package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">Models package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">Pipelines package</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="agentscope.service.html">Service package</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="agentscope.service.execute_code.html">Code package</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">File package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#module-agentscope.service.file.common">common module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.service.file.common.create_directory"><code class="docutils literal notranslate"><span class="pre">create_directory()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.service.file.common.create_file"><code class="docutils literal notranslate"><span class="pre">create_file()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.service.file.common.delete_directory"><code class="docutils literal notranslate"><span class="pre">delete_directory()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.service.file.common.delete_file"><code class="docutils literal notranslate"><span class="pre">delete_file()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.service.file.common.move_directory"><code class="docutils literal notranslate"><span class="pre">move_directory()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.service.file.common.move_file"><code class="docutils literal notranslate"><span class="pre">move_file()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#module-agentscope.service.file.json">json module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.service.file.json.read_json_file"><code class="docutils literal notranslate"><span class="pre">read_json_file()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.service.file.json.write_json_file"><code class="docutils literal notranslate"><span class="pre">write_json_file()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#module-agentscope.service.file.text">text module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.service.file.text.read_text_file"><code class="docutils literal notranslate"><span class="pre">read_text_file()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.service.file.text.write_text_file"><code class="docutils literal notranslate"><span class="pre">write_text_file()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.service.retrieval.html">Retrieval package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.service.sql_query.html">SQL query package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.service.text_processing.html">Text processing package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.service.html#service-status-module">service_status module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.service.html#service-response-module">service_response module</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">RPC package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">Utils package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">Web UI package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.html">Module contents</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope</a></li>
 </ul>
 
         </div>
@@ -114,8 +82,7 @@
           <div role="navigation" aria-label="页面导航">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="agentscope.service.html">Service package</a></li>
-      <li class="breadcrumb-item active">File package</li>
+      <li class="breadcrumb-item active">agentscope.service.file</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/agentscope.service.file.rst.txt" rel="nofollow"> 查看页面源码</a>
       </li>
@@ -125,228 +92,14 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="file-package">
-<h1>File package<a class="headerlink" href="#file-package" title="Link to this heading"></a></h1>
-<section id="module-agentscope.service.file.common">
-<span id="common-module"></span><h2>common module<a class="headerlink" href="#module-agentscope.service.file.common" title="Link to this heading"></a></h2>
-<p>Common operators for file and directory.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="agentscope.service.file.common.create_directory">
-<span class="sig-prename descclassname"><span class="pre">agentscope.service.file.common.</span></span><span class="sig-name descname"><span class="pre">create_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ServiceResponse</span></span></span><a class="reference internal" href="_modules/agentscope/service/file/common.html#create_directory"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.file.common.create_directory" title="Link to this definition"></a></dt>
-<dd><p>Create a directory at the specified path.</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>directory_path</strong> (<cite>str</cite>) – The path where the directory will be created.</p>
-</dd>
-<dt class="field-even">返回<span class="colon">:</span></dt>
-<dd class="field-even"><p>where the boolean indicates success, and the
-str contains an error message if any, including the error type.</p>
-</dd>
-<dt class="field-odd">返回类型<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="agentscope.service.file.common.create_file">
-<span class="sig-prename descclassname"><span class="pre">agentscope.service.file.common.</span></span><span class="sig-name descname"><span class="pre">create_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ServiceResponse</span></span></span><a class="reference internal" href="_modules/agentscope/service/file/common.html#create_file"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.file.common.create_file" title="Link to this definition"></a></dt>
-<dd><p>Create a file and write content to it.</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>file_path</strong> (<cite>str</cite>) – The path where the file will be created.</p></li>
-<li><p><strong>content</strong> (<cite>str</cite>) – Content to write into the file.</p></li>
-</ul>
-</dd>
-<dt class="field-even">返回<span class="colon">:</span></dt>
-<dd class="field-even"><p>Where the boolean indicates success, and the
-str contains an error message if any, including the error type.</p>
-</dd>
-<dt class="field-odd">返回类型<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="agentscope.service.file.common.delete_directory">
-<span class="sig-prename descclassname"><span class="pre">agentscope.service.file.common.</span></span><span class="sig-name descname"><span class="pre">delete_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ServiceResponse</span></span></span><a class="reference internal" href="_modules/agentscope/service/file/common.html#delete_directory"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.file.common.delete_directory" title="Link to this definition"></a></dt>
-<dd><p>Delete a directory and all of its contents.</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>directory_path</strong> (<cite>str</cite>) – The path of the directory to be deleted.</p>
-</dd>
-<dt class="field-even">返回<span class="colon">:</span></dt>
-<dd class="field-even"><p>Where the boolean indicates success, and the
-str contains an error message if any, including the error type.</p>
-</dd>
-<dt class="field-odd">返回类型<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="agentscope.service.file.common.delete_file">
-<span class="sig-prename descclassname"><span class="pre">agentscope.service.file.common.</span></span><span class="sig-name descname"><span class="pre">delete_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ServiceResponse</span></span></span><a class="reference internal" href="_modules/agentscope/service/file/common.html#delete_file"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.file.common.delete_file" title="Link to this definition"></a></dt>
-<dd><p>Delete a file specified by the file path.</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>file_path</strong> (<cite>str</cite>) – The path of the file to be deleted.</p>
-</dd>
-<dt class="field-even">返回<span class="colon">:</span></dt>
-<dd class="field-even"><p>Where the boolean indicates success, and the
-str contains an error message if any, including the error type.</p>
-</dd>
-<dt class="field-odd">返回类型<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="agentscope.service.file.common.move_directory">
-<span class="sig-prename descclassname"><span class="pre">agentscope.service.file.common.</span></span><span class="sig-name descname"><span class="pre">move_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ServiceResponse</span></span></span><a class="reference internal" href="_modules/agentscope/service/file/common.html#move_directory"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.file.common.move_directory" title="Link to this definition"></a></dt>
-<dd><p>Move a directory from a source path to a destination path.</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>source_path</strong> (<cite>str</cite>) – The current path of the directory.</p></li>
-<li><p><strong>destination_path</strong> (<cite>str</cite>) – The new path for the directory.</p></li>
-</ul>
-</dd>
-<dt class="field-even">返回<span class="colon">:</span></dt>
-<dd class="field-even"><p>Where the boolean indicates success, and the
-str contains an error message if any, including the error type.</p>
-</dd>
-<dt class="field-odd">返回类型<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="agentscope.service.file.common.move_file">
-<span class="sig-prename descclassname"><span class="pre">agentscope.service.file.common.</span></span><span class="sig-name descname"><span class="pre">move_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ServiceResponse</span></span></span><a class="reference internal" href="_modules/agentscope/service/file/common.html#move_file"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.file.common.move_file" title="Link to this definition"></a></dt>
-<dd><p>Move a file from a source path to a destination path.</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>source_path</strong> (<cite>str</cite>) – The current path of the file.</p></li>
-<li><p><strong>destination_path</strong> (<cite>str</cite>) – The new path for the file.</p></li>
-</ul>
-</dd>
-<dt class="field-even">返回<span class="colon">:</span></dt>
-<dd class="field-even"><p>Where the boolean indicates success, and the
-str contains an error message if any, including the error type.</p>
-</dd>
-<dt class="field-odd">返回类型<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
-</dd>
-</dl>
-</dd></dl>
-
-</section>
-<section id="module-agentscope.service.file.json">
-<span id="json-module"></span><h2>json module<a class="headerlink" href="#module-agentscope.service.file.json" title="Link to this heading"></a></h2>
-<p>Operators for json file and directory.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="agentscope.service.file.json.read_json_file">
-<span class="sig-prename descclassname"><span class="pre">agentscope.service.file.json.</span></span><span class="sig-name descname"><span class="pre">read_json_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ServiceResponse</span></span></span><a class="reference internal" href="_modules/agentscope/service/file/json.html#read_json_file"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.file.json.read_json_file" title="Link to this definition"></a></dt>
-<dd><p>Read and parse a JSON file.</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>file_path</strong> (<cite>str</cite>) – The path to the JSON file to be read.</p>
-</dd>
-<dt class="field-even">返回<span class="colon">:</span></dt>
-<dd class="field-even"><p>Where the boolean indicates success, the
-Any is the parsed JSON content (typically a dict), and the str contains
-an error message if any, including the error type.</p>
-</dd>
-<dt class="field-odd">返回类型<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="agentscope.service.file.json.write_json_file">
-<span class="sig-prename descclassname"><span class="pre">agentscope.service.file.json.</span></span><span class="sig-name descname"><span class="pre">write_json_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ServiceResponse</span></span></span><a class="reference internal" href="_modules/agentscope/service/file/json.html#write_json_file"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.file.json.write_json_file" title="Link to this definition"></a></dt>
-<dd><p>Serialize data to a JSON file.</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>file_path</strong> (<cite>str</cite>) – The path to the file where the JSON data will be written.</p></li>
-<li><p><strong>data</strong> (<cite>Any</cite>) – The data to serialize to JSON.</p></li>
-<li><p><strong>overwrite</strong> (<cite>bool</cite>) – Whether to overwrite the file if it already exists.</p></li>
-</ul>
-</dd>
-<dt class="field-even">返回<span class="colon">:</span></dt>
-<dd class="field-even"><p>where the boolean indicates success, and the
-str contains an error message if any, including the error type.</p>
-</dd>
-<dt class="field-odd">返回类型<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
-</dd>
-</dl>
-</dd></dl>
-
-</section>
-<section id="module-agentscope.service.file.text">
-<span id="text-module"></span><h2>text module<a class="headerlink" href="#module-agentscope.service.file.text" title="Link to this heading"></a></h2>
-<p>Operators for txt file and directory.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="agentscope.service.file.text.read_text_file">
-<span class="sig-prename descclassname"><span class="pre">agentscope.service.file.text.</span></span><span class="sig-name descname"><span class="pre">read_text_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ServiceResponse</span></span></span><a class="reference internal" href="_modules/agentscope/service/file/text.html#read_text_file"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.file.text.read_text_file" title="Link to this definition"></a></dt>
-<dd><p>Read the content of the text file.</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>file_path</strong> (<cite>str</cite>) – The path to the text file to be read.</p>
-</dd>
-<dt class="field-even">返回<span class="colon">:</span></dt>
-<dd class="field-even"><p>A tuple (bool, str) where the boolean indicates
-success, and the str contains the file content or an error message
-if any, including the error type.</p>
-</dd>
-<dt class="field-odd">返回类型<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="agentscope.service.file.text.write_text_file">
-<span class="sig-prename descclassname"><span class="pre">agentscope.service.file.text.</span></span><span class="sig-name descname"><span class="pre">write_text_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ServiceResponse</span></span></span><a class="reference internal" href="_modules/agentscope/service/file/text.html#write_text_file"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.file.text.write_text_file" title="Link to this definition"></a></dt>
-<dd><p>Write content to a text file.</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>file_path</strong> (<cite>str</cite>) – The path to the file where content will be written.</p></li>
-<li><p><strong>content</strong> (<cite>str</cite>) – Content to write into the file.</p></li>
-<li><p><strong>overwrite</strong> (<cite>bool</cite>, defaults to <cite>False</cite>) – Whether to overwrite the file if it already exists.</p></li>
-</ul>
-</dd>
-<dt class="field-even">返回<span class="colon">:</span></dt>
-<dd class="field-even"><p>where the boolean indicates success, and the
-str contains an error message if any, including the error type.</p>
-</dd>
-<dt class="field-odd">返回类型<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
-</dd>
-</dl>
-</dd></dl>
-
-</section>
+  <section id="module-agentscope.service.file">
+<span id="agentscope-service-file"></span><h1>agentscope.service.file<a class="headerlink" href="#module-agentscope.service.file" title="Link to this heading"></a></h1>
 </section>
 
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
-        <a href="agentscope.service.execute_code.html" class="btn btn-neutral float-left" title="Code package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
-        <a href="agentscope.service.retrieval.html" class="btn btn-neutral float-right" title="Retrieval package" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 

@@ -1,11 +1,7 @@
-Code package
-================================
+agentscope.service.execute_code
+===============================
 
-exec\_python module
---------------------------------------------
-
-.. automodule:: agentscope.service.execute_code.exec_python
+.. automodule:: agentscope.service.execute_code
    :members:
    :undoc-members:
    :show-inheritance:
-

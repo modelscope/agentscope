@@ -1,20 +1,7 @@
-Memory package
-==========================
+agentscope.memory
+=================
 
-
-memory module
---------------------------------
-
-.. automodule:: agentscope.memory.memory
+.. automodule:: agentscope.memory
    :members:
    :undoc-members:
    :show-inheritance:
-
-temporary\_memory module
--------------------------------------------
-
-.. automodule:: agentscope.memory.temporary_memory
-   :members:
-   :undoc-members:
-   :show-inheritance:
-

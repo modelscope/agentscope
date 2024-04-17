@@ -17,7 +17,7 @@
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
         <script>mermaid.initialize({startOnLoad:true});</script>
@@ -57,15 +57,15 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">Agents package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">Memory package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">Models package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">Pipelines package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">Service package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">RPC package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">Utils package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">Web UI package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
 </ul>
 
         </div>
@@ -116,7 +116,7 @@
 
 
 <div class="viewcode-block" id="OpenAIWrapperBase">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.openai_model.OpenAIWrapperBase">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.OpenAIWrapperBase">[docs]</a>
 <span class="k">class</span> <span class="nc">OpenAIWrapperBase</span><span class="p">(</span><span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for OpenAI API.&quot;&quot;&quot;</span>
 
@@ -188,7 +188,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_register_default_metrics</span><span class="p">()</span>
 
 <div class="viewcode-block" id="OpenAIWrapperBase.format">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.openai_model.OpenAIWrapperBase.format">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.OpenAIWrapperBase.format">[docs]</a>
     <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">]],</span>
@@ -203,7 +203,7 @@
 
 
 <div class="viewcode-block" id="OpenAIChatWrapper">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.openai_model.OpenAIChatWrapper">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.OpenAIChatWrapper">[docs]</a>
 <span class="k">class</span> <span class="nc">OpenAIChatWrapper</span><span class="p">(</span><span class="n">OpenAIWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for OpenAI&#39;s chat API.&quot;&quot;&quot;</span>
 
@@ -317,7 +317,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="OpenAIChatWrapper.format">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.openai_model.OpenAIChatWrapper.format">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.OpenAIChatWrapper.format">[docs]</a>
     <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">]],</span>
@@ -363,7 +363,7 @@
 
 
 <div class="viewcode-block" id="OpenAIDALLEWrapper">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.openai_model.OpenAIDALLEWrapper">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.OpenAIDALLEWrapper">[docs]</a>
 <span class="k">class</span> <span class="nc">OpenAIDALLEWrapper</span><span class="p">(</span><span class="n">OpenAIWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for OpenAI&#39;s DALL·E API.&quot;&quot;&quot;</span>
 
@@ -470,7 +470,7 @@
 
 
 <div class="viewcode-block" id="OpenAIEmbeddingWrapper">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.openai_model.OpenAIEmbeddingWrapper">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.OpenAIEmbeddingWrapper">[docs]</a>
 <span class="k">class</span> <span class="nc">OpenAIEmbeddingWrapper</span><span class="p">(</span><span class="n">OpenAIWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for OpenAI embedding API.&quot;&quot;&quot;</span>
 
