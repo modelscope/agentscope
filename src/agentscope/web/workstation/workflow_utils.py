@@ -53,6 +53,11 @@ def kwarg_converter(kwargs: dict) -> str:
     return ", ".join(kwarg_parts)
 
 
+def deps_converter(dep_vars: list) -> str:
+    """Convert a dep_vars list to a string."""
+    return f"[{', '.join(dep_vars)}]"
+
+
 class WorkflowNode(ABC):
     """
     Abstract base class representing a generic node in a workflow.
@@ -87,9 +92,9 @@ class WorkflowNode(ABC):
     #     Compile workflow node to python executable code dict
     #     """
     #     return {
-    #         "imports": [],
-    #         "inits": [],
-    #         "execs": [],
+    #         "imports": None,
+    #         "inits": None,
+    #         "execs": None,
     #     }
 
 
@@ -179,6 +184,8 @@ class MsgHubNode(WorkflowNode):
         deps: List,
         **kwargs,
     ) -> None:
+        self.dep_vars = [x[1] for x in deps]
+        deps = [x[0] for x in deps]
         self.announcement = Msg(
             name=kwargs["announcement"].get("name", "Host"),
             content=kwargs["announcement"].get("content", "Welcome!"),
@@ -220,10 +227,24 @@ class SequentialPipelineNode(WorkflowNode):
         deps: List,
         **kwargs,
     ) -> None:
+        self.dep_vars = [x[1] for x in deps]
+        self.deps = deps
+        deps = [x[0] for x in deps]
         self.pipeline = SequentialPipeline(operators=deps)
 
     def __call__(self, x: dict = None) -> dict:
         return self.pipeline(x)
+
+    def compile(self, var: str) -> dict:
+        """
+        Compile SequentialPipelineNode to python executable code dict
+        """
+        return {
+            "imports": "from agentscope.pipelines import SequentialPipeline",
+            "inits": f"{var} = SequentialPipeline("
+            f"{deps_converter(self.dep_vars)})",
+            "execs": f"x = {var}(x)",
+        }
 
 
 class ForLoopPipelineNode(WorkflowNode):
@@ -241,13 +262,29 @@ class ForLoopPipelineNode(WorkflowNode):
         deps: List,
         **kwargs,
     ) -> None:
+        self.dep_vars = [x[1] for x in deps]
+        deps = [x[0] for x in deps]
         assert (
             len(deps) == 1
         ), "ForLoopPipelineNode can only contain one Pipeline Node."
         self.pipeline = ForLoopPipeline(loop_body_operators=deps[0], **kwargs)
+        self.kwargs = kwargs
 
     def __call__(self, x: dict = None) -> dict:
         return self.pipeline(x)
+
+    def compile(self, var: str) -> dict:
+        """
+        Compile SequentialPipelineNode to python executable code dict
+        """
+        return {
+            "imports": "from agentscope.pipelines import ForLoopPipeline",
+            "inits": f"{var} = ForLoopPipeline("
+            f"loop_body_operators="
+            f"{deps_converter(self.dep_vars)},"
+            f" {kwarg_converter(self.kwargs)})",
+            "execs": f"x = {var}(x)",
+        }
 
 
 class WhileLoopPipelineNode(WorkflowNode):
@@ -265,6 +302,8 @@ class WhileLoopPipelineNode(WorkflowNode):
         deps: List,
         **kwargs,
     ) -> None:
+        self.dep_vars = [x[1] for x in deps]
+        deps = [x[0] for x in deps]
         assert (
             len(deps) == 1
         ), "WhileLoopPipelineNode can only contain one Pipeline Node."
@@ -292,6 +331,8 @@ class IfElsePipelineNode(WorkflowNode):
         deps: List,
         **kwargs,
     ) -> None:
+        self.dep_vars = [x[1] for x in deps]
+        deps = [x[0] for x in deps]
         assert (
             0 < len(deps) <= 2
         ), "IfElsePipelineNode must contain one or two Pipeline Node."
@@ -323,6 +364,8 @@ class SwitchPipelineNode(WorkflowNode):
         deps: List,
         **kwargs,
     ) -> None:
+        self.dep_vars = [x[1] for x in deps]
+        deps = [x[0] for x in deps]
         assert 0 < len(deps), (
             "SwitchPipelineNode must contain at least " "one Pipeline Node."
         )
@@ -369,6 +412,8 @@ class CopyNode(WorkflowNode):
         deps: List,
         **kwargs,
     ) -> None:
+        self.dep_vars = [x[1] for x in deps]
+        deps = [x[0] for x in deps]
         assert len(deps) == 1, "Copy Node can only have one parent!"
         self.pipeline = deps[0]
 
@@ -457,6 +502,12 @@ class ASDiGraph(nx.DiGraph):
 
     def compile(self, compiled_filename: str) -> None:
         """Compile DAG to a runnable python code"""
+        sorted_nodes = list(nx.topological_sort(self))
+        sorted_nodes = [
+            node_id
+            for node_id in sorted_nodes
+            if node_id not in self.nodes_not_in_graph
+        ]
 
         # Prepare the header of the file with necessary imports and any
         # global definitions
@@ -476,7 +527,8 @@ class ASDiGraph(nx.DiGraph):
             logger.debug(self.nodes[node_idx])
             node = self.nodes[node_idx]
             if isinstance(node["opt"], WorkflowNode):
-                compile_dict = node["opt"].compile(var=node_idx)
+                var_name = node["opt"].node_type.name.lower()
+                compile_dict = node["opt"].compile(var=f"{var_name}{node_idx}")
             elif isinstance(node["opt"], AgentBase):
                 compile_dict = {
                     "imports": f"from agentscope.agents import {node['name']}",
@@ -486,6 +538,7 @@ class ASDiGraph(nx.DiGraph):
                 }
             else:
                 raise TypeError
+            node["compile_dict"] = compile_dict
 
             imports.append(compile_dict["imports"])
 
@@ -497,7 +550,9 @@ class ASDiGraph(nx.DiGraph):
             else:
                 inits.append(compile_dict["inits"])
 
-            execs.append(compile_dict["execs"])
+        for node_id in sorted_nodes:
+            node = self.nodes[node_id]
+            execs.append(node["compile_dict"]["execs"])
 
         header = "\n".join(imports)
 
@@ -555,7 +610,18 @@ class ASDiGraph(nx.DiGraph):
             if not self.has_node(dep_node_id):
                 dep_node_info = config[dep_node_id]
                 self.add_as_node(dep_node_id, dep_node_info, config)
-            dep_opts.append(self.nodes[dep_node_id]["opt"])
+            if isinstance(self.nodes[dep_node_id]["opt"], WorkflowNode):
+                node_var = self.nodes[dep_node_id][
+                    "opt"
+                ].node_type.name.lower()
+            elif isinstance(self.nodes[dep_node_id]["opt"], AgentBase):
+                node_var = "agent"
+            else:
+                raise TypeError
+            # node_var is for compile
+            dep_opts.append(
+                (self.nodes[dep_node_id]["opt"], f"{node_var}{dep_node_id}"),
+            )
 
         if len(deps) == 0:
             value = node_cls(**node_info["data"].get("args", {}))
