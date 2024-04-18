@@ -317,6 +317,7 @@ class LlamaIndexAgent(RAGAgentBase):
             load_data_args = {
                 "loader": SimpleDirectoryReader(self.config["data_path"]),
             }
+            # NOTE: "data_path" is never used/defined for the current version.
         logger.info(f"rag.load_data args: {load_data_args}")
         docs = rag.load_data(**load_data_args)
 

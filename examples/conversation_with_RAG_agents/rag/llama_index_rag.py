@@ -30,7 +30,8 @@ except ImportError:
     BaseEmbedding, Embedding = None, None
     IngestionPipeline, BasePydanticVectorStore, VectorStore = None, None, None
     NodeParser, SentenceSplitter = None, None
-    VectorStoreIndex = None
+    VectorStoreIndex, StorageContext = None, None
+    load_index_from_storage = None
     PrivateAttr = None
 
 from rag import RAGBase

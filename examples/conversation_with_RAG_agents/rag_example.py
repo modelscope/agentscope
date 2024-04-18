@@ -34,52 +34,36 @@ def main() -> None:
 
     with open("configs/agent_config.json", "r", encoding="utf-8") as f:
         agent_configs = json.load(f)
+    # define RAG-based agents for tutorial and code
     tutorial_agent = LlamaIndexAgent(**agent_configs[0]["args"])
     code_explain_agent = LlamaIndexAgent(**agent_configs[1]["args"])
     agent_configs[2]["args"].pop("description")
-    summarize_agent = DialogAgent(**agent_configs[2]["args"])
+    # define a guide agent
+    guide_agent = LlamaIndexAgent(**agent_configs[3]["args"])
     rag_agents = [
         tutorial_agent,
         code_explain_agent,
+        guide_agent, # this is the new one
     ]
     rag_agent_names = [agent.name for agent in rag_agents]
-    summarize_agents = [summarize_agent]
-    summarize_agent_names = [agent.name for agent in summarize_agents]
-    helper_agents = rag_agents + summarize_agents
+    helper_agents = rag_agents
 
     user_agent = UserAgent()
-    # start the conversation between user and assistant
     while True:
         x = user_agent()
         x.role = "user"  # to enforce dashscope requirement on roles
         if len(x["content"]) == 0 or str(x["content"]).startswith("exit"):
             break
-        speak_list = filter_agents(x.get("content", ""), helper_agents)
+        speak_list = filter_agents(x.get("content", ""), rag_agents)
         if len(speak_list) == 0:
-            # if no agent is @ (mentioned), default invoke all rag agents and
-            # summarize agents
-            speak_list = rag_agents + summarize_agents
-        for agent in speak_list:
-            if agent.name in summarize_agent_names:
-                # if summarize agent is mentioned, then also call rag agents
-                # TODO: let summarize agent choose which agent to call
-                speak_list = rag_agents + summarize_agents
+            guide_response = guide_agent(x)
+            speak_list = filter_agents(guide_response.get("content", ""),
+                                       helper_agents)
 
         agent_name_list = [agent.name for agent in speak_list]
-        rag_agent_responses = []
         for agent_name, agent in zip(agent_name_list, speak_list):
             if agent_name in rag_agent_names:
-                rag_agent_responses.append(agent(x))
-
-        msg = Msg(
-            name="user",
-            role="user",
-            content="/n".join([msg.content for msg in rag_agent_responses]),
-        )
-        for agent_name, agent in zip(agent_name_list, speak_list):
-            if agent_name in summarize_agent_names:
-                agent(msg)
-
+                agent(x)
 
 if __name__ == "__main__":
     main()
