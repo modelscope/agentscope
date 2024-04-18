@@ -147,9 +147,6 @@ class ModelNode(WorkflowNode):
         read_model_configs([self.opt_kwargs])
 
     def compile(self) -> dict:
-        """
-        Compile ModelNode to python executable code dict
-        """
         return {
             "imports": "from agentscope.models import read_model_configs",
             "inits": f"read_model_configs([{self.opt_kwargs}])",
@@ -181,9 +178,6 @@ class MsgNode(WorkflowNode):
         return self.msg
 
     def compile(self) -> dict:
-        """
-        Compile ModelNode to python executable code dict
-        """
         return {
             "imports": "from agentscope.message import Msg",
             "inits": f"{DEFAULT_FLOW_VAR} = Msg"
@@ -206,13 +200,130 @@ class PlaceHolderNode(WorkflowNode):
         return placeholder(x)
 
     def compile(self) -> dict:
-        """
-        Compile PlaceHolderNode to python executable code dict
-        """
         return {
             "imports": "from agentscope.pipelines.functional import "
             "placeholder",
             "inits": f"{self.var_name} = placeholder",
+            "execs": f"{DEFAULT_FLOW_VAR} = {self.var_name}"
+            f"({DEFAULT_FLOW_VAR})",
+        }
+
+
+class DialogAgentNode(WorkflowNode):
+    """
+    A node representing a DialogAgent within a workflow.
+    """
+
+    node_type = WorkflowNodeType.AGENT
+
+    def __init__(
+        self,
+        node_id: str,
+        opt_kwargs: dict,
+        source_kwargs: dict,
+        dep_opts: list,
+    ) -> None:
+        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+        self.pipeline = DialogAgent(**self.opt_kwargs)
+
+    def __call__(self, x: dict = None) -> dict:
+        return self.pipeline(x)
+
+    def compile(self) -> dict:
+        return {
+            "imports": "from agentscope.agents import DialogAgent",
+            "inits": f"{self.var_name} = DialogAgent("
+            f"{kwarg_converter(self.opt_kwargs)})",
+            "execs": f"{DEFAULT_FLOW_VAR} = {self.var_name}"
+            f"({DEFAULT_FLOW_VAR})",
+        }
+
+
+class UserAgentNode(WorkflowNode):
+    """
+    A node representing a UserAgent within a workflow.
+    """
+
+    node_type = WorkflowNodeType.AGENT
+
+    def __init__(
+        self,
+        node_id: str,
+        opt_kwargs: dict,
+        source_kwargs: dict,
+        dep_opts: list,
+    ) -> None:
+        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+        self.pipeline = UserAgent(**self.opt_kwargs)
+
+    def __call__(self, x: dict = None) -> dict:
+        return self.pipeline(x)
+
+    def compile(self) -> dict:
+        return {
+            "imports": "from agentscope.agents import UserAgent",
+            "inits": f"{self.var_name} = UserAgent("
+            f"{kwarg_converter(self.opt_kwargs)})",
+            "execs": f"{DEFAULT_FLOW_VAR} = {self.var_name}"
+            f"({DEFAULT_FLOW_VAR})",
+        }
+
+
+class TextToImageAgentNode(WorkflowNode):
+    """
+    A node representing a TextToImageAgent within a workflow.
+    """
+
+    node_type = WorkflowNodeType.AGENT
+
+    def __init__(
+        self,
+        node_id: str,
+        opt_kwargs: dict,
+        source_kwargs: dict,
+        dep_opts: list,
+    ) -> None:
+        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+        self.pipeline = TextToImageAgent(**self.opt_kwargs)
+
+    def __call__(self, x: dict = None) -> dict:
+        return self.pipeline(x)
+
+    def compile(self) -> dict:
+        return {
+            "imports": "from agentscope.agents import TextToImageAgent",
+            "inits": f"{self.var_name} = TextToImageAgent("
+            f"{kwarg_converter(self.opt_kwargs)})",
+            "execs": f"{DEFAULT_FLOW_VAR} = {self.var_name}"
+            f"({DEFAULT_FLOW_VAR})",
+        }
+
+
+class DictDialogAgentNode(WorkflowNode):
+    """
+    A node representing a DictDialogAgent within a workflow.
+    """
+
+    node_type = WorkflowNodeType.AGENT
+
+    def __init__(
+        self,
+        node_id: str,
+        opt_kwargs: dict,
+        source_kwargs: dict,
+        dep_opts: list,
+    ) -> None:
+        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+        self.pipeline = DictDialogAgent(**self.opt_kwargs)
+
+    def __call__(self, x: dict = None) -> dict:
+        return self.pipeline(x)
+
+    def compile(self) -> dict:
+        return {
+            "imports": "from agentscope.agents import DictDialogAgent",
+            "inits": f"{self.var_name} = DictDialogAgent("
+            f"{kwarg_converter(self.opt_kwargs)})",
             "execs": f"{DEFAULT_FLOW_VAR} = {self.var_name}"
             f"({DEFAULT_FLOW_VAR})",
         }
@@ -262,9 +373,6 @@ class MsgHubNode(WorkflowNode):
         return x
 
     def compile(self) -> dict:
-        """
-        Compile SequentialPipelineNode to python executable code dict
-        """
         announcement = (
             f'Msg(name="'
             f'{self.opt_kwargs["announcement"].get("name", "Host")}", '
@@ -307,9 +415,6 @@ class SequentialPipelineNode(WorkflowNode):
         return self.pipeline(x)
 
     def compile(self) -> dict:
-        """
-        Compile SequentialPipelineNode to python executable code dict
-        """
         return {
             "imports": "from agentscope.pipelines import SequentialPipeline",
             "inits": f"{self.var_name} = SequentialPipeline("
@@ -349,9 +454,6 @@ class ForLoopPipelineNode(WorkflowNode):
         return self.pipeline(x)
 
     def compile(self) -> dict:
-        """
-        Compile ForLoopPipelineNode to python executable code dict
-        """
         return {
             "imports": "from agentscope.pipelines import ForLoopPipeline",
             "inits": f"{self.var_name} = ForLoopPipeline("
@@ -393,9 +495,6 @@ class WhileLoopPipelineNode(WorkflowNode):
         return self.pipeline(x)
 
     def compile(self) -> dict:
-        """
-        Compile WhileLoopPipeline to python executable code dict
-        """
         return {
             "imports": "from agentscope.pipelines import WhileLoopPipeline",
             "inits": f"{self.var_name} = WhileLoopPipeline("
@@ -444,9 +543,6 @@ class IfElsePipelineNode(WorkflowNode):
         return self.pipeline(x)
 
     def compile(self) -> dict:
-        """
-        Compile IfElsePipelineNode to python executable code dict
-        """
         imports = "from agentscope.pipelines import IfElsePipeline"
         execs = f"{DEFAULT_FLOW_VAR} = {self.var_name}({DEFAULT_FLOW_VAR})"
         if len(self.dep_vars) == 1:
@@ -524,9 +620,6 @@ class SwitchPipelineNode(WorkflowNode):
         return self.pipeline(x)
 
     def compile(self) -> dict:
-        """
-        Compile SwitchPipelineNode to python executable code dict
-        """
         imports = (
             "from agentscope.pipelines import SwitchPipeline\n"
             "from agentscope.pipelines.functional import placeholder"
@@ -568,9 +661,6 @@ class CopyNode(WorkflowNode):
         return self.pipeline(x)
 
     def compile(self) -> dict:
-        """
-        Compile CopyNode to python executable code dict
-        """
         return {
             "imports": "",
             "inits": "",
@@ -579,21 +669,22 @@ class CopyNode(WorkflowNode):
         }
 
 
+# TODO: remove this mapping
 NODE_NAME_MAPPING = {
-    "dashscope_chat": (ModelNode, WorkflowNodeType.MODEL),
-    "openai_chat": (ModelNode, WorkflowNodeType.MODEL),
-    "post_api_chat": (ModelNode, WorkflowNodeType.MODEL),
-    "Message": (MsgNode, WorkflowNodeType.MESSAGE),
-    "DialogAgent": (DialogAgent, WorkflowNodeType.AGENT),
-    "UserAgent": (UserAgent, WorkflowNodeType.AGENT),
-    "TextToImageAgent": (TextToImageAgent, WorkflowNodeType.AGENT),
-    "DictDialogAgent": (DictDialogAgent, WorkflowNodeType.AGENT),
-    "Placeholder": (PlaceHolderNode, WorkflowNodeType.PIPELINE),
-    "MsgHub": (MsgHubNode, WorkflowNodeType.PIPELINE),
-    "SequentialPipeline": (SequentialPipelineNode, WorkflowNodeType.PIPELINE),
-    "ForLoopPipeline": (ForLoopPipelineNode, WorkflowNodeType.PIPELINE),
-    "WhileLoopPipeline": (WhileLoopPipelineNode, WorkflowNodeType.PIPELINE),
-    "IfElsePipeline": (IfElsePipelineNode, WorkflowNodeType.PIPELINE),
-    "SwitchPipeline": (SwitchPipelineNode, WorkflowNodeType.PIPELINE),
-    "CopyNode": (CopyNode, WorkflowNodeType.COPY),
+    "dashscope_chat": ModelNode,
+    "openai_chat": ModelNode,
+    "post_api_chat": ModelNode,
+    "Message": MsgNode,
+    "DialogAgent": DialogAgentNode,
+    "UserAgent": UserAgentNode,
+    "TextToImageAgent": TextToImageAgentNode,
+    "DictDialogAgent": DictDialogAgentNode,
+    "Placeholder": PlaceHolderNode,
+    "MsgHub": MsgHubNode,
+    "SequentialPipeline": SequentialPipelineNode,
+    "ForLoopPipeline": ForLoopPipelineNode,
+    "WhileLoopPipeline": WhileLoopPipelineNode,
+    "IfElsePipeline": IfElsePipelineNode,
+    "SwitchPipeline": SwitchPipelineNode,
+    "CopyNode": CopyNode,
 }

@@ -13,19 +13,12 @@ import networkx as nx
 from loguru import logger
 
 import agentscope
-from agentscope.agents import (
-    AgentBase,
-)
 from agentscope.web.workstation.workflow_node import (
-    WorkflowNode,
     NODE_NAME_MAPPING,
     WorkflowNodeType,
     DEFAULT_FLOW_VAR,
 )
-from agentscope.web.workstation.workflow_utils import (
-    is_callable_expression,
-    kwarg_converter,
-)
+from agentscope.web.workstation.workflow_utils import is_callable_expression
 
 
 def remove_duplicates_from_end(lst: list) -> list:
@@ -170,9 +163,9 @@ class ASDiGraph(nx.DiGraph):
         Returns:
             The computation object associated with the added node.
         """
-        node_cls, node_type = NODE_NAME_MAPPING[node_info.get("name", "")]
-        # TODO: support all type of node
-        if node_type not in [
+        node_cls = NODE_NAME_MAPPING[node_info.get("name", "")]
+        # TODO: support all type of node, SERVICE not support now
+        if node_cls.node_type not in [
             WorkflowNodeType.MODEL,
             WorkflowNodeType.AGENT,
             WorkflowNodeType.MESSAGE,
@@ -188,7 +181,7 @@ class ASDiGraph(nx.DiGraph):
         deps = [str(n) for n in node_info.get("data", {}).get("elements", [])]
 
         # Exclude for dag when in a Group
-        if node_type != WorkflowNodeType.COPY:
+        if node_cls.node_type != WorkflowNodeType.COPY:
             self.nodes_not_in_graph = self.nodes_not_in_graph.union(set(deps))
 
         dep_opts = []
@@ -205,21 +198,8 @@ class ASDiGraph(nx.DiGraph):
             dep_opts=dep_opts,
         )
 
-        # TODO: remove this
         # Add build compiled python code
-        if isinstance(node_opt, WorkflowNode):
-            compile_dict = node_opt.compile()
-        elif isinstance(node_opt, AgentBase):
-            compile_dict = {
-                "imports": f"from agentscope.agents import"
-                f" {node_info['name']}",
-                "inits": f"agent{node_id} = {node_info['name']}"
-                f"({kwarg_converter(node_info['data']['args'])})",
-                "execs": f"{DEFAULT_FLOW_VAR} = agent{node_id}"
-                f"({DEFAULT_FLOW_VAR})",
-            }
-        else:
-            raise TypeError
+        compile_dict = node_opt.compile()
 
         self.add_node(
             node_id,
@@ -231,10 +211,7 @@ class ASDiGraph(nx.DiGraph):
         # Insert compile information to imports and inits
         self.imports.append(compile_dict["imports"])
 
-        if (
-            hasattr(node_opt, "node_type")
-            and node_opt.node_type == WorkflowNodeType.MODEL
-        ):
+        if node_cls.node_type == WorkflowNodeType.MODEL:
             self.inits.insert(1, compile_dict["inits"])
         else:
             self.inits.append(compile_dict["inits"])
@@ -320,12 +297,18 @@ def build_dag(config: dict) -> ASDiGraph:
 
     # Add and init model nodes first
     for node_id, node_info in config.items():
-        if NODE_NAME_MAPPING[node_info["name"]][1] == WorkflowNodeType.MODEL:
+        if (
+            NODE_NAME_MAPPING[node_info["name"]].node_type
+            == WorkflowNodeType.MODEL
+        ):
             dag.add_as_node(node_id, node_info, config)
 
     # Add and init non-model nodes
     for node_id, node_info in config.items():
-        if NODE_NAME_MAPPING[node_info["name"]][1] != WorkflowNodeType.MODEL:
+        if (
+            NODE_NAME_MAPPING[node_info["name"]].node_type
+            != WorkflowNodeType.MODEL
+        ):
             dag.add_as_node(node_id, node_info, config)
 
     # Add edges
