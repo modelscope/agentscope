@@ -411,6 +411,9 @@ class RpcAgentServerLauncher:
         max_timeout_seconds: int = 1800,
         local_mode: bool = False,
         custom_agents: list = None,
+        agent_class: Type[AgentBase] = None,
+        agent_args: tuple = (),
+        agent_kwargs: dict = None,
     ) -> None:
         """Init a rpc agent server launcher.
 
@@ -429,6 +432,12 @@ class RpcAgentServerLauncher:
             custom_agents: (`list`, defaults to `None`):
                 A list of custom agent classes that are not in
                 `agentscope.agents`.
+            agent_class (`Type[AgentBase]`, deprecated):
+                The AgentBase subclass encapsulated by this wrapper.
+            agent_args (`tuple`, deprecated): The args tuple used to
+                initialize the agent_class.
+            agent_kwargs (`dict`, deprecated): The args dict used to
+                initialize the agent_class.
         """
         self.host = host
         self.port = check_port(port)
@@ -439,6 +448,15 @@ class RpcAgentServerLauncher:
         self.stop_event = None
         self.parent_con = None
         self.custom_agents = custom_agents
+        if (
+            agent_class is not None
+            or len(agent_args) > 0
+            or agent_kwargs is not None
+        ):
+            logger.warning(
+                "`agent_class`, `agent_args` and `agent_kwargs` is deprecated"
+                " in `RpcAgentServerLauncher`",
+            )
 
     def _launch_in_main(self) -> None:
         """Launch gRPC server in main-process"""
