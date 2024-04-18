@@ -4,7 +4,7 @@
 from functools import partial
 from agentscope.message import Msg
 from agentscope.agents import AgentBase
-from agentscope.service.web_search.search import google_search, bing_search
+from agentscope.service import google_search, bing_search
 
 
 class SearcherAgent(AgentBase):

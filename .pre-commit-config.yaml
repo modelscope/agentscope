@@ -29,6 +29,7 @@ repos:
                 pb2\.py$
                 | grpc\.py$
                 | ^docs
+                | \.html$
             )
         args: [ --disallow-untyped-defs,
                 --disallow-incomplete-defs,
@@ -66,6 +67,7 @@ repos:
                 | grpc\.py$
                 | \.demo$
                 | \.md$
+                | \.html$
           )
         args: [
           --disable=W0511,
@@ -91,6 +93,8 @@ repos:
           --disable=W0221,
           --disable=R0401,
           --disable=W0632,
+          --disable=W0123,
+          --disable=C3001,
         ]
   - repo: https://github.com/regebro/pyroma
     rev: "4.0"

@@ -1,0 +1,34 @@
+[{
+    "config_name": "dashscope_image_synthesis-wanx-v1-1024x1024",
+    "model_type": "dashscope_image_synthesis",
+    "model_name": "wanx-v1",
+    "api_key": "{your_api_key}",
+    "generate_args": {
+        "n": 1,
+        "negative_prompt": "{unwanted_prompt}",
+        "size": "1024*1024"
+    }
+},
+{
+    "config_name": "dashscope_image_synthesis-wanx-v1-720x1280",
+    "model_type": "dashscope_image_synthesis",
+    "model_name": "wanx-v1",
+    "api_key": "{your_api_key}",
+    "generate_args": {
+        "n": 1,
+        "negative_prompt": "{unwanted_prompt}",
+        "size": "720*1280"
+    }
+},
+{
+    "config_name": "dashscope_image_synthesis-wanx-v1-1280x720",
+    "model_type": "dashscope_image_synthesis",
+    "model_name": "wanx-v1",
+    "api_key": "{your_api_key}",
+    "generate_args": {
+        "n": 1,
+        "negative_prompt": "{unwanted_prompt}",
+        "size": "1280*720"
+    }
+}
+]

@@ -50,9 +50,6 @@ __all__ = [
     "OpenAIChatWrapper",
     "OpenAIDALLEWrapper",
     "OpenAIEmbeddingWrapper",
-    "load_model_by_config_name",
-    "read_model_configs",
-    "clear_model_configs",
     "DashScopeChatWrapper",
     "DashScopeImageSynthesisWrapper",
     "DashScopeTextEmbeddingWrapper",
@@ -62,6 +59,9 @@ __all__ = [
     "OllamaGenerationWrapper",
     "GeminiChatWrapper",
     "GeminiEmbeddingWrapper",
+    "load_model_by_config_name",
+    "read_model_configs",
+    "clear_model_configs",
 ]
 
 _MODEL_CONFIGS: dict[str, dict] = {}
@@ -76,27 +76,14 @@ def _get_model_wrapper(model_type: str) -> Type[ModelWrapperBase]:
     Returns:
         `Type[ModelWrapperBase]`: The corresponding model wrapper class.
     """
-    if model_type in ModelWrapperBase.type_registry:
-        return ModelWrapperBase.type_registry[  # type: ignore[return-value]
-            model_type
-        ]
-    elif model_type in ModelWrapperBase.registry:
-        return ModelWrapperBase.registry[  # type: ignore[return-value]
-            model_type
-        ]
-    elif model_type in ModelWrapperBase.deprecated_type_registry:
-        cls = ModelWrapperBase.deprecated_type_registry[model_type]
-        logger.warning(
-            f"Model type [{model_type}] will be deprecated in future releases,"
-            f" please use [{cls.model_type}] instead.",
-        )
-        return cls  # type: ignore[return-value]
-    else:
+    wrapper = ModelWrapperBase.get_wrapper(model_type=model_type)
+    if wrapper is None:
         logger.warning(
             f"Unsupported model_type [{model_type}],"
             "use PostApiModelWrapper instead.",
         )
         return PostAPIModelWrapperBase
+    return wrapper
 
 
 def load_model_by_config_name(config_name: str) -> ModelWrapperBase:
