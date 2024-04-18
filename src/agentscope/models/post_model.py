@@ -214,7 +214,7 @@ class PostAPIChatWrapper(PostAPIModelWrapperBase):
 
 
 class PostAPIDALLEWrapper(PostAPIModelWrapperBase):
-    """A post api model wrapper compatible with openai dalle"""
+    """A post api model wrapper compatible with openai dall_e"""
 
     model_type: str = "post_api_dall_e"
 

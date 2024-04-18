@@ -32,7 +32,7 @@ agentscope.init(model_configs=MODEL_CONFIG_OR_PATH)
 model_configs = [
     {
         "config_name": "gpt-4-temperature-0.0",
-        "model_type": "openai",
+        "model_type": "openai_chat",
         "model_name": "gpt-4",
         "api_key": "xxx",
         "organization": "xxx",
@@ -65,7 +65,7 @@ AgentScope中，模型配置是一个字典，用于指定模型的类型以及�
 {
     # 基础参数
     "config_name": "gpt-4-temperature-0.0",     # 模型配置名称
-    "model_type": "openai",                     # 对应`ModelWrapper`类型
+    "model_type": "openai_chat",                # 对应`ModelWrapper`类型
 
     # 详细参数
     # ...
@@ -83,7 +83,7 @@ AgentScope中，模型配置是一个字典，用于指定模型的类型以及�
 class OpenAIChatWrapper(OpenAIWrapper):
     """The model wrapper for OpenAI's chat API."""
 
-    model_type: str = "openai"
+    model_type: str = "openai_chat"
     # ...
 ```
 
@@ -92,7 +92,7 @@ API如下：
 
 | API                    | Task            | Model Wrapper                                                                                                                   | `model_type`                  | Some Supported Models                            |
 |------------------------|-----------------|---------------------------------------------------------------------------------------------------------------------------------|-------------------------------|--------------------------------------------------|
-| OpenAI API             | Chat            | [`OpenAIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)                 | `"openai"`                    | gpt-4, gpt-3.5-turbo, ...                        |
+| OpenAI API             | Chat            | [`OpenAIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)                 | `"openai_chat"`                    | gpt-4, gpt-3.5-turbo, ...                        |
 |                        | Embedding       | [`OpenAIEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)            | `"openai_embedding"`          | text-embedding-ada-002, ...                      |
 |                        | DALL·E          | [`OpenAIDALLEWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)                | `"openai_dall_e"`             | dall-e-2, dall-e-3                               |
 | DashScope API          | Chat            | [`DashScopeChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py)           | `"dashscope_chat"`            | qwen-plus, qwen-max, ...                         |
@@ -118,9 +118,9 @@ API如下：
 <summary>OpenAI Chat API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py">agents.models.OpenAIChatWrapper</a></code>)</summary>
 
 ```python
-openai_chat_config = {
+{
     "config_name": "{your_config_name}",
-    "model_type": "openai",
+    "model_type": "openai_chat",
 
     # 必要参数
     "model_name": "gpt-4",
@@ -293,7 +293,7 @@ openai_chat_config = {
     "model_type": "gemini_chat",
 
     # 必要参数
-    "model_name": "{model_name}",               # Gemini Chat API中的模型名，例如：gemini-prp
+    "model_name": "{model_name}",               # Gemini Chat API中的模型名，例如：gemini-pro
 
     # 可选参数
     "api_key": "{your_api_key}",                # 如果没有提供，将从环境变量GEMINI_API_KEY中读取
@@ -311,7 +311,7 @@ openai_chat_config = {
     "model_type": "gemini_embedding",
 
     # 必要参数
-    "model_name": "{model_name}",               # Gemini Embedding API中的模型名，例如：gemini-prp
+    "model_name": "{model_name}",               # Gemini Embedding API中的模型名，例如：models/embedding-001
 
     # 可选参数
     "api_key": "{your_api_key}",                # 如果没有提供，将从环境变量GEMINI_API_KEY中读取

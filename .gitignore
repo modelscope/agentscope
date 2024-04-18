@@ -137,4 +137,6 @@ dmypy.json
 docs/sphinx_doc/build/
 
 # Used to save loggings and files
-runs/
+*runs/
+agentscope.db
+tmp*.json

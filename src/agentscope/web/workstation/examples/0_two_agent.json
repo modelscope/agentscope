@@ -1,0 +1,96 @@
+{
+  "4": {
+    "name": "dashscope_chat",
+    "data": {
+      "args": {
+        "config_name": "qwen",
+        "model_name": "qwen-max",
+        "api_key": "************",
+        "temperature": 0.1,
+        "seed": 1,
+        "model_type": "dashscope_chat",
+        "messages_key": "input"
+      }
+    },
+    "inputs": {},
+    "outputs": {}
+  },
+  "5": {
+    "name": "Message",
+    "data": {
+      "args": {
+        "name": "Host",
+        "content": "Hello",
+        "url": ""
+      }
+    },
+    "inputs": {
+      "input_1": {
+        "connections": []
+      }
+    },
+    "outputs": {
+      "output_1": {
+        "connections": [
+          {
+            "node": "7",
+            "output": "input_1"
+          }
+        ]
+      }
+    }
+  },
+  "6": {
+    "name": "UserAgent",
+    "data": {
+      "args": {
+        "name": "User"
+      }
+    },
+    "inputs": {
+      "input_1": {
+        "connections": [
+          {
+            "node": "7",
+            "input": "output_1"
+          }
+        ]
+      }
+    },
+    "outputs": {
+      "output_1": {
+        "connections": []
+      }
+    }
+  },
+  "7": {
+    "name": "DialogAgent",
+    "data": {
+      "args": {
+        "name": "Alice",
+        "sys_prompt": "You are Alice.",
+        "model_config_name": "qwen"
+      }
+    },
+    "inputs": {
+      "input_1": {
+        "connections": [
+          {
+            "node": "5",
+            "input": "output_1"
+          }
+        ]
+      }
+    },
+    "outputs": {
+      "output_1": {
+        "connections": [
+          {
+            "node": "6",
+            "output": "input_1"
+          }
+        ]
+      }
+    }
+  }
+}
