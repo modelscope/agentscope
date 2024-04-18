@@ -36,11 +36,13 @@ def main() -> None:
         agent_configs = json.load(f)
     tutorial_agent = LlamaIndexAgent(**agent_configs[0]["args"])
     code_explain_agent = LlamaIndexAgent(**agent_configs[1]["args"])
-    agent_configs[2]["args"].pop("description")
-    summarize_agent = DialogAgent(**agent_configs[2]["args"])
+    api_agent = LlamaIndexAgent(**agent_configs[2]["args"])
+    agent_configs[3]["args"].pop("description")
+    summarize_agent = DialogAgent(**agent_configs[3]["args"])
     rag_agents = [
         tutorial_agent,
         code_explain_agent,
+        api_agent,
     ]
     rag_agent_names = [agent.name for agent in rag_agents]
     summarize_agents = [summarize_agent]
