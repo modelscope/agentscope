@@ -400,7 +400,7 @@ class ForLoopPipelineNode(WorkflowNode):
     """
     A node representing a for-loop structure in a workflow.
 
-    ForLoopPipelineNode allows the execution of a node node multiple times,
+    ForLoopPipelineNode allows the execution of a pipeline node multiple times,
     iterating over a given set of inputs or a specified range.
     """
 
@@ -416,7 +416,7 @@ class ForLoopPipelineNode(WorkflowNode):
         super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
         assert (
             len(self.dep_opts) == 1
-        ), "ForLoopPipelineNode can only contain one Pipeline Node."
+        ), "ForLoopPipelineNode can only contain one PipelineNode."
         self.pipeline = ForLoopPipeline(
             loop_body_operators=self.dep_opts[0],
             **self.opt_kwargs,
@@ -457,7 +457,7 @@ class WhileLoopPipelineNode(WorkflowNode):
         super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
         assert (
             len(self.dep_opts) == 1
-        ), "WhileLoopPipelineNode can only contain one Pipeline Node."
+        ), "WhileLoopPipelineNode can only contain one PipelineNode."
         self.pipeline = WhileLoopPipeline(
             loop_body_operators=self.dep_opts[0],
             **self.opt_kwargs,
@@ -498,7 +498,7 @@ class IfElsePipelineNode(WorkflowNode):
         super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
         assert (
             0 < len(self.dep_opts) <= 2
-        ), "IfElsePipelineNode must contain one or two Pipeline Node."
+        ), "IfElsePipelineNode must contain one or two PipelineNode."
         if len(self.dep_opts) == 1:
             self.pipeline = IfElsePipeline(
                 if_body_operators=self.dep_opts[0],
@@ -554,7 +554,7 @@ class SwitchPipelineNode(WorkflowNode):
     ) -> None:
         super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
         assert 0 < len(self.dep_opts), (
-            "SwitchPipelineNode must contain at least " "one Pipeline Node."
+            "SwitchPipelineNode must contain at least " "one PipelineNode."
         )
         case_operators = {}
         self.case_operators_var = {}
@@ -569,7 +569,7 @@ class SwitchPipelineNode(WorkflowNode):
             self.default_var_name = self.dep_vars.pop(-1)
         else:
             raise ValueError(
-                f"SwitchPipelineNode node {self.dep_opts} not matches "
+                f"SwitchPipelineNode deps {self.dep_opts} not matches "
                 f"cases {self.opt_kwargs['cases']}.",
             )
 
@@ -626,7 +626,7 @@ class CopyNode(WorkflowNode):
         dep_opts: list,
     ) -> None:
         super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
-        assert len(self.dep_opts) == 1, "Copy Node can only have one parent!"
+        assert len(self.dep_opts) == 1, "CopyNode can only have one parent!"
         self.pipeline = self.dep_opts[0]
 
     def __call__(self, x: dict = None) -> dict:
@@ -697,7 +697,7 @@ def get_all_agents(
             nested_agents = get_all_agents(
                 participant,
                 seen_agents,
-                return_var,
+                return_var=return_var,
             )
             all_agents.extend(nested_agents)
         else:
