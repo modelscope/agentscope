@@ -5,7 +5,7 @@ import json
 import os
 
 from loguru import logger
-from agentscope.web.workstation.workflow_utils import build_dag
+from agentscope.web.workstation.workflow_dag import build_dag
 
 
 def load_config(config_path: str) -> dict:
