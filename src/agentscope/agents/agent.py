@@ -41,7 +41,7 @@ class _AgentMeta(ABCMeta):
                 "Please only use keywords arguments to initialize your agents."
                 "\ne.g.\nagent = YourAgentClass(name='agent_name', ...)",
             )
-        if "to_dist" in kwargs:
+        if "to_dist" in kwargs and kwargs["to_dist"] is True:
             from .rpc_agent import RpcAgent
 
             kwargs.pop("to_dist")

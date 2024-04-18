@@ -2,7 +2,7 @@
 
 > **WARNING:**
 > **This example will consume a huge amount of tokens.**
-> **Please do not use model API that requires payment.**
+> **Using paid model API with this example can introduce a high cost.**
 > **Users with powerful GPUs (A800 or better) can use local inference services (such as vLLM) to run this example,**
 > **while CPU inference services such as ollama is not recommended.**
 
@@ -63,6 +63,7 @@ Before running the script, please set `base_port`, `host_name` and `moderator_nu
 After setting the above values correctly, you can use the script to start multiple agent server on your machine. The following command will start 10 agent servers on your machine with port numbers starting from `base_port` to `base_port + 9`, and will also start `moderator_num` agent servers for moderators with port numbers starting from `base_port + 10` to `base_port + moderator_num + 9`.
 
 ```shell
+#./start_all_server.sh <number_of_server_per_host>
 ./start_all_server.sh 10
 ```
 
@@ -79,9 +80,10 @@ Before running the script, please set the following setting correctly:
 - `agent_type`: `random` or `llm`. Please use `random` if you don't have local inference service.
 - `max_value`: The upper bound of numbers generated in the game.
 
-The command below will run a simulation with 1000 participant agents and evenly distributed those agents to all agent servers started in Step 2.
+The command below will run a simulation with 1000 participant agents and evenly distributed those agents to the 10 agent servers started in Step 2.
 
 ```shell
+#./run_simulation.sh <number_of_server_per_host> <total_number_of_participant>
 ./run_simulation.sh 10 1000
 ```
 
