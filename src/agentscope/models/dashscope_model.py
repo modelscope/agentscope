@@ -267,7 +267,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         # Parse all information into a list of messages
         input_msgs = []
         for _ in args:
-            if not _:
+            if _ is None:
                 continue
             if isinstance(_, MessageBase):
                 input_msgs.append(_)
@@ -756,7 +756,7 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
         # Parse all information into a list of messages
         input_msgs = []
         for _ in args:
-            if not _:
+            if _ is None:
                 continue
             if isinstance(_, MessageBase):
                 input_msgs.append(_)
