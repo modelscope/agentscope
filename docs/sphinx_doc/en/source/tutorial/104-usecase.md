@@ -263,7 +263,7 @@ With the game logic and agents set up, you're ready to run the Werewolf game. By
 
 ```bash
 cd examples/game_werewolf
-python main.py  # Assuming the pipeline is implemented in main.py
+python main.py  # Assuming the node is implemented in main.py
 ```
 
 As the game starts, you'll see output in the terminal, similar to the logs below, which illustrate how the game unfolds:

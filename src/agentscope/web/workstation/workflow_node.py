@@ -10,7 +10,6 @@ from agentscope.agents import (
     UserAgent,
     TextToImageAgent,
     DictDialogAgent,
-    AgentBase,
 )
 from agentscope.message import Msg
 from agentscope.models import read_model_configs
@@ -20,7 +19,6 @@ from agentscope.pipelines import (
     WhileLoopPipeline,
     IfElsePipeline,
     SwitchPipeline,
-    PipelineBase,
 )
 from agentscope.pipelines.functional import placeholder
 from agentscope.web.workstation.workflow_utils import (
@@ -30,41 +28,6 @@ from agentscope.web.workstation.workflow_utils import (
 )
 
 DEFAULT_FLOW_VAR = "flow"
-
-
-def get_all_agents(
-    pipeline: PipelineBase,
-    seen_agents: Optional[set] = None,
-) -> List:
-    """
-    Retrieve all unique agent objects from a pipeline.
-
-    Recursively traverses the pipeline to collect all distinct agent-based
-    participants. Prevents duplication by tracking already seen agents.
-
-    Args:
-        pipeline (PipelineBase): The pipeline from which to extract agents.
-        seen_agents (set, optional): A set of agents that have already been
-            seen to avoid duplication. Defaults to None.
-
-    Returns:
-        list: A list of unique agent objects found in the pipeline.
-    """
-    if seen_agents is None:
-        seen_agents = set()
-
-    all_agents = []
-
-    for participant in pipeline.participants:
-        if isinstance(participant, AgentBase):
-            if participant not in seen_agents:
-                all_agents.append(participant)
-                seen_agents.add(participant)
-        elif isinstance(participant, PipelineBase):
-            nested_agents = get_all_agents(participant, seen_agents)
-            all_agents.extend(nested_agents)
-
-    return all_agents
 
 
 class WorkflowNodeType(IntEnum):
@@ -130,7 +93,7 @@ class ModelNode(WorkflowNode):
     A node that represents a model in a workflow.
 
     The ModelNode can be used to load and execute a model as part of the
-    workflow pipeline. It initializes model configurations and performs
+    workflow node. It initializes model configurations and performs
     model-related operations when called.
     """
 
@@ -183,29 +146,6 @@ class MsgNode(WorkflowNode):
             "inits": f"{DEFAULT_FLOW_VAR} = Msg"
             f"({kwarg_converter(self.opt_kwargs)})",
             "execs": "",
-        }
-
-
-class PlaceHolderNode(WorkflowNode):
-    """
-    A placeholder node within a workflow.
-
-    This node acts as a placeholder and can be used to pass through information
-    or data without performing any significant operation.
-    """
-
-    node_type = WorkflowNodeType.PIPELINE
-
-    def __call__(self, x: dict = None) -> dict:
-        return placeholder(x)
-
-    def compile(self) -> dict:
-        return {
-            "imports": "from agentscope.pipelines.functional import "
-            "placeholder",
-            "inits": f"{self.var_name} = placeholder",
-            "execs": f"{DEFAULT_FLOW_VAR} = {self.var_name}"
-            f"({DEFAULT_FLOW_VAR})",
         }
 
 
@@ -334,7 +274,7 @@ class MsgHubNode(WorkflowNode):
     A node that serves as a messaging hub within a workflow.
 
     MsgHubNode is responsible for broadcasting announcements to participants
-    and managing the flow of messages within a workflow's pipeline.
+    and managing the flow of messages within a workflow's node.
     """
 
     node_type = WorkflowNodeType.PIPELINE
@@ -352,20 +292,18 @@ class MsgHubNode(WorkflowNode):
             content=self.opt_kwargs["announcement"].get("content", "Welcome!"),
             role="system",
         )
-        assert (
-            isinstance(self.dep_opts, list)
-            and len(self.dep_opts) == 1
-            and hasattr(
-                self.dep_opts[0],
-                "pipeline",
-            )
+        assert len(self.dep_opts) == 1 and hasattr(
+            self.dep_opts[0],
+            "pipeline",
         ), (
             "MsgHub members must be a list of length 1, with the first "
             "element being an instance of PipelineBaseNode"
         )
 
-        self.pipeline = self.dep_opts[0].pipeline
+        self.pipeline = self.dep_opts[0]
         self.participants = get_all_agents(self.pipeline)
+        self.participants_var = get_all_agents(self.pipeline, return_var=True)
+        print(self.participants_var)
 
     def __call__(self, x: dict = None) -> dict:
         with msghub(self.participants, announcement=self.announcement):
@@ -380,7 +318,8 @@ class MsgHubNode(WorkflowNode):
             f'{self.opt_kwargs["announcement"].get("content", "Host")}"'
             f', role="system")'
         )
-        execs = f"""with msghub([], announcement={announcement}):
+        execs = f"""with msghub({deps_converter(self.participants_var)},
+        announcement={announcement}):
         {DEFAULT_FLOW_VAR} = {self.dep_vars[0]}({DEFAULT_FLOW_VAR})
         """
         return {
@@ -391,9 +330,42 @@ class MsgHubNode(WorkflowNode):
         }
 
 
+class PlaceHolderNode(WorkflowNode):
+    """
+    A placeholder node within a workflow.
+
+    This node acts as a placeholder and can be used to pass through information
+    or data without performing any significant operation.
+    """
+
+    node_type = WorkflowNodeType.PIPELINE
+
+    def __init__(
+        self,
+        node_id: str,
+        opt_kwargs: dict,
+        source_kwargs: dict,
+        dep_opts: list,
+    ) -> None:
+        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+        self.pipeline = placeholder
+
+    def __call__(self, x: dict = None) -> dict:
+        return self.pipeline(x)
+
+    def compile(self) -> dict:
+        return {
+            "imports": "from agentscope.pipelines.functional import "
+            "placeholder",
+            "inits": f"{self.var_name} = placeholder",
+            "execs": f"{DEFAULT_FLOW_VAR} = {self.var_name}"
+            f"({DEFAULT_FLOW_VAR})",
+        }
+
+
 class SequentialPipelineNode(WorkflowNode):
     """
-    A node representing a sequential pipeline within a workflow.
+    A node representing a sequential node within a workflow.
 
     SequentialPipelineNode executes a series of operators or nodes in a
     sequence, where the output of one node is the input to the next.
@@ -428,7 +400,7 @@ class ForLoopPipelineNode(WorkflowNode):
     """
     A node representing a for-loop structure in a workflow.
 
-    ForLoopPipelineNode allows the execution of a pipeline node multiple times,
+    ForLoopPipelineNode allows the execution of a node node multiple times,
     iterating over a given set of inputs or a specified range.
     """
 
@@ -469,7 +441,7 @@ class WhileLoopPipelineNode(WorkflowNode):
     """
     A node representing a while-loop structure in a workflow.
 
-    WhileLoopPipelineNode enables conditional repeated execution of a pipeline
+    WhileLoopPipelineNode enables conditional repeated execution of a node
     node based on a specified condition.
     """
 
@@ -510,7 +482,7 @@ class IfElsePipelineNode(WorkflowNode):
     """
     A node representing an if-else conditional structure in a workflow.
 
-    IfElsePipelineNode directs the flow of execution to different pipeline
+    IfElsePipelineNode directs the flow of execution to different node
     nodes based on a specified condition.
     """
 
@@ -567,7 +539,7 @@ class SwitchPipelineNode(WorkflowNode):
     """
     A node representing a switch-case structure within a workflow.
 
-    SwitchPipelineNode routes the execution to different pipeline nodes
+    SwitchPipelineNode routes the execution to different node nodes
     based on the evaluation of a specified key or condition.
     """
 
@@ -606,7 +578,7 @@ class SwitchPipelineNode(WorkflowNode):
             self.dep_opts,
             self.dep_vars,
         ):
-            case_operators[key] = value
+            case_operators[key] = value.pipeline
             self.case_operators_var[key] = var
         self.opt_kwargs.pop("cases")
         self.source_kwargs.pop("cases")
@@ -669,7 +641,6 @@ class CopyNode(WorkflowNode):
         }
 
 
-# TODO: remove this mapping
 NODE_NAME_MAPPING = {
     "dashscope_chat": ModelNode,
     "openai_chat": ModelNode,
@@ -688,3 +659,48 @@ NODE_NAME_MAPPING = {
     "SwitchPipeline": SwitchPipelineNode,
     "CopyNode": CopyNode,
 }
+
+
+def get_all_agents(
+    node: WorkflowNode,
+    seen_agents: Optional[set] = None,
+    return_var: bool = False,
+) -> List:
+    """
+    Retrieve all unique agent objects from a pipeline.
+
+    Recursively traverses the pipeline to collect all distinct agent-based
+    participants. Prevents duplication by tracking already seen agents.
+
+    Args:
+        node (WorkflowNode): The WorkflowNode from which to extract agents.
+        seen_agents (set, optional): A set of agents that have already been
+            seen to avoid duplication. Defaults to None.
+
+    Returns:
+        list: A list of unique agent objects found in the pipeline.
+    """
+    if seen_agents is None:
+        seen_agents = set()
+
+    all_agents = []
+
+    for participant in node.pipeline.participants:
+        if participant.node_type == WorkflowNodeType.AGENT:
+            if participant not in seen_agents:
+                if return_var:
+                    all_agents.append(participant.var_name)
+                else:
+                    all_agents.append(participant.pipeline)
+                seen_agents.add(participant.pipeline)
+        elif participant.node_type == WorkflowNodeType.PIPELINE:
+            nested_agents = get_all_agents(
+                participant,
+                seen_agents,
+                return_var,
+            )
+            all_agents.extend(nested_agents)
+        else:
+            raise TypeError(type(participant))
+
+    return all_agents

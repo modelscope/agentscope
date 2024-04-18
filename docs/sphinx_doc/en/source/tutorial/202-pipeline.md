@@ -18,14 +18,14 @@ class PipelineBase(Operator):
     # ... [code omitted for brevity]
     @abstractmethod
     def __call__(self, x: Optional[dict] = None) -> dict:
-        """Define the actions taken by this pipeline.
+        """Define the actions taken by this node.
 
         Args:
             x (Optional[`dict`], optional):
                 Dialog history and some environmental information
 
         Returns:
-            `dict`: The pipeline's response to the input.
+            `dict`: The node's response to the input.
         """
 ```
 
@@ -217,13 +217,13 @@ It's worth noting that AgentScope supports the combination of pipelines to creat
 
 ```python
 from agentscope.pipelines import SequentialPipeline, IfElsePipeline
-# Create a pipeline that executes agents in order
+# Create a node that executes agents in order
 pipe1 = SequentialPipeline([agent1, agent2, agent3])
-# Create a pipeline that executes agents in ifElsePipeline
+# Create a node that executes agents in ifElsePipeline
 pipe2 = IfElsePipeline(condition, agent4, agent5)
-# Create a pipeline that executes pipe1 and pipe2 in order
+# Create a node that executes pipe1 and pipe2 in order
 pipe3 = SequentialPipeline([pipe1, pipe2])
-# Invoke the pipeline
+# Invoke the node
 x = pipe3(x)
 ```
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Unit tests for pipeline classes and functions
+Unit tests for node classes and functions
 """
 
 import unittest

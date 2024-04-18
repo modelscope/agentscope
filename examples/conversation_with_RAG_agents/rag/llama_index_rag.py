@@ -42,7 +42,7 @@ from agentscope.models import ModelWrapperBase
 class _EmbeddingModel(BaseEmbedding):
     """
     wrapper for ModelWrapperBase to an embedding model can be used
-    in Llama Index pipeline.
+    in Llama Index node.
     """
 
     _emb_model_wrapper: ModelWrapperBase = PrivateAttr()
@@ -232,7 +232,7 @@ class LlamaIndexRAG(RAGBase):
         2) generate embedding,
         3) store the embedding-content to vdb
         """
-        # build and run preprocessing pipeline
+        # build and run preprocessing node
         if transformations is None:
             transformations = [
                 SentenceSplitter(
