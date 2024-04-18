@@ -43,7 +43,7 @@ Note:
                 "model_type": "post_api",
                 "api_url": "{api_url}",
                 "headers": {"Authorization": "Bearer {API_TOKEN}"},
-                "max_length": {max_length_of_model},
+                "max_new_tokens": {max_new_tokens_of_model},
                 "timeout": {timeout},
                 "max_retries": {max_retries},
                 "generate_args": {

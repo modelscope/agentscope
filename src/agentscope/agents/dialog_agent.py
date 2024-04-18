@@ -8,7 +8,6 @@ from ..message import Msg
 from .agent import AgentBase
 from ..prompt import PromptType
 
-
 class DialogAgent(AgentBase):
     """A simple agent used to perform a dialogue. Your can set its role by
     `sys_prompt`."""
@@ -96,3 +95,5 @@ class DialogAgent(AgentBase):
             self.memory.add(msg)
 
         return msg
+    
+    
