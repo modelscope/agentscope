@@ -206,6 +206,7 @@ class MsgHubNode(WorkflowNode):
             content=kwargs["announcement"].get("content", "Welcome!"),
             role="system",
         )
+        self.kwargs = kwargs
         assert (
             isinstance(deps, list)
             and len(deps) == 1
@@ -219,6 +220,7 @@ class MsgHubNode(WorkflowNode):
         )
 
         self.pipeline = deps[0].pipeline
+        print(deps[0], deps[0].pipeline)
         self.participants = get_all_agents(self.pipeline)
 
     def __call__(self, x: dict = None) -> dict:
@@ -230,12 +232,19 @@ class MsgHubNode(WorkflowNode):
         """
         Compile SequentialPipelineNode to python executable code dict
         """
+        announcement = (
+            f'Msg(name="{self.kwargs["announcement"].get("name", "Host")}", '
+            f'content="{self.kwargs["announcement"].get("content", "Host")}"'
+            f', role="system")'
+        )
+        execs = f"""with msghub([], announcement={announcement}):
+        x = {self.dep_vars[0]}(x)
+        """
         return {
-            "imports": "from agentscope.msghub import msghub",
+            "imports": "from agentscope.msghub import msghub\n"
+            "from agentscope.message import Msg",
             "inits": "",
-            "execs": f"""with msghub(self.participants,
-            announcement=self.announcement):\n        x = {1}(x)
-            """,
+            "execs": execs,
         }
 
 
