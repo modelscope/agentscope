@@ -87,7 +87,7 @@ The command below will run a simulation with 1000 participant agents and evenly 
 ./run_simulation.sh 10 1000
 ```
 
-The following is sample output from a single-machine simulation scenario:
+The following is sample output from a single-machine (16 CPU cores) simulation scenario:
 
 ```log
 2024-04-16 10:31:53.786 | INFO     | agentscope.models:read_model_configs:178 - Load configs for model wrapper: model_1, model_2, model_3, model_4, model_5, model_6, model_7, model_8
@@ -99,3 +99,7 @@ The following is sample output from a single-machine simulation scenario:
 2024-04-16 10:31:54.211 | INFO     | __main__:run_main_process_new:163 - [init takes 0.38274645805358887 s]
 Moderator: The average value is 49.561 [takes 4.197571277618408 s]
 ```
+
+> We conduct an experiment based on this example.
+> There are 4 machines in our experiment, where each machine has 64 CPU cores and 8 A100 GPUs and a 13B model is deployed on each GPU.
+> We deploy **64,000** participant agents and 64 moderator agents evenly on each machine, and its running time is about **30s** (excluding initialization time).

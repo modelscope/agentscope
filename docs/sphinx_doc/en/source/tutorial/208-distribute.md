@@ -12,9 +12,11 @@ This tutorial will introduce the implementation and usage of AgentScope distribu
 
 ## Usage
 
-In AgentScope, the process that runs the application flow is called the "main process", and each agent can run in a separate process named "agent server process".
-According to the different relationships between the main process and the agent server process, AgentScope supports two modes for each agent: **Subprocess** and **Independent** mode.
-In the Subprocess mode, agent server processes will be automatically started from the main process, while in the Independent mode, the agent server process is independent of the main process and developers need to start the agent server process on the corresponding machine.
+In AgentScope, the process that runs the application flow is called the **main process**, and each agent can run in a separate process named **agent server process**.
+According to the different relationships between the main process and the agent server process, AgentScope supports two modes for each agent: **Child Process** and **Independent Process** mode.
+
+- In the Child Process Mode, agent server processes will be automatically started as sub-processes from the main process.
+- While in the Independent Process Mode, the agent server process is independent of the main process and developers need to start the agent server process on the corresponding machine.
 
 The above concepts may seem complex, but don't worry, for application developers, you only need to convert your existing agent to its distributed version.
 
@@ -38,12 +40,12 @@ b = AgentB(
 
 Next we will introduce the conversion details of both modes.
 
-#### Subprocess Mode
+#### Child Process Mode
 
 To use this mode, you only need to call each agent's `to_dist()` method without any input parameter. AgentScope will automatically start all agent server processes from the main process.
 
 ```python
-# Subprocess mode
+# Child Process mode
 a = AgentA(
     name="A"
     # ...
@@ -54,9 +56,9 @@ b = AgentB(
 ).to_dist()
 ```
 
-#### Independent Mode
+#### Independent Process Mode
 
-In the Independent mode, we need to start the agent server process on the target machine first.
+In the Independent Process Mode, we need to start the agent server process on the target machine first.
 For example, start two agent server processes on the two different machines with IP `ip_a` and `ip_b`(called `Machine1` and `Machine2` accrodingly).
 You can run the following code on `Machine1`:
 
@@ -122,10 +124,10 @@ And developers just need to write the application flow in a centralized way in t
 
 All examples described above convert initialized agents into their distributed version through the `to_dist()` method, which is equivalent to initialize the agent twice. For agents whose initialization process is time-consuming, the `to_dist` method is inefficient. Therefore, AgentScope also provides a method to convert the Agent instance into its distributed version while initializing it, that is, passing in `to_dist=True` and other necessary parameters when the original agent instance is initialized.
 
-In Subprocess mode, the initialization of distribtued agent can be simplified to the following code:
+In Child Process Mode, the initialization of distribtued agent can be simplified to the following code:
 
 ```python
-# Subprocess mode
+# Child Process mode
 a = AgentA(
     name="A",
     # ...
@@ -138,7 +140,7 @@ b = AgentB(
 )
 ```
 
-In Independent mode, it is as follows:
+In Independent Process Mode, it is as follows:
 
 ```python
 a = AgentA(
@@ -188,8 +190,8 @@ while x is None or x.content == "exit":
 ```
 
 - Agents are deployed in a distributed manner
-  - `AgentA` in Subprocess mode
-  - `AgentB` in Independent mode
+  - `AgentA` in Child Process mode
+  - `AgentB` in Independent Process Mode
 
 ```python
 # Create agent objects

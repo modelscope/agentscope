@@ -36,14 +36,15 @@ class _AgentMeta(ABCMeta):
         super().__init__(name, bases, attrs)
 
     def __call__(cls, *args: tuple, **kwargs: dict) -> Any:
-        if len(args) > 0:
-            logger.warning(
-                "Please only use keywords arguments to initialize your agents."
-                "\ne.g.\nagent = YourAgentClass(name='agent_name', ...)",
-            )
         if "to_dist" in kwargs and kwargs["to_dist"] is True:
             from .rpc_agent import RpcAgent
 
+            if len(args) > 0:
+                logger.warning(
+                    "Please only use keywords arguments to init your agents."
+                    "\ne.g.\nagent = YourAgentClass(name='agent_name', ...)",
+                    "",
+                )
             kwargs.pop("to_dist")
             if cls is not RpcAgent and not issubclass(cls, RpcAgent):
                 return RpcAgent(
