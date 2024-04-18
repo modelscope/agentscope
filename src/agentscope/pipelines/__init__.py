@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""" Import all node related modules in the package. """
+""" Import all pipeline related modules in the package. """
 from .pipeline import (
     PipelineBase,
     IfElsePipeline,

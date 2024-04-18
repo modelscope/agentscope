@@ -264,7 +264,7 @@ for i in range(1, MAX_GAME_ROUND + 1):
 
 ```bash
 cd examples/game_werewolf
-python main.py  # Assuming the node is implemented in main.py
+python main.py  # Assuming the pipeline is implemented in main.py
 ```
 
 游戏开始后，你将在终端看到类似于下面的日志输出。这些日志展示了游戏是如何展开的：

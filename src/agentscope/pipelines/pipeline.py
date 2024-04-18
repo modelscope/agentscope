@@ -23,7 +23,7 @@ from ..agents.operator import Operator
 class PipelineBase(Operator):
     r"""Base interface of all pipelines.
 
-    The node is a special kind of operator that includes
+    The pipeline is a special kind of operator that includes
     multiple operators and the interaction logic among them.
     """
 
@@ -32,19 +32,19 @@ class PipelineBase(Operator):
 
     @abstractmethod
     def __call__(self, x: Optional[dict] = None) -> dict:
-        """Define the actions taken by this node.
+        """Define the actions taken by this pipeline.
 
         Args:
             x (Optional[`dict`], optional):
                 Dialog history and some environment information
 
         Returns:
-            `dict`: The node's response to the input.
+            `dict`: The pipeline's response to the input.
         """
 
 
 class IfElsePipeline(PipelineBase):
-    r"""A template node for implementing control flow like if-else.
+    r"""A template pipeline for implementing control flow like if-else.
 
     IfElsePipeline(condition_func, if_body_operators, else_body_operators)
     represents the following workflow::
@@ -88,7 +88,7 @@ class IfElsePipeline(PipelineBase):
 
 
 class SwitchPipeline(PipelineBase):
-    r"""A template node for implementing control flow like switch-case.
+    r"""A template pipeline for implementing control flow like switch-case.
 
     SwitchPipeline(condition_func, case_operators, default_operators)
     represents the following workflow::
@@ -137,7 +137,7 @@ class SwitchPipeline(PipelineBase):
 
 
 class ForLoopPipeline(PipelineBase):
-    r"""A template node for implementing control flow like for-loop
+    r"""A template pipeline for implementing control flow like for-loop
 
     ForLoopPipeline(loop_body_operators, max_loop) represents the following
     workflow::
@@ -187,7 +187,7 @@ class ForLoopPipeline(PipelineBase):
 
 
 class WhileLoopPipeline(PipelineBase):
-    r"""A template node for implementing control flow like while-loop
+    r"""A template pipeline for implementing control flow like while-loop
 
     WhileLoopPipeline(loop_body_operators, condition_operator, condition_func)
     represents the following workflow::
@@ -227,7 +227,7 @@ class WhileLoopPipeline(PipelineBase):
 
 
 class SequentialPipeline(PipelineBase):
-    r"""A template node for implementing sequential logic.
+    r"""A template pipeline for implementing sequential logic.
 
     Sequential(operators) represents the following workflow::
 
@@ -238,7 +238,7 @@ class SequentialPipeline(PipelineBase):
     """
 
     def __init__(self, operators: Sequence[Operator]) -> None:
-        r"""Initialize a Sequential node.
+        r"""Initialize a Sequential pipeline.
 
         Args:
             operators (`Sequence[Operator]`):

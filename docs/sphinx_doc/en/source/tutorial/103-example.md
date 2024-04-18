@@ -97,7 +97,7 @@ For a more advanced approach, AgentScope offers the option of using pipelines to
 ```python
 from agentscope.pipelines.functional import sequentialpipeline
 
-# Execute the conversation loop within a node structure
+# Execute the conversation loop within a pipeline structure
 x = None
 while x is None or x.content != "exit":
   x = sequentialpipeline([dialog_agent, user_agent])
