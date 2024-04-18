@@ -11,6 +11,8 @@ This example is a large scale simulation to demonstrate the scalability of Agent
 - How to run a large number of agent servers in a GPU cluster.
 - How to connect to those agent servers and run a huge number of agents in them.
 
+> Based on this example, we deploy 64,000 agents evenly on 4 machines, and each machine has 64 CPU cores and 8 A100 GPUs. The running time is about 30s (excluding initialization time).
+
 ## Background
 
 This example simulates the following scenario:
@@ -99,7 +101,3 @@ The following is sample output from a single-machine (16 CPU cores) simulation s
 2024-04-16 10:31:54.211 | INFO     | __main__:run_main_process_new:163 - [init takes 0.38274645805358887 s]
 Moderator: The average value is 49.561 [takes 4.197571277618408 s]
 ```
-
-> We conduct an experiment based on this example.
-> There are 4 machines in our experiment, where each machine has 64 CPU cores and 8 A100 GPUs and a 13B model is deployed on each GPU.
-> We deploy **64,000** participant agents and 64 moderator agents evenly on each machine, and its running time is about **30s** (excluding initialization time).
