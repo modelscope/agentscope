@@ -13,7 +13,7 @@ capability can be used to build easily.
 * **Cloning repo:** This example requires cloning the whole AgentScope repo to local.
 * **Packages:** This example is built on the LlamaIndex package. Thus, some packages need to be installed before running the example.
     ```bash
-    pip install llama-index llama-hub tree_sitter tree-sitter-languages
+    pip install llama-index llama-index-readers-docstring-walker tree_sitter tree-sitter-languages
     ```
 * **Model APIs:** This example uses Dashscope APIs. Thus, we also need an API key for DashScope.
   ```bash
