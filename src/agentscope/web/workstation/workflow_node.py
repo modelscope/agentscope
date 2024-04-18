@@ -2,7 +2,7 @@
 """Workflow node opt."""
 from abc import ABC, abstractmethod
 from enum import IntEnum
-from typing import List, Any, Optional
+from typing import List, Optional
 
 from agentscope import msghub
 from agentscope.agents import (
@@ -89,22 +89,40 @@ class WorkflowNode(ABC):
 
     node_type = None
 
-    def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
-        super().__init__()
-        self.initialize(*args, **kwargs)
-
-    def initialize(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+    def __init__(
+        self,
+        node_id: str,
+        opt_kwargs: dict,
+        source_kwargs: dict,
+        dep_opts: list,
+    ) -> None:
         """
         Initialize nodes. Implement specific initialization logic in
         subclasses.
         """
+        self.node_id = node_id
+        self.opt_kwargs = opt_kwargs
+        self.source_kwargs = source_kwargs
+        self.dep_opts = dep_opts
+        self.dep_vars = [opt.var_name for opt in self.dep_opts]
+        self.var_name = f"{self.node_type.name.lower()}_{self.node_id}"
 
-    @abstractmethod
-    def __call__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+    def __call__(self, x: dict = None):  # type: ignore[no-untyped-def]
         """
         Performs the operations of the node. Implement specific logic in
         subclasses.
         """
+
+    @abstractmethod
+    def compile(self) -> dict:
+        """
+        Compile Node to python executable code dict
+        """
+        return {
+            "imports": "",
+            "inits": "",
+            "execs": "",
+        }
 
 
 class ModelNode(WorkflowNode):
@@ -118,20 +136,23 @@ class ModelNode(WorkflowNode):
 
     node_type = WorkflowNodeType.MODEL
 
-    def initialize(self, **kwargs):  # type: ignore[no-untyped-def]
-        self.kwargs = kwargs
-        read_model_configs([kwargs])
+    def __init__(
+        self,
+        node_id: str,
+        opt_kwargs: dict,
+        source_kwargs: dict,
+        dep_opts: list,
+    ) -> None:
+        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+        read_model_configs([self.opt_kwargs])
 
-    def __call__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
-        return None
-
-    def compile(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+    def compile(self) -> dict:
         """
         Compile ModelNode to python executable code dict
         """
         return {
             "imports": "from agentscope.models import read_model_configs",
-            "inits": f"read_model_configs([{self.kwargs}])",
+            "inits": f"read_model_configs([{self.opt_kwargs}])",
             "execs": "",
         }
 
@@ -146,21 +167,27 @@ class MsgNode(WorkflowNode):
 
     node_type = WorkflowNodeType.MESSAGE
 
-    def initialize(self, *args, **kwargs):  # type: ignore[no-untyped-def]
-        self.kwargs = kwargs
-        self.msg = Msg(**kwargs)
+    def __init__(
+        self,
+        node_id: str,
+        opt_kwargs: dict,
+        source_kwargs: dict,
+        dep_opts: list,
+    ) -> None:
+        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+        self.msg = Msg(**self.opt_kwargs)
 
-    def __call__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+    def __call__(self, x: dict = None) -> dict:
         return self.msg
 
-    def compile(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+    def compile(self) -> dict:
         """
         Compile ModelNode to python executable code dict
         """
         return {
             "imports": "from agentscope.message import Msg",
             "inits": f"{DEFAULT_FLOW_VAR} = Msg"
-            f"({kwarg_converter(self.kwargs)})",
+            f"({kwarg_converter(self.opt_kwargs)})",
             "execs": "",
         }
 
@@ -178,15 +205,16 @@ class PlaceHolderNode(WorkflowNode):
     def __call__(self, x: dict = None) -> dict:
         return placeholder(x)
 
-    def compile(self, var):  # type: ignore[no-untyped-def]
+    def compile(self) -> dict:
         """
         Compile PlaceHolderNode to python executable code dict
         """
         return {
             "imports": "from agentscope.pipelines.functional import "
             "placeholder",
-            "inits": f"{var} = placeholder",
-            "execs": f"{DEFAULT_FLOW_VAR} = {var}({DEFAULT_FLOW_VAR})",
+            "inits": f"{self.var_name} = placeholder",
+            "execs": f"{DEFAULT_FLOW_VAR} = {self.var_name}"
+            f"({DEFAULT_FLOW_VAR})",
         }
 
 
@@ -200,26 +228,24 @@ class MsgHubNode(WorkflowNode):
 
     node_type = WorkflowNodeType.PIPELINE
 
-    def initialize(  # type: ignore[no-untyped-def]
+    def __init__(
         self,
-        deps: List,
-        source: dict,
-        **kwargs,
+        node_id: str,
+        opt_kwargs: dict,
+        source_kwargs: dict,
+        dep_opts: list,
     ) -> None:
-        self.source = source
-        self.dep_vars = [x[1] for x in deps]
-        deps = [x[0] for x in deps]
+        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
         self.announcement = Msg(
-            name=kwargs["announcement"].get("name", "Host"),
-            content=kwargs["announcement"].get("content", "Welcome!"),
+            name=self.opt_kwargs["announcement"].get("name", "Host"),
+            content=self.opt_kwargs["announcement"].get("content", "Welcome!"),
             role="system",
         )
-        self.kwargs = kwargs
         assert (
-            isinstance(deps, list)
-            and len(deps) == 1
+            isinstance(self.dep_opts, list)
+            and len(self.dep_opts) == 1
             and hasattr(
-                deps[0],
+                self.dep_opts[0],
                 "pipeline",
             )
         ), (
@@ -227,7 +253,7 @@ class MsgHubNode(WorkflowNode):
             "element being an instance of PipelineBaseNode"
         )
 
-        self.pipeline = deps[0].pipeline
+        self.pipeline = self.dep_opts[0].pipeline
         self.participants = get_all_agents(self.pipeline)
 
     def __call__(self, x: dict = None) -> dict:
@@ -235,13 +261,15 @@ class MsgHubNode(WorkflowNode):
             x = self.pipeline(x)
         return x
 
-    def compile(self, var: str) -> dict:
+    def compile(self) -> dict:
         """
         Compile SequentialPipelineNode to python executable code dict
         """
         announcement = (
-            f'Msg(name="{self.kwargs["announcement"].get("name", "Host")}", '
-            f'content="{self.kwargs["announcement"].get("content", "Host")}"'
+            f'Msg(name="'
+            f'{self.opt_kwargs["announcement"].get("name", "Host")}", '
+            f'content="'
+            f'{self.opt_kwargs["announcement"].get("content", "Host")}"'
             f', role="system")'
         )
         execs = f"""with msghub([], announcement={announcement}):
@@ -265,30 +293,29 @@ class SequentialPipelineNode(WorkflowNode):
 
     node_type = WorkflowNodeType.PIPELINE
 
-    def initialize(  # type: ignore[no-untyped-def]
+    def __init__(
         self,
-        deps: List,
-        source: dict,
-        **kwargs,
+        node_id: str,
+        opt_kwargs: dict,
+        source_kwargs: dict,
+        dep_opts: list,
     ) -> None:
-        self.source = source
-        self.dep_vars = [x[1] for x in deps]
-        self.deps = deps
-        deps = [x[0] for x in deps]
-        self.pipeline = SequentialPipeline(operators=deps)
+        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+        self.pipeline = SequentialPipeline(operators=self.dep_opts)
 
     def __call__(self, x: dict = None) -> dict:
         return self.pipeline(x)
 
-    def compile(self, var: str) -> dict:
+    def compile(self) -> dict:
         """
         Compile SequentialPipelineNode to python executable code dict
         """
         return {
             "imports": "from agentscope.pipelines import SequentialPipeline",
-            "inits": f"{var} = SequentialPipeline("
+            "inits": f"{self.var_name} = SequentialPipeline("
             f"{deps_converter(self.dep_vars)})",
-            "execs": f"{DEFAULT_FLOW_VAR} = {var}({DEFAULT_FLOW_VAR})",
+            "execs": f"{DEFAULT_FLOW_VAR} = {self.var_name}"
+            f"({DEFAULT_FLOW_VAR})",
         }
 
 
@@ -302,35 +329,37 @@ class ForLoopPipelineNode(WorkflowNode):
 
     node_type = WorkflowNodeType.PIPELINE
 
-    def initialize(  # type: ignore[no-untyped-def]
+    def __init__(
         self,
-        deps: List,
-        source: dict,
-        **kwargs,
+        node_id: str,
+        opt_kwargs: dict,
+        source_kwargs: dict,
+        dep_opts: list,
     ) -> None:
-        self.source = source
-        self.dep_vars = [x[1] for x in deps]
-        deps = [x[0] for x in deps]
+        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
         assert (
-            len(deps) == 1
+            len(self.dep_opts) == 1
         ), "ForLoopPipelineNode can only contain one Pipeline Node."
-        self.pipeline = ForLoopPipeline(loop_body_operators=deps[0], **kwargs)
-        self.kwargs = kwargs
+        self.pipeline = ForLoopPipeline(
+            loop_body_operators=self.dep_opts[0],
+            **self.opt_kwargs,
+        )
 
     def __call__(self, x: dict = None) -> dict:
         return self.pipeline(x)
 
-    def compile(self, var: str) -> dict:
+    def compile(self) -> dict:
         """
         Compile ForLoopPipelineNode to python executable code dict
         """
         return {
             "imports": "from agentscope.pipelines import ForLoopPipeline",
-            "inits": f"{var} = ForLoopPipeline("
+            "inits": f"{self.var_name} = ForLoopPipeline("
             f"loop_body_operators="
             f"{deps_converter(self.dep_vars)},"
-            f" {kwarg_converter(self.source)})",
-            "execs": f"{DEFAULT_FLOW_VAR} = {var}({DEFAULT_FLOW_VAR})",
+            f" {kwarg_converter(self.source_kwargs)})",
+            "execs": f"{DEFAULT_FLOW_VAR} = {self.var_name}"
+            f"({DEFAULT_FLOW_VAR})",
         }
 
 
@@ -344,38 +373,37 @@ class WhileLoopPipelineNode(WorkflowNode):
 
     node_type = WorkflowNodeType.PIPELINE
 
-    def initialize(  # type: ignore[no-untyped-def]
+    def __init__(
         self,
-        deps: List,
-        source: dict,
-        **kwargs,
+        node_id: str,
+        opt_kwargs: dict,
+        source_kwargs: dict,
+        dep_opts: list,
     ) -> None:
-        self.source = source
-        self.dep_vars = [x[1] for x in deps]
-        deps = [x[0] for x in deps]
+        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
         assert (
-            len(deps) == 1
+            len(self.dep_opts) == 1
         ), "WhileLoopPipelineNode can only contain one Pipeline Node."
         self.pipeline = WhileLoopPipeline(
-            loop_body_operators=deps[0],
-            **kwargs,
+            loop_body_operators=self.dep_opts[0],
+            **self.opt_kwargs,
         )
-        self.kwargs = kwargs
 
     def __call__(self, x: dict = None) -> dict:
         return self.pipeline(x)
 
-    def compile(self, var: str) -> dict:
+    def compile(self) -> dict:
         """
         Compile WhileLoopPipeline to python executable code dict
         """
         return {
             "imports": "from agentscope.pipelines import WhileLoopPipeline",
-            "inits": f"{var} = WhileLoopPipeline("
+            "inits": f"{self.var_name} = WhileLoopPipeline("
             f"loop_body_operators="
             f"{deps_converter(self.dep_vars)},"
-            f" {kwarg_converter(self.source)})",
-            "execs": f"{DEFAULT_FLOW_VAR} = {var}({DEFAULT_FLOW_VAR})",
+            f" {kwarg_converter(self.source_kwargs)})",
+            "execs": f"{DEFAULT_FLOW_VAR} = {self.var_name}"
+            f"({DEFAULT_FLOW_VAR})",
         }
 
 
@@ -389,47 +417,49 @@ class IfElsePipelineNode(WorkflowNode):
 
     node_type = WorkflowNodeType.PIPELINE
 
-    def initialize(  # type: ignore[no-untyped-def]
+    def __init__(
         self,
-        deps: List,
-        source: dict,
-        **kwargs,
+        node_id: str,
+        opt_kwargs: dict,
+        source_kwargs: dict,
+        dep_opts: list,
     ) -> None:
-        self.source = source
-        self.dep_vars = [x[1] for x in deps]
-        deps = [x[0] for x in deps]
+        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
         assert (
-            0 < len(deps) <= 2
+            0 < len(self.dep_opts) <= 2
         ), "IfElsePipelineNode must contain one or two Pipeline Node."
-        if len(deps) == 1:
-            self.pipeline = IfElsePipeline(if_body_operators=deps[0], **kwargs)
-        elif len(deps) == 2:
+        if len(self.dep_opts) == 1:
             self.pipeline = IfElsePipeline(
-                if_body_operators=deps[0],
-                else_body_operators=deps[1],
-                **kwargs,
+                if_body_operators=self.dep_opts[0],
+                **self.opt_kwargs,
+            )
+        elif len(self.dep_opts) == 2:
+            self.pipeline = IfElsePipeline(
+                if_body_operators=self.dep_opts[0],
+                else_body_operators=self.dep_opts[1],
+                **self.opt_kwargs,
             )
 
     def __call__(self, x: dict = None) -> dict:
         return self.pipeline(x)
 
-    def compile(self, var: str) -> dict:
+    def compile(self) -> dict:
         """
         Compile IfElsePipelineNode to python executable code dict
         """
         imports = "from agentscope.pipelines import IfElsePipeline"
-        execs = f"{DEFAULT_FLOW_VAR} = {var}({DEFAULT_FLOW_VAR})"
+        execs = f"{DEFAULT_FLOW_VAR} = {self.var_name}({DEFAULT_FLOW_VAR})"
         if len(self.dep_vars) == 1:
             return {
                 "imports": imports,
-                "inits": f"{var} = IfElsePipeline("
+                "inits": f"{self.var_name} = IfElsePipeline("
                 f"if_body_operators={self.dep_vars[0]})",
                 "execs": execs,
             }
         elif len(self.dep_vars) == 2:
             return {
                 "imports": imports,
-                "inits": f"{var} = IfElsePipeline("
+                "inits": f"{self.var_name} = IfElsePipeline("
                 f"if_body_operators={self.dep_vars[0]}, "
                 f"else_body_operators={self.dep_vars[1]})",
                 "execs": execs,
@@ -447,52 +477,53 @@ class SwitchPipelineNode(WorkflowNode):
 
     node_type = WorkflowNodeType.PIPELINE
 
-    def initialize(  # type: ignore[no-untyped-def]
+    def __init__(
         self,
-        deps: List,
-        source: dict,
-        **kwargs,
+        node_id: str,
+        opt_kwargs: dict,
+        source_kwargs: dict,
+        dep_opts: list,
     ) -> None:
-        self.source = source
-        self.dep_vars = [x[1] for x in deps]
-
-        deps = [x[0] for x in deps]
-        assert 0 < len(deps), (
+        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+        assert 0 < len(self.dep_opts), (
             "SwitchPipelineNode must contain at least " "one Pipeline Node."
         )
         case_operators = {}
         self.case_operators_var = {}
 
-        if len(deps) == len(kwargs["cases"]):
+        if len(self.dep_opts) == len(self.opt_kwargs["cases"]):
             # No default_operators provided
             default_operators = placeholder
             self.default_var_name = "placeholder"
-        elif len(deps) == len(kwargs["cases"]) + 1:
+        elif len(self.dep_opts) == len(self.opt_kwargs["cases"]) + 1:
             # default_operators provided
-            default_operators = deps.pop(-1)
+            default_operators = self.dep_opts.pop(-1)
             self.default_var_name = self.dep_vars.pop(-1)
         else:
             raise ValueError(
-                f"SwitchPipelineNode node {deps} not matches "
-                f"cases {kwargs['cases']}.",
+                f"SwitchPipelineNode node {self.dep_opts} not matches "
+                f"cases {self.opt_kwargs['cases']}.",
             )
 
-        for key, value, var in zip(kwargs["cases"], deps, self.dep_vars):
+        for key, value, var in zip(
+            self.opt_kwargs["cases"],
+            self.dep_opts,
+            self.dep_vars,
+        ):
             case_operators[key] = value
             self.case_operators_var[key] = var
-        kwargs.pop("cases")
-        self.source.pop("cases")
+        self.opt_kwargs.pop("cases")
+        self.source_kwargs.pop("cases")
         self.pipeline = SwitchPipeline(
             case_operators=case_operators,
             default_operators=default_operators,  # type: ignore[arg-type]
-            **kwargs,
+            **self.opt_kwargs,
         )
-        self.kwargs = kwargs
 
     def __call__(self, x: dict = None) -> dict:
         return self.pipeline(x)
 
-    def compile(self, var: str) -> dict:
+    def compile(self) -> dict:
         """
         Compile SwitchPipelineNode to python executable code dict
         """
@@ -500,13 +531,13 @@ class SwitchPipelineNode(WorkflowNode):
             "from agentscope.pipelines import SwitchPipeline\n"
             "from agentscope.pipelines.functional import placeholder"
         )
-        execs = f"{DEFAULT_FLOW_VAR} = {var}({DEFAULT_FLOW_VAR})"
+        execs = f"{DEFAULT_FLOW_VAR} = {self.var_name}({DEFAULT_FLOW_VAR})"
         return {
             "imports": imports,
-            "inits": f"{var} = SwitchPipeline(case_operators="
+            "inits": f"{self.var_name} = SwitchPipeline(case_operators="
             f"{dict_converter(self.case_operators_var)}, "
             f"default_operators={self.default_var_name},"
-            f" {kwarg_converter(self.source)})",
+            f" {kwarg_converter(self.source_kwargs)})",
             "execs": execs,
         }
 
@@ -522,24 +553,21 @@ class CopyNode(WorkflowNode):
 
     node_type = WorkflowNodeType.COPY
 
-    def initialize(  # type: ignore[no-untyped-def]
+    def __init__(
         self,
-        deps: List,
-        **kwargs,
+        node_id: str,
+        opt_kwargs: dict,
+        source_kwargs: dict,
+        dep_opts: list,
     ) -> None:
-        self.dep_vars = [x[1] for x in deps]
-        deps = [x[0] for x in deps]
-        assert len(deps) == 1, "Copy Node can only have one parent!"
-        self.pipeline = deps[0]
+        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+        assert len(self.dep_opts) == 1, "Copy Node can only have one parent!"
+        self.pipeline = self.dep_opts[0]
 
-    def __call__(  # type: ignore[no-untyped-def]
-        self,
-        *args,
-        **kwargs,
-    ) -> Any:
-        return self.pipeline(*args, **kwargs)
+    def __call__(self, x: dict = None) -> dict:
+        return self.pipeline(x)
 
-    def compile(self, var: str) -> dict:
+    def compile(self) -> dict:
         """
         Compile CopyNode to python executable code dict
         """
