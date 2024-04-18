@@ -111,4 +111,17 @@ as_studio config.json
 
 Or you can run your workflow on ModelScope Studio. Click the **RUN** button. Then, fill in the `API_KEY` environment variable in ModelScope Studio. After a few minutes, enjoy your journey on AgentScope!
 
+You can also compile JSON configuration to Python code and run:
+
+```bash
+# Compile
+as_workflow config.json --compile ${YOUR_PYTHON_SCRIPT_NAME}.py
+
+# Run python workflow
+python ${YOUR_PYTHON_SCRIPT_NAME}.py
+
+# Run workflow in as_studio (gradio ui)
+python ${YOUR_PYTHON_SCRIPT_NAME}.py
+```
+
 More examples about AgentScope Workstation are coming soon!
