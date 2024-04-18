@@ -18,10 +18,11 @@ def execute_shell_command(command: str) -> ServiceResponse:
         string if sucessful, or an error message include the error type.
 
     Note:
-        Use any bash/shell commands you want (e.g. find, grep, cat, ls, cd),
+        Use any bash/shell commands you want (e.g. find, grep, cat, ls),
         but note that :
-        1. interactive session commands (e.g. python, vim) are NOT supported,
-        so please do not invoke them.
+        1. interactive session commands (e.g. python, vim) or commands that 
+        change current state (e.g. cd that change the current directory)
+        are NOT supported yet, so please do not invoke them.
         2. be VERY CAREFUL when using commands that will
         change/edit the files current directory (e.g. rm, sed).
     ...
