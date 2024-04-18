@@ -36,6 +36,9 @@ from agentscope.message import Msg
 from agentscope.models import read_model_configs
 
 
+DEFAULT_FLOW_VAR = "flow"
+
+
 class WorkflowNodeType(IntEnum):
     """Enum for workflow node."""
 
@@ -69,6 +72,18 @@ def dict_converter(dictionary: dict) -> str:
     for key, value in dictionary.items():
         result_parts.append(f'"{key}": {value}')
     return "{" + ", ".join(result_parts) + "}"
+
+
+def remove_duplicates_from_end(lst: list) -> list:
+    """remove duplicates element from end on a list"""
+    seen = set()
+    result = []
+    for item in reversed(lst):
+        if item not in seen:
+            seen.add(item)
+            result.append(item)
+    result.reverse()
+    return result
 
 
 class WorkflowNode(ABC):
@@ -152,7 +167,8 @@ class MsgNode(WorkflowNode):
         """
         return {
             "imports": "from agentscope.message import Msg",
-            "inits": f"x = Msg({kwarg_converter(self.kwargs)})",
+            "inits": f"{DEFAULT_FLOW_VAR} = Msg"
+            f"({kwarg_converter(self.kwargs)})",
             "execs": "",
         }
 
@@ -178,7 +194,7 @@ class PlaceHolderNode(WorkflowNode):
             "imports": "from agentscope.pipelines.functional import "
             "placeholder",
             "inits": f"{var} = placeholder",
-            "execs": f"x = {var}(x)",
+            "execs": f"{DEFAULT_FLOW_VAR} = {var}({DEFAULT_FLOW_VAR})",
         }
 
 
@@ -220,7 +236,6 @@ class MsgHubNode(WorkflowNode):
         )
 
         self.pipeline = deps[0].pipeline
-        print(deps[0], deps[0].pipeline)
         self.participants = get_all_agents(self.pipeline)
 
     def __call__(self, x: dict = None) -> dict:
@@ -238,7 +253,7 @@ class MsgHubNode(WorkflowNode):
             f', role="system")'
         )
         execs = f"""with msghub([], announcement={announcement}):
-        x = {self.dep_vars[0]}(x)
+        {DEFAULT_FLOW_VAR} = {self.dep_vars[0]}({DEFAULT_FLOW_VAR})
         """
         return {
             "imports": "from agentscope.msghub import msghub\n"
@@ -281,7 +296,7 @@ class SequentialPipelineNode(WorkflowNode):
             "imports": "from agentscope.pipelines import SequentialPipeline",
             "inits": f"{var} = SequentialPipeline("
             f"{deps_converter(self.dep_vars)})",
-            "execs": f"x = {var}(x)",
+            "execs": f"{DEFAULT_FLOW_VAR} = {var}({DEFAULT_FLOW_VAR})",
         }
 
 
@@ -323,7 +338,7 @@ class ForLoopPipelineNode(WorkflowNode):
             f"loop_body_operators="
             f"{deps_converter(self.dep_vars)},"
             f" {kwarg_converter(self.source)})",
-            "execs": f"x = {var}(x)",
+            "execs": f"{DEFAULT_FLOW_VAR} = {var}({DEFAULT_FLOW_VAR})",
         }
 
 
@@ -368,7 +383,7 @@ class WhileLoopPipelineNode(WorkflowNode):
             f"loop_body_operators="
             f"{deps_converter(self.dep_vars)},"
             f" {kwarg_converter(self.source)})",
-            "execs": f"x = {var}(x)",
+            "execs": f"{DEFAULT_FLOW_VAR} = {var}({DEFAULT_FLOW_VAR})",
         }
 
 
@@ -411,7 +426,7 @@ class IfElsePipelineNode(WorkflowNode):
         Compile IfElsePipelineNode to python executable code dict
         """
         imports = "from agentscope.pipelines import IfElsePipeline"
-        execs = f"x = {var}(x)"
+        execs = f"{DEFAULT_FLOW_VAR} = {var}({DEFAULT_FLOW_VAR})"
         if len(self.dep_vars) == 1:
             return {
                 "imports": imports,
@@ -493,7 +508,7 @@ class SwitchPipelineNode(WorkflowNode):
             "from agentscope.pipelines import SwitchPipeline\n"
             "from agentscope.pipelines.functional import placeholder"
         )
-        execs = f"x = {var}(x)"
+        execs = f"{DEFAULT_FLOW_VAR} = {var}({DEFAULT_FLOW_VAR})"
         return {
             "imports": imports,
             "inits": f"{var} = SwitchPipeline(case_operators="
@@ -539,7 +554,8 @@ class CopyNode(WorkflowNode):
         return {
             "imports": "",
             "inits": "",
-            "execs": f"x = {self.dep_vars[0]}(x)",
+            "execs": f"{DEFAULT_FLOW_VAR} = {self.dep_vars[0]}"
+            f"({DEFAULT_FLOW_VAR})",
         }
 
 
@@ -591,6 +607,7 @@ class ASDiGraph(nx.DiGraph):
 
         self.inits = [
             """agentscope.init(logger_level="DEBUG")""",
+            f"{DEFAULT_FLOW_VAR} = None",
         ]
 
         self.execs = ["\n"]
@@ -632,6 +649,16 @@ class ASDiGraph(nx.DiGraph):
 
     def compile(self, compiled_filename: str) -> None:
         """Compile DAG to a runnable python code"""
+
+        def format_python_code(code: str) -> str:
+            try:
+                from black import FileMode, format_str
+
+                logger.debug("Formatting Code with black...")
+                return format_str(code, mode=FileMode())
+            except Exception:
+                return code
+
         sorted_nodes = list(nx.topological_sort(self))
         sorted_nodes = [
             node_id
@@ -645,6 +672,9 @@ class ASDiGraph(nx.DiGraph):
 
         header = "\n".join(self.imports)
 
+        # Remove duplicate import
+        new_imports = remove_duplicates_from_end(header.split("\n"))
+        header = "\n".join(new_imports)
         body = "\n    ".join(self.inits + self.execs)
 
         main_body = f"def main():\n    {body}"
@@ -657,7 +687,7 @@ class ASDiGraph(nx.DiGraph):
 
         # Write the script to file
         with open(compiled_filename, "w", encoding="utf-8") as file:
-            file.write(script)
+            file.write(format_python_code(script))
 
     # pylint: disable=R0912
     def add_as_node(
@@ -740,7 +770,8 @@ class ASDiGraph(nx.DiGraph):
                 f" {node_info['name']}",
                 "inits": f"agent{node_id} = {node_info['name']}"
                 f"({kwarg_converter(node_info['data']['args'])})",
-                "execs": f"x = agent{node_id}(x)",
+                "execs": f"{DEFAULT_FLOW_VAR} = agent{node_id}"
+                f"({DEFAULT_FLOW_VAR})",
             }
         else:
             raise TypeError
