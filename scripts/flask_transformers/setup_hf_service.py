@@ -51,13 +51,13 @@ def get_response() -> dict:
         **json,
     )
 
+    new_response_ids = response_ids[:, len(prompt_tokens_input_ids) :]
+
     response = tokenizer.batch_decode(
-        response_ids,
+        new_response_ids,
         skip_special_tokens=True,
         clean_up_tokenization_spaces=False,
     )[0]
-
-    response = response.removeprefix(prompt)
 
     print(f"[RESPONSE]:\n{response}")
     print("=" * 80)
