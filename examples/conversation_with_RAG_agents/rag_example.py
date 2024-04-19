@@ -11,7 +11,6 @@ from groupchat_utils import filter_agents
 
 import agentscope
 from agentscope.agents import UserAgent
-
 from agentscope.agents import DialogAgent
 
 

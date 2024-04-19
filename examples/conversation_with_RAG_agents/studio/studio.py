@@ -45,6 +45,17 @@ glb_history_dict = defaultdict(init_uid_list)
 glb_signed_user = []
 
 
+def get_new_uid(request: gr.Request) -> str:
+    """extract user ID from request"""
+    headers = request.headers
+    splits = headers.get("referer").split("?", 1)
+    if len(splits) > 1:
+        uid = splits[1]
+    else:
+        uid = "local_user"
+    return uid
+
+
 def reset_glb_var(uid: str) -> None:
     """Reset global variables for a given user ID."""
     global glb_history_dict
@@ -238,7 +249,6 @@ def run_app() -> None:
                 </p>
             </div>
             """
-            print(agent_info)
             gr.HTML(agent_info)
             with open("configs/agent_config.json", "r", encoding="utf-8") as f:
                 agent_configs = json.load(f)
@@ -286,7 +296,6 @@ def run_app() -> None:
         )
 
         def mention(text: str) -> str:
-            print(text)
             return f"@{text}"
 
         for button_pair in agent_buttons:
@@ -298,20 +307,17 @@ def run_app() -> None:
 
         reset_button.click(send_reset_msg, inputs=[uuid])
 
-        chatbot.custom(fn=fn_choice, inputs=[uuid])
-
-        demo.load(
+        demo.load(get_new_uid, None, uuid).then(
             check_for_new_session,
             inputs=[uuid],
-            every=0.5,
-        )
-
-        demo.load(
+        ).then(
             get_chat,
             inputs=[uuid],
             outputs=[chatbot],
             every=0.5,
         )
+
+        chatbot.custom(fn=fn_choice, inputs=[uuid])
     demo.queue()
     demo.launch()
 
