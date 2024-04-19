@@ -248,39 +248,3 @@ class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
             lazy_launch=lazy_launch,
             agent_id=self.agent_id,
         )
-    
-    def fine_tune(self, data_path):
-        """
-        Fine-tune the agent's underlying model.
-
-        Parameters:
-            data_path (str): The path to the training data.
-            training_args (dict, optional): Training arguments to customize the fine-tuning process.
-        """
-        # Check if the model wrapper supports fine-tuning
-        if hasattr(self.model, "fine_tune"):
-            # Call the fine_tune method of the model wrapper
-            self.model.fine_tune(data_path)
-            logger.info("Fine-tuning completed successfully.")
-        else:
-            # Log an error or raise an exception if fine-tuning is not supported by the model wrapper
-            logger.error("The model wrapper does not support fine-tuning.")
-
-
-
-    def load_model(self, model_id, local_model_path=None):
-        """
-        Load a new model into the agent.
-
-        Parameters:
-            model_id (str): The Hugging Face model ID or a custom identifier.
-            huggingface_token (str, optional): Token for Hugging Face authentication.
-            local_model_path (str, optional): Path to a locally saved model.
-        """
-        # Ensure the model wrapper supports model loading
-        if hasattr(self.model, "load_model"):
-            # Delegate to the model wrapper's load_model method
-            self.model.load_model(model_id, local_model_path)
-        else:
-            # Log an error if model loading is not supported
-            logger.error("The model wrapper does not support dynamic model loading.")
