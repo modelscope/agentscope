@@ -130,7 +130,8 @@ llama3_flask_model_configuration = {
   "api_url": "http://127.0.0.1:8000/llm/",
   "json_args": {
     "max_length": 4096,
-    "temperature": 0.5
+    "temperature": 0.5,
+    "eos_token_id": [128001, 128009]
   }
 }
 ```
