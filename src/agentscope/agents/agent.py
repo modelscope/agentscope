@@ -36,7 +36,8 @@ class _AgentMeta(ABCMeta):
         super().__init__(name, bases, attrs)
 
     def __call__(cls, *args: tuple, **kwargs: dict) -> Any:
-        if "to_dist" in kwargs and kwargs["to_dist"] is True:
+        to_dist = kwargs.pop("to_dist", False)
+        if to_dist is not False and to_dist is not None:
             from .rpc_agent import RpcAgent
 
             if len(args) > 0:
@@ -45,39 +46,37 @@ class _AgentMeta(ABCMeta):
                     "\ne.g.\nagent = YourAgentClass(name='agent_name', ...)",
                     "",
                 )
-            kwargs.pop("to_dist")
+                raise ValueError(
+                    "Please only use keywords arguments to init your agents."
+                    "\ne.g.\nagent = YourAgentClass(name='agent_name', ...)",
+                    "",
+                )
             if cls is not RpcAgent and not issubclass(cls, RpcAgent):
                 return RpcAgent(
                     name=kwargs["name"],  # type: ignore[arg-type]
-                    host=kwargs.pop(  # type: ignore[arg-type]
+                    host=to_dist.pop(  # type: ignore[arg-type]
                         "host",
                         "localhost",
                     ),
-                    port=kwargs.pop("port", None),  # type: ignore[arg-type]
+                    port=to_dist.pop("port", None),  # type: ignore[arg-type]
                     max_pool_size=kwargs.pop(  # type: ignore[arg-type]
                         "max_pool_size",
                         8192,
                     ),
-                    max_timeout_seconds=kwargs.pop(  # type: ignore[arg-type]
+                    max_timeout_seconds=to_dist.pop(  # type: ignore[arg-type]
                         "max_timeout_seconds",
                         1800,
                     ),
-                    local_mode=kwargs.pop(  # type: ignore[arg-type]
+                    local_mode=to_dist.pop(  # type: ignore[arg-type]
                         "local_mode",
                         True,
                     ),
-                    lazy_launch=kwargs.pop(  # type: ignore[arg-type]
+                    lazy_launch=to_dist.pop(  # type: ignore[arg-type]
                         "lazy_launch",
                         True,
                     ),
-                    agent_id=kwargs.pop(  # type: ignore[arg-type]
-                        "agent_id",
-                        cls.generate_agent_id(),
-                    ),
-                    connect_existing=kwargs.pop(  # type: ignore[arg-type]
-                        "connect_existing",
-                        False,
-                    ),
+                    agent_id=cls.generate_agent_id(),
+                    connect_existing=False,
                     agent_class=cls,
                     agent_configs={
                         "args": args,
@@ -128,6 +127,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
         model_config_name: str = None,
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
+        to_dist: Optional[Union[dict, bool]] = None,
     ) -> None:
         r"""Initialize an agent from the given arguments.
 
@@ -144,6 +144,10 @@ class AgentBase(Operator, metaclass=_AgentMeta):
                 Whether the agent has memory.
             memory_config (`Optional[dict]`):
                 The config of memory.
+            to_dist (`Optional[Union[dict, bool]]`):
+                The parameter dict for `to_dist` method. Used in `_AgentMeta`,
+                when this parameter is provided, the agent will automatically
+                be converted into its distributed version.
         """
         self.name = name
         self.memory_config = memory_config
