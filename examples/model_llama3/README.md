@@ -6,46 +6,44 @@ AgentScope supports Llama3 now! You can
 - 🔧 Test Llama3 in AgentScope built-in examples!
 - 🖋 Use Llama3 to build your own multi-agent applications!
 
-Set up llama3 model service according to your hardware.
+Follow the guidance below to use Llama3 in AgentScope!
 
 ## Contents
 
-- [Llama3 in AgentScope](#llama3-in-agentscope)
-  - [Contents](#contents)
-  - [CPU Inference](#cpu-inference)
-    - [Setup Llama3 Service](#setup-llama3-service)
-    - [Use Llama3 in AgentScope](#use-llama3-in-agentscope)
-  - [GPU Inference](#gpu-inference)
-    - [Setup Llama3 Service](#setup-llama3-service-1)
-    - [Use Llama3 in AgentScope](#use-llama3-in-agentscope-1)
+- [CPU Inference](#cpu-inference)
+  - [Setup Llama3 Service](#setup-llama3-service)
+  - [Use Llama3 in AgentScope](#use-llama3-in-agentscope)
+- [GPU Inference](#gpu-inference)
+  - [Setup Llama3 Service](#setup-llama3-service-1)
+  - [Use Llama3 in AgentScope](#use-llama3-in-agentscope-1)
 
 ## CPU Inference
 
 ### Setup Llama3 Service
 
-AgentScope supports Llama3 CPU inference with the help of ollama.
+AgentScope supports Llama3 CPU inference with the help of ollama. Note the llama3 models in ollama are quantized into 4 bits.
 
-1. download ollama from [here](https://ollama.com/).
+1. Download ollama from [here](https://ollama.com/).
 
-2. start ollama service
+2. Start ollama software, or execute the following command in terminal
 
    ```bash
    ollama serve
    ```
 
-3. pull the llama model
+3. Pull llama3 model by the following command
 
-   ```bash
-   # llama3 8b model
-   ollama pull llama3
+ ```bash
+ # llama3 8b model
+ ollama pull llama3
 
-   # llama3 70b model
-   ollama pull llama3:70b
-   ```
+ # llama3 70b model
+ ollama pull llama3:70b
+ ```
 
 ### Use Llama3 in AgentScope
 
-Use llama3 model by the following model configuration
+Use llama3 model with the following model configuration in AgentScope
 
 ```python
 llama3_8b_ollama_model_configuration = {
@@ -69,6 +67,34 @@ llama3_70b_ollama_model_configuration = {
    },
    "keep_alive": "5m"
 }
+```
+
+After that, you can experience llama3 with our built-in examples! For example, start a conversation with llama3-8b model by the following code:
+
+```python
+import agentscope
+from agentscope.agents import UserAgent, DialogAgent
+
+agentscope.init(model_configs={
+   "config_name": "ollama_llama3_8b",
+   "model_type": "ollama_chat",
+   "model_name": "llama3",
+   "options": {
+       "temperature": 0.5,
+       "seed": 123
+   },
+   "keep_alive": "5m"
+})
+
+user = UserAgent("user")
+agent = DialogAgent("assistant", sys_prompt="You're a helpful assistant.", model_config_name="ollama_llama3_8b")
+
+x = None
+while True:
+    x = agent(x)
+    x = user(x)
+    if x.content == "exit":
+        break
 ```
 
 ## GPU Inference
