@@ -317,7 +317,7 @@ Here we provide example configurations for different model wrappers.
 
     # Optional parameters
     "options": {                                # Parameters passed to the model when calling
-        # e.g. "temperature": 0., "seed": "123",
+        # e.g. "temperature": 0., "seed": 123,
     },
     "keep_alive": "5m",                         # Controls how long the model will stay loaded into memory
 }
@@ -338,7 +338,7 @@ Here we provide example configurations for different model wrappers.
 
     # Optional parameters
     "options": {                                # Parameters passed to the model when calling
-        # "temperature": 0., "seed": "123",
+        # "temperature": 0., "seed": 123,
     },
     "keep_alive": "5m",                         # Controls how long the model will stay loaded into memory
 }
@@ -359,7 +359,7 @@ Here we provide example configurations for different model wrappers.
 
     # Optional parameters
     "options": {                                # Parameters passed to the model when calling
-        # "temperature": 0., "seed": "123",
+        # "temperature": 0., "seed": 123,
     },
     "keep_alive": "5m",                         # Controls how long the model will stay loaded into memory
 }
