@@ -59,7 +59,7 @@ class DashScopeWrapperBase(ModelWrapperBase, ABC):
 
         self.api_key = api_key
         dashscope.api_key = self.api_key
-        self.max_length = None
+        self.max_new_tokens = None
 
         # Set monitor accordingly
         self._register_default_metrics()

@@ -24,7 +24,7 @@ class PromptEngine:
         self,
         model: ModelWrapperBase,
         shrink_policy: ShrinkPolicy = ShrinkPolicy.TRUNCATE,
-        max_length: Optional[int] = None,
+        max_new_tokens: Optional[int] = None,
         prompt_type: Optional[PromptType] = None,
         max_summary_length: int = 200,
         summarize_model: Optional[ModelWrapperBase] = None,
@@ -38,7 +38,7 @@ class PromptEngine:
             `ShrinkPolicy.TRUNCATE`):
                 The shrink policy for prompt engineering, defaults to
                 `ShrinkPolicy.TRUNCATE`.
-            max_length (`Optional[int]`, defaults to `None`):
+            max_new_tokens (`Optional[int]`, defaults to `None`):
                 The max length of context, if it is None, it will be set to the
                 max length of the model.
             prompt_type (`Optional[MsgType]`, defaults to `None`):
@@ -53,7 +53,7 @@ class PromptEngine:
 
         Note:
             1. TODO: Shrink function is still under development.
-            2. If the argument `max_length` and `prompt_type` are not given,
+            2. If the argument `max_new_tokens` and `prompt_type` are not given,
             they will be set according to the given model.
             3. `shrink_policy` is used when the prompt is too long, it can
             be set to `ShrinkPolicy.TRUNCATE` or `ShrinkPolicy.SUMMARIZE`.
@@ -83,7 +83,7 @@ class PromptEngine:
         """
         self.model = model
         self.shrink_policy = shrink_policy
-        self.max_length = max_length
+        self.max_new_tokens = max_new_tokens or model.max_new_tokens
 
         if prompt_type is None:
             if isinstance(model, OpenAIWrapperBase):
