@@ -45,7 +45,7 @@ AgentScope supports Llama3 CPU inference with the help of ollama. Note the llama
 Use llama3 model with the following model configuration in AgentScope
 
 ```python
-llama3_70b_ollama_model_configuration = {
+llama3_8b_ollama_model_configuration = {
    "config_name": "ollama_llama3_8b",
    "model_type": "ollama_chat",
    "model_name": "llama3",
