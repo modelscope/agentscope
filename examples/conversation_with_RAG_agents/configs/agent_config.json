@@ -4,7 +4,7 @@
     "args": {
       "name": "Tutorial-Assistant",
       "description": "Tutorial-Assistant is an agent that can provide answer based on English tutorial material, mainly the markdown files. It can answer general questions about AgentScope.",
-      "sys_prompt": "You're an assistant helping new users to use AgentScope. You generate answers based on the provided context. The answer is expected to be short and simple. If the key words of the question can be found in the provided context, the answer should direct the user to the section which contains the answer. For example, 'You may refer to SECTION_NAME for more details.'",
+      "sys_prompt": "You're an assistant helping new users to use AgentScope. The language style is helpful and cheerful. You generate answers based on the provided context. The answer is expected to be no longer than 100 words. If the key words of the question can be found in the provided context, the answer should contain the section name which contains the answer. For example, 'You may refer to SECTION_NAME for more details.'",
       "model_config_name": "qwen_config",
       "emb_model_config_name": "qwen_emb_config",
       "rag_config": {
@@ -21,7 +21,7 @@
             },
             "chunk_size": 2048,
             "chunk_overlap": 40,
-            "similarity_top_k": 10,
+            "similarity_top_k": 5,
             "log_retrieval": false,
             "recent_n_mem": 1,
             "persist_dir": "../../rag_storage/tutorial_assist"
@@ -33,7 +33,7 @@
     "args": {
       "name": "Code-Search-Assistant",
       "description": "Code-Search-Assistant is an agent that can provide answer based on AgentScope code base. It can answer questions about specific modules in AgentScope.",
-      "sys_prompt": "You're a coding assistant of AgentScope. The answer starts with appreciation for the question, then provide details regarding the functionality and features of the modules mentioned in the question. The language should be in a professional and simple style.",
+      "sys_prompt": "You're a coding assistant of AgentScope. The answer starts with appreciation for the question, then provide details regarding the functionality and features of the modules mentioned in the question. The language should be in a professional and simple style. The answer is limited to be less than 100 words.",
       "model_config_name": "qwen_config",
       "emb_model_config_name": "qwen_emb_config",
       "rag_config": {
@@ -64,7 +64,7 @@
             },
             "chunk_size": 2048,
             "chunk_overlap": 40,
-            "similarity_top_k": 10,
+            "similarity_top_k": 5,
             "log_retrieval": false,
             "recent_n_mem": 1,
             "persist_dir": "../../rag_storage/code_assist"
@@ -74,54 +74,11 @@
   {
     "class": "DialogAgent",
     "args": {
-      "name": "Summarize-Assistant",
-      "description": "Summarize-Assistant is an agent that can summarize multiple RAG agents' answers.",
-      "sys_prompt": "You summarize the answers of the previous two messages and remove the redundant information. The answer need to be simple and itemized. The answer is expected to be short and simple. If the question is about how to use something, or the configuration of something , output the answer from Code-Search-Assistant. Otherwise, output the answer of Tutorial-Assistant",
-      "model_config_name": "qwen_config",
-      "use_memory": true
-    }
-  },
-  {
-    "class": "LlamaIndexAgent",
-    "args": {
       "name": "Agent-Guiding-Assistant",
       "description": "Agent-Guiding-Assistant is an agent that decide which agent should provide the answer next. It can answer questions about specific functions and classes in AgentScope.",
-      "sys_prompt": "You're an assistant deciding which agent should provide the answer next by searching the provided context. The answer starts with appreciations for the question. Next, if the question is asking about specific functionality or feature or usage of a module SOME_MODULE in the codes, output '@ Code-Search-Assistant', then saying Code-Search-Assistant is suitable for answering the question. Otherwise, start with '@ Tutorial-Assistant' then saying Tutorial-Assistant is more suitable for the question.",
+      "sys_prompt": "You're an assistant guiding the user to specific agent for help. The answer is in a cheerful stypled language. The output starts with appreciation for the question. Next, rephrase the question in a simple declarative Sentence for example, 'I think you are asking...'. Last, if the question is a coding question, output '@ Code-Search-Assistant, you might be suitable for answering the question, otherwise, output '@ Tutorial-Assistant, I think you are more suitable for the question, please tell us more about it. The answer is expected to be one line only",
       "model_config_name": "qwen_config",
-      "emb_model_config_name": "qwen_emb_config",
-      "rag_config": {
-            "load_data": {
-              "loader": {
-                "create_object": true,
-                "module": "llama_index.core",
-                "class": "SimpleDirectoryReader",
-                "init_args": {
-                  "input_dir": "../../src/agentscope",
-                  "recursive": true,
-                  "required_exts": [".py"]
-                }
-              }
-            },
-            "store_and_index": {
-              "transformations": [
-                {
-                  "create_object": true,
-                  "module": "llama_index.core.node_parser",
-                  "class": "CodeSplitter",
-                  "init_args": {
-                    "language": "python",
-                    "chunk_lines": 100
-                  }
-                }
-              ]
-            },
-            "chunk_size": 2048,
-            "chunk_overlap": 40,
-            "similarity_top_k": 10,
-            "log_retrieval": false,
-            "recent_n_mem": 1,
-            "persist_dir": "../../rag_storage/code_assist"
-      }
+      "use_memory": false
     }
   }
 ]
