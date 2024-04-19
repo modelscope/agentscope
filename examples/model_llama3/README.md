@@ -45,30 +45,46 @@ AgentScope supports Llama3 CPU inference with the help of ollama.
 
 ### Use Llama3 in AgentScope
 
-Use llama3 model by the following model configuration
+Use llama3 model by the following model configuration.
 
 ```python
-llama3_8b_ollama_model_configuration = {
-   "config_name": "ollama_llama3_8b",
-   "model_type": "ollama_chat",
-   "model_name": "llama3",
-   "options": {
-       "temperature": 0.5,
-       "seed": 123
-   },
-   "keep_alive": "5m"
-}
+# For llama3 8b
+agentscope.init(
+    model_configs={
+        "config_name": "llama3_8b",
+        "model_type": "ollama_chat",
+        "model_name": "llama3",
+        "options": {
+            "temperature": 0.5,
+            "seed": 123
+        },
+        "keep_alive": "5m"
+    }
+)
 
-llama3_70b_ollama_model_configuration = {
-   "config_name": "ollama_llama3_70b",
-   "model_type": "ollama_chat",
-   "model_name": "llama3:70b",
-   "options": {
-       "temperature": 0.5,
-       "seed": 123
-   },
-   "keep_alive": "5m"
-}
+# For llama3 70b
+agentscope.init(
+    model_configs={
+        "config_name": "llama3_70b",
+        "model_type": "ollama_chat",
+        "model_name": "llama3:70b",
+        "options": {
+            "temperature": 0.5,
+            "seed": 123
+        },
+        "keep_alive": "5m"
+    }
+)
+```
+
+Then, initialize your agent with llama3 model.
+
+```python
+my_agent = DialogAgent(
+    name="Assistant",
+    sys_prompt="You're a helpful assistant.",
+    model_config_name="llama3_8",  # or "llama3_70b"
+)
 ```
 
 ## GPU Inference
