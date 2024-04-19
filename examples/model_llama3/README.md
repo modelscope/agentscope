@@ -103,13 +103,21 @@ while True:
 
 If you have a GPU, you can set up llama3 model service with the help of Flask and Transformers quickly.
 
+Note you need to apply for permission to download the llama3 model from [Hugging Face model hub](https://huggingface.co/unsloth/llama-3-8b-Instruct).
+
 1. Install Flask and Transformers
 
 ```bash
 pip install flask transformers torch
 ```
 
-2. Run flask server by the following command in scripts directory:
+2. Apply for model permission, and log in your huggingface account in terminal
+
+```bash
+huggingface-cli login
+```
+
+3. Then run flask server by the following command in scripts directory:
 
 ```bash
 # 8B model
@@ -131,7 +139,7 @@ llama3_flask_model_configuration = {
   "json_args": {
     "max_length": 4096,
     "temperature": 0.5,
-    "eos_token_id": [128001, 128009]
+    "eos_token_id": [128001, 128009] # currently the model configuration in huggingface misses eos_token_id
   }
 }
 ```
