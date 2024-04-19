@@ -44,6 +44,7 @@ def get_response() -> dict:
     print(f"[PROMPT]:\n{prompt}")
 
     prompt_tokenized = tokenizer(prompt, return_tensors="pt").to(model.device)
+    prompt_tokens_input_ids = prompt_tokenized.input_ids[0]
 
     response_ids = model.generate(
         prompt_tokenized.input_ids,
@@ -65,29 +66,31 @@ def get_response() -> dict:
         "data": {
             "completion_tokens": len(response_ids[0]),
             "messages": {},
-            "prompt_tokens": len(prompt_tokenized.input_ids[0]),
+            "prompt_tokens": len(prompt_tokens_input_ids),
             "response": {
                 "choices": [
                     {
-                        "message": response,
+                        "message": {
+                            "content": response,
+                        },
                     },
                 ],
                 "created": "",
                 "id": create_timestamp(),
-                "model": model.__class__,
+                "model": "flask_model",
                 "object": "text_completion",
                 "usage": {
                     "completion_tokens": len(response_ids[0]),
-                    "prompt_tokens": len(prompt_tokenized.input_ids[0]),
+                    "prompt_tokens": len(prompt_tokens_input_ids),
                     "total_tokens": len(response_ids[0])
                     + len(
-                        prompt_tokenized.input_ids[0],
+                        prompt_tokens_input_ids,
                     ),
                 },
             },
             "total_tokens": len(response_ids[0])
             + len(
-                prompt_tokenized.input_ids[0],
+                prompt_tokens_input_ids,
             ),
             "username": "",
         },

@@ -1,6 +1,7 @@
 # Llama3 in AgentScope
 
 AgentScope supports Llama3 now! You can
+
 - 🚀 Set up Llama3 model service in AgentScope! Both CPU and GPU inference are supported!
 - 🔧 Test Llama3 in AgentScope built-in examples!
 - 🖋 Use Llama3 to build your own multi-agent applications!
