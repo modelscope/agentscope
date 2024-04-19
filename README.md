@@ -106,7 +106,7 @@ the following libraries.
 **Example Applications**
 
 - Model
-  - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Using Llama3 in AgentScope](./examples/model_llama3)  
+  - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Using Llama3 in AgentScope](./examples/model_llama3)
 
 - Conversation
   - [Basic Conversation](./examples/conversation_basic)
