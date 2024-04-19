@@ -75,16 +75,7 @@ After that, you can experience llama3 with our built-in examples! For example, s
 import agentscope
 from agentscope.agents import UserAgent, DialogAgent
 
-agentscope.init(model_configs={
-   "config_name": "ollama_llama3_8b",
-   "model_type": "ollama_chat",
-   "model_name": "llama3",
-   "options": {
-       "temperature": 0.5,
-       "seed": 123
-   },
-   "keep_alive": "5m"
-})
+agentscope.init(model_configs=llama3_8b_ollama_model_configuration)
 
 user = UserAgent("user")
 agent = DialogAgent("assistant", sys_prompt="You're a helpful assistant.", model_config_name="ollama_llama3_8b")
