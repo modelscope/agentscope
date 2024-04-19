@@ -3,7 +3,7 @@
 
 from agentscope.message import Msg
 from agentscope.agents import AgentBase
-from agentscope.service.web_search.web_digest import load_web
+from agentscope.service import load_web
 
 
 class AnswererAgent(AgentBase):
