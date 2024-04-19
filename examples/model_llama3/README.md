@@ -109,10 +109,14 @@ If you have a GPU, you can set up llama3 model service with the help of Flask an
 pip install flask transformers torch
 ```
 
-2. Run flask server by the following command  
+2. Run flask server by the following command in scripts directory:
 
 ```bash
-python flask_llama3_server.py
+# 8B model
+python flask_transformers/setup_hf_service.py --model_name_or_path meta-llama/Meta-Llama-3-8B-Instruct --port 8000
+
+# 70B model
+python flask_transformers/setup_hf_service.py --model_name_or_path meta-llama/Meta-Llama-3-70B-Instruct --port 8000
 ```
 
 ### Use Llama3 in AgentScope
@@ -120,11 +124,14 @@ python flask_llama3_server.py
 In AgentScope, use the following model configurations
 
 ```python
-llama3_8b_flask_model_configuration = {
-    
-}
-
-llama3_70b_flask_model_configuration = {
-    
+llama3_flask_model_configuration = {
+  "model_type": "post_api_chat",
+  "config_name": "llama-3",
+  "api_url": "http://127.0.0.1:8000/llm/",
+  "json_args": {
+    "max_length": 4096,
+    "temperature": 0.5,
+    "eos_token_id": [128001, 128009]
+  }
 }
 ```
