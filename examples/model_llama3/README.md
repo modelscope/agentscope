@@ -1,11 +1,11 @@
 # Llama3 in AgentScope!
 
-AgentScope supports Llama3 now! You can 
-- 🚀 Set up Llama3 model service in AgentScope! Both CPU and GPU inference are supported! 
+AgentScope supports Llama3 now! You can
+- 🚀 Set up Llama3 model service in AgentScope! Both CPU and GPU inference are supported!
 - 🔧 Test Llama3 in AgentScope built-in examples!
 - 🖋 Use Llama3 to build your own multi-agent applications!
 
-Set up llama3 model service according to your hardware. 
+Set up llama3 model service according to your hardware.
 
 ## Contents
 - [CPU Inference](#cpu-inference)
@@ -19,9 +19,9 @@ Set up llama3 model service according to your hardware.
 
 ### Setup Llama3 Service
 
-AgentScope supports Llama3 CPU inference with the help of ollama. 
+AgentScope supports Llama3 CPU inference with the help of ollama.
 
-1. download ollama from [here](). 
+1. download ollama from [here]().
 
 2. pull the llama model
 ```bash
@@ -33,11 +33,11 @@ Use llama3 model by the following model configuration
 
 ```python
 llama3_8b_ollama_model_configuration = {
-    
+
 }
 
 llama3_70b_ollama_model_configuration = {
-    
+
 }
 ```
 
@@ -45,7 +45,7 @@ llama3_70b_ollama_model_configuration = {
 
 ### Setup Llama3 Service
 
-If you have a GPU, you can set up llama3 model service with the help of Flask and Transformers quickly. 
+If you have a GPU, you can set up llama3 model service with the help of Flask and Transformers quickly.
 
 1. Install Flask and Transformers
 
@@ -53,9 +53,13 @@ If you have a GPU, you can set up llama3 model service with the help of Flask an
 pip install flask transformers torch
 ```
 
-2. Run flask server by the following command  
+2. Run flask server by the following command in scripts directory:
 ```bash
-python flask_llama3_server.py
+# 8B model
+python flask_transformers/setup_hf_service.py --model_name_or_path meta-llama/Meta-Llama-3-8B-Instruct --port 8000
+
+# 70B model
+python flask_transformers/setup_hf_service.py --model_name_or_path meta-llama/Meta-Llama-3-70B-Instruct --port 8000
 ```
 
 ### Use Llama3 in AgentScope
@@ -63,11 +67,13 @@ python flask_llama3_server.py
 In AgentScope, use the following model configurations
 
 ```python
-llama3_8b_flask_model_configuration = {
-    
-}
-
-llama3_70b_flask_model_configuration = {
-    
+llama3_flask_model_configuration = {
+  "model_type": "post_api_chat",
+  "config_name": "llama-3",
+  "api_url": "http://127.0.0.1:8000/llm/",
+  "json_args": {
+    "max_length": 4096,
+    "temperature": 0.5
+  }
 }
 ```
