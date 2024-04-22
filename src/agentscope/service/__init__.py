@@ -70,3 +70,6 @@ __all__ = [
     "parse_html_to_text",
     "download_from_url",
 ]
+
+
+from .file.common import write_file_by_line, read_file_by_line
