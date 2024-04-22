@@ -1,4 +1,6 @@
-"This folder contains three examples showcasing interesting tasks and algorithms that can be completed using AgentScope. The main folder is 'notebooks,' which contains three runnable Jupyter notebooks:
+"This folder contains three examples showcasing interesting tasks and algorithms that can be completed using AgentScope. The goal of this example is to implement and compare three prompting strategies—ReAct for external services, Reflect-Improve for enhancing output quality, and Tree of Thoughts for boosting reasoning in large language models (LLMs).
+
+ The main folder is 'notebooks,' which contains three runnable Jupyter notebooks:
 
 - **react_example.ipynb** demonstrates how to equip the ReAct agent with a customized service, enabling it to complete tasks involving web searches, reasoning, and writing files to the computer.
 - **complicated_flow.ipynb** illustrates how to build a reflection-improvement workflow using AgentScope to generate output with better quality.
