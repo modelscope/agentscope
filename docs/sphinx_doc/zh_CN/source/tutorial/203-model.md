@@ -337,7 +337,7 @@ API如下：
 
     # 可选参数
     "options": {                                # 模型API接口被调用时传入的参数
-        # 例如："temperature": 0., "seed": "123",
+        # 例如："temperature": 0., "seed": 123,
     },
     "keep_alive": "5m",                         # 控制一次调用后模型在内存中的存活时间
 }
@@ -358,7 +358,7 @@ API如下：
 
     # 可选参数
     "options": {                                # 模型API接口被调用时传入的参数
-        # "temperature": 0., "seed": "123",
+        # "temperature": 0., "seed": 123,
     },
     "keep_alive": "5m",                         # 控制一次调用后模型在内存中的存活时间
 }
@@ -379,7 +379,7 @@ API如下：
 
     # 可选参数
     "options": {                                # 模型API接口被调用时传入的参数
-        # "temperature": 0., "seed": "123",
+        # "temperature": 0., "seed": 123,
     },
     "keep_alive": "5m",                         # 控制一次调用后模型在内存中的存活时间
 }
