@@ -418,6 +418,8 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
         """
         input_msgs = []
         for _ in args:
+            if _ is None:
+                continue
             if isinstance(_, MessageBase):
                 input_msgs.append(_)
             elif isinstance(_, list) and all(
