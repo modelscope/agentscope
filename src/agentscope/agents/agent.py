@@ -40,20 +40,13 @@ class _AgentMeta(ABCMeta):
         if to_dist is not False and to_dist is not None:
             from .rpc_agent import RpcAgent
 
-            if len(args) > 0:
-                logger.warning(
-                    "Please only use keywords arguments to init your agents."
-                    "\ne.g.\nagent = YourAgentClass(name='agent_name', ...)",
-                    "",
-                )
-                raise ValueError(
-                    "Please only use keywords arguments to init your agents."
-                    "\ne.g.\nagent = YourAgentClass(name='agent_name', ...)",
-                    "",
-                )
             if cls is not RpcAgent and not issubclass(cls, RpcAgent):
                 return RpcAgent(
-                    name=kwargs["name"],  # type: ignore[arg-type]
+                    name=(
+                        args[0]
+                        if len(args) > 0
+                        else kwargs["name"]  # type: ignore[arg-type]
+                    ),
                     host=to_dist.pop(  # type: ignore[arg-type]
                         "host",
                         "localhost",
@@ -127,7 +120,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
         model_config_name: str = None,
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
-        to_dist: Optional[Union[dict, bool]] = None,
+        to_dist: Optional[Union[dict, bool]] = False,
     ) -> None:
         r"""Initialize an agent from the given arguments.
 
@@ -144,10 +137,11 @@ class AgentBase(Operator, metaclass=_AgentMeta):
                 Whether the agent has memory.
             memory_config (`Optional[dict]`):
                 The config of memory.
-            to_dist (`Optional[Union[dict, bool]]`):
+            to_dist (`Optional[Union[dict, bool]]`, default to `False`):
                 The parameter dict for `to_dist` method. Used in `_AgentMeta`,
                 when this parameter is provided, the agent will automatically
-                be converted into its distributed version.
+                be converted into its distributed version. See
+                :doc:`Tutorial <208-distribute-en>` for detail.
         """
         self.name = name
         self.memory_config = memory_config
@@ -170,6 +164,12 @@ class AgentBase(Operator, metaclass=_AgentMeta):
         # The audience of this agent, which means if this agent generates a
         # response, it will be passed to all agents in the audience.
         self._audience = None
+        # convert to distributed agent, conversion is in `_AgentMeta`
+        if to_dist is not False and to_dist is not None:
+            logger.info(
+                f"Convert {self.__class__.__name__}[{self.name}] into"
+                " a distributed agent.",
+            )
 
     @classmethod
     def generate_agent_id(cls) -> str:

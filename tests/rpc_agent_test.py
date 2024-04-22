@@ -116,10 +116,13 @@ class DemoGeneratorAgent(AgentBase):
 class DemoGatherAgent(AgentBase):
     """A demo agent to gather value"""
 
-    def __init__(self, name: str, agents: list[DemoGeneratorAgent]) -> None:
-        super().__init__(
-            name,
-        )
+    def __init__(
+        self,
+        name: str,
+        agents: list[DemoGeneratorAgent],
+        to_dist: dict = None,
+    ) -> None:
+        super().__init__(name, to_dist=to_dist)
         self.agents = agents
 
     def reply(self, _: dict = None) -> dict:
@@ -331,8 +334,9 @@ class BasicRpcAgentTest(unittest.TestCase):
         # rpc agent c
         agent_c = DemoRpcAgentAdd(  # pylint: disable=E1123
             name="c",
-            to_dist=True,
-            lazy_launch=False,
+            to_dist={
+                "lazy_launch": False,
+            },
         )
         msg = Msg(
             name="System",
@@ -435,9 +439,10 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertEqual(oid, agent1.client.agent_id)
         agent2 = DemoRpcAgentWithMemory(  # pylint: disable=E1123
             name="a",
-            to_dist=True,
-            host="127.0.0.1",
-            port=launcher.port,
+            to_dist={
+                "host": "127.0.0.1",
+                "port": launcher.port,
+            },
         )
         # agent3 has the same agent id as agent1
         # so it share the same memory with agent1
@@ -576,16 +581,18 @@ class BasicRpcAgentTest(unittest.TestCase):
         gather1 = DemoGatherAgent(  # pylint: disable=E1123
             name="g1",
             agents=agents[:4],
-            to_dist=True,  # type: ignore[call-arg]
-            host=host,  # type: ignore[call-arg]
-            port=launcher1.port,  # type: ignore[call-arg]
+            to_dist={
+                "host": host,
+                "port": launcher1.port,
+            },
         )
         gather2 = DemoGatherAgent(  # pylint: disable=E1123
             name="g2",
             agents=agents[4:],
-            to_dist=True,  # type: ignore[call-arg]
-            host=host,  # type: ignore[call-arg]
-            port=launcher2.port,  # type: ignore[call-arg]
+            to_dist={
+                "host": host,
+                "port": launcher2.port,
+            },
         )
         r1 = gather1()
         r2 = gather2()

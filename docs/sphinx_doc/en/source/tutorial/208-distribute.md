@@ -122,9 +122,10 @@ And developers just need to write the application flow in a centralized way in t
 
 #### Advanced Usage of `to_dist`
 
-All examples described above convert initialized agents into their distributed version through the `to_dist()` method, which is equivalent to initialize the agent twice. For agents whose initialization process is time-consuming, the `to_dist` method is inefficient. Therefore, AgentScope also provides a method to convert the Agent instance into its distributed version while initializing it, that is, passing in `to_dist=True` and other necessary parameters when the original agent instance is initialized.
+All examples described above convert initialized agents into their distributed version through the `to_dist()` method, which is equivalent to initialize the agent twice, once in the main process and once in the agent server process.
+For agents whose initialization process is time-consuming, the `to_dist` method is inefficient. Therefore, AgentScope also provides a method to convert the Agent instance into its distributed version while initializing it, that is, passing in `to_dist` parameter to the Agent's initialization function.
 
-In Child Process Mode, the initialization of distribtued agent can be simplified to the following code:
+In Child Process Mode, just pass `to_dist=True` to the Agent's initialization function.
 
 ```python
 # Child Process mode
@@ -140,26 +141,28 @@ b = AgentB(
 )
 ```
 
-In Independent Process Mode, it is as follows:
+In Independent Process Mode, you need to encapsulate the parameters of the `to_dist()` method in a dictionary and pass it into the `to_dist` field, for example:
 
 ```python
 a = AgentA(
     name="A",
     # ...
-    to_dist=True,
-    host="ip_a",
-    port=12001,
+    to_dist={
+        "host": "ip_a",
+        "port": 12001,
+    },
 )
 b = AgentB(
     name="B",
     # ...
-    to_dist=True,
-    host="ip_b",
-    port=12002,
+    to_dist={
+        "host": "ip_b",
+        "port": 12002,
+    },
 )
 ```
 
-Compared with the original `to_dist()` function call, this method only needs to pass in `to_dist=True` in the original agent's initialization function, and pass other parameters originally passed in the `to_dist()` method into the Agent's initialization function in the form of key-value pairs.
+Compared with the original `to_dist()` function call, this method just initializes the agent once in the agent server process.
 
 ### Step 2: Orchestrate Distributed Application Flow
 

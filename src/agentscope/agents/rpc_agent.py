@@ -116,8 +116,9 @@ class RpcAgent(AgentBase):
         # if host and port are not provided, launch server locally
         launch_server = port is None
         if launch_server:
+            self.host = "localhost"
             self.server_launcher = RpcAgentServerLauncher(
-                host=host,
+                host=self.host,
                 port=port,
                 max_pool_size=max_pool_size,
                 max_timeout_seconds=max_timeout_seconds,
