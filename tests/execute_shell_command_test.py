@@ -41,7 +41,7 @@ class ExecuteShellCommandTest(unittest.TestCase):
             command=self.arg2,
         )
         assert result.status == ServiceExecStatus.SUCCESS
-        assert result.content == "helloworld"
+        assert result.content == "Helloworld"
 
         result = execute_shell_command(
             command=self.arg3,
