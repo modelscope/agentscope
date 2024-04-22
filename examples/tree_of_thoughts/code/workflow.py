@@ -22,12 +22,12 @@ from typing import (
     Dict,
     Tuple,
     Any,
+    Protocol,
     Optional,
     Literal,
+    runtime_checkable,
 )
 from abc import ABC, abstractmethod
-from typing_extensions import Protocol
-import typing_extensions
 
 
 class WorkFlowBase(ABC):
@@ -80,7 +80,7 @@ class WorkFlowBase(ABC):
         """
 
 
-@typing_extensions.runtime_checkable
+@runtime_checkable
 class Processor(Protocol):
     """
     Protocol for defining processors.
@@ -165,10 +165,14 @@ class SequentialWorkFlow(WorkFlowBase):
 
             def default_processor(
                 message: Any,
-                _workflow: WorkFlowBase,
-                *_: Any,
-                **__: Any,
-            ) -> Tuple[Any, str]:
+                workflow: WorkFlowBase,
+                *args: Any,
+                **kwargs: Any,
+            ) -> Tuple[Any, str]:  # pylint: disable=unused-argument
+                # Default processor that
+                # forwards the message to the destination node.
+                # does not use the workflow, args, or kwargs.
+                _ = workflow, args, kwargs
                 return message, dst_node
 
             if src_node in self.edges:
