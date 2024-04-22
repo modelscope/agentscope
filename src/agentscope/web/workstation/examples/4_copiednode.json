@@ -1,0 +1,123 @@
+{
+  "7": {
+    "name": "DialogAgent",
+    "data": {
+      "args": {
+        "name": "Alice",
+        "sys_prompt": "You are Alice.",
+        "model_config_name": "qwen"
+      }
+    },
+    "inputs": {
+      "input_1": {
+        "connections": [
+          {
+            "node": "11",
+            "input": "output_1"
+          }
+        ]
+      }
+    },
+    "outputs": {
+      "output_1": {
+        "connections": [
+          {
+            "node": "8",
+            "output": "input_1"
+          }
+        ]
+      }
+    }
+  },
+  "8": {
+    "name": "UserAgent",
+    "data": {
+      "args": {
+        "name": "User"
+      }
+    },
+    "inputs": {
+      "input_1": {
+        "connections": [
+          {
+            "node": "7",
+            "input": "output_1"
+          }
+        ]
+      }
+    },
+    "outputs": {
+      "output_1": {
+        "connections": [
+          {
+            "node": "12",
+            "output": "input_1"
+          }
+        ]
+      }
+    }
+  },
+  "10": {
+    "name": "dashscope_chat",
+    "data": {
+      "args": {
+        "config_name": "qwen",
+        "model_name": "qwen-max",
+        "api_key": "************",
+        "temperature": 0.1,
+        "seed": 1,
+        "model_type": "dashscope_chat",
+        "messages_key": "input"
+      }
+    },
+    "inputs": {},
+    "outputs": {}
+  },
+  "11": {
+    "name": "Message",
+    "data": {
+      "args": {
+        "name": "Host",
+        "content": "Hi"
+      }
+    },
+    "inputs": {
+      "input_1": {
+        "connections": []
+      }
+    },
+    "outputs": {
+      "output_1": {
+        "connections": [
+          {
+            "node": "7",
+            "output": "input_1"
+          }
+        ]
+      }
+    }
+  },
+  "12": {
+    "name": "CopyNode",
+    "data": {
+      "elements": [
+        "7"
+      ]
+    },
+    "inputs": {
+      "input_1": {
+        "connections": [
+          {
+            "node": "8",
+            "input": "output_1"
+          }
+        ]
+      }
+    },
+    "outputs": {
+      "output_1": {
+        "connections": []
+      }
+    }
+  }
+}
