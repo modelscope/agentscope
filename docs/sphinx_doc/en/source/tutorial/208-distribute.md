@@ -241,8 +241,12 @@ By implementing each Agent as an Actor, an Agent will automatically wait for its
 
 #### PlaceHolder
 
-Meanwhile, to support centralized application orchestration, AgentScope introduces the concept of Placeholder. A Placeholder is a special message that contains the address and port number of the agent that generated the Placeholder, which is used to indicate that the input message of the Agent is not ready yet.
-When the input message of the Agent is ready, the Placeholder will be replaced by the real message, and then the actual `reply` method will be executed.
+Meanwhile, to support centralized application orchestration, AgentScope introduces the concept of Placeholder.
+A Placeholder is a special message that contains the address and port number of the agent that generated the placeholder, which is used to indicate that the output message of the Agent is not ready yet.
+When calling the `reply` method of a distributed agent, a placeholder is returned immediately without blocking the main process.
+The interface of placeholder is exactly the same as the message, so that the orchestration flow can be written in a centralized way.
+When getting values from a placeholder, the placeholder will send a request to get the real values from the source agent.
+A placeholder itself is also a message, and it can be sent to other agents, and let other agents to get the real values, which can avoid sending the real values multiple times.
 
 About more detailed technical implementation solutions, please refer to our [paper](https://arxiv.org/abs/2402.14034).
 

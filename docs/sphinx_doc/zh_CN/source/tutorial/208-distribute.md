@@ -240,8 +240,11 @@ D-->F
 
 #### PlaceHolder
 
-同时，为了支持中心化的应用编排，AgentScope引入了Placeholder这一概念。Placeholder是一个特殊的消息，它包含了产生该Placeholder的智能体的地址和端口号，用于表示Agent的输入消息还未准备好。
-当Agent的输入消息准备好后，Placeholder会被替换为真实的消息，然后运行实际的`reply`方法
+同时，为了支持中心化的应用编排，AgentScope引入了Placeholder这一概念。
+Placeholder 可以理解为消息的指针，指向消息真正产生的位置，其对外接口与传统模式中的消息完全一致，因此可以按照传统中心化的消息使用方式编排应用。
+Placeholder 内部包含了该消息产生方的联络方法，可以通过网络获取到被指向消息的真正值。
+每个分布式部署的 Agent 在收到其他 Agent 发来的消息时都会立即返回一个 Placeholder，从而避免阻塞请求发起方。
+而请求发起方可以借助返回的 Placeholder 在真正需要消息内容时再去向原 Agent 发起请求，请求发起方甚至可以将 Placholder 发送给其他 Agent 让其他 Agent 代为获取消息内容，从而减少消息真实内容的不必要转发。
 
 关于更加详细的技术实现方案，请参考我们的[论文](https://arxiv.org/abs/2402.14034)。
 
