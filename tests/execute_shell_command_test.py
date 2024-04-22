@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """ Python code execution test."""
 import unittest
+import platform
 
 from agentscope.service import execute_shell_command
 from agentscope.service import ServiceExecStatus
@@ -24,7 +25,9 @@ class ExecuteShellCommandTest(unittest.TestCase):
         self.arg3 = "rm tmp_a.txt"
 
     def test(self) -> None:
-        """test command"""
+        """test command, skip on windows"""
+        if platform.system() == "Windows":
+            return
         result = execute_shell_command(
             command=self.arg0,
         )
