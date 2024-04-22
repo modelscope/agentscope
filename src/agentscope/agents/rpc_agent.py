@@ -462,7 +462,7 @@ class RpcAgentServerLauncher:
     def _launch_in_main(self) -> None:
         """Launch gRPC server in main-process"""
         logger.info(
-            f"Launching AgentPlatform at [{self.host}:{self.port}]...",
+            f"Launching agent server at [{self.host}:{self.port}]...",
         )
         asyncio.run(
             setup_rpc_agent_server_async(
@@ -500,7 +500,7 @@ class RpcAgentServerLauncher:
         start_event.wait()
         self.server = server_process
         logger.info(
-            f"Launch AgentPlatform at [{self.host}:{self.port}] success",
+            f"Launch agent server at [{self.host}:{self.port}] success",
         )
 
     def launch(self, in_subprocess: bool = True) -> None:
@@ -531,7 +531,7 @@ class RpcAgentServerLauncher:
             if self.server.is_alive():
                 self.server.kill()
                 logger.info(
-                    f"AgentPlatform at port [{self.port}] is killed.",
+                    f"Agent server at port [{self.port}] is killed.",
                 )
             self.server = None
 
