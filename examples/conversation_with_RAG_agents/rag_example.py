@@ -44,24 +44,32 @@ def main() -> None:
 
     with open("configs/agent_config.json", "r", encoding="utf-8") as f:
         agent_configs = json.load(f)
+
     # define RAG-based agents for tutorial and code
     tutorial_agent = LlamaIndexAgent(**agent_configs[0]["args"])
     code_explain_agent = LlamaIndexAgent(**agent_configs[1]["args"])
-    # prepare html for api agent
+
+    # NOTE: before defining api-assist, we need to prepare the docstring html
+    # first
     prepare_docstring_html(
-        agent_configs[2]["args"]["rag_config"]["repo_base"],
-        agent_configs[2]["args"]["rag_config"]["load_data"]["loader"][
-            "init_args"
-        ]["input_dir"],
+        "../../",
+        "../../docs/docstring_html/",
     )
+    # define an API agent
     api_agent = LlamaIndexAgent(**agent_configs[2]["args"])
+
     # define a guide agent
     agent_configs[3]["args"].pop("description")
     guide_agent = DialogAgent(**agent_configs[3]["args"])
+
+    # define a searching agent
+    searching_agent = LlamaIndexAgent(**agent_configs[4]["args"])
+
     rag_agents = [
         tutorial_agent,
         code_explain_agent,
         api_agent,
+        searching_agent,
     ]
     rag_agent_names = [agent.name for agent in rag_agents]
 
@@ -70,8 +78,8 @@ def main() -> None:
         # The workflow is the following:
         # 1. user input a message,
         # 2. if it mentions one of the agents, then the agent will be called
-        # 3. otherwise, the guide agent will be decide which agent to call
-        # 4. the called agent will response to the user
+        # 3. otherwise, the guide agent will decide which agent to call
+        # 4. the called agent will respond to the user
         # 5. repeat
         x = user_agent()
         x.role = "user"  # to enforce dashscope requirement on roles

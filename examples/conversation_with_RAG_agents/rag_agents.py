@@ -61,9 +61,8 @@ class RAGAgentBase(AgentBase, ABC):
         # setup embedding model used in RAG
         self.emb_model = load_model_by_config_name(emb_model_config_name)
 
+        # setup RAG configurations
         self.rag_config = rag_config or {}
-        if "log_retrieval" not in self.rag_config:
-            self.rag_config["log_retrieval"] = True
 
         # use LlamaIndexAgent OR LangChainAgent
         self.rag = self.init_rag()
@@ -248,38 +247,42 @@ class LlamaIndexAgent(RAGAgentBase):
                 An example of the config for retrieving code files
                 is as following:
 
-                "rag_config": {
-                    "load_data": {
-                      "loader": {
-                        "create_object": true,
-                        "module": "llama_index.core",
-                        "class": "SimpleDirectoryReader",
-                        "init_args": {
-                          "input_dir": "path/to/data",
-                          "recursive": true
-                          ...
+                "rag_config":{
+                    "index_configs": [
+                      {
+                        "load_data": {
+                          "loader": {
+                            "create_object": true,
+                            "module": "llama_index.core",
+                            "class": "SimpleDirectoryReader",
+                            "init_args": {
+                              "input_dir": "path/to/data",
+                              "recursive": true
+                              ...
+                            }
+                          }
+                        },
+                        "store_and_index": {
+                          "transformations": [
+                            {
+                              "create_object": true,
+                              "module": "llama_index.core.node_parser",
+                              "class": "CodeSplitter",
+                              "init_args": {
+                                "language": "python",
+                                "chunk_lines": 100
+                              }
+                            }
+                          ]
                         }
                       }
-                    },
-                    "store_and_index": {
-                      "transformations": [
-                        {
-                          "create_object": true,
-                          "module": "llama_index.core.node_parser",
-                          "class": "CodeSplitter",
-                          "init_args": {
-                            "language": "python",
-                            "chunk_lines": 100
-                          }
-                        }
-                      ]
-                    },
+                    ],
                     "chunk_size": 2048,
                     "chunk_overlap": 40,
                     "similarity_top_k": 10,
                     "log_retrieval": true,
                     "recent_n_mem": 1
-               }
+                  }
         """
         super().__init__(
             name=name,
@@ -293,45 +296,58 @@ class LlamaIndexAgent(RAGAgentBase):
 
     def init_rag(self) -> LlamaIndexRAG:
         # dynamic loading loader
-        # init rag related attributes
+        # initiate RAG related attributes
         rag = LlamaIndexRAG(
             model=self.model,
             emb_model=self.emb_model,
             config=self.rag_config,
         )
-        # load the document to memory
-        # Feed the AgentScope tutorial documents, so that
-        # the agent can answer questions related to AgentScope!
-        if "load_data" in self.rag_config:
-            load_data_args = self._prepare_args_from_config(
-                self.rag_config["load_data"],
-            )
-        else:
-            try:
-                from llama_index.core import SimpleDirectoryReader
-            except ImportError as exc_inner:
-                raise ImportError(
-                    " LlamaIndexAgent requires llama-index to be install."
-                    "Please run `pip install llama-index`",
-                ) from exc_inner
-            load_data_args = {
-                "loader": SimpleDirectoryReader(self.config["data_path"]),
-            }
-            # NOTE: "data_path" is never used/defined for the current version.
-        logger.info(f"rag.load_data args: {load_data_args}")
-        docs = rag.load_data(**load_data_args)
+        # initiate the loaded document/store_and_index arguments list,
+        docs_list, store_and_index_args_list = [], []
 
-        # store and indexing
-        if "store_and_index" in self.rag_config:
-            store_and_index_args = self._prepare_args_from_config(
-                self.rag_config["store_and_index"],
-            )
-        else:
-            store_and_index_args = {}
+        # load the indexing configurations
+        index_config = self.rag_config["index_config"]
 
-        logger.info(f"store_and_index_args args: {store_and_index_args}")
-        rag.store_and_index(docs, **store_and_index_args)
+        # NOTE: as each selected file type may need to use a different loader
+        # and transformations, the length of the list depends on
+        # the total count of loaded data.
+        for index_config_i in range(len(index_config)):
+            if "load_data" in index_config[index_config_i]:
+                load_data_args = self._prepare_args_from_config(
+                    index_config[index_config_i]["load_data"],
+                )
+            else:
+                try:
+                    from llama_index.core import SimpleDirectoryReader
+                except ImportError as exc_inner:
+                    raise ImportError(
+                        " LlamaIndexAgent requires llama-index to be install."
+                        "Please run `pip install llama-index`",
+                    ) from exc_inner
+                load_data_args = {
+                    "loader": SimpleDirectoryReader(
+                        index_config[index_config_i][
+                            "set_default_data_path"]),
+                }
+            logger.info(f"rag.load_data args: {load_data_args}")
+            docs = rag.load_data(**load_data_args)
+            docs_list.append(docs)
 
+            # store and indexing for each file type
+            if "store_and_index" in index_config[index_config_i]:
+                store_and_index_args = self._prepare_args_from_config(
+                    index_config[index_config_i]["store_and_index"],
+                )
+            else:
+                store_and_index_args = {"transformations": None}
+            store_and_index_args_list.append(store_and_index_args)
+
+        # display the arguments for store_and_index_list
+        logger.info(f"store_and_index_args args: {store_and_index_args_list}")
+
+        # pass the loaded documents and arguments to store_and_index
+        rag.store_and_index(docs_list=docs_list,
+                            store_and_index_args_list=store_and_index_args_list)
         return rag
 
     def reply(

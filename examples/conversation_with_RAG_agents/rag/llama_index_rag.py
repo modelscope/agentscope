@@ -204,16 +204,17 @@ class LlamaIndexRAG(RAGBase):
 
     def store_and_index(
         self,
-        docs: Any,
+        docs_list: Any,
         vector_store: Union[BasePydanticVectorStore, VectorStore, None] = None,
         retriever: Optional[BaseRetriever] = None,
         transformations: Optional[list[NodeParser]] = None,
+        store_and_index_args_list: Optional[list] = None,
         **kwargs: Any,
     ) -> Any:
         """
         Preprocessing the loaded documents.
         Args:
-            docs (Any):
+            docs_list (Any):
                 documents to be processed, usually expected to be in
                  llama index Documents.
             vector_store (Union[BasePydanticVectorStore, VectorStore, None]):
@@ -224,6 +225,9 @@ class LlamaIndexRAG(RAGBase):
                 optional, specifies the transformations (operators) to
                 process documents (e.g., split the documents into smaller
                 chunks)
+            store_and_index_args_list (Optional[list]):
+                optional, specifies the indexing configurations in llama
+                index for each document type
 
         Return:
             Any: return the index of the processed document
@@ -231,52 +235,51 @@ class LlamaIndexRAG(RAGBase):
         In LlamaIndex terms, an Index is a data structure composed
         of Document objects, designed to enable querying by an LLM.
         For example:
-        1) preprocessing documents with
-        2) generate embedding,
-        3) store the embedding-content to vdb
+        1) preprocessing documents with data loaders
+        2) generate embedding by configuring pipline with embedding models
+        3) store the embedding-content to vector database
         """
-        # build and run preprocessing pipeline
-        if transformations is None:
-            transformations = [
-                SentenceSplitter(
-                    chunk_size=self.config.get(
-                        "chunk_size",
-                        DEFAULT_CHUNK_SIZE,
-                    ),
-                    chunk_overlap=self.config.get(
-                        "chunk_overlap",
-                        DEFAULT_CHUNK_OVERLAP,
-                    ),
-                ),
-            ]
 
-        # adding embedding model as the last step of transformation
-        # https://docs.llamaindex.ai/en/stable/module_guides/loading/ingestion_pipeline/root.html
-        transformations.append(self.emb_model)
-
+        # if persist_dir does not exist, calculate the index
         if not os.path.exists(self.persist_dir):
-            # check if index is persisted, if not, calculate the index
-            if vector_store is None:
-                # No vector_store is provide,
+            # nodes, or called chunks, is a presentation of the documents
+            nodes = []
+            # we build nodes by using the IngestionPipeline for each document
+            for i in range(len(docs_list)):
+                # load the transformation
+                transformations = store_and_index_args_list[i].get(
+                    "transformations", None)
+                # if it is not specified, use the default configuration
+                if transformations is None:
+                    transformations = [
+                        SentenceSplitter(
+                            chunk_size=self.config.get(
+                                "chunk_size",
+                                DEFAULT_CHUNK_SIZE,
+                            ),
+                            chunk_overlap=self.config.get(
+                                "chunk_overlap",
+                                DEFAULT_CHUNK_OVERLAP,
+                            ),
+                        ),
+                    ]
+
+                # adding embedding model as the last step of transformation
+                # https://docs.llamaindex.ai/en/stable/module_guides/loading/ingestion_pipeline/root.html
+                transformations.append(self.emb_model)
+
                 # use in memory to construct an index
                 pipeline = IngestionPipeline(
                     transformations=transformations,
                 )
-                nodes = pipeline.run(documents=docs)
-                self.index = VectorStoreIndex(
-                    nodes=nodes,
-                    embed_model=self.emb_model,
-                )
-            else:
-                # use vector_store to construct an index
-                pipeline = IngestionPipeline(
-                    transformations=transformations,
-                    vector_store=vector_store,
-                )
-                _ = pipeline.run(docs)
-                self.index = VectorStoreIndex.from_vector_store(
-                    vector_store=vector_store,
-                )
+                # stack up the nodes from the pipline
+                nodes = nodes + pipeline.run(documents=docs_list[i])
+
+            # feed all the nodes to embedding model to calculate index
+            self.index = VectorStoreIndex(
+                nodes=nodes,
+                embed_model=self.emb_model,
+            )
             # persist the calculated index
             self.index.storage_context.persist(persist_dir=self.persist_dir)
         else:
