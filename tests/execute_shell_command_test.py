@@ -19,9 +19,9 @@ class ExecuteShellCommandTest(unittest.TestCase):
 
         self.arg1 = "echo 'Helloworld' >> tmp_a.txt"
 
-        self.args2 = "cat tmp_a.txt"
+        self.arg2 = "cat tmp_a.txt"
 
-        self.args3 = "rm tmp_a.txt"
+        self.arg3 = "rm tmp_a.txt"
 
     def test(self) -> None:
         """test command"""
