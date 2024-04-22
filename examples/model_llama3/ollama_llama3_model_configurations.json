@@ -1,0 +1,22 @@
+[
+  {
+     "config_name": "ollama_llama3_8b",
+     "model_type": "ollama_chat",
+     "model_name": "llama3",
+     "options": {
+         "temperature": 0.5,
+         "seed": 123
+     },
+     "keep_alive": "5m"
+  },
+  {
+     "config_name": "ollama_llama3_70b",
+     "model_type": "ollama_chat",
+     "model_name": "llama3:70b",
+     "options": {
+         "temperature": 0.5,
+         "seed": 123
+     },
+     "keep_alive": "5m"
+  }
+]
