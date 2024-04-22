@@ -121,7 +121,7 @@ as_workflow config.json --compile ${YOUR_PYTHON_SCRIPT_NAME}.py
 python ${YOUR_PYTHON_SCRIPT_NAME}.py
 
 # Run workflow in as_studio (gradio ui)
-python ${YOUR_PYTHON_SCRIPT_NAME}.py
+as_studio ${YOUR_PYTHON_SCRIPT_NAME}.py
 ```
 
 More examples about AgentScope Workstation are coming soon!
