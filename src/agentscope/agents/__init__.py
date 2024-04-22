@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """ Import all agent related modules in the package. """
-from .agent import AgentBase, get_agent_class
+from .agent import AgentBase
 from .operator import Operator
 from .dialog_agent import DialogAgent
 from .dict_dialog_agent import DictDialogAgent
@@ -12,7 +12,6 @@ from .react_agent import ReActAgent
 
 __all__ = [
     "AgentBase",
-    "get_agent_class",
     "Operator",
     "DialogAgent",
     "DictDialogAgent",

@@ -551,14 +551,14 @@ class BasicRpcAgentTest(unittest.TestCase):
             host=host,
             port=12010,
             local_mode=False,
-            custom_agents=[DemoRpcAgent],
+            custom_agents=[DemoGatherAgent, DemoGeneratorAgent],
         )
         launcher2 = RpcAgentServerLauncher(
             # choose port automatically
             host=host,
             port=12011,
             local_mode=False,
-            custom_agents=[DemoRpcAgent],
+            custom_agents=[DemoGatherAgent, DemoGeneratorAgent],
         )
         launcher1.launch()
         launcher2.launch()

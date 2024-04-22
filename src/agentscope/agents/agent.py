@@ -25,14 +25,14 @@ class _AgentMeta(ABCMeta):
 
     def __init__(cls, name: Any, bases: Any, attrs: Any) -> None:
         if not hasattr(cls, "registry"):
-            cls.registry = {}
+            cls._registry = {}
         else:
-            if name in cls.registry:
+            if name in cls._registry:
                 logger.warning(
                     f"Agent class with name [{name}] already exists.",
                 )
             else:
-                cls.registry[name] = cls
+                cls._registry[name] = cls
         super().__init__(name, bases, attrs)
 
     def __call__(cls, *args: tuple, **kwargs: dict) -> Any:
@@ -86,24 +86,6 @@ class _AgentMeta(ABCMeta):
         return instance
 
 
-# todo: add a unique agent_type field to distinguish different agent class
-def get_agent_class(agent_class_name: str) -> Type[AgentBase]:
-    """Get the agent class based on the specific agent class name.
-
-    Args:
-        agent_class_name (`str`): the name of the agent class.
-
-    Raises:
-        ValueError: Agent class name not exits.
-
-    Returns:
-        Type[AgentBase]: the AgentBase sub-class.
-    """
-    if agent_class_name not in AgentBase.registry:
-        raise ValueError()
-    return AgentBase.registry[agent_class_name]
-
-
 class AgentBase(Operator, metaclass=_AgentMeta):
     """Base class for all agents.
 
@@ -141,7 +123,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
                 The parameter dict for `to_dist` method. Used in `_AgentMeta`,
                 when this parameter is provided, the agent will automatically
                 be converted into its distributed version. See
-                :doc:`Tutorial <208-distribute-en>` for detail.
+                :doc:`Tutorial <tutorial/208-distribute>` for detail.
         """
         self.name = name
         self.memory_config = memory_config
@@ -176,6 +158,39 @@ class AgentBase(Operator, metaclass=_AgentMeta):
         """Generate the agent_id of this agent instance"""
         # TODO: change cls.__name__ into a global unique agent_type
         return f"{cls.__name__}_{uuid.uuid4().hex}"
+
+    # todo: add a unique agent_type field to distinguish different agent class
+    @classmethod
+    def get_agent_class(cls, agent_class_name: str) -> Type[AgentBase]:
+        """Get the agent class based on the specific agent class name.
+
+        Args:
+            agent_class_name (`str`): the name of the agent class.
+
+        Raises:
+            ValueError: Agent class name not exits.
+
+        Returns:
+            Type[AgentBase]: the AgentBase sub-class.
+        """
+        if agent_class_name not in cls._registry:
+            raise ValueError(f"Agent [{agent_class_name}] not found.")
+        return cls._registry[agent_class_name]  # type: ignore[return-value]
+
+    @classmethod
+    def register_agent_class(cls, agent_class: Type[AgentBase]) -> None:
+        """Register the agent class into the registry.
+
+        Args:
+            agent_class (Type[AgentBase]): the agent class to be registered.
+        """
+        agent_class_name = agent_class.__name__
+        if agent_class_name in cls._registry:
+            logger.warning(
+                f"Agent class with name [{agent_class_name}] already exists.",
+            )
+        else:
+            cls._registry[agent_class_name] = agent_class
 
     def reply(self, x: dict = None) -> dict:
         """Define the actions taken by this agent.

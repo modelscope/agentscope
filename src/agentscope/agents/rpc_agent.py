@@ -25,7 +25,7 @@ except ImportError:
     ExpiringDict = None
 
 from agentscope._init import init_process, _INIT_SETTINGS
-from agentscope.agents.agent import AgentBase, get_agent_class
+from agentscope.agents.agent import AgentBase
 from agentscope.message import (
     Msg,
     PlaceholderMessage,
@@ -323,7 +323,7 @@ async def setup_rpc_agent_server_async(
     # update agent registry
     if custom_agents is not None:
         for agent_class in custom_agents:
-            AgentBase.registry[agent_class.__name__] = agent_class
+            AgentBase.register_agent_class(agent_class=agent_class)
     while True:
         try:
             port = check_port(port)
@@ -616,7 +616,7 @@ class AgentPlatform(RpcAgentServicer):
         with self.agent_id_lock:
             if agent_id not in self.agent_pool:
                 agent_class_name = agent_configs["class_name"]
-                agent_instance = get_agent_class(agent_class_name)(
+                agent_instance = AgentBase.get_agent_class(agent_class_name)(
                     *agent_configs["args"],
                     **agent_configs["kwargs"],
                 )
