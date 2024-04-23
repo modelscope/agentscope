@@ -23,159 +23,158 @@ class ServiceFactoryTest(unittest.TestCase):
     def setUp(self) -> None:
         """Init for ExampleTest."""
         self.json_schema_bing_search1 = {
-                "type": "function",
-                "function": {
-                    "name": "bing_search",
-                    "description": (
-                        "Search question in Bing Search API and "
-                        "return the searching results"
-                    ),
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "num_results": {
-                                "type": "number",
-                                "description": (
-                                    "The number of search "
-                                    "results to return."
-                                ),
-                                "default": 10,
-                            },
-                            "question": {
-                                "type": "string",
-                                "description": "The search query string.",
-                            },
+            "type": "function",
+            "function": {
+                "name": "bing_search",
+                "description": (
+                    "Search question in Bing Search API and "
+                    "return the searching results"
+                ),
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "num_results": {
+                            "type": "number",
+                            "description": (
+                                "The number of search " "results to return."
+                            ),
+                            "default": 10,
                         },
-                        "required": [
-                            "question",
-                        ],
+                        "question": {
+                            "type": "string",
+                            "description": "The search query string.",
+                        },
                     },
+                    "required": [
+                        "question",
+                    ],
                 },
-            }
+            },
+        }
 
         self.json_schema_bing_search2 = {
-                "type": "function",
-                "function": {
-                    "name": "bing_search",
-                    "description": (
-                        "Search question in Bing Search API and "
-                        "return the searching results"
-                    ),
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "question": {
-                                "type": "string",
-                                "description": "The search query string.",
-                            },
+            "type": "function",
+            "function": {
+                "name": "bing_search",
+                "description": (
+                    "Search question in Bing Search API and "
+                    "return the searching results"
+                ),
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "question": {
+                            "type": "string",
+                            "description": "The search query string.",
                         },
-                        "required": ["question"],
                     },
+                    "required": ["question"],
                 },
-            }
+            },
+        }
 
         self.json_schema_func = {
-                "type": "function",
-                "function": {
-                    "name": "func",
-                    "description": None,
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "c": {"default": "test"},
-                            "d": {
-                                "type": "typing.Literal",
-                                "enum": [1, "abc", "d"],
-                                "default": 1,
-                            },
-                            "b": {},
-                            "a": {"type": "string"},
+            "type": "function",
+            "function": {
+                "name": "func",
+                "description": None,
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "c": {"default": "test"},
+                        "d": {
+                            "type": "typing.Literal",
+                            "enum": [1, "abc", "d"],
+                            "default": 1,
                         },
-                        "required": ["a", "b"],
+                        "b": {},
+                        "a": {"type": "string"},
                     },
+                    "required": ["a", "b"],
                 },
-            }
+            },
+        }
 
         self.json_schema_execute_python_code = {
-                "type": "function",
-                "function": {
-                    "name": "execute_python_code",
-                    "description": "Execute a piece of python code.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "code": {
-                                "type": "string",
-                                "description": (
-                                    "The Python code to be " "executed."
-                                ),
-                            },
+            "type": "function",
+            "function": {
+                "name": "execute_python_code",
+                "description": "Execute a piece of python code.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "code": {
+                            "type": "string",
+                            "description": (
+                                "The Python code to be " "executed."
+                            ),
                         },
-                        "required": ["code"],
                     },
+                    "required": ["code"],
                 },
-            }
+            },
+        }
 
         self.json_schema_retrieve_from_list = {
-                "type": "function",
-                "function": {
-                    "name": "retrieve_from_list",
-                    "description": "Retrieve data in a list.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "query": {
-                                "description": "A message to be retrieved.",
-                            },
+            "type": "function",
+            "function": {
+                "name": "retrieve_from_list",
+                "description": "Retrieve data in a list.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "query": {
+                            "description": "A message to be retrieved.",
                         },
-                        "required": [
-                            "query",
-                        ],
                     },
+                    "required": [
+                        "query",
+                    ],
                 },
-            }
+            },
+        }
 
         self.json_schema_query_mysql = {
-                "type": "function",
-                "function": {
-                    "name": "query_mysql",
-                    "description": "Execute query within MySQL database.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "query": {
-                                "type": "string",
-                                "description": "SQL query to execute.",
-                            },
+            "type": "function",
+            "function": {
+                "name": "query_mysql",
+                "description": "Execute query within MySQL database.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "query": {
+                            "type": "string",
+                            "description": "SQL query to execute.",
                         },
-                        "required": [
-                            "query",
-                        ],
                     },
+                    "required": [
+                        "query",
+                    ],
                 },
-            }
+            },
+        }
 
         self.json_schema_summarization = {
-                "type": "function",
-                "function": {
-                    "name": "summarization",
-                    "description": "Summarize the input text.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "text": {
-                                "type": "string",
-                                "description": (
-                                    "Text to be summarized by " "the model."
-                                ),
-                            },
+            "type": "function",
+            "function": {
+                "name": "summarization",
+                "description": "Summarize the input text.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "text": {
+                            "type": "string",
+                            "description": (
+                                "Text to be summarized by " "the model."
+                            ),
                         },
-                        "required": [
-                            "text",
-                        ],
                     },
+                    "required": [
+                        "text",
+                    ],
                 },
-            }
+            },
+        }
 
     def test_bing_search(self) -> None:
         """Test bing_search."""
@@ -185,7 +184,7 @@ class ServiceFactoryTest(unittest.TestCase):
         print(json.dumps(doc_dict, indent=4))
         self.assertDictEqual(
             doc_dict,
-            self.json_schema_bing_search1
+            self.json_schema_bing_search1,
         )
 
         # Set num_results by developer rather than model
@@ -197,7 +196,7 @@ class ServiceFactoryTest(unittest.TestCase):
 
         self.assertDictEqual(
             doc_dict,
-            self.json_schema_bing_search2
+            self.json_schema_bing_search2,
         )
 
     def test_enum(self) -> None:
@@ -215,7 +214,7 @@ class ServiceFactoryTest(unittest.TestCase):
 
         self.assertDictEqual(
             doc_dict,
-            self.json_schema_func
+            self.json_schema_func,
         )
 
     def test_exec_python_code(self) -> None:
@@ -229,7 +228,7 @@ class ServiceFactoryTest(unittest.TestCase):
 
         self.assertDictEqual(
             doc_dict,
-            self.json_schema_execute_python_code
+            self.json_schema_execute_python_code,
         )
 
     def test_retrieval(self) -> None:
@@ -245,7 +244,7 @@ class ServiceFactoryTest(unittest.TestCase):
 
         self.assertDictEqual(
             doc_dict,
-            self.json_schema_retrieve_from_list
+            self.json_schema_retrieve_from_list,
         )
 
     def test_sql_query(self) -> None:
@@ -263,7 +262,7 @@ class ServiceFactoryTest(unittest.TestCase):
 
         self.assertDictEqual(
             doc_dict,
-            self.json_schema_query_mysql
+            self.json_schema_query_mysql,
         )
 
     def test_summary(self) -> None:
@@ -281,13 +280,14 @@ class ServiceFactoryTest(unittest.TestCase):
 
         self.assertDictEqual(
             doc_dict,
-            self.json_schema_summarization
+            self.json_schema_summarization,
         )
 
-    def test_object_service_factory(self):
+    def test_object_service_factory(self) -> None:
+        """Test the object of ServiceFactory."""
         service_factory = ServiceFactory()
 
-        service_factory.add(bing_search, api_key="xxx")
+        service_factory.add(bing_search, api_key="xxx", num_results=3)
         service_factory.add(
             execute_python_code,
             timeout=300,
@@ -295,8 +295,9 @@ class ServiceFactoryTest(unittest.TestCase):
             maximum_memory_bytes=None,
         )
 
-        self.assertEqual(service_factory.tools_instruction,
-                         """## Tool Functions:
+        self.assertEqual(
+            service_factory.tools_instruction,
+            """## Tool Functions:
 The following tool functions are available in the format of
 ```
 {index}. {function name}: {function description}
@@ -307,16 +308,16 @@ The following tool functions are available in the format of
 
 1. bing_search: Search question in Bing Search API and return the searching results
 	question (string): The search query string.
-	num_results (number): The number of search results to return.
 2. execute_python_code: Execute a piece of python code.
 	code (string): The Python code to be executed.
-""")
+""",  # noqa
+        )
         self.assertDictEqual(
             service_factory.json_schemas,
             {
-                "bing_search": self.json_schema_bing_search1,
-                "execute_python_code": self.json_schema_execute_python_code
-            }
+                "bing_search": self.json_schema_bing_search2,
+                "execute_python_code": self.json_schema_execute_python_code,
+            },
         )
 
 
