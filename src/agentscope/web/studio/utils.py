@@ -113,6 +113,7 @@ def send_reset_msg(uid: Optional[str] = None) -> None:
     global glb_uid_dict
     glb_queue_reset_msg = glb_uid_dict[uid]["glb_queue_reset_msg"]
     glb_queue_reset_msg.put([None, "**Reset**"])
+    send_player_input("**Reset**", uid)
 
 
 def get_reset_msg(uid: Optional[str] = None) -> None:
@@ -192,6 +193,7 @@ def user_input(
 ) -> str:
     """get user input"""
     if hasattr(thread_local_data, "uid"):
+        get_reset_msg(uid=thread_local_data.uid)
         content = get_player_input(
             timeout=timeout,
             uid=thread_local_data.uid,
