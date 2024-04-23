@@ -7,8 +7,7 @@ from agentscope.service.service_response import ServiceResponse
 
 def execute_shell_command(command: str) -> ServiceResponse:
     """
-    Executes a given shell command(using subprocess) and returns the execution
-    result as a string.
+    Executes a given shell command.
 
     Args:
         command (str): The shell command to execute.

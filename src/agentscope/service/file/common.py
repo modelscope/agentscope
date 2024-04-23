@@ -204,9 +204,9 @@ def move_directory(
         )
 
 
-def show_directory(directory_path: str) -> ServiceResponse:
+def list_directory_content(directory_path: str) -> ServiceResponse:
     """
-    Show/List the contents of a directory. i.e. ls -a
+    List the contents of a directory. i.e. ls -a
 
     Args:
         directory_path (`str`):
@@ -230,7 +230,7 @@ def show_directory(directory_path: str) -> ServiceResponse:
         ls_result: List[str] = os.listdir(directory_path)
         return ServiceResponse(
             status=ServiceExecStatus.SUCCESS,
-            content=f"The listdir results are: {ls_result}",
+            content=ls_result,
         )
     except Exception as e:
         error_message = f"{e.__class__.__name__}: {e}"
