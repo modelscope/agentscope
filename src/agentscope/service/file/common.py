@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=C0301
 """ Common operators for file and directory. """
 import os
 import shutil
@@ -30,7 +31,7 @@ def create_file(file_path: str, content: str = "") -> ServiceResponse:
         )
     try:
         with open(file_path, "w", encoding="utf-8") as file:
-            file.write("")
+            file.write(content)
         return ServiceResponse(
             status=ServiceExecStatus.SUCCESS,
             content="Success",
@@ -274,8 +275,11 @@ def get_current_directory() -> ServiceResponse:
 
 
 def write_file(
-    file_path: str, content: str, start_line: int = 0, end_line: int = -1
-):
+    file_path: str,
+    content: str,
+    start_line: int = 0,
+    end_line: int = -1,
+) -> ServiceResponse:
     """
     Write content to a file by replacing the current lines between <start_line> and <end_line> with <content>. Default start_line = 0 and end_line = -1. Calling this with no <start_line> <end_line> args will replace the whole file, so besure to use this with caution when writing to a file that already exists.
 
@@ -284,7 +288,7 @@ def write_file(
         content (`str`): The content to write to the file.
         start_line (`Optional[int]`, defaults to `0`): The start line of the file to be replace with <content>.
         end_line (`Optional[int]`, defaults to `-1`): The end line of the file to be replace with <content>.
-    """
+    """  # noqa
     try:
         mode = "w" if not os.path.exists(file_path) else "r+"
         insert = content.split("\n")
@@ -300,7 +304,8 @@ def write_file(
             file.seek(0)
             file.writelines(new_file)
             file.truncate()
-            obs = f'WRITE OPERATION:\nYou have written to "{file_path}" on these lines: {start_line}:{end_line}.'
+            obs = f'WRITE OPERATION:\nYou have written to "{file_path}" \
+                on these lines: {start_line}:{end_line}.'
             return ServiceResponse(
                 status=ServiceExecStatus.SUCCESS,
                 content=obs + "".join(new_file),
@@ -313,7 +318,11 @@ def write_file(
         )
 
 
-def read_file(file_path: str, start_line: int = 0, end_line: int = -1):
+def read_file(
+    file_path: str,
+    start_line: int = 0,
+    end_line: int = -1,
+) -> ServiceResponse:
     """
     Shows a given file's contents starting from <start_line> up to <end_line>. Default: start_line = 0, end_line = -1. By default the whole file will be read.
 
@@ -321,7 +330,7 @@ def read_file(file_path: str, start_line: int = 0, end_line: int = -1):
         file_path (`str`): The path to the file to read.
         start_line (`Optional[int]`, defaults to `0`): The start line of the file to be read.
         end_line (`Optional[int]`, defaults to `-1`): The end line of the file to be read.
-    """
+    """  # noqa
     start_line = max(start_line, 0)
     try:
         with open(file_path, "r", encoding="utf-8") as file:
