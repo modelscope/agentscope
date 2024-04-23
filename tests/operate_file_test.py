@@ -15,7 +15,7 @@ from agentscope.service import (
     write_text_file,
     read_json_file,
     write_json_file,
-    show_directory,
+    list_directory_content,
     get_current_directory,
 )
 from agentscope.service.service_status import ServiceExecStatus
@@ -74,7 +74,7 @@ class OperateFileTest(unittest.TestCase):
         is_success = move_directory(self.dir_name, self.moved_dir_name).status
         self.assertEqual(is_success, ServiceExecStatus.SUCCESS)
 
-        is_success = show_directory(self.moved_dir_name).status
+        is_success = list_directory_content(self.moved_dir_name).status
         self.assertEqual(is_success, ServiceExecStatus.SUCCESS)
 
         is_success = delete_directory(self.moved_dir_name).status

@@ -11,7 +11,7 @@ from .file.common import (
     create_directory,
     delete_directory,
     move_directory,
-    show_directory,
+    list_directory_content,
     get_current_directory,
 )
 from .file.text import read_text_file, write_text_file
@@ -50,7 +50,7 @@ __all__ = [
     "create_directory",
     "delete_directory",
     "move_directory",
-    "show_directory",
+    "list_directory_content",
     "get_current_directory",
     "read_text_file",
     "write_text_file",
