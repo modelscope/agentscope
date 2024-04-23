@@ -99,6 +99,7 @@
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
 <span class="kn">from</span> <span class="nn">.execute_code.exec_python</span> <span class="kn">import</span> <span class="n">execute_python_code</span>
+<span class="kn">from</span> <span class="nn">.execute_code.exec_shell</span> <span class="kn">import</span> <span class="n">execute_shell_command</span>
 <span class="kn">from</span> <span class="nn">.file.common</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">create_file</span><span class="p">,</span>
     <span class="n">delete_file</span><span class="p">,</span>
@@ -106,6 +107,8 @@
     <span class="n">create_directory</span><span class="p">,</span>
     <span class="n">delete_directory</span><span class="p">,</span>
     <span class="n">move_directory</span><span class="p">,</span>
+    <span class="n">list_directory_content</span><span class="p">,</span>
+    <span class="n">get_current_directory</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.file.text</span> <span class="kn">import</span> <span class="n">read_text_file</span><span class="p">,</span> <span class="n">write_text_file</span>
 <span class="kn">from</span> <span class="nn">.file.json</span> <span class="kn">import</span> <span class="n">read_json_file</span><span class="p">,</span> <span class="n">write_json_file</span>
@@ -139,12 +142,15 @@
     <span class="s2">&quot;ServiceFactory&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_help&quot;</span><span class="p">,</span>
     <span class="s2">&quot;execute_python_code&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;execute_shell_command&quot;</span><span class="p">,</span>
     <span class="s2">&quot;create_file&quot;</span><span class="p">,</span>
     <span class="s2">&quot;delete_file&quot;</span><span class="p">,</span>
     <span class="s2">&quot;move_file&quot;</span><span class="p">,</span>
     <span class="s2">&quot;create_directory&quot;</span><span class="p">,</span>
     <span class="s2">&quot;delete_directory&quot;</span><span class="p">,</span>
     <span class="s2">&quot;move_directory&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;list_directory_content&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_current_directory&quot;</span><span class="p">,</span>
     <span class="s2">&quot;read_text_file&quot;</span><span class="p">,</span>
     <span class="s2">&quot;write_text_file&quot;</span><span class="p">,</span>
     <span class="s2">&quot;read_json_file&quot;</span><span class="p">,</span>

@@ -76,12 +76,15 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.service.get_help"><code class="docutils literal notranslate"><span class="pre">get_help()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.service.execute_python_code"><code class="docutils literal notranslate"><span class="pre">execute_python_code()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.service.execute_shell_command"><code class="docutils literal notranslate"><span class="pre">execute_shell_command()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.service.create_file"><code class="docutils literal notranslate"><span class="pre">create_file()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.service.delete_file"><code class="docutils literal notranslate"><span class="pre">delete_file()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.service.move_file"><code class="docutils literal notranslate"><span class="pre">move_file()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.service.create_directory"><code class="docutils literal notranslate"><span class="pre">create_directory()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.service.delete_directory"><code class="docutils literal notranslate"><span class="pre">delete_directory()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.service.move_directory"><code class="docutils literal notranslate"><span class="pre">move_directory()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.service.list_directory_content"><code class="docutils literal notranslate"><span class="pre">list_directory_content()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.service.get_current_directory"><code class="docutils literal notranslate"><span class="pre">get_current_directory()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.service.read_text_file"><code class="docutils literal notranslate"><span class="pre">read_text_file()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.service.write_text_file"><code class="docutils literal notranslate"><span class="pre">write_text_file()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.service.read_json_file"><code class="docutils literal notranslate"><span class="pre">read_json_file()</span></code></a></li>
@@ -262,6 +265,35 @@ since <cite>signal.setitimer</cite> is only available in Unix.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.execute_shell_command">
+<span class="sig-prename descclassname"><span class="pre">agentscope.service.</span></span><span class="sig-name descname"><span class="pre">execute_shell_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#agentscope.service.ServiceResponse" title="agentscope.service.service_response.ServiceResponse"><span class="pre">ServiceResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/service/execute_code/exec_shell.html#execute_shell_command"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.execute_shell_command" title="Link to this definition"></a></dt>
+<dd><p>Executes a given shell command.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>command</strong> (<em>str</em>) – The shell command to execute.</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>Contains either the output from the shell command as a
+string if sucessful, or an error message include the error type.</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#agentscope.service.ServiceResponse" title="agentscope.service.ServiceResponse">ServiceResponse</a></p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">备注</p>
+<p>Use any bash/shell commands you want (e.g. find, grep, cat, ls),
+but note that :
+1. interactive session commands (e.g. python, vim) or commands that
+change current state (e.g. cd that change the current directory)
+are NOT supported yet, so please do not invoke them.
+2. be VERY CAREFUL when using commands that will
+change/edit the files current directory (e.g. rm, sed).</p>
+</div>
+<p>…</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="agentscope.service.create_file">
 <span class="sig-prename descclassname"><span class="pre">agentscope.service.</span></span><span class="sig-name descname"><span class="pre">create_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#agentscope.service.ServiceResponse" title="agentscope.service.service_response.ServiceResponse"><span class="pre">ServiceResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/service/file/common.html#create_file"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.create_file" title="Link to this definition"></a></dt>
 <dd><p>Create a file and write content to it.</p>
@@ -374,6 +406,39 @@ str contains an error message if any, including the error type.</p>
 </dd>
 <dt class="field-odd">返回类型<span class="colon">:</span></dt>
 <dd class="field-odd"><p><cite>ServiceResponse</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.list_directory_content">
+<span class="sig-prename descclassname"><span class="pre">agentscope.service.</span></span><span class="sig-name descname"><span class="pre">list_directory_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#agentscope.service.ServiceResponse" title="agentscope.service.service_response.ServiceResponse"><span class="pre">ServiceResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/service/file/common.html#list_directory_content"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.list_directory_content" title="Link to this definition"></a></dt>
+<dd><p>List the contents of a directory. i.e. ls -a</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>directory_path</strong> (<cite>str</cite>) – The path of the directory to show.</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>The results contain a list of direcotry contents,
+or an error message if any, including the error type.</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.get_current_directory">
+<span class="sig-prename descclassname"><span class="pre">agentscope.service.</span></span><span class="sig-name descname"><span class="pre">get_current_directory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#agentscope.service.ServiceResponse" title="agentscope.service.service_response.ServiceResponse"><span class="pre">ServiceResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/service/file/common.html#get_current_directory"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.get_current_directory" title="Link to this definition"></a></dt>
+<dd><p>Get the current working directory path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The current working directory path, or an error
+message if any, including the error type.</p>
+</dd>
+<dt class="field-even">返回类型<span class="colon">:</span></dt>
+<dd class="field-even"><p><cite>ServiceResponse</cite></p>
 </dd>
 </dl>
 </dd></dl>

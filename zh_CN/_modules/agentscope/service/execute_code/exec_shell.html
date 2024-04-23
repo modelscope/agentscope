@@ -1,0 +1,187 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.service.execute_code.exec_shell &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=7d86a446"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../../_static/translations.js?v=beaddf03"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../../../../en/_modules/agentscope/service/execute_code/exec_shell.html">English</a></li> |
+    <a href="../../../../../zh_CN/_modules/agentscope/service/execute_code/exec_shell.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/quick_start.html">快速上手</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/advance.html">进阶使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.utils.html">agentscope.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.html">agentscope</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">模块代码</a></li>
+          <li class="breadcrumb-item"><a href="../../service.html">agentscope.service</a></li>
+      <li class="breadcrumb-item active">agentscope.service.execute_code.exec_shell</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>agentscope.service.execute_code.exec_shell 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Service to execute shell commands.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">from</span> <span class="nn">agentscope.service.service_status</span> <span class="kn">import</span> <span class="n">ServiceExecStatus</span>
+<span class="kn">from</span> <span class="nn">agentscope.service.service_response</span> <span class="kn">import</span> <span class="n">ServiceResponse</span>
+
+
+<div class="viewcode-block" id="execute_shell_command">
+<a class="viewcode-back" href="../../../../agentscope.service.html#agentscope.service.execute_shell_command">[文档]</a>
+<span class="k">def</span> <span class="nf">execute_shell_command</span><span class="p">(</span><span class="n">command</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Executes a given shell command.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        command (str): The shell command to execute.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ServiceResponse: Contains either the output from the shell command as a</span>
+<span class="sd">        string if sucessful, or an error message include the error type.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Use any bash/shell commands you want (e.g. find, grep, cat, ls),</span>
+<span class="sd">        but note that :</span>
+<span class="sd">        1. interactive session commands (e.g. python, vim) or commands that</span>
+<span class="sd">        change current state (e.g. cd that change the current directory)</span>
+<span class="sd">        are NOT supported yet, so please do not invoke them.</span>
+<span class="sd">        2. be VERY CAREFUL when using commands that will</span>
+<span class="sd">        change/edit the files current directory (e.g. rm, sed).</span>
+<span class="sd">    ...</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="n">command</span><span class="p">,</span>
+            <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+            <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span> <span class="k">else</span> <span class="s2">&quot;Success.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">e</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">stderr</span>
+            <span class="k">else</span> <span class="s2">&quot;An error occurred </span><span class="se">\</span>
+<span class="s2">            while executing the command.&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="n">error_message</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

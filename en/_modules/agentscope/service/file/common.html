@@ -98,6 +98,7 @@
 <span class="sd">&quot;&quot;&quot; Common operators for file and directory. &quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 
 <span class="kn">from</span> <span class="nn">agentscope.utils.common</span> <span class="kn">import</span> <span class="n">write_file</span>
 <span class="kn">from</span> <span class="nn">agentscope.service.service_response</span> <span class="kn">import</span> <span class="n">ServiceResponse</span>
@@ -307,6 +308,70 @@
         <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
             <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
             <span class="n">content</span><span class="o">=</span><span class="s2">&quot;Success&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="n">error_message</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="list_directory_content">
+<a class="viewcode-back" href="../../../../agentscope.service.html#agentscope.service.list_directory_content">[docs]</a>
+<span class="k">def</span> <span class="nf">list_directory_content</span><span class="p">(</span><span class="n">directory_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    List the contents of a directory. i.e. ls -a</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        directory_path (`str`):</span>
+<span class="sd">            The path of the directory to show.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `ServiceResponse`: The results contain a list of direcotry contents,</span>
+<span class="sd">        or an error message if any, including the error type.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">directory_path</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="s2">&quot;FileNotFoundError: The directory does not exist.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">directory_path</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="s2">&quot;FileNotFoundError: The path is not a directory&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">ls_result</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">directory_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="n">ls_result</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="n">error_message</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_current_directory">
+<a class="viewcode-back" href="../../../../agentscope.service.html#agentscope.service.get_current_directory">[docs]</a>
+<span class="k">def</span> <span class="nf">get_current_directory</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the current working directory path.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `ServiceResponse`: The current working directory path, or an error</span>
+<span class="sd">        message if any, including the error type.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="n">cwd</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
