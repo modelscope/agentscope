@@ -8,8 +8,6 @@ can perform certain actions when called.
 """
 import copy
 from typing import Any
-
-import networkx as nx
 from loguru import logger
 
 import agentscope
@@ -19,6 +17,11 @@ from agentscope.web.workstation.workflow_node import (
     DEFAULT_FLOW_VAR,
 )
 from agentscope.web.workstation.workflow_utils import is_callable_expression
+
+try:
+    import networkx as nx
+except ImportError:
+    nx = None
 
 
 def remove_duplicates_from_end(lst: list) -> list:
