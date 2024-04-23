@@ -10,6 +10,7 @@ from agentscope.agents import (
     UserAgent,
     TextToImageAgent,
     DictDialogAgent,
+    ReActAgent,
 )
 from agentscope.message import Msg
 from agentscope.models import read_model_configs
@@ -25,6 +26,14 @@ from agentscope.web.workstation.workflow_utils import (
     kwarg_converter,
     deps_converter,
     dict_converter,
+)
+from agentscope.service import (
+    bing_search,
+    google_search,
+    read_text_file,
+    write_text_file,
+    execute_python_code,
+    ServiceFactory,
 )
 
 DEFAULT_FLOW_VAR = "flow"
@@ -264,6 +273,43 @@ class DictDialogAgentNode(WorkflowNode):
             "imports": "from agentscope.agents import DictDialogAgent",
             "inits": f"{self.var_name} = DictDialogAgent("
             f"{kwarg_converter(self.opt_kwargs)})",
+            "execs": f"{DEFAULT_FLOW_VAR} = {self.var_name}"
+            f"({DEFAULT_FLOW_VAR})",
+        }
+
+
+class ReActAgentNode(WorkflowNode):
+    """
+    A node representing a ReActAgent within a workflow.
+    """
+
+    node_type = WorkflowNodeType.AGENT
+
+    def __init__(
+        self,
+        node_id: str,
+        opt_kwargs: dict,
+        source_kwargs: dict,
+        dep_opts: list,
+    ) -> None:
+        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+        # Build tools
+        self.tools = []
+        for tool in dep_opts:
+            if not hasattr(tool, "service_func"):
+                raise TypeError(f"{tool} must be tool!")
+            self.tools.append(tool.service_func)
+        self.pipeline = ReActAgent(tools=self.tools, **self.opt_kwargs)
+
+    def __call__(self, x: dict = None) -> dict:
+        return self.pipeline(x)
+
+    def compile(self) -> dict:
+        return {
+            "imports": "from agentscope.agents import ReActAgent",
+            "inits": f"{self.var_name} = ReActAgent"
+            f"({kwarg_converter(self.opt_kwargs)}, tools"
+            f"={deps_converter(self.dep_vars)})",
             "execs": f"{DEFAULT_FLOW_VAR} = {self.var_name}"
             f"({DEFAULT_FLOW_VAR})",
         }
@@ -641,6 +687,142 @@ class CopyNode(WorkflowNode):
         }
 
 
+class BingSearchServiceNode(WorkflowNode):
+    """
+    Bing Search Node
+    """
+
+    node_type = WorkflowNodeType.SERVICE
+
+    def __init__(
+        self,
+        node_id: str,
+        opt_kwargs: dict,
+        source_kwargs: dict,
+        dep_opts: list,
+    ) -> None:
+        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+        self.service_func = ServiceFactory.get(bing_search, **self.opt_kwargs)
+
+    def compile(self) -> dict:
+        return {
+            "imports": "from agentscope.service import ServiceFactory\n"
+            "from agentscope.service import bing_search",
+            "inits": f"{self.var_name} = ServiceFactory.get(bing_search,"
+            f" {kwarg_converter(self.opt_kwargs)})",
+            "execs": "",
+        }
+
+
+class GoogleSearchServiceNode(WorkflowNode):
+    """
+    Google Search Node
+    """
+
+    node_type = WorkflowNodeType.SERVICE
+
+    def __init__(
+        self,
+        node_id: str,
+        opt_kwargs: dict,
+        source_kwargs: dict,
+        dep_opts: list,
+    ) -> None:
+        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+        self.service_func = ServiceFactory.get(
+            google_search,
+            **self.opt_kwargs,
+        )
+
+    def compile(self) -> dict:
+        return {
+            "imports": "from agentscope.service import ServiceFactory\n"
+            "from agentscope.service import google_search",
+            "inits": f"{self.var_name} = ServiceFactory.get(google_search,"
+            f" {kwarg_converter(self.opt_kwargs)})",
+            "execs": "",
+        }
+
+
+class PythonServiceNode(WorkflowNode):
+    """
+    Execute python Node
+    """
+
+    node_type = WorkflowNodeType.SERVICE
+
+    def __init__(
+        self,
+        node_id: str,
+        opt_kwargs: dict,
+        source_kwargs: dict,
+        dep_opts: list,
+    ) -> None:
+        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+        self.service_func = ServiceFactory.get(execute_python_code)
+
+    def compile(self) -> dict:
+        return {
+            "imports": "from agentscope.service import ServiceFactory\n"
+            "from agentscope.service import execute_python_code",
+            "inits": f"{self.var_name} = ServiceFactory.get("
+            f"execute_python_code)",
+            "execs": "",
+        }
+
+
+class ReadTextServiceNode(WorkflowNode):
+    """
+    Read Text Service Node
+    """
+
+    node_type = WorkflowNodeType.SERVICE
+
+    def __init__(
+        self,
+        node_id: str,
+        opt_kwargs: dict,
+        source_kwargs: dict,
+        dep_opts: list,
+    ) -> None:
+        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+        self.service_func = ServiceFactory.get(read_text_file)
+
+    def compile(self) -> dict:
+        return {
+            "imports": "from agentscope.service import ServiceFactory\n"
+            "from agentscope.service import read_text_file",
+            "inits": f"{self.var_name} = ServiceFactory.get(read_text_file)",
+            "execs": "",
+        }
+
+
+class WriteTextServiceNode(WorkflowNode):
+    """
+    Write Text Service Node
+    """
+
+    node_type = WorkflowNodeType.SERVICE
+
+    def __init__(
+        self,
+        node_id: str,
+        opt_kwargs: dict,
+        source_kwargs: dict,
+        dep_opts: list,
+    ) -> None:
+        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+        self.service_func = ServiceFactory.get(write_text_file)
+
+    def compile(self) -> dict:
+        return {
+            "imports": "from agentscope.service import ServiceFactory\n"
+            "from agentscope.service import write_text_file",
+            "inits": f"{self.var_name} = ServiceFactory.get(write_text_file)",
+            "execs": "",
+        }
+
+
 NODE_NAME_MAPPING = {
     "dashscope_chat": ModelNode,
     "openai_chat": ModelNode,
@@ -650,6 +832,7 @@ NODE_NAME_MAPPING = {
     "UserAgent": UserAgentNode,
     "TextToImageAgent": TextToImageAgentNode,
     "DictDialogAgent": DictDialogAgentNode,
+    "ReActAgent": ReActAgentNode,
     "Placeholder": PlaceHolderNode,
     "MsgHub": MsgHubNode,
     "SequentialPipeline": SequentialPipelineNode,
@@ -658,6 +841,11 @@ NODE_NAME_MAPPING = {
     "IfElsePipeline": IfElsePipelineNode,
     "SwitchPipeline": SwitchPipelineNode,
     "CopyNode": CopyNode,
+    "BingSearchService": BingSearchServiceNode,
+    "GoogleSearchService": GoogleSearchServiceNode,
+    "PythonService": PythonServiceNode,
+    "ReadTextService": ReadTextServiceNode,
+    "WriteTextService": WriteTextServiceNode,
 }
 
 

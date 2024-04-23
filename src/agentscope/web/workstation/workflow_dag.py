@@ -164,13 +164,13 @@ class ASDiGraph(nx.DiGraph):
             The computation object associated with the added node.
         """
         node_cls = NODE_NAME_MAPPING[node_info.get("name", "")]
-        # TODO: support all type of node, SERVICE not support now
         if node_cls.node_type not in [
             WorkflowNodeType.MODEL,
             WorkflowNodeType.AGENT,
             WorkflowNodeType.MESSAGE,
             WorkflowNodeType.PIPELINE,
             WorkflowNodeType.COPY,
+            WorkflowNodeType.SERVICE,
         ]:
             raise NotImplementedError(node_cls)
 
