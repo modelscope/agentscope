@@ -448,6 +448,22 @@ class ServiceFactory:
 
         Example:
 
+            .. code-block:: python
+
+                def bing_search(query: str, api_key: str, num_results: int=10):
+                    '''Search the query in Bing search engine.
+
+                    Args:
+                        query (str):
+                            The string query to search.
+                        api_key (str):
+                            The API key for Bing search.
+                        num_results (int):
+                            The number of results to return, default to 10.
+                    '''
+                    pass
+
+
         """
         # Get the function for agent to use
         tool_func = partial(service_func, **kwargs)
