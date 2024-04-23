@@ -121,6 +121,7 @@ class DictDialogAgent(AgentBase):
                 "will be removed in the future.",
             )
 
+    # TODO change typing from dict to MSG
     def reply(self, x: dict = None) -> dict:
         """Reply function of the agent.
         Processes the input data, generates a prompt using the current
@@ -150,7 +151,9 @@ class DictDialogAgent(AgentBase):
         # prepare prompt
         prompt = self.model.format(
             Msg("system", self.sys_prompt, role="system"),
-            self.memory and self.memory.get_memory(),  # type: ignore[arg-type]
+            self.memory
+            and self.memory.get_memory()
+            or x,  # type: ignore[arg-type]
         )
 
         # call llm

@@ -51,7 +51,7 @@ class GeminiWrapperBase(ModelWrapperBase, ABC):
                 "environment variable.",
             )
 
-        genai.configure(api_key=api_key)
+        genai.configure(api_key=api_key, **kwargs)
 
         self.model_name = model_name
 
@@ -239,6 +239,8 @@ class GeminiChatWrapper(GeminiWrapperBase):
         """
         input_msgs = []
         for _ in args:
+            if _ is None:
+                continue
             if isinstance(_, MessageBase):
                 input_msgs.append(_)
             elif isinstance(_, list) and all(

@@ -3,11 +3,12 @@
 import unittest
 from unittest.mock import patch, MagicMock
 
-from agentscope.models import (  # pylint: disable=no-name-in-module
+from agentscope.models import (
     ModelResponse,
     DashScopeChatWrapper,
     DashScopeImageSynthesisWrapper,
     DashScopeTextEmbeddingWrapper,
+    DashScopeMultiModalWrapper,
 )
 
 
@@ -167,7 +168,7 @@ class TestDashScopeImageSynthesisWrapper(unittest.TestCase):
         # Call the wrapper with prompt and expect a RuntimeError
         prompt = "Generate an image of a sunset"
         with self.assertRaises(RuntimeError) as context:
-            self.wrapper(prompt, save_local=False)
+            self.wrapper(prompt, save_local=False, n=1)
 
         # Assert the expected exception message
         self.assertIn("Error Code", str(context.exception))
@@ -249,6 +250,99 @@ class TestDashScopeTextEmbeddingWrapper(unittest.TestCase):
             input=texts,
             model=self.wrapper.model_name,
             **self.wrapper.generate_args,
+        )
+
+
+class TestDashScopeMultiModalWrapper(unittest.TestCase):
+    """Test DashScope MultiModal Wrapper"""
+
+    def setUp(self) -> None:
+        # Initialize DashScopeMultiModalWrapper instance
+        self.wrapper = DashScopeMultiModalWrapper(
+            config_name="test_config",
+            model_name="test_model",
+            api_key="test_key",
+        )
+
+    @patch(
+        "agentscope.models.dashscope_model."
+        "dashscope.MultiModalConversation.call",
+    )
+    def test_call_success(self, mock_call: MagicMock) -> None:
+        """Test call success"""
+        # Mocking the response from the API
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.output = {
+            "choices": [
+                {"message": {"content": [{"text": "This is the result."}]}},
+            ],
+        }
+        mock_response.usage = {
+            "input_tokens": 23,
+            "output_tokens": 5,
+            "image_tokens": 17,
+        }
+        mock_call.return_value = mock_response
+
+        messages = [
+            {
+                "role": "user",
+                "content": [
+                    {"text": "What does this picture depict?"},
+                    {"image": "http://example.com/image.jpg"},
+                ],
+            },
+        ]
+        # Calling the wrapper and validating the response
+        response = self.wrapper(messages=messages)
+        self.assertIsInstance(response, ModelResponse)
+        self.assertEqual(response.text, "This is the result.")
+        self.assertEqual(response.raw, mock_response)
+
+        # Verify call to dashscope.MultiModalConversation.call
+        mock_call.assert_called_once_with(
+            model=self.wrapper.model_name,
+            messages=messages,
+        )
+
+    @patch(
+        "agentscope.models.dashscope_model."
+        "dashscope.MultiModalConversation.call",
+    )
+    def test_call_failure(self, mock_call: MagicMock) -> None:
+        """Test call failure"""
+        # Simulating a failed API call
+        mock_response = MagicMock()
+        mock_response.status_code = 400
+        mock_response.request_id = "Test_request_id"
+        mock_response.code = "Error Code"
+        mock_response.message = "Error Message"
+        mock_call.return_value = mock_response
+
+        messages = [
+            {
+                "role": "user",
+                "content": [
+                    {"text": "What does this picture depict?"},
+                    {"image": "http://example.com/image.jpg"},
+                ],
+            },
+        ]
+        # Expecting a RuntimeError to be raised
+        with self.assertRaises(RuntimeError) as context:
+            self.wrapper(messages=messages)
+
+        # Assert the expected exception message
+        self.assertIn("Error Code", str(context.exception))
+        self.assertIn("Error Message", str(context.exception))
+        self.assertIn("Test_request_id", str(context.exception))
+        self.assertIn("400", str(context.exception))
+
+        # Verify call to dashscope.MultiModalConversation.call
+        mock_call.assert_called_once_with(
+            model=self.wrapper.model_name,
+            messages=messages,
         )
 
 

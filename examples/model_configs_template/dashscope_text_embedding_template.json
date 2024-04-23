@@ -1,0 +1,13 @@
+[{
+    "config_name": "dashscope_text_embedding-text-embedding-v1",
+    "model_type": "dashscope_text_embedding",
+    "model_name": "text-embedding-v1",
+    "api_key": "{your_api_key}"
+},
+{
+    "config_name": "dashscope_text_embedding-text-embedding-v2",
+    "model_type": "dashscope_text_embedding",
+    "model_name": "text-embedding-v2",
+    "api_key": "{your_api_key}"
+}
+]

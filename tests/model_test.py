@@ -45,7 +45,7 @@ class BasicModelTest(unittest.TestCase):
         )
         # get model wrapper class by model type
         self.assertEqual(
-            _get_model_wrapper(model_type="openai"),
+            _get_model_wrapper(model_type="openai_chat"),
             OpenAIChatWrapper,
         )
         # return PostAPIModelWrapperBase if model_type is not supported
