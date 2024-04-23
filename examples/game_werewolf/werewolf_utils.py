@@ -15,11 +15,11 @@ def check_winning(alive_agents: list, wolf_agents: list, host: str) -> bool:
     """check which group wins"""
     if len(wolf_agents) * 2 >= len(alive_agents):
         msg = Msg(host, Prompts.to_all_wolf_win, role="assistant")
-        logger.chat(f"{host}: {msg.content}")
+        logger.chat(msg)
         return True
     if alive_agents and not wolf_agents:
         msg = Msg(host, Prompts.to_all_village_win, role="assistant")
-        logger.chat(f"{host}: {msg.content}")
+        logger.chat(msg)
         return True
     return False
 
