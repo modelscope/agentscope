@@ -348,6 +348,13 @@ class OpenAIDALLEWrapper(OpenAIWrapperBase):
 
         # step5: return response
         raw_response = response.model_dump()
+        if "data" not in raw_response:
+            if "error" in raw_response:
+                error_msg = raw_response["error"]["message"]
+            else:
+                error_msg = raw_response
+            logger.error(f"Error in OpenAI API call:\n{error_msg}")
+            raise ValueError(f"Error in OpenAI API call:\n{error_msg}")
         images = raw_response["data"]
         # Get image urls as a list
         urls = [_["url"] for _ in images]
