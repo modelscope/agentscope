@@ -2,6 +2,7 @@
 """ Common operators for file and directory. """
 import os
 import shutil
+from typing import List
 
 from agentscope.utils.common import write_file
 from agentscope.service.service_response import ServiceResponse
@@ -194,6 +195,64 @@ def move_directory(
         return ServiceResponse(
             status=ServiceExecStatus.SUCCESS,
             content="Success",
+        )
+    except Exception as e:
+        error_message = f"{e.__class__.__name__}: {e}"
+        return ServiceResponse(
+            status=ServiceExecStatus.ERROR,
+            content=error_message,
+        )
+
+
+def list_directory_content(directory_path: str) -> ServiceResponse:
+    """
+    List the contents of a directory. i.e. ls -a
+
+    Args:
+        directory_path (`str`):
+            The path of the directory to show.
+
+    Returns:
+        `ServiceResponse`: The results contain a list of direcotry contents,
+        or an error message if any, including the error type.
+    """
+    if not os.path.exists(directory_path):
+        return ServiceResponse(
+            status=ServiceExecStatus.ERROR,
+            content="FileNotFoundError: The directory does not exist.",
+        )
+    if not os.path.isdir(directory_path):
+        return ServiceResponse(
+            status=ServiceExecStatus.ERROR,
+            content="FileNotFoundError: The path is not a directory",
+        )
+    try:
+        ls_result: List[str] = os.listdir(directory_path)
+        return ServiceResponse(
+            status=ServiceExecStatus.SUCCESS,
+            content=ls_result,
+        )
+    except Exception as e:
+        error_message = f"{e.__class__.__name__}: {e}"
+        return ServiceResponse(
+            status=ServiceExecStatus.ERROR,
+            content=error_message,
+        )
+
+
+def get_current_directory() -> ServiceResponse:
+    """
+    Get the current working directory path.
+
+    Returns:
+        `ServiceResponse`: The current working directory path, or an error
+        message if any, including the error type.
+    """
+    try:
+        cwd = os.getcwd()
+        return ServiceResponse(
+            status=ServiceExecStatus.SUCCESS,
+            content=cwd,
         )
     except Exception as e:
         error_message = f"{e.__class__.__name__}: {e}"
