@@ -221,6 +221,13 @@ class PostAPIDALLEWrapper(PostAPIModelWrapperBase):
     deprecated_model_type: str = "post_api_dalle"
 
     def _parse_response(self, response: dict) -> ModelResponse:
+        if "data" not in response["data"]["response"]:
+            if "error" in response["data"]["response"]:
+                error_msg = response["data"]["response"]["error"]["message"]
+            else:
+                error_msg = response["data"]["response"]
+            logger.error(f"Error in API call:\n{error_msg}")
+            raise ValueError(f"Error in API call:\n{error_msg}")
         urls = [img["url"] for img in response["data"]["response"]["data"]]
         return ModelResponse(image_urls=urls)
 
