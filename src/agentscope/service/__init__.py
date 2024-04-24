@@ -3,6 +3,7 @@
 from loguru import logger
 
 from .execute_code.exec_python import execute_python_code
+from .execute_code.exec_shell import execute_shell_command
 from .file.common import (
     create_file,
     delete_file,
@@ -10,6 +11,8 @@ from .file.common import (
     create_directory,
     delete_directory,
     move_directory,
+    list_directory_content,
+    get_current_directory,
 )
 from .file.text import read_text_file, write_text_file
 from .file.json import read_json_file, write_json_file
@@ -35,13 +38,20 @@ def get_help() -> None:
 
 
 __all__ = [
+    "ServiceResponse",
+    "ServiceExecStatus",
+    "ServiceFactory",
+    "get_help",
     "execute_python_code",
+    "execute_shell_command",
     "create_file",
     "delete_file",
     "move_file",
     "create_directory",
     "delete_directory",
     "move_directory",
+    "list_directory_content",
+    "get_current_directory",
     "read_text_file",
     "write_text_file",
     "read_json_file",
@@ -52,12 +62,9 @@ __all__ = [
     "query_mysql",
     "query_sqlite",
     "query_mongodb",
-    "ServiceResponse",
-    "ServiceFactory",
     "cos_sim",
     "summarization",
     "retrieve_from_list",
-    "ServiceExecStatus",
     "digest_webpage",
     "load_web",
     "parse_html_to_text",

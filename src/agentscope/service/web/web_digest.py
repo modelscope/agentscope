@@ -217,7 +217,8 @@ def digest_webpage(
     html_selected_tags: Sequence[str] = ("h", "p", "li", "div", "a"),
     digest_prompt: str = DEFAULT_WEB_SYS_PROMPT,
 ) -> ServiceResponse:
-    """
+    """Digest the given webpage.
+
     Args:
         web_text_or_url (str): preprocessed web text or url to the web page
         model (ModelWrapperBase): the model to digest the web content

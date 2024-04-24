@@ -53,11 +53,12 @@ Note:
             }
 
 """
+from __future__ import annotations
 import inspect
 import time
 from abc import ABCMeta
 from functools import wraps
-from typing import Sequence, Any, Callable, Union, List
+from typing import Sequence, Any, Callable, Union, List, Type
 
 from loguru import logger
 
@@ -155,16 +156,16 @@ class _ModelWrapperMeta(ABCMeta):
         return super().__new__(mcs, name, bases, attrs)
 
     def __init__(cls, name: Any, bases: Any, attrs: Any) -> None:
-        if not hasattr(cls, "registry"):
-            cls.registry = {}
-            cls.type_registry = {}
-            cls.deprecated_type_registry = {}
+        if not hasattr(cls, "_registry"):
+            cls._registry = {}
+            cls._type_registry = {}
+            cls._deprecated_type_registry = {}
         else:
-            cls.registry[name] = cls
+            cls._registry[name] = cls
             if hasattr(cls, "model_type"):
-                cls.type_registry[cls.model_type] = cls
+                cls._type_registry[cls.model_type] = cls
                 if hasattr(cls, "deprecated_model_type"):
-                    cls.deprecated_type_registry[
+                    cls._deprecated_type_registry[
                         cls.deprecated_model_type
                     ] = cls
         super().__init__(name, bases, attrs)
@@ -202,6 +203,23 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
 
         self.config_name = config_name
         logger.info(f"Initialize model [{config_name}]")
+
+    @classmethod
+    def get_wrapper(cls, model_type: str) -> Type[ModelWrapperBase]:
+        """Get the specific model wrapper"""
+        if model_type in cls._type_registry:
+            return cls._type_registry[model_type]  # type: ignore[return-value]
+        elif model_type in cls._registry:
+            return cls._registry[model_type]  # type: ignore[return-value]
+        elif model_type in cls._deprecated_type_registry:
+            deprecated_cls = cls._deprecated_type_registry[model_type]
+            logger.warning(
+                f"Model type [{model_type}] will be deprecated in future "
+                f"releases, please use [{deprecated_cls.model_type}] instead.",
+            )
+            return deprecated_cls  # type: ignore[return-value]
+        else:
+            return None  # type: ignore[return-value]
 
     def __call__(self, *args: Any, **kwargs: Any) -> ModelResponse:
         """Processing input with the model."""

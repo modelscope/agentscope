@@ -2,23 +2,31 @@
 """ Import all pipeline related modules in the package. """
 from .pipeline import (
     PipelineBase,
+    SequentialPipeline,
     IfElsePipeline,
     SwitchPipeline,
     ForLoopPipeline,
     WhileLoopPipeline,
-    SequentialPipeline,
 )
 
-from .functional import sequentialpipeline
-from .functional import ifelsepipeline
+from .functional import (
+    sequentialpipeline,
+    ifelsepipeline,
+    switchpipeline,
+    forlooppipeline,
+    whilelooppipeline,
+)
 
 __all__ = [
     "PipelineBase",
+    "SequentialPipeline",
     "IfElsePipeline",
     "SwitchPipeline",
     "ForLoopPipeline",
     "WhileLoopPipeline",
-    "SequentialPipeline",
     "sequentialpipeline",
     "ifelsepipeline",
+    "switchpipeline",
+    "forlooppipeline",
+    "whilelooppipeline",
 ]
