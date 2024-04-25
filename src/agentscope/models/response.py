@@ -3,6 +3,7 @@
 import json
 from typing import Optional, Sequence, Any
 
+from loguru import logger
 
 from agentscope.utils.tools import _is_json_serializable
 
@@ -26,6 +27,7 @@ class ModelResponse:
         embedding: Sequence = None,
         image_urls: Sequence[str] = None,
         raw: Any = None,
+        parsed: Any = None,
     ) -> None:
         """Initialize the model response.
 
@@ -38,11 +40,34 @@ class ModelResponse:
                 The image URLs returned by the model.
             raw (`Any`, optional):
                 The raw data returned by the model.
+            parsed (`Any`, optional):
+                The parsed data returned by the model.
         """
         self.text = text
         self.embedding = embedding
         self.image_urls = image_urls
         self.raw = raw
+        self.parsed = parsed
+
+    def __getattribute__(self, item: str) -> Any:
+        """Warning for the deprecated json attribute."""
+        if item == "json":
+            logger.warning(
+                "The json attribute in ModelResponse class is deprecated. Use"
+                " parsed attribute instead.",
+            )
+
+        return super().__getattribute__(item)
+
+    def __setattr__(self, key: str, value: Any) -> Optional[Any]:
+        """Warning for the deprecated json attribute."""
+        if key == "json":
+            logger.warning(
+                "The json attribute in ModelResponse class is deprecated. Use"
+                " parsed attribute instead.",
+            )
+
+        return super().__setattr__(key, value)
 
     def __str__(self) -> str:
         if _is_json_serializable(self.raw):

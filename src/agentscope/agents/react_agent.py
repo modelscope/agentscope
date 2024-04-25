@@ -7,12 +7,12 @@ from typing import Any
 
 from loguru import logger
 
-from agentscope._exception import ResponseParsingError, FunctionCallError
+from agentscope.exception import ResponseParsingError, FunctionCallError
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
 from agentscope.parser import MarkdownJsonBlockParser
-from agentscope.service import ServiceFactory
-from agentscope.service.service_factory import ServiceFunction
+from agentscope.service import ServiceToolkit
+from agentscope.service.service_toolkit import ServiceFunction
 
 INSTRUCTION_PROMPT = """## What You Should Do:
 1. First, analyze the current situation, and determine your goal.
@@ -42,7 +42,7 @@ class ReActAgent(AgentBase):
         self,
         name: str,
         model_config_name: str,
-        service_factory: ServiceFactory,
+        service_toolkit: ServiceToolkit = None,
         sys_prompt: str = "You're a helpful assistant. Your name is {name}.",
         max_iters: int = 10,
         verbose: bool = True,
@@ -59,8 +59,8 @@ class ReActAgent(AgentBase):
             model_config_name (`str`):
                 The name of the model config, which is used to load model from
                 configuration.
-            service_factory (`ServiceFactory`):
-                A `ServiceFactory` object that contains the tool functions.
+            service_toolkit (`ServiceToolkit`):
+                A `ServiceToolkit` object that contains the tool functions.
             max_iters (`int`, defaults to `10`):
                 The maximum number of iterations of the reasoning-acting loops.
             verbose (`bool`, defaults to `True`):
@@ -74,10 +74,12 @@ class ReActAgent(AgentBase):
             model_config_name=model_config_name,
         )
 
+        # TODO: To compatible with the old version, which will be deprecated
+        #  soon
         if "tools" in kwargs:
             logger.warning(
                 "The argument `tools` will be deprecated soon. "
-                "Please use `service_factory` instead. Example refers to "
+                "Please use `service_toolkit` instead. Example refers to "
                 "https://github.com/modelscope/agentscope/blob/main/"
                 "examples/conversation_with_react_agent/code/"
                 "conversation_with_react_agent.py",
@@ -93,10 +95,19 @@ class ReActAgent(AgentBase):
                     json_schema=json_schema,
                 )
 
-            service_factory = ServiceFactory()
-            service_factory.service_funcs = service_funcs
+            if service_toolkit is None:
+                service_toolkit = ServiceToolkit()
+                service_toolkit.service_funcs = service_funcs
+            else:
+                service_toolkit.service_funcs.update(service_funcs)
 
-        self.service_factory = service_factory
+        elif service_toolkit is None:
+            raise ValueError(
+                "The argument `service_toolkit` is required to initialize "
+                "the ReActAgent.",
+            )
+
+        self.service_toolkit = service_toolkit
         self.verbose = verbose
         self.max_iters = max_iters
 
@@ -108,7 +119,7 @@ class ReActAgent(AgentBase):
                 # The brief intro of the role and target
                 sys_prompt.format(name=self.name),
                 # The instruction prompt for tools
-                self.service_factory.tools_instruction,
+                self.service_toolkit.tools_instruction,
                 # The detailed instruction prompt for the agent
                 INSTRUCTION_PROMPT,
             ],
@@ -122,7 +133,7 @@ class ReActAgent(AgentBase):
             content_hint={
                 "thought": "what you thought",
                 "speak": "what you speak",
-                "function": service_factory.tools_call_format,
+                "function": service_toolkit.tools_calling_format,
             },
         )
 
@@ -202,9 +213,9 @@ class ReActAgent(AgentBase):
             if self.verbose:
                 self.speak(f" ITER {_+1}, STEP 2: ACTING ".center(70, "#"))
 
-            # Parse, check and execute the tool functions in service factory
+            # Parse, check and execute the tool functions in service toolkit
             try:
-                execute_results = self.service_factory.parse_and_call_func(
+                execute_results = self.service_toolkit.parse_and_call_func(
                     res.parsed["function"],
                 )
 

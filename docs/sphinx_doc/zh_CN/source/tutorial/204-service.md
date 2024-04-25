@@ -40,20 +40,30 @@
 
 ## 使用Service函数
 
-AgentScope为Service函数提供了两个服务类，分别是`ServiceFactory`和`ServiceResponse`。
+AgentScope为Service函数提供了两个服务类，分别是`ServiceToolkit`和`ServiceResponse`。
 
-- `ServiceFactory`的主要作用是将一般的Python函数编程大模型可以直接使用的形式，同时自动生成函数说明。
-- `ServiceResponse`是一个字典的子类，为所有Service函数提供了统一的调用结果接口。
+### 关于ServiceToolkit
 
-### 关于ServiceFactory
+大模型使用工具函数通常涉及以下5个步骤：
 
-智能体使用的工具一般是函数类型，开发者需要准备大模型能够直接调用的函数，并且需要提供函数的说明。
-但是一般的函数往往需要开发者提供部分参数（例如秘钥，用户名，特定的网址等），然后大模型才能够
-使用。同时为多个函数生成特定格式的说明也是一件繁琐的事情。
+1. **准备工具函数**。即开发者通过提供必要的参数（例如api key、用户名、密码等）将工具函数预处理成大模型能直接调用的形式。
+2. **为大模型准备工具描述**。即一份详细的函数功能描述，以便大模型能够正确理解工具函数。
+3. **约定函数调用格式**。提供一份说明来告诉大模型如何调用工具函数，即调用格式。
+4. **解析大模型返回值**。从大模型获取返回值之后，需要按照第三步中的调用格式来解析字符串。
+5. **调用函数并处理异常**。实际调用函数，返回结果，并处理异常。
 
-为了解决上述问题，AgentScope提出了`ServiceFactory`，对于给定的Service
-函数，它允许开发者指定部分参数，生成一个大模型可以直接调用的函数，并且自动根据Docstring生成函数说明。
-以Bing网络搜索函数为例。
+为了简化上述步骤并提高复用性，AgentScope引入了ServiceToolkit模块。它可以
+- 注册python函数为工具函数
+- 生成字符串和JSON schema格式的工具函数说明
+- 内置一套工具函数的调用格式
+- 解析模型响应、调用工具功能，并处理异常
+
+
+#### 如何使用
+
+按照以下步骤使用ServiceToolkit:
+
+1. 初始化一个ServiceToolkit对象并注册服务函数及其必要参数。例如，以下Bing搜索功能。
 
 ```python
 def bing_search(
@@ -80,66 +90,108 @@ def bing_search(
     [omitted for brevity]
     """
 ```
-
-上述函数中，`question`是大模型填写的字段，而`api_key`，`num_results`是开发者需要提供的参数。
-我们利用`ServiceFactory`的`get`函数进行处理：
+We register the function in a `ServiceToolkit` object by providing `api_key` and `num_results` as necessary parameters.
+我们通过提供`api_key`和`num_results`作为必要参数，在`ServiceToolkit`对象中注册bing_search函数。
 
 ```python
-from agentscope.service import ServiceFactory
+from agentscope.service import ServiceToolkit
 
-func, func_intro = ServiceFactory.get(
+service_toolkit = ServiceToolkit()
+
+service_toolkit.add(
     bing_search,
     api_key="xxx",
-    num_results=3)
+    num_results=3
+)
 ```
 
-上述代码中，ServiceFactory生成的func和下面的函数是等价的：
+2. 在提示中使用`tools_instruction`属性指导LLM，或使用`json_schemas`属性获取JSON schema格式的说明，以构建自定义格式的函数说明或直接在模型API中使用（例如OpenAI Chat API）。
 
-```python
-def bing_search(question: str) -> ServiceResponse:
-    """
-    Search question in Bing Search API and return the searching results
 
-    Args:
-        question (`str`):
-            The search query string.
-    """
-    return bing_search(question, api_key="xxx", num_results=3)
+````text
+>> print(service_toolkit.tools_instruction)
+## Tool Functions:
+The following tool functions are available in the format of
+```
+{index}. {function name}: {function description}
+{argument1 name} ({argument type}): {argument description}
+{argument2 name} ({argument type}): {argument description}
+...
 ```
 
-生成的JSON Schema格式说明如下，该格式的函数说明可以直接用于OpenAI API中的tools字段。
-用户也可以根据自己的需求进行二次修改。
-
-```python
-# print(func_intro)
+1. bing_search: Search question in Bing Search API and return the searching results
+    question (str): The search query string.
+````
+````text
+>> print(service_toolkit.json_schemas)
 {
-    "type": "function",
-    "function": {
-        "name": "bing_search",
-        "description": "Search question in Bing Search API and return the searching results",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "question": {
-                    "type": "string",
-                    "description": "The search query string."
-                }
-            },
-            "required": [
-                "question"
-            ]
-        }
-    }
+  "bing_search": {
+      "type": "function",
+      "function": {
+          "name": "bing_search",
+          "description": "Search question in Bing Search API and return the searching results",
+          "parameters": {
+              "type": "object",
+              "properties": {
+                  "question": {
+                      "type": "string",
+                      "description": "The search query string."
+                  }
+              },
+              "required": [
+                  "question"
+              ]
+          }
+      }
+  }
 }
+````
+
+3. 通过`tools_calling_format`属性指导LLM如何使用工具函数。ServiceToolkit中默认大模型
+需要返回一个JSON格式的列表，列表中包含若干个字典，每个字典即为一个函数调用。必须包含name和
+arguments两个字段，其中name为函数名，arguments为函数参数。arguments键值对应的值是从
+“参数名”映射到“参数值”的字典。
+
+```text
+>> print(service_toolkit.tools_calling_format)
+[{"name": "{function name}", "arguments": {"{argument1 name}": xxx, "{argument2 name}": xxx}}]
 ```
 
-**注意**：`ServiceFactory`生成的函数和参数说明（包括描述，类型，默认值）是从函数的docstring
-中自动提取的，因此建议原函数的docstring应该按照Google风格进行书写，以便更好的提取函数说明。
+4. 通过`parse_and_call_func`方法解析大模型生成的字符串，并调用函数。此函数可以接收字符串或解析后符合格式要求的字典作为输入。
+- 当输入为字符串时，此函数将相应地解析字符串并使用解析后的参数执行函数。
+- 而如果输入为解析后的字典，则直接调用函数。
 
-**建议**：
 
-- Service函数的名称应该是自解释的，这样智能体可以理解函数并正确使用它。
-- 在定义函数时应提供参数的类型（例如`def func(a: int, b: str, c: bool)`），以便智能体正确指定参数。
+```python
+# a string input
+string_input = '[{"name": "bing_search", "arguments": {"question": "xxx"}}]'
+res_of_string_input = service_toolkit.parse_and_call_func(string_input)
+
+# or a parsed dictionary
+dict_input = [{"name": "bing_search", "arguments": {"question": "xxx"}}]
+# res_of_dict_input is the same as res_of_string_input
+res_of_dict_input = service_toolkit.parse_and_call_func(dict_input)
+
+print(res_of_string_input)
+```
+```
+1. Execute function bing_search
+    [ARGUMENTS]:
+        question: xxx
+    [STATUS]: SUCCESS
+    [RESULT]: ...
+```
+
+关于ServiceToolkit的具体使用样例，可以参考`agentscope.agents`中`ReActAgent`类。
+
+#### 创建新的Service函数
+
+新的Service函数必须满足以下要求才能被ServiceToolkit正常使用：
+1. 具有格式化的函数说明（推荐Google风格），以便ServiceToolkit提取函数说明。
+2. 函数名称应该是自解释的，这样智能体可以理解函数并正确使用它。
+3. 在定义函数时应提供参数的类型（例如`def func(a: int, b: str, c: bool)`），以便大模型
+能够给出类型正确的参数。
+
 
 ### 关于ServiceResponse
 

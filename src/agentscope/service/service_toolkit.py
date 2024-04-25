@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Service factory for model prompt."""
+"""Service Toolkit for service function usage."""
 import collections.abc
 import json
 from functools import partial
@@ -17,7 +17,7 @@ from typing import (
 )
 from loguru import logger
 
-from .._exception import (
+from ..exception import (
     JsonParsingError,
     FunctionNotFoundError,
     FunctionCallFormatError,
@@ -104,14 +104,14 @@ class ServiceFunction:
         )
 
 
-class ServiceFactory:
-    """A service factory class that turns service function into string
+class ServiceToolkit:
+    """A service toolkit class that turns service function into string
     prompt format."""
 
     service_funcs: dict[str, ServiceFunction]
-    """The registered functions in the service factory."""
+    """The registered functions in the service toolkit."""
 
-    tools_instruction_template: str = (
+    _tools_instruction_format: str = (
         "## Tool Functions:\n"
         "The following tool functions are available in the format of\n"
         "```\n"
@@ -124,27 +124,27 @@ class ServiceFactory:
     )
     """The instruction template for the tool functions."""
 
-    tools_call_format: str = (
+    _tools_calling_format: str = (
         '[{"name": "{function name}", "arguments": {"{argument1 name}": xxx,'
         ' "{argument2 name}": xxx}}]'
     )
     """The format of the tool function call."""
 
-    execute_result_template = (
+    _tools_execution_format: str = (
         "{index}. Execute function {function_name}\n"
-        "   [EXECUTE ARGUMENTS]:\n"
+        "   [ARGUMENTS]:\n"
         "       {arguments}\n"
-        "   [EXECUTE STATUS]: {status}\n"
-        "   [EXECUTE RESULT]: {result}\n"
+        "   [STATUS]: {status}\n"
+        "   [RESULT]: {result}\n"
     )
     """The prompt template for the execution results."""
 
     def __init__(self) -> None:
-        """Initialize the service factory with a list of service functions."""
+        """Initialize the service toolkit with a list of service functions."""
         self.service_funcs = {}
 
     def add(self, service_func: Callable[..., Any], **kwargs: Any) -> None:
-        """Add a service function to the factory, which will be processed into
+        """Add a service function to the toolkit, which will be processed into
         a tool function that can be called by the model directly, and
         registered in processed_funcs.
 
@@ -193,7 +193,7 @@ class ServiceFactory:
 
         """
 
-        processed_func, json_schema = ServiceFactory.get(
+        processed_func, json_schema = ServiceToolkit.get(
             service_func,
             **kwargs,
         )
@@ -217,6 +217,11 @@ class ServiceFactory:
     def json_schemas(self) -> dict:
         """The json schema descriptions of the processed service funcs."""
         return {k: v.json_schema for k, v in self.service_funcs.items()}
+
+    @property
+    def tools_calling_format(self) -> str:
+        """The calling format of the tool functions."""
+        return self._tools_calling_format
 
     @property
     def tools_instruction(self) -> str:
@@ -248,7 +253,7 @@ class ServiceFactory:
             # No tools are provided
             return ""
         else:
-            return self.tools_instruction_template.format_map(
+            return self._tools_instruction_format.format_map(
                 {"function_prompt": tools_description},
             )
 
@@ -286,7 +291,7 @@ class ServiceFactory:
                 # the JSON parsing error
                 raise JsonParsingError(
                     f"Except a list of dictionaries in JSON format, "
-                    f"like: {self.tools_call_format}",
+                    f"like: {self.tools_calling_format}",
                 ) from None
         else:
             cmds = cmd
@@ -303,7 +308,7 @@ class ServiceFactory:
             # Not list, raise parsing error
             raise JsonParsingError(
                 f"Except a list of dictionaries in JSON format "
-                f"like: {self.tools_call_format}",
+                f"like: {self.tools_calling_format}",
             )
 
         # --- Check the format of the command ---
@@ -384,7 +389,7 @@ class ServiceFactory:
 
             arguments = [f"{k}: {v}" for k, v in kwargs.items()]
 
-            execute_res = self.execute_result_template.format_map(
+            execute_res = self._tools_execution_format.format_map(
                 {
                     "index": i + 1,
                     "function_name": cmd["name"],
@@ -465,6 +470,163 @@ class ServiceFactory:
 
 
         """
+        # Get the function for agent to use
+        tool_func = partial(service_func, **kwargs)
+
+        # Obtain all arguments of the service function
+        argsspec = inspect.getfullargspec(service_func)
+
+        # Construct the mapping from arguments to their typings
+        if parse is None:
+            raise ImportError(
+                "Missing required package `docstring_parser`"
+                "Please install it by "
+                "`pip install docstring_parser`.",
+            )
+
+        docstring = parse(service_func.__doc__)
+
+        # Function description
+        func_description = (
+            docstring.short_description or docstring.long_description
+        )
+
+        # The arguments that requires the agent to specify
+        args_agent = set(argsspec.args) - set(kwargs.keys())
+
+        # Check if the arguments from agent have descriptions in docstring
+        args_description = {
+            _.arg_name: _.description for _ in docstring.params
+        }
+
+        # Prepare default values
+        if argsspec.defaults is None:
+            args_defaults = {}
+        else:
+            args_defaults = dict(
+                zip(
+                    reversed(argsspec.args),
+                    reversed(argsspec.defaults),  # type: ignore
+                ),
+            )
+
+        args_required = sorted(
+            list(set(args_agent) - set(args_defaults.keys())),
+        )
+
+        # Prepare types of the arguments, remove the return type
+        args_types = {
+            k: v for k, v in argsspec.annotations.items() if k != "return"
+        }
+
+        # Prepare argument dictionary
+        properties_field = {}
+        for key in args_agent:
+            arg_property = {}
+            # type
+            if key in args_types:
+                try:
+                    required_type = _get_type_str(args_types[key])
+                    arg_property["type"] = required_type
+                except Exception:
+                    logger.warning(
+                        f"Fail and skip to get the type of the "
+                        f"argument `{key}`.",
+                    )
+
+                # For Literal type, add enum field
+                if get_origin(args_types[key]) is Literal:
+                    arg_property["enum"] = list(args_types[key].__args__)
+
+            # description
+            if key in args_description:
+                arg_property["description"] = args_description[key]
+
+            # default
+            if key in args_defaults and args_defaults[key] is not None:
+                arg_property["default"] = args_defaults[key]
+
+            properties_field[key] = arg_property
+
+        # Construct the JSON Schema for the service function
+        func_dict = {
+            "type": "function",
+            "function": {
+                "name": service_func.__name__,
+                "description": func_description,
+                "parameters": {
+                    "type": "object",
+                    "properties": properties_field,
+                    "required": args_required,
+                },
+            },
+        }
+
+        return tool_func, func_dict
+
+
+class ServiceFactory:
+    """A service factory class that turns service function into string
+    prompt format."""
+
+    @classmethod
+    def get(
+        cls,
+        service_func: Callable[..., Any],
+        **kwargs: Any,
+    ) -> Tuple[Callable[..., Any], dict]:
+        """Convert a service function into a tool function that agent can
+        use, and generate a dictionary in JSON Schema format that can be
+        used in OpenAI API directly. While for open-source model, developers
+        should handle the conversation from json dictionary to prompt.
+
+        Args:
+            service_func (`Callable[..., Any]`):
+                The service function to be called.
+            kwargs (`Any`):
+                The arguments to be passed to the service function.
+
+        Returns:
+            `Tuple(Callable[..., Any], dict)`: A tuple of tool function and
+            a dict in JSON Schema format to describe the function.
+
+        Note:
+            The description of the function and arguments are extracted from
+            its docstring automatically, which should be well-formatted in
+            **Google style**. Otherwise, their descriptions in the returned
+            dictionary will be empty.
+
+        Suggestions:
+            1. The name of the service function should be self-explanatory,
+            so that the agent can understand the function and use it properly.
+            2. The typing of the arguments should be provided when defining
+            the function (e.g. `def func(a: int, b: str, c: bool)`), so that
+            the agent can specify the arguments properly.
+
+        Example:
+
+            .. code-block:: python
+
+                def bing_search(query: str, api_key: str, num_results: int=10):
+                    '''Search the query in Bing search engine.
+
+                    Args:
+                        query (str):
+                            The string query to search.
+                        api_key (str):
+                            The API key for Bing search.
+                        num_results (int):
+                            The number of results to return, default to 10.
+                    '''
+                    pass
+
+
+        """
+        logger.warning(
+            "The service factory will be deprecated in the future."
+            " Try to use the `ServiceToolkit` class instead.",
+        )
+
         # Get the function for agent to use
         tool_func = partial(service_func, **kwargs)
 

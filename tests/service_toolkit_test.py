@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-""" Unit test for service factory. """
+""" Unit test for service toolkit. """
 import json
 import unittest
 from typing import Literal
 
-from agentscope.models import ModelWrapperBase
+from agentscope.models import ModelWrapperBase, ModelResponse
+from agentscope.parser import MultiTaggedContentParser, TaggedContent
 from agentscope.service import (
     bing_search,
     execute_python_code,
@@ -12,12 +13,12 @@ from agentscope.service import (
     query_mysql,
     summarization,
 )
-from agentscope.service.service_factory import ServiceFactory
+from agentscope.service import ServiceToolkit
 
 
-class ServiceFactoryTest(unittest.TestCase):
+class ServiceToolkitTest(unittest.TestCase):
     """
-    Unit test for service factory.
+    Unit test for service toolkit.
     """
 
     def setUp(self) -> None:
@@ -180,7 +181,7 @@ class ServiceFactoryTest(unittest.TestCase):
         """Test bing_search."""
         # api_key is specified by developer, while question and num_results
         # are specified by model
-        _, doc_dict = ServiceFactory.get(bing_search, api_key="xxx")
+        _, doc_dict = ServiceToolkit.get(bing_search, api_key="xxx")
         print(json.dumps(doc_dict, indent=4))
         self.assertDictEqual(
             doc_dict,
@@ -188,7 +189,7 @@ class ServiceFactoryTest(unittest.TestCase):
         )
 
         # Set num_results by developer rather than model
-        _, doc_dict = ServiceFactory.get(
+        _, doc_dict = ServiceToolkit.get(
             bing_search,
             num_results=3,
             api_key="xxx",
@@ -200,7 +201,7 @@ class ServiceFactoryTest(unittest.TestCase):
         )
 
     def test_enum(self) -> None:
-        """Test enum in service factory."""
+        """Test enum in service toolkit."""
 
         def func(  # type: ignore
             a: str,
@@ -210,7 +211,7 @@ class ServiceFactoryTest(unittest.TestCase):
         ) -> None:
             print(a, b, c, d)
 
-        _, doc_dict = ServiceFactory.get(func)
+        _, doc_dict = ServiceToolkit.get(func)
 
         self.assertDictEqual(
             doc_dict,
@@ -218,8 +219,8 @@ class ServiceFactoryTest(unittest.TestCase):
         )
 
     def test_exec_python_code(self) -> None:
-        """Test execute_python_code in service factory."""
-        _, doc_dict = ServiceFactory.get(
+        """Test execute_python_code in service toolkit."""
+        _, doc_dict = ServiceToolkit.get(
             execute_python_code,
             timeout=300,
             use_docker=True,
@@ -232,8 +233,8 @@ class ServiceFactoryTest(unittest.TestCase):
         )
 
     def test_retrieval(self) -> None:
-        """Test retrieval in service factory."""
-        _, doc_dict = ServiceFactory.get(
+        """Test retrieval in service toolkit."""
+        _, doc_dict = ServiceToolkit.get(
             retrieve_from_list,
             knowledge=[1, 2, 3],
             score_func=lambda x, y: 1.0,
@@ -248,8 +249,8 @@ class ServiceFactoryTest(unittest.TestCase):
         )
 
     def test_sql_query(self) -> None:
-        """Test sql_query in service factory."""
-        _, doc_dict = ServiceFactory.get(
+        """Test sql_query in service toolkit."""
+        _, doc_dict = ServiceToolkit.get(
             query_mysql,
             database="test",
             host="localhost",
@@ -266,8 +267,8 @@ class ServiceFactoryTest(unittest.TestCase):
         )
 
     def test_summary(self) -> None:
-        """Test summarization in service factory."""
-        _, doc_dict = ServiceFactory.get(
+        """Test summarization in service toolkit."""
+        _, doc_dict = ServiceToolkit.get(
             summarization,
             model=ModelWrapperBase("abc"),
             system_prompt="",
@@ -283,12 +284,12 @@ class ServiceFactoryTest(unittest.TestCase):
             self.json_schema_summarization,
         )
 
-    def test_object_service_factory(self) -> None:
-        """Test the object of ServiceFactory."""
-        service_factory = ServiceFactory()
+    def test_service_toolkit(self) -> None:
+        """Test the object of ServiceToolkit."""
+        service_toolkit = ServiceToolkit()
 
-        service_factory.add(bing_search, api_key="xxx", num_results=3)
-        service_factory.add(
+        service_toolkit.add(bing_search, api_key="xxx", num_results=3)
+        service_toolkit.add(
             execute_python_code,
             timeout=300,
             use_docker=True,
@@ -296,7 +297,7 @@ class ServiceFactoryTest(unittest.TestCase):
         )
 
         self.assertEqual(
-            service_factory.tools_instruction,
+            service_toolkit.tools_instruction,
             """## Tool Functions:
 The following tool functions are available in the format of
 ```
@@ -313,10 +314,63 @@ The following tool functions are available in the format of
 """,  # noqa
         )
         self.assertDictEqual(
-            service_factory.json_schemas,
+            service_toolkit.json_schemas,
             {
                 "bing_search": self.json_schema_bing_search2,
                 "execute_python_code": self.json_schema_execute_python_code,
+            },
+        )
+
+    def test_multi_tagged_content(self) -> None:
+        """Test multi tagged content"""
+
+        parser = MultiTaggedContentParser(
+            TaggedContent(
+                "thought",
+                "[THOUGHT]",
+                "what you think",
+                "[/THOUGHT]",
+            ),
+            TaggedContent("speak", "[SPEAK]", "what you speak", "[/SPEAK]"),
+            TaggedContent(
+                "function",
+                "[FUNCTION]",
+                '{"function name": "xxx", "args": {"arg name": "xxx"}}',
+                "[/FUNCTION]",
+                parse_json=True,
+            ),
+        )
+
+        target_format_instruction = (
+            "Respond with specific tags as outlined below, and the content "
+            "between [FUNCTION] and [/FUNCTION] MUST be a JSON object:\n"
+            "[THOUGHT]what you think[/THOUGHT]\n"
+            "[SPEAK]what you speak[/SPEAK]\n"
+            '[FUNCTION]{"function name": "xxx", "args": {"arg name": "xxx"}}'
+            "[/FUNCTION]"
+        )
+
+        self.assertEqual(parser.format_instruction, target_format_instruction)
+
+        response = ModelResponse(
+            text=(
+                "This is a test\n[THOUGHT]I think this is a good idea"
+                "[/THOUGHT]\n[SPEAK]I am speaking now[/SPEAK]\n[FUNCTION]"
+                '{"function name": "bing_search", "args": {"query": "news of '
+                'today"}}[/FUNCTION]'
+            ),
+        )
+        res = parser.parse(response)
+
+        self.assertDictEqual(
+            res.parsed,
+            {
+                "thought": "I think this is a good idea",
+                "speak": "I am speaking now",
+                "function": {
+                    "function name": "bing_search",
+                    "args": {"query": "news of today"},
+                },
             },
         )
 

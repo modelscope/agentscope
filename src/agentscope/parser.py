@@ -8,7 +8,7 @@ from typing import Optional, Any
 
 from loguru import logger
 
-from agentscope._exception import JsonParsingError, TagNotFoundError
+from agentscope.exception import JsonParsingError, TagNotFoundError
 from agentscope.models import ModelResponse
 
 

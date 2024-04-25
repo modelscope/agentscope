@@ -64,7 +64,7 @@ from loguru import logger
 
 from agentscope.utils import QuotaExceededError
 from .response import ModelResponse
-from .._exception import ResponseParsingError
+from ..exception import ResponseParsingError
 
 from ..file_manager import file_manager
 from ..message import MessageBase
