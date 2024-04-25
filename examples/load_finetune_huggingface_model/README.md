@@ -4,15 +4,7 @@ This example demonstrates how to load and optionally fine-tune a Hugging Face mo
 
 ## Functionality Overview
 
-This example allows you to:
-
-- Set up a user agent and an assistant agent for interactive conversations.
-- Modify the `sys_prompt` to customize the assistant agent's role.
-- Terminate the conversation by entering "exit".
-
-## Advanced Features
-
-Beyond basic conversation setup, the example introduces advanced functionalities:
+Compared to basic conversation setup, this example introduces model loading and fine-tuning features:
 
 - Use `dialog_agent.load_model(model_id, local_model_path)` to load a model either from the Hugging Face Model Hub or a local directory.
 - Apply `dialog_agent.fine_tune(data_path)` to fine-tune the model based on your dataset.
