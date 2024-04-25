@@ -15,8 +15,9 @@ def main() -> None:
             {
                 "model_type": "huggingface",
                 "config_name": "my_custom_model",
-                "model_id": "google/gemma-2b-it",  # Or another generative model of your choice
-                # "local_model_path": # Specify your local model path
+                # "model_id": "google/gemma-2b-it",  # Or another generative model of your choice. Needed from loading from Hugging Face.
+                # "local_model_path":  # Specify your local model path
+                # "local_tokenizer_path":  # Specify your local tokenizer path
                 "max_length": 128,
                 "device": "cuda",
                 "data_path": "GAIR/lima", # Specify a Hugging Face data path if you wish to finetune the model from the start
@@ -39,7 +40,9 @@ def main() -> None:
         model_config_name="my_custom_model",  # Use your custom model config name here
     )
     
-    dialog_agent.load_model(model_id = "google/gemma-2b-it", local_model_path = None) #load gemma-2b-it from Hugging Face
+    dialog_agent.load_model(model_id = "google/gemma-2b-it", local_model_path = None) #load model gemma-2b-it from Hugging Face
+    dialog_agent.load_tokenizer(model_id = "google/gemma-2b-it", local_tokenizer_path = None) #load tokenizer for gemma-2b-it from Hugging Face
+
     # dialog_agent.fine_tune(data_path=  "GAIR/lima") #fine-tune loaded model with lima dataset with default hyperparameters
     
     #fine-tune loaded model with lima dataset with customized hyperparameters (`fine_tune_config` argument is optional. Defaults to None.)

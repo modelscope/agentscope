@@ -17,7 +17,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
     """
     model_type: str = "huggingface"  # Unique identifier for this model wrapper
 
-    def __init__(self, config_name, model_id, max_length=512, data_path = None, device = None, local_model_path = None, fine_tune_config=None, **kwargs):
+    def __init__(self, config_name, model_id = None, max_length=512, data_path = None, device = None, local_model_path = None, local_tokenizer_path = None, fine_tune_config=None, **kwargs):
         """Initializes the HuggingFaceWrapper with the given configuration.
 
         Arguments:
@@ -42,28 +42,13 @@ class HuggingFaceWrapper(ModelWrapperBase):
             self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         else:
             self.device = device
-        try:
-            if local_model_path == None:
-                self.model = AutoModelForCausalLM.from_pretrained(model_id, token = self.huggingface_token, device_map="auto",)
-                self.tokenizer = AutoTokenizer.from_pretrained(model_id, token = self.huggingface_token)
-                print("load new model")
-            else:
-                self.model = AutoModelForCausalLM.from_pretrained(
-                    local_model_path, local_files_only=True,
-                    device_map="auto"
-                )
-                self.tokenizer = AutoTokenizer.from_pretrained(model_id, token = self.huggingface_token)
-                print("load local model")
+        
+        self.load_model(model_id, local_model_path = local_model_path)
+        self.load_tokenizer(model_id, local_tokenizer_path = local_tokenizer_path)
+        
+        if data_path != None:
+            self.model = self.fine_tune_training(self.model, self.tokenizer, data_path,  token = self.huggingface_token, fine_tune_config = fine_tune_config)
                 
-            if data_path != None:
-                self.model = self.fine_tune_training(self.model, self.tokenizer, data_path,  token = self.huggingface_token, fine_tune_config = fine_tune_config)
-                
-                
-            
-        except Exception as e:
-            logger.error(f"Failed to load model {model_id}: {e}")
-            raise
-
     def __call__(self, input, **kwargs) -> ModelResponse:
         """Process the input data to generate a response from the model.
 
@@ -110,22 +95,46 @@ class HuggingFaceWrapper(ModelWrapperBase):
         try:
             if local_model_path == None:
                 self.model = AutoModelForCausalLM.from_pretrained(model_id, token = self.huggingface_token, device_map="auto",)
-                self.tokenizer = AutoTokenizer.from_pretrained(model_id, token = self.huggingface_token)
                 print("new model")
             else:
                 self.model = AutoModelForCausalLM.from_pretrained(
                     local_model_path, local_files_only=True,
                     device_map="auto"
                 )
-                self.tokenizer = AutoTokenizer.from_pretrained(model_id, token = self.huggingface_token)
                 print("local model")
             
-            
-            # Optionally, log the successful model loading
+            #log the successful model loading
             logger.info(f"Successfully loaded new model '{model_id}' from '{local_model_path}'")
         except Exception as e:
             # Handle exceptions during model loading, such as file not found or load errors
             logger.error(f"Failed to load model '{model_id}' from '{local_model_path}': {e}")
+            raise  # Or handle error appropriately
+    
+    def load_tokenizer(self, model_id, local_tokenizer_path = None):
+        """
+        Load the tokenizer from a local path.
+        
+        Arguments:
+            local_tokenizer_path (str): The file path to the tokenizer to be loaded.
+            model_id (str): An identifier for the model on Huggingface.
+        
+        Raises:
+            Exception: If the tokenizer cannot be loaded from the given path or identifier. Possible reasons include file not found, incorrect model ID, or network issues while fetching the tokenizer.
+        """
+
+        try:
+            if local_tokenizer_path == None:
+                self.tokenizer = AutoTokenizer.from_pretrained(model_id, token = self.huggingface_token)
+                print("new tokenizer")
+            else:
+                self.tokenizer = AutoTokenizer.from_pretrained(local_tokenizer_path)
+                print("local tokenizer")
+            
+            #log the successful tokenizer loading
+            logger.info(f"Successfully loaded new tokenizer for model '{model_id}' from '{local_tokenizer_path}'")
+        except Exception as e:
+            # Handle exceptions during model loading, such as file not found or load errors
+            logger.error(f"Failed to load tokenizer for model '{model_id}' from '{local_tokenizer_path}': {e}")
             raise  # Or handle error appropriately
 
     def fine_tune(self, data_path, fine_tune_config=None):
@@ -250,29 +259,29 @@ class HuggingFaceWrapper(ModelWrapperBase):
 
         # Specify the filename
         log_name = f"{model.config._name_or_path.split('/')[-1]}_{time_string}_log_history.json"
-
-        relative_path = os.path.join(os.path.dirname(__file__), "../../../examples/load_finetune_huggingface_model/"+log_name)
-        normalized_path = os.path.normpath(relative_path)
-
-        os.makedirs(os.path.dirname(normalized_path), exist_ok=True)
+        log_path = os.path.join(os.path.dirname(__file__), log_name)
 
         # Writing JSON data
-        with open(normalized_path, 'w') as f:
+        with open(log_path, 'w') as f:
             json.dump(trainer.state.log_history, f)
 
-        save_name = f"sft_{model.config._name_or_path.split('/')[-1]}_{time_string}"
-        relative_path = os.path.join(os.path.dirname(__file__), "../../../examples/load_finetune_huggingface_model/"+save_name)
-        normalized_path = os.path.normpath(relative_path)
+        
 
-        os.makedirs(os.path.dirname(normalized_path), exist_ok=True)
+        # os.makedirs(os.path.dirname(model_path), exist_ok=True)
         # Check if directory exists
-        if not os.path.exists(normalized_path):
-            # If not, create the directory
-            os.makedirs(normalized_path)
+        # if not os.path.exists(model_path):
+        #     # If not, create the directory
+        #     os.makedirs(model_path)
 
         #save model
-        trainer.save_model(normalized_path)
-        # trainer.mode.save_config(save_path)
+        model_name = f"sft_{model.config._name_or_path.split('/')[-1]}_{time_string}"
+        model_path = os.path.join(os.path.dirname(__file__), model_name)
+        trainer.save_model(model_path)
+
+        #save tokenizer
+        tokenizer_name = f"sft_{model.config._name_or_path.split('/')[-1]}_tokenizer_{time_string}"
+        tokenizer_path = os.path.join(os.path.dirname(__file__), tokenizer_name)
+        tokenizer.save_pretrained(tokenizer_path)
 
         
         return model
@@ -304,12 +313,12 @@ class Finetune_DialogAgent(DialogAgent):
         
         
 
-    def load_model(self, model_id, local_model_path=None):
+    def load_model(self, model_id = None, local_model_path=None):
         """
         Load a new model into the agent.
 
         Arguments:
-            model_id (str): The Hugging Face model ID or a custom identifier.
+            model_id (str): The Hugging Face model ID or a custom identifier. Needed if loading model from Hugging Face.
             local_model_path (str, optional): Path to a locally saved model.
         
         Raises:
@@ -320,6 +329,23 @@ class Finetune_DialogAgent(DialogAgent):
             self.model.load_model(model_id, local_model_path)
         else:
             logger.error("The model wrapper does not support dynamic model loading.")
+
+    def load_tokenizer(self, model_id = None, local_tokenizer_path=None):
+        """
+        Load a new tokenizer for the agent.
+
+        Arguments:
+            model_id (str): The Hugging Face model ID or a custom identifier. Needed if loading tokenizer from Hugging Face.
+            local_tokenizer_path (str, optional): Path to a locally saved tokenizer.
+        
+        Raises:
+            Exception: If the model tokenizer process fails or if the model wrapper does not support dynamic loading.
+        """
+
+        if hasattr(self.model, "load_tokenizer"):
+            self.model.load_tokenizer(model_id, local_tokenizer_path)
+        else:
+            logger.error("The model wrapper does not support dynamic loading.")
 
     def fine_tune(self, data_path, fine_tune_config=None):
         """
