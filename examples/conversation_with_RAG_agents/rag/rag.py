@@ -31,13 +31,13 @@ class RAGBase(ABC):
         self,
         model: Optional[ModelWrapperBase],
         emb_model: Any = None,
-        config: Optional[dict] = None,
+        rag_config: Optional[dict] = None,
         **kwargs: Any,
     ) -> None:
         # pylint: disable=unused-argument
         self.postprocessing_model = model
         self.emb_model = emb_model
-        self.config = config or {}
+        self.rag_config = rag_config or {}
 
     @abstractmethod
     def load_data(

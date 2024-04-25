@@ -53,9 +53,9 @@ class _EmbeddingModel(BaseEmbedding):
     _emb_model_wrapper: ModelWrapperBase = PrivateAttr()
 
     def __init__(
-        self,
-        emb_model: ModelWrapperBase,
-        embed_batch_size: int = 1,
+            self,
+            emb_model: ModelWrapperBase,
+            embed_batch_size: int = 1,
     ) -> None:
         """
         Dummy wrapper to convert a ModelWrapperBase to llama Index
@@ -109,8 +109,8 @@ class _EmbeddingModel(BaseEmbedding):
         return self._get_text_embedding(text)
 
     async def _aget_text_embeddings(
-        self,
-        texts: List[str],
+            self,
+            texts: List[str],
     ) -> List[List[float]]:
         """Asynchronously get text embeddings."""
         return self._get_text_embeddings(texts)
@@ -122,11 +122,12 @@ class LlamaIndexRAG(RAGBase):
     """
 
     def __init__(
-        self,
-        model: Optional[ModelWrapperBase],
-        emb_model: Union[ModelWrapperBase, BaseEmbedding, None] = None,
-        config: Optional[dict] = None,
-        **kwargs: Any,
+            self,
+            model: Optional[ModelWrapperBase],
+            emb_model: Union[ModelWrapperBase, BaseEmbedding, None] = None,
+            rag_config: Optional[dict] = None,
+            index_config: Optional[dict] = None,
+            **kwargs: Any,
     ) -> None:
         """
         RAG component based on llama index.
@@ -135,14 +136,18 @@ class LlamaIndexRAG(RAGBase):
                 The language model used for final synthesis
             emb_model (Optional[ModelWrapperBase]):
                 The embedding model used for generate embeddings
-            config (dict):
-                The additional configuration for llama index rag
+            rag_config (dict):
+                The configuration for llama index rag
+            index_config (dict):
+                The configuration for caculating the index
         """
-        super().__init__(model, emb_model, config, **kwargs)
+        super().__init__(model, emb_model, rag_config, **kwargs)
         self.retriever = None
         self.index = None
-        self.persist_dir = self.config.get("persist_dir", "/")
+        self.persist_dir = rag_config.get("persist_dir", "/")
         self.emb_model = emb_model
+        self.rag_config = rag_config
+        self.index_config = index_config
 
         # ensure the emb_model is compatible with LlamaIndex
         if isinstance(emb_model, ModelWrapperBase):
@@ -153,12 +158,46 @@ class LlamaIndexRAG(RAGBase):
             raise TypeError(
                 f"Embedding model does not support {type(self.emb_model)}.",
             )
+        self.init_rag()
+
+    def init_rag(self) -> None:
+        """
+        Initialize the RAG.
+        """
+        # initiate the loaded document/store_and_index arguments list,
+        docs_list, store_and_index_args_list = [], []
+
+        # NOTE: as each selected file type may need to use a different loader
+        # and transformations, the length of the list depends on
+        # the total count of loaded data.
+        for index_config_i in range(len(self.index_config)):
+            docs = self.load_docs(
+                index_config=self.index_config[index_config_i])
+            docs_list.append(docs)
+
+            # store and indexing for each file type
+            if "store_and_index" in self.index_config[index_config_i]:
+                store_and_index_args = self._prepare_args_from_config(
+                    self.index_config[index_config_i]["store_and_index"],
+                )
+            else:
+                store_and_index_args = {"transformations": None}
+            store_and_index_args_list.append(store_and_index_args)
+
+        # display the arguments for store_and_index_list
+        logger.info(f"store_and_index_args args: {store_and_index_args_list}")
+
+        # pass the loaded documents and arguments to store_and_index
+        self.store_and_index(
+            docs_list=docs_list,
+            store_and_index_args_list=store_and_index_args_list
+        )
 
     def load_data(
-        self,
-        loader: BaseReader,
-        query: Optional[str] = None,
-        **kwargs: Any,
+            self,
+            loader: BaseReader,
+            query: Optional[str] = None,
+            **kwargs: Any,
     ) -> Any:
         """
         Accept a loader, loading the desired data (no chunking)
@@ -204,12 +243,12 @@ class LlamaIndexRAG(RAGBase):
         return documents
 
     def store_and_index(
-        self,
-        docs_list: Any,
-        retriever: Optional[BaseRetriever] = None,
-        transformations: Optional[list[NodeParser]] = None,
-        store_and_index_args_list: Optional[list] = None,
-        **kwargs: Any,
+            self,
+            docs_list: Any,
+            retriever: Optional[BaseRetriever] = None,
+            transformations: Optional[list[NodeParser]] = None,
+            store_and_index_args_list: Optional[list] = None,
+            **kwargs: Any,
     ) -> Any:
         """
         Preprocessing the loaded documents.
@@ -261,7 +300,7 @@ class LlamaIndexRAG(RAGBase):
             # load the storage_context
             storage_context = StorageContext.from_defaults(
                 persist_dir=self.persist_dir,
-                )
+            )
             # construct index from
             self.index = load_index_from_storage(
                 storage_context=storage_context,
@@ -271,11 +310,11 @@ class LlamaIndexRAG(RAGBase):
         # set the retriever
         if retriever is None:
             logger.info(
-                f'{self.config.get("similarity_top_k", DEFAULT_TOP_K)}',
+                f'{self.rag_config.get("similarity_top_k", DEFAULT_TOP_K)}',
             )
             self.retriever = self.index.as_retriever(
                 embed_model=self.emb_model,
-                similarity_top_k=self.config.get(
+                similarity_top_k=self.rag_config.get(
                     "similarity_top_k",
                     DEFAULT_TOP_K,
                 ),
@@ -343,11 +382,11 @@ class LlamaIndexRAG(RAGBase):
         if transformations is None:
             transformations = [
                 SentenceSplitter(
-                    chunk_size=self.config.get(
+                    chunk_size=self.rag_config.get(
                         "chunk_size",
                         DEFAULT_CHUNK_SIZE,
                     ),
-                    chunk_overlap=self.config.get(
+                    chunk_overlap=self.rag_config.get(
                         "chunk_overlap",
                         DEFAULT_CHUNK_OVERLAP,
                     ),
@@ -399,8 +438,8 @@ class LlamaIndexRAG(RAGBase):
         return retrieved
 
     def _prepare_args_from_config(
-        self,
-        config: dict,
+            self,
+            config: dict,
     ) -> Any:
         """
         Helper function to build args for the two functions:

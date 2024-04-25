@@ -244,36 +244,9 @@ class LlamaIndexAgent(RAGAgentBase):
         rag = LlamaIndexRAG(
             model=self.model,
             emb_model=self.emb_model,
-            config=self.rag_config,
+            rag_config=self.rag_config,
+            index_config=self.rag_config.get("index_config")
         )
-        # initiate the loaded document/store_and_index arguments list,
-        docs_list, store_and_index_args_list = [], []
-
-        # load the indexing configurations
-        index_config = self.rag_config["index_config"]
-
-        # NOTE: as each selected file type may need to use a different loader
-        # and transformations, the length of the list depends on
-        # the total count of loaded data.
-        for index_config_i in range(len(index_config)):
-            docs = rag.load_docs(index_config = index_config[index_config_i])
-            docs_list.append(docs)
-
-            # store and indexing for each file type
-            if "store_and_index" in index_config[index_config_i]:
-                store_and_index_args = self._prepare_args_from_config(
-                    index_config[index_config_i]["store_and_index"],
-                )
-            else:
-                store_and_index_args = {"transformations": None}
-            store_and_index_args_list.append(store_and_index_args)
-
-        # display the arguments for store_and_index_list
-        logger.info(f"store_and_index_args args: {store_and_index_args_list}")
-
-        # pass the loaded documents and arguments to store_and_index
-        rag.store_and_index(docs_list=docs_list,
-                            store_and_index_args_list=store_and_index_args_list)
         return rag
 
     def reply(
