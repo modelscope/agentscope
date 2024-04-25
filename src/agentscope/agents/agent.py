@@ -2,10 +2,8 @@
 """ Base class for Agent """
 
 from __future__ import annotations
-import time
 from abc import ABCMeta
 from typing import Optional
-from typing import Callable
 from typing import Sequence
 from typing import Union
 from typing import Any
@@ -15,51 +13,6 @@ from loguru import logger
 from agentscope.agents.operator import Operator
 from agentscope.models import load_model_by_config_name
 from agentscope.memory import TemporaryMemory
-from agentscope.utils.logging_utils import log_studio
-from agentscope.web.studio.utils import thread_local_data
-from agentscope.web.studio.constants import _SPEAK
-
-
-def pre_reply_decorator(func: Callable) -> Callable:
-    """
-    Decorator for providing additional functionality before the execution
-    of `reply` method.
-
-    This decorator function adds a sleep delay and a "speak" action before
-    calling the actual method it decorates. It checks if a 'uid' attribute
-    is set on the thread's local data.
-
-    Args:
-        func (Callable): The original method that the decorator will wrap.
-
-    Returns:
-        Callable: The decorated/wrapped method.
-    """
-
-    def wrapper(self: Any, *args: Any, **kwargs: Any) -> Any:
-        """
-        The wrapper function that executes the augmented functionality.
-
-        Args:
-            self (Any): The instance of the object to which the method being
-            decorated belongs.
-            *args (Any): Variable length argument list for the decorated
-            method.
-            **kwargs (Any): Arbitrary keyword arguments for the decorated
-            method.
-
-        Returns:
-            Any: The return value from the decorated method.
-        """
-        if hasattr(thread_local_data, "uid"):
-            time.sleep(0.1)
-            log_studio(
-                {"name": self.name, "content": _SPEAK},
-                thread_local_data.uid,
-            )
-        return func(self, *args, **kwargs)
-
-    return wrapper
 
 
 class _RecordInitSettingMeta(ABCMeta):
@@ -69,12 +22,6 @@ class _RecordInitSettingMeta(ABCMeta):
         instance = super().__call__(*args, **kwargs)
         instance._init_settings = {"args": args, "kwargs": kwargs}
         return instance
-
-    def __new__(mcs, name: Any, bases: Any, attrs: Any) -> Any:
-        if "reply" in attrs and not attrs.get("_skip_reply_decorator", False):
-            original_reply = attrs["reply"]
-            attrs["reply"] = pre_reply_decorator(original_reply)
-        return super().__new__(mcs, name, bases, attrs)
 
 
 class AgentBase(Operator, metaclass=_RecordInitSettingMeta):
