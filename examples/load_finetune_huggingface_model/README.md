@@ -2,10 +2,6 @@
 
 This example demonstrates how to load and optionally fine-tune a Hugging Face model within a multi-agent conversation setup using AgentScope. The complete code is provided in `load_finetune_huggingface_model.py`.
 
-## Background
-
-In the context of AgentScope, agents are designed to mimic user and assistant roles in a conversation. This setup allows for the integration and testing of different models from the Hugging Face Hub, enhancing their capabilities through fine-tuning with custom datasets.
-
 ## Functionality Overview
 
 This example allows you to:
