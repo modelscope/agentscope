@@ -51,7 +51,9 @@ glb_signed_user = []
 def reset_glb_var(uid: str) -> None:
     """Reset global variables for a given user ID."""
     global glb_history_dict
+    global glb_doing_signal_dict
     glb_history_dict[uid] = init_uid_list()
+    glb_doing_signal_dict[uid] = init_uid_list()
 
 
 def get_chat(uid: str) -> list[list]:
