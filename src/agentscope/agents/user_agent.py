@@ -30,6 +30,8 @@ class UserAgent(AgentBase):
         self.name = name
         self.require_url = require_url
 
+    _skip_decorator = True
+
     def reply(
         self,
         x: dict = None,

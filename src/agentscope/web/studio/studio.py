@@ -30,7 +30,9 @@ from agentscope.web.studio.utils import (
     audio2text,
     send_reset_msg,
     thread_local_data,
+    cycle_dots,
 )
+from agentscope.web.studio.constants import _SPEAK
 
 MAX_NUM_DISPLAY_MSG = 20
 FAIL_COUNT_DOWN = 30
@@ -41,7 +43,13 @@ def init_uid_list() -> list:
     return []
 
 
+def init_uid_dict() -> dict:
+    """Initialize an empty dict for storing user IDs."""
+    return {}
+
+
 glb_history_dict = defaultdict(init_uid_list)
+glb_doing_signal_dict = defaultdict(init_uid_dict)
 glb_signed_user = []
 
 
@@ -55,11 +63,18 @@ def get_chat(uid: str) -> list[list]:
     """Retrieve chat messages for a given user ID."""
     uid = check_uuid(uid)
     global glb_history_dict
+    global glb_doing_signal_dict
+
     line = get_chat_msg(uid=uid)
     # TODO: Optimize the display effect, currently there is a problem of
     #  output display jumping
     if line:
-        glb_history_dict[uid] += [line]
+        if line[1] and line[1]["text"] == _SPEAK:
+            line[1]["text"] = ""
+            glb_doing_signal_dict[uid] = line
+        else:
+            glb_history_dict[uid] += [line]
+            glb_doing_signal_dict[uid] = []
     dial_msg = []
     for line in glb_history_dict[uid]:
         _, msg = line
@@ -68,6 +83,14 @@ def get_chat(uid: str) -> list[list]:
         else:
             # User chat, format: (msg, None)
             dial_msg.append(line)
+    if glb_doing_signal_dict[uid]:
+        if glb_doing_signal_dict[uid][1]:
+            text = cycle_dots(glb_doing_signal_dict[uid][1]["text"])
+            glb_doing_signal_dict[uid][1]["text"] = text
+            glb_doing_signal_dict[uid][1]["id"] = str(time.time())
+            glb_doing_signal_dict[uid][1]["flushing"] = False
+
+        dial_msg.append(glb_doing_signal_dict[uid])
     return dial_msg[-MAX_NUM_DISPLAY_MSG:]
 
 
