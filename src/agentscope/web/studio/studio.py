@@ -43,13 +43,8 @@ def init_uid_list() -> list:
     return []
 
 
-def init_uid_dict() -> dict:
-    """Initialize an empty dict for storing user IDs."""
-    return {}
-
-
 glb_history_dict = defaultdict(init_uid_list)
-glb_doing_signal_dict = defaultdict(init_uid_dict)
+glb_doing_signal_dict = defaultdict(init_uid_list)
 glb_signed_user = []
 
 

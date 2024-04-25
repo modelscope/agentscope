@@ -71,7 +71,7 @@ class _RecordInitSettingMeta(ABCMeta):
         return instance
 
     def __new__(mcs, name: Any, bases: Any, attrs: Any) -> Any:
-        if "reply" in attrs and not attrs.get("_skip_decorator", False):
+        if "reply" in attrs and not attrs.get("_skip_reply_decorator", False):
             original_reply = attrs["reply"]
             attrs["reply"] = pre_reply_decorator(original_reply)
         return super().__new__(mcs, name, bases, attrs)
