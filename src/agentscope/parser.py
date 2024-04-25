@@ -99,7 +99,10 @@ class MarkdownJsonBlockParser(ParserBase):
             if isinstance(content_hint, str):
                 self.content_hint = content_hint
             else:
-                self.content_hint = json.dumps(content_hint)
+                self.content_hint = json.dumps(
+                    content_hint,
+                    ensure_ascii=False,
+                )
 
     def parse(self, response: ModelResponse) -> ModelResponse:
         """Parse the response text to a json object."""
