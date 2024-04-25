@@ -71,62 +71,6 @@ class RAGAgentBase(AgentBase, ABC):
     def init_rag(self) -> RAGBase:
         """initialize RAG with configuration"""
 
-    def _prepare_args_from_config(
-        self,
-        config: dict,
-    ) -> Any:
-        """
-        Helper function to build args for the two functions:
-        rag.load_data(...) and rag.store_and_index(docs, ...)
-        in RAG classes.
-        Args:
-            config (dict): a dictionary containing configurations
-
-        Returns:
-            Any: an object that is parsed/built to be an element
-                of input to the function of RAG module.
-        """
-        if not isinstance(config, dict):
-            return config
-
-        if "create_object" in config:
-            # if a term in args is a object,
-            # recursively create object with args from config
-            module_name = config.get("module", "")
-            class_name = config.get("class", "")
-            init_args = config.get("init_args", {})
-            try:
-                cur_module = importlib.import_module(module_name)
-                cur_class = getattr(cur_module, class_name)
-                init_args = self._prepare_args_from_config(init_args)
-                logger.info(
-                    f"load and build object{cur_module, cur_class, init_args}",
-                )
-                return cur_class(**init_args)
-            except ImportError as exc_inner:
-                logger.error(
-                    f"Fail to load class {class_name} "
-                    f"from module {module_name}",
-                )
-                raise ImportError(
-                    f"Fail to load class {class_name} "
-                    f"from module {module_name}",
-                ) from exc_inner
-        else:
-            prepared_args = {}
-            for key, value in config.items():
-                if isinstance(value, list):
-                    prepared_args[key] = []
-                    for c in value:
-                        prepared_args[key].append(
-                            self._prepare_args_from_config(c),
-                        )
-                elif isinstance(value, dict):
-                    prepared_args[key] = self._prepare_args_from_config(value)
-                else:
-                    prepared_args[key] = value
-            return prepared_args
-
     def reply(
         self,
         x: dict = None,
@@ -312,25 +256,7 @@ class LlamaIndexAgent(RAGAgentBase):
         # and transformations, the length of the list depends on
         # the total count of loaded data.
         for index_config_i in range(len(index_config)):
-            if "load_data" in index_config[index_config_i]:
-                load_data_args = self._prepare_args_from_config(
-                    index_config[index_config_i]["load_data"],
-                )
-            else:
-                try:
-                    from llama_index.core import SimpleDirectoryReader
-                except ImportError as exc_inner:
-                    raise ImportError(
-                        " LlamaIndexAgent requires llama-index to be install."
-                        "Please run `pip install llama-index`",
-                    ) from exc_inner
-                load_data_args = {
-                    "loader": SimpleDirectoryReader(
-                        index_config[index_config_i][
-                            "set_default_data_path"]),
-                }
-            logger.info(f"rag.load_data args: {load_data_args}")
-            docs = rag.load_data(**load_data_args)
+            docs = rag.load_docs(index_config = index_config[index_config_i])
             docs_list.append(docs)
 
             # store and indexing for each file type
