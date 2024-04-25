@@ -104,7 +104,7 @@ class ASDiGraph(nx.DiGraph):
             else:
                 raise ValueError("Too many predecessors!")
 
-    def compile(self, compiled_filename: str) -> None:
+    def compile(self, compiled_filename: str = "") -> str:
         """Compile DAG to a runnable python code"""
 
         def format_python_code(code: str) -> str:
@@ -142,9 +142,13 @@ class ASDiGraph(nx.DiGraph):
             f"'__main__':\n    main()\n"
         )
 
-        # Write the script to file
-        with open(compiled_filename, "w", encoding="utf-8") as file:
-            file.write(format_python_code(script))
+        formatted_code = format_python_code(script)
+
+        if len(compiled_filename) > 0:
+            # Write the script to file
+            with open(compiled_filename, "w", encoding="utf-8") as file:
+                file.write(formatted_code)
+        return formatted_code
 
     # pylint: disable=R0912
     def add_as_node(
