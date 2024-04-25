@@ -349,7 +349,6 @@ class MsgHubNode(WorkflowNode):
         self.pipeline = self.dep_opts[0]
         self.participants = get_all_agents(self.pipeline)
         self.participants_var = get_all_agents(self.pipeline, return_var=True)
-        print(self.participants_var)
 
     def __call__(self, x: dict = None) -> dict:
         with msghub(self.participants, announcement=self.announcement):
