@@ -1,0 +1,192 @@
+{
+  "4": {
+    "name": "MsgHub",
+    "data": {
+      "elements": [
+        "5"
+      ],
+      "args": {
+        "announcement": {
+          "name": "Host",
+          "content": "This is a chat room and you can speak freely and briefly."
+        }
+      }
+    },
+    "inputs": {
+      "input_1": {
+        "connections": [
+          {
+            "node": "13",
+            "input": "output_1"
+          }
+        ]
+      }
+    },
+    "outputs": {
+      "output_1": {
+        "connections": []
+      }
+    }
+  },
+  "5": {
+    "name": "WhileLoopPipeline",
+    "data": {
+      "elements": [
+        "6"
+      ],
+      "args": {
+        "condition_func": "lambda *args: True"
+      }
+    },
+    "inputs": {
+      "input_1": {
+        "connections": []
+      }
+    },
+    "outputs": {
+      "output_1": {
+        "connections": []
+      }
+    }
+  },
+  "6": {
+    "name": "SequentialPipeline",
+    "data": {
+      "elements": [
+        "7",
+        "8",
+        "9",
+        "10"
+      ]
+    },
+    "inputs": {
+      "input_1": {
+        "connections": []
+      }
+    },
+    "outputs": {
+      "output_1": {
+        "connections": []
+      }
+    }
+  },
+  "7": {
+    "name": "DialogAgent",
+    "data": {
+      "args": {
+        "name": "Lingfeng",
+        "sys_prompt": "You are Lingfeng, a noble in the imperial court, known for your wisdom and strategic acumen. You often engage in complex political intrigues and have recently suspected the Queen’s adviser of treachery. Your speaking style is reminiscent of classical literature. Respond in a concise statement, no more than 30 words.",
+        "model_config_name": "qwen"
+      }
+    },
+    "inputs": {
+      "input_1": {
+        "connections": []
+      }
+    },
+    "outputs": {
+      "output_1": {
+        "connections": []
+      }
+    }
+  },
+  "8": {
+    "name": "DialogAgent",
+    "data": {
+      "args": {
+        "name": "Boyu",
+        "sys_prompt": "You are Boyu, a friend of Lingfeng and an enthusiast of court dramas. Your speech is modern but with a flair for the dramatic, matching your love for emotive storytelling. You've been closely following Lingfeng’s political maneuvers in the imperial court through secret correspondence. Respond in a concise statement, no more than 30 words.",
+        "model_config_name": "qwen"
+      }
+    },
+    "inputs": {
+      "input_1": {
+        "connections": []
+      }
+    },
+    "outputs": {
+      "output_1": {
+        "connections": []
+      }
+    }
+  },
+  "9": {
+    "name": "DialogAgent",
+    "data": {
+      "args": {
+        "name": "Haotian",
+        "sys_prompt": "You are Haotian, Lingfeng’s cousin who prefers the open fields to the confines of court life. As a celebrated athlete, your influence has protected Lingfeng in times of political strife. You promote physical training as a way to prepare for life's battles, often using sports metaphors in conversation. Respond in a concise statement, no more than 30 words.",
+        "model_config_name": "qwen"
+      }
+    },
+    "inputs": {
+      "input_1": {
+        "connections": []
+      }
+    },
+    "outputs": {
+      "output_1": {
+        "connections": []
+      }
+    }
+  },
+  "10": {
+    "name": "UserAgent",
+    "data": {
+      "args": {
+        "name": "King"
+      }
+    },
+    "inputs": {
+      "input_1": {
+        "connections": []
+      }
+    },
+    "outputs": {
+      "output_1": {
+        "connections": []
+      }
+    }
+  },
+  "12": {
+    "name": "dashscope_chat",
+    "data": {
+      "args": {
+        "config_name": "qwen",
+        "model_name": "qwen-max",
+        "api_key": "******",
+        "temperature": 0.1,
+        "seed": 1,
+        "model_type": "dashscope_chat",
+        "messages_key": "input"
+      }
+    },
+    "inputs": {},
+    "outputs": {}
+  },
+  "13": {
+    "name": "Message",
+    "data": {
+      "args": {
+        "name": "User",
+        "content": "Hello every one",
+        "url": ""
+      }
+    },
+    "inputs": {
+      "input_1": {
+        "connections": []
+      }
+    },
+    "outputs": {
+      "output_1": {
+        "connections": [
+          {
+            "node": "4",
+            "output": "input_1"
+          }
+        ]
+      }
+    }
+  }
+}
