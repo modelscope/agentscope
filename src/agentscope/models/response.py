@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 """Parser for model response."""
-import inspect
 import json
-from typing import Optional, Sequence, Any, Callable
+from typing import Optional, Sequence, Any
 
 from loguru import logger
 
@@ -20,7 +19,7 @@ class ModelResponse:
     embedding: Optional[Sequence] = None
     raw: Optional[Any] = None
     image_urls: Optional[Sequence[str]] = None
-    json: Optional[Any] = None
+    parsed: Optional[Any] = None
 
     def __init__(
         self,
@@ -28,6 +27,7 @@ class ModelResponse:
         embedding: Sequence = None,
         image_urls: Sequence[str] = None,
         raw: Any = None,
+        parsed: Any = None,
     ) -> None:
         """Initialize the model response.
 
@@ -40,11 +40,34 @@ class ModelResponse:
                 The image URLs returned by the model.
             raw (`Any`, optional):
                 The raw data returned by the model.
+            parsed (`Any`, optional):
+                The parsed data returned by the model.
         """
         self.text = text
         self.embedding = embedding
         self.image_urls = image_urls
         self.raw = raw
+        self.parsed = parsed
+
+    def __getattribute__(self, item: str) -> Any:
+        """Warning for the deprecated json attribute."""
+        if item == "json":
+            logger.warning(
+                "The json attribute in ModelResponse class is deprecated. Use"
+                " parsed attribute instead.",
+            )
+
+        return super().__getattribute__(item)
+
+    def __setattr__(self, key: str, value: Any) -> Optional[Any]:
+        """Warning for the deprecated json attribute."""
+        if key == "json":
+            logger.warning(
+                "The json attribute in ModelResponse class is deprecated. Use"
+                " parsed attribute instead.",
+            )
+
+        return super().__setattr__(key, value)
 
     def __str__(self) -> str:
         if _is_json_serializable(self.raw):
@@ -56,107 +79,7 @@ class ModelResponse:
             "text": self.text,
             "embedding": self.embedding,
             "image_urls": self.image_urls,
-            "json": self.json,
+            "parsed": self.parsed,
             "raw": raw,
         }
         return json.dumps(serialized_fields, indent=4, ensure_ascii=False)
-
-
-class ResponseParser:
-    """A class that contains several static methods to parse the response."""
-
-    @classmethod
-    def to_dict(cls, response: ModelResponse) -> ModelResponse:
-        """Parse the response text to a dict, and feed it into the `json`
-        field."""
-        text = response.text
-        if text is not None:
-            logger.debug("Text before parsing", text)
-
-            # extract from the first '{' to the last '}'
-            index_start = max(text.find("{"), 0)
-            index_end = min(text.rfind("}") + 1, len(text))
-
-            text = text[index_start:index_end]
-            logger.debug("Text after parsing", text)
-
-            response.text = text
-            response.json = json.loads(text)
-            return response
-        else:
-            raise ValueError(
-                f"The text field of the model response is None: {response}",
-            )
-
-    @classmethod
-    def to_list(cls, response: ModelResponse) -> ModelResponse:
-        """Parse the response text to a list, and feed it into the `json`
-        field."""
-        text = response.text
-        if text is not None:
-            logger.debug("Text before parsing", text)
-
-            # extract from the first '{' to the last '}'
-            index_start = max(text.find("["), 0)
-            index_end = min(text.rfind("]") + 1, len(text))
-
-            text = text[index_start:index_end]
-            logger.debug("Text after parsing", text)
-
-            response.text = text
-            response.json = json.loads(text)
-            return response
-        else:
-            raise ValueError(
-                f"The text field of the model response is None: {response}",
-            )
-
-
-class ResponseParsingError(Exception):
-    """Exception raised when parsing the response fails."""
-
-    parse_func: str
-    """The source code of the parsing function."""
-
-    error_info: str
-    """The detail information of the error."""
-
-    response: ModelResponse
-    """The response that fails to be parsed."""
-
-    def __init__(
-        self,
-        *args: Any,
-        parse_func: Callable,
-        error_info: str,
-        response: ModelResponse,
-        **kwargs: Any,
-    ) -> None:
-        """Initialize the exception.
-
-        Args:
-            parse_func (`str`):
-                The source code of the parsing function.
-            error_info (`str`):
-                The detail information of the error.
-            response (`ModelResponse`):
-                The response that fails to be parsed.
-        """
-        super().__init__(*args, **kwargs)
-
-        self.parse_func_code = inspect.getsource(parse_func)
-        self.error_info = error_info
-        self.response = response
-
-    def __str__(self) -> str:
-        return (
-            f"Fail to parse response with the following parsing function:\n"
-            f"## PARSE FUNCTION: \n"
-            f"```python\n"
-            f"{self.parse_func_code}"
-            f"```\n\n"
-            f"## ERROR INFO: \n"
-            f"{self.error_info}\n\n"
-            f"## INPUT RESPONSE: \n"
-            f"{self.response}"
-        )
