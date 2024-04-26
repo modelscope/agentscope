@@ -343,10 +343,6 @@ print(prompt)
 如果第一条消息的 role 字段是 "system"，它将被转换为带有 role 字段为 "system" 和 content 字段为系统消息的单个消息。其余的消息会被转化为带有 role 字段为 "user" 和 content 字段为对话历史的消息。
 下面展示了一个示例：
 
-**注意**Gemini Chat API中`parts`字段可以包含图片的url，由于我们将消息转换成字符串格式
-的输入，因此图片url在目前的`format`函数中是不支持的。
-我们推荐开发者可以根据需求动手定制化自己的提示。
-
 ```python
 from agentscope.models import ZhipuAIChatWrapper
 from agentscope.message import Msg

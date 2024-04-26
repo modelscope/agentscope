@@ -77,7 +77,6 @@ class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
 
     model_type: str = "zhipuai_chat"
 
-    # TOTEST
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
         # TODO: set quota to the following metrics
