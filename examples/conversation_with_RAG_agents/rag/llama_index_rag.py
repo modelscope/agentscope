@@ -4,7 +4,7 @@ This module is an integration of the Llama index RAG
 into AgentScope package
 """
 
-from typing import Any, Optional, List, Union
+from typing import Any, Optional, List, Union, Sequence
 from loguru import logger
 import importlib
 import os.path
@@ -158,9 +158,9 @@ class LlamaIndexRAG(RAGBase):
             raise TypeError(
                 f"Embedding model does not support {type(self.emb_model)}.",
             )
-        self.init_rag()
+        self._init_rag()
 
-    def init_rag(self) -> None:
+    def _init_rag(self) -> None:
         """
         Initialize the RAG.
         """
@@ -171,8 +171,8 @@ class LlamaIndexRAG(RAGBase):
         # and transformations, the length of the list depends on
         # the total count of loaded data.
         for index_config_i in range(len(self.index_config)):
-            docs = self.load_docs(
-                index_config=self.index_config[index_config_i])
+            docs = self.load_data(
+                config=self.index_config[index_config_i])
             docs_list.append(docs)
 
             # store and indexing for each file type
@@ -195,19 +195,21 @@ class LlamaIndexRAG(RAGBase):
 
     def load_data(
             self,
-            loader: BaseReader,
+            loader: Optional[BaseReader] = None,
             query: Optional[str] = None,
+            config: Optional[dict] = None,
             **kwargs: Any,
     ) -> Any:
         """
         Accept a loader, loading the desired data (no chunking)
         Args:
-            loader (BaseReader):
+            loader (Optional[BaseReader]):
                 object to load data, expected be an instance of class
                 inheriting from BaseReader in llama index.
             query (Optional[str]):
                 optional, used when the data is in a database.
-
+            config (Optional[dict]):
+                optional, used when the loader config is in a config file.
         Returns:
             Any: loaded documents
 
@@ -235,6 +237,27 @@ class LlamaIndexRAG(RAGBase):
             )
         ```
         """
+        loader_config = config.get("load_data", {})
+        if loader_config is not None:
+            # we prepare the loader from the configs
+            load_data_args = self._prepare_args_from_config(
+                config=loader_config,
+            )
+        else:
+            # we prepare the loader by default
+            try:
+                from llama_index.core import SimpleDirectoryReader
+            except ImportError as exc_inner:
+                raise ImportError(
+                    " LlamaIndexAgent requires llama-index to be install."
+                    "Please run `pip install llama-index`",
+                ) from exc_inner
+            load_data_args = {
+                "loader": SimpleDirectoryReader(
+                    input_dir="set_default_data_path"),
+            }
+        logger.info(f"rag.load_data args: {load_data_args}")
+        loader = load_data_args["loader"]
         if query is None:
             documents = loader.load_data()
         else:
@@ -295,7 +318,7 @@ class LlamaIndexRAG(RAGBase):
                 embed_model=self.emb_model,
             )
             # persist the calculated index
-            self.persist_to_dir()
+            self._persist_to_dir()
         else:
             # load the storage_context
             storage_context = StorageContext.from_defaults(
@@ -324,41 +347,11 @@ class LlamaIndexRAG(RAGBase):
             self.retriever = retriever
         return self.index
 
-    def persist_to_dir(self):
+    def _persist_to_dir(self):
         """
         Persist the index to the directory.
         """
         self.index.storage_context.persist(persist_dir=self.persist_dir)
-
-    def load_docs(self, index_config: dict) -> Any:
-        """
-        Load the documents by configurations.
-        Args:
-            index_config (dict):
-                the index configuration
-        Return:
-            Any: the loaded documents
-        """
-
-        if "load_data" in index_config:
-            load_data_args = self._prepare_args_from_config(
-                index_config["load_data"],
-            )
-        else:
-            try:
-                from llama_index.core import SimpleDirectoryReader
-            except ImportError as exc_inner:
-                raise ImportError(
-                    " LlamaIndexAgent requires llama-index to be install."
-                    "Please run `pip install llama-index`",
-                ) from exc_inner
-            load_data_args = {
-                "loader": SimpleDirectoryReader(
-                    index_config["set_default_data_path"]),
-            }
-        logger.info(f"rag.load_data args: {load_data_args}")
-        docs = self.load_data(**load_data_args)
-        return docs
 
     def docs_to_nodes(
             self,
@@ -403,6 +396,19 @@ class LlamaIndexRAG(RAGBase):
         # stack up the nodes from the pipline
         nodes = pipeline.run(documents=docs)
         return nodes
+
+    def nodes_to_index(
+            self,
+            nodes,
+    ) -> None:
+        """
+        Convert the nodes to index.
+        """
+        # feed all the nodes to embedding model to calculate index
+        self.index = VectorStoreIndex(
+            nodes=nodes,
+            embed_model=self.emb_model,
+        )
 
     def set_retriever(self, retriever: BaseRetriever) -> None:
         """

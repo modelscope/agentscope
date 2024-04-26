@@ -42,8 +42,9 @@ class RAGBase(ABC):
     @abstractmethod
     def load_data(
         self,
-        loader: Any,
+        loader: Optional[Any],
         query: Any,
+        config: Optional[dict] = None,
         **kwargs: Any,
     ) -> Any:
         """
@@ -51,6 +52,7 @@ class RAGBase(ABC):
         Args:
             loader (Any): data loader, depending on the package
             query (str): query for getting data from DB
+            config (dict): config for data loader
 
         Returns:
             Any: loaded documents
@@ -81,7 +83,11 @@ class RAGBase(ABC):
         """
 
     @abstractmethod
-    def retrieve(self, query: Any, to_list_strs: bool = False) -> list[Any]:
+    def retrieve(
+            self,
+            query: Any,
+            to_list_strs: bool = False,
+    ) -> list[Any]:
         """
         retrieve list of content from vdb to memory
         Args:
