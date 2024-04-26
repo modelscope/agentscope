@@ -187,6 +187,15 @@ def audio2text(audio_path: str) -> str:
     return " ".join([s["text"] for s in result["output"]["sentence"]])
 
 
+def cycle_dots(text: str, num_dots: int = 3) -> str:
+    """display thinking dots before agent reply"""
+    current_dots = len(text) - len(text.rstrip("."))
+    next_dots = (current_dots + 1) % (num_dots + 1)
+    if next_dots == 0:
+        next_dots = 1
+    return text.rstrip(".") + "." * next_dots
+
+
 def user_input(
     prefix: str = "User input: ",
     timeout: Optional[int] = None,
