@@ -28,6 +28,7 @@ AgentScope 文档
    :glob:
    :caption: AgentScope API 文档
 
+   agentscope.message
    agentscope.agents
    agentscope.memory
    agentscope.models

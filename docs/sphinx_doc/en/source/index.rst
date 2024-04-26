@@ -28,6 +28,7 @@ AgentScope Documentation
    :glob:
    :caption: AgentScope API Reference
 
+   agentscope.message
    agentscope.agents
    agentscope.memory
    agentscope.models
