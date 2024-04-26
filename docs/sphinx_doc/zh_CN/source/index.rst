@@ -28,15 +28,17 @@ AgentScope 文档
    :glob:
    :caption: AgentScope API 文档
 
+   agentscope
+   agentscope.message
+   agentscope.models
    agentscope.agents
    agentscope.memory
-   agentscope.models
    agentscope.pipelines
    agentscope.service
    agentscope.rpc
-   agentscope.utils
    agentscope.web
-   agentscope
+   agentscope.prompt
+   agentscope.utils
 
 Indices and tables
 ==================
