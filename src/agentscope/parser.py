@@ -95,6 +95,15 @@ class MarkdownJsonBlockParser(ParserBase):
     """The instruction for the format of the json object."""
 
     def __init__(self, content_hint: Optional[Any] = None) -> None:
+        """Initialize the parser with the content hint.
+
+        Args:
+            content_hint (`Optional[Any]`, defaults to `None`):
+                The hint used to remind LLM what should be fill between the
+                tags. If it is a string, it will be used as the content hint
+                directly. If it is a dict, it will be converted to a json
+                string and used as the content hint.
+        """
         if content_hint is not None:
             if isinstance(content_hint, str):
                 self.content_hint = content_hint
@@ -105,7 +114,8 @@ class MarkdownJsonBlockParser(ParserBase):
                 )
 
     def parse(self, response: ModelResponse) -> ModelResponse:
-        """Parse the response text to a json object."""
+        """Parse the response text to a json object, and fill it in the parsed
+        field in the response object."""
 
         # extract the content and try to fix the missing tags by hand
         try:

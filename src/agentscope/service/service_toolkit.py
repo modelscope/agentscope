@@ -203,7 +203,7 @@ class ServiceToolkit:
         if name in self.service_funcs:
             logger.warning(
                 f"Service function `{name}` already exists, "
-                f"skip to add it.",
+                f"skip adding it.",
             )
         else:
             self.service_funcs[name] = ServiceFunction(
