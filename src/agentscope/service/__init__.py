@@ -22,7 +22,8 @@ from .sql_query.mongodb import query_mongodb
 from .web.search import bing_search, google_search
 from .web.arxiv import arxiv_search
 from .service_response import ServiceResponse
-from .service_factory import ServiceFactory
+from .service_toolkit import ServiceToolkit
+from .service_toolkit import ServiceFactory
 from .retrieval.similarity import cos_sim
 from .text_processing.summarization import summarization
 from .retrieval.retrieval_from_list import retrieve_from_list
@@ -40,7 +41,7 @@ def get_help() -> None:
 __all__ = [
     "ServiceResponse",
     "ServiceExecStatus",
-    "ServiceFactory",
+    "ServiceToolkit",
     "get_help",
     "execute_python_code",
     "execute_shell_command",
@@ -69,4 +70,6 @@ __all__ = [
     "load_web",
     "parse_html_to_text",
     "download_from_url",
+    # to be deprecated
+    "ServiceFactory",
 ]
