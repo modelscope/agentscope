@@ -99,7 +99,7 @@ A draggable interface for building AgentScope workflow, which is a tool for gene
 ![](https://gw.alicdn.com/imgextra/i3/O1CN01uioF2Z1tYCsWgR3Cf_!!6000000005913-1-tps-2156-1080.gif)
 
 ### How to Use
-Go to the [AgentScope Workstation website](http://39.103.132.84:8080/) and log in with GitHub. Drag modules to the canvas and fill in the blanks. Link each module to build a workflow. Click the **EXPORT** button to get the final configurations. Then save the configurations as `config.json`. Then run with the following commands:
+Go to the [AgentScope Workstation website](https://agentscope.aliyun.com/) and log in with GitHub. Drag modules to the canvas and fill in the blanks. Link each module to build a workflow. Click the **EXPORT** button to get the final configurations. Then save the configurations as `config.json`. Then run with the following commands:
 
 ```bash
 # Run in command line
@@ -110,5 +110,18 @@ as_studio config.json
 ```
 
 Or you can run your workflow on ModelScope Studio. Click the **RUN** button. Then, fill in the `API_KEY` environment variable in ModelScope Studio. After a few minutes, enjoy your journey on AgentScope!
+
+You can also compile JSON configuration to Python code and run:
+
+```bash
+# Compile
+as_workflow config.json --compile ${YOUR_PYTHON_SCRIPT_NAME}.py
+
+# Run python workflow
+python ${YOUR_PYTHON_SCRIPT_NAME}.py
+
+# Run workflow in as_studio (gradio ui)
+as_studio ${YOUR_PYTHON_SCRIPT_NAME}.py
+```
 
 More examples about AgentScope Workstation are coming soon!
