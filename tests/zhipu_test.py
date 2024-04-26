@@ -3,7 +3,8 @@
 import unittest
 from unittest.mock import patch, MagicMock
 
-from agentscope.models import ZhipuAIChatWrapper
+import agentscope
+from agentscope.models import load_model_by_config_name
 
 
 class TestZhipuAIChatWrapper(unittest.TestCase):
@@ -43,13 +44,18 @@ class TestZhipuAIChatWrapper(unittest.TestCase):
             mock_response
         )
 
-        chat_wrapper = ZhipuAIChatWrapper(
-            config_name=self.config_name,
-            model_name=self.model_name,
-            api_key=self.api_key,
+        agentscope.init(
+            model_configs={
+                "config_name": "test_config",
+                "model_type": "zhipuai_chat",
+                "model_name": "glm-4",
+                "api_key": self.api_key,
+            },
         )
 
-        response = chat_wrapper(messages=self.messages)
+        model = load_model_by_config_name("test_config")
+
+        response = model(messages=self.messages)
 
         self.assertEqual(response.text, "Hello, this is a mocked response!")
 
