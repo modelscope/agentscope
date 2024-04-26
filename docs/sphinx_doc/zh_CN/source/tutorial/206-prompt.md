@@ -29,6 +29,7 @@ AgentScope为以下的模型API提供了内置的提示构建策略。
 - [OllamaChatWrapper](#ollamachatwrapper)
 - [OllamaGenerationWrapper](#ollamagenerationwrapper)
 - [GeminiChatWrapper](#geminichatwrapper)
+- [ZhipuAIChatWrapper](#zhipuaichatwrapper)
 
 这些策略是在对应Model Wrapper类的`format`函数中实现的。它接受`Msg`对象，`Msg`对象的列表或它们的混合作为输入。在`format`函数将会把输入重新组织成一个`Msg`对象的列表，因此为了方便解释，我们在下面的章节中认为`format`函数的输入是`Msg`对象的列表。
 

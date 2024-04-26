@@ -44,6 +44,7 @@ generation model APIs.
 - [OllamaChatWrapper](#ollamachatwrapper)
 - [OllamaGenerationWrapper](#ollamagenerationwrapper)
 - [GeminiChatWrapper](#geminichatwrapper)
+- [ZhipuAIChatWrapper](#zhipuaichatwrapper)
 
 These strategies are implemented in the `format` functions of the model
 wrapper classes.
