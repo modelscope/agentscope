@@ -10,7 +10,7 @@ from loguru import logger
 from agentscope.exception import ResponseParsingError, FunctionCallError
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
-from agentscope.parser import MarkdownJsonDictParser
+from agentscope.parsers import MarkdownJsonDictParser
 from agentscope.service import ServiceToolkit
 from agentscope.service.service_toolkit import ServiceFunction
 

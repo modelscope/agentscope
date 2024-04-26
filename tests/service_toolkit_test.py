@@ -5,7 +5,7 @@ import unittest
 from typing import Literal
 
 from agentscope.models import ModelWrapperBase, ModelResponse
-from agentscope.parser import MultiTaggedContentParser, TaggedContent
+from agentscope.parsers import MultiTaggedContentParser, TaggedContent
 from agentscope.service import (
     bing_search,
     execute_python_code,

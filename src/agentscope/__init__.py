@@ -11,6 +11,7 @@ from . import message
 from . import prompt
 from . import web
 from . import exception
+from . import parsers
 
 # objects or function
 from .msghub import msghub

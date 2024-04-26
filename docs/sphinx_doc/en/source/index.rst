@@ -31,11 +31,9 @@ AgentScope Documentation
    agentscope
    agentscope.message
    agentscope.models
-   agentscope
-   agentscope.message
-   agentscope.models
    agentscope.agents
    agentscope.memory
+   agentscope.parsers
    agentscope.pipelines
    agentscope.service
    agentscope.rpc
