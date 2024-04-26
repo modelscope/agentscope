@@ -365,6 +365,48 @@ print(prompt)
 ]
 ```
 
+### `ZhipuAIChatWrapper`
+
+`ZhipuAIChatWrapper` encapsulates the ZhipuAI chat API, which takes a list of messages as input. The message must obey the following rules:
+
+- Require `role` and `content` fields, and `role` must be either `"user"`
+  `"system"` or `"assistant"`.
+- There must be at least one `user` message.
+- The `user` must speak in the beginning and end of the input messages list.
+
+#### Prompt Strategy
+
+If the role field of the first message is `"system"`, it will be converted into a single message with the `role` field as `"system"` and the `content` field as the system message. The rest of the messages will be converted into a message with the `role` field as `"user"` and the `content` field as the dialogue history.
+
+An example is shown below:
+
+```python
+from agentscope.models import ZhipuAIChatWrapper
+from agentscope.message import Msg
+
+model = ZhipuAIChatWrapper(
+    config_name="", # empty since we directly initialize the model wrapper
+    model_name="glm-4",
+    api_key="your api key",
+)
+
+prompt = model.format(
+   Msg("system", "You're a helpful assistant", role="system"),   # Msg object
+   [                                                             # a list of Msg objects
+      Msg(name="Bob", content="Hi!", role="assistant"),
+      Msg(name="Alice", content="Nice to meet you!", role="assistant"),
+   ],
+)
+print(prompt)
+```
+
+```bash
+[
+  {"role": "system", "content": "You are a helpful assistant"},
+  {"role": "user", "content": "## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!"},
+]
+```
+
 ## Prompt Engine (Will be deprecated in the future)
 
 AgentScope provides the `PromptEngine` class to simplify the process of crafting

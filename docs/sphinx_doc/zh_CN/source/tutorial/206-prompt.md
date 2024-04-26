@@ -326,6 +326,53 @@ print(prompt)
 ]
 ```
 
+
+### `ZhipuAIChatWrapper`
+
+`ZhipuAIChatWrapper`封装了ZhipuAi聊天API，它接受消息列表或字符串提示作为输入。与DashScope聊天API类似，如果我们传递消息列表，它必须遵守以下规则：
+
+- 必须有 role 和 content 字段，且 role 必须是 "user"、"system" 或 "assistant" 中的一个。
+- 至少有一个 user 消息。
+
+当代理可能扮演多种不同角色并连续发言时，这些要求使得构建多代理对话变得困难。
+因此，我们决定在内置的`format`函数中将消息列表转换为字符串提示，并且封装在一条user信息中。
+
+#### 提示的构建策略
+
+如果第一条消息的 role 字段是 "system"，它将被转换为带有 role 字段为 "system" 和 content 字段为系统消息的单个消息。其余的消息会被转化为带有 role 字段为 "user" 和 content 字段为对话历史的消息。
+下面展示了一个示例：
+
+**注意**Gemini Chat API中`parts`字段可以包含图片的url，由于我们将消息转换成字符串格式
+的输入，因此图片url在目前的`format`函数中是不支持的。
+我们推荐开发者可以根据需求动手定制化自己的提示。
+
+```python
+from agentscope.models import ZhipuAIChatWrapper
+from agentscope.message import Msg
+
+model = ZhipuAIChatWrapper(
+    config_name="", # empty since we directly initialize the model wrapper
+    model_name="glm-4",
+    api_key="your api key",
+)
+
+prompt = model.format(
+   Msg("system", "You're a helpful assistant", role="system"),   # Msg object
+   [                                                             # a list of Msg objects
+      Msg(name="Bob", content="Hi!", role="assistant"),
+      Msg(name="Alice", content="Nice to meet you!", role="assistant"),
+   ],
+)
+print(prompt)
+```
+
+```bash
+[
+  {"role": "system", "content": "You are a helpful assistant"},
+  {"role": "user", "content": "## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!"},
+]
+```
+
 ## 关于`PromptEngine`类 （将会在未来版本弃用）
 
 `PromptEngine`类提供了一种结构化的方式来合并不同的提示组件，比如指令、提示、对话历史和用户输入，以适合底层语言模型的格式。
