@@ -145,18 +145,18 @@ b = AgentB(
 a = AgentA(
     name="A",
     # ...
-    to_dist={
-        "host": "ip_a",
-        "port": 12001,
-    },
+    to_dist=DistConf(
+        host="ip_a",
+        port=12001,
+    ),
 )
 b = AgentB(
     name="B",
     # ...
-    to_dist={
-        "host": "ip_b",
-        "port": 12002,
-    },
+    to_dist=DistConf(
+        host="ip_b",
+        port=12002,
+    ),
 )
 ```
 

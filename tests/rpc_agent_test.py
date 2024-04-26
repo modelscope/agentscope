@@ -8,7 +8,7 @@ import shutil
 from loguru import logger
 
 import agentscope
-from agentscope.agents import AgentBase
+from agentscope.agents import AgentBase, DistConf
 from agentscope.agents.rpc_agent import RpcAgentServerLauncher
 from agentscope.message import Msg
 from agentscope.message import PlaceholderMessage
@@ -334,9 +334,9 @@ class BasicRpcAgentTest(unittest.TestCase):
         # rpc agent c
         agent_c = DemoRpcAgentAdd(  # pylint: disable=E1123
             name="c",
-            to_dist={
-                "lazy_launch": False,
-            },
+            to_dist=DistConf(
+                lazy_launch=False,
+            ),
         )
         msg = Msg(
             name="System",
@@ -581,10 +581,10 @@ class BasicRpcAgentTest(unittest.TestCase):
         gather1 = DemoGatherAgent(  # pylint: disable=E1123
             name="g1",
             agents=agents[:4],
-            to_dist={
-                "host": host,
-                "port": launcher1.port,
-            },
+            to_dist=DistConf(
+                host=host,
+                port=launcher1.port,
+            ),
         )
         gather2 = DemoGatherAgent(  # pylint: disable=E1123
             name="g2",

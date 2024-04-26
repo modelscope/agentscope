@@ -86,6 +86,43 @@ class _AgentMeta(ABCMeta):
         return instance
 
 
+class DistConf(dict):
+    """Distribution configuration for agents."""
+
+    def __init__(
+        self,
+        host: str = "localhost",
+        port: int = None,
+        max_pool_size: int = 8192,
+        max_timeout_seconds: int = 1800,
+        local_mode: bool = True,
+        lazy_launch: bool = True,
+    ):
+        """Init the distributed configuration.
+
+        Args:
+            host (`str`, defaults to `"localhost"`):
+                Hostname of the rpc agent server.
+            port (`int`, defaults to `None`):
+                Port of the rpc agent server.
+            max_pool_size (`int`, defaults to `8192`):
+                Max number of task results that the server can accommodate.
+            max_timeout_seconds (`int`, defaults to `1800`):
+                Timeout for task results.
+            local_mode (`bool`, defaults to `True`):
+                Whether the started rpc server only listens to local
+                requests.
+            lazy_launch (`bool`, defaults to `True`):
+                Only launch the server when the agent is called.
+        """
+        self["host"] = host
+        self["port"] = port
+        self["max_pool_size"] = max_pool_size
+        self["max_timeout_seconds"] = max_timeout_seconds
+        self["local_mode"] = local_mode
+        self["lazy_launch"] = lazy_launch
+
+
 class AgentBase(Operator, metaclass=_AgentMeta):
     """Base class for all agents.
 
@@ -102,7 +139,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
         model_config_name: str = None,
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
-        to_dist: Optional[Union[dict, bool]] = False,
+        to_dist: Optional[Union[DistConf, bool]] = False,
     ) -> None:
         r"""Initialize an agent from the given arguments.
 
@@ -119,7 +156,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
                 Whether the agent has memory.
             memory_config (`Optional[dict]`):
                 The config of memory.
-            to_dist (`Optional[Union[dict, bool]]`, default to `False`):
+            to_dist (`Optional[Union[DistConf, bool]]`, default to `False`):
                 The parameter dict passed to :py:meth:`to_dist` method. Used in
                 :py:class:`_AgentMeta`, when this parameter is provided,
                 the agent will automatically be converted into its distributed
@@ -136,11 +173,11 @@ class AgentBase(Operator, metaclass=_AgentMeta):
                     # connect to an existing agent server
                     agent = XXXAgent(
                         # ... other parameters
-                        to_dist={
-                            "host": "<ip of your server>",
-                            "port": <port of your server>,
-                            # other parameters of `to_dist`
-                        },
+                        to_dist=DistConf(
+                            host="<ip of your server>",
+                            port=<port of your server>,
+                            # other parameters
+                        ),
                     )
 
                 See :doc:`Tutorial<tutorial/208-distribute>` for detail.
