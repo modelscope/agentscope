@@ -4,12 +4,18 @@
 from abc import ABC, abstractmethod
 import json
 from copy import deepcopy
-from typing import Optional, Any
+from typing import Optional, Any, List
 
 from loguru import logger
 
-from agentscope.exception import JsonParsingError, TagNotFoundError
+from agentscope.exception import (
+    JsonParsingError,
+    TagNotFoundError,
+    JsonTypeError,
+    RequiredFieldNotFoundError,
+)
 from agentscope.models import ModelResponse
+from agentscope.utils.tools import _join_str_with_comma_and
 
 
 class ParserBase(ABC):
@@ -73,7 +79,7 @@ class ParserBase(ABC):
         return extract_text
 
 
-class MarkdownJsonBlockParser(ParserBase):
+class MarkdownJsonObjectParser(ParserBase):
     """A parser to parse the response text to a json object."""
 
     name: str = "json block"
@@ -175,6 +181,89 @@ class MarkdownJsonBlockParser(ParserBase):
         return self._format_instruction.format(
             content_hint=self.content_hint,
         )
+
+
+class MarkdownJsonDictParser(MarkdownJsonObjectParser):
+    """A class used to parse a JSON dictionary object in a markdown fenced
+    code"""
+
+    name: str = "json block"
+    """The name of the parser."""
+
+    tag_begin: str = "```json"
+    """Opening tag for a code block."""
+
+    content_hint: str = "{your_json_dictionary}"
+    """The hint of the content."""
+
+    tag_end: str = "```"
+    """Closing end for a code block."""
+
+    _format_instruction = (
+        "You should respond a json object in a json fenced code block as "
+        "follows:\n```json\n{content_hint}\n```"
+    )
+    """The instruction for the format of the json object."""
+
+    required_keys: List[str]
+    """A list of required keys in the JSON dictionary object. If the response
+    misses any of the required keys, it will raise a
+    RequiredFieldNotFoundError."""
+
+    def __init__(
+        self,
+        content_hint: Optional[Any] = None,
+        required_keys: List[str] = None,
+    ) -> None:
+        """Initialize the parser with the content hint.
+
+        Args:
+            content_hint (`Optional[Any]`, defaults to `None`):
+                The hint used to remind LLM what should be fill between the
+                tags. If it is a string, it will be used as the content hint
+                directly. If it is a dict, it will be converted to a json
+                string and used as the content hint.
+            required_keys (`List[str]`, defaults to `[]`):
+                A list of required keys in the JSON dictionary object. If the
+                response misses any of the required keys, it will raise a
+                RequiredFieldNotFoundError.
+        """
+        super().__init__(content_hint)
+
+        self.required_keys = required_keys or []
+
+    def parse(self, response: ModelResponse) -> ModelResponse:
+        """Parse the text field of the response to a JSON dictionary object,
+        store it in the parsed field of the response object, and check if the
+        required keys exists.
+        """
+        # Parse the JSON object
+        response = super().parse(response)
+
+        if not isinstance(response.parsed, dict):
+            # If not a dictionary, raise an error
+            raise JsonTypeError(
+                "A JSON dictionary object is wanted, "
+                f"but got {type(response.parsed)} instead.",
+                response.text,
+            )
+
+        # Check if the required keys exist
+        keys_missing = []
+        for key in self.required_keys:
+            if key not in response.parsed:
+                keys_missing.append(key)
+
+        if len(keys_missing) != 0:
+            raise RequiredFieldNotFoundError(
+                f"Missing required "
+                f"field{'' if len(keys_missing)==1 else 's'} "
+                f"{_join_str_with_comma_and(keys_missing)} in the JSON "
+                f"dictionary object.",
+                response.text,
+            )
+
+        return response
 
 
 class MarkdownCodeBlockParser(ParserBase):

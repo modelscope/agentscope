@@ -24,6 +24,15 @@ class JsonParsingError(ResponseParsingError):
     """The exception class for JSON parsing error."""
 
 
+class JsonTypeError(ResponseParsingError):
+    """The exception class for JSON type error."""
+
+
+class RequiredFieldNotFoundError(ResponseParsingError):
+    """The exception class for missing required field in model response, when
+    the response is required to be a JSON dict object with required fields."""
+
+
 class TagNotFoundError(ResponseParsingError):
     """The exception class for missing tagged content in model response."""
 

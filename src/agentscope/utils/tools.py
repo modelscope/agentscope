@@ -5,7 +5,7 @@ import datetime
 import json
 import secrets
 import string
-from typing import Any, Literal
+from typing import Any, Literal, List
 
 from urllib.parse import urlparse
 
@@ -244,3 +244,17 @@ def _convert_to_str(content: Any) -> str:
         return json.dumps(content, ensure_ascii=False)
     else:
         return str(content)
+
+
+def _join_str_with_comma_and(elements: List[str]) -> str:
+    """Return the JSON string with comma, and use " and " between the last two
+    elements."""
+
+    if len(elements) == 0:
+        return ""
+    elif len(elements) == 1:
+        return elements[0]
+    elif len(elements) == 2:
+        return " and ".join(elements)
+    else:
+        return ", ".join(elements[:-1]) + f", and {elements[-1]}"

@@ -162,7 +162,7 @@ def requests_get(
     return search_results
 
 
-def if_change_database(sql_query: str) -> bool:
+def _if_change_database(sql_query: str) -> bool:
     """Check whether SQL query only contains SELECT query"""
     # Compile the regex pattern outside the function for better performance
     pattern_unsafe_sql = re.compile(

@@ -18,7 +18,7 @@ import agentscope
 # Prepare the Bing API key and model configuration
 BING_API_KEY = "{YOUR_BING_API_KEY}"
 
-YOUR_MODEL_CONFIGURATION_NAME = "gpt-4"
+YOUR_MODEL_CONFIGURATION_NAME = "{YOUR_MODEL_CONFIGURATION_NAME}"
 YOUR_MODEL_CONFIGURATION = {
     "model_type": "xxx",
     "config_name": YOUR_MODEL_CONFIGURATION_NAME,

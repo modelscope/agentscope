@@ -10,7 +10,7 @@ from loguru import logger
 from agentscope.exception import ResponseParsingError, FunctionCallError
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
-from agentscope.parser import MarkdownJsonBlockParser
+from agentscope.parser import MarkdownJsonDictParser
 from agentscope.service import ServiceToolkit
 from agentscope.service.service_toolkit import ServiceFunction
 
@@ -129,12 +129,13 @@ class ReActAgent(AgentBase):
         self.memory.add(Msg("system", self.sys_prompt, role="system"))
 
         # Initialize a parser object to formulate the response from the model
-        self.parser = MarkdownJsonBlockParser(
+        self.parser = MarkdownJsonDictParser(
             content_hint={
                 "thought": "what you thought",
                 "speak": "what you speak",
                 "function": service_toolkit.tools_calling_format,
             },
+            required_keys=["thought", "speak", "function"],
         )
 
     def reply(self, x: dict = None) -> dict:
