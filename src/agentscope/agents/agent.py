@@ -157,7 +157,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
             memory_config (`Optional[dict]`):
                 The config of memory.
             to_dist (`Optional[Union[DistConf, bool]]`, default to `False`):
-                The parameter dict passed to :py:meth:`to_dist` method. Used in
+                The configurations passed to :py:meth:`to_dist` method. Used in
                 :py:class:`_AgentMeta`, when this parameter is provided,
                 the agent will automatically be converted into its distributed
                 version. Below are some examples:

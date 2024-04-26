@@ -141,7 +141,7 @@ b = AgentB(
 )
 ```
 
-In Independent Process Mode, you need to encapsulate the parameters of the `to_dist()` method in a dictionary and pass it into the `to_dist` field, for example:
+In Independent Process Mode, you need to encapsulate the parameters of the `to_dist()` method in  {class}`DistConf<agentscope.agents.DistConf>` instance and pass it into the `to_dist` field, for example:
 
 ```python
 a = AgentA(

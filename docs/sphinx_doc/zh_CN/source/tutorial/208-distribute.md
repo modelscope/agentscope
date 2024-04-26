@@ -139,7 +139,7 @@ b = AgentB(
 )
 ```
 
-独立进程模式下， 则需要将原来 `to_dist()` 函数的参数以字典的形式传入 Agent 初始化函数的 `to_dist` 域：
+独立进程模式下， 则需要将原来 `to_dist()` 函数的参数以 {class}`DistConf<agentscope.agents.DistConf>` 实例的形式传入 Agent 初始化函数的 `to_dist` 域：
 
 ```python
 a = AgentA(
