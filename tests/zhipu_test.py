@@ -60,7 +60,6 @@ class TestZhipuAIChatWrapper(unittest.TestCase):
         mock_zhipuai_client.chat.completions.create.assert_called_once()
 
 
-# 添加至您的测试文件中
 class TestZhipuAIEmbeddingWrapper(unittest.TestCase):
     """Test ZhipuAI Embedding Wrapper"""
 
@@ -72,7 +71,6 @@ class TestZhipuAIEmbeddingWrapper(unittest.TestCase):
     @patch("agentscope.models.zhipu_model.zhipuai")
     def test_embedding(self, mock_zhipuai: MagicMock) -> None:
         """Test embedding API"""
-        # 创建模拟的 embeddings.create 方法的响应值
         mock_embedding_response = MagicMock()
         mock_embedding_response.model_dump.return_value = {
             "data": [
