@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""" Average """
+""" A large-scale social simulation experiment """
 
 import argparse
 import time

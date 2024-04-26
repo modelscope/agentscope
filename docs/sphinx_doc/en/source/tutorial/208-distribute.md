@@ -22,8 +22,8 @@ The above concepts may seem complex, but don't worry, for application developers
 
 ### Step 1: Convert your agent to its distributed version
 
-All agents in AgentScope can automatically convert to its distributed version by calling its `to_dist` method.
-But note that your agent must inherit from the `agentscope.agents.AgentBase` class, because the `to_dist` method is provided by the `AgentBase` class.
+All agents in AgentScope can automatically convert to its distributed version by calling its {func}`to_dist<agentscope.agents.AgentBase.to_dist>` method.
+But note that your agent must inherit from the {class}`agentscope.agents.AgentBase<agentscope.agents.AgentBase>` class, because the `to_dist` method is provided by the `AgentBase` class.
 
 Suppose there are two agent classes `AgentA` and `AgentB`, both of which inherit from `AgentBase`.
 
@@ -122,7 +122,7 @@ And developers just need to write the application flow in a centralized way in t
 
 #### Advanced Usage of `to_dist`
 
-All examples described above convert initialized agents into their distributed version through the `to_dist()` method, which is equivalent to initialize the agent twice, once in the main process and once in the agent server process.
+All examples described above convert initialized agents into their distributed version through the {func}`to_dist<agentscope.agents.AgentBase.to_dist>` method, which is equivalent to initialize the agent twice, once in the main process and once in the agent server process.
 For agents whose initialization process is time-consuming, the `to_dist` method is inefficient. Therefore, AgentScope also provides a method to convert the Agent instance into its distributed version while initializing it, that is, passing in `to_dist` parameter to the Agent's initialization function.
 
 In Child Process Mode, just pass `to_dist=True` to the Agent's initialization function.
@@ -241,7 +241,7 @@ By implementing each Agent as an Actor, an Agent will automatically wait for its
 
 #### PlaceHolder
 
-Meanwhile, to support centralized application orchestration, AgentScope introduces the concept of Placeholder.
+Meanwhile, to support centralized application orchestration, AgentScope introduces the concept of {class}`Placeholder<agentscope.message.PlaceholderMessage>`.
 A Placeholder is a special message that contains the address and port number of the agent that generated the placeholder, which is used to indicate that the output message of the Agent is not ready yet.
 When calling the `reply` method of a distributed agent, a placeholder is returned immediately without blocking the main process.
 The interface of placeholder is exactly the same as the message, so that the orchestration flow can be written in a centralized way.

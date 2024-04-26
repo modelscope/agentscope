@@ -120,10 +120,31 @@ class AgentBase(Operator, metaclass=_AgentMeta):
             memory_config (`Optional[dict]`):
                 The config of memory.
             to_dist (`Optional[Union[dict, bool]]`, default to `False`):
-                The parameter dict for `to_dist` method. Used in `_AgentMeta`,
-                when this parameter is provided, the agent will automatically
-                be converted into its distributed version. See
-                :doc:`Tutorial <tutorial/208-distribute>` for detail.
+                The parameter dict passed to :py:meth:`to_dist` method. Used in
+                :py:class:`_AgentMeta`, when this parameter is provided,
+                the agent will automatically be converted into its distributed
+                version. The input format is as follows:
+
+                .. code-block:: python
+
+                    # run as a sub process
+                    agent = XXXAgent(
+                        # ... other parameters
+                        to_dist=True,
+                    )
+
+                    # connect to an existing agent server
+                    agent = XXXAgent(
+                        # ... other parameters
+                        to_dist={
+                            "host": "ip of your server",
+                            "port": 12345,
+                            # other parameters of `to_dist`
+                        },
+                    )
+
+                See :doc:`Distribution Tutorial <tutorial/208-distribute>` for
+                detail.
         """
         self.name = name
         self.memory_config = memory_config

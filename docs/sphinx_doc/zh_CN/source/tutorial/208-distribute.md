@@ -20,8 +20,8 @@ AgentScope中，我们将运行应用流程的进程称为**主进程 (Main Proc
 
 ### 步骤1: 转化为分布式版本
 
-AgentScope 中所有智能体都可以通过 `to_dist` 方法转化为对应的分布式版本。
-但需要注意，你的智能体必须继承自 `agentscope.agents.AgentBase` 类，因为是 `AgentBase` 提供了 `to_dist` 方法。
+AgentScope 中所有智能体都可以通过 {func}`to_dist<agentscope.agents.AgentBase.to_dist>` 方法转化为对应的分布式版本。
+但需要注意，你的智能体必须继承自 {class}`agentscope.agents.AgentBase<agentscope.agents.AgentBase>` 类，因为是 `AgentBase` 提供了 `to_dist` 方法。
 
 假设有两个智能体类`AgentA`和`AgentB`，它们都继承自 `AgentBase`。
 
@@ -121,7 +121,7 @@ b = AgentB(
 
 #### `to_dist` 进阶用法
 
-上面介绍的案例都是将一个已经初始化的 Agent 通过 `to_dist()` 方法转化为其分布式版本，相当于要执行两次初始化操作，一次在主进程中，一次在智能体进程中。如果 Agent 的初始化过程耗时较长，直接使用 `to_dist` 方法会严重影响运行效率。为此 AgentScope 也提供了在初始化 Agent 实例的同时将其转化为其分布式版本的方法，即在原 Agent 实例初始化时传入 `to_dist` 参数。
+上面介绍的案例都是将一个已经初始化的 Agent 通过 {func}`to_dist<agentscope.agents.AgentBase.to_dist>` 方法转化为其分布式版本，相当于要执行两次初始化操作，一次在主进程中，一次在智能体进程中。如果 Agent 的初始化过程耗时较长，直接使用 `to_dist` 方法会严重影响运行效率。为此 AgentScope 也提供了在初始化 Agent 实例的同时将其转化为其分布式版本的方法，即在原 Agent 实例初始化时传入 `to_dist` 参数。
 
 子进程模式下，只需要在 Agent 初始化函数中传入 `to_dist=True` 即可：
 
@@ -240,7 +240,7 @@ D-->F
 
 #### PlaceHolder
 
-同时，为了支持中心化的应用编排，AgentScope引入了Placeholder这一概念。
+同时，为了支持中心化的应用编排，AgentScope 引入了 {class}`Placeholder<agentscope.message.PlaceholderMessage>` 这一概念。
 Placeholder 可以理解为消息的指针，指向消息真正产生的位置，其对外接口与传统模式中的消息完全一致，因此可以按照传统中心化的消息使用方式编排应用。
 Placeholder 内部包含了该消息产生方的联络方法，可以通过网络获取到被指向消息的真正值。
 每个分布式部署的 Agent 在收到其他 Agent 发来的消息时都会立即返回一个 Placeholder，从而避免阻塞请求发起方。
