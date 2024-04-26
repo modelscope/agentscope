@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""dashscope test"""
+"""zhipuai test"""
 import unittest
 from unittest.mock import patch, MagicMock
 
@@ -8,7 +8,7 @@ from agentscope.models import load_model_by_config_name
 
 
 class TestZhipuAIChatWrapper(unittest.TestCase):
-    """Test DashScope Chat Wrapper"""
+    """Test ZhipuAI Chat Wrapper"""
 
     def setUp(self) -> None:
         self.config_name = "test_config"
