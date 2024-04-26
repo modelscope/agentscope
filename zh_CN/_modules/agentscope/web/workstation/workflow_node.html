@@ -1,0 +1,1216 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.web.workstation.workflow_node &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=7d86a446"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../../_static/translations.js?v=beaddf03"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../../../../en/_modules/agentscope/web/workstation/workflow_node.html">English</a></li> |
+    <a href="../../../../../zh_CN/_modules/agentscope/web/workstation/workflow_node.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/quick_start.html">快速上手</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/advance.html">进阶使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.utils.html">agentscope.utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">模块代码</a></li>
+      <li class="breadcrumb-item active">agentscope.web.workstation.workflow_node</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>agentscope.web.workstation.workflow_node 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Workflow node opt.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">IntEnum</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span> <span class="nn">agentscope</span> <span class="kn">import</span> <span class="n">msghub</span>
+<span class="kn">from</span> <span class="nn">agentscope.agents</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DialogAgent</span><span class="p">,</span>
+    <span class="n">UserAgent</span><span class="p">,</span>
+    <span class="n">TextToImageAgent</span><span class="p">,</span>
+    <span class="n">DictDialogAgent</span><span class="p">,</span>
+    <span class="n">ReActAgent</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">read_model_configs</span>
+<span class="kn">from</span> <span class="nn">agentscope.pipelines</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SequentialPipeline</span><span class="p">,</span>
+    <span class="n">ForLoopPipeline</span><span class="p">,</span>
+    <span class="n">WhileLoopPipeline</span><span class="p">,</span>
+    <span class="n">IfElsePipeline</span><span class="p">,</span>
+    <span class="n">SwitchPipeline</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">agentscope.pipelines.functional</span> <span class="kn">import</span> <span class="n">placeholder</span>
+<span class="kn">from</span> <span class="nn">agentscope.web.workstation.workflow_utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">kwarg_converter</span><span class="p">,</span>
+    <span class="n">deps_converter</span><span class="p">,</span>
+    <span class="n">dict_converter</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">agentscope.service</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">bing_search</span><span class="p">,</span>
+    <span class="n">google_search</span><span class="p">,</span>
+    <span class="n">read_text_file</span><span class="p">,</span>
+    <span class="n">write_text_file</span><span class="p">,</span>
+    <span class="n">execute_python_code</span><span class="p">,</span>
+    <span class="n">ServiceFactory</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">DEFAULT_FLOW_VAR</span> <span class="o">=</span> <span class="s2">&quot;flow&quot;</span>
+
+
+<div class="viewcode-block" id="WorkflowNodeType">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WorkflowNodeType">[文档]</a>
+<span class="k">class</span> <span class="nc">WorkflowNodeType</span><span class="p">(</span><span class="n">IntEnum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum for workflow node.&quot;&quot;&quot;</span>
+
+    <span class="n">MODEL</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">AGENT</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">PIPELINE</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">SERVICE</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">MESSAGE</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">COPY</span> <span class="o">=</span> <span class="mi">5</span></div>
+
+
+
+<div class="viewcode-block" id="WorkflowNode">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WorkflowNode">[文档]</a>
+<span class="k">class</span> <span class="nc">WorkflowNode</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base class representing a generic node in a workflow.</span>
+
+<span class="sd">    WorkflowNode is designed to be subclassed with specific logic implemented</span>
+<span class="sd">    in the subclass methods. It provides an interface for initialization and</span>
+<span class="sd">    execution of operations when the node is called.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">node_type</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="WorkflowNode.__init__">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WorkflowNode.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">opt_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">source_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">dep_opts</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize nodes. Implement specific initialization logic in</span>
+<span class="sd">        subclasses.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">node_id</span> <span class="o">=</span> <span class="n">node_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span> <span class="o">=</span> <span class="n">opt_kwargs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">source_kwargs</span> <span class="o">=</span> <span class="n">source_kwargs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span> <span class="o">=</span> <span class="n">dep_opts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dep_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">opt</span><span class="o">.</span><span class="n">var_name</span> <span class="k">for</span> <span class="n">opt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">var_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">node_type</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">node_id</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>  <span class="c1"># type: ignore[no-untyped-def]</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Performs the operations of the node. Implement specific logic in</span>
+<span class="sd">        subclasses.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="WorkflowNode.compile">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WorkflowNode.compile">[文档]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compile Node to python executable code dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="p">}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ModelNode">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.ModelNode">[文档]</a>
+<span class="k">class</span> <span class="nc">ModelNode</span><span class="p">(</span><span class="n">WorkflowNode</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A node that represents a model in a workflow.</span>
+
+<span class="sd">    The ModelNode can be used to load and execute a model as part of the</span>
+<span class="sd">    workflow node. It initializes model configurations and performs</span>
+<span class="sd">    model-related operations when called.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">node_type</span> <span class="o">=</span> <span class="n">WorkflowNodeType</span><span class="o">.</span><span class="n">MODEL</span>
+
+<div class="viewcode-block" id="ModelNode.__init__">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.ModelNode.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">opt_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">source_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">dep_opts</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">opt_kwargs</span><span class="p">,</span> <span class="n">source_kwargs</span><span class="p">,</span> <span class="n">dep_opts</span><span class="p">)</span>
+        <span class="n">read_model_configs</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="ModelNode.compile">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.ModelNode.compile">[文档]</a>
+    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.models import read_model_configs&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;read_model_configs([</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="si">}</span><span class="s2">])&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="p">}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="MsgNode">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.MsgNode">[文档]</a>
+<span class="k">class</span> <span class="nc">MsgNode</span><span class="p">(</span><span class="n">WorkflowNode</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A node that manages messaging within a workflow.</span>
+
+<span class="sd">    MsgNode is responsible for handling messages, creating message objects,</span>
+<span class="sd">    and performing message-related operations when the node is invoked.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">node_type</span> <span class="o">=</span> <span class="n">WorkflowNodeType</span><span class="o">.</span><span class="n">MESSAGE</span>
+
+<div class="viewcode-block" id="MsgNode.__init__">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.MsgNode.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">opt_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">source_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">dep_opts</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">opt_kwargs</span><span class="p">,</span> <span class="n">source_kwargs</span><span class="p">,</span> <span class="n">dep_opts</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">msg</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg</span>
+
+<div class="viewcode-block" id="MsgNode.compile">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.MsgNode.compile">[文档]</a>
+    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.message import Msg&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2"> = Msg&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">kwarg_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="p">}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="DialogAgentNode">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.DialogAgentNode">[文档]</a>
+<span class="k">class</span> <span class="nc">DialogAgentNode</span><span class="p">(</span><span class="n">WorkflowNode</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A node representing a DialogAgent within a workflow.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">node_type</span> <span class="o">=</span> <span class="n">WorkflowNodeType</span><span class="o">.</span><span class="n">AGENT</span>
+
+<div class="viewcode-block" id="DialogAgentNode.__init__">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.DialogAgentNode.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">opt_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">source_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">dep_opts</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">opt_kwargs</span><span class="p">,</span> <span class="n">source_kwargs</span><span class="p">,</span> <span class="n">dep_opts</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">DialogAgent</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DialogAgentNode.compile">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.DialogAgentNode.compile">[文档]</a>
+    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.agents import DialogAgent&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = DialogAgent(&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">kwarg_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+        <span class="p">}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="UserAgentNode">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.UserAgentNode">[文档]</a>
+<span class="k">class</span> <span class="nc">UserAgentNode</span><span class="p">(</span><span class="n">WorkflowNode</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A node representing a UserAgent within a workflow.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">node_type</span> <span class="o">=</span> <span class="n">WorkflowNodeType</span><span class="o">.</span><span class="n">AGENT</span>
+
+<div class="viewcode-block" id="UserAgentNode.__init__">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.UserAgentNode.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">opt_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">source_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">dep_opts</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">opt_kwargs</span><span class="p">,</span> <span class="n">source_kwargs</span><span class="p">,</span> <span class="n">dep_opts</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">UserAgent</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<div class="viewcode-block" id="UserAgentNode.compile">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.UserAgentNode.compile">[文档]</a>
+    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.agents import UserAgent&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = UserAgent(&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">kwarg_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+        <span class="p">}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TextToImageAgentNode">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.TextToImageAgentNode">[文档]</a>
+<span class="k">class</span> <span class="nc">TextToImageAgentNode</span><span class="p">(</span><span class="n">WorkflowNode</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A node representing a TextToImageAgent within a workflow.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">node_type</span> <span class="o">=</span> <span class="n">WorkflowNodeType</span><span class="o">.</span><span class="n">AGENT</span>
+
+<div class="viewcode-block" id="TextToImageAgentNode.__init__">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.TextToImageAgentNode.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">opt_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">source_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">dep_opts</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">opt_kwargs</span><span class="p">,</span> <span class="n">source_kwargs</span><span class="p">,</span> <span class="n">dep_opts</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">TextToImageAgent</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TextToImageAgentNode.compile">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.TextToImageAgentNode.compile">[文档]</a>
+    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.agents import TextToImageAgent&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = TextToImageAgent(&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">kwarg_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+        <span class="p">}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="DictDialogAgentNode">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.DictDialogAgentNode">[文档]</a>
+<span class="k">class</span> <span class="nc">DictDialogAgentNode</span><span class="p">(</span><span class="n">WorkflowNode</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A node representing a DictDialogAgent within a workflow.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">node_type</span> <span class="o">=</span> <span class="n">WorkflowNodeType</span><span class="o">.</span><span class="n">AGENT</span>
+
+<div class="viewcode-block" id="DictDialogAgentNode.__init__">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.DictDialogAgentNode.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">opt_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">source_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">dep_opts</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">opt_kwargs</span><span class="p">,</span> <span class="n">source_kwargs</span><span class="p">,</span> <span class="n">dep_opts</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">DictDialogAgent</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DictDialogAgentNode.compile">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.DictDialogAgentNode.compile">[文档]</a>
+    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.agents import DictDialogAgent&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = DictDialogAgent(&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">kwarg_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+        <span class="p">}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ReActAgentNode">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.ReActAgentNode">[文档]</a>
+<span class="k">class</span> <span class="nc">ReActAgentNode</span><span class="p">(</span><span class="n">WorkflowNode</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A node representing a ReActAgent within a workflow.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">node_type</span> <span class="o">=</span> <span class="n">WorkflowNodeType</span><span class="o">.</span><span class="n">AGENT</span>
+
+<div class="viewcode-block" id="ReActAgentNode.__init__">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.ReActAgentNode.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">opt_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">source_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">dep_opts</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">opt_kwargs</span><span class="p">,</span> <span class="n">source_kwargs</span><span class="p">,</span> <span class="n">dep_opts</span><span class="p">)</span>
+        <span class="c1"># Build tools</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tools</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">tool</span> <span class="ow">in</span> <span class="n">dep_opts</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">tool</span><span class="p">,</span> <span class="s2">&quot;service_func&quot;</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tool</span><span class="si">}</span><span class="s2"> must be tool!&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tool</span><span class="o">.</span><span class="n">service_func</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">ReActAgent</span><span class="p">(</span><span class="n">tools</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tools</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ReActAgentNode.compile">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.ReActAgentNode.compile">[文档]</a>
+    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.agents import ReActAgent&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = ReActAgent&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">kwarg_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">)</span><span class="si">}</span><span class="s2">, tools&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;=</span><span class="si">{</span><span class="n">deps_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_vars</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+        <span class="p">}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="MsgHubNode">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.MsgHubNode">[文档]</a>
+<span class="k">class</span> <span class="nc">MsgHubNode</span><span class="p">(</span><span class="n">WorkflowNode</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A node that serves as a messaging hub within a workflow.</span>
+
+<span class="sd">    MsgHubNode is responsible for broadcasting announcements to participants</span>
+<span class="sd">    and managing the flow of messages within a workflow&#39;s node.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">node_type</span> <span class="o">=</span> <span class="n">WorkflowNodeType</span><span class="o">.</span><span class="n">PIPELINE</span>
+
+<div class="viewcode-block" id="MsgHubNode.__init__">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.MsgHubNode.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">opt_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">source_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">dep_opts</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">opt_kwargs</span><span class="p">,</span> <span class="n">source_kwargs</span><span class="p">,</span> <span class="n">dep_opts</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">announcement</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">[</span><span class="s2">&quot;announcement&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;Host&quot;</span><span class="p">),</span>
+            <span class="n">content</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">[</span><span class="s2">&quot;announcement&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;content&quot;</span><span class="p">,</span> <span class="s2">&quot;Welcome!&quot;</span><span class="p">),</span>
+            <span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s2">&quot;pipeline&quot;</span><span class="p">,</span>
+        <span class="p">),</span> <span class="p">(</span>
+            <span class="s2">&quot;MsgHub members must be a list of length 1, with the first &quot;</span>
+            <span class="s2">&quot;element being an instance of PipelineBaseNode&quot;</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">participants</span> <span class="o">=</span> <span class="n">get_all_agents</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">participants_var</span> <span class="o">=</span> <span class="n">get_all_agents</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">return_var</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">msghub</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">participants</span><span class="p">,</span> <span class="n">announcement</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">announcement</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span>
+
+<div class="viewcode-block" id="MsgHubNode.compile">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.MsgHubNode.compile">[文档]</a>
+    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">announcement</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Msg(name=&quot;&#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">[</span><span class="s2">&quot;announcement&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Host&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&quot;, &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;content=&quot;&#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">[</span><span class="s2">&quot;announcement&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;content&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Host&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;, role=&quot;system&quot;)&#39;</span>
+        <span class="p">)</span>
+        <span class="n">execs</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;with msghub(</span><span class="si">{</span><span class="n">deps_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">participants_var</span><span class="p">)</span><span class="si">}</span><span class="s2">,</span>
+<span class="s2">        announcement=</span><span class="si">{</span><span class="n">announcement</span><span class="si">}</span><span class="s2">):</span>
+<span class="s2">        </span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2">)</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.msghub import msghub</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;from agentscope.message import Msg&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="n">execs</span><span class="p">,</span>
+        <span class="p">}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="PlaceHolderNode">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.PlaceHolderNode">[文档]</a>
+<span class="k">class</span> <span class="nc">PlaceHolderNode</span><span class="p">(</span><span class="n">WorkflowNode</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A placeholder node within a workflow.</span>
+
+<span class="sd">    This node acts as a placeholder and can be used to pass through information</span>
+<span class="sd">    or data without performing any significant operation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">node_type</span> <span class="o">=</span> <span class="n">WorkflowNodeType</span><span class="o">.</span><span class="n">PIPELINE</span>
+
+<div class="viewcode-block" id="PlaceHolderNode.__init__">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.PlaceHolderNode.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">opt_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">source_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">dep_opts</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">opt_kwargs</span><span class="p">,</span> <span class="n">source_kwargs</span><span class="p">,</span> <span class="n">dep_opts</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">placeholder</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PlaceHolderNode.compile">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.PlaceHolderNode.compile">[文档]</a>
+    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.pipelines.functional import &quot;</span>
+            <span class="s2">&quot;placeholder&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = placeholder&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+        <span class="p">}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="SequentialPipelineNode">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.SequentialPipelineNode">[文档]</a>
+<span class="k">class</span> <span class="nc">SequentialPipelineNode</span><span class="p">(</span><span class="n">WorkflowNode</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A node representing a sequential node within a workflow.</span>
+
+<span class="sd">    SequentialPipelineNode executes a series of operators or nodes in a</span>
+<span class="sd">    sequence, where the output of one node is the input to the next.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">node_type</span> <span class="o">=</span> <span class="n">WorkflowNodeType</span><span class="o">.</span><span class="n">PIPELINE</span>
+
+<div class="viewcode-block" id="SequentialPipelineNode.__init__">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.SequentialPipelineNode.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">opt_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">source_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">dep_opts</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">opt_kwargs</span><span class="p">,</span> <span class="n">source_kwargs</span><span class="p">,</span> <span class="n">dep_opts</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">SequentialPipeline</span><span class="p">(</span><span class="n">operators</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SequentialPipelineNode.compile">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.SequentialPipelineNode.compile">[文档]</a>
+    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.pipelines import SequentialPipeline&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = SequentialPipeline(&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">deps_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_vars</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+        <span class="p">}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ForLoopPipelineNode">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.ForLoopPipelineNode">[文档]</a>
+<span class="k">class</span> <span class="nc">ForLoopPipelineNode</span><span class="p">(</span><span class="n">WorkflowNode</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A node representing a for-loop structure in a workflow.</span>
+
+<span class="sd">    ForLoopPipelineNode allows the execution of a pipeline node multiple times,</span>
+<span class="sd">    iterating over a given set of inputs or a specified range.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">node_type</span> <span class="o">=</span> <span class="n">WorkflowNodeType</span><span class="o">.</span><span class="n">PIPELINE</span>
+
+<div class="viewcode-block" id="ForLoopPipelineNode.__init__">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.ForLoopPipelineNode.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">opt_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">source_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">dep_opts</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">opt_kwargs</span><span class="p">,</span> <span class="n">source_kwargs</span><span class="p">,</span> <span class="n">dep_opts</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="p">),</span> <span class="s2">&quot;ForLoopPipelineNode can only contain one PipelineNode.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">ForLoopPipeline</span><span class="p">(</span>
+            <span class="n">loop_body_operators</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ForLoopPipelineNode.compile">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.ForLoopPipelineNode.compile">[文档]</a>
+    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.pipelines import ForLoopPipeline&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = ForLoopPipeline(&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;loop_body_operators=&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">deps_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_vars</span><span class="p">)</span><span class="si">}</span><span class="s2">,&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">kwarg_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_kwargs</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+        <span class="p">}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="WhileLoopPipelineNode">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WhileLoopPipelineNode">[文档]</a>
+<span class="k">class</span> <span class="nc">WhileLoopPipelineNode</span><span class="p">(</span><span class="n">WorkflowNode</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A node representing a while-loop structure in a workflow.</span>
+
+<span class="sd">    WhileLoopPipelineNode enables conditional repeated execution of a node</span>
+<span class="sd">    node based on a specified condition.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">node_type</span> <span class="o">=</span> <span class="n">WorkflowNodeType</span><span class="o">.</span><span class="n">PIPELINE</span>
+
+<div class="viewcode-block" id="WhileLoopPipelineNode.__init__">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WhileLoopPipelineNode.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">opt_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">source_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">dep_opts</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">opt_kwargs</span><span class="p">,</span> <span class="n">source_kwargs</span><span class="p">,</span> <span class="n">dep_opts</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="p">),</span> <span class="s2">&quot;WhileLoopPipelineNode can only contain one PipelineNode.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">WhileLoopPipeline</span><span class="p">(</span>
+            <span class="n">loop_body_operators</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<div class="viewcode-block" id="WhileLoopPipelineNode.compile">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WhileLoopPipelineNode.compile">[文档]</a>
+    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.pipelines import WhileLoopPipeline&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = WhileLoopPipeline(&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;loop_body_operators=&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">deps_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_vars</span><span class="p">)</span><span class="si">}</span><span class="s2">,&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">kwarg_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_kwargs</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+        <span class="p">}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="IfElsePipelineNode">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.IfElsePipelineNode">[文档]</a>
+<span class="k">class</span> <span class="nc">IfElsePipelineNode</span><span class="p">(</span><span class="n">WorkflowNode</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A node representing an if-else conditional structure in a workflow.</span>
+
+<span class="sd">    IfElsePipelineNode directs the flow of execution to different node</span>
+<span class="sd">    nodes based on a specified condition.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">node_type</span> <span class="o">=</span> <span class="n">WorkflowNodeType</span><span class="o">.</span><span class="n">PIPELINE</span>
+
+<div class="viewcode-block" id="IfElsePipelineNode.__init__">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.IfElsePipelineNode.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">opt_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">source_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">dep_opts</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">opt_kwargs</span><span class="p">,</span> <span class="n">source_kwargs</span><span class="p">,</span> <span class="n">dep_opts</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="mi">0</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">2</span>
+        <span class="p">),</span> <span class="s2">&quot;IfElsePipelineNode must contain one or two PipelineNode.&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">IfElsePipeline</span><span class="p">(</span>
+                <span class="n">if_body_operators</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">IfElsePipeline</span><span class="p">(</span>
+                <span class="n">if_body_operators</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">else_body_operators</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<div class="viewcode-block" id="IfElsePipelineNode.compile">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.IfElsePipelineNode.compile">[文档]</a>
+    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">imports</span> <span class="o">=</span> <span class="s2">&quot;from agentscope.pipelines import IfElsePipeline&quot;</span>
+        <span class="n">execs</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_vars</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="n">imports</span><span class="p">,</span>
+                <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = IfElsePipeline(&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;if_body_operators=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="n">execs</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_vars</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="n">imports</span><span class="p">,</span>
+                <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = IfElsePipeline(&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;if_body_operators=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;else_body_operators=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="n">execs</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="SwitchPipelineNode">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.SwitchPipelineNode">[文档]</a>
+<span class="k">class</span> <span class="nc">SwitchPipelineNode</span><span class="p">(</span><span class="n">WorkflowNode</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A node representing a switch-case structure within a workflow.</span>
+
+<span class="sd">    SwitchPipelineNode routes the execution to different node nodes</span>
+<span class="sd">    based on the evaluation of a specified key or condition.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">node_type</span> <span class="o">=</span> <span class="n">WorkflowNodeType</span><span class="o">.</span><span class="n">PIPELINE</span>
+
+<div class="viewcode-block" id="SwitchPipelineNode.__init__">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.SwitchPipelineNode.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">opt_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">source_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">dep_opts</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">opt_kwargs</span><span class="p">,</span> <span class="n">source_kwargs</span><span class="p">,</span> <span class="n">dep_opts</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">),</span> <span class="p">(</span>
+            <span class="s2">&quot;SwitchPipelineNode must contain at least &quot;</span> <span class="s2">&quot;one PipelineNode.&quot;</span>
+        <span class="p">)</span>
+        <span class="n">case_operators</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">case_operators_var</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">[</span><span class="s2">&quot;cases&quot;</span><span class="p">]):</span>
+            <span class="c1"># No default_operators provided</span>
+            <span class="n">default_operators</span> <span class="o">=</span> <span class="n">placeholder</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">default_var_name</span> <span class="o">=</span> <span class="s2">&quot;placeholder&quot;</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">[</span><span class="s2">&quot;cases&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># default_operators provided</span>
+            <span class="n">default_operators</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">default_var_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dep_vars</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;SwitchPipelineNode deps </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="si">}</span><span class="s2"> not matches &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;cases </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">[</span><span class="s1">&#39;cases&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">[</span><span class="s2">&quot;cases&quot;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dep_vars</span><span class="p">,</span>
+        <span class="p">):</span>
+            <span class="n">case_operators</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">pipeline</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">case_operators_var</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">var</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;cases&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">source_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;cases&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">SwitchPipeline</span><span class="p">(</span>
+            <span class="n">case_operators</span><span class="o">=</span><span class="n">case_operators</span><span class="p">,</span>
+            <span class="n">default_operators</span><span class="o">=</span><span class="n">default_operators</span><span class="p">,</span>  <span class="c1"># type: ignore[arg-type]</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SwitchPipelineNode.compile">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.SwitchPipelineNode.compile">[文档]</a>
+    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">imports</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;from agentscope.pipelines import SwitchPipeline</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;from agentscope.pipelines.functional import placeholder&quot;</span>
+        <span class="p">)</span>
+        <span class="n">execs</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="n">imports</span><span class="p">,</span>
+            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = SwitchPipeline(case_operators=&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dict_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">case_operators_var</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;default_operators=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">default_var_name</span><span class="si">}</span><span class="s2">,&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">kwarg_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_kwargs</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="n">execs</span><span class="p">,</span>
+        <span class="p">}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="CopyNode">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.CopyNode">[文档]</a>
+<span class="k">class</span> <span class="nc">CopyNode</span><span class="p">(</span><span class="n">WorkflowNode</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A node that duplicates the output of another node in the workflow.</span>
+
+<span class="sd">    CopyNode is used to replicate the results of a parent node and can be</span>
+<span class="sd">    useful in workflows where the same output is needed for multiple</span>
+<span class="sd">    subsequent operations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">node_type</span> <span class="o">=</span> <span class="n">WorkflowNodeType</span><span class="o">.</span><span class="n">COPY</span>
+
+<div class="viewcode-block" id="CopyNode.__init__">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.CopyNode.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">opt_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">source_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">dep_opts</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">opt_kwargs</span><span class="p">,</span> <span class="n">source_kwargs</span><span class="p">,</span> <span class="n">dep_opts</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;CopyNode can only have one parent!&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CopyNode.compile">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.CopyNode.compile">[文档]</a>
+    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+        <span class="p">}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="BingSearchServiceNode">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.BingSearchServiceNode">[文档]</a>
+<span class="k">class</span> <span class="nc">BingSearchServiceNode</span><span class="p">(</span><span class="n">WorkflowNode</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Bing Search Node</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">node_type</span> <span class="o">=</span> <span class="n">WorkflowNodeType</span><span class="o">.</span><span class="n">SERVICE</span>
+
+<div class="viewcode-block" id="BingSearchServiceNode.__init__">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.BingSearchServiceNode.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">opt_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">source_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">dep_opts</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">opt_kwargs</span><span class="p">,</span> <span class="n">source_kwargs</span><span class="p">,</span> <span class="n">dep_opts</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">service_func</span> <span class="o">=</span> <span class="n">ServiceFactory</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">bing_search</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BingSearchServiceNode.compile">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.BingSearchServiceNode.compile">[文档]</a>
+    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.service import ServiceFactory</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;from agentscope.service import bing_search&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = ServiceFactory.get(bing_search,&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">kwarg_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="p">}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="GoogleSearchServiceNode">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.GoogleSearchServiceNode">[文档]</a>
+<span class="k">class</span> <span class="nc">GoogleSearchServiceNode</span><span class="p">(</span><span class="n">WorkflowNode</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Google Search Node</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">node_type</span> <span class="o">=</span> <span class="n">WorkflowNodeType</span><span class="o">.</span><span class="n">SERVICE</span>
+
+<div class="viewcode-block" id="GoogleSearchServiceNode.__init__">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.GoogleSearchServiceNode.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">opt_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">source_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">dep_opts</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">opt_kwargs</span><span class="p">,</span> <span class="n">source_kwargs</span><span class="p">,</span> <span class="n">dep_opts</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">service_func</span> <span class="o">=</span> <span class="n">ServiceFactory</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="n">google_search</span><span class="p">,</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GoogleSearchServiceNode.compile">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.GoogleSearchServiceNode.compile">[文档]</a>
+    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.service import ServiceFactory</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;from agentscope.service import google_search&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = ServiceFactory.get(google_search,&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">kwarg_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="p">}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="PythonServiceNode">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.PythonServiceNode">[文档]</a>
+<span class="k">class</span> <span class="nc">PythonServiceNode</span><span class="p">(</span><span class="n">WorkflowNode</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Execute python Node</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">node_type</span> <span class="o">=</span> <span class="n">WorkflowNodeType</span><span class="o">.</span><span class="n">SERVICE</span>
+
+<div class="viewcode-block" id="PythonServiceNode.__init__">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.PythonServiceNode.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">opt_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">source_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">dep_opts</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">opt_kwargs</span><span class="p">,</span> <span class="n">source_kwargs</span><span class="p">,</span> <span class="n">dep_opts</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">service_func</span> <span class="o">=</span> <span class="n">ServiceFactory</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">execute_python_code</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PythonServiceNode.compile">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.PythonServiceNode.compile">[文档]</a>
+    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.service import ServiceFactory</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;from agentscope.service import execute_python_code&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = ServiceFactory.get(&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;execute_python_code)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="p">}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ReadTextServiceNode">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.ReadTextServiceNode">[文档]</a>
+<span class="k">class</span> <span class="nc">ReadTextServiceNode</span><span class="p">(</span><span class="n">WorkflowNode</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read Text Service Node</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">node_type</span> <span class="o">=</span> <span class="n">WorkflowNodeType</span><span class="o">.</span><span class="n">SERVICE</span>
+
+<div class="viewcode-block" id="ReadTextServiceNode.__init__">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.ReadTextServiceNode.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">opt_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">source_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">dep_opts</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">opt_kwargs</span><span class="p">,</span> <span class="n">source_kwargs</span><span class="p">,</span> <span class="n">dep_opts</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">service_func</span> <span class="o">=</span> <span class="n">ServiceFactory</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">read_text_file</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ReadTextServiceNode.compile">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.ReadTextServiceNode.compile">[文档]</a>
+    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.service import ServiceFactory</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;from agentscope.service import read_text_file&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = ServiceFactory.get(read_text_file)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="p">}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="WriteTextServiceNode">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WriteTextServiceNode">[文档]</a>
+<span class="k">class</span> <span class="nc">WriteTextServiceNode</span><span class="p">(</span><span class="n">WorkflowNode</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Write Text Service Node</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">node_type</span> <span class="o">=</span> <span class="n">WorkflowNodeType</span><span class="o">.</span><span class="n">SERVICE</span>
+
+<div class="viewcode-block" id="WriteTextServiceNode.__init__">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WriteTextServiceNode.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">opt_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">source_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">dep_opts</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">opt_kwargs</span><span class="p">,</span> <span class="n">source_kwargs</span><span class="p">,</span> <span class="n">dep_opts</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">service_func</span> <span class="o">=</span> <span class="n">ServiceFactory</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">write_text_file</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WriteTextServiceNode.compile">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WriteTextServiceNode.compile">[文档]</a>
+    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.service import ServiceFactory</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;from agentscope.service import write_text_file&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = ServiceFactory.get(write_text_file)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="p">}</span></div>
+</div>
+
+
+
+<span class="n">NODE_NAME_MAPPING</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;dashscope_chat&quot;</span><span class="p">:</span> <span class="n">ModelNode</span><span class="p">,</span>
+    <span class="s2">&quot;openai_chat&quot;</span><span class="p">:</span> <span class="n">ModelNode</span><span class="p">,</span>
+    <span class="s2">&quot;post_api_chat&quot;</span><span class="p">:</span> <span class="n">ModelNode</span><span class="p">,</span>
+    <span class="s2">&quot;Message&quot;</span><span class="p">:</span> <span class="n">MsgNode</span><span class="p">,</span>
+    <span class="s2">&quot;DialogAgent&quot;</span><span class="p">:</span> <span class="n">DialogAgentNode</span><span class="p">,</span>
+    <span class="s2">&quot;UserAgent&quot;</span><span class="p">:</span> <span class="n">UserAgentNode</span><span class="p">,</span>
+    <span class="s2">&quot;TextToImageAgent&quot;</span><span class="p">:</span> <span class="n">TextToImageAgentNode</span><span class="p">,</span>
+    <span class="s2">&quot;DictDialogAgent&quot;</span><span class="p">:</span> <span class="n">DictDialogAgentNode</span><span class="p">,</span>
+    <span class="s2">&quot;ReActAgent&quot;</span><span class="p">:</span> <span class="n">ReActAgentNode</span><span class="p">,</span>
+    <span class="s2">&quot;Placeholder&quot;</span><span class="p">:</span> <span class="n">PlaceHolderNode</span><span class="p">,</span>
+    <span class="s2">&quot;MsgHub&quot;</span><span class="p">:</span> <span class="n">MsgHubNode</span><span class="p">,</span>
+    <span class="s2">&quot;SequentialPipeline&quot;</span><span class="p">:</span> <span class="n">SequentialPipelineNode</span><span class="p">,</span>
+    <span class="s2">&quot;ForLoopPipeline&quot;</span><span class="p">:</span> <span class="n">ForLoopPipelineNode</span><span class="p">,</span>
+    <span class="s2">&quot;WhileLoopPipeline&quot;</span><span class="p">:</span> <span class="n">WhileLoopPipelineNode</span><span class="p">,</span>
+    <span class="s2">&quot;IfElsePipeline&quot;</span><span class="p">:</span> <span class="n">IfElsePipelineNode</span><span class="p">,</span>
+    <span class="s2">&quot;SwitchPipeline&quot;</span><span class="p">:</span> <span class="n">SwitchPipelineNode</span><span class="p">,</span>
+    <span class="s2">&quot;CopyNode&quot;</span><span class="p">:</span> <span class="n">CopyNode</span><span class="p">,</span>
+    <span class="s2">&quot;BingSearchService&quot;</span><span class="p">:</span> <span class="n">BingSearchServiceNode</span><span class="p">,</span>
+    <span class="s2">&quot;GoogleSearchService&quot;</span><span class="p">:</span> <span class="n">GoogleSearchServiceNode</span><span class="p">,</span>
+    <span class="s2">&quot;PythonService&quot;</span><span class="p">:</span> <span class="n">PythonServiceNode</span><span class="p">,</span>
+    <span class="s2">&quot;ReadTextService&quot;</span><span class="p">:</span> <span class="n">ReadTextServiceNode</span><span class="p">,</span>
+    <span class="s2">&quot;WriteTextService&quot;</span><span class="p">:</span> <span class="n">WriteTextServiceNode</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="get_all_agents">
+<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.get_all_agents">[文档]</a>
+<span class="k">def</span> <span class="nf">get_all_agents</span><span class="p">(</span>
+    <span class="n">node</span><span class="p">:</span> <span class="n">WorkflowNode</span><span class="p">,</span>
+    <span class="n">seen_agents</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">set</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">return_var</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve all unique agent objects from a pipeline.</span>
+
+<span class="sd">    Recursively traverses the pipeline to collect all distinct agent-based</span>
+<span class="sd">    participants. Prevents duplication by tracking already seen agents.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        node (WorkflowNode): The WorkflowNode from which to extract agents.</span>
+<span class="sd">        seen_agents (set, optional): A set of agents that have already been</span>
+<span class="sd">            seen to avoid duplication. Defaults to None.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: A list of unique agent objects found in the pipeline.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">seen_agents</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">seen_agents</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="n">all_agents</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">participant</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">participants</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">participant</span><span class="o">.</span><span class="n">node_type</span> <span class="o">==</span> <span class="n">WorkflowNodeType</span><span class="o">.</span><span class="n">AGENT</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">participant</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">seen_agents</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">return_var</span><span class="p">:</span>
+                    <span class="n">all_agents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">participant</span><span class="o">.</span><span class="n">var_name</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">all_agents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">participant</span><span class="o">.</span><span class="n">pipeline</span><span class="p">)</span>
+                <span class="n">seen_agents</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">participant</span><span class="o">.</span><span class="n">pipeline</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">participant</span><span class="o">.</span><span class="n">node_type</span> <span class="o">==</span> <span class="n">WorkflowNodeType</span><span class="o">.</span><span class="n">PIPELINE</span><span class="p">:</span>
+            <span class="n">nested_agents</span> <span class="o">=</span> <span class="n">get_all_agents</span><span class="p">(</span>
+                <span class="n">participant</span><span class="p">,</span>
+                <span class="n">seen_agents</span><span class="p">,</span>
+                <span class="n">return_var</span><span class="o">=</span><span class="n">return_var</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">all_agents</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">nested_agents</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">participant</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">all_agents</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

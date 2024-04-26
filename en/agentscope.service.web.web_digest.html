@@ -1,0 +1,242 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.service.web.web_digest &mdash; AgentScope  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../en/agentscope.service.web.web_digest.html">English</a></li> |
+    <a href="../zh_CN/agentscope.service.web.web_digest.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/quick_start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/advance.html">Advanced Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/contribute.html">Get Involved</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">agentscope.service.web.web_digest</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/agentscope.service.web.web_digest.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-agentscope.service.web.web_digest">
+<span id="agentscope-service-web-web-digest"></span><h1>agentscope.service.web.web_digest<a class="headerlink" href="#module-agentscope.service.web.web_digest" title="Link to this heading"></a></h1>
+<p>parsing and digesting the web pages</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.web.web_digest.is_valid_url">
+<span class="sig-prename descclassname"><span class="pre">agentscope.service.web.web_digest.</span></span><span class="sig-name descname"><span class="pre">is_valid_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/agentscope/service/web/web_digest.html#is_valid_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.service.web.web_digest.is_valid_url" title="Link to this definition"></a></dt>
+<dd><p>Use urlparse to check if a URL is valid
+:param url: string to be checked
+:type url: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if url is valid, False otherwise</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.web.web_digest.load_web">
+<span class="sig-prename descclassname"><span class="pre">agentscope.service.web.web_digest.</span></span><span class="sig-name descname"><span class="pre">load_web</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_raw</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">html_selected_tags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_parse_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Response</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.service.service_response.html#agentscope.service.service_response.ServiceResponse" title="agentscope.service.service_response.ServiceResponse"><span class="pre">ServiceResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/service/web/web_digest.html#load_web"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.service.web.web_digest.load_web" title="Link to this definition"></a></dt>
+<dd><p>Function for parsing and digesting the web page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> (<em>str</em>) – the url of the web page</p></li>
+<li><p><strong>keep_raw</strong> (<em>bool</em>) – Whether to keep raw HTML. If True, the content is
+stored with key “raw”.</p></li>
+<li><p><strong>html_selected_tags</strong> (<em>Optional</em><em>[</em><em>Sequence</em><em>[</em><em>str</em><em>]</em><em>]</em>) – the text in elements of <cite>html_selected_tags</cite> will
+be extracted and stored with “html_to_text”
+key in return.</p></li>
+<li><p><strong>self_parse_func</strong> (<em>Optional</em><em>[</em><em>Callable</em><em>]</em>) – if “self_parse_func” is not None, then the
+function will be invoked with the
+requests.Response as input.
+The result is stored with <cite>self_define_func</cite>
+key</p></li>
+<li><p><strong>timeout</strong> (<em>int</em>) – timeout parameter for requests.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>If successful, <cite>ServiceResponse</cite> object is returned
+with <cite>content</cite> field is a dict, where keys are subset of:</p>
+<blockquote>
+<div><blockquote>
+<div><p>”raw”: exists if <cite>keep_raw</cite> is True, store raw HTML content`;</p>
+<p>”self_define_func”: exists if <cite>self_parse_func</cite> is provided,
+store the return of self_define_func;</p>
+<p>”html_to_text”: exists if <cite>html_selected_tags</cite> is provided
+and not empty;</p>
+<p>”json”: exists if url links to a json webpage, then it is
+parsed as json.</p>
+</div></blockquote>
+<p>For example, <cite>ServiceResponse.content</cite> field is</p>
+</div></blockquote>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;raw&quot;</span><span class="p">:</span> <span class="n">xxxxx</span><span class="p">,</span>
+    <span class="s2">&quot;selected_tags_text&quot;</span><span class="p">:</span> <span class="n">xxxxx</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.web.web_digest.parse_html_to_text">
+<span class="sig-prename descclassname"><span class="pre">agentscope.service.web.web_digest.</span></span><span class="sig-name descname"><span class="pre">parse_html_to_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">html_text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">html_selected_tags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/service/web/web_digest.html#parse_html_to_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.service.web.web_digest.parse_html_to_text" title="Link to this definition"></a></dt>
+<dd><p>Parse the obtained HTML file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>html_text</strong> (<em>str</em>) – HTML source code</p></li>
+<li><p><strong>html_selected_tags</strong> (<em>Optional</em><em>[</em><em>Sequence</em><em>[</em><em>str</em><em>]</em><em>]</em>) – the text in elements of <cite>html_selected_tags</cite> will
+be extracted and returned.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>If successful, <cite>ServiceResponse</cite> object is returned
+with <cite>content</cite> field is processed text content of the selected tags,</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.web.web_digest.digest_webpage">
+<span class="sig-prename descclassname"><span class="pre">agentscope.service.web.web_digest.</span></span><span class="sig-name descname"><span class="pre">digest_webpage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">web_text_or_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.models.model.html#agentscope.models.model.ModelWrapperBase" title="agentscope.models.model.ModelWrapperBase"><span class="pre">ModelWrapperBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">html_selected_tags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">('h',</span> <span class="pre">'p',</span> <span class="pre">'li',</span> <span class="pre">'div',</span> <span class="pre">'a')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digest_prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&quot;You're</span> <span class="pre">a</span> <span class="pre">web</span> <span class="pre">page</span> <span class="pre">analyser.</span> <span class="pre">You</span> <span class="pre">job</span> <span class="pre">is</span> <span class="pre">to</span> <span class="pre">extract</span> <span class="pre">importantand</span> <span class="pre">useful</span> <span class="pre">information</span> <span class="pre">from</span> <span class="pre">html</span> <span class="pre">or</span> <span class="pre">webpage</span> <span class="pre">description.\n&quot;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.service.service_response.html#agentscope.service.service_response.ServiceResponse" title="agentscope.service.service_response.ServiceResponse"><span class="pre">ServiceResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/service/web/web_digest.html#digest_webpage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.service.web.web_digest.digest_webpage" title="Link to this definition"></a></dt>
+<dd><p>Digest the given webpage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>web_text_or_url</strong> (<em>str</em>) – preprocessed web text or url to the web page</p></li>
+<li><p><strong>model</strong> (<a class="reference internal" href="agentscope.models.html#agentscope.models.ModelWrapperBase" title="agentscope.models.ModelWrapperBase"><em>ModelWrapperBase</em></a>) – the model to digest the web content</p></li>
+<li><p><strong>html_selected_tags</strong> (<em>Sequence</em><em>[</em><em>str</em><em>]</em>) – the text in elements of <cite>html_selected_tags</cite> will
+be extracted and feed to the model</p></li>
+<li><p><strong>digest_prompt</strong> (<em>str</em>) – system prompt for the model to digest
+the web content</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>If successful, <cite>ServiceResponse</cite> object is returned
+with <cite>content</cite> field filled with the model output.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Alibaba Tongyi Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

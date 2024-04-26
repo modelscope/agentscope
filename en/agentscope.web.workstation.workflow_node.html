@@ -1,0 +1,739 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.web.workstation.workflow_node &mdash; AgentScope  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../en/agentscope.web.workstation.workflow_node.html">English</a></li> |
+    <a href="../zh_CN/agentscope.web.workstation.workflow_node.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/quick_start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/advance.html">Advanced Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/contribute.html">Get Involved</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">agentscope.web.workstation.workflow_node</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/agentscope.web.workstation.workflow_node.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-agentscope.web.workstation.workflow_node">
+<span id="agentscope-web-workstation-workflow-node"></span><h1>agentscope.web.workstation.workflow_node<a class="headerlink" href="#module-agentscope.web.workstation.workflow_node" title="Link to this heading"></a></h1>
+<p>Workflow node opt.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.WorkflowNodeType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.web.workstation.workflow_node.</span></span><span class="sig-name descname"><span class="pre">WorkflowNodeType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#WorkflowNodeType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.WorkflowNodeType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">IntEnum</span></code></p>
+<p>Enum for workflow node.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.WorkflowNodeType.MODEL">
+<span class="sig-name descname"><span class="pre">MODEL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#agentscope.web.workstation.workflow_node.WorkflowNodeType.MODEL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.WorkflowNodeType.AGENT">
+<span class="sig-name descname"><span class="pre">AGENT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#agentscope.web.workstation.workflow_node.WorkflowNodeType.AGENT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.WorkflowNodeType.PIPELINE">
+<span class="sig-name descname"><span class="pre">PIPELINE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#agentscope.web.workstation.workflow_node.WorkflowNodeType.PIPELINE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.WorkflowNodeType.SERVICE">
+<span class="sig-name descname"><span class="pre">SERVICE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#agentscope.web.workstation.workflow_node.WorkflowNodeType.SERVICE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.WorkflowNodeType.MESSAGE">
+<span class="sig-name descname"><span class="pre">MESSAGE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#agentscope.web.workstation.workflow_node.WorkflowNodeType.MESSAGE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.WorkflowNodeType.COPY">
+<span class="sig-name descname"><span class="pre">COPY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#agentscope.web.workstation.workflow_node.WorkflowNodeType.COPY" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.WorkflowNode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.web.workstation.workflow_node.</span></span><span class="sig-name descname"><span class="pre">WorkflowNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#WorkflowNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.WorkflowNode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Abstract base class representing a generic node in a workflow.</p>
+<p>WorkflowNode is designed to be subclassed with specific logic implemented
+in the subclass methods. It provides an interface for initialization and
+execution of operations when the node is called.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.WorkflowNode.node_type">
+<span class="sig-name descname"><span class="pre">node_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#agentscope.web.workstation.workflow_node.WorkflowNode.node_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.WorkflowNode.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#WorkflowNode.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.WorkflowNode.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize nodes. Implement specific initialization logic in
+subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.WorkflowNode.compile">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#WorkflowNode.compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.WorkflowNode.compile" title="Link to this definition"></a></dt>
+<dd><p>Compile Node to python executable code dict</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.ModelNode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.web.workstation.workflow_node.</span></span><span class="sig-name descname"><span class="pre">ModelNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#ModelNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.ModelNode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#agentscope.web.workstation.workflow_node.WorkflowNode" title="agentscope.web.workstation.workflow_node.WorkflowNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkflowNode</span></code></a></p>
+<p>A node that represents a model in a workflow.</p>
+<p>The ModelNode can be used to load and execute a model as part of the
+workflow node. It initializes model configurations and performs
+model-related operations when called.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.ModelNode.node_type">
+<span class="sig-name descname"><span class="pre">node_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#agentscope.web.workstation.workflow_node.ModelNode.node_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.ModelNode.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#ModelNode.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.ModelNode.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize nodes. Implement specific initialization logic in
+subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.ModelNode.compile">
+<span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#ModelNode.compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.ModelNode.compile" title="Link to this definition"></a></dt>
+<dd><p>Compile Node to python executable code dict</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.MsgNode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.web.workstation.workflow_node.</span></span><span class="sig-name descname"><span class="pre">MsgNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#MsgNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.MsgNode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#agentscope.web.workstation.workflow_node.WorkflowNode" title="agentscope.web.workstation.workflow_node.WorkflowNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkflowNode</span></code></a></p>
+<p>A node that manages messaging within a workflow.</p>
+<p>MsgNode is responsible for handling messages, creating message objects,
+and performing message-related operations when the node is invoked.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.MsgNode.node_type">
+<span class="sig-name descname"><span class="pre">node_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#agentscope.web.workstation.workflow_node.MsgNode.node_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.MsgNode.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#MsgNode.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.MsgNode.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize nodes. Implement specific initialization logic in
+subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.MsgNode.compile">
+<span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#MsgNode.compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.MsgNode.compile" title="Link to this definition"></a></dt>
+<dd><p>Compile Node to python executable code dict</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.DialogAgentNode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.web.workstation.workflow_node.</span></span><span class="sig-name descname"><span class="pre">DialogAgentNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#DialogAgentNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.DialogAgentNode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#agentscope.web.workstation.workflow_node.WorkflowNode" title="agentscope.web.workstation.workflow_node.WorkflowNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkflowNode</span></code></a></p>
+<p>A node representing a DialogAgent within a workflow.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.DialogAgentNode.node_type">
+<span class="sig-name descname"><span class="pre">node_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#agentscope.web.workstation.workflow_node.DialogAgentNode.node_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.DialogAgentNode.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#DialogAgentNode.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.DialogAgentNode.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize nodes. Implement specific initialization logic in
+subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.DialogAgentNode.compile">
+<span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#DialogAgentNode.compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.DialogAgentNode.compile" title="Link to this definition"></a></dt>
+<dd><p>Compile Node to python executable code dict</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.UserAgentNode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.web.workstation.workflow_node.</span></span><span class="sig-name descname"><span class="pre">UserAgentNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#UserAgentNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.UserAgentNode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#agentscope.web.workstation.workflow_node.WorkflowNode" title="agentscope.web.workstation.workflow_node.WorkflowNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkflowNode</span></code></a></p>
+<p>A node representing a UserAgent within a workflow.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.UserAgentNode.node_type">
+<span class="sig-name descname"><span class="pre">node_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#agentscope.web.workstation.workflow_node.UserAgentNode.node_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.UserAgentNode.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#UserAgentNode.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.UserAgentNode.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize nodes. Implement specific initialization logic in
+subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.UserAgentNode.compile">
+<span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#UserAgentNode.compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.UserAgentNode.compile" title="Link to this definition"></a></dt>
+<dd><p>Compile Node to python executable code dict</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.TextToImageAgentNode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.web.workstation.workflow_node.</span></span><span class="sig-name descname"><span class="pre">TextToImageAgentNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#TextToImageAgentNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.TextToImageAgentNode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#agentscope.web.workstation.workflow_node.WorkflowNode" title="agentscope.web.workstation.workflow_node.WorkflowNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkflowNode</span></code></a></p>
+<p>A node representing a TextToImageAgent within a workflow.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.TextToImageAgentNode.node_type">
+<span class="sig-name descname"><span class="pre">node_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#agentscope.web.workstation.workflow_node.TextToImageAgentNode.node_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.TextToImageAgentNode.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#TextToImageAgentNode.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.TextToImageAgentNode.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize nodes. Implement specific initialization logic in
+subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.TextToImageAgentNode.compile">
+<span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#TextToImageAgentNode.compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.TextToImageAgentNode.compile" title="Link to this definition"></a></dt>
+<dd><p>Compile Node to python executable code dict</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.DictDialogAgentNode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.web.workstation.workflow_node.</span></span><span class="sig-name descname"><span class="pre">DictDialogAgentNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#DictDialogAgentNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.DictDialogAgentNode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#agentscope.web.workstation.workflow_node.WorkflowNode" title="agentscope.web.workstation.workflow_node.WorkflowNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkflowNode</span></code></a></p>
+<p>A node representing a DictDialogAgent within a workflow.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.DictDialogAgentNode.node_type">
+<span class="sig-name descname"><span class="pre">node_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#agentscope.web.workstation.workflow_node.DictDialogAgentNode.node_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.DictDialogAgentNode.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#DictDialogAgentNode.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.DictDialogAgentNode.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize nodes. Implement specific initialization logic in
+subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.DictDialogAgentNode.compile">
+<span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#DictDialogAgentNode.compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.DictDialogAgentNode.compile" title="Link to this definition"></a></dt>
+<dd><p>Compile Node to python executable code dict</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.ReActAgentNode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.web.workstation.workflow_node.</span></span><span class="sig-name descname"><span class="pre">ReActAgentNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#ReActAgentNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.ReActAgentNode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#agentscope.web.workstation.workflow_node.WorkflowNode" title="agentscope.web.workstation.workflow_node.WorkflowNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkflowNode</span></code></a></p>
+<p>A node representing a ReActAgent within a workflow.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.ReActAgentNode.node_type">
+<span class="sig-name descname"><span class="pre">node_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#agentscope.web.workstation.workflow_node.ReActAgentNode.node_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.ReActAgentNode.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#ReActAgentNode.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.ReActAgentNode.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize nodes. Implement specific initialization logic in
+subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.ReActAgentNode.compile">
+<span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#ReActAgentNode.compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.ReActAgentNode.compile" title="Link to this definition"></a></dt>
+<dd><p>Compile Node to python executable code dict</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.MsgHubNode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.web.workstation.workflow_node.</span></span><span class="sig-name descname"><span class="pre">MsgHubNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#MsgHubNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.MsgHubNode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#agentscope.web.workstation.workflow_node.WorkflowNode" title="agentscope.web.workstation.workflow_node.WorkflowNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkflowNode</span></code></a></p>
+<p>A node that serves as a messaging hub within a workflow.</p>
+<p>MsgHubNode is responsible for broadcasting announcements to participants
+and managing the flow of messages within a workflow’s node.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.MsgHubNode.node_type">
+<span class="sig-name descname"><span class="pre">node_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#agentscope.web.workstation.workflow_node.MsgHubNode.node_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.MsgHubNode.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#MsgHubNode.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.MsgHubNode.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize nodes. Implement specific initialization logic in
+subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.MsgHubNode.compile">
+<span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#MsgHubNode.compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.MsgHubNode.compile" title="Link to this definition"></a></dt>
+<dd><p>Compile Node to python executable code dict</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.PlaceHolderNode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.web.workstation.workflow_node.</span></span><span class="sig-name descname"><span class="pre">PlaceHolderNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#PlaceHolderNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.PlaceHolderNode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#agentscope.web.workstation.workflow_node.WorkflowNode" title="agentscope.web.workstation.workflow_node.WorkflowNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkflowNode</span></code></a></p>
+<p>A placeholder node within a workflow.</p>
+<p>This node acts as a placeholder and can be used to pass through information
+or data without performing any significant operation.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.PlaceHolderNode.node_type">
+<span class="sig-name descname"><span class="pre">node_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#agentscope.web.workstation.workflow_node.PlaceHolderNode.node_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.PlaceHolderNode.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#PlaceHolderNode.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.PlaceHolderNode.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize nodes. Implement specific initialization logic in
+subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.PlaceHolderNode.compile">
+<span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#PlaceHolderNode.compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.PlaceHolderNode.compile" title="Link to this definition"></a></dt>
+<dd><p>Compile Node to python executable code dict</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.SequentialPipelineNode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.web.workstation.workflow_node.</span></span><span class="sig-name descname"><span class="pre">SequentialPipelineNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#SequentialPipelineNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.SequentialPipelineNode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#agentscope.web.workstation.workflow_node.WorkflowNode" title="agentscope.web.workstation.workflow_node.WorkflowNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkflowNode</span></code></a></p>
+<p>A node representing a sequential node within a workflow.</p>
+<p>SequentialPipelineNode executes a series of operators or nodes in a
+sequence, where the output of one node is the input to the next.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.SequentialPipelineNode.node_type">
+<span class="sig-name descname"><span class="pre">node_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#agentscope.web.workstation.workflow_node.SequentialPipelineNode.node_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.SequentialPipelineNode.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#SequentialPipelineNode.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.SequentialPipelineNode.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize nodes. Implement specific initialization logic in
+subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.SequentialPipelineNode.compile">
+<span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#SequentialPipelineNode.compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.SequentialPipelineNode.compile" title="Link to this definition"></a></dt>
+<dd><p>Compile Node to python executable code dict</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.ForLoopPipelineNode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.web.workstation.workflow_node.</span></span><span class="sig-name descname"><span class="pre">ForLoopPipelineNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#ForLoopPipelineNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.ForLoopPipelineNode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#agentscope.web.workstation.workflow_node.WorkflowNode" title="agentscope.web.workstation.workflow_node.WorkflowNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkflowNode</span></code></a></p>
+<p>A node representing a for-loop structure in a workflow.</p>
+<p>ForLoopPipelineNode allows the execution of a pipeline node multiple times,
+iterating over a given set of inputs or a specified range.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.ForLoopPipelineNode.node_type">
+<span class="sig-name descname"><span class="pre">node_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#agentscope.web.workstation.workflow_node.ForLoopPipelineNode.node_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.ForLoopPipelineNode.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#ForLoopPipelineNode.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.ForLoopPipelineNode.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize nodes. Implement specific initialization logic in
+subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.ForLoopPipelineNode.compile">
+<span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#ForLoopPipelineNode.compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.ForLoopPipelineNode.compile" title="Link to this definition"></a></dt>
+<dd><p>Compile Node to python executable code dict</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.WhileLoopPipelineNode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.web.workstation.workflow_node.</span></span><span class="sig-name descname"><span class="pre">WhileLoopPipelineNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#WhileLoopPipelineNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.WhileLoopPipelineNode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#agentscope.web.workstation.workflow_node.WorkflowNode" title="agentscope.web.workstation.workflow_node.WorkflowNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkflowNode</span></code></a></p>
+<p>A node representing a while-loop structure in a workflow.</p>
+<p>WhileLoopPipelineNode enables conditional repeated execution of a node
+node based on a specified condition.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.WhileLoopPipelineNode.node_type">
+<span class="sig-name descname"><span class="pre">node_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#agentscope.web.workstation.workflow_node.WhileLoopPipelineNode.node_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.WhileLoopPipelineNode.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#WhileLoopPipelineNode.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.WhileLoopPipelineNode.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize nodes. Implement specific initialization logic in
+subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.WhileLoopPipelineNode.compile">
+<span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#WhileLoopPipelineNode.compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.WhileLoopPipelineNode.compile" title="Link to this definition"></a></dt>
+<dd><p>Compile Node to python executable code dict</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.IfElsePipelineNode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.web.workstation.workflow_node.</span></span><span class="sig-name descname"><span class="pre">IfElsePipelineNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#IfElsePipelineNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.IfElsePipelineNode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#agentscope.web.workstation.workflow_node.WorkflowNode" title="agentscope.web.workstation.workflow_node.WorkflowNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkflowNode</span></code></a></p>
+<p>A node representing an if-else conditional structure in a workflow.</p>
+<p>IfElsePipelineNode directs the flow of execution to different node
+nodes based on a specified condition.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.IfElsePipelineNode.node_type">
+<span class="sig-name descname"><span class="pre">node_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#agentscope.web.workstation.workflow_node.IfElsePipelineNode.node_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.IfElsePipelineNode.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#IfElsePipelineNode.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.IfElsePipelineNode.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize nodes. Implement specific initialization logic in
+subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.IfElsePipelineNode.compile">
+<span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#IfElsePipelineNode.compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.IfElsePipelineNode.compile" title="Link to this definition"></a></dt>
+<dd><p>Compile Node to python executable code dict</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.SwitchPipelineNode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.web.workstation.workflow_node.</span></span><span class="sig-name descname"><span class="pre">SwitchPipelineNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#SwitchPipelineNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.SwitchPipelineNode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#agentscope.web.workstation.workflow_node.WorkflowNode" title="agentscope.web.workstation.workflow_node.WorkflowNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkflowNode</span></code></a></p>
+<p>A node representing a switch-case structure within a workflow.</p>
+<p>SwitchPipelineNode routes the execution to different node nodes
+based on the evaluation of a specified key or condition.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.SwitchPipelineNode.node_type">
+<span class="sig-name descname"><span class="pre">node_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#agentscope.web.workstation.workflow_node.SwitchPipelineNode.node_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.SwitchPipelineNode.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#SwitchPipelineNode.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.SwitchPipelineNode.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize nodes. Implement specific initialization logic in
+subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.SwitchPipelineNode.compile">
+<span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#SwitchPipelineNode.compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.SwitchPipelineNode.compile" title="Link to this definition"></a></dt>
+<dd><p>Compile Node to python executable code dict</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.CopyNode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.web.workstation.workflow_node.</span></span><span class="sig-name descname"><span class="pre">CopyNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#CopyNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.CopyNode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#agentscope.web.workstation.workflow_node.WorkflowNode" title="agentscope.web.workstation.workflow_node.WorkflowNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkflowNode</span></code></a></p>
+<p>A node that duplicates the output of another node in the workflow.</p>
+<p>CopyNode is used to replicate the results of a parent node and can be
+useful in workflows where the same output is needed for multiple
+subsequent operations.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.CopyNode.node_type">
+<span class="sig-name descname"><span class="pre">node_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#agentscope.web.workstation.workflow_node.CopyNode.node_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.CopyNode.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#CopyNode.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.CopyNode.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize nodes. Implement specific initialization logic in
+subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.CopyNode.compile">
+<span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#CopyNode.compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.CopyNode.compile" title="Link to this definition"></a></dt>
+<dd><p>Compile Node to python executable code dict</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.BingSearchServiceNode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.web.workstation.workflow_node.</span></span><span class="sig-name descname"><span class="pre">BingSearchServiceNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#BingSearchServiceNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.BingSearchServiceNode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#agentscope.web.workstation.workflow_node.WorkflowNode" title="agentscope.web.workstation.workflow_node.WorkflowNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkflowNode</span></code></a></p>
+<p>Bing Search Node</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.BingSearchServiceNode.node_type">
+<span class="sig-name descname"><span class="pre">node_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#agentscope.web.workstation.workflow_node.BingSearchServiceNode.node_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.BingSearchServiceNode.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#BingSearchServiceNode.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.BingSearchServiceNode.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize nodes. Implement specific initialization logic in
+subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.BingSearchServiceNode.compile">
+<span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#BingSearchServiceNode.compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.BingSearchServiceNode.compile" title="Link to this definition"></a></dt>
+<dd><p>Compile Node to python executable code dict</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.GoogleSearchServiceNode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.web.workstation.workflow_node.</span></span><span class="sig-name descname"><span class="pre">GoogleSearchServiceNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#GoogleSearchServiceNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.GoogleSearchServiceNode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#agentscope.web.workstation.workflow_node.WorkflowNode" title="agentscope.web.workstation.workflow_node.WorkflowNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkflowNode</span></code></a></p>
+<p>Google Search Node</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.GoogleSearchServiceNode.node_type">
+<span class="sig-name descname"><span class="pre">node_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#agentscope.web.workstation.workflow_node.GoogleSearchServiceNode.node_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.GoogleSearchServiceNode.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#GoogleSearchServiceNode.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.GoogleSearchServiceNode.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize nodes. Implement specific initialization logic in
+subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.GoogleSearchServiceNode.compile">
+<span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#GoogleSearchServiceNode.compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.GoogleSearchServiceNode.compile" title="Link to this definition"></a></dt>
+<dd><p>Compile Node to python executable code dict</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.PythonServiceNode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.web.workstation.workflow_node.</span></span><span class="sig-name descname"><span class="pre">PythonServiceNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#PythonServiceNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.PythonServiceNode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#agentscope.web.workstation.workflow_node.WorkflowNode" title="agentscope.web.workstation.workflow_node.WorkflowNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkflowNode</span></code></a></p>
+<p>Execute python Node</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.PythonServiceNode.node_type">
+<span class="sig-name descname"><span class="pre">node_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#agentscope.web.workstation.workflow_node.PythonServiceNode.node_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.PythonServiceNode.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#PythonServiceNode.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.PythonServiceNode.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize nodes. Implement specific initialization logic in
+subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.PythonServiceNode.compile">
+<span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#PythonServiceNode.compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.PythonServiceNode.compile" title="Link to this definition"></a></dt>
+<dd><p>Compile Node to python executable code dict</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.ReadTextServiceNode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.web.workstation.workflow_node.</span></span><span class="sig-name descname"><span class="pre">ReadTextServiceNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#ReadTextServiceNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.ReadTextServiceNode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#agentscope.web.workstation.workflow_node.WorkflowNode" title="agentscope.web.workstation.workflow_node.WorkflowNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkflowNode</span></code></a></p>
+<p>Read Text Service Node</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.ReadTextServiceNode.node_type">
+<span class="sig-name descname"><span class="pre">node_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#agentscope.web.workstation.workflow_node.ReadTextServiceNode.node_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.ReadTextServiceNode.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#ReadTextServiceNode.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.ReadTextServiceNode.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize nodes. Implement specific initialization logic in
+subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.ReadTextServiceNode.compile">
+<span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#ReadTextServiceNode.compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.ReadTextServiceNode.compile" title="Link to this definition"></a></dt>
+<dd><p>Compile Node to python executable code dict</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.WriteTextServiceNode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.web.workstation.workflow_node.</span></span><span class="sig-name descname"><span class="pre">WriteTextServiceNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#WriteTextServiceNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.WriteTextServiceNode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#agentscope.web.workstation.workflow_node.WorkflowNode" title="agentscope.web.workstation.workflow_node.WorkflowNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkflowNode</span></code></a></p>
+<p>Write Text Service Node</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.WriteTextServiceNode.node_type">
+<span class="sig-name descname"><span class="pre">node_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#agentscope.web.workstation.workflow_node.WriteTextServiceNode.node_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.WriteTextServiceNode.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#WriteTextServiceNode.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.WriteTextServiceNode.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize nodes. Implement specific initialization logic in
+subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.WriteTextServiceNode.compile">
+<span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#WriteTextServiceNode.compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.WriteTextServiceNode.compile" title="Link to this definition"></a></dt>
+<dd><p>Compile Node to python executable code dict</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_node.get_all_agents">
+<span class="sig-prename descclassname"><span class="pre">agentscope.web.workstation.workflow_node.</span></span><span class="sig-name descname"><span class="pre">get_all_agents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#agentscope.web.workstation.workflow_node.WorkflowNode" title="agentscope.web.workstation.workflow_node.WorkflowNode"><span class="pre">WorkflowNode</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">seen_agents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">set</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_var</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_node.html#get_all_agents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_node.get_all_agents" title="Link to this definition"></a></dt>
+<dd><p>Retrieve all unique agent objects from a pipeline.</p>
+<p>Recursively traverses the pipeline to collect all distinct agent-based
+participants. Prevents duplication by tracking already seen agents.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>node</strong> (<a class="reference internal" href="#agentscope.web.workstation.workflow_node.WorkflowNode" title="agentscope.web.workstation.workflow_node.WorkflowNode"><em>WorkflowNode</em></a>) – The WorkflowNode from which to extract agents.</p></li>
+<li><p><strong>seen_agents</strong> (<em>set</em><em>, </em><em>optional</em>) – A set of agents that have already been
+seen to avoid duplication. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of unique agent objects found in the pipeline.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Alibaba Tongyi Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -57,15 +57,17 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">agentscope.web</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
 </ul>
 
         </div>
@@ -115,9 +117,13 @@
 <span class="kn">from</span> <span class="nn">..file_manager</span> <span class="kn">import</span> <span class="n">file_manager</span>
 
 
+<div class="viewcode-block" id="DashScopeWrapperBase">
+<a class="viewcode-back" href="../../../agentscope.models.dashscope_model.html#agentscope.models.DashScopeWrapperBase">[docs]</a>
 <span class="k">class</span> <span class="nc">DashScopeWrapperBase</span><span class="p">(</span><span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for DashScope API.&quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="DashScopeWrapperBase.__init__">
+<a class="viewcode-back" href="../../../agentscope.models.dashscope_model.html#agentscope.models.DashScopeWrapperBase.__init__">[docs]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -158,8 +164,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">max_length</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># Set monitor accordingly</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_register_default_metrics</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_default_metrics</span><span class="p">()</span></div>
 
+
+<div class="viewcode-block" id="DashScopeWrapperBase.format">
+<a class="viewcode-back" href="../../../agentscope.models.dashscope_model.html#agentscope.models.DashScopeWrapperBase.format">[docs]</a>
     <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">]],</span>
@@ -168,11 +177,13 @@
             <span class="sa">f</span><span class="s2">&quot;Model Wrapper [</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">] doesn&#39;t &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;need to format the input. Please try to use the &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;model wrapper directly.&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="p">)</span></div>
+</div>
+
 
 
 <div class="viewcode-block" id="DashScopeChatWrapper">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.DashScopeChatWrapper">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.models.dashscope_model.html#agentscope.models.DashScopeChatWrapper">[docs]</a>
 <span class="k">class</span> <span class="nc">DashScopeChatWrapper</span><span class="p">(</span><span class="n">DashScopeWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for DashScope&#39;s chat API, refer to</span>
 <span class="sd">    https://help.aliyun.com/zh/dashscope/developer-reference/api-details</span>
@@ -310,7 +321,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="DashScopeChatWrapper.format">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.DashScopeChatWrapper.format">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.models.dashscope_model.html#agentscope.models.DashScopeChatWrapper.format">[docs]</a>
     <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">]],</span>
@@ -419,7 +430,7 @@
 
 
 <div class="viewcode-block" id="DashScopeImageSynthesisWrapper">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.DashScopeImageSynthesisWrapper">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.models.dashscope_model.html#agentscope.models.DashScopeImageSynthesisWrapper">[docs]</a>
 <span class="k">class</span> <span class="nc">DashScopeImageSynthesisWrapper</span><span class="p">(</span><span class="n">DashScopeWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for DashScope Image Synthesis API, refer to</span>
 <span class="sd">    https://help.aliyun.com/zh/dashscope/developer-reference/quick-start-1</span>
@@ -524,7 +535,7 @@
 
 
 <div class="viewcode-block" id="DashScopeTextEmbeddingWrapper">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.DashScopeTextEmbeddingWrapper">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.models.dashscope_model.html#agentscope.models.DashScopeTextEmbeddingWrapper">[docs]</a>
 <span class="k">class</span> <span class="nc">DashScopeTextEmbeddingWrapper</span><span class="p">(</span><span class="n">DashScopeWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for DashScope Text Embedding API.&quot;&quot;&quot;</span>
 
@@ -628,7 +639,7 @@
 
 
 <div class="viewcode-block" id="DashScopeMultiModalWrapper">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.DashScopeMultiModalWrapper">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.models.dashscope_model.html#agentscope.models.DashScopeMultiModalWrapper">[docs]</a>
 <span class="k">class</span> <span class="nc">DashScopeMultiModalWrapper</span><span class="p">(</span><span class="n">DashScopeWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for DashScope Multimodal API, refer to</span>
 <span class="sd">    https://help.aliyun.com/zh/dashscope/developer-reference/tongyi-qianwen-vl-api</span>
@@ -770,7 +781,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="DashScopeMultiModalWrapper.format">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.DashScopeMultiModalWrapper.format">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.models.dashscope_model.html#agentscope.models.DashScopeMultiModalWrapper.format">[docs]</a>
     <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">]],</span>

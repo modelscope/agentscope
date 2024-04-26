@@ -57,15 +57,17 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">agentscope.web</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
 </ul>
 
         </div>
@@ -268,7 +270,7 @@
 
 
 <div class="viewcode-block" id="ModelWrapperBase">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.ModelWrapperBase">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.models.model.html#agentscope.models.ModelWrapperBase">[docs]</a>
 <span class="k">class</span> <span class="nc">ModelWrapperBase</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">_ModelWrapperMeta</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The base class for model wrapper.&quot;&quot;&quot;</span>
 
@@ -282,6 +284,8 @@
     <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The name of the model, which is used in model api calling.&quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="ModelWrapperBase.__init__">
+<a class="viewcode-back" href="../../../agentscope.models.model.html#agentscope.models.ModelWrapperBase.__init__">[docs]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>  <span class="c1"># pylint: disable=W0613</span>
         <span class="n">config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -300,10 +304,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span> <span class="o">=</span> <span class="n">MonitorFactory</span><span class="o">.</span><span class="n">get_monitor</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">config_name</span> <span class="o">=</span> <span class="n">config_name</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Initialize model [</span><span class="si">{</span><span class="n">config_name</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Initialize model [</span><span class="si">{</span><span class="n">config_name</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="ModelWrapperBase.get_wrapper">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.ModelWrapperBase.get_wrapper">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.models.model.html#agentscope.models.ModelWrapperBase.get_wrapper">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get_wrapper</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">ModelWrapperBase</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the specific model wrapper&quot;&quot;&quot;</span>
@@ -331,7 +336,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="ModelWrapperBase.format">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.ModelWrapperBase.format">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.models.model.html#agentscope.models.ModelWrapperBase.format">[docs]</a>
     <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">]],</span>
@@ -393,7 +398,7 @@
             <span class="k">return</span> <span class="n">get_full_name</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">metric_name</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ModelWrapperBase.update_monitor">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.ModelWrapperBase.update_monitor">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.models.model.html#agentscope.models.ModelWrapperBase.update_monitor">[docs]</a>
     <span class="k">def</span> <span class="nf">update_monitor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the monitor with the given values.</span>
 

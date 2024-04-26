@@ -58,15 +58,17 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.agents.html">agentscope.agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.memory.html">agentscope.memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.rpc.html">agentscope.rpc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.utils.html">agentscope.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.web.html">agentscope.web</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.utils.html">agentscope.utils</a></li>
 </ul>
 
         </div>
@@ -134,7 +136,7 @@
 
 
 <div class="viewcode-block" id="execute_python_code">
-<a class="viewcode-back" href="../../../../agentscope.service.html#agentscope.service.execute_python_code">[文档]</a>
+<a class="viewcode-back" href="../../../../agentscope.service.execute_code.exec_python.html#agentscope.service.execute_python_code">[文档]</a>
 <span class="k">def</span> <span class="nf">execute_python_code</span><span class="p">(</span>
     <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span>
@@ -459,6 +461,8 @@
         <span class="p">)</span>
 
 
+<div class="viewcode-block" id="sys_python_guard">
+<a class="viewcode-back" href="../../../../agentscope.service.execute_code.exec_python.html#agentscope.service.sys_python_guard">[文档]</a>
 <span class="k">def</span> <span class="nf">sys_python_guard</span><span class="p">(</span><span class="n">maximum_memory_bytes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This disables various destructive functions and prevents the generated code</span>
@@ -544,7 +548,8 @@
         <span class="s2">&quot;tkinter&quot;</span><span class="p">,</span>
     <span class="p">]</span>
     <span class="k">for</span> <span class="n">module_name</span> <span class="ow">in</span> <span class="n">sys_modules_to_disable</span><span class="p">:</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">module_name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">module_name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
 </pre></div>
 
            </div>

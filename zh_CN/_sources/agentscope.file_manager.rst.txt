@@ -1,0 +1,6 @@
+agentscope.file_manager
+=======================
+.. automodule:: agentscope.file_manager
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -57,15 +57,17 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">agentscope.web</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
 </ul>
 
         </div>
@@ -106,10 +108,12 @@
 
 
 <div class="viewcode-block" id="UserAgent">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.UserAgent">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.agents.user_agent.html#agentscope.agents.UserAgent">[docs]</a>
 <span class="k">class</span> <span class="nc">UserAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;User agent class&quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="UserAgent.__init__">
+<a class="viewcode-back" href="../../../agentscope.agents.user_agent.html#agentscope.agents.UserAgent.__init__">[docs]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;User&quot;</span><span class="p">,</span> <span class="n">require_url</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a UserAgent object.</span>
 
@@ -125,10 +129,11 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">require_url</span> <span class="o">=</span> <span class="n">require_url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">require_url</span> <span class="o">=</span> <span class="n">require_url</span></div>
+
 
 <div class="viewcode-block" id="UserAgent.reply">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.UserAgent.reply">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.agents.user_agent.html#agentscope.agents.UserAgent.reply">[docs]</a>
     <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -201,7 +206,7 @@
 
 
 <div class="viewcode-block" id="UserAgent.speak">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.UserAgent.speak">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.agents.user_agent.html#agentscope.agents.UserAgent.speak">[docs]</a>
     <span class="k">def</span> <span class="nf">speak</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">content</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span>

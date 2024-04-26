@@ -1,0 +1,220 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.agents.dict_dialog_agent &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=7d86a446"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/translations.js?v=beaddf03"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../en/agentscope.agents.dict_dialog_agent.html">English</a></li> |
+    <a href="../zh_CN/agentscope.agents.dict_dialog_agent.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/quick_start.html">快速上手</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/advance.html">进阶使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">agentscope.agents.dict_dialog_agent</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/agentscope.agents.dict_dialog_agent.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-agentscope.agents.dict_dialog_agent">
+<span id="agentscope-agents-dict-dialog-agent"></span><h1>agentscope.agents.dict_dialog_agent<a class="headerlink" href="#module-agentscope.agents.dict_dialog_agent" title="Link to this heading"></a></h1>
+<p>A dict dialog agent that using <cite>parse_func</cite> and <cite>fault_handler</cite> to
+parse the model response.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.agents.dict_dialog_agent.parse_dict">
+<span class="sig-prename descclassname"><span class="pre">agentscope.agents.dict_dialog_agent.</span></span><span class="sig-name descname"><span class="pre">parse_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.models.response.html#agentscope.models.response.ModelResponse" title="agentscope.models.response.ModelResponse"><span class="pre">ModelResponse</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.models.response.html#agentscope.models.response.ModelResponse" title="agentscope.models.response.ModelResponse"><span class="pre">ModelResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/agents/dict_dialog_agent.html#parse_dict"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.agents.dict_dialog_agent.parse_dict" title="Link to this definition"></a></dt>
+<dd><p>Parse function for DictDialogAgent</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.agents.dict_dialog_agent.default_response">
+<span class="sig-prename descclassname"><span class="pre">agentscope.agents.dict_dialog_agent.</span></span><span class="sig-name descname"><span class="pre">default_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.models.response.html#agentscope.models.response.ModelResponse" title="agentscope.models.response.ModelResponse"><span class="pre">ModelResponse</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.models.response.html#agentscope.models.response.ModelResponse" title="agentscope.models.response.ModelResponse"><span class="pre">ModelResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/agents/dict_dialog_agent.html#default_response"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.agents.dict_dialog_agent.default_response" title="Link to this definition"></a></dt>
+<dd><p>The default response of fault_handler</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.agents.dict_dialog_agent.DictDialogAgent">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.agents.dict_dialog_agent.</span></span><span class="sig-name descname"><span class="pre">DictDialogAgent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/agents/dict_dialog_agent.html#DictDialogAgent"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.agents.dict_dialog_agent.DictDialogAgent" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference internal" href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase" title="agentscope.agents.agent.AgentBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AgentBase</span></code></a></p>
+<p>An agent that generates response in a dict format, where user can
+specify the required fields in the response via prompt, e.g.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;... Response in the following format that can be loaded by</span>
+<span class="n">python</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="s2">&quot;thought&quot;</span><span class="p">:</span> <span class="s2">&quot;thought&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;speak&quot;</span><span class="p">:</span> <span class="s2">&quot;thoughts summary to say to others&quot;</span><span class="p">,</span>
+    <span class="c1"># ...</span>
+<span class="p">}</span><span class="s2">&quot;</span>
+</pre></div>
+</div>
+<p>This agent class is an example for using <cite>parse_func</cite> and <cite>fault_handler</cite>
+to parse the output from the model, and handling the fault when parsing
+fails. We take “speak” as a required field in the response, and print
+the speak field as the output response.</p>
+<p>For usage example, please refer to the example of werewolf in
+<cite>examples/game_werewolf</cite></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.agents.dict_dialog_agent.DictDialogAgent.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">name:</span> <span class="pre">str,</span> <span class="pre">sys_prompt:</span> <span class="pre">str,</span> <span class="pre">model_config_name:</span> <span class="pre">str,</span> <span class="pre">use_memory:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">memory_config:</span> <span class="pre">dict</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">parse_func:</span> <span class="pre">~typing.Callable[[...],</span> <span class="pre">~typing.Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">parse_dict&gt;,</span> <span class="pre">fault_handler:</span> <span class="pre">~typing.Callable[[...],</span> <span class="pre">~typing.Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">default_response&gt;,</span> <span class="pre">max_retries:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">3,</span> <span class="pre">prompt_type:</span> <span class="pre">~agentscope.prompt.PromptType</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/agents/dict_dialog_agent.html#DictDialogAgent.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.agents.dict_dialog_agent.DictDialogAgent.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the dict dialog agent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<cite>str</cite>) – The name of the agent.</p></li>
+<li><p><strong>sys_prompt</strong> (<cite>Optional[str]</cite>, defaults to <cite>None</cite>) – The system prompt of the agent, which can be passed by args
+or hard-coded in the agent.</p></li>
+<li><p><strong>model_config_name</strong> (<cite>str</cite>, defaults to None) – The name of the model config, which is used to load model from
+configuration.</p></li>
+<li><p><strong>use_memory</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – Whether the agent has memory.</p></li>
+<li><p><strong>memory_config</strong> (<cite>Optional[dict]</cite>, defaults to <cite>None</cite>) – The config of memory.</p></li>
+<li><p><strong>parse_func</strong> (<cite>Optional[Callable[…, Any]]</cite>, defaults to <cite>parse_dict</cite>) – The function used to parse the model output,
+e.g. <cite>json.loads</cite>, which is used to extract json from the
+output.</p></li>
+<li><p><strong>fault_handler</strong> (<cite>Optional[Callable[…, Any]]</cite>, defaults to <cite>default_response</cite>) – The function used to handle the fault when parse_func fails
+to parse the model output.</p></li>
+<li><p><strong>max_retries</strong> (<cite>Optional[int]</cite>, defaults to <cite>None</cite>) – The maximum number of retries when failed to parse the model
+output.</p></li>
+<li><p><strong>prompt_type</strong> (<cite>Optional[PromptType]</cite>, defaults to <cite>PromptType.LIST</cite>) – The type of the prompt organization, chosen from
+<cite>PromptType.LIST</cite> or <cite>PromptType.STRING</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.agents.dict_dialog_agent.DictDialogAgent.reply">
+<span class="sig-name descname"><span class="pre">reply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/agents/dict_dialog_agent.html#DictDialogAgent.reply"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.agents.dict_dialog_agent.DictDialogAgent.reply" title="Link to this definition"></a></dt>
+<dd><p>Reply function of the agent.
+Processes the input data, generates a prompt using the current
+dialogue memory and system prompt, and invokes the language
+model to produce a response. The response is then formatted
+and added to the dialogue memory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<cite>dict</cite>, defaults to <cite>None</cite>) – A dictionary representing the user’s input to the agent.
+This input is added to the dialogue memory if provided.</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary representing the message generated by the agent in
+response to the user’s input. It contains at least a ‘speak’ key
+with the textual response and may include other keys such as
+‘agreement’ if provided by the language model.</p>
+</dd>
+<dt class="field-odd">抛出<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>json.decoder.JSONDecodeError</strong> – If the response from the language model is not valid JSON,
+    it defaults to treating the response as plain text.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

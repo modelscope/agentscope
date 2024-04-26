@@ -58,15 +58,17 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">agentscope.web</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
 </ul>
 
         </div>
@@ -110,12 +112,14 @@
 
 
 <div class="viewcode-block" id="MemoryBase">
-<a class="viewcode-back" href="../../../agentscope.memory.html#agentscope.memory.MemoryBase">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.memory.memory.html#agentscope.memory.MemoryBase">[文档]</a>
 <span class="k">class</span> <span class="nc">MemoryBase</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for memory.&quot;&quot;&quot;</span>
 
     <span class="n">_version</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 
+<div class="viewcode-block" id="MemoryBase.__init__">
+<a class="viewcode-back" href="../../../agentscope.memory.memory.html#agentscope.memory.MemoryBase.__init__">[文档]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -126,10 +130,11 @@
 <span class="sd">            config (`Optional[dict]`, defaults to `None`):</span>
 <span class="sd">                Configuration of this memory.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">config</span></div>
+
 
 <div class="viewcode-block" id="MemoryBase.update_config">
-<a class="viewcode-back" href="../../../agentscope.memory.html#agentscope.memory.MemoryBase.update_config">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.memory.memory.html#agentscope.memory.MemoryBase.update_config">[文档]</a>
     <span class="k">def</span> <span class="nf">update_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Configure memory as specified in config</span>
@@ -138,7 +143,7 @@
 
 
 <div class="viewcode-block" id="MemoryBase.get_memory">
-<a class="viewcode-back" href="../../../agentscope.memory.html#agentscope.memory.MemoryBase.get_memory">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.memory.memory.html#agentscope.memory.MemoryBase.get_memory">[文档]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_memory</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -152,7 +157,7 @@
 
 
 <div class="viewcode-block" id="MemoryBase.add">
-<a class="viewcode-back" href="../../../agentscope.memory.html#agentscope.memory.MemoryBase.add">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.memory.memory.html#agentscope.memory.MemoryBase.add">[文档]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -161,7 +166,7 @@
 
 
 <div class="viewcode-block" id="MemoryBase.delete">
-<a class="viewcode-back" href="../../../agentscope.memory.html#agentscope.memory.MemoryBase.delete">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.memory.memory.html#agentscope.memory.MemoryBase.delete">[文档]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -171,7 +176,7 @@
 
 
 <div class="viewcode-block" id="MemoryBase.load">
-<a class="viewcode-back" href="../../../agentscope.memory.html#agentscope.memory.MemoryBase.load">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.memory.memory.html#agentscope.memory.MemoryBase.load">[文档]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">load</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -185,7 +190,7 @@
 
 
 <div class="viewcode-block" id="MemoryBase.export">
-<a class="viewcode-back" href="../../../agentscope.memory.html#agentscope.memory.MemoryBase.export">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.memory.memory.html#agentscope.memory.MemoryBase.export">[文档]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">export</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -196,14 +201,14 @@
 
 
 <div class="viewcode-block" id="MemoryBase.clear">
-<a class="viewcode-back" href="../../../agentscope.memory.html#agentscope.memory.MemoryBase.clear">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.memory.memory.html#agentscope.memory.MemoryBase.clear">[文档]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Clean memory, depending on how the memory are stored&quot;&quot;&quot;</span></div>
 
 
 <div class="viewcode-block" id="MemoryBase.size">
-<a class="viewcode-back" href="../../../agentscope.memory.html#agentscope.memory.MemoryBase.size">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.memory.memory.html#agentscope.memory.MemoryBase.size">[文档]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the number of memory segments in memory.&quot;&quot;&quot;</span>

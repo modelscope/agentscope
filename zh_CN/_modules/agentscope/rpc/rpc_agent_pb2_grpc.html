@@ -58,15 +58,17 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">agentscope.web</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
 </ul>
 
         </div>
@@ -106,10 +108,12 @@
 
 
 <div class="viewcode-block" id="RpcAgentStub">
-<a class="viewcode-back" href="../../../agentscope.rpc.html#agentscope.rpc.RpcAgentStub">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgentStub">[文档]</a>
 <span class="k">class</span> <span class="nc">RpcAgentStub</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Servicer for rpc agent server&quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="RpcAgentStub.__init__">
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgentStub.__init__">[文档]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor.</span>
 
@@ -121,16 +125,17 @@
             <span class="n">request_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">RpcMsg</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
             <span class="n">response_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">RpcMsg</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
         <span class="p">)</span></div>
+</div>
 
 
 
 <div class="viewcode-block" id="RpcAgentServicer">
-<a class="viewcode-back" href="../../../agentscope.rpc.html#agentscope.rpc.RpcAgentServicer">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgentServicer">[文档]</a>
 <span class="k">class</span> <span class="nc">RpcAgentServicer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Servicer for rpc agent server&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="RpcAgentServicer.call_func">
-<a class="viewcode-back" href="../../../agentscope.rpc.html#agentscope.rpc.RpcAgentServicer.call_func">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgentServicer.call_func">[文档]</a>
     <span class="k">def</span> <span class="nf">call_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Missing associated documentation comment in .proto file.&quot;&quot;&quot;</span>
         <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNIMPLEMENTED</span><span class="p">)</span>
@@ -141,7 +146,7 @@
 
 
 <div class="viewcode-block" id="add_RpcAgentServicer_to_server">
-<a class="viewcode-back" href="../../../agentscope.rpc.html#agentscope.rpc.add_RpcAgentServicer_to_server">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.add_RpcAgentServicer_to_server">[文档]</a>
 <span class="k">def</span> <span class="nf">add_RpcAgentServicer_to_server</span><span class="p">(</span><span class="n">servicer</span><span class="p">,</span> <span class="n">server</span><span class="p">):</span>
     <span class="n">rpc_method_handlers</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;call_func&quot;</span><span class="p">:</span> <span class="n">grpc</span><span class="o">.</span><span class="n">unary_unary_rpc_method_handler</span><span class="p">(</span>
@@ -159,9 +164,13 @@
 
 
 <span class="c1"># This class is part of an EXPERIMENTAL API.</span>
+<div class="viewcode-block" id="RpcAgent">
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgent">[文档]</a>
 <span class="k">class</span> <span class="nc">RpcAgent</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Servicer for rpc agent server&quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="RpcAgent.call_func">
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgent.call_func">[文档]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">call_func</span><span class="p">(</span>
         <span class="n">request</span><span class="p">,</span>
@@ -189,7 +198,9 @@
             <span class="n">wait_for_ready</span><span class="p">,</span>
             <span class="n">timeout</span><span class="p">,</span>
             <span class="n">metadata</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="p">)</span></div>
+</div>
+
 </pre></div>
 
            </div>

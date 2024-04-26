@@ -58,15 +58,17 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">agentscope.web</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
 </ul>
 
         </div>
@@ -117,10 +119,12 @@
 
 
 <div class="viewcode-block" id="OpenAIWrapperBase">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.OpenAIWrapperBase">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.models.openai_model.html#agentscope.models.OpenAIWrapperBase">[文档]</a>
 <span class="k">class</span> <span class="nc">OpenAIWrapperBase</span><span class="p">(</span><span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for OpenAI API.&quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="OpenAIWrapperBase.__init__">
+<a class="viewcode-back" href="../../../agentscope.models.openai_model.html#agentscope.models.OpenAIWrapperBase.__init__">[文档]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -186,10 +190,11 @@
 
         <span class="c1"># Set monitor accordingly</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_register_budget</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">budget</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_register_default_metrics</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_default_metrics</span><span class="p">()</span></div>
+
 
 <div class="viewcode-block" id="OpenAIWrapperBase.format">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.OpenAIWrapperBase.format">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.models.openai_model.html#agentscope.models.OpenAIWrapperBase.format">[文档]</a>
     <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">]],</span>
@@ -204,7 +209,7 @@
 
 
 <div class="viewcode-block" id="OpenAIChatWrapper">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.OpenAIChatWrapper">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.models.openai_model.html#agentscope.models.OpenAIChatWrapper">[文档]</a>
 <span class="k">class</span> <span class="nc">OpenAIChatWrapper</span><span class="p">(</span><span class="n">OpenAIWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for OpenAI&#39;s chat API.&quot;&quot;&quot;</span>
 
@@ -318,7 +323,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="OpenAIChatWrapper.format">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.OpenAIChatWrapper.format">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.models.openai_model.html#agentscope.models.OpenAIChatWrapper.format">[文档]</a>
     <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">]],</span>
@@ -364,7 +369,7 @@
 
 
 <div class="viewcode-block" id="OpenAIDALLEWrapper">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.OpenAIDALLEWrapper">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.models.openai_model.html#agentscope.models.OpenAIDALLEWrapper">[文档]</a>
 <span class="k">class</span> <span class="nc">OpenAIDALLEWrapper</span><span class="p">(</span><span class="n">OpenAIWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for OpenAI&#39;s DALL·E API.&quot;&quot;&quot;</span>
 
@@ -478,7 +483,7 @@
 
 
 <div class="viewcode-block" id="OpenAIEmbeddingWrapper">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.OpenAIEmbeddingWrapper">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.models.openai_model.html#agentscope.models.OpenAIEmbeddingWrapper">[文档]</a>
 <span class="k">class</span> <span class="nc">OpenAIEmbeddingWrapper</span><span class="p">(</span><span class="n">OpenAIWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for OpenAI embedding API.&quot;&quot;&quot;</span>
 

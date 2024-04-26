@@ -58,15 +58,17 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.agents.html">agentscope.agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.memory.html">agentscope.memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.rpc.html">agentscope.rpc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../agentscope.utils.html">agentscope.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.web.html">agentscope.web</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.utils.html">agentscope.utils</a></li>
 </ul>
 
         </div>
@@ -105,9 +107,13 @@
 <span class="kn">from</span> <span class="nn">agentscope.agents</span> <span class="kn">import</span> <span class="n">AgentBase</span>
 
 
+<div class="viewcode-block" id="MsgHubManager">
+<a class="viewcode-back" href="../../agentscope.msghub.html#agentscope.MsgHubManager">[文档]</a>
 <span class="k">class</span> <span class="nc">MsgHubManager</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;MsgHub manager class for sharing dialog among a group of agents.&quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="MsgHubManager.__init__">
+<a class="viewcode-back" href="../../agentscope.msghub.html#agentscope.MsgHubManager.__init__">[文档]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">participants</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">AgentBase</span><span class="p">],</span>
@@ -118,13 +124,14 @@
 <span class="sd">        Args:</span>
 <span class="sd">            participants (`Sequence[AgentBase]`):</span>
 <span class="sd">                The Sequence of participants in the msghub.</span>
-<span class="sd">            announcement (`Optional[Union[list[dict], dict]]`, defaults to</span>
-<span class="sd">            `None`):</span>
+<span class="sd">            announcement</span>
+<span class="sd">                (`Optional[Union[list[dict], dict]]`, defaults to `None`):</span>
 <span class="sd">                The message that will be broadcast to all participants at</span>
 <span class="sd">                the first without requiring response.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">participants</span> <span class="o">=</span> <span class="n">participants</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">announcement</span> <span class="o">=</span> <span class="n">announcement</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">announcement</span> <span class="o">=</span> <span class="n">announcement</span></div>
+
 
     <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MsgHubManager</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Will be called when entering the msghub.&quot;&quot;&quot;</span>
@@ -155,6 +162,8 @@
         <span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">participants</span><span class="p">:</span>
             <span class="n">agent</span><span class="o">.</span><span class="n">reset_audience</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">participants</span><span class="p">)</span>
 
+<div class="viewcode-block" id="MsgHubManager.add">
+<a class="viewcode-back" href="../../agentscope.msghub.html#agentscope.MsgHubManager.add">[文档]</a>
     <span class="k">def</span> <span class="nf">add</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">new_participant</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">AgentBase</span><span class="p">],</span> <span class="n">AgentBase</span><span class="p">],</span>
@@ -172,8 +181,11 @@
                     <span class="s2">&quot;already joined in.&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_audience</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_audience</span><span class="p">()</span></div>
 
+
+<div class="viewcode-block" id="MsgHubManager.delete">
+<a class="viewcode-back" href="../../agentscope.msghub.html#agentscope.MsgHubManager.delete">[文档]</a>
     <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">participant</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">AgentBase</span><span class="p">],</span> <span class="n">AgentBase</span><span class="p">],</span>
@@ -196,8 +208,11 @@
                 <span class="p">)</span>
 
         <span class="c1"># Remove this agent from the audience of other agents</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_audience</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_audience</span><span class="p">()</span></div>
 
+
+<div class="viewcode-block" id="MsgHubManager.broadcast">
+<a class="viewcode-back" href="../../agentscope.msghub.html#agentscope.MsgHubManager.broadcast">[文档]</a>
     <span class="k">def</span> <span class="nf">broadcast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Broadcast the message to all participants.</span>
 
@@ -207,11 +222,13 @@
 <span class="sd">                participants.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">participants</span><span class="p">:</span>
-            <span class="n">agent</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="n">agent</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+</div>
+
 
 
 <div class="viewcode-block" id="msghub">
-<a class="viewcode-back" href="../../agentscope.html#agentscope.msghub">[文档]</a>
+<a class="viewcode-back" href="../../agentscope.msghub.html#agentscope.msghub">[文档]</a>
 <span class="k">def</span> <span class="nf">msghub</span><span class="p">(</span>
     <span class="n">participants</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">AgentBase</span><span class="p">],</span>
     <span class="n">announcement</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>

@@ -24,7 +24,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="agentscope.utils" href="agentscope.utils.html" />
+    <link rel="next" title="agentscope.web" href="agentscope.web.html" />
     <link rel="prev" title="agentscope.service" href="agentscope.service.html" /> 
 </head>
 
@@ -59,19 +59,23 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">agentscope.rpc</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.rpc.RpcAgentClient"><code class="docutils literal notranslate"><span class="pre">RpcAgentClient</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.rpc.RpcAgentClient.__init__"><code class="docutils literal notranslate"><span class="pre">RpcAgentClient.__init__()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.rpc.RpcAgentClient.call_func"><code class="docutils literal notranslate"><span class="pre">RpcAgentClient.call_func()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.rpc.RpcAgentClient.create_agent"><code class="docutils literal notranslate"><span class="pre">RpcAgentClient.create_agent()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.rpc.RpcAgentClient.delete_agent"><code class="docutils literal notranslate"><span class="pre">RpcAgentClient.delete_agent()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.rpc.ResponseStub"><code class="docutils literal notranslate"><span class="pre">ResponseStub</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.rpc.ResponseStub.__init__"><code class="docutils literal notranslate"><span class="pre">ResponseStub.__init__()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.rpc.ResponseStub.set_response"><code class="docutils literal notranslate"><span class="pre">ResponseStub.set_response()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.rpc.ResponseStub.get_response"><code class="docutils literal notranslate"><span class="pre">ResponseStub.get_response()</span></code></a></li>
 </ul>
@@ -84,14 +88,17 @@
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.rpc.RpcAgentServicer.call_func"><code class="docutils literal notranslate"><span class="pre">RpcAgentServicer.call_func()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.rpc.RpcAgentStub"><code class="docutils literal notranslate"><span class="pre">RpcAgentStub</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.rpc.RpcAgentStub"><code class="docutils literal notranslate"><span class="pre">RpcAgentStub</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.rpc.RpcAgentStub.__init__"><code class="docutils literal notranslate"><span class="pre">RpcAgentStub.__init__()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.rpc.call_in_thread"><code class="docutils literal notranslate"><span class="pre">call_in_thread()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.rpc.add_RpcAgentServicer_to_server"><code class="docutils literal notranslate"><span class="pre">add_RpcAgentServicer_to_server()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils</a></li>
 </ul>
 
         </div>
@@ -126,6 +133,23 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.rpc.</span></span><span class="sig-name descname"><span class="pre">RpcAgentClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agent_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/rpc/rpc_agent_client.html#RpcAgentClient"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.rpc.RpcAgentClient" title="Link to this definition"></a></dt>
 <dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A client of Rpc agent server</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.rpc.RpcAgentClient.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agent_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/rpc/rpc_agent_client.html#RpcAgentClient.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.rpc.RpcAgentClient.__init__" title="Link to this definition"></a></dt>
+<dd><p>Init a rpc agent client</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>host</strong> (<cite>str</cite>) – the hostname of the rpc agent server which the</p></li>
+<li><p><strong>connected.</strong> (<em>is</em>)</p></li>
+<li><p><strong>port</strong> (<cite>int</cite>) – the port of the rpc agent server which the client</p></li>
+<li><p><strong>connected.</strong></p></li>
+<li><p><strong>agent_id</strong> (<cite>str</cite>) – the agent id of the agent being called.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.rpc.RpcAgentClient.call_func">
 <span class="sig-name descname"><span class="pre">call_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">300</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/rpc/rpc_agent_client.html#RpcAgentClient.call_func"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.rpc.RpcAgentClient.call_func" title="Link to this definition"></a></dt>
@@ -165,6 +189,11 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.rpc.</span></span><span class="sig-name descname"><span class="pre">ResponseStub</span></span><a class="reference internal" href="_modules/agentscope/rpc/rpc_agent_client.html#ResponseStub"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.rpc.ResponseStub" title="Link to this definition"></a></dt>
 <dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A stub used to save the response of an rpc call in a sub-thread.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.rpc.ResponseStub.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/rpc/rpc_agent_client.html#ResponseStub.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.rpc.ResponseStub.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.rpc.ResponseStub.set_response">
 <span class="sig-name descname"><span class="pre">set_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/rpc/rpc_agent_client.html#ResponseStub.set_response"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.rpc.ResponseStub.set_response" title="Link to this definition"></a></dt>
@@ -208,11 +237,22 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.rpc.</span></span><span class="sig-name descname"><span class="pre">RpcAgentStub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/rpc/rpc_agent_pb2_grpc.html#RpcAgentStub"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.rpc.RpcAgentStub" title="Link to this definition"></a></dt>
 <dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Servicer for rpc agent server</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.rpc.RpcAgentStub.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/rpc/rpc_agent_pb2_grpc.html#RpcAgentStub.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.rpc.RpcAgentStub.__init__" title="Link to this definition"></a></dt>
+<dd><p>Constructor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>channel</strong> – A grpc.Channel.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="agentscope.rpc.call_in_thread">
-<span class="sig-prename descclassname"><span class="pre">agentscope.rpc.</span></span><span class="sig-name descname"><span class="pre">call_in_thread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#agentscope.rpc.RpcAgentClient" title="agentscope.rpc.rpc_agent_client.RpcAgentClient"><span class="pre">RpcAgentClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#agentscope.rpc.ResponseStub" title="agentscope.rpc.rpc_agent_client.ResponseStub"><span class="pre">ResponseStub</span></a></span></span><a class="reference internal" href="_modules/agentscope/rpc/rpc_agent_client.html#call_in_thread"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.rpc.call_in_thread" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">agentscope.rpc.</span></span><span class="sig-name descname"><span class="pre">call_in_thread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.rpc.rpc_agent_client.html#agentscope.rpc.rpc_agent_client.RpcAgentClient" title="agentscope.rpc.rpc_agent_client.RpcAgentClient"><span class="pre">RpcAgentClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.rpc.rpc_agent_client.html#agentscope.rpc.rpc_agent_client.ResponseStub" title="agentscope.rpc.rpc_agent_client.ResponseStub"><span class="pre">ResponseStub</span></a></span></span><a class="reference internal" href="_modules/agentscope/rpc/rpc_agent_client.html#call_in_thread"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.rpc.call_in_thread" title="Link to this definition"></a></dt>
 <dd><p>Call rpc function in a sub-thread.</p>
 <dl class="field-list simple">
 <dt class="field-odd">参数<span class="colon">:</span></dt>
@@ -243,7 +283,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
         <a href="agentscope.service.html" class="btn btn-neutral float-left" title="agentscope.service" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
-        <a href="agentscope.utils.html" class="btn btn-neutral float-right" title="agentscope.utils" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="agentscope.web.html" class="btn btn-neutral float-right" title="agentscope.web" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

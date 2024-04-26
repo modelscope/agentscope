@@ -58,15 +58,17 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">agentscope.web</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
 </ul>
 
         </div>
@@ -107,7 +109,7 @@
 
 
 <div class="viewcode-block" id="ModelResponse">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.ModelResponse">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.models.response.html#agentscope.models.ModelResponse">[文档]</a>
 <span class="k">class</span> <span class="nc">ModelResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Encapsulation of data returned by the model.</span>
 
@@ -121,6 +123,8 @@
     <span class="n">image_urls</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">json</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
+<div class="viewcode-block" id="ModelResponse.__init__">
+<a class="viewcode-back" href="../../../agentscope.models.response.html#agentscope.models.ModelResponse.__init__">[文档]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -143,7 +147,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">text</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">embedding</span> <span class="o">=</span> <span class="n">embedding</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">image_urls</span> <span class="o">=</span> <span class="n">image_urls</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="o">=</span> <span class="n">raw</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="o">=</span> <span class="n">raw</span></div>
+
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">_is_json_serializable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw</span><span class="p">):</span>
@@ -163,12 +168,12 @@
 
 
 <div class="viewcode-block" id="ResponseParser">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.ResponseParser">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.models.response.html#agentscope.models.ResponseParser">[文档]</a>
 <span class="k">class</span> <span class="nc">ResponseParser</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A class that contains several static methods to parse the response.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="ResponseParser.to_dict">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.ResponseParser.to_dict">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.models.response.html#agentscope.models.ResponseParser.to_dict">[文档]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse the response text to a dict, and feed it into the `json`</span>
@@ -194,7 +199,7 @@
 
 
 <div class="viewcode-block" id="ResponseParser.to_list">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.ResponseParser.to_list">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.models.response.html#agentscope.models.ResponseParser.to_list">[文档]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">to_list</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse the response text to a list, and feed it into the `json`</span>
@@ -222,7 +227,7 @@
 
 
 <div class="viewcode-block" id="ResponseParsingError">
-<a class="viewcode-back" href="../../../agentscope.models.html#agentscope.models.ResponseParsingError">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.models.response.html#agentscope.models.ResponseParsingError">[文档]</a>
 <span class="k">class</span> <span class="nc">ResponseParsingError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Exception raised when parsing the response fails.&quot;&quot;&quot;</span>
 
@@ -235,6 +240,8 @@
     <span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The response that fails to be parsed.&quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="ResponseParsingError.__init__">
+<a class="viewcode-back" href="../../../agentscope.models.response.html#agentscope.models.ResponseParsingError.__init__">[文档]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
@@ -257,7 +264,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">parse_func_code</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getsource</span><span class="p">(</span><span class="n">parse_func</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">error_info</span> <span class="o">=</span> <span class="n">error_info</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">response</span> <span class="o">=</span> <span class="n">response</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">response</span> <span class="o">=</span> <span class="n">response</span></div>
+
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>

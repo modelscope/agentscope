@@ -57,15 +57,17 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">agentscope.web</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
 </ul>
 
         </div>
@@ -116,7 +118,7 @@
 
 
 <div class="viewcode-block" id="PipelineBase">
-<a class="viewcode-back" href="../../../agentscope.pipelines.html#agentscope.pipelines.PipelineBase">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.pipelines.pipeline.html#agentscope.pipelines.PipelineBase">[docs]</a>
 <span class="k">class</span> <span class="nc">PipelineBase</span><span class="p">(</span><span class="n">Operator</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Base interface of all pipelines.</span>
 
@@ -124,8 +126,11 @@
 <span class="sd">    multiple operators and the interaction logic among them.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="PipelineBase.__init__">
+<a class="viewcode-back" href="../../../agentscope.pipelines.pipeline.html#agentscope.pipelines.PipelineBase.__init__">[docs]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">participants</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">participants</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span></div>
+
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
@@ -142,7 +147,7 @@
 
 
 <div class="viewcode-block" id="IfElsePipeline">
-<a class="viewcode-back" href="../../../agentscope.pipelines.html#agentscope.pipelines.IfElsePipeline">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.pipelines.pipeline.html#agentscope.pipelines.IfElsePipeline">[docs]</a>
 <span class="k">class</span> <span class="nc">IfElsePipeline</span><span class="p">(</span><span class="n">PipelineBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;A template pipeline for implementing control flow like if-else.</span>
 
@@ -155,6 +160,8 @@
 <span class="sd">            else_body_operators(x)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="IfElsePipeline.__init__">
+<a class="viewcode-back" href="../../../agentscope.pipelines.pipeline.html#agentscope.pipelines.IfElsePipeline.__init__">[docs]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">condition_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">bool</span><span class="p">],</span>
@@ -176,7 +183,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">condition_func</span> <span class="o">=</span> <span class="n">condition_func</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">if_body_operator</span> <span class="o">=</span> <span class="n">if_body_operators</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">else_body_operator</span> <span class="o">=</span> <span class="n">else_body_operators</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">participants</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">if_body_operator</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">else_body_operator</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">participants</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">if_body_operator</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">else_body_operator</span><span class="p">]</span></div>
+
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">ifelsepipeline</span><span class="p">(</span>
@@ -189,7 +197,7 @@
 
 
 <div class="viewcode-block" id="SwitchPipeline">
-<a class="viewcode-back" href="../../../agentscope.pipelines.html#agentscope.pipelines.SwitchPipeline">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.pipelines.pipeline.html#agentscope.pipelines.SwitchPipeline">[docs]</a>
 <span class="k">class</span> <span class="nc">SwitchPipeline</span><span class="p">(</span><span class="n">PipelineBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;A template pipeline for implementing control flow like switch-case.</span>
 
@@ -203,6 +211,8 @@
 <span class="sd">            default: return default_operators(x)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="SwitchPipeline.__init__">
+<a class="viewcode-back" href="../../../agentscope.pipelines.pipeline.html#agentscope.pipelines.SwitchPipeline.__init__">[docs]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">condition_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Any</span><span class="p">],</span>
@@ -228,7 +238,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">default_operators</span> <span class="o">=</span> <span class="n">default_operators</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">participants</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">case_operators</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">+</span> <span class="p">[</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">default_operators</span><span class="p">,</span>
-        <span class="p">]</span>
+        <span class="p">]</span></div>
+
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">switchpipeline</span><span class="p">(</span>
@@ -241,7 +252,7 @@
 
 
 <div class="viewcode-block" id="ForLoopPipeline">
-<a class="viewcode-back" href="../../../agentscope.pipelines.html#agentscope.pipelines.ForLoopPipeline">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.pipelines.pipeline.html#agentscope.pipelines.ForLoopPipeline">[docs]</a>
 <span class="k">class</span> <span class="nc">ForLoopPipeline</span><span class="p">(</span><span class="n">PipelineBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;A template pipeline for implementing control flow like for-loop</span>
 
@@ -260,6 +271,8 @@
 <span class="sd">                break</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="ForLoopPipeline.__init__">
+<a class="viewcode-back" href="../../../agentscope.pipelines.pipeline.html#agentscope.pipelines.ForLoopPipeline.__init__">[docs]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">loop_body_operators</span><span class="p">:</span> <span class="n">Operators</span><span class="p">,</span>
@@ -281,7 +294,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">loop_body_operators</span> <span class="o">=</span> <span class="n">loop_body_operators</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_loop</span> <span class="o">=</span> <span class="n">max_loop</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">break_func</span> <span class="o">=</span> <span class="n">break_func</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">participants</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">loop_body_operators</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">participants</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">loop_body_operators</span><span class="p">]</span></div>
+
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">forlooppipeline</span><span class="p">(</span>
@@ -294,7 +308,7 @@
 
 
 <div class="viewcode-block" id="WhileLoopPipeline">
-<a class="viewcode-back" href="../../../agentscope.pipelines.html#agentscope.pipelines.WhileLoopPipeline">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.pipelines.pipeline.html#agentscope.pipelines.WhileLoopPipeline">[docs]</a>
 <span class="k">class</span> <span class="nc">WhileLoopPipeline</span><span class="p">(</span><span class="n">PipelineBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;A template pipeline for implementing control flow like while-loop</span>
 
@@ -307,6 +321,8 @@
 <span class="sd">            i += 1</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="WhileLoopPipeline.__init__">
+<a class="viewcode-back" href="../../../agentscope.pipelines.pipeline.html#agentscope.pipelines.WhileLoopPipeline.__init__">[docs]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">loop_body_operators</span><span class="p">:</span> <span class="n">Operators</span><span class="p">,</span>
@@ -325,7 +341,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">condition_func</span> <span class="o">=</span> <span class="n">condition_func</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loop_body_operators</span> <span class="o">=</span> <span class="n">loop_body_operators</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">participants</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">loop_body_operators</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">participants</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">loop_body_operators</span><span class="p">]</span></div>
+
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">whilelooppipeline</span><span class="p">(</span>
@@ -337,7 +354,7 @@
 
 
 <div class="viewcode-block" id="SequentialPipeline">
-<a class="viewcode-back" href="../../../agentscope.pipelines.html#agentscope.pipelines.SequentialPipeline">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.pipelines.pipeline.html#agentscope.pipelines.SequentialPipeline">[docs]</a>
 <span class="k">class</span> <span class="nc">SequentialPipeline</span><span class="p">(</span><span class="n">PipelineBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;A template pipeline for implementing sequential logic.</span>
 
@@ -349,6 +366,8 @@
 <span class="sd">        x = operators[n](x)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="SequentialPipeline.__init__">
+<a class="viewcode-back" href="../../../agentscope.pipelines.pipeline.html#agentscope.pipelines.SequentialPipeline.__init__">[docs]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operators</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Operator</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Initialize a Sequential pipeline.</span>
 
@@ -357,7 +376,8 @@
 <span class="sd">                A Sequence of operators to be executed sequentially.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">operators</span> <span class="o">=</span> <span class="n">operators</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">participants</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operators</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">participants</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operators</span><span class="p">)</span></div>
+
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">sequentialpipeline</span><span class="p">(</span><span class="n">operators</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">operators</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">)</span></div>

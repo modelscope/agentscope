@@ -24,8 +24,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="agentscope.web" href="agentscope.web.html" />
-    <link rel="prev" title="agentscope.rpc" href="agentscope.rpc.html" /> 
+    <link rel="prev" title="agentscope.prompt" href="agentscope.prompt.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -59,12 +58,16 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">agentscope.utils</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.utils.setup_logger"><code class="docutils literal notranslate"><span class="pre">setup_logger()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.utils.MonitorBase"><code class="docutils literal notranslate"><span class="pre">MonitorBase</span></code></a><ul>
@@ -83,7 +86,10 @@
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.utils.MonitorBase.register_budget"><code class="docutils literal notranslate"><span class="pre">MonitorBase.register_budget()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.utils.QuotaExceededError"><code class="docutils literal notranslate"><span class="pre">QuotaExceededError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.utils.QuotaExceededError"><code class="docutils literal notranslate"><span class="pre">QuotaExceededError</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.utils.QuotaExceededError.__init__"><code class="docutils literal notranslate"><span class="pre">QuotaExceededError.__init__()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.utils.MonitorFactory"><code class="docutils literal notranslate"><span class="pre">MonitorFactory</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.utils.MonitorFactory.get_monitor"><code class="docutils literal notranslate"><span class="pre">MonitorFactory.get_monitor()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.utils.MonitorFactory.flush"><code class="docutils literal notranslate"><span class="pre">MonitorFactory.flush()</span></code></a></li>
@@ -91,8 +97,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope</a></li>
 </ul>
 
         </div>
@@ -401,6 +405,17 @@ the same <cite>prefix</cite>, only the first time will take effect.</p></li>
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.utils.</span></span><span class="sig-name descname"><span class="pre">QuotaExceededError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/utils/monitor.html#QuotaExceededError"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.utils.QuotaExceededError" title="Link to this definition"></a></dt>
 <dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
 <p>An Exception used to indicate that a certain metric exceeds quota</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.utils.QuotaExceededError.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/utils/monitor.html#QuotaExceededError.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.utils.QuotaExceededError.__init__" title="Link to this definition"></a></dt>
+<dd><p>Init a QuotaExceedError instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<cite>str</cite>) – name of the metric which exceeds quota.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -415,7 +430,7 @@ the same <cite>prefix</cite>, only the first time will take effect.</p></li>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.utils.MonitorFactory.get_monitor">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_monitor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">impl_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'agentscope.db'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#agentscope.utils.MonitorBase" title="agentscope.utils.monitor.MonitorBase"><span class="pre">MonitorBase</span></a></span></span><a class="reference internal" href="_modules/agentscope/utils/monitor.html#MonitorFactory.get_monitor"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.utils.MonitorFactory.get_monitor" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_monitor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">impl_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'agentscope.db'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.utils.monitor.html#agentscope.utils.monitor.MonitorBase" title="agentscope.utils.monitor.MonitorBase"><span class="pre">MonitorBase</span></a></span></span><a class="reference internal" href="_modules/agentscope/utils/monitor.html#MonitorFactory.get_monitor"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.utils.MonitorFactory.get_monitor" title="Link to this definition"></a></dt>
 <dd><p>Get the monitor instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">参数<span class="colon">:</span></dt>
@@ -449,8 +464,7 @@ Flush the monitor singleton.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
-        <a href="agentscope.rpc.html" class="btn btn-neutral float-left" title="agentscope.rpc" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
-        <a href="agentscope.web.html" class="btn btn-neutral float-right" title="agentscope.web" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="agentscope.prompt.html" class="btn btn-neutral float-left" title="agentscope.prompt" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
     </div>
 
   <hr/>

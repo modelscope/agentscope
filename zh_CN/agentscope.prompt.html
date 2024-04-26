@@ -1,0 +1,253 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.prompt &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=7d86a446"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/translations.js?v=beaddf03"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="agentscope.utils" href="agentscope.utils.html" />
+    <link rel="prev" title="agentscope.web" href="agentscope.web.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../en/agentscope.prompt.html">English</a></li> |
+    <a href="../zh_CN/agentscope.prompt.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/quick_start.html">快速上手</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/advance.html">进阶使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">agentscope.prompt</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.prompt.PromptType"><code class="docutils literal notranslate"><span class="pre">PromptType</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.prompt.PromptType.STRING"><code class="docutils literal notranslate"><span class="pre">PromptType.STRING</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.prompt.PromptType.LIST"><code class="docutils literal notranslate"><span class="pre">PromptType.LIST</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.prompt.PromptEngine"><code class="docutils literal notranslate"><span class="pre">PromptEngine</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.prompt.PromptEngine.__init__"><code class="docutils literal notranslate"><span class="pre">PromptEngine.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.prompt.PromptEngine.join"><code class="docutils literal notranslate"><span class="pre">PromptEngine.join()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.prompt.PromptEngine.join_to_str"><code class="docutils literal notranslate"><span class="pre">PromptEngine.join_to_str()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.prompt.PromptEngine.join_to_list"><code class="docutils literal notranslate"><span class="pre">PromptEngine.join_to_list()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">agentscope.prompt</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/agentscope.prompt.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-agentscope.prompt">
+<span id="agentscope-prompt"></span><h1>agentscope.prompt<a class="headerlink" href="#module-agentscope.prompt" title="Link to this heading"></a></h1>
+<p>Prompt engineering module.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.prompt.PromptType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.prompt.</span></span><span class="sig-name descname"><span class="pre">PromptType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/prompt.html#PromptType"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.prompt.PromptType" title="Link to this definition"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">IntEnum</span></code></p>
+<p>Enum for prompt types.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.prompt.PromptType.STRING">
+<span class="sig-name descname"><span class="pre">STRING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#agentscope.prompt.PromptType.STRING" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.prompt.PromptType.LIST">
+<span class="sig-name descname"><span class="pre">LIST</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#agentscope.prompt.PromptType.LIST" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.prompt.PromptEngine">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.prompt.</span></span><span class="sig-name descname"><span class="pre">PromptEngine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.models.model.html#agentscope.models.model.ModelWrapperBase" title="agentscope.models.model.ModelWrapperBase"><span class="pre">ModelWrapperBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">shrink_policy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.constants.html#agentscope.constants.ShrinkPolicy" title="agentscope.constants.ShrinkPolicy"><span class="pre">ShrinkPolicy</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">ShrinkPolicy.TRUNCATE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#agentscope.prompt.PromptType" title="agentscope.prompt.PromptType"><span class="pre">PromptType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_summary_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">summarize_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.models.model.html#agentscope.models.model.ModelWrapperBase" title="agentscope.models.model.ModelWrapperBase"><span class="pre">ModelWrapperBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/prompt.html#PromptEngine"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.prompt.PromptEngine" title="Link to this definition"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Prompt engineering module for both list and string prompt</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.prompt.PromptEngine.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.models.model.html#agentscope.models.model.ModelWrapperBase" title="agentscope.models.model.ModelWrapperBase"><span class="pre">ModelWrapperBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">shrink_policy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.constants.html#agentscope.constants.ShrinkPolicy" title="agentscope.constants.ShrinkPolicy"><span class="pre">ShrinkPolicy</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">ShrinkPolicy.TRUNCATE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#agentscope.prompt.PromptType" title="agentscope.prompt.PromptType"><span class="pre">PromptType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_summary_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">summarize_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.models.model.html#agentscope.models.model.ModelWrapperBase" title="agentscope.models.model.ModelWrapperBase"><span class="pre">ModelWrapperBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/prompt.html#PromptEngine.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.prompt.PromptEngine.__init__" title="Link to this definition"></a></dt>
+<dd><p>Init PromptEngine.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<cite>ModelWrapperBase</cite>) – The target model for prompt engineering.</p></li>
+<li><p><strong>(</strong><strong>ShrinkPolicy</strong> (<em>shrink_policy</em>)</p></li>
+<li><p><strong>to</strong> (<em>defaults</em>)</p></li>
+<li><p><strong>ShrinkPolicy.TRUNCATE</strong><strong>)</strong> – The shrink policy for prompt engineering, defaults to
+<cite>ShrinkPolicy.TRUNCATE</cite>.</p></li>
+<li><p><strong>max_length</strong> (<cite>Optional[int]</cite>, defaults to <cite>None</cite>) – The max length of context, if it is None, it will be set to the
+max length of the model.</p></li>
+<li><p><strong>prompt_type</strong> (<cite>Optional[MsgType]</cite>, defaults to <cite>None</cite>) – The type of prompt, if it is None, it will be set according to
+the model.</p></li>
+<li><p><strong>max_summary_length</strong> (<cite>int</cite>, defaults to <cite>200</cite>) – The max length of summary, if it is None, it will be set to the
+max length of the model.</p></li>
+<li><p><strong>summarize_model</strong> (<cite>Optional[ModelWrapperBase]</cite>, defaults to <cite>None</cite>) – The model used for summarization, if it is None, it will be
+set to <cite>model</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">备注</p>
+<ol class="arabic simple">
+<li><p>TODO: Shrink function is still under development.</p></li>
+</ol>
+<p>2. If the argument <cite>max_length</cite> and <cite>prompt_type</cite> are not given,
+they will be set according to the given model.</p>
+<p>3. <cite>shrink_policy</cite> is used when the prompt is too long, it can
+be set to <cite>ShrinkPolicy.TRUNCATE</cite> or <cite>ShrinkPolicy.SUMMARIZE</cite>.</p>
+<blockquote>
+<div><p>a. <cite>ShrinkPolicy.TRUNCATE</cite> will truncate the prompt to the
+desired length.</p>
+<p>b. <cite>ShrinkPolicy.SUMMARIZE</cite> will summarize partial of the
+dialog history to save space. The summarization model
+defaults to <cite>model</cite> if not given.</p>
+</div></blockquote>
+</div>
+<p class="rubric">示例</p>
+<p>With prompt engine, we encapsulate different operations for
+string- and list-style prompt, and block the prompt engineering
+process from the user.
+As a user, you can just combine you prompt as follows.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># prepare the component</span>
+<span class="n">system_prompt</span> <span class="o">=</span> <span class="s2">&quot;You&#39;re a helpful assistant ...&quot;</span>
+<span class="n">hint_prompt</span> <span class="o">=</span> <span class="s2">&quot;You should response in Json format.&quot;</span>
+<span class="n">prefix</span> <span class="o">=</span> <span class="s2">&quot;assistant: &quot;</span>
+
+<span class="c1"># initialize the prompt engine and join the prompt</span>
+<span class="n">engine</span> <span class="o">=</span> <span class="n">PromptEngine</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="n">prompt</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">system_prompt</span><span class="p">,</span> <span class="n">memory</span><span class="o">.</span><span class="n">get_memory</span><span class="p">(),</span>
+<span class="n">hint_prompt</span><span class="p">,</span> <span class="n">prefix</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.prompt.PromptEngine.join">
+<span class="sig-name descname"><span class="pre">join</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/prompt.html#PromptEngine.join"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.prompt.PromptEngine.join" title="Link to this definition"></a></dt>
+<dd><p>Join prompt components according to its type. The join function can
+accept any number and type of arguments. If prompt type is
+<cite>PromptType.STRING</cite>, the arguments will be joined by <cite>“\n”</cite>. If
+prompt type is <cite>PromptType.LIST</cite>, the string arguments will be
+converted to <cite>Msg</cite> from <cite>system</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.prompt.PromptEngine.join_to_str">
+<span class="sig-name descname"><span class="pre">join_to_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/prompt.html#PromptEngine.join_to_str"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.prompt.PromptEngine.join_to_str" title="Link to this definition"></a></dt>
+<dd><p>Join prompt components to a string.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.prompt.PromptEngine.join_to_list">
+<span class="sig-name descname"><span class="pre">join_to_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/agentscope/prompt.html#PromptEngine.join_to_list"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.prompt.PromptEngine.join_to_list" title="Link to this definition"></a></dt>
+<dd><p>Join prompt components to a list of <cite>Msg</cite> objects.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="agentscope.web.html" class="btn btn-neutral float-left" title="agentscope.web" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="agentscope.utils.html" class="btn btn-neutral float-right" title="agentscope.utils" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

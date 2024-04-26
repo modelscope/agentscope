@@ -57,15 +57,17 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">agentscope.web</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
 </ul>
 
         </div>
@@ -120,7 +122,7 @@
 
 
 <div class="viewcode-block" id="AgentBase">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.AgentBase">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.agents.agent.html#agentscope.agents.AgentBase">[docs]</a>
 <span class="k">class</span> <span class="nc">AgentBase</span><span class="p">(</span><span class="n">Operator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">_RecordInitSettingMeta</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for all agents.</span>
 
@@ -130,6 +132,8 @@
 
     <span class="n">_version</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 
+<div class="viewcode-block" id="AgentBase.__init__">
+<a class="viewcode-back" href="../../../agentscope.agents.agent.html#agentscope.agents.AgentBase.__init__">[docs]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -174,10 +178,11 @@
 
         <span class="c1"># The audience of this agent, which means if this agent generates a</span>
         <span class="c1"># response, it will be passed to all agents in the audience.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_audience</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_audience</span> <span class="o">=</span> <span class="kc">None</span></div>
+
 
 <div class="viewcode-block" id="AgentBase.generate_agent_id">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.AgentBase.generate_agent_id">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.agents.agent.html#agentscope.agents.AgentBase.generate_agent_id">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">generate_agent_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the agent_id of this agent instance&quot;&quot;&quot;</span>
@@ -186,7 +191,7 @@
 
 
 <div class="viewcode-block" id="AgentBase.reply">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.AgentBase.reply">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.agents.agent.html#agentscope.agents.AgentBase.reply">[docs]</a>
     <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Define the actions taken by this agent.</span>
 
@@ -208,7 +213,7 @@
 
 
 <div class="viewcode-block" id="AgentBase.load_from_config">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.AgentBase.load_from_config">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.agents.agent.html#agentscope.agents.AgentBase.load_from_config">[docs]</a>
     <span class="k">def</span> <span class="nf">load_from_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Load configuration for this agent.</span>
 
@@ -218,7 +223,7 @@
 
 
 <div class="viewcode-block" id="AgentBase.export_config">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.AgentBase.export_config">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.agents.agent.html#agentscope.agents.AgentBase.export_config">[docs]</a>
     <span class="k">def</span> <span class="nf">export_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return configuration of this agent.</span>
 
@@ -229,7 +234,7 @@
 
 
 <div class="viewcode-block" id="AgentBase.load_memory">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.AgentBase.load_memory">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.agents.agent.html#agentscope.agents.AgentBase.load_memory">[docs]</a>
     <span class="k">def</span> <span class="nf">load_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memory</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Load input memory.&quot;&quot;&quot;</span></div>
 
@@ -246,7 +251,7 @@
         <span class="k">return</span> <span class="n">res</span>
 
 <div class="viewcode-block" id="AgentBase.speak">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.AgentBase.speak">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.agents.agent.html#agentscope.agents.AgentBase.speak">[docs]</a>
     <span class="k">def</span> <span class="nf">speak</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">content</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span>
@@ -256,7 +261,7 @@
 
 
 <div class="viewcode-block" id="AgentBase.observe">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.AgentBase.observe">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.agents.agent.html#agentscope.agents.AgentBase.observe">[docs]</a>
     <span class="k">def</span> <span class="nf">observe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Observe the input, store it in memory without response to it.</span>
 
@@ -269,7 +274,7 @@
 
 
 <div class="viewcode-block" id="AgentBase.reset_audience">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.AgentBase.reset_audience">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.agents.agent.html#agentscope.agents.AgentBase.reset_audience">[docs]</a>
     <span class="k">def</span> <span class="nf">reset_audience</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">audience</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">AgentBase</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the audience of this agent, which means if this agent</span>
 <span class="sd">        generates a response, it will be passed to all audiences.</span>
@@ -285,7 +290,7 @@
 
 
 <div class="viewcode-block" id="AgentBase.clear_audience">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.AgentBase.clear_audience">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.agents.agent.html#agentscope.agents.AgentBase.clear_audience">[docs]</a>
     <span class="k">def</span> <span class="nf">clear_audience</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove the audience of this agent.&quot;&quot;&quot;</span>
         <span class="c1"># TODO: we leave the consideration of nested msghub for future.</span>
@@ -294,7 +299,7 @@
 
 
 <div class="viewcode-block" id="AgentBase.rm_audience">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.AgentBase.rm_audience">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.agents.agent.html#agentscope.agents.AgentBase.rm_audience">[docs]</a>
     <span class="k">def</span> <span class="nf">rm_audience</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">audience</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">AgentBase</span><span class="p">],</span> <span class="n">AgentBase</span><span class="p">],</span>
@@ -328,7 +333,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_id</span>
 
 <div class="viewcode-block" id="AgentBase.to_dist">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.AgentBase.to_dist">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.agents.agent.html#agentscope.agents.AgentBase.to_dist">[docs]</a>
     <span class="k">def</span> <span class="nf">to_dist</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>

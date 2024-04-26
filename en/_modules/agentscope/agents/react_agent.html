@@ -57,15 +57,17 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">agentscope.web</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
 </ul>
 
         </div>
@@ -162,7 +164,7 @@
 
 
 <div class="viewcode-block" id="ReActAgent">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.ReActAgent">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.agents.react_agent.html#agentscope.agents.ReActAgent">[docs]</a>
 <span class="k">class</span> <span class="nc">ReActAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An agent class that implements the ReAct algorithm. More details refer</span>
 <span class="sd">    to https://arxiv.org/abs/2210.03629.</span>
@@ -173,6 +175,8 @@
 <span class="sd">    their own needs.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="ReActAgent.__init__">
+<a class="viewcode-back" href="../../../agentscope.agents.react_agent.html#agentscope.agents.ReActAgent.__init__">[docs]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -224,10 +228,11 @@
             <span class="p">)</span>
 
         <span class="c1"># Put sys prompt into memory</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sys_prompt</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sys_prompt</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">))</span></div>
+
 
 <div class="viewcode-block" id="ReActAgent.reply">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.ReActAgent.reply">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.agents.react_agent.html#agentscope.agents.ReActAgent.reply">[docs]</a>
     <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The reply function that achieves the ReAct algorithm.</span>
 <span class="sd">        The more details please refer to https://arxiv.org/abs/2210.03629&quot;&quot;&quot;</span>
@@ -335,7 +340,7 @@
 
 
 <div class="viewcode-block" id="ReActAgent.execute_func">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.ReActAgent.execute_func">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.agents.react_agent.html#agentscope.agents.ReActAgent.execute_func">[docs]</a>
     <span class="k">def</span> <span class="nf">execute_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">func_call</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the tool function and return the result.</span>
 
@@ -380,7 +385,7 @@
 
 
 <div class="viewcode-block" id="ReActAgent.prepare_funcs_prompt">
-<a class="viewcode-back" href="../../../agentscope.agents.html#agentscope.agents.ReActAgent.prepare_funcs_prompt">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.agents.react_agent.html#agentscope.agents.ReActAgent.prepare_funcs_prompt">[docs]</a>
     <span class="k">def</span> <span class="nf">prepare_funcs_prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tools</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert function descriptions from json schema format to</span>
 <span class="sd">        string prompt format.</span>

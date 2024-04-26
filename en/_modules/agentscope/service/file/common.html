@@ -57,15 +57,17 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.agents.html">agentscope.agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.memory.html">agentscope.memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.rpc.html">agentscope.rpc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.utils.html">agentscope.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.web.html">agentscope.web</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.utils.html">agentscope.utils</a></li>
 </ul>
 
         </div>
@@ -106,7 +108,7 @@
 
 
 <div class="viewcode-block" id="create_file">
-<a class="viewcode-back" href="../../../../agentscope.service.html#agentscope.service.create_file">[docs]</a>
+<a class="viewcode-back" href="../../../../agentscope.service.file.common.html#agentscope.service.create_file">[docs]</a>
 <span class="k">def</span> <span class="nf">create_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a file and write content to it.</span>
@@ -132,7 +134,7 @@
 
 
 <div class="viewcode-block" id="delete_file">
-<a class="viewcode-back" href="../../../../agentscope.service.html#agentscope.service.delete_file">[docs]</a>
+<a class="viewcode-back" href="../../../../agentscope.service.file.common.html#agentscope.service.delete_file">[docs]</a>
 <span class="k">def</span> <span class="nf">delete_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete a file specified by the file path.</span>
 
@@ -161,7 +163,7 @@
 
 
 <div class="viewcode-block" id="move_file">
-<a class="viewcode-back" href="../../../../agentscope.service.html#agentscope.service.move_file">[docs]</a>
+<a class="viewcode-back" href="../../../../agentscope.service.file.common.html#agentscope.service.move_file">[docs]</a>
 <span class="k">def</span> <span class="nf">move_file</span><span class="p">(</span><span class="n">source_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">destination_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Move a file from a source path to a destination path.</span>
@@ -203,7 +205,7 @@
 
 
 <div class="viewcode-block" id="create_directory">
-<a class="viewcode-back" href="../../../../agentscope.service.html#agentscope.service.create_directory">[docs]</a>
+<a class="viewcode-back" href="../../../../agentscope.service.file.common.html#agentscope.service.create_directory">[docs]</a>
 <span class="k">def</span> <span class="nf">create_directory</span><span class="p">(</span><span class="n">directory_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a directory at the specified path.</span>
@@ -238,7 +240,7 @@
 
 
 <div class="viewcode-block" id="delete_directory">
-<a class="viewcode-back" href="../../../../agentscope.service.html#agentscope.service.delete_directory">[docs]</a>
+<a class="viewcode-back" href="../../../../agentscope.service.file.common.html#agentscope.service.delete_directory">[docs]</a>
 <span class="k">def</span> <span class="nf">delete_directory</span><span class="p">(</span><span class="n">directory_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Delete a directory and all of its contents.</span>
@@ -273,7 +275,7 @@
 
 
 <div class="viewcode-block" id="move_directory">
-<a class="viewcode-back" href="../../../../agentscope.service.html#agentscope.service.move_directory">[docs]</a>
+<a class="viewcode-back" href="../../../../agentscope.service.file.common.html#agentscope.service.move_directory">[docs]</a>
 <span class="k">def</span> <span class="nf">move_directory</span><span class="p">(</span>
     <span class="n">source_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">destination_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -319,7 +321,7 @@
 
 
 <div class="viewcode-block" id="list_directory_content">
-<a class="viewcode-back" href="../../../../agentscope.service.html#agentscope.service.list_directory_content">[docs]</a>
+<a class="viewcode-back" href="../../../../agentscope.service.file.common.html#agentscope.service.list_directory_content">[docs]</a>
 <span class="k">def</span> <span class="nf">list_directory_content</span><span class="p">(</span><span class="n">directory_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    List the contents of a directory. i.e. ls -a</span>
@@ -358,7 +360,7 @@
 
 
 <div class="viewcode-block" id="get_current_directory">
-<a class="viewcode-back" href="../../../../agentscope.service.html#agentscope.service.get_current_directory">[docs]</a>
+<a class="viewcode-back" href="../../../../agentscope.service.file.common.html#agentscope.service.get_current_directory">[docs]</a>
 <span class="k">def</span> <span class="nf">get_current_directory</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the current working directory path.</span>

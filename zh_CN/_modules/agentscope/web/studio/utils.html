@@ -1,0 +1,387 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.web.studio.utils &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=7d86a446"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../../_static/translations.js?v=beaddf03"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../../../../en/_modules/agentscope/web/studio/utils.html">English</a></li> |
+    <a href="../../../../../zh_CN/_modules/agentscope/web/studio/utils.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/quick_start.html">快速上手</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/advance.html">进阶使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.utils.html">agentscope.utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">模块代码</a></li>
+      <li class="breadcrumb-item active">agentscope.web.studio.utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>agentscope.web.studio.utils 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;web ui utils&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Queue</span>
+<span class="kn">from</span> <span class="nn">queue</span> <span class="kn">import</span> <span class="n">Empty</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+
+<span class="kn">from</span> <span class="nn">dashscope.audio.asr</span> <span class="kn">import</span> <span class="n">RecognitionCallback</span><span class="p">,</span> <span class="n">Recognition</span>
+
+<span class="n">SYS_MSG_PREFIX</span> <span class="o">=</span> <span class="s2">&quot;【SYSTEM】&quot;</span>
+
+<span class="n">thread_local_data</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">local</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="init_uid_queues">
+<a class="viewcode-back" href="../../../../agentscope.web.studio.utils.html#agentscope.web.studio.utils.init_uid_queues">[文档]</a>
+<span class="k">def</span> <span class="nf">init_uid_queues</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Initializes and returns a dictionary of user-specific queues.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;glb_queue_chat_msg&quot;</span><span class="p">:</span> <span class="n">Queue</span><span class="p">(),</span>
+        <span class="s2">&quot;glb_queue_user_input&quot;</span><span class="p">:</span> <span class="n">Queue</span><span class="p">(),</span>
+        <span class="s2">&quot;glb_queue_reset_msg&quot;</span><span class="p">:</span> <span class="n">Queue</span><span class="p">(),</span>
+    <span class="p">}</span></div>
+
+
+
+<span class="n">glb_uid_dict</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="n">init_uid_queues</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="send_msg">
+<a class="viewcode-back" href="../../../../agentscope.web.studio.utils.html#agentscope.web.studio.utils.send_msg">[文档]</a>
+<span class="k">def</span> <span class="nf">send_msg</span><span class="p">(</span>
+    <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">is_player</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">role</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">uid</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">flushing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">avatar</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">msg_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sends a message to the web UI.&quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">glb_uid_dict</span>
+    <span class="n">glb_queue_chat_msg</span> <span class="o">=</span> <span class="n">glb_uid_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;glb_queue_chat_msg&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">is_player</span><span class="p">:</span>
+        <span class="n">glb_queue_chat_msg</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="p">,</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">role</span><span class="p">,</span>
+                    <span class="s2">&quot;flushing&quot;</span><span class="p">:</span> <span class="n">flushing</span><span class="p">,</span>
+                    <span class="s2">&quot;avatar&quot;</span><span class="p">:</span> <span class="n">avatar</span><span class="p">,</span>
+                <span class="p">},</span>
+                <span class="kc">None</span><span class="p">,</span>
+            <span class="p">],</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">glb_queue_chat_msg</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="kc">None</span><span class="p">,</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="p">,</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">role</span><span class="p">,</span>
+                    <span class="s2">&quot;flushing&quot;</span><span class="p">:</span> <span class="n">flushing</span><span class="p">,</span>
+                    <span class="s2">&quot;avatar&quot;</span><span class="p">:</span> <span class="n">avatar</span><span class="p">,</span>
+                    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">msg_id</span><span class="p">,</span>
+                <span class="p">},</span>
+            <span class="p">],</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_chat_msg">
+<a class="viewcode-back" href="../../../../agentscope.web.studio.utils.html#agentscope.web.studio.utils.get_chat_msg">[文档]</a>
+<span class="k">def</span> <span class="nf">get_chat_msg</span><span class="p">(</span><span class="n">uid</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieves the next chat message from the queue, if available.&quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">glb_uid_dict</span>
+    <span class="n">glb_queue_chat_msg</span> <span class="o">=</span> <span class="n">glb_uid_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;glb_queue_chat_msg&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">glb_queue_chat_msg</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">glb_queue_chat_msg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">line</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">line</span>
+    <span class="k">return</span> <span class="p">[]</span></div>
+
+
+
+<div class="viewcode-block" id="send_player_input">
+<a class="viewcode-back" href="../../../../agentscope.web.studio.utils.html#agentscope.web.studio.utils.send_player_input">[文档]</a>
+<span class="k">def</span> <span class="nf">send_player_input</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sends player input to the web UI.&quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">glb_uid_dict</span>
+    <span class="n">glb_queue_user_input</span> <span class="o">=</span> <span class="n">glb_uid_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;glb_queue_user_input&quot;</span><span class="p">]</span>
+    <span class="n">glb_queue_user_input</span><span class="o">.</span><span class="n">put</span><span class="p">([</span><span class="kc">None</span><span class="p">,</span> <span class="n">msg</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="get_player_input">
+<a class="viewcode-back" href="../../../../agentscope.web.studio.utils.html#agentscope.web.studio.utils.get_player_input">[文档]</a>
+<span class="k">def</span> <span class="nf">get_player_input</span><span class="p">(</span>
+    <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">uid</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Gets player input from the web UI or command line.&quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">glb_uid_dict</span>
+    <span class="n">glb_queue_user_input</span> <span class="o">=</span> <span class="n">glb_uid_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;glb_queue_user_input&quot;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">timeout</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">glb_queue_user_input</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">except</span> <span class="n">Empty</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="s2">&quot;timed out&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">glb_queue_user_input</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">content</span> <span class="o">==</span> <span class="s2">&quot;**Reset**&quot;</span><span class="p">:</span>
+        <span class="n">glb_uid_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">init_uid_queues</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">ResetException</span>
+    <span class="k">return</span> <span class="n">content</span></div>
+
+
+
+<div class="viewcode-block" id="send_reset_msg">
+<a class="viewcode-back" href="../../../../agentscope.web.studio.utils.html#agentscope.web.studio.utils.send_reset_msg">[文档]</a>
+<span class="k">def</span> <span class="nf">send_reset_msg</span><span class="p">(</span><span class="n">uid</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sends a reset message to the web UI.&quot;&quot;&quot;</span>
+    <span class="n">uid</span> <span class="o">=</span> <span class="n">check_uuid</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span>
+    <span class="k">global</span> <span class="n">glb_uid_dict</span>
+    <span class="n">glb_queue_reset_msg</span> <span class="o">=</span> <span class="n">glb_uid_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;glb_queue_reset_msg&quot;</span><span class="p">]</span>
+    <span class="n">glb_queue_reset_msg</span><span class="o">.</span><span class="n">put</span><span class="p">([</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;**Reset**&quot;</span><span class="p">])</span>
+    <span class="n">send_player_input</span><span class="p">(</span><span class="s2">&quot;**Reset**&quot;</span><span class="p">,</span> <span class="n">uid</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_reset_msg">
+<a class="viewcode-back" href="../../../../agentscope.web.studio.utils.html#agentscope.web.studio.utils.get_reset_msg">[文档]</a>
+<span class="k">def</span> <span class="nf">get_reset_msg</span><span class="p">(</span><span class="n">uid</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieves a reset message from the queue, if available.&quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">glb_uid_dict</span>
+    <span class="n">glb_queue_reset_msg</span> <span class="o">=</span> <span class="n">glb_uid_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">][</span><span class="s2">&quot;glb_queue_reset_msg&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">glb_queue_reset_msg</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">glb_queue_reset_msg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">content</span> <span class="o">==</span> <span class="s2">&quot;**Reset**&quot;</span><span class="p">:</span>
+            <span class="n">glb_uid_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">init_uid_queues</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">ResetException</span></div>
+
+
+
+<div class="viewcode-block" id="ResetException">
+<a class="viewcode-back" href="../../../../agentscope.web.studio.utils.html#agentscope.web.studio.utils.ResetException">[文档]</a>
+<span class="k">class</span> <span class="nc">ResetException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom exception to signal a reset action in the application.&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="check_uuid">
+<a class="viewcode-back" href="../../../../agentscope.web.studio.utils.html#agentscope.web.studio.utils.check_uuid">[文档]</a>
+<span class="k">def</span> <span class="nf">check_uuid</span><span class="p">(</span><span class="n">uid</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks whether a UUID is provided or generates a default one.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">uid</span> <span class="ow">or</span> <span class="n">uid</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;MODELSCOPE_ENVIRONMENT&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;studio&quot;</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">gradio</span> <span class="k">as</span> <span class="nn">gr</span>
+
+            <span class="k">raise</span> <span class="n">gr</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span><span class="s2">&quot;Please login first&quot;</span><span class="p">)</span>
+        <span class="n">uid</span> <span class="o">=</span> <span class="s2">&quot;local_user&quot;</span>
+    <span class="k">return</span> <span class="n">uid</span></div>
+
+
+
+<div class="viewcode-block" id="generate_image_from_name">
+<a class="viewcode-back" href="../../../../agentscope.web.studio.utils.html#agentscope.web.studio.utils.generate_image_from_name">[文档]</a>
+<span class="k">def</span> <span class="nf">generate_image_from_name</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generates an image based on the hash of the given name.&quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">agentscope.file_manager</span> <span class="kn">import</span> <span class="n">file_manager</span>
+
+    <span class="c1"># Using hashlib to generate a hash of the name</span>
+    <span class="n">hash_func</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">()</span>
+    <span class="n">hash_func</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+    <span class="n">hash_value</span> <span class="o">=</span> <span class="n">hash_func</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+
+    <span class="c1"># Extract the first 6 characters of the hash value as the hexadecimal</span>
+    <span class="c1"># representation of the color</span>
+    <span class="c1"># generate a color value between #000000 and #ffffff</span>
+    <span class="n">color_hex</span> <span class="o">=</span> <span class="s2">&quot;#&quot;</span> <span class="o">+</span> <span class="n">hash_value</span><span class="p">[:</span><span class="mi">6</span><span class="p">]</span>
+    <span class="n">color_rgb</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;RGB&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">color_hex</span><span class="p">)</span><span class="o">.</span><span class="n">getpixel</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+    <span class="n">image_filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file_manager</span><span class="o">.</span><span class="n">dir_root</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_image.png&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check if the image already exists</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">image_filepath</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">image_filepath</span>
+
+    <span class="c1"># If the image does not exist, generate and save it</span>
+    <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">200</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;RGB&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">),</span> <span class="n">color_rgb</span><span class="p">)</span>
+
+    <span class="n">image</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">image_filepath</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">image_filepath</span></div>
+
+
+
+<div class="viewcode-block" id="audio2text">
+<a class="viewcode-back" href="../../../../agentscope.web.studio.utils.html#agentscope.web.studio.utils.audio2text">[文档]</a>
+<span class="k">def</span> <span class="nf">audio2text</span><span class="p">(</span><span class="n">audio_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts audio file at the given path to text using ASR.&quot;&quot;&quot;</span>
+    <span class="c1"># dashscope.api_key = &quot;&quot;</span>
+    <span class="n">callback</span> <span class="o">=</span> <span class="n">RecognitionCallback</span><span class="p">()</span>
+    <span class="n">rec</span> <span class="o">=</span> <span class="n">Recognition</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="s2">&quot;paraformer-realtime-v1&quot;</span><span class="p">,</span>
+        <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;wav&quot;</span><span class="p">,</span>
+        <span class="n">sample_rate</span><span class="o">=</span><span class="mi">16000</span><span class="p">,</span>
+        <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">audio_path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">s</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">][</span><span class="s2">&quot;sentence&quot;</span><span class="p">]])</span></div>
+
+
+
+<div class="viewcode-block" id="cycle_dots">
+<a class="viewcode-back" href="../../../../agentscope.web.studio.utils.html#agentscope.web.studio.utils.cycle_dots">[文档]</a>
+<span class="k">def</span> <span class="nf">cycle_dots</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">num_dots</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;display thinking dots before agent reply&quot;&quot;&quot;</span>
+    <span class="n">current_dots</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">))</span>
+    <span class="n">next_dots</span> <span class="o">=</span> <span class="p">(</span><span class="n">current_dots</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="n">num_dots</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">next_dots</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">next_dots</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">*</span> <span class="n">next_dots</span></div>
+
+
+
+<div class="viewcode-block" id="user_input">
+<a class="viewcode-back" href="../../../../agentscope.web.studio.utils.html#agentscope.web.studio.utils.user_input">[文档]</a>
+<span class="k">def</span> <span class="nf">user_input</span><span class="p">(</span>
+    <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;User input: &quot;</span><span class="p">,</span>
+    <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;get user input&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">thread_local_data</span><span class="p">,</span> <span class="s2">&quot;uid&quot;</span><span class="p">):</span>
+        <span class="n">get_reset_msg</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="n">thread_local_data</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">get_player_input</span><span class="p">(</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span>
+            <span class="n">uid</span><span class="o">=</span><span class="n">thread_local_data</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">timeout</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">inputimeout</span> <span class="kn">import</span> <span class="n">inputimeout</span><span class="p">,</span> <span class="n">TimeoutOccurred</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">content</span> <span class="o">=</span> <span class="n">inputimeout</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">TimeoutOccurred</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="s2">&quot;timed out&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">content</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

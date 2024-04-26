@@ -1,0 +1,6 @@
+agentscope.service.execute_code.exec_shell
+==========================================
+.. automodule:: agentscope.service.execute_code.exec_shell
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,6 @@
+agentscope.agents.dialog_agent
+==============================
+.. automodule:: agentscope.agents.dialog_agent
+   :members:
+   :undoc-members:
+   :show-inheritance:

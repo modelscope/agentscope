@@ -1,0 +1,272 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.web.workstation.workflow_dag &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=7d86a446"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/translations.js?v=beaddf03"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../en/agentscope.web.workstation.workflow_dag.html">English</a></li> |
+    <a href="../zh_CN/agentscope.web.workstation.workflow_dag.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/quick_start.html">快速上手</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/advance.html">进阶使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">agentscope.web.workstation.workflow_dag</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/agentscope.web.workstation.workflow_dag.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-agentscope.web.workstation.workflow_dag">
+<span id="agentscope-web-workstation-workflow-dag"></span><h1>agentscope.web.workstation.workflow_dag<a class="headerlink" href="#module-agentscope.web.workstation.workflow_dag" title="Link to this heading"></a></h1>
+<p>AgentScope workstation DAG running engine.</p>
+<p>This module defines various workflow nodes that can be used to construct
+a computational DAG. Each node represents a step in the DAG and
+can perform certain actions when called.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_dag.remove_duplicates_from_end">
+<span class="sig-prename descclassname"><span class="pre">agentscope.web.workstation.workflow_dag.</span></span><span class="sig-name descname"><span class="pre">remove_duplicates_from_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lst</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_dag.html#remove_duplicates_from_end"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_dag.remove_duplicates_from_end" title="Link to this definition"></a></dt>
+<dd><p>remove duplicates element from end on a list</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_dag.ASDiGraph">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.web.workstation.workflow_dag.</span></span><span class="sig-name descname"><span class="pre">ASDiGraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_dag.html#ASDiGraph"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_dag.ASDiGraph" title="Link to this definition"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">DiGraph</span></code></p>
+<p>A class that represents a directed graph, extending the functionality of
+networkx’s DiGraph to suit specific workflow requirements in AgentScope.</p>
+<p>This graph supports operations such as adding nodes with associated
+computations and executing these computations in a topological order.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_dag.ASDiGraph.nodes_not_in_graph">
+<span class="sig-name descname"><span class="pre">nodes_not_in_graph</span></span><a class="headerlink" href="#agentscope.web.workstation.workflow_dag.ASDiGraph.nodes_not_in_graph" title="Link to this definition"></a></dt>
+<dd><p>A set of nodes that are not included in</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>set</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">the</span> <span class="pre">computation</span> <span class="pre">graph.</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_dag.ASDiGraph.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_dag.html#ASDiGraph.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_dag.ASDiGraph.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the ASDiGraph instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_dag.ASDiGraph.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_dag.html#ASDiGraph.run"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_dag.ASDiGraph.run" title="Link to this definition"></a></dt>
+<dd><p>Execute the computations associated with each node in the graph.</p>
+<p>The method initializes AgentScope, performs a topological sort of
+the nodes, and then runs each node’s computation sequentially using
+the outputs from its predecessors as inputs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_dag.ASDiGraph.compile">
+<span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compiled_filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_dag.html#ASDiGraph.compile"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_dag.ASDiGraph.compile" title="Link to this definition"></a></dt>
+<dd><p>Compile DAG to a runnable python code</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_dag.ASDiGraph.add_as_node">
+<span class="sig-name descname"><span class="pre">add_as_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_dag.html#ASDiGraph.add_as_node"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_dag.ASDiGraph.add_as_node" title="Link to this definition"></a></dt>
+<dd><p>Add a node to the graph based on provided node information and
+configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>node_id</strong> (<em>str</em>) – The identifier for the node being added.</p></li>
+<li><p><strong>node_info</strong> (<em>dict</em>) – A dictionary containing information about the
+node.</p></li>
+<li><p><strong>config</strong> (<em>dict</em>) – Configuration information for the node dependencies.</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>The computation object associated with the added node.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_dag.ASDiGraph.exec_node">
+<span class="sig-name descname"><span class="pre">exec_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_in</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_dag.html#ASDiGraph.exec_node"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_dag.ASDiGraph.exec_node" title="Link to this definition"></a></dt>
+<dd><p>Execute the computation associated with a given node in the graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>node_id</strong> (<em>str</em>) – The identifier of the node whose computation is
+to be executed.</p></li>
+<li><p><strong>x_in</strong> – The input to the node’s computation. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>The output of the node’s computation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_dag.sanitize_node_data">
+<span class="sig-prename descclassname"><span class="pre">agentscope.web.workstation.workflow_dag.</span></span><span class="sig-name descname"><span class="pre">sanitize_node_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_dag.html#sanitize_node_data"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_dag.sanitize_node_data" title="Link to this definition"></a></dt>
+<dd><p>Clean and validate node data, evaluating callable expressions where
+necessary.</p>
+<p>Processes the raw node information, removes empty arguments, and evaluates
+any callable expressions provided as string literals.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>raw_info</strong> (<em>dict</em>) – The raw node information dictionary that may contain
+callable expressions as strings.</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>The sanitized node information with callable expressions</dt><dd><p>evaluated.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.web.workstation.workflow_dag.build_dag">
+<span class="sig-prename descclassname"><span class="pre">agentscope.web.workstation.workflow_dag.</span></span><span class="sig-name descname"><span class="pre">build_dag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#agentscope.web.workstation.workflow_dag.ASDiGraph" title="agentscope.web.workstation.workflow_dag.ASDiGraph"><span class="pre">ASDiGraph</span></a></span></span><a class="reference internal" href="_modules/agentscope/web/workstation/workflow_dag.html#build_dag"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.web.workstation.workflow_dag.build_dag" title="Link to this definition"></a></dt>
+<dd><p>Construct a Directed Acyclic Graph (DAG) from the provided configuration.</p>
+<p>Initializes the graph nodes based on the configuration, adds model nodes
+first, then non-model nodes, and finally adds edges between the nodes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<em>dict</em>) – The configuration to build the graph from, containing
+node info such as name, type, arguments, and connections.</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>The constructed directed acyclic graph.</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#agentscope.web.workstation.workflow_dag.ASDiGraph" title="agentscope.web.workstation.workflow_dag.ASDiGraph">ASDiGraph</a></p>
+</dd>
+<dt class="field-even">抛出<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the resulting graph is not acyclic.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

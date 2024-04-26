@@ -58,15 +58,17 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">agentscope.web</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
 </ul>
 
         </div>
@@ -116,10 +118,12 @@
 
 
 <div class="viewcode-block" id="RpcAgentClient">
-<a class="viewcode-back" href="../../../agentscope.rpc.html#agentscope.rpc.RpcAgentClient">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_client.html#agentscope.rpc.RpcAgentClient">[文档]</a>
 <span class="k">class</span> <span class="nc">RpcAgentClient</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A client of Rpc agent server&quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="RpcAgentClient.__init__">
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_client.html#agentscope.rpc.RpcAgentClient.__init__">[文档]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Init a rpc agent client</span>
 
@@ -132,10 +136,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">agent_id</span> <span class="o">=</span> <span class="n">agent_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent_id</span> <span class="o">=</span> <span class="n">agent_id</span></div>
+
 
 <div class="viewcode-block" id="RpcAgentClient.call_func">
-<a class="viewcode-back" href="../../../agentscope.rpc.html#agentscope.rpc.RpcAgentClient.call_func">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_client.html#agentscope.rpc.RpcAgentClient.call_func">[文档]</a>
     <span class="k">def</span> <span class="nf">call_func</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -165,7 +170,7 @@
 
 
 <div class="viewcode-block" id="RpcAgentClient.create_agent">
-<a class="viewcode-back" href="../../../agentscope.rpc.html#agentscope.rpc.RpcAgentClient.create_agent">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_client.html#agentscope.rpc.RpcAgentClient.create_agent">[文档]</a>
     <span class="k">def</span> <span class="nf">create_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_configs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new agent for this client.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -186,7 +191,7 @@
 
 
 <div class="viewcode-block" id="RpcAgentClient.delete_agent">
-<a class="viewcode-back" href="../../../agentscope.rpc.html#agentscope.rpc.RpcAgentClient.delete_agent">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_client.html#agentscope.rpc.RpcAgentClient.delete_agent">[文档]</a>
     <span class="k">def</span> <span class="nf">delete_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Delete the agent created by this client.</span>
@@ -203,16 +208,19 @@
 
 
 <div class="viewcode-block" id="ResponseStub">
-<a class="viewcode-back" href="../../../agentscope.rpc.html#agentscope.rpc.ResponseStub">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_client.html#agentscope.rpc.ResponseStub">[文档]</a>
 <span class="k">class</span> <span class="nc">ResponseStub</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A stub used to save the response of an rpc call in a sub-thread.&quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="ResponseStub.__init__">
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_client.html#agentscope.rpc.ResponseStub.__init__">[文档]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">response</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">condition</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Condition</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">condition</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Condition</span><span class="p">()</span></div>
+
 
 <div class="viewcode-block" id="ResponseStub.set_response">
-<a class="viewcode-back" href="../../../agentscope.rpc.html#agentscope.rpc.ResponseStub.set_response">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_client.html#agentscope.rpc.ResponseStub.set_response">[文档]</a>
     <span class="k">def</span> <span class="nf">set_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the message.&quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="p">:</span>
@@ -221,7 +229,7 @@
 
 
 <div class="viewcode-block" id="ResponseStub.get_response">
-<a class="viewcode-back" href="../../../agentscope.rpc.html#agentscope.rpc.ResponseStub.get_response">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_client.html#agentscope.rpc.ResponseStub.get_response">[文档]</a>
     <span class="k">def</span> <span class="nf">get_response</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the message.&quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="p">:</span>
@@ -233,7 +241,7 @@
 
 
 <div class="viewcode-block" id="call_in_thread">
-<a class="viewcode-back" href="../../../agentscope.rpc.html#agentscope.rpc.call_in_thread">[文档]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_client.html#agentscope.rpc.call_in_thread">[文档]</a>
 <span class="k">def</span> <span class="nf">call_in_thread</span><span class="p">(</span>
     <span class="n">client</span><span class="p">:</span> <span class="n">RpcAgentClient</span><span class="p">,</span>
     <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>

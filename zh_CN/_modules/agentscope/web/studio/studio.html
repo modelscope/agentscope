@@ -1,0 +1,494 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.web.studio.studio &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=7d86a446"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../../_static/translations.js?v=beaddf03"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../../../../en/_modules/agentscope/web/studio/studio.html">English</a></li> |
+    <a href="../../../../../zh_CN/_modules/agentscope/web/studio/studio.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/quick_start.html">快速上手</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/advance.html">进阶使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.utils.html">agentscope.utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">模块代码</a></li>
+      <li class="breadcrumb-item active">agentscope.web.studio.studio</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>agentscope.web.studio.studio 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;run web ui&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">gradio</span> <span class="k">as</span> <span class="nn">gr</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">gr</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">modelscope_studio</span> <span class="k">as</span> <span class="nn">mgr</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">mgr</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="kn">from</span> <span class="nn">agentscope.web.studio.utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">send_player_input</span><span class="p">,</span>
+    <span class="n">get_chat_msg</span><span class="p">,</span>
+    <span class="n">SYS_MSG_PREFIX</span><span class="p">,</span>
+    <span class="n">ResetException</span><span class="p">,</span>
+    <span class="n">check_uuid</span><span class="p">,</span>
+    <span class="n">send_msg</span><span class="p">,</span>
+    <span class="n">generate_image_from_name</span><span class="p">,</span>
+    <span class="n">audio2text</span><span class="p">,</span>
+    <span class="n">send_reset_msg</span><span class="p">,</span>
+    <span class="n">thread_local_data</span><span class="p">,</span>
+    <span class="n">cycle_dots</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">agentscope.web.studio.constants</span> <span class="kn">import</span> <span class="n">_SPEAK</span>
+
+<span class="n">MAX_NUM_DISPLAY_MSG</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">FAIL_COUNT_DOWN</span> <span class="o">=</span> <span class="mi">30</span>
+
+
+<div class="viewcode-block" id="init_uid_list">
+<a class="viewcode-back" href="../../../../agentscope.web.studio.studio.html#agentscope.web.studio.studio.init_uid_list">[文档]</a>
+<span class="k">def</span> <span class="nf">init_uid_list</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Initialize an empty list for storing user IDs.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[]</span></div>
+
+
+
+<span class="n">glb_history_dict</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="n">init_uid_list</span><span class="p">)</span>
+<span class="n">glb_doing_signal_dict</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="n">init_uid_list</span><span class="p">)</span>
+<span class="n">glb_signed_user</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+<div class="viewcode-block" id="reset_glb_var">
+<a class="viewcode-back" href="../../../../agentscope.web.studio.studio.html#agentscope.web.studio.studio.reset_glb_var">[文档]</a>
+<span class="k">def</span> <span class="nf">reset_glb_var</span><span class="p">(</span><span class="n">uid</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reset global variables for a given user ID.&quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">glb_history_dict</span>
+    <span class="k">global</span> <span class="n">glb_doing_signal_dict</span>
+    <span class="n">glb_history_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">init_uid_list</span><span class="p">()</span>
+    <span class="n">glb_doing_signal_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">init_uid_list</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="get_chat">
+<a class="viewcode-back" href="../../../../agentscope.web.studio.studio.html#agentscope.web.studio.studio.get_chat">[文档]</a>
+<span class="k">def</span> <span class="nf">get_chat</span><span class="p">(</span><span class="n">uid</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve chat messages for a given user ID.&quot;&quot;&quot;</span>
+    <span class="n">uid</span> <span class="o">=</span> <span class="n">check_uuid</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span>
+    <span class="k">global</span> <span class="n">glb_history_dict</span>
+    <span class="k">global</span> <span class="n">glb_doing_signal_dict</span>
+
+    <span class="n">line</span> <span class="o">=</span> <span class="n">get_chat_msg</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">)</span>
+    <span class="c1"># TODO: Optimize the display effect, currently there is a problem of</span>
+    <span class="c1">#  output display jumping</span>
+    <span class="k">if</span> <span class="n">line</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;text&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">_SPEAK</span><span class="p">:</span>
+            <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;text&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">glb_doing_signal_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">line</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">glb_history_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="n">line</span><span class="p">]</span>
+            <span class="n">glb_doing_signal_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">dial_msg</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">glb_history_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]:</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">line</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">dial_msg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># User chat, format: (msg, None)</span>
+            <span class="n">dial_msg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">glb_doing_signal_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">glb_doing_signal_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">][</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">cycle_dots</span><span class="p">(</span><span class="n">glb_doing_signal_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;text&quot;</span><span class="p">])</span>
+            <span class="n">glb_doing_signal_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;text&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text</span>
+            <span class="n">glb_doing_signal_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
+            <span class="n">glb_doing_signal_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;flushing&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">dial_msg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">glb_doing_signal_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">dial_msg</span><span class="p">[</span><span class="o">-</span><span class="n">MAX_NUM_DISPLAY_MSG</span><span class="p">:]</span></div>
+
+
+
+<div class="viewcode-block" id="send_audio">
+<a class="viewcode-back" href="../../../../agentscope.web.studio.studio.html#agentscope.web.studio.studio.send_audio">[文档]</a>
+<span class="k">def</span> <span class="nf">send_audio</span><span class="p">(</span><span class="n">audio_term</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert audio input to text and send as a chat message.&quot;&quot;&quot;</span>
+    <span class="n">uid</span> <span class="o">=</span> <span class="n">check_uuid</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">audio2text</span><span class="p">(</span><span class="n">audio_path</span><span class="o">=</span><span class="n">audio_term</span><span class="p">)</span>
+    <span class="n">send_player_input</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">)</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="n">content</span><span class="si">}</span>
+<span class="s2">    &lt;audio src=&quot;</span><span class="si">{</span><span class="n">audio_term</span><span class="si">}</span><span class="s2">&quot;&gt;&lt;/audio&gt;&quot;&quot;&quot;</span>
+    <span class="n">send_msg</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">is_player</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;Me&quot;</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span> <span class="n">avatar</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="send_image">
+<a class="viewcode-back" href="../../../../agentscope.web.studio.studio.html#agentscope.web.studio.studio.send_image">[文档]</a>
+<span class="k">def</span> <span class="nf">send_image</span><span class="p">(</span><span class="n">image_term</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Send an image as a chat message.&quot;&quot;&quot;</span>
+    <span class="n">uid</span> <span class="o">=</span> <span class="n">check_uuid</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span>
+    <span class="n">send_player_input</span><span class="p">(</span><span class="n">image_term</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">)</span>
+
+    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;&lt;img src=&quot;</span><span class="si">{</span><span class="n">image_term</span><span class="si">}</span><span class="s2">&quot;&gt;&lt;/img&gt;&quot;&quot;&quot;</span>
+    <span class="n">avatar</span> <span class="o">=</span> <span class="n">generate_image_from_name</span><span class="p">(</span><span class="s2">&quot;Me&quot;</span><span class="p">)</span>
+    <span class="n">send_msg</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">is_player</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;Me&quot;</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span> <span class="n">avatar</span><span class="o">=</span><span class="n">avatar</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="send_message">
+<a class="viewcode-back" href="../../../../agentscope.web.studio.studio.html#agentscope.web.studio.studio.send_message">[文档]</a>
+<span class="k">def</span> <span class="nf">send_message</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Send a generic message to the player.&quot;&quot;&quot;</span>
+    <span class="n">uid</span> <span class="o">=</span> <span class="n">check_uuid</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span>
+    <span class="n">send_player_input</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">)</span>
+    <span class="n">avatar</span> <span class="o">=</span> <span class="n">generate_image_from_name</span><span class="p">(</span><span class="s2">&quot;Me&quot;</span><span class="p">)</span>
+    <span class="n">send_msg</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">is_player</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;Me&quot;</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span> <span class="n">avatar</span><span class="o">=</span><span class="n">avatar</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="fn_choice">
+<a class="viewcode-back" href="../../../../agentscope.web.studio.studio.html#agentscope.web.studio.studio.fn_choice">[文档]</a>
+<span class="k">def</span> <span class="nf">fn_choice</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">gr</span><span class="o">.</span><span class="n">EventData</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle a selection event from the chatbot interface.&quot;&quot;&quot;</span>
+    <span class="n">uid</span> <span class="o">=</span> <span class="n">check_uuid</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span>
+    <span class="c1"># pylint: disable=protected-access</span>
+    <span class="n">send_player_input</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">],</span> <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="import_function_from_path">
+<a class="viewcode-back" href="../../../../agentscope.web.studio.studio.html#agentscope.web.studio.studio.import_function_from_path">[文档]</a>
+<span class="k">def</span> <span class="nf">import_function_from_path</span><span class="p">(</span>
+    <span class="n">module_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">function_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">module_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Import a function from the given module path.&quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">importlib.util</span>
+
+    <span class="n">script_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">module_path</span><span class="p">))</span>
+
+    <span class="c1"># Temporarily add a script directory to sys.path</span>
+    <span class="n">original_sys_path</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">[:]</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">script_dir</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># If a module name is not provided, you can use the filename (</span>
+        <span class="c1"># without extension) as the module name</span>
+        <span class="k">if</span> <span class="n">module_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">module_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">module_path</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># Creating module specifications and loading modules</span>
+        <span class="n">spec</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">spec_from_file_location</span><span class="p">(</span>
+            <span class="n">module_name</span><span class="p">,</span>
+            <span class="n">module_path</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">module_from_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+            <span class="n">spec</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">exec_module</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+            <span class="c1"># Getting a function from a module</span>
+            <span class="n">function</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">function_name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Could not find module spec for </span><span class="si">{</span><span class="n">module_name</span><span class="si">}</span><span class="s2"> at&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">module_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;The module &#39;</span><span class="si">{</span><span class="n">module_name</span><span class="si">}</span><span class="s2">&#39; does not have a function named &#39;&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">function_name</span><span class="si">}</span><span class="s2">&#39;. Please put your code in the main function, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;read README.md for details.&quot;</span><span class="p">,</span>
+        <span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="c1"># Restore the original sys.path</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">original_sys_path</span>
+
+    <span class="k">return</span> <span class="n">function</span></div>
+
+
+
+<span class="c1"># pylint: disable=too-many-statements</span>
+<div class="viewcode-block" id="run_app">
+<a class="viewcode-back" href="../../../../agentscope.web.studio.studio.html#agentscope.web.studio.studio.run_app">[文档]</a>
+<span class="k">def</span> <span class="nf">run_app</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Entry point for the web UI application.&quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">gr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Please install [full] version of AgentScope.&quot;</span>
+
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;script&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Script file to run&quot;</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="c1"># Make sure script_path is an absolute path</span>
+    <span class="n">script_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">script</span><span class="p">)</span>
+
+    <span class="c1"># Get the directory where the script is located</span>
+    <span class="n">script_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">script_path</span><span class="p">)</span>
+    <span class="c1"># Save the current working directory</span>
+    <span class="c1"># Change the current working directory to the directory where</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">script_dir</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">start_game</span><span class="p">(</span><span class="n">uid</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Start the main game loop.&quot;&quot;&quot;</span>
+        <span class="n">thread_local_data</span><span class="o">.</span><span class="n">uid</span> <span class="o">=</span> <span class="n">uid</span>
+        <span class="k">if</span> <span class="n">script_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.py&quot;</span><span class="p">):</span>
+            <span class="n">main</span> <span class="o">=</span> <span class="n">import_function_from_path</span><span class="p">(</span><span class="n">script_path</span><span class="p">,</span> <span class="s2">&quot;main&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">script_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
+            <span class="kn">from</span> <span class="nn">agentscope.web.workstation.workflow</span> <span class="kn">import</span> <span class="p">(</span>
+                <span class="n">start_workflow</span><span class="p">,</span>
+                <span class="n">load_config</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">config</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">(</span><span class="n">script_path</span><span class="p">)</span>
+            <span class="n">main</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">start_workflow</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unrecognized file formats: </span><span class="si">{</span><span class="n">script_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">main</span><span class="p">()</span>
+            <span class="k">except</span> <span class="n">ResetException</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reset Successfully：</span><span class="si">{</span><span class="n">uid</span><span class="si">}</span><span class="s2"> &quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">trace_info</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="n">traceback</span><span class="o">.</span><span class="n">TracebackException</span><span class="o">.</span><span class="n">from_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(),</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">FAIL_COUNT_DOWN</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                    <span class="n">send_msg</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">SYS_MSG_PREFIX</span><span class="si">}</span><span class="s2"> error </span><span class="si">{</span><span class="n">trace_info</span><span class="si">}</span><span class="s2">, reboot &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;in </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">,</span>
+                        <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">reset_glb_var</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">check_for_new_session</span><span class="p">(</span><span class="n">uid</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check for a new user session and start a game thread if necessary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">uid</span> <span class="o">=</span> <span class="n">check_uuid</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">uid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">glb_signed_user</span><span class="p">:</span>
+            <span class="n">glb_signed_user</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;==========Signed User==========&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total number of users: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">glb_signed_user</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">run_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span>
+                <span class="n">target</span><span class="o">=</span><span class="n">start_game</span><span class="p">,</span>
+                <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">uid</span><span class="p">,),</span>
+            <span class="p">)</span>
+            <span class="n">run_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="k">with</span> <span class="n">gr</span><span class="o">.</span><span class="n">Blocks</span><span class="p">()</span> <span class="k">as</span> <span class="n">demo</span><span class="p">:</span>
+        <span class="n">warning_html_code</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                        &lt;div class=&quot;hint&quot; style=&quot;text-align:</span>
+<span class="s2">                        center;background-color: rgba(255, 255, 0, 0.15);</span>
+<span class="s2">                        padding: 10px; margin: 10px; border-radius: 5px;</span>
+<span class="s2">                        border: 1px solid #ffcc00;&quot;&gt;</span>
+<span class="s2">                        &lt;p&gt;If you want to start over, please click the</span>
+<span class="s2">                        &lt;strong&gt;reset&lt;/strong&gt;</span>
+<span class="s2">                        button and &lt;strong&gt;refresh&lt;/strong&gt; the page&lt;/p&gt;</span>
+<span class="s2">                        &lt;/div&gt;</span>
+<span class="s2">                        &quot;&quot;&quot;</span>
+        <span class="n">gr</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span><span class="n">warning_html_code</span><span class="p">)</span>
+        <span class="n">uuid</span> <span class="o">=</span> <span class="n">gr</span><span class="o">.</span><span class="n">Textbox</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;modelscope_uuid&quot;</span><span class="p">,</span> <span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">gr</span><span class="o">.</span><span class="n">Row</span><span class="p">():</span>
+            <span class="n">chatbot</span> <span class="o">=</span> <span class="n">mgr</span><span class="o">.</span><span class="n">Chatbot</span><span class="p">(</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Dialog&quot;</span><span class="p">,</span>
+                <span class="n">show_label</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">bubble_full_width</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">gr</span><span class="o">.</span><span class="n">Column</span><span class="p">():</span>
+            <span class="n">user_chat_input</span> <span class="o">=</span> <span class="n">gr</span><span class="o">.</span><span class="n">Textbox</span><span class="p">(</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">&quot;user_chat_input&quot;</span><span class="p">,</span>
+                <span class="n">placeholder</span><span class="o">=</span><span class="s2">&quot;Say something here&quot;</span><span class="p">,</span>
+                <span class="n">show_label</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">send_button</span> <span class="o">=</span> <span class="n">gr</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s2">&quot;📣Send&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">gr</span><span class="o">.</span><span class="n">Row</span><span class="p">():</span>
+            <span class="n">audio</span> <span class="o">=</span> <span class="n">gr</span><span class="o">.</span><span class="n">Accordion</span><span class="p">(</span><span class="s2">&quot;Audio input&quot;</span><span class="p">,</span> <span class="nb">open</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">audio</span><span class="p">:</span>
+                <span class="n">audio_term</span> <span class="o">=</span> <span class="n">gr</span><span class="o">.</span><span class="n">Audio</span><span class="p">(</span>
+                    <span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;filepath&quot;</span><span class="p">,</span>
+                    <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;wav&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">submit_audio_button</span> <span class="o">=</span> <span class="n">gr</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s2">&quot;Send Audio&quot;</span><span class="p">)</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">gr</span><span class="o">.</span><span class="n">Accordion</span><span class="p">(</span><span class="s2">&quot;Image input&quot;</span><span class="p">,</span> <span class="nb">open</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">image</span><span class="p">:</span>
+                <span class="n">image_term</span> <span class="o">=</span> <span class="n">gr</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span>
+                    <span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">height</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+                    <span class="n">interactive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;filepath&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">submit_image_button</span> <span class="o">=</span> <span class="n">gr</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s2">&quot;Send Image&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">gr</span><span class="o">.</span><span class="n">Column</span><span class="p">():</span>
+            <span class="n">reset_button</span> <span class="o">=</span> <span class="n">gr</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s2">&quot;Reset&quot;</span><span class="p">)</span>
+
+        <span class="c1"># submit message</span>
+        <span class="n">send_button</span><span class="o">.</span><span class="n">click</span><span class="p">(</span>
+            <span class="n">send_message</span><span class="p">,</span>
+            <span class="p">[</span><span class="n">user_chat_input</span><span class="p">,</span> <span class="n">uuid</span><span class="p">],</span>
+            <span class="n">user_chat_input</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">user_chat_input</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span>
+            <span class="n">send_message</span><span class="p">,</span>
+            <span class="p">[</span><span class="n">user_chat_input</span><span class="p">,</span> <span class="n">uuid</span><span class="p">],</span>
+            <span class="n">user_chat_input</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">submit_audio_button</span><span class="o">.</span><span class="n">click</span><span class="p">(</span>
+            <span class="n">send_audio</span><span class="p">,</span>
+            <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">audio_term</span><span class="p">,</span> <span class="n">uuid</span><span class="p">],</span>
+            <span class="n">outputs</span><span class="o">=</span><span class="p">[</span><span class="n">audio_term</span><span class="p">],</span>
+        <span class="p">)</span>
+
+        <span class="n">submit_image_button</span><span class="o">.</span><span class="n">click</span><span class="p">(</span>
+            <span class="n">send_image</span><span class="p">,</span>
+            <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">image_term</span><span class="p">,</span> <span class="n">uuid</span><span class="p">],</span>
+            <span class="n">outputs</span><span class="o">=</span><span class="p">[</span><span class="n">image_term</span><span class="p">],</span>
+        <span class="p">)</span>
+
+        <span class="n">reset_button</span><span class="o">.</span><span class="n">click</span><span class="p">(</span><span class="n">send_reset_msg</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">uuid</span><span class="p">])</span>
+
+        <span class="n">chatbot</span><span class="o">.</span><span class="n">custom</span><span class="p">(</span><span class="n">fn</span><span class="o">=</span><span class="n">fn_choice</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">uuid</span><span class="p">])</span>
+
+        <span class="n">demo</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+            <span class="n">check_for_new_session</span><span class="p">,</span>
+            <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">uuid</span><span class="p">],</span>
+            <span class="n">every</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">demo</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+            <span class="n">get_chat</span><span class="p">,</span>
+            <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">uuid</span><span class="p">],</span>
+            <span class="n">outputs</span><span class="o">=</span><span class="p">[</span><span class="n">chatbot</span><span class="p">],</span>
+            <span class="n">every</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="n">demo</span><span class="o">.</span><span class="n">queue</span><span class="p">()</span>
+    <span class="n">demo</span><span class="o">.</span><span class="n">launch</span><span class="p">()</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run_app</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

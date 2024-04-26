@@ -1,0 +1,6 @@
+agentscope.agents.text_to_image_agent
+=====================================
+.. automodule:: agentscope.agents.text_to_image_agent
+   :members:
+   :undoc-members:
+   :show-inheritance:
