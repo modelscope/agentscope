@@ -34,6 +34,7 @@ AgentScope Documentation
    agentscope.agents
    agentscope.memory
    agentscope.parsers
+   agentscope.exception
    agentscope.pipelines
    agentscope.service
    agentscope.rpc
