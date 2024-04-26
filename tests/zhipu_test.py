@@ -11,8 +11,6 @@ class TestZhipuAIChatWrapper(unittest.TestCase):
     """Test ZhipuAI Chat Wrapper"""
 
     def setUp(self) -> None:
-        self.config_name = "test_config"
-        self.model_name = "test_model"
         self.api_key = "test_api_key.secret_key"
         self.messages = [
             {"role": "user", "content": "Hello, ZhipuAI!"},
@@ -60,6 +58,60 @@ class TestZhipuAIChatWrapper(unittest.TestCase):
         self.assertEqual(response.text, "Hello, this is a mocked response!")
 
         mock_zhipuai_client.chat.completions.create.assert_called_once()
+
+
+# 添加至您的测试文件中
+class TestZhipuAIEmbeddingWrapper(unittest.TestCase):
+    """Test ZhipuAI Embedding Wrapper"""
+
+    def setUp(self) -> None:
+        self.api_key = "test_api_key"
+        self.model_name = "embedding-2"
+        self.text_to_embed = "This is a test sentence for embedding."
+
+    @patch("agentscope.models.zhipu_model.zhipuai")
+    def test_embedding(self, mock_zhipuai: MagicMock) -> None:
+        """Test embedding API"""
+        # 创建模拟的 embeddings.create 方法的响应值
+        mock_embedding_response = MagicMock()
+        mock_embedding_response.model_dump.return_value = {
+            "data": [
+                {"embedding": [0.1, 0.2, 0.3]},
+            ],
+            "usage": {
+                "prompt_tokens": 10,
+                "completion_tokens": 2,
+                "total_tokens": 12,
+            },
+        }
+
+        mock_zhipuai_client = MagicMock()
+        mock_zhipuai.ZhipuAI.return_value = mock_zhipuai_client
+        mock_zhipuai_client.embeddings.create.return_value = (
+            mock_embedding_response
+        )
+
+        agentscope.init(
+            model_configs={
+                "config_name": "test_embedding",
+                "model_type": "zhipuai_embedding",
+                "model_name": self.model_name,
+                "api_key": self.api_key,
+            },
+        )
+
+        model = load_model_by_config_name("test_embedding")
+
+        response = model(self.text_to_embed)
+
+        expected_embedding = [[0.1, 0.2, 0.3]]
+        self.assertEqual(response.embedding, expected_embedding)
+
+        mock_zhipuai_client.embeddings.create.assert_called_once_with(
+            input=self.text_to_embed,
+            model=self.model_name,
+            **{},
+        )
 
 
 if __name__ == "__main__":
