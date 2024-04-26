@@ -315,13 +315,7 @@ def run_app() -> None:
             outputs=[image_term],
         )
 
-        reset_button.click(
-            send_reset_msg,
-            inputs=[uuid],
-            js="""()=> {
-            window.location.reload()
-        }""",
-        )
+        reset_button.click(send_reset_msg, inputs=[uuid])
 
         chatbot.custom(fn=fn_choice, inputs=[uuid])
 
