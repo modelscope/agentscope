@@ -24,7 +24,7 @@
             "similarity_top_k": 10,
             "log_retrieval": false,
             "recent_n_mem": 1,
-            "persist_dir": "../../rag_storage/tutorial_assist"
+            "persist_dir": "./rag_storage/tutorial_assist"
       }
     }
   },
@@ -67,7 +67,7 @@
             "similarity_top_k": 10,
             "log_retrieval": false,
             "recent_n_mem": 1,
-            "persist_dir": "../../rag_storage/code_assist"
+            "persist_dir": "./rag_storage/code_assist"
       }
     }
   },
@@ -108,15 +108,17 @@
             "similarity_top_k": 4,
             "log_retrieval": true,
             "recent_n_mem": 1,
-            "persist_dir": "../../rag_storage/docstring_assist"
+            "persist_dir": "./rag_storage/docstring_assist",
+            "repo_base": "../../",
+            "file_dir": "../../docs/docstring_html/"
       }
     }
   },
   {
     "class": "DialogAgent",
     "args": {
-      "name": "Summarize-Assistant",
-      "description": "Summarize-Assistant is an agent that can summarize multiple RAG agents' answers.",
+      "name": "Guide-Assistant",
+      "description": "Guide-Assistant is an agent that can summarize multiple RAG agents' answers.",
       "sys_prompt": "You summarize the answers of the previous two messages and remove the redundant information. The answer need to be simple and itemized. The answer needs to be less than 100 words.ex .",
       "model_config_name": "qwen_config",
       "use_memory": true

@@ -3,10 +3,10 @@
 This module is an integration of the Llama index RAG
 into AgentScope package
 """
-
+import os.path
 from typing import Any, Optional, List, Union
 from loguru import logger
-import os.path
+
 
 try:
     from llama_index.core.readers.base import BaseReader
@@ -33,8 +33,8 @@ except ImportError:
     VectorStoreIndex = None
     PrivateAttr = None
 
-from rag import RAGBase
-from rag.rag import (
+from agentscope.rag import RAGBase
+from agentscope.rag.rag import (
     DEFAULT_CHUNK_SIZE,
     DEFAULT_CHUNK_OVERLAP,
     DEFAULT_TOP_K,
@@ -282,7 +282,7 @@ class LlamaIndexRAG(RAGBase):
             # load the storage_context
             storage_context = StorageContext.from_defaults(
                 persist_dir=self.persist_dir,
-                )
+            )
             # construct index from
             self.index = load_index_from_storage(
                 storage_context=storage_context,

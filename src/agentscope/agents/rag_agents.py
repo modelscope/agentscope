@@ -11,7 +11,7 @@ from typing import Optional, Any
 import importlib
 from loguru import logger
 
-from rag import RAGBase, LlamaIndexRAG
+from agentscope.rag import RAGBase, LlamaIndexRAG
 
 from agentscope.agents.agent import AgentBase
 from agentscope.message import Msg
