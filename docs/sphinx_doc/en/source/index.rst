@@ -28,15 +28,15 @@ AgentScope Documentation
    :glob:
    :caption: AgentScope API Reference
 
+   agentscope
+   agentscope.models
    agentscope.agents
    agentscope.memory
-   agentscope.models
    agentscope.pipelines
    agentscope.service
    agentscope.rpc
-   agentscope.utils
    agentscope.web
-   agentscope
+   agentscope.utils
 
 Indices and tables
 ==================
