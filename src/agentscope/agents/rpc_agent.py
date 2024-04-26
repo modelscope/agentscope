@@ -430,7 +430,7 @@ class RpcAgentServerLauncher:
             local_mode (`bool`, defaults to `False`):
                 Whether the started rpc server only listens to local
                 requests.
-            custom_agents: (`list`, defaults to `None`):
+            custom_agents (`list`, defaults to `None`):
                 A list of custom agent classes that are not in
                 `agentscope.agents`.
             agent_class (`Type[AgentBase]`, deprecated):
