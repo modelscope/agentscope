@@ -236,8 +236,21 @@ class ReActAgent(AgentBase):
                 self.speak(error_msg)
                 self.memory.add(error_msg)
 
-        return Msg(
+        # Exceed the maximum iterations
+        hint_msg = Msg(
             "system",
-            "The agent has reached the maximum iterations.",
+            "You have failed to generate a response in the maximum "
+            "iterations. Now generate a reply by summarizing the current "
+            "situation.",
             role="system",
         )
+        if self.verbose:
+            self.speak(hint_msg)
+
+        # Generate a reply by summarizing the current situation
+        prompt = self.model.format(self.memory.get_memory(), hint_msg)
+        res = self.model(prompt)
+        res_msg = Msg(self.name, res.text, "assistant")
+        self.speak(res_msg)
+
+        return res_msg
