@@ -33,8 +33,7 @@ class MessageBase(dict):
                 role-playing scenario to tell the name of the sender.
             content (`Any`):
                 The content of the message.
-            role (`Literal["system", "user", "assistant"]`,
-            defaults to "assistant"):
+            role (`Literal["system", "user", "assistant"]`, defaults to "assistant"):
                 The role of who send the message. It can be one of the
                 `"system"`, `"user"`, or `"assistant"`. Default to
                 `"assistant"`.
@@ -45,8 +44,7 @@ class MessageBase(dict):
                 current time.
             **kwargs (`Any`):
                 Other attributes of the message.
-
-        """
+        """  # noqa
         # id and timestamp will be added to the object as its attributes
         # rather than items in dict
         self.id = uuid4().hex
@@ -114,14 +112,13 @@ class Msg(MessageBase):
                 Used to identify the source of the message, e.g. the system
                 information, the user input, or the model response. This
                 argument is used to accommodate most Chat API formats.
-            url (`Optional[Union[list[str], str]]`, defaults to None):
+            url (`Optional[Union[list[str], str]]`, defaults to `None`):
                 A url to file, image, video, audio or website.
-            timestamp (`Optional[str]`, defaults to None):
+            timestamp (`Optional[str]`, defaults to `None`):
                 The timestamp of the message, if None, it will be set to
                 current time.
             **kwargs (`Any`):
                 Other attributes of the message.
-
         """
 
         if role is None:
@@ -253,8 +250,7 @@ class PlaceholderMessage(MessageBase):
                 https://cookbook.openai.com/examples/how_to_format_inputs_to_chatgpt_models.
             content (`Any`):
                 The content of the message.
-            role (`Literal["system", "user", "assistant"]`, defaults to
-            "assistant"):
+            role (`Literal["system", "user", "assistant"]`, defaults to "assistant"):
                 The role of the message, which can be one of the `"system"`,
                 `"user"`, or `"assistant"`.
             url (`Optional[Union[list[str], str]]`, defaults to None):
@@ -274,7 +270,7 @@ class PlaceholderMessage(MessageBase):
                 this placeholder.
             x (`dict`, defaults to `None`):
                 Input parameters used to call rpc methods on the client.
-        """
+        """  # noqa
         super().__init__(
             name=name,
             content=content,
