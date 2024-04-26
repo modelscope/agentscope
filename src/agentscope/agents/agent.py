@@ -123,7 +123,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
                 The parameter dict passed to :py:meth:`to_dist` method. Used in
                 :py:class:`_AgentMeta`, when this parameter is provided,
                 the agent will automatically be converted into its distributed
-                version. The input format is as follows:
+                version. Below are some examples:
 
                 .. code-block:: python
 
@@ -137,14 +137,13 @@ class AgentBase(Operator, metaclass=_AgentMeta):
                     agent = XXXAgent(
                         # ... other parameters
                         to_dist={
-                            "host": "ip of your server",
-                            "port": 12345,
+                            "host": "<ip of your server>",
+                            "port": <port of your server>,
                             # other parameters of `to_dist`
                         },
                     )
 
-                See :doc:`Distribution Tutorial <tutorial/208-distribute>` for
-                detail.
+                See :doc:`Tutorial<tutorial/208-distribute>` for detail.
         """
         self.name = name
         self.memory_config = memory_config
