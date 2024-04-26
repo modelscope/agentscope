@@ -29,6 +29,10 @@ AgentScope Documentation
    :caption: AgentScope API Reference
 
    agentscope
+   agentscope.message
+   agentscope.models
+   agentscope
+   agentscope.message
    agentscope.models
    agentscope.agents
    agentscope.memory
@@ -36,6 +40,7 @@ AgentScope Documentation
    agentscope.service
    agentscope.rpc
    agentscope.web
+   agentscope.prompt
    agentscope.utils
 
 Indices and tables

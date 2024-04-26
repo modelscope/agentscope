@@ -29,6 +29,7 @@ AgentScope 文档
    :caption: AgentScope API 文档
 
    agentscope
+   agentscope.message
    agentscope.models
    agentscope.agents
    agentscope.memory
@@ -36,6 +37,7 @@ AgentScope 文档
    agentscope.service
    agentscope.rpc
    agentscope.web
+   agentscope.prompt
    agentscope.utils
 
 Indices and tables
