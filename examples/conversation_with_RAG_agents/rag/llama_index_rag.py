@@ -170,6 +170,31 @@ class LlamaIndexRAG(RAGBase):
         # NOTE: as each selected file type may need to use a different loader
         # and transformations, the length of the list depends on
         # the total count of loaded data.
+        if os.path.exists(self.persist_dir):
+            self.load_index()
+        else:
+            self.data_to_index()
+
+    def load_index(self):
+        """
+        Load the index from persist_dir.
+        """
+        # load the storage_context
+        storage_context = StorageContext.from_defaults(
+            persist_dir=self.persist_dir,
+        )
+        # construct index from
+        self.index = load_index_from_storage(
+            storage_context=storage_context,
+            embed_model=self.emb_model,
+        )
+
+    def data_to_index(self):
+        """
+        Convert the data to index by configs.
+        """
+        # load the data
+        docs_list, store_and_index_args_list = [], []
         for index_config_i in range(len(self.index_config)):
             docs = self.load_data(
                 config=self.index_config[index_config_i])
@@ -188,7 +213,7 @@ class LlamaIndexRAG(RAGBase):
         logger.info(f"store_and_index_args args: {store_and_index_args_list}")
 
         # pass the loaded documents and arguments to store_and_index
-        self.store_and_index(
+        self.index = self.store_and_index(
             docs_list=docs_list,
             store_and_index_args_list=store_and_index_args_list
         )
@@ -318,7 +343,7 @@ class LlamaIndexRAG(RAGBase):
                 embed_model=self.emb_model,
             )
             # persist the calculated index
-            self._persist_to_dir()
+            self.persist_to_dir()
         else:
             # load the storage_context
             storage_context = StorageContext.from_defaults(
@@ -347,7 +372,7 @@ class LlamaIndexRAG(RAGBase):
             self.retriever = retriever
         return self.index
 
-    def _persist_to_dir(self):
+    def persist_to_dir(self):
         """
         Persist the index to the directory.
         """
