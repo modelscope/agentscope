@@ -63,6 +63,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.agents.html">agentscope.agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.exception.html">agentscope.exception</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.rpc.html">agentscope.rpc</a></li>
@@ -120,7 +122,8 @@
 <span class="kn">from</span> <span class="nn">.web.search</span> <span class="kn">import</span> <span class="n">bing_search</span><span class="p">,</span> <span class="n">google_search</span>
 <span class="kn">from</span> <span class="nn">.web.arxiv</span> <span class="kn">import</span> <span class="n">arxiv_search</span>
 <span class="kn">from</span> <span class="nn">.service_response</span> <span class="kn">import</span> <span class="n">ServiceResponse</span>
-<span class="kn">from</span> <span class="nn">.service_factory</span> <span class="kn">import</span> <span class="n">ServiceFactory</span>
+<span class="kn">from</span> <span class="nn">.service_toolkit</span> <span class="kn">import</span> <span class="n">ServiceToolkit</span>
+<span class="kn">from</span> <span class="nn">.service_toolkit</span> <span class="kn">import</span> <span class="n">ServiceFactory</span>
 <span class="kn">from</span> <span class="nn">.retrieval.similarity</span> <span class="kn">import</span> <span class="n">cos_sim</span>
 <span class="kn">from</span> <span class="nn">.text_processing.summarization</span> <span class="kn">import</span> <span class="n">summarization</span>
 <span class="kn">from</span> <span class="nn">.retrieval.retrieval_from_list</span> <span class="kn">import</span> <span class="n">retrieve_from_list</span>
@@ -141,7 +144,7 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;ServiceResponse&quot;</span><span class="p">,</span>
     <span class="s2">&quot;ServiceExecStatus&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ServiceFactory&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ServiceToolkit&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_help&quot;</span><span class="p">,</span>
     <span class="s2">&quot;execute_python_code&quot;</span><span class="p">,</span>
     <span class="s2">&quot;execute_shell_command&quot;</span><span class="p">,</span>
@@ -170,6 +173,8 @@
     <span class="s2">&quot;load_web&quot;</span><span class="p">,</span>
     <span class="s2">&quot;parse_html_to_text&quot;</span><span class="p">,</span>
     <span class="s2">&quot;download_from_url&quot;</span><span class="p">,</span>
+    <span class="c1"># to be deprecated</span>
+    <span class="s2">&quot;ServiceFactory&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 

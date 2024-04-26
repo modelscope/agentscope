@@ -1,0 +1,233 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.parsers.tagged_content_parser &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=7d86a446"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/translations.js?v=beaddf03"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../en/agentscope.parsers.tagged_content_parser.html">English</a></li> |
+    <a href="../zh_CN/agentscope.parsers.tagged_content_parser.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/quick_start.html">快速上手</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/advance.html">进阶使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">agentscope.parsers.tagged_content_parser</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/agentscope.parsers.tagged_content_parser.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-agentscope.parsers.tagged_content_parser">
+<span id="agentscope-parsers-tagged-content-parser"></span><h1>agentscope.parsers.tagged_content_parser<a class="headerlink" href="#module-agentscope.parsers.tagged_content_parser" title="Link to this heading"></a></h1>
+<p>The parser for tagged content in the model response.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.parsers.tagged_content_parser.TaggedContent">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.parsers.tagged_content_parser.</span></span><span class="sig-name descname"><span class="pre">TaggedContent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag_begin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content_hint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag_end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parse_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/parsers/tagged_content_parser.html#TaggedContent"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.parsers.tagged_content_parser.TaggedContent" title="Link to this definition"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A tagged content object to store the tag name, tag begin, content hint
+and tag end.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.parsers.tagged_content_parser.TaggedContent.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag_begin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content_hint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag_end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parse_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/parsers/tagged_content_parser.html#TaggedContent.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.parsers.tagged_content_parser.TaggedContent.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the tagged content object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<cite>str</cite>) – The name of the tagged content.</p></li>
+<li><p><strong>tag_begin</strong> (<cite>str</cite>) – The beginning tag.</p></li>
+<li><p><strong>content_hint</strong> (<cite>str</cite>) – The hint of the content.</p></li>
+<li><p><strong>tag_end</strong> (<cite>str</cite>) – The ending tag.</p></li>
+<li><p><strong>parse_json</strong> (<cite>bool</cite>, defaults to <cite>False</cite>) – Whether to parse the content as a json object.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.parsers.tagged_content_parser.TaggedContent.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.parsers.tagged_content_parser.TaggedContent.name" title="Link to this definition"></a></dt>
+<dd><p>The name of the tagged content.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.parsers.tagged_content_parser.TaggedContent.tag_begin">
+<span class="sig-name descname"><span class="pre">tag_begin</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.parsers.tagged_content_parser.TaggedContent.tag_begin" title="Link to this definition"></a></dt>
+<dd><p>The beginning tag.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.parsers.tagged_content_parser.TaggedContent.content_hint">
+<span class="sig-name descname"><span class="pre">content_hint</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.parsers.tagged_content_parser.TaggedContent.content_hint" title="Link to this definition"></a></dt>
+<dd><p>The hint of the content.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.parsers.tagged_content_parser.TaggedContent.tag_end">
+<span class="sig-name descname"><span class="pre">tag_end</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.parsers.tagged_content_parser.TaggedContent.tag_end" title="Link to this definition"></a></dt>
+<dd><p>The ending tag.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.parsers.tagged_content_parser.TaggedContent.parse_json">
+<span class="sig-name descname"><span class="pre">parse_json</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#agentscope.parsers.tagged_content_parser.TaggedContent.parse_json" title="Link to this definition"></a></dt>
+<dd><p>Whether to parse the content as a json object.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.parsers.tagged_content_parser.MultiTaggedContentParser">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.parsers.tagged_content_parser.</span></span><span class="sig-name descname"><span class="pre">MultiTaggedContentParser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">tagged_contents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#agentscope.parsers.tagged_content_parser.TaggedContent" title="agentscope.parsers.tagged_content_parser.TaggedContent"><span class="pre">TaggedContent</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/parsers/tagged_content_parser.html#MultiTaggedContentParser"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.parsers.tagged_content_parser.MultiTaggedContentParser" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference internal" href="agentscope.parsers.parser_base.html#agentscope.parsers.parser_base.ParserBase" title="agentscope.parsers.parser_base.ParserBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParserBase</span></code></a></p>
+<p>Parse response text by multiple tags, and return a dict of their
+content. Asking llm to generate JSON dictionary object directly maybe not a
+good idea due to involving escape characters and other issues. So we can
+ask llm to generate text with tags, and then parse the text to get the
+final JSON dictionary object.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.parsers.tagged_content_parser.MultiTaggedContentParser.json_required_hint">
+<span class="sig-name descname"><span class="pre">json_required_hint</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">',</span> <span class="pre">and</span> <span class="pre">the</span> <span class="pre">content</span> <span class="pre">between</span> <span class="pre">{}</span> <span class="pre">MUST</span> <span class="pre">be</span> <span class="pre">a</span> <span class="pre">JSON</span> <span class="pre">object:'</span></em><a class="headerlink" href="#agentscope.parsers.tagged_content_parser.MultiTaggedContentParser.json_required_hint" title="Link to this definition"></a></dt>
+<dd><p>If a tagged content is required to be a JSON object by <cite>parse_json</cite>
+equals to <cite>True</cite>, this instruction will be used to remind the model to
+generate JSON object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.parsers.tagged_content_parser.MultiTaggedContentParser.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">tagged_contents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#agentscope.parsers.tagged_content_parser.TaggedContent" title="agentscope.parsers.tagged_content_parser.TaggedContent"><span class="pre">TaggedContent</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/parsers/tagged_content_parser.html#MultiTaggedContentParser.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.parsers.tagged_content_parser.MultiTaggedContentParser.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the parser with tags.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tags</strong> (<cite>dict[str, Tuple[str, str]]</cite>) – A dictionary of tags, the key is the tag name, and the value is
+a tuple of starting tag and end tag.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.parsers.tagged_content_parser.MultiTaggedContentParser.format_instruction">
+<span class="sig-name descname"><span class="pre">format_instruction</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Respond</span> <span class="pre">with</span> <span class="pre">specific</span> <span class="pre">tags</span> <span class="pre">as</span> <span class="pre">outlined</span> <span class="pre">below{json_required_hint}\n{tag_lines_format}'</span></em><a class="headerlink" href="#agentscope.parsers.tagged_content_parser.MultiTaggedContentParser.format_instruction" title="Link to this definition"></a></dt>
+<dd><p>The instruction for the format of the tagged content.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.parsers.tagged_content_parser.MultiTaggedContentParser.parse">
+<span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.models.response.html#agentscope.models.response.ModelResponse" title="agentscope.models.response.ModelResponse"><span class="pre">ModelResponse</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.models.response.html#agentscope.models.response.ModelResponse" title="agentscope.models.response.ModelResponse"><span class="pre">ModelResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/parsers/tagged_content_parser.html#MultiTaggedContentParser.parse"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.parsers.tagged_content_parser.MultiTaggedContentParser.parse" title="Link to this definition"></a></dt>
+<dd><p>Parse the response text by tags, and return a dict of their content
+in the parsed field of the model response object. If the tagged content
+requires to parse as a JSON object by <cite>parse_json</cite> equals to <cite>True</cite>, it
+will be parsed as a JSON object by <cite>json.loads</cite>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.parsers.json_object_parser &mdash; AgentScope  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../en/agentscope.parsers.json_object_parser.html">English</a></li> |
+    <a href="../zh_CN/agentscope.parsers.json_object_parser.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/quick_start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/advance.html">Advanced Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/contribute.html">Get Involved</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">agentscope.parsers.json_object_parser</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/agentscope.parsers.json_object_parser.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-agentscope.parsers.json_object_parser">
+<span id="agentscope-parsers-json-object-parser"></span><h1>agentscope.parsers.json_object_parser<a class="headerlink" href="#module-agentscope.parsers.json_object_parser" title="Link to this heading"></a></h1>
+<p>The parser for JSON object in the model response.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.parsers.json_object_parser.MarkdownJsonObjectParser">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.parsers.json_object_parser.</span></span><span class="sig-name descname"><span class="pre">MarkdownJsonObjectParser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content_hint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/parsers/json_object_parser.html#MarkdownJsonObjectParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="agentscope.parsers.parser_base.html#agentscope.parsers.parser_base.ParserBase" title="agentscope.parsers.parser_base.ParserBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParserBase</span></code></a></p>
+<p>A parser to parse the response text to a json object.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'json</span> <span class="pre">block'</span></em><a class="headerlink" href="#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.name" title="Link to this definition"></a></dt>
+<dd><p>The name of the parser.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.tag_begin">
+<span class="sig-name descname"><span class="pre">tag_begin</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'```json'</span></em><a class="headerlink" href="#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.tag_begin" title="Link to this definition"></a></dt>
+<dd><p>Opening tag for a code block.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.tag_end">
+<span class="sig-name descname"><span class="pre">tag_end</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'```'</span></em><a class="headerlink" href="#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.tag_end" title="Link to this definition"></a></dt>
+<dd><p>Closing end for a code block.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content_hint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/parsers/json_object_parser.html#MarkdownJsonObjectParser.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the parser with the content hint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>content_hint</strong> (<cite>Optional[Any]</cite>, defaults to <cite>None</cite>) – The hint used to remind LLM what should be fill between the
+tags. If it is a string, it will be used as the content hint
+directly. If it is a dict, it will be converted to a json
+string and used as the content hint.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.content_hint">
+<span class="sig-name descname"><span class="pre">content_hint</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'{your_json_object}'</span></em><a class="headerlink" href="#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.content_hint" title="Link to this definition"></a></dt>
+<dd><p>The hint of the content.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.parse">
+<span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.models.response.html#agentscope.models.response.ModelResponse" title="agentscope.models.response.ModelResponse"><span class="pre">ModelResponse</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.models.response.html#agentscope.models.response.ModelResponse" title="agentscope.models.response.ModelResponse"><span class="pre">ModelResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/parsers/json_object_parser.html#MarkdownJsonObjectParser.parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.parse" title="Link to this definition"></a></dt>
+<dd><p>Parse the response text to a json object, and fill it in the parsed
+field in the response object.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.format_instruction">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">format_instruction</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.format_instruction" title="Link to this definition"></a></dt>
+<dd><p>Get the format instruction for the json object, if the
+format_example is provided, it will be used as the example.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.parsers.json_object_parser.MarkdownJsonDictParser">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.parsers.json_object_parser.</span></span><span class="sig-name descname"><span class="pre">MarkdownJsonDictParser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content_hint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required_keys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/parsers/json_object_parser.html#MarkdownJsonDictParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.parsers.json_object_parser.MarkdownJsonDictParser" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser" title="agentscope.parsers.json_object_parser.MarkdownJsonObjectParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">MarkdownJsonObjectParser</span></code></a></p>
+<p>A class used to parse a JSON dictionary object in a markdown fenced
+code</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.parsers.json_object_parser.MarkdownJsonDictParser.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'json</span> <span class="pre">block'</span></em><a class="headerlink" href="#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.name" title="Link to this definition"></a></dt>
+<dd><p>The name of the parser.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.parsers.json_object_parser.MarkdownJsonDictParser.tag_begin">
+<span class="sig-name descname"><span class="pre">tag_begin</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'```json'</span></em><a class="headerlink" href="#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.tag_begin" title="Link to this definition"></a></dt>
+<dd><p>Opening tag for a code block.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.parsers.json_object_parser.MarkdownJsonDictParser.content_hint">
+<span class="sig-name descname"><span class="pre">content_hint</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'{your_json_dictionary}'</span></em><a class="headerlink" href="#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.content_hint" title="Link to this definition"></a></dt>
+<dd><p>The hint of the content.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.parsers.json_object_parser.MarkdownJsonDictParser.tag_end">
+<span class="sig-name descname"><span class="pre">tag_end</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'```'</span></em><a class="headerlink" href="#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.tag_end" title="Link to this definition"></a></dt>
+<dd><p>Closing end for a code block.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.parsers.json_object_parser.MarkdownJsonDictParser.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content_hint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required_keys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/parsers/json_object_parser.html#MarkdownJsonDictParser.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the parser with the content hint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>content_hint</strong> (<cite>Optional[Any]</cite>, defaults to <cite>None</cite>) – The hint used to remind LLM what should be fill between the
+tags. If it is a string, it will be used as the content hint
+directly. If it is a dict, it will be converted to a json
+string and used as the content hint.</p></li>
+<li><p><strong>required_keys</strong> (<cite>List[str]</cite>, defaults to <cite>[]</cite>) – A list of required keys in the JSON dictionary object. If the
+response misses any of the required keys, it will raise a
+RequiredFieldNotFoundError.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.parsers.json_object_parser.MarkdownJsonDictParser.required_keys">
+<span class="sig-name descname"><span class="pre">required_keys</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.required_keys" title="Link to this definition"></a></dt>
+<dd><p>A list of required keys in the JSON dictionary object. If the response
+misses any of the required keys, it will raise a
+RequiredFieldNotFoundError.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.parsers.json_object_parser.MarkdownJsonDictParser.parse">
+<span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.models.response.html#agentscope.models.response.ModelResponse" title="agentscope.models.response.ModelResponse"><span class="pre">ModelResponse</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.models.response.html#agentscope.models.response.ModelResponse" title="agentscope.models.response.ModelResponse"><span class="pre">ModelResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/parsers/json_object_parser.html#MarkdownJsonDictParser.parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.parse" title="Link to this definition"></a></dt>
+<dd><p>Parse the text field of the response to a JSON dictionary object,
+store it in the parsed field of the response object, and check if the
+required keys exists.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Alibaba Tongyi Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

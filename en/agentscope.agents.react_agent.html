@@ -61,6 +61,8 @@
 <li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc</a></li>
@@ -110,7 +112,7 @@ maybe different. Developers are encouraged to modify the prompt to fit
 their own needs.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.agents.react_agent.ReActAgent.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tools</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sys_prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&quot;You're</span> <span class="pre">a</span> <span class="pre">helpful</span> <span class="pre">assistant.</span> <span class="pre">Your</span> <span class="pre">name</span> <span class="pre">is</span> <span class="pre">{name}.&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/agents/react_agent.html#ReActAgent.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.react_agent.ReActAgent.__init__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">service_toolkit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceToolkit" title="agentscope.service.service_toolkit.ServiceToolkit"><span class="pre">ServiceToolkit</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sys_prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&quot;You're</span> <span class="pre">a</span> <span class="pre">helpful</span> <span class="pre">assistant.</span> <span class="pre">Your</span> <span class="pre">name</span> <span class="pre">is</span> <span class="pre">{name}.&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/agents/react_agent.html#ReActAgent.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.react_agent.ReActAgent.__init__" title="Link to this definition"></a></dt>
 <dd><p>Initialize the ReAct agent with the given name, model config name
 and tools.</p>
 <dl class="field-list simple">
@@ -120,10 +122,11 @@ and tools.</p>
 <li><p><strong>sys_prompt</strong> (<cite>str</cite>) – The system prompt of the agent.</p></li>
 <li><p><strong>model_config_name</strong> (<cite>str</cite>) – The name of the model config, which is used to load model from
 configuration.</p></li>
-<li><p><strong>tools</strong> (<cite>List[Tuple]</cite>) – A list of tuples, each containing the name of a tool and the
-tool’s description in JSON schema format.</p></li>
+<li><p><strong>service_toolkit</strong> (<cite>ServiceToolkit</cite>) – A <cite>ServiceToolkit</cite> object that contains the tool functions.</p></li>
 <li><p><strong>max_iters</strong> (<cite>int</cite>, defaults to <cite>10</cite>) – The maximum number of iterations of the reasoning-acting loops.</p></li>
-<li><p><strong>verbose</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – Whether to print the output of the tools.</p></li>
+<li><p><strong>verbose</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – Whether to print the detailed information during reasoning and
+acting steps. If <cite>False</cite>, only the content in speak field will
+be print out.</p></li>
 </ul>
 </dd>
 </dl>
@@ -134,54 +137,6 @@ tool’s description in JSON schema format.</p></li>
 <span class="sig-name descname"><span class="pre">reply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/agents/react_agent.html#ReActAgent.reply"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.react_agent.ReActAgent.reply" title="Link to this definition"></a></dt>
 <dd><p>The reply function that achieves the ReAct algorithm.
 The more details please refer to <a class="reference external" href="https://arxiv.org/abs/2210.03629">https://arxiv.org/abs/2210.03629</a></p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.agents.react_agent.ReActAgent.execute_func">
-<span class="sig-name descname"><span class="pre">execute_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_call</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/agents/react_agent.html#ReActAgent.execute_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.react_agent.ReActAgent.execute_func" title="Link to this definition"></a></dt>
-<dd><p>Execute the tool function and return the result.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>index</strong> (<cite>int</cite>) – The index of the tool function.</p></li>
-<li><p><strong>func_call</strong> (<cite>dict</cite>) – The function call dictionary with keys ‘name’ and ‘arguments’.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The execution results.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.agents.react_agent.ReActAgent.prepare_funcs_prompt">
-<span class="sig-name descname"><span class="pre">prepare_funcs_prompt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tools</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/agents/react_agent.html#ReActAgent.prepare_funcs_prompt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.react_agent.ReActAgent.prepare_funcs_prompt" title="Link to this definition"></a></dt>
-<dd><p>Convert function descriptions from json schema format to
-string prompt format.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>tools</strong> (<cite>List[Tuple]</cite>) – The list of tool functions and their descriptions in JSON
-schema format.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>The string prompt for the tool functions and a function name</dt><dd><p>mapping dict.</p>
-</dd>
-</dl>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="n">index</span><span class="p">}</span><span class="o">.</span> <span class="p">{</span><span class="n">function</span> <span class="n">name</span><span class="p">}:</span> <span class="p">{</span><span class="n">function</span> <span class="n">description</span><span class="p">}</span>
-    <span class="p">{</span><span class="n">argument</span> <span class="n">name</span><span class="p">}</span> <span class="p">({</span><span class="n">argument</span> <span class="nb">type</span><span class="p">}):</span> <span class="p">{</span><span class="n">argument</span> <span class="n">description</span><span class="p">}</span>
-    <span class="o">...</span>
-</pre></div>
-</div>
-</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>Tuple[str, dict]</cite></p>
-</dd>
-</dl>
 </dd></dl>
 
 </dd></dl>

@@ -33,6 +33,8 @@ AgentScope 文档
    agentscope.models
    agentscope.agents
    agentscope.memory
+   agentscope.parsers
+   agentscope.exception
    agentscope.pipelines
    agentscope.service
    agentscope.rpc

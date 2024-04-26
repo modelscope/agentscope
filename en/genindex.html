@@ -62,6 +62,8 @@
 <li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc</a></li>
@@ -159,6 +161,12 @@
 </li>
         <li><a href="agentscope.agents.html#agentscope.agents.UserAgent.__init__">(agentscope.agents.UserAgent method)</a>
 </li>
+        <li><a href="agentscope.exception.html#agentscope.exception.FunctionCallError.__init__">(agentscope.exception.FunctionCallError method)</a>
+</li>
+        <li><a href="agentscope.exception.html#agentscope.exception.ResponseParsingError.__init__">(agentscope.exception.ResponseParsingError method)</a>
+</li>
+        <li><a href="agentscope.exception.html#agentscope.exception.TagNotFoundError.__init__">(agentscope.exception.TagNotFoundError method)</a>
+</li>
         <li><a href="agentscope.memory.memory.html#agentscope.memory.memory.MemoryBase.__init__">(agentscope.memory.memory.MemoryBase method)</a>
 </li>
         <li><a href="agentscope.memory.html#agentscope.memory.MemoryBase.__init__">(agentscope.memory.MemoryBase method)</a>
@@ -201,11 +209,27 @@
 </li>
         <li><a href="agentscope.models.response.html#agentscope.models.response.ModelResponse.__init__">(agentscope.models.response.ModelResponse method)</a>
 </li>
-        <li><a href="agentscope.models.response.html#agentscope.models.response.ResponseParsingError.__init__">(agentscope.models.response.ResponseParsingError method)</a>
-</li>
-        <li><a href="agentscope.models.html#agentscope.models.ResponseParsingError.__init__">(agentscope.models.ResponseParsingError method)</a>
-</li>
         <li><a href="agentscope.msghub.html#agentscope.msghub.MsgHubManager.__init__">(agentscope.msghub.MsgHubManager method)</a>
+</li>
+        <li><a href="agentscope.parsers.code_block_parser.html#agentscope.parsers.code_block_parser.MarkdownCodeBlockParser.__init__">(agentscope.parsers.code_block_parser.MarkdownCodeBlockParser method)</a>
+</li>
+        <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.__init__">(agentscope.parsers.json_object_parser.MarkdownJsonDictParser method)</a>
+</li>
+        <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.__init__">(agentscope.parsers.json_object_parser.MarkdownJsonObjectParser method)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownCodeBlockParser.__init__">(agentscope.parsers.MarkdownCodeBlockParser method)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonDictParser.__init__">(agentscope.parsers.MarkdownJsonDictParser method)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonObjectParser.__init__">(agentscope.parsers.MarkdownJsonObjectParser method)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.MultiTaggedContentParser.__init__">(agentscope.parsers.MultiTaggedContentParser method)</a>
+</li>
+        <li><a href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.MultiTaggedContentParser.__init__">(agentscope.parsers.tagged_content_parser.MultiTaggedContentParser method)</a>
+</li>
+        <li><a href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.TaggedContent.__init__">(agentscope.parsers.tagged_content_parser.TaggedContent method)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.TaggedContent.__init__">(agentscope.parsers.TaggedContent method)</a>
 </li>
         <li><a href="agentscope.pipelines.html#agentscope.pipelines.ForLoopPipeline.__init__">(agentscope.pipelines.ForLoopPipeline method)</a>
 </li>
@@ -247,7 +271,13 @@
 </li>
         <li><a href="agentscope.service.service_response.html#agentscope.service.service_response.ServiceResponse.__init__">(agentscope.service.service_response.ServiceResponse method)</a>
 </li>
+        <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceFunction.__init__">(agentscope.service.service_toolkit.ServiceFunction method)</a>
+</li>
+        <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceToolkit.__init__">(agentscope.service.service_toolkit.ServiceToolkit method)</a>
+</li>
         <li><a href="agentscope.service.html#agentscope.service.ServiceResponse.__init__">(agentscope.service.ServiceResponse method)</a>
+</li>
+        <li><a href="agentscope.service.html#agentscope.service.ServiceToolkit.__init__">(agentscope.service.ServiceToolkit method)</a>
 </li>
         <li><a href="agentscope.utils.monitor.html#agentscope.utils.monitor.QuotaExceededError.__init__">(agentscope.utils.monitor.QuotaExceededError method)</a>
 </li>
@@ -316,6 +346,10 @@
         <li><a href="agentscope.memory.html#agentscope.memory.TemporaryMemory.add">(agentscope.memory.TemporaryMemory method)</a>
 </li>
         <li><a href="agentscope.msghub.html#agentscope.msghub.MsgHubManager.add">(agentscope.msghub.MsgHubManager method)</a>
+</li>
+        <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceToolkit.add">(agentscope.service.service_toolkit.ServiceToolkit method)</a>
+</li>
+        <li><a href="agentscope.service.html#agentscope.service.ServiceToolkit.add">(agentscope.service.ServiceToolkit method)</a>
 </li>
         <li><a href="agentscope.utils.monitor.html#agentscope.utils.monitor.MonitorBase.add">(agentscope.utils.monitor.MonitorBase method)</a>
 </li>
@@ -424,6 +458,13 @@
 </li>
       </ul></li>
       <li>
+    agentscope.exception
+
+      <ul>
+        <li><a href="agentscope.exception.html#module-agentscope.exception">module</a>
+</li>
+      </ul></li>
+      <li>
     agentscope.file_manager
 
       <ul>
@@ -529,6 +570,41 @@
 </li>
       </ul></li>
       <li>
+    agentscope.parsers
+
+      <ul>
+        <li><a href="agentscope.parsers.html#module-agentscope.parsers">module</a>
+</li>
+      </ul></li>
+      <li>
+    agentscope.parsers.code_block_parser
+
+      <ul>
+        <li><a href="agentscope.parsers.code_block_parser.html#module-agentscope.parsers.code_block_parser">module</a>
+</li>
+      </ul></li>
+      <li>
+    agentscope.parsers.json_object_parser
+
+      <ul>
+        <li><a href="agentscope.parsers.json_object_parser.html#module-agentscope.parsers.json_object_parser">module</a>
+</li>
+      </ul></li>
+      <li>
+    agentscope.parsers.parser_base
+
+      <ul>
+        <li><a href="agentscope.parsers.parser_base.html#module-agentscope.parsers.parser_base">module</a>
+</li>
+      </ul></li>
+      <li>
+    agentscope.parsers.tagged_content_parser
+
+      <ul>
+        <li><a href="agentscope.parsers.tagged_content_parser.html#module-agentscope.parsers.tagged_content_parser">module</a>
+</li>
+      </ul></li>
+      <li>
     agentscope.pipelines
 
       <ul>
@@ -570,6 +646,8 @@
         <li><a href="agentscope.rpc.rpc_agent_client.html#module-agentscope.rpc.rpc_agent_client">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     agentscope.rpc.rpc_agent_pb2
 
@@ -591,8 +669,6 @@
         <li><a href="agentscope.service.html#module-agentscope.service">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     agentscope.service.execute_code
 
@@ -664,13 +740,6 @@
 </li>
       </ul></li>
       <li>
-    agentscope.service.service_factory
-
-      <ul>
-        <li><a href="agentscope.service.service_factory.html#module-agentscope.service.service_factory">module</a>
-</li>
-      </ul></li>
-      <li>
     agentscope.service.service_response
 
       <ul>
@@ -682,6 +751,13 @@
 
       <ul>
         <li><a href="agentscope.service.service_status.html#module-agentscope.service.service_status">module</a>
+</li>
+      </ul></li>
+      <li>
+    agentscope.service.service_toolkit
+
+      <ul>
+        <li><a href="agentscope.service.service_toolkit.html#module-agentscope.service.service_toolkit">module</a>
 </li>
       </ul></li>
       <li>
@@ -873,6 +949,10 @@
         <li><a href="agentscope.web.workstation.workflow_utils.html#module-agentscope.web.workstation.workflow_utils">module</a>
 </li>
       </ul></li>
+      <li><a href="agentscope.exception.html#agentscope.exception.ArgumentNotFoundError">ArgumentNotFoundError</a>
+</li>
+      <li><a href="agentscope.exception.html#agentscope.exception.ArgumentTypeError">ArgumentTypeError</a>
+</li>
       <li><a href="agentscope.service.html#agentscope.service.arxiv_search">arxiv_search() (in module agentscope.service)</a>
 
       <ul>
@@ -1053,6 +1133,24 @@
         <li><a href="agentscope.models.post_model.html#agentscope.models.post_model.PostAPIModelWrapperBase.config_name">(agentscope.models.post_model.PostAPIModelWrapperBase attribute)</a>
 </li>
       </ul></li>
+      <li><a href="agentscope.parsers.code_block_parser.html#agentscope.parsers.code_block_parser.MarkdownCodeBlockParser.content_hint">content_hint (agentscope.parsers.code_block_parser.MarkdownCodeBlockParser attribute)</a>
+
+      <ul>
+        <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.content_hint">(agentscope.parsers.json_object_parser.MarkdownJsonDictParser attribute)</a>
+</li>
+        <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.content_hint">(agentscope.parsers.json_object_parser.MarkdownJsonObjectParser attribute)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownCodeBlockParser.content_hint">(agentscope.parsers.MarkdownCodeBlockParser attribute)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonDictParser.content_hint">(agentscope.parsers.MarkdownJsonDictParser attribute)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonObjectParser.content_hint">(agentscope.parsers.MarkdownJsonObjectParser attribute)</a>
+</li>
+        <li><a href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.TaggedContent.content_hint">(agentscope.parsers.tagged_content_parser.TaggedContent attribute)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.TaggedContent.content_hint">(agentscope.parsers.TaggedContent attribute)</a>
+</li>
+      </ul></li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WorkflowNodeType.COPY">COPY (agentscope.web.workstation.workflow_node.WorkflowNodeType attribute)</a>
 </li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.CopyNode">CopyNode (class in agentscope.web.workstation.workflow_node)</a>
@@ -1219,34 +1317,22 @@
         <li><a href="agentscope.service.html#agentscope.service.ServiceExecStatus.ERROR">(agentscope.service.ServiceExecStatus attribute)</a>
 </li>
       </ul></li>
-      <li><a href="agentscope.models.response.html#agentscope.models.response.ResponseParsingError.error_info">error_info (agentscope.models.response.ResponseParsingError attribute)</a>
-
-      <ul>
-        <li><a href="agentscope.models.html#agentscope.models.ResponseParsingError.error_info">(agentscope.models.ResponseParsingError attribute)</a>
-</li>
-      </ul></li>
       <li><a href="agentscope.web.workstation.workflow_dag.html#agentscope.web.workstation.workflow_dag.ASDiGraph.exec_node">exec_node() (agentscope.web.workstation.workflow_dag.ASDiGraph method)</a>
 </li>
-      <li><a href="agentscope.agents.react_agent.html#agentscope.agents.react_agent.ReActAgent.execute_func">execute_func() (agentscope.agents.react_agent.ReActAgent method)</a>
-
-      <ul>
-        <li><a href="agentscope.agents.html#agentscope.agents.ReActAgent.execute_func">(agentscope.agents.ReActAgent method)</a>
-</li>
-      </ul></li>
       <li><a href="agentscope.service.html#agentscope.service.execute_python_code">execute_python_code() (in module agentscope.service)</a>
 
       <ul>
         <li><a href="agentscope.service.execute_code.exec_python.html#agentscope.service.execute_code.exec_python.execute_python_code">(in module agentscope.service.execute_code.exec_python)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.service.html#agentscope.service.execute_shell_command">execute_shell_command() (in module agentscope.service)</a>
 
       <ul>
         <li><a href="agentscope.service.execute_code.exec_shell.html#agentscope.service.execute_code.exec_shell.execute_shell_command">(in module agentscope.service.execute_code.exec_shell)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.utils.monitor.html#agentscope.utils.monitor.MonitorBase.exists">exists() (agentscope.utils.monitor.MonitorBase method)</a>
 
       <ul>
@@ -1348,6 +1434,28 @@
 </li>
       </ul></li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.parsers.code_block_parser.html#agentscope.parsers.code_block_parser.MarkdownCodeBlockParser.format_instruction">format_instruction (agentscope.parsers.code_block_parser.MarkdownCodeBlockParser attribute)</a>
+
+      <ul>
+        <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.format_instruction">(agentscope.parsers.json_object_parser.MarkdownJsonObjectParser property)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownCodeBlockParser.format_instruction">(agentscope.parsers.MarkdownCodeBlockParser attribute)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonObjectParser.format_instruction">(agentscope.parsers.MarkdownJsonObjectParser property)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.MultiTaggedContentParser.format_instruction">(agentscope.parsers.MultiTaggedContentParser attribute)</a>
+</li>
+        <li><a href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.MultiTaggedContentParser.format_instruction">(agentscope.parsers.tagged_content_parser.MultiTaggedContentParser attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="agentscope.exception.html#agentscope.exception.FunctionCallError">FunctionCallError</a>
+</li>
+      <li><a href="agentscope.exception.html#agentscope.exception.FunctionCallFormatError">FunctionCallFormatError</a>
+</li>
+      <li><a href="agentscope.exception.html#agentscope.exception.FunctionNotFoundError">FunctionNotFoundError</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="G">G</h2>
@@ -1381,10 +1489,14 @@
         <li><a href="agentscope.models.html#agentscope.models.GeminiChatWrapper.generation_method">(agentscope.models.GeminiChatWrapper attribute)</a>
 </li>
       </ul></li>
-      <li><a href="agentscope.service.service_factory.html#agentscope.service.service_factory.ServiceFactory.get">get() (agentscope.service.service_factory.ServiceFactory class method)</a>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceFactory.get">get() (agentscope.service.service_toolkit.ServiceFactory class method)</a>
 
       <ul>
+        <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceToolkit.get">(agentscope.service.service_toolkit.ServiceToolkit class method)</a>
+</li>
         <li><a href="agentscope.service.html#agentscope.service.ServiceFactory.get">(agentscope.service.ServiceFactory class method)</a>
+</li>
+        <li><a href="agentscope.service.html#agentscope.service.ServiceToolkit.get">(agentscope.service.ServiceToolkit class method)</a>
 </li>
       </ul></li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.get_all_agents">get_all_agents() (in module agentscope.web.workstation.workflow_node)</a>
@@ -1419,6 +1531,8 @@
         <li><a href="agentscope.memory.html#agentscope.memory.TemporaryMemory.get_memory">(agentscope.memory.TemporaryMemory method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.utils.monitor.html#agentscope.utils.monitor.MonitorBase.get_metric">get_metric() (agentscope.utils.monitor.MonitorBase method)</a>
 
       <ul>
@@ -1427,8 +1541,6 @@
         <li><a href="agentscope.utils.html#agentscope.utils.MonitorBase.get_metric">(agentscope.utils.MonitorBase method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.utils.monitor.html#agentscope.utils.monitor.MonitorBase.get_metrics">get_metrics() (agentscope.utils.monitor.MonitorBase method)</a>
 
       <ul>
@@ -1501,8 +1613,6 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="agentscope.utils.common.html#agentscope.utils.common.if_change_database">if_change_database() (in module agentscope.utils.common)</a>
-</li>
       <li><a href="agentscope.pipelines.html#agentscope.pipelines.IfElsePipeline">IfElsePipeline (class in agentscope.pipelines)</a>
 
       <ul>
@@ -1553,16 +1663,28 @@
 </li>
       <li><a href="agentscope.prompt.html#agentscope.prompt.PromptEngine.join_to_str">join_to_str() (agentscope.prompt.PromptEngine method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.constants.html#agentscope.constants.ResponseFormat.JSON">JSON (agentscope.constants.ResponseFormat attribute)</a>
 </li>
-      <li><a href="agentscope.models.html#agentscope.models.ModelResponse.json">json (agentscope.models.ModelResponse attribute)</a>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MultiTaggedContentParser.json_required_hint">json_required_hint (agentscope.parsers.MultiTaggedContentParser attribute)</a>
 
       <ul>
-        <li><a href="agentscope.models.response.html#agentscope.models.response.ModelResponse.json">(agentscope.models.response.ModelResponse attribute)</a>
+        <li><a href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.MultiTaggedContentParser.json_required_hint">(agentscope.parsers.tagged_content_parser.MultiTaggedContentParser attribute)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceFunction.json_schema">json_schema (agentscope.service.service_toolkit.ServiceFunction attribute)</a>
+</li>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceToolkit.json_schemas">json_schemas (agentscope.service.service_toolkit.ServiceToolkit property)</a>
+
+      <ul>
+        <li><a href="agentscope.service.html#agentscope.service.ServiceToolkit.json_schemas">(agentscope.service.ServiceToolkit property)</a>
+</li>
+      </ul></li>
+      <li><a href="agentscope.exception.html#agentscope.exception.JsonParsingError">JsonParsingError</a>
+</li>
+      <li><a href="agentscope.exception.html#agentscope.exception.JsonTypeError">JsonTypeError</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -1651,6 +1773,24 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.web.workstation.workflow.html#agentscope.web.workstation.workflow.main">main() (in module agentscope.web.workstation.workflow)</a>
 </li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownCodeBlockParser">MarkdownCodeBlockParser (class in agentscope.parsers)</a>
+
+      <ul>
+        <li><a href="agentscope.parsers.code_block_parser.html#agentscope.parsers.code_block_parser.MarkdownCodeBlockParser">(class in agentscope.parsers.code_block_parser)</a>
+</li>
+      </ul></li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonDictParser">MarkdownJsonDictParser (class in agentscope.parsers)</a>
+
+      <ul>
+        <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonDictParser">(class in agentscope.parsers.json_object_parser)</a>
+</li>
+      </ul></li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonObjectParser">MarkdownJsonObjectParser (class in agentscope.parsers)</a>
+
+      <ul>
+        <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser">(class in agentscope.parsers.json_object_parser)</a>
+</li>
+      </ul></li>
       <li><a href="agentscope.memory.html#agentscope.memory.MemoryBase">MemoryBase (class in agentscope.memory)</a>
 
       <ul>
@@ -1660,6 +1800,10 @@
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WorkflowNodeType.MESSAGE">MESSAGE (agentscope.web.workstation.workflow_node.WorkflowNodeType attribute)</a>
 </li>
       <li><a href="agentscope.message.html#agentscope.message.MessageBase">MessageBase (class in agentscope.message)</a>
+</li>
+      <li><a href="agentscope.exception.html#agentscope.exception.TagNotFoundError.missing_begin_tag">missing_begin_tag (agentscope.exception.TagNotFoundError attribute)</a>
+</li>
+      <li><a href="agentscope.exception.html#agentscope.exception.TagNotFoundError.missing_end_tag">missing_end_tag (agentscope.exception.TagNotFoundError attribute)</a>
 </li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WorkflowNodeType.MODEL">MODEL (agentscope.web.workstation.workflow_node.WorkflowNodeType attribute)</a>
 </li>
@@ -1805,6 +1949,8 @@
 </li>
         <li><a href="agentscope.constants.html#module-agentscope.constants">agentscope.constants</a>
 </li>
+        <li><a href="agentscope.exception.html#module-agentscope.exception">agentscope.exception</a>
+</li>
         <li><a href="agentscope.file_manager.html#module-agentscope.file_manager">agentscope.file_manager</a>
 </li>
         <li><a href="agentscope.memory.html#module-agentscope.memory">agentscope.memory</a>
@@ -1834,6 +1980,16 @@
         <li><a href="agentscope.models.response.html#module-agentscope.models.response">agentscope.models.response</a>
 </li>
         <li><a href="agentscope.msghub.html#module-agentscope.msghub">agentscope.msghub</a>
+</li>
+        <li><a href="agentscope.parsers.html#module-agentscope.parsers">agentscope.parsers</a>
+</li>
+        <li><a href="agentscope.parsers.code_block_parser.html#module-agentscope.parsers.code_block_parser">agentscope.parsers.code_block_parser</a>
+</li>
+        <li><a href="agentscope.parsers.json_object_parser.html#module-agentscope.parsers.json_object_parser">agentscope.parsers.json_object_parser</a>
+</li>
+        <li><a href="agentscope.parsers.parser_base.html#module-agentscope.parsers.parser_base">agentscope.parsers.parser_base</a>
+</li>
+        <li><a href="agentscope.parsers.tagged_content_parser.html#module-agentscope.parsers.tagged_content_parser">agentscope.parsers.tagged_content_parser</a>
 </li>
         <li><a href="agentscope.pipelines.html#module-agentscope.pipelines">agentscope.pipelines</a>
 </li>
@@ -1873,11 +2029,11 @@
 </li>
         <li><a href="agentscope.service.retrieval.similarity.html#module-agentscope.service.retrieval.similarity">agentscope.service.retrieval.similarity</a>
 </li>
-        <li><a href="agentscope.service.service_factory.html#module-agentscope.service.service_factory">agentscope.service.service_factory</a>
-</li>
         <li><a href="agentscope.service.service_response.html#module-agentscope.service.service_response">agentscope.service.service_response</a>
 </li>
         <li><a href="agentscope.service.service_status.html#module-agentscope.service.service_status">agentscope.service.service_status</a>
+</li>
+        <li><a href="agentscope.service.service_toolkit.html#module-agentscope.service.service_toolkit">agentscope.service.service_toolkit</a>
 </li>
         <li><a href="agentscope.service.sql_query.html#module-agentscope.service.sql_query">agentscope.service.sql_query</a>
 </li>
@@ -1974,12 +2130,38 @@
 </li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.MsgNode">MsgNode (class in agentscope.web.workstation.workflow_node)</a>
 </li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MultiTaggedContentParser">MultiTaggedContentParser (class in agentscope.parsers)</a>
+
+      <ul>
+        <li><a href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.MultiTaggedContentParser">(class in agentscope.parsers.tagged_content_parser)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.parsers.code_block_parser.html#agentscope.parsers.code_block_parser.MarkdownCodeBlockParser.name">name (agentscope.parsers.code_block_parser.MarkdownCodeBlockParser attribute)</a>
+
+      <ul>
+        <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.name">(agentscope.parsers.json_object_parser.MarkdownJsonDictParser attribute)</a>
+</li>
+        <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.name">(agentscope.parsers.json_object_parser.MarkdownJsonObjectParser attribute)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownCodeBlockParser.name">(agentscope.parsers.MarkdownCodeBlockParser attribute)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonDictParser.name">(agentscope.parsers.MarkdownJsonDictParser attribute)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonObjectParser.name">(agentscope.parsers.MarkdownJsonObjectParser attribute)</a>
+</li>
+        <li><a href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.TaggedContent.name">(agentscope.parsers.tagged_content_parser.TaggedContent attribute)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.TaggedContent.name">(agentscope.parsers.TaggedContent attribute)</a>
+</li>
+        <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceFunction.name">(agentscope.service.service_toolkit.ServiceFunction attribute)</a>
+</li>
+      </ul></li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.BingSearchServiceNode.node_type">node_type (agentscope.web.workstation.workflow_node.BingSearchServiceNode attribute)</a>
 
       <ul>
@@ -2110,24 +2292,68 @@
         <li><a href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaWrapperBase.options">(agentscope.models.ollama_model.OllamaWrapperBase attribute)</a>
 </li>
       </ul></li>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceFunction.original_func">original_func (agentscope.service.service_toolkit.ServiceFunction attribute)</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="agentscope.agents.dict_dialog_agent.html#agentscope.agents.dict_dialog_agent.parse_dict">parse_dict() (in module agentscope.agents.dict_dialog_agent)</a>
-</li>
-      <li><a href="agentscope.models.response.html#agentscope.models.response.ResponseParsingError.parse_func">parse_func (agentscope.models.response.ResponseParsingError attribute)</a>
+      <li><a href="agentscope.parsers.code_block_parser.html#agentscope.parsers.code_block_parser.MarkdownCodeBlockParser.parse">parse() (agentscope.parsers.code_block_parser.MarkdownCodeBlockParser method)</a>
 
       <ul>
-        <li><a href="agentscope.models.html#agentscope.models.ResponseParsingError.parse_func">(agentscope.models.ResponseParsingError attribute)</a>
+        <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.parse">(agentscope.parsers.json_object_parser.MarkdownJsonDictParser method)</a>
+</li>
+        <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.parse">(agentscope.parsers.json_object_parser.MarkdownJsonObjectParser method)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownCodeBlockParser.parse">(agentscope.parsers.MarkdownCodeBlockParser method)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonDictParser.parse">(agentscope.parsers.MarkdownJsonDictParser method)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonObjectParser.parse">(agentscope.parsers.MarkdownJsonObjectParser method)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.MultiTaggedContentParser.parse">(agentscope.parsers.MultiTaggedContentParser method)</a>
+</li>
+        <li><a href="agentscope.parsers.parser_base.html#agentscope.parsers.parser_base.ParserBase.parse">(agentscope.parsers.parser_base.ParserBase method)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.ParserBase.parse">(agentscope.parsers.ParserBase method)</a>
+</li>
+        <li><a href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.MultiTaggedContentParser.parse">(agentscope.parsers.tagged_content_parser.MultiTaggedContentParser method)</a>
 </li>
       </ul></li>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceToolkit.parse_and_call_func">parse_and_call_func() (agentscope.service.service_toolkit.ServiceToolkit method)</a>
+
+      <ul>
+        <li><a href="agentscope.service.html#agentscope.service.ServiceToolkit.parse_and_call_func">(agentscope.service.ServiceToolkit method)</a>
+</li>
+      </ul></li>
+      <li><a href="agentscope.agents.dict_dialog_agent.html#agentscope.agents.dict_dialog_agent.parse_dict">parse_dict() (in module agentscope.agents.dict_dialog_agent)</a>
+</li>
       <li><a href="agentscope.service.html#agentscope.service.parse_html_to_text">parse_html_to_text() (in module agentscope.service)</a>
 
       <ul>
         <li><a href="agentscope.service.web.web_digest.html#agentscope.service.web.web_digest.parse_html_to_text">(in module agentscope.service.web.web_digest)</a>
+</li>
+      </ul></li>
+      <li><a href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.TaggedContent.parse_json">parse_json (agentscope.parsers.tagged_content_parser.TaggedContent attribute)</a>
+
+      <ul>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.TaggedContent.parse_json">(agentscope.parsers.TaggedContent attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="agentscope.models.html#agentscope.models.ModelResponse.parsed">parsed (agentscope.models.ModelResponse attribute)</a>
+
+      <ul>
+        <li><a href="agentscope.models.response.html#agentscope.models.response.ModelResponse.parsed">(agentscope.models.response.ModelResponse attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.ParserBase">ParserBase (class in agentscope.parsers)</a>
+
+      <ul>
+        <li><a href="agentscope.parsers.parser_base.html#agentscope.parsers.parser_base.ParserBase">(class in agentscope.parsers.parser_base)</a>
 </li>
       </ul></li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WorkflowNodeType.PIPELINE">PIPELINE (agentscope.web.workstation.workflow_node.WorkflowNodeType attribute)</a>
@@ -2144,8 +2370,6 @@
 </li>
       <li><a href="agentscope.message.html#agentscope.message.PlaceholderMessage">PlaceholderMessage (class in agentscope.message)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.PlaceHolderNode">PlaceHolderNode (class in agentscope.web.workstation.workflow_node)</a>
 </li>
       <li><a href="agentscope.models.html#agentscope.models.PostAPIChatWrapper">PostAPIChatWrapper (class in agentscope.models)</a>
@@ -2162,13 +2386,9 @@
         <li><a href="agentscope.models.post_model.html#agentscope.models.post_model.PostAPIModelWrapperBase">(class in agentscope.models.post_model)</a>
 </li>
       </ul></li>
-      <li><a href="agentscope.agents.react_agent.html#agentscope.agents.react_agent.ReActAgent.prepare_funcs_prompt">prepare_funcs_prompt() (agentscope.agents.react_agent.ReActAgent method)</a>
-
-      <ul>
-        <li><a href="agentscope.agents.html#agentscope.agents.ReActAgent.prepare_funcs_prompt">(agentscope.agents.ReActAgent method)</a>
-</li>
-      </ul></li>
       <li><a href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.RpcServerSideWrapper.process_messages">process_messages() (agentscope.agents.rpc_agent.RpcServerSideWrapper method)</a>
+</li>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceFunction.processed_func">processed_func (agentscope.service.service_toolkit.ServiceFunction attribute)</a>
 </li>
       <li><a href="agentscope.prompt.html#agentscope.prompt.PromptEngine">PromptEngine (class in agentscope.prompt)</a>
 </li>
@@ -2216,6 +2436,8 @@
         <li><a href="agentscope.models.response.html#agentscope.models.response.ModelResponse.raw">(agentscope.models.response.ModelResponse attribute)</a>
 </li>
       </ul></li>
+      <li><a href="agentscope.exception.html#agentscope.exception.ResponseParsingError.raw_response">raw_response (agentscope.exception.ResponseParsingError attribute)</a>
+</li>
       <li><a href="agentscope.agents.html#agentscope.agents.ReActAgent">ReActAgent (class in agentscope.agents)</a>
 
       <ul>
@@ -2300,6 +2522,16 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.utils.common.html#agentscope.utils.common.requests_get">requests_get() (in module agentscope.utils.common)</a>
 </li>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceFunction.require_args">require_args (agentscope.service.service_toolkit.ServiceFunction attribute)</a>
+</li>
+      <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.required_keys">required_keys (agentscope.parsers.json_object_parser.MarkdownJsonDictParser attribute)</a>
+
+      <ul>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonDictParser.required_keys">(agentscope.parsers.MarkdownJsonDictParser attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="agentscope.exception.html#agentscope.exception.RequiredFieldNotFoundError">RequiredFieldNotFoundError</a>
+</li>
       <li><a href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.reset_audience">reset_audience() (agentscope.agents.agent.AgentBase method)</a>
 
       <ul>
@@ -2310,21 +2542,9 @@
 </li>
       <li><a href="agentscope.web.studio.utils.html#agentscope.web.studio.utils.ResetException">ResetException</a>
 </li>
-      <li><a href="agentscope.models.response.html#agentscope.models.response.ResponseParsingError.response">response (agentscope.models.response.ResponseParsingError attribute)</a>
-
-      <ul>
-        <li><a href="agentscope.models.html#agentscope.models.ResponseParsingError.response">(agentscope.models.ResponseParsingError attribute)</a>
-</li>
-      </ul></li>
       <li><a href="agentscope.constants.html#agentscope.constants.ResponseFormat">ResponseFormat (class in agentscope.constants)</a>
 </li>
-      <li><a href="agentscope.models.html#agentscope.models.ResponseParser">ResponseParser (class in agentscope.models)</a>
-
-      <ul>
-        <li><a href="agentscope.models.response.html#agentscope.models.response.ResponseParser">(class in agentscope.models.response)</a>
-</li>
-      </ul></li>
-      <li><a href="agentscope.models.html#agentscope.models.ResponseParsingError">ResponseParsingError</a>, <a href="agentscope.models.response.html#agentscope.models.response.ResponseParsingError">[1]</a>
+      <li><a href="agentscope.exception.html#agentscope.exception.ResponseParsingError">ResponseParsingError</a>
 </li>
       <li><a href="agentscope.rpc.html#agentscope.rpc.ResponseStub">ResponseStub (class in agentscope.rpc)</a>
 
@@ -2440,6 +2660,12 @@
       </ul></li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WorkflowNodeType.SERVICE">SERVICE (agentscope.web.workstation.workflow_node.WorkflowNodeType attribute)</a>
 </li>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceToolkit.service_funcs">service_funcs (agentscope.service.service_toolkit.ServiceToolkit attribute)</a>
+
+      <ul>
+        <li><a href="agentscope.service.html#agentscope.service.ServiceToolkit.service_funcs">(agentscope.service.ServiceToolkit attribute)</a>
+</li>
+      </ul></li>
       <li><a href="agentscope.service.html#agentscope.service.ServiceExecStatus">ServiceExecStatus (class in agentscope.service)</a>
 
       <ul>
@@ -2449,13 +2675,21 @@
       <li><a href="agentscope.service.html#agentscope.service.ServiceFactory">ServiceFactory (class in agentscope.service)</a>
 
       <ul>
-        <li><a href="agentscope.service.service_factory.html#agentscope.service.service_factory.ServiceFactory">(class in agentscope.service.service_factory)</a>
+        <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceFactory">(class in agentscope.service.service_toolkit)</a>
 </li>
       </ul></li>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceFunction">ServiceFunction (class in agentscope.service.service_toolkit)</a>
+</li>
       <li><a href="agentscope.service.html#agentscope.service.ServiceResponse">ServiceResponse (class in agentscope.service)</a>
 
       <ul>
         <li><a href="agentscope.service.service_response.html#agentscope.service.service_response.ServiceResponse">(class in agentscope.service.service_response)</a>
+</li>
+      </ul></li>
+      <li><a href="agentscope.service.html#agentscope.service.ServiceToolkit">ServiceToolkit (class in agentscope.service)</a>
+
+      <ul>
+        <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceToolkit">(class in agentscope.service.service_toolkit)</a>
 </li>
       </ul></li>
       <li><a href="agentscope.utils.monitor.html#agentscope.utils.monitor.MonitorBase.set_quota">set_quota() (agentscope.utils.monitor.MonitorBase method)</a>
@@ -2472,14 +2706,14 @@
         <li><a href="agentscope.rpc.rpc_agent_client.html#agentscope.rpc.rpc_agent_client.ResponseStub.set_response">(agentscope.rpc.rpc_agent_client.ResponseStub method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.utils.html#agentscope.utils.setup_logger">setup_logger() (in module agentscope.utils)</a>
 
       <ul>
         <li><a href="agentscope.utils.logging_utils.html#agentscope.utils.logging_utils.setup_logger">(in module agentscope.utils.logging_utils)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.setup_rpc_agent_server">setup_rpc_agent_server() (in module agentscope.agents.rpc_agent)</a>
 </li>
       <li><a href="agentscope.constants.html#agentscope.constants.ShrinkPolicy">ShrinkPolicy (class in agentscope.constants)</a>
@@ -2562,12 +2796,58 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.parsers.code_block_parser.html#agentscope.parsers.code_block_parser.MarkdownCodeBlockParser.tag_begin">tag_begin (agentscope.parsers.code_block_parser.MarkdownCodeBlockParser attribute)</a>
+
+      <ul>
+        <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.tag_begin">(agentscope.parsers.json_object_parser.MarkdownJsonDictParser attribute)</a>
+</li>
+        <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.tag_begin">(agentscope.parsers.json_object_parser.MarkdownJsonObjectParser attribute)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownCodeBlockParser.tag_begin">(agentscope.parsers.MarkdownCodeBlockParser attribute)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonDictParser.tag_begin">(agentscope.parsers.MarkdownJsonDictParser attribute)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonObjectParser.tag_begin">(agentscope.parsers.MarkdownJsonObjectParser attribute)</a>
+</li>
+        <li><a href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.TaggedContent.tag_begin">(agentscope.parsers.tagged_content_parser.TaggedContent attribute)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.TaggedContent.tag_begin">(agentscope.parsers.TaggedContent attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="agentscope.parsers.code_block_parser.html#agentscope.parsers.code_block_parser.MarkdownCodeBlockParser.tag_end">tag_end (agentscope.parsers.code_block_parser.MarkdownCodeBlockParser attribute)</a>
+
+      <ul>
+        <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.tag_end">(agentscope.parsers.json_object_parser.MarkdownJsonDictParser attribute)</a>
+</li>
+        <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.tag_end">(agentscope.parsers.json_object_parser.MarkdownJsonObjectParser attribute)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownCodeBlockParser.tag_end">(agentscope.parsers.MarkdownCodeBlockParser attribute)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonDictParser.tag_end">(agentscope.parsers.MarkdownJsonDictParser attribute)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonObjectParser.tag_end">(agentscope.parsers.MarkdownJsonObjectParser attribute)</a>
+</li>
+        <li><a href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.TaggedContent.tag_end">(agentscope.parsers.tagged_content_parser.TaggedContent attribute)</a>
+</li>
+        <li><a href="agentscope.parsers.html#agentscope.parsers.TaggedContent.tag_end">(agentscope.parsers.TaggedContent attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.TaggedContent">TaggedContent (class in agentscope.parsers)</a>
+
+      <ul>
+        <li><a href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.TaggedContent">(class in agentscope.parsers.tagged_content_parser)</a>
+</li>
+      </ul></li>
+      <li><a href="agentscope.exception.html#agentscope.exception.TagNotFoundError">TagNotFoundError</a>
+</li>
       <li><a href="agentscope.memory.html#agentscope.memory.TemporaryMemory">TemporaryMemory (class in agentscope.memory)</a>
 
       <ul>
         <li><a href="agentscope.memory.temporary_memory.html#agentscope.memory.temporary_memory.TemporaryMemory">(class in agentscope.memory.temporary_memory)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.models.html#agentscope.models.ModelResponse.text">text (agentscope.models.ModelResponse attribute)</a>
 
       <ul>
@@ -2588,24 +2868,10 @@
 </li>
       <li><a href="agentscope.utils.tools.html#agentscope.utils.tools.to_dialog_str">to_dialog_str() (in module agentscope.utils.tools)</a>
 </li>
-      <li><a href="agentscope.models.response.html#agentscope.models.response.ResponseParser.to_dict">to_dict() (agentscope.models.response.ResponseParser class method)</a>
-
-      <ul>
-        <li><a href="agentscope.models.html#agentscope.models.ResponseParser.to_dict">(agentscope.models.ResponseParser class method)</a>
-</li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.to_dist">to_dist() (agentscope.agents.agent.AgentBase method)</a>
 
       <ul>
         <li><a href="agentscope.agents.html#agentscope.agents.AgentBase.to_dist">(agentscope.agents.AgentBase method)</a>
-</li>
-      </ul></li>
-      <li><a href="agentscope.models.response.html#agentscope.models.response.ResponseParser.to_list">to_list() (agentscope.models.response.ResponseParser class method)</a>
-
-      <ul>
-        <li><a href="agentscope.models.html#agentscope.models.ResponseParser.to_list">(agentscope.models.ResponseParser class method)</a>
 </li>
       </ul></li>
       <li><a href="agentscope.utils.tools.html#agentscope.utils.tools.to_openai_dict">to_openai_dict() (in module agentscope.utils.tools)</a>
@@ -2618,6 +2884,18 @@
         <li><a href="agentscope.message.html#agentscope.message.PlaceholderMessage.to_str">(agentscope.message.PlaceholderMessage method)</a>
 </li>
         <li><a href="agentscope.message.html#agentscope.message.Tht.to_str">(agentscope.message.Tht method)</a>
+</li>
+      </ul></li>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceToolkit.tools_calling_format">tools_calling_format (agentscope.service.service_toolkit.ServiceToolkit property)</a>
+
+      <ul>
+        <li><a href="agentscope.service.html#agentscope.service.ServiceToolkit.tools_calling_format">(agentscope.service.ServiceToolkit property)</a>
+</li>
+      </ul></li>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceToolkit.tools_instruction">tools_instruction (agentscope.service.service_toolkit.ServiceToolkit property)</a>
+
+      <ul>
+        <li><a href="agentscope.service.html#agentscope.service.ServiceToolkit.tools_instruction">(agentscope.service.ServiceToolkit property)</a>
 </li>
       </ul></li>
       <li><a href="agentscope.constants.html#agentscope.constants.ShrinkPolicy.TRUNCATE">TRUNCATE (agentscope.constants.ShrinkPolicy attribute)</a>

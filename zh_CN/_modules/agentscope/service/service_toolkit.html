@@ -1,0 +1,880 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.service.service_toolkit &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=7d86a446"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/translations.js?v=beaddf03"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../../../en/_modules/agentscope/service/service_toolkit.html">English</a></li> |
+    <a href="../../../../zh_CN/_modules/agentscope/service/service_toolkit.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/quick_start.html">快速上手</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/advance.html">进阶使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.exception.html">agentscope.exception</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">模块代码</a></li>
+          <li class="breadcrumb-item"><a href="../service.html">agentscope.service</a></li>
+      <li class="breadcrumb-item active">agentscope.service.service_toolkit</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>agentscope.service.service_toolkit 源代码</h1><div class="highlight"><pre>
+<span></span># -*- coding: utf-8 -*-
+&quot;&quot;&quot;Service Toolkit for service function usage.&quot;&quot;&quot;
+import collections.abc
+import json
+from functools import partial
+import inspect
+from typing import (
+    Callable,
+    Any,
+    Tuple,
+    Union,
+    Optional,
+    Literal,
+    get_args,
+    get_origin,
+    List,
+)
+from loguru import logger
+
+from ..exception import (
+    JsonParsingError,
+    FunctionNotFoundError,
+    FunctionCallFormatError,
+)
+from .service_response import ServiceResponse
+from .service_response import ServiceExecStatus
+
+try:
+    from docstring_parser import parse
+except ImportError:
+    parse = None
+
+
+def _get_type_str(cls: Any) -&gt; Optional[Union[str, list]]:
+    &quot;&quot;&quot;Get the type string.&quot;&quot;&quot;
+    type_str = None
+    if hasattr(cls, &quot;__origin__&quot;):
+        # Typing class
+        if cls.__origin__ is Union:
+            type_str = [_get_type_str(_) for _ in get_args(cls)]
+        elif cls.__origin__ is collections.abc.Sequence:
+            type_str = &quot;array&quot;
+        else:
+            type_str = str(cls.__origin__)
+    else:
+        # Normal class
+        if cls is str:
+            type_str = &quot;string&quot;
+        elif cls in [float, int, complex]:
+            type_str = &quot;number&quot;
+        elif cls is bool:
+            type_str = &quot;boolean&quot;
+        elif cls is collections.abc.Sequence:
+            type_str = &quot;array&quot;
+        elif cls is None.__class__:
+            type_str = &quot;null&quot;
+        else:
+            type_str = cls.__name__
+
+    return type_str  # type: ignore[return-value]
+
+
+<div class="viewcode-block" id="ServiceFunction">
+<a class="viewcode-back" href="../../../agentscope.service.service_toolkit.html#agentscope.service.ServiceFunction">[文档]</a>
+class ServiceFunction:
+    &quot;&quot;&quot;The service function class.&quot;&quot;&quot;
+
+    name: str
+    &quot;&quot;&quot;The name of the service function.&quot;&quot;&quot;
+
+    original_func: Callable
+    &quot;&quot;&quot;The original function before processing.&quot;&quot;&quot;
+
+    processed_func: Callable
+    &quot;&quot;&quot;The processed function that can be called by the model directly.&quot;&quot;&quot;
+
+    json_schema: dict
+    &quot;&quot;&quot;The JSON schema description of the service function.&quot;&quot;&quot;
+
+    require_args: bool
+    &quot;&quot;&quot;Whether calling the service function requests arguments. Some arguments
+    may have default values, so it is not necessary to provide all arguments.
+    &quot;&quot;&quot;
+
+<div class="viewcode-block" id="ServiceFunction.__init__">
+<a class="viewcode-back" href="../../../agentscope.service.service_toolkit.html#agentscope.service.ServiceFunction.__init__">[文档]</a>
+    def __init__(
+        self,
+        name: str,
+        original_func: Callable,
+        processed_func: Callable,
+        json_schema: dict,
+    ) -&gt; None:
+        &quot;&quot;&quot;Initialize the service function object.&quot;&quot;&quot;
+
+        self.name = name
+        self.original_func = original_func
+        self.processed_func = processed_func
+        self.json_schema = json_schema
+
+        self.require_args = (
+            len(
+                json_schema[&quot;function&quot;]
+                .get(&quot;parameters&quot;, {})
+                .get(&quot;required&quot;, []),
+            )
+            != 0
+        )</div>
+</div>
+
+
+
+<div class="viewcode-block" id="ServiceToolkit">
+<a class="viewcode-back" href="../../../agentscope.service.service_toolkit.html#agentscope.service.ServiceToolkit">[文档]</a>
+class ServiceToolkit:
+    &quot;&quot;&quot;A service toolkit class that turns service function into string
+    prompt format.&quot;&quot;&quot;
+
+    service_funcs: dict[str, ServiceFunction]
+    &quot;&quot;&quot;The registered functions in the service toolkit.&quot;&quot;&quot;
+
+    _tools_instruction_format: str = (
+        &quot;## Tool Functions:\n&quot;
+        &quot;The following tool functions are available in the format of\n&quot;
+        &quot;```\n&quot;
+        &quot;{{index}}. {{function name}}: {{function description}}\n&quot;
+        &quot;{{argument1 name}} ({{argument type}}): {{argument description}}\n&quot;
+        &quot;{{argument2 name}} ({{argument type}}): {{argument description}}\n&quot;
+        &quot;...\n&quot;
+        &quot;```\n\n&quot;
+        &quot;{function_prompt}\n&quot;
+    )
+    &quot;&quot;&quot;The instruction template for the tool functions.&quot;&quot;&quot;
+
+    _tools_calling_format: str = (
+        &#39;[{&quot;name&quot;: &quot;{function name}&quot;, &quot;arguments&quot;: {&quot;{argument1 name}&quot;: xxx,&#39;
+        &#39; &quot;{argument2 name}&quot;: xxx}}]&#39;
+    )
+    &quot;&quot;&quot;The format of the tool function call.&quot;&quot;&quot;
+
+    _tools_execution_format: str = (
+        &quot;{index}. Execute function {function_name}\n&quot;
+        &quot;   [ARGUMENTS]:\n&quot;
+        &quot;       {arguments}\n&quot;
+        &quot;   [STATUS]: {status}\n&quot;
+        &quot;   [RESULT]: {result}\n&quot;
+    )
+    &quot;&quot;&quot;The prompt template for the execution results.&quot;&quot;&quot;
+
+<div class="viewcode-block" id="ServiceToolkit.__init__">
+<a class="viewcode-back" href="../../../agentscope.service.service_toolkit.html#agentscope.service.ServiceToolkit.__init__">[文档]</a>
+    def __init__(self) -&gt; None:
+        &quot;&quot;&quot;Initialize the service toolkit with a list of service functions.&quot;&quot;&quot;
+        self.service_funcs = {}</div>
+
+
+<div class="viewcode-block" id="ServiceToolkit.add">
+<a class="viewcode-back" href="../../../agentscope.service.service_toolkit.html#agentscope.service.ServiceToolkit.add">[文档]</a>
+    def add(self, service_func: Callable[..., Any], **kwargs: Any) -&gt; None:
+        &quot;&quot;&quot;Add a service function to the toolkit, which will be processed into
+        a tool function that can be called by the model directly, and
+        registered in processed_funcs.
+
+        Args:
+            service_func (`Callable[..., Any]`):
+                The service function to be called.
+            kwargs (`Any`):
+                The arguments to be passed to the service function.
+
+        Returns:
+            `Tuple(Callable[..., Any], dict)`: A tuple of tool function and
+            a dict in JSON Schema format to describe the function.
+
+        Note:
+            The description of the function and arguments are extracted from
+            its docstring automatically, which should be well-formatted in
+            **Google style**. Otherwise, their descriptions in the returned
+            dictionary will be empty.
+
+        Suggestions:
+            1. The name of the service function should be self-explanatory,
+            so that the agent can understand the function and use it properly.
+            2. The typing of the arguments should be provided when defining
+            the function (e.g. `def func(a: int, b: str, c: bool)`), so that
+            the agent can specify the arguments properly.
+            3. The execution results should be a `ServiceResponse` object.
+
+        Example:
+
+            .. code-block:: python
+
+                def bing_search(query: str, api_key: str, num_results=10):
+                    \&quot;&quot;&quot;Search the query in Bing search engine.
+
+                        Args:
+                            query: (`str`):
+                                The string query to search.
+                            api_key: (`str`):
+                                The API key for Bing search.
+                            num_results: (`int`, optional):
+                                The number of results to return, default to 10.
+                    \&quot;&quot;&quot;
+
+                    # ... Your implementation here ...
+                    return ServiceResponse(status, output)
+
+        &quot;&quot;&quot;
+
+        processed_func, json_schema = ServiceToolkit.get(
+            service_func,
+            **kwargs,
+        )
+
+        # register the service function
+        name = service_func.__name__
+        if name in self.service_funcs:
+            logger.warning(
+                f&quot;Service function `{name}` already exists, &quot;
+                f&quot;skip adding it.&quot;,
+            )
+        else:
+            self.service_funcs[name] = ServiceFunction(
+                name=name,
+                original_func=service_func,
+                processed_func=processed_func,
+                json_schema=json_schema,
+            )</div>
+
+
+    @property
+    def json_schemas(self) -&gt; dict:
+        &quot;&quot;&quot;The json schema descriptions of the processed service funcs.&quot;&quot;&quot;
+        return {k: v.json_schema for k, v in self.service_funcs.items()}
+
+    @property
+    def tools_calling_format(self) -&gt; str:
+        &quot;&quot;&quot;The calling format of the tool functions.&quot;&quot;&quot;
+        return self._tools_calling_format
+
+    @property
+    def tools_instruction(self) -&gt; str:
+        &quot;&quot;&quot;The instruction of the tool functions.&quot;&quot;&quot;
+        tools_prompt = []
+        for i, (func_name, desc) in enumerate(self.json_schemas.items()):
+            func_desc = desc[&quot;function&quot;][&quot;description&quot;]
+            args_desc = desc[&quot;function&quot;][&quot;parameters&quot;][&quot;properties&quot;]
+
+            args_list = [f&quot;{i + 1}. {func_name}: {func_desc}&quot;]
+            for args_name, args_info in args_desc.items():
+                if &quot;type&quot; in args_info:
+                    args_line = (
+                        f&#39;\t{args_name} ({args_info[&quot;type&quot;]}): &#39;
+                        f&#39;{args_info.get(&quot;description&quot;, &quot;&quot;)}&#39;
+                    )
+                else:
+                    args_line = (
+                        f&#39;\t{args_name}: {args_info.get(&quot;description&quot;, &quot;&quot;)}&#39;
+                    )
+                args_list.append(args_line)
+
+            func_prompt = &quot;\n&quot;.join(args_list)
+            tools_prompt.append(func_prompt)
+
+        tools_description = &quot;\n&quot;.join(tools_prompt)
+
+        if tools_description == &quot;&quot;:
+            # No tools are provided
+            return &quot;&quot;
+        else:
+            return self._tools_instruction_format.format_map(
+                {&quot;function_prompt&quot;: tools_description},
+            )
+
+    def _parse_and_check_text(self, cmd: Union[list[dict], str]) -&gt; List[dict]:
+        &quot;&quot;&quot;Parsing and check the format of the function calling text.&quot;&quot;&quot;
+
+        # Record the error
+        error_info = []
+
+        if isinstance(cmd, str):
+            # --- Syntax check: if the input can be loaded by JSON
+            try:
+                processed_text = cmd.strip()
+
+                # complete &quot;[&quot; and &quot;]&quot; if they are missing
+                index_start = processed_text.find(&quot;[&quot;)
+                index_end = processed_text.rfind(&quot;]&quot;)
+
+                if index_start == -1:
+                    index_start = 0
+                    error_info.append(&#39;Missing &quot;[&quot; at the beginning.&#39;)
+
+                if index_end == -1:
+                    index_end = len(processed_text)
+                    error_info.append(&#39;Missing &quot;]&quot; at the end.&#39;)
+
+                # remove the unnecessary prefix before &quot;[&quot; and suffix after &quot;]&quot;
+                processed_text = processed_text[
+                    index_start : index_end + 1  # noqa: E203
+                ]
+
+                cmds = json.loads(processed_text)
+            except json.JSONDecodeError:
+                # Since we have processed the text, here we can only report
+                # the JSON parsing error
+                raise JsonParsingError(
+                    f&quot;Except a list of dictionaries in JSON format, &quot;
+                    f&quot;like: {self.tools_calling_format}&quot;,
+                ) from None
+        else:
+            cmds = cmd
+
+        # --- Semantic Check: if the input is a list of dicts with
+        # required fields
+
+        # Handle the case when the input is a single dictionary
+        if isinstance(cmds, dict):
+            # The error info is already recorded in error_info
+            cmds = [cmds]
+
+        if not isinstance(cmds, list):
+            # Not list, raise parsing error
+            raise JsonParsingError(
+                f&quot;Except a list of dictionaries in JSON format &quot;
+                f&quot;like: {self.tools_calling_format}&quot;,
+            )
+
+        # --- Check the format of the command ---
+        for sub_cmd in cmds:
+            if not isinstance(sub_cmd, dict):
+                raise JsonParsingError(
+                    f&quot;Except a JSON list of dictionaries, but got&quot;
+                    f&quot; {type(sub_cmd)} instead.&quot;,
+                )
+
+            if &quot;name&quot; not in sub_cmd:
+                raise FunctionCallFormatError(
+                    &quot;The field &#39;name&#39; is required in the dictionary.&quot;,
+                )
+
+            # Obtain the service function
+            func_name = sub_cmd[&quot;name&quot;]
+
+            # Cannot find the service function
+            if func_name not in self.service_funcs:
+                raise FunctionNotFoundError(
+                    f&quot;Cannot find a tool function named `{func_name}`.&quot;,
+                )
+
+            # Type error for the arguments
+            if not isinstance(sub_cmd[&quot;arguments&quot;], dict):
+                raise FunctionCallFormatError(
+                    &quot;Except a dictionary for the arguments, but got &quot;
+                    f&quot;{type(sub_cmd[&#39;arguments&#39;])} instead.&quot;,
+                )
+
+            # Leaving the type checking and required checking to the runtime
+            # error reporting during execution
+        return cmds
+
+    def _execute_func(self, cmds: List[dict]) -&gt; str:
+        &quot;&quot;&quot;Execute the function with the arguments.
+
+        Args:
+            cmds (`List[dict]`):
+                A list of dictionaries, where each dictionary contains the
+                name of the function and its arguments, e.g. {&quot;name&quot;: &quot;func1&quot;,
+                &quot;arguments&quot;: {&quot;arg1&quot;: 1, &quot;arg2&quot;: 2}}.
+
+        Returns:
+            `str`: The prompt of the execution results.
+        &quot;&quot;&quot;
+
+        execute_results = []
+        for i, cmd in enumerate(cmds):
+            func_name = cmd[&quot;name&quot;]
+            service_func = self.service_funcs[cmd[&quot;name&quot;]]
+            kwargs = cmd.get(&quot;arguments&quot;, {})
+
+            print(f&quot;&gt;&gt;&gt; Executing function {func_name} with arguments:&quot;)
+            for key, value in kwargs.items():
+                value = (
+                    value if len(str(value)) &lt; 50 else str(value)[:50] + &quot;...&quot;
+                )
+                print(f&quot;&gt;&gt;&gt; \t{key}: {value}&quot;)
+
+            # Execute the function
+            try:
+                func_res = service_func.processed_func(**kwargs)
+            except Exception as e:
+                func_res = ServiceResponse(
+                    status=ServiceExecStatus.ERROR,
+                    content=str(e),
+                )
+
+            print(&quot;&gt;&gt;&gt; END &quot;)
+
+            status = (
+                &quot;SUCCESS&quot;
+                if func_res.status == ServiceExecStatus.SUCCESS
+                else &quot;FAILED&quot;
+            )
+
+            arguments = [f&quot;{k}: {v}&quot; for k, v in kwargs.items()]
+
+            execute_res = self._tools_execution_format.format_map(
+                {
+                    &quot;index&quot;: i + 1,
+                    &quot;function_name&quot;: cmd[&quot;name&quot;],
+                    &quot;arguments&quot;: &quot;\n\t\t&quot;.join(arguments),
+                    &quot;status&quot;: status,
+                    &quot;result&quot;: func_res.content,
+                },
+            )
+
+            execute_results.append(execute_res)
+
+        execute_results_prompt = &quot;\n&quot;.join(execute_results)
+
+        return execute_results_prompt
+
+<div class="viewcode-block" id="ServiceToolkit.parse_and_call_func">
+<a class="viewcode-back" href="../../../agentscope.service.service_toolkit.html#agentscope.service.ServiceToolkit.parse_and_call_func">[文档]</a>
+    def parse_and_call_func(self, text_cmd: Union[list[dict], str]) -&gt; str:
+        &quot;&quot;&quot;Parse, check the text and call the function.&quot;&quot;&quot;
+
+        # --- Step 1: Parse the text according to the tools_call_format
+        cmds = self._parse_and_check_text(text_cmd)
+
+        # --- Step 2: Call the service function ---
+
+        execute_results_prompt = self._execute_func(cmds)
+
+        return execute_results_prompt</div>
+
+
+<div class="viewcode-block" id="ServiceToolkit.get">
+<a class="viewcode-back" href="../../../agentscope.service.service_toolkit.html#agentscope.service.ServiceToolkit.get">[文档]</a>
+    @classmethod
+    def get(
+        cls,
+        service_func: Callable[..., Any],
+        **kwargs: Any,
+    ) -&gt; Tuple[Callable[..., Any], dict]:
+        &quot;&quot;&quot;Convert a service function into a tool function that agent can
+        use, and generate a dictionary in JSON Schema format that can be
+        used in OpenAI API directly. While for open-source model, developers
+        should handle the conversation from json dictionary to prompt.
+
+        Args:
+            service_func (`Callable[..., Any]`):
+                The service function to be called.
+            kwargs (`Any`):
+                The arguments to be passed to the service function.
+
+        Returns:
+            `Tuple(Callable[..., Any], dict)`: A tuple of tool function and
+            a dict in JSON Schema format to describe the function.
+
+        Note:
+            The description of the function and arguments are extracted from
+            its docstring automatically, which should be well-formatted in
+            **Google style**. Otherwise, their descriptions in the returned
+            dictionary will be empty.
+
+        Suggestions:
+            1. The name of the service function should be self-explanatory,
+            so that the agent can understand the function and use it properly.
+            2. The typing of the arguments should be provided when defining
+            the function (e.g. `def func(a: int, b: str, c: bool)`), so that
+            the agent can specify the arguments properly.
+
+        Example:
+
+            .. code-block:: python
+
+                def bing_search(query: str, api_key: str, num_results: int=10):
+                    &#39;&#39;&#39;Search the query in Bing search engine.
+
+                    Args:
+                        query (str):
+                            The string query to search.
+                        api_key (str):
+                            The API key for Bing search.
+                        num_results (int):
+                            The number of results to return, default to 10.
+                    &#39;&#39;&#39;
+                    pass
+
+
+        &quot;&quot;&quot;
+        # Get the function for agent to use
+        tool_func = partial(service_func, **kwargs)
+
+        # Obtain all arguments of the service function
+        argsspec = inspect.getfullargspec(service_func)
+
+        # Construct the mapping from arguments to their typings
+        if parse is None:
+            raise ImportError(
+                &quot;Missing required package `docstring_parser`&quot;
+                &quot;Please install it by &quot;
+                &quot;`pip install docstring_parser`.&quot;,
+            )
+
+        docstring = parse(service_func.__doc__)
+
+        # Function description
+        func_description = (
+            docstring.short_description or docstring.long_description
+        )
+
+        # The arguments that requires the agent to specify
+        args_agent = set(argsspec.args) - set(kwargs.keys())
+
+        # Check if the arguments from agent have descriptions in docstring
+        args_description = {
+            _.arg_name: _.description for _ in docstring.params
+        }
+
+        # Prepare default values
+        if argsspec.defaults is None:
+            args_defaults = {}
+        else:
+            args_defaults = dict(
+                zip(
+                    reversed(argsspec.args),
+                    reversed(argsspec.defaults),  # type: ignore
+                ),
+            )
+
+        args_required = sorted(
+            list(set(args_agent) - set(args_defaults.keys())),
+        )
+
+        # Prepare types of the arguments, remove the return type
+        args_types = {
+            k: v for k, v in argsspec.annotations.items() if k != &quot;return&quot;
+        }
+
+        # Prepare argument dictionary
+        properties_field = {}
+        for key in args_agent:
+            arg_property = {}
+            # type
+            if key in args_types:
+                try:
+                    required_type = _get_type_str(args_types[key])
+                    arg_property[&quot;type&quot;] = required_type
+                except Exception:
+                    logger.warning(
+                        f&quot;Fail and skip to get the type of the &quot;
+                        f&quot;argument `{key}`.&quot;,
+                    )
+
+                # For Literal type, add enum field
+                if get_origin(args_types[key]) is Literal:
+                    arg_property[&quot;enum&quot;] = list(args_types[key].__args__)
+
+            # description
+            if key in args_description:
+                arg_property[&quot;description&quot;] = args_description[key]
+
+            # default
+            if key in args_defaults and args_defaults[key] is not None:
+                arg_property[&quot;default&quot;] = args_defaults[key]
+
+            properties_field[key] = arg_property
+
+        # Construct the JSON Schema for the service function
+        func_dict = {
+            &quot;type&quot;: &quot;function&quot;,
+            &quot;function&quot;: {
+                &quot;name&quot;: service_func.__name__,
+                &quot;description&quot;: func_description,
+                &quot;parameters&quot;: {
+                    &quot;type&quot;: &quot;object&quot;,
+                    &quot;properties&quot;: properties_field,
+                    &quot;required&quot;: args_required,
+                },
+            },
+        }
+
+        return tool_func, func_dict</div>
+</div>
+
+
+
+<div class="viewcode-block" id="ServiceFactory">
+<a class="viewcode-back" href="../../../agentscope.service.service_toolkit.html#agentscope.service.ServiceFactory">[文档]</a>
+class ServiceFactory:
+    &quot;&quot;&quot;A service factory class that turns service function into string
+    prompt format.&quot;&quot;&quot;
+
+<div class="viewcode-block" id="ServiceFactory.get">
+<a class="viewcode-back" href="../../../agentscope.service.service_toolkit.html#agentscope.service.ServiceFactory.get">[文档]</a>
+    @classmethod
+    def get(
+        cls,
+        service_func: Callable[..., Any],
+        **kwargs: Any,
+    ) -&gt; Tuple[Callable[..., Any], dict]:
+        &quot;&quot;&quot;Convert a service function into a tool function that agent can
+        use, and generate a dictionary in JSON Schema format that can be
+        used in OpenAI API directly. While for open-source model, developers
+        should handle the conversation from json dictionary to prompt.
+
+        Args:
+            service_func (`Callable[..., Any]`):
+                The service function to be called.
+            kwargs (`Any`):
+                The arguments to be passed to the service function.
+
+        Returns:
+            `Tuple(Callable[..., Any], dict)`: A tuple of tool function and
+            a dict in JSON Schema format to describe the function.
+
+        Note:
+            The description of the function and arguments are extracted from
+            its docstring automatically, which should be well-formatted in
+            **Google style**. Otherwise, their descriptions in the returned
+            dictionary will be empty.
+
+        Suggestions:
+            1. The name of the service function should be self-explanatory,
+            so that the agent can understand the function and use it properly.
+            2. The typing of the arguments should be provided when defining
+            the function (e.g. `def func(a: int, b: str, c: bool)`), so that
+            the agent can specify the arguments properly.
+
+        Example:
+
+            .. code-block:: python
+
+                def bing_search(query: str, api_key: str, num_results: int=10):
+                    &#39;&#39;&#39;Search the query in Bing search engine.
+
+                    Args:
+                        query (str):
+                            The string query to search.
+                        api_key (str):
+                            The API key for Bing search.
+                        num_results (int):
+                            The number of results to return, default to 10.
+                    &#39;&#39;&#39;
+                    pass
+
+
+        &quot;&quot;&quot;
+        logger.warning(
+            &quot;The service factory will be deprecated in the future.&quot;
+            &quot; Try to use the `ServiceToolkit` class instead.&quot;,
+        )
+
+        # Get the function for agent to use
+        tool_func = partial(service_func, **kwargs)
+
+        # Obtain all arguments of the service function
+        argsspec = inspect.getfullargspec(service_func)
+
+        # Construct the mapping from arguments to their typings
+        if parse is None:
+            raise ImportError(
+                &quot;Missing required package `docstring_parser`&quot;
+                &quot;Please install it by &quot;
+                &quot;`pip install docstring_parser`.&quot;,
+            )
+
+        docstring = parse(service_func.__doc__)
+
+        # Function description
+        func_description = (
+            docstring.short_description or docstring.long_description
+        )
+
+        # The arguments that requires the agent to specify
+        args_agent = set(argsspec.args) - set(kwargs.keys())
+
+        # Check if the arguments from agent have descriptions in docstring
+        args_description = {
+            _.arg_name: _.description for _ in docstring.params
+        }
+
+        # Prepare default values
+        if argsspec.defaults is None:
+            args_defaults = {}
+        else:
+            args_defaults = dict(
+                zip(
+                    reversed(argsspec.args),
+                    reversed(argsspec.defaults),  # type: ignore
+                ),
+            )
+
+        args_required = sorted(
+            list(set(args_agent) - set(args_defaults.keys())),
+        )
+
+        # Prepare types of the arguments, remove the return type
+        args_types = {
+            k: v for k, v in argsspec.annotations.items() if k != &quot;return&quot;
+        }
+
+        # Prepare argument dictionary
+        properties_field = {}
+        for key in args_agent:
+            arg_property = {}
+            # type
+            if key in args_types:
+                try:
+                    required_type = _get_type_str(args_types[key])
+                    arg_property[&quot;type&quot;] = required_type
+                except Exception:
+                    logger.warning(
+                        f&quot;Fail and skip to get the type of the &quot;
+                        f&quot;argument `{key}`.&quot;,
+                    )
+
+                # For Literal type, add enum field
+                if get_origin(args_types[key]) is Literal:
+                    arg_property[&quot;enum&quot;] = list(args_types[key].__args__)
+
+            # description
+            if key in args_description:
+                arg_property[&quot;description&quot;] = args_description[key]
+
+            # default
+            if key in args_defaults and args_defaults[key] is not None:
+                arg_property[&quot;default&quot;] = args_defaults[key]
+
+            properties_field[key] = arg_property
+
+        # Construct the JSON Schema for the service function
+        func_dict = {
+            &quot;type&quot;: &quot;function&quot;,
+            &quot;function&quot;: {
+                &quot;name&quot;: service_func.__name__,
+                &quot;description&quot;: func_description,
+                &quot;parameters&quot;: {
+                    &quot;type&quot;: &quot;object&quot;,
+                    &quot;properties&quot;: properties_field,
+                    &quot;required&quot;: args_required,
+                },
+            },
+        }
+
+        return tool_func, func_dict</div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

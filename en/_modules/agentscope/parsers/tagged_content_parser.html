@@ -1,0 +1,292 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.parsers.tagged_content_parser &mdash; AgentScope  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../../../en/_modules/agentscope/parsers/tagged_content_parser.html">English</a></li> |
+    <a href="../../../../zh_CN/_modules/agentscope/parsers/tagged_content_parser.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/quick_start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/advance.html">Advanced Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/contribute.html">Get Involved</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.exception.html">agentscope.exception</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">agentscope.parsers.tagged_content_parser</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for agentscope.parsers.tagged_content_parser</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;The parser for tagged content in the model response.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="kn">from</span> <span class="nn">agentscope.exception</span> <span class="kn">import</span> <span class="n">JsonParsingError</span>
+<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ModelResponse</span>
+<span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">ParserBase</span>
+
+
+<div class="viewcode-block" id="TaggedContent">
+<a class="viewcode-back" href="../../../agentscope.parsers.tagged_content_parser.html#agentscope.parsers.TaggedContent">[docs]</a>
+<span class="k">class</span> <span class="nc">TaggedContent</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A tagged content object to store the tag name, tag begin, content hint</span>
+<span class="sd">    and tag end.&quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The name of the tagged content.&quot;&quot;&quot;</span>
+
+    <span class="n">tag_begin</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The beginning tag.&quot;&quot;&quot;</span>
+
+    <span class="n">content_hint</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The hint of the content.&quot;&quot;&quot;</span>
+
+    <span class="n">tag_end</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The ending tag.&quot;&quot;&quot;</span>
+
+    <span class="n">parse_json</span><span class="p">:</span> <span class="nb">bool</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Whether to parse the content as a json object.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TaggedContent.__init__">
+<a class="viewcode-back" href="../../../agentscope.parsers.tagged_content_parser.html#agentscope.parsers.TaggedContent.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">tag_begin</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">content_hint</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">tag_end</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">parse_json</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the tagged content object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (`str`):</span>
+<span class="sd">                The name of the tagged content.</span>
+<span class="sd">            tag_begin (`str`):</span>
+<span class="sd">                The beginning tag.</span>
+<span class="sd">            content_hint (`str`):</span>
+<span class="sd">                The hint of the content.</span>
+<span class="sd">            tag_end (`str`):</span>
+<span class="sd">                The ending tag.</span>
+<span class="sd">            parse_json (`bool`, defaults to `False`):</span>
+<span class="sd">                Whether to parse the content as a json object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tag_begin</span> <span class="o">=</span> <span class="n">tag_begin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">content_hint</span> <span class="o">=</span> <span class="n">content_hint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tag_end</span> <span class="o">=</span> <span class="n">tag_end</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parse_json</span> <span class="o">=</span> <span class="n">parse_json</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the tagged content as a string.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">tag_begin</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">content_hint</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">tag_end</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="MultiTaggedContentParser">
+<a class="viewcode-back" href="../../../agentscope.parsers.tagged_content_parser.html#agentscope.parsers.MultiTaggedContentParser">[docs]</a>
+<span class="k">class</span> <span class="nc">MultiTaggedContentParser</span><span class="p">(</span><span class="n">ParserBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse response text by multiple tags, and return a dict of their</span>
+<span class="sd">    content. Asking llm to generate JSON dictionary object directly maybe not a</span>
+<span class="sd">    good idea due to involving escape characters and other issues. So we can</span>
+<span class="sd">    ask llm to generate text with tags, and then parse the text to get the</span>
+<span class="sd">    final JSON dictionary object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">format_instruction</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;Respond with specific tags as outlined below</span><span class="si">{json_required_hint}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;</span><span class="si">{tag_lines_format}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The instruction for the format of the tagged content.&quot;&quot;&quot;</span>
+
+    <span class="n">json_required_hint</span> <span class="o">=</span> <span class="s2">&quot;, and the content between </span><span class="si">{}</span><span class="s2"> MUST be a JSON object:&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;If a tagged content is required to be a JSON object by `parse_json`</span>
+<span class="sd">    equals to `True`, this instruction will be used to remind the model to</span>
+<span class="sd">    generate JSON object.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="MultiTaggedContentParser.__init__">
+<a class="viewcode-back" href="../../../agentscope.parsers.tagged_content_parser.html#agentscope.parsers.MultiTaggedContentParser.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">tagged_contents</span><span class="p">:</span> <span class="n">TaggedContent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the parser with tags.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tags (`dict[str, Tuple[str, str]]`):</span>
+<span class="sd">                A dictionary of tags, the key is the tag name, and the value is</span>
+<span class="sd">                a tuple of starting tag and end tag.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tagged_contents</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tagged_contents</span><span class="p">)</span>
+
+        <span class="c1"># Prepare the format instruction according to the tagged contents</span>
+        <span class="n">tag_lines</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tagged_contents</span><span class="p">])</span>
+
+        <span class="c1"># Prepare hint for the tagged contents that requires a JSON object.</span>
+        <span class="n">json_required_tags</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_</span><span class="o">.</span><span class="n">tag_begin</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">_</span><span class="o">.</span><span class="n">tag_end</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tagged_contents</span>
+                <span class="k">if</span> <span class="n">_</span><span class="o">.</span><span class="n">parse_json</span>
+            <span class="p">],</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">json_required_tags</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">json_required_hint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">json_required_hint</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">json_required_tags</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">json_required_hint</span> <span class="o">=</span> <span class="s2">&quot;: &quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">format_instruction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_instruction</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">json_required_hint</span><span class="o">=</span><span class="n">json_required_hint</span><span class="p">,</span>
+            <span class="n">tag_lines_format</span><span class="o">=</span><span class="n">tag_lines</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MultiTaggedContentParser.parse">
+<a class="viewcode-back" href="../../../agentscope.parsers.tagged_content_parser.html#agentscope.parsers.MultiTaggedContentParser.parse">[docs]</a>
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse the response text by tags, and return a dict of their content</span>
+<span class="sd">        in the parsed field of the model response object. If the tagged content</span>
+<span class="sd">        requires to parse as a JSON object by `parse_json` equals to `True`, it</span>
+<span class="sd">        will be parsed as a JSON object by `json.loads`.&quot;&quot;&quot;</span>
+
+        <span class="n">tag_to_content</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">tagged_content</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tagged_contents</span><span class="p">:</span>
+            <span class="n">tag_begin</span> <span class="o">=</span> <span class="n">tagged_content</span><span class="o">.</span><span class="n">tag_begin</span>
+            <span class="n">tag_end</span> <span class="o">=</span> <span class="n">tagged_content</span><span class="o">.</span><span class="n">tag_end</span>
+
+            <span class="n">extract_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_first_content_by_tag</span><span class="p">(</span>
+                <span class="n">response</span><span class="p">,</span>
+                <span class="n">tag_begin</span><span class="p">,</span>
+                <span class="n">tag_end</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">tagged_content</span><span class="o">.</span><span class="n">parse_json</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">extract_content</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">extract_content</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">raw_response</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tag_begin</span><span class="si">}{</span><span class="n">extract_content</span><span class="si">}{</span><span class="n">tag_end</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="k">raise</span> <span class="n">JsonParsingError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;The content between </span><span class="si">{</span><span class="n">tagged_content</span><span class="o">.</span><span class="n">tag_begin</span><span class="si">}</span><span class="s2"> and &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tagged_content</span><span class="o">.</span><span class="n">tag_end</span><span class="si">}</span><span class="s2"> should be a JSON object.&quot;</span>
+                        <span class="sa">f</span><span class="s1">&#39;When parsing &quot;</span><span class="si">{</span><span class="n">raw_response</span><span class="si">}</span><span class="s1">&quot;, an error occurred: &#39;</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="n">raw_response</span><span class="o">=</span><span class="n">raw_response</span><span class="p">,</span>
+                    <span class="p">)</span> <span class="kn">from</span> <span class="kc">None</span>
+
+            <span class="n">tag_to_content</span><span class="p">[</span><span class="n">tagged_content</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">extract_content</span>
+
+        <span class="n">response</span><span class="o">.</span><span class="n">parsed</span> <span class="o">=</span> <span class="n">tag_to_content</span>
+        <span class="k">return</span> <span class="n">response</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Alibaba Tongyi Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

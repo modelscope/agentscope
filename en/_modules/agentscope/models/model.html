@@ -62,6 +62,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.exception.html">agentscope.exception</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc</a></li>
@@ -161,7 +163,8 @@
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
 <span class="kn">from</span> <span class="nn">agentscope.utils</span> <span class="kn">import</span> <span class="n">QuotaExceededError</span>
-<span class="kn">from</span> <span class="nn">.response</span> <span class="kn">import</span> <span class="n">ResponseParsingError</span><span class="p">,</span> <span class="n">ModelResponse</span>
+<span class="kn">from</span> <span class="nn">.response</span> <span class="kn">import</span> <span class="n">ModelResponse</span>
+<span class="kn">from</span> <span class="nn">..exception</span> <span class="kn">import</span> <span class="n">ResponseParsingError</span>
 
 <span class="kn">from</span> <span class="nn">..file_manager</span> <span class="kn">import</span> <span class="n">file_manager</span>
 <span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">MessageBase</span>
@@ -221,7 +224,7 @@
             <span class="c1"># Parse the response if needed</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">parse_func</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">except</span> <span class="n">ResponseParsingError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">itr</span> <span class="o">&lt;</span> <span class="n">max_retries</span><span class="p">:</span>
                     <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                         <span class="sa">f</span><span class="s2">&quot;Fail to parse response (</span><span class="si">{</span><span class="n">itr</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">max_retries</span><span class="si">}</span><span class="s2">):</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -233,12 +236,7 @@
                     <span class="k">if</span> <span class="n">fault_handler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">callable</span><span class="p">(</span><span class="n">fault_handler</span><span class="p">):</span>
                         <span class="k">return</span> <span class="n">fault_handler</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">error_info</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
-                        <span class="k">raise</span> <span class="n">ResponseParsingError</span><span class="p">(</span>
-                            <span class="n">parse_func</span><span class="o">=</span><span class="n">parse_func</span><span class="p">,</span>
-                            <span class="n">error_info</span><span class="o">=</span><span class="n">error_info</span><span class="p">,</span>
-                            <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
-                        <span class="p">)</span> <span class="kn">from</span> <span class="kc">None</span>
+                        <span class="k">raise</span>
         <span class="k">return</span> <span class="p">{}</span>
 
     <span class="k">return</span> <span class="n">checking_wrapper</span>
@@ -304,7 +302,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span> <span class="o">=</span> <span class="n">MonitorFactory</span><span class="o">.</span><span class="n">get_monitor</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">config_name</span> <span class="o">=</span> <span class="n">config_name</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Initialize model [</span><span class="si">{</span><span class="n">config_name</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span></div>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Initialize model by configuration [</span><span class="si">{</span><span class="n">config_name</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ModelWrapperBase.get_wrapper">

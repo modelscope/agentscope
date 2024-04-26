@@ -64,6 +64,8 @@
 <li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">agentscope.service</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.service.ServiceResponse"><code class="docutils literal notranslate"><span class="pre">ServiceResponse</span></code></a><ul>
@@ -75,8 +77,15 @@
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.service.ServiceExecStatus.ERROR"><code class="docutils literal notranslate"><span class="pre">ServiceExecStatus.ERROR</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.service.ServiceFactory"><code class="docutils literal notranslate"><span class="pre">ServiceFactory</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.service.ServiceFactory.get"><code class="docutils literal notranslate"><span class="pre">ServiceFactory.get()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.service.ServiceToolkit"><code class="docutils literal notranslate"><span class="pre">ServiceToolkit</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.service.ServiceToolkit.__init__"><code class="docutils literal notranslate"><span class="pre">ServiceToolkit.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.service.ServiceToolkit.service_funcs"><code class="docutils literal notranslate"><span class="pre">ServiceToolkit.service_funcs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.service.ServiceToolkit.add"><code class="docutils literal notranslate"><span class="pre">ServiceToolkit.add()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.service.ServiceToolkit.json_schemas"><code class="docutils literal notranslate"><span class="pre">ServiceToolkit.json_schemas</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.service.ServiceToolkit.tools_calling_format"><code class="docutils literal notranslate"><span class="pre">ServiceToolkit.tools_calling_format</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.service.ServiceToolkit.tools_instruction"><code class="docutils literal notranslate"><span class="pre">ServiceToolkit.tools_instruction</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.service.ServiceToolkit.parse_and_call_func"><code class="docutils literal notranslate"><span class="pre">ServiceToolkit.parse_and_call_func()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.service.ServiceToolkit.get"><code class="docutils literal notranslate"><span class="pre">ServiceToolkit.get()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.service.get_help"><code class="docutils literal notranslate"><span class="pre">get_help()</span></code></a></li>
@@ -107,6 +116,10 @@
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.service.load_web"><code class="docutils literal notranslate"><span class="pre">load_web()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.service.parse_html_to_text"><code class="docutils literal notranslate"><span class="pre">parse_html_to_text()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.service.download_from_url"><code class="docutils literal notranslate"><span class="pre">download_from_url()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.service.ServiceFactory"><code class="docutils literal notranslate"><span class="pre">ServiceFactory</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.service.ServiceFactory.get"><code class="docutils literal notranslate"><span class="pre">ServiceFactory.get()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc</a></li>
@@ -184,15 +197,107 @@ Otherwise, <cite>content</cite> is the error message.</p></li>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="agentscope.service.ServiceFactory">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.service.</span></span><span class="sig-name descname"><span class="pre">ServiceFactory</span></span><a class="reference internal" href="_modules/agentscope/service/service_factory.html#ServiceFactory"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.ServiceFactory" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="agentscope.service.ServiceToolkit">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.service.</span></span><span class="sig-name descname"><span class="pre">ServiceToolkit</span></span><a class="reference internal" href="_modules/agentscope/service/service_toolkit.html#ServiceToolkit"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.ServiceToolkit" title="Link to this definition"></a></dt>
 <dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A service factory class that turns service function into string
+<p>A service toolkit class that turns service function into string
 prompt format.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="agentscope.service.ServiceFactory.get">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/service/service_factory.html#ServiceFactory.get"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.ServiceFactory.get" title="Link to this definition"></a></dt>
-<dd><p>Covnert a service function into a tool function that agent can
+<dt class="sig sig-object py" id="agentscope.service.ServiceToolkit.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/service/service_toolkit.html#ServiceToolkit.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.ServiceToolkit.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the service toolkit with a list of service functions.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.service.ServiceToolkit.service_funcs">
+<span class="sig-name descname"><span class="pre">service_funcs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceFunction" title="agentscope.service.service_toolkit.ServiceFunction"><span class="pre">ServiceFunction</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#agentscope.service.ServiceToolkit.service_funcs" title="Link to this definition"></a></dt>
+<dd><p>The registered functions in the service toolkit.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.service.ServiceToolkit.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/service/service_toolkit.html#ServiceToolkit.add"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.ServiceToolkit.add" title="Link to this definition"></a></dt>
+<dd><p>Add a service function to the toolkit, which will be processed into
+a tool function that can be called by the model directly, and
+registered in processed_funcs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>service_func</strong> (<cite>Callable[…, Any]</cite>) – The service function to be called.</p></li>
+<li><p><strong>kwargs</strong> (<cite>Any</cite>) – The arguments to be passed to the service function.</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple of tool function and
+a dict in JSON Schema format to describe the function.</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>Tuple(Callable[…, Any], dict)</cite></p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">备注</p>
+<p>The description of the function and arguments are extracted from
+its docstring automatically, which should be well-formatted in
+<strong>Google style</strong>. Otherwise, their descriptions in the returned
+dictionary will be empty.</p>
+</div>
+<dl class="simple">
+<dt>Suggestions:</dt><dd><p>1. The name of the service function should be self-explanatory,
+so that the agent can understand the function and use it properly.
+2. The typing of the arguments should be provided when defining
+the function (e.g. <cite>def func(a: int, b: str, c: bool)</cite>), so that
+the agent can specify the arguments properly.
+3. The execution results should be a <cite>ServiceResponse</cite> object.</p>
+</dd>
+</dl>
+<p class="rubric">示例</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">bing_search</span><span class="p">(</span><span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">num_results</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Search the query in Bing search engine.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            query: (`str`):</span>
+<span class="sd">                The string query to search.</span>
+<span class="sd">            api_key: (`str`):</span>
+<span class="sd">                The API key for Bing search.</span>
+<span class="sd">            num_results: (`int`, optional):</span>
+<span class="sd">                The number of results to return, default to 10.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># ... Your implementation here ...</span>
+    <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="agentscope.service.ServiceToolkit.json_schemas">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">json_schemas</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><a class="headerlink" href="#agentscope.service.ServiceToolkit.json_schemas" title="Link to this definition"></a></dt>
+<dd><p>The json schema descriptions of the processed service funcs.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="agentscope.service.ServiceToolkit.tools_calling_format">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tools_calling_format</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.service.ServiceToolkit.tools_calling_format" title="Link to this definition"></a></dt>
+<dd><p>The calling format of the tool functions.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="agentscope.service.ServiceToolkit.tools_instruction">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tools_instruction</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.service.ServiceToolkit.tools_instruction" title="Link to this definition"></a></dt>
+<dd><p>The instruction of the tool functions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.service.ServiceToolkit.parse_and_call_func">
+<span class="sig-name descname"><span class="pre">parse_and_call_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text_cmd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/service/service_toolkit.html#ServiceToolkit.parse_and_call_func"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.ServiceToolkit.parse_and_call_func" title="Link to this definition"></a></dt>
+<dd><p>Parse, check the text and call the function.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.service.ServiceToolkit.get">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/service/service_toolkit.html#ServiceToolkit.get"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.ServiceToolkit.get" title="Link to this definition"></a></dt>
+<dd><p>Convert a service function into a tool function that agent can
 use, and generate a dictionary in JSON Schema format that can be
 used in OpenAI API directly. While for open-source model, developers
 should handle the conversation from json dictionary to prompt.</p>
@@ -226,7 +331,21 @@ the function (e.g. <cite>def func(a: int, b: str, c: bool)</cite>), so that
 the agent can specify the arguments properly.</p>
 </dd>
 </dl>
-<p>Example:</p>
+<p class="rubric">示例</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">bing_search</span><span class="p">(</span><span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">num_results</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Search the query in Bing search engine.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        query (str):</span>
+<span class="sd">            The string query to search.</span>
+<span class="sd">        api_key (str):</span>
+<span class="sd">            The API key for Bing search.</span>
+<span class="sd">        num_results (int):</span>
+<span class="sd">            The number of results to return, default to 10.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </dd></dl>
@@ -990,6 +1109,68 @@ results or error message.</p>
 <dd class="field-odd"><p><cite>ServiceResponse</cite></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.service.ServiceFactory">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.service.</span></span><span class="sig-name descname"><span class="pre">ServiceFactory</span></span><a class="reference internal" href="_modules/agentscope/service/service_toolkit.html#ServiceFactory"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.ServiceFactory" title="Link to this definition"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A service factory class that turns service function into string
+prompt format.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.service.ServiceFactory.get">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/service/service_toolkit.html#ServiceFactory.get"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.ServiceFactory.get" title="Link to this definition"></a></dt>
+<dd><p>Convert a service function into a tool function that agent can
+use, and generate a dictionary in JSON Schema format that can be
+used in OpenAI API directly. While for open-source model, developers
+should handle the conversation from json dictionary to prompt.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>service_func</strong> (<cite>Callable[…, Any]</cite>) – The service function to be called.</p></li>
+<li><p><strong>kwargs</strong> (<cite>Any</cite>) – The arguments to be passed to the service function.</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple of tool function and
+a dict in JSON Schema format to describe the function.</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>Tuple(Callable[…, Any], dict)</cite></p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">备注</p>
+<p>The description of the function and arguments are extracted from
+its docstring automatically, which should be well-formatted in
+<strong>Google style</strong>. Otherwise, their descriptions in the returned
+dictionary will be empty.</p>
+</div>
+<dl class="simple">
+<dt>Suggestions:</dt><dd><p>1. The name of the service function should be self-explanatory,
+so that the agent can understand the function and use it properly.
+2. The typing of the arguments should be provided when defining
+the function (e.g. <cite>def func(a: int, b: str, c: bool)</cite>), so that
+the agent can specify the arguments properly.</p>
+</dd>
+</dl>
+<p class="rubric">示例</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">bing_search</span><span class="p">(</span><span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">num_results</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Search the query in Bing search engine.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        query (str):</span>
+<span class="sd">            The string query to search.</span>
+<span class="sd">        api_key (str):</span>
+<span class="sd">            The API key for Bing search.</span>
+<span class="sd">        num_results (int):</span>
+<span class="sd">            The number of results to return, default to 10.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </dd></dl>
 
 </section>

@@ -62,6 +62,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.agents.html">agentscope.agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.exception.html">agentscope.exception</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.rpc.html">agentscope.rpc</a></li>
@@ -102,7 +104,7 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
 
 <span class="kn">from</span> <span class="nn">..service_response</span> <span class="kn">import</span> <span class="n">ServiceResponse</span>
-<span class="kn">from</span> <span class="nn">...utils.common</span> <span class="kn">import</span> <span class="n">if_change_database</span>
+<span class="kn">from</span> <span class="nn">...utils.common</span> <span class="kn">import</span> <span class="n">_if_change_database</span>
 <span class="kn">from</span> <span class="nn">...service.service_status</span> <span class="kn">import</span> <span class="n">ServiceExecStatus</span>
 
 <span class="k">try</span><span class="p">:</span>
@@ -153,7 +155,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Check if the query is safe</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">allow_change_data</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">if_change_database</span><span class="p">(</span><span class="n">query</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">allow_change_data</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">_if_change_database</span><span class="p">(</span><span class="n">query</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">&quot;Unsafe SQL query detected. Only SELECT statements are allowed. &quot;</span>
             <span class="s2">&quot;If you want to allow changing data in the database, &quot;</span>
@@ -180,7 +182,7 @@
         <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">if_change_database</span><span class="p">(</span><span class="n">query</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">_if_change_database</span><span class="p">(</span><span class="n">query</span><span class="p">):</span>
             <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
         <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>

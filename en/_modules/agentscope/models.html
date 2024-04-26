@@ -62,6 +62,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.agents.html">agentscope.agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.exception.html">agentscope.exception</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.rpc.html">agentscope.rpc</a></li>
@@ -104,11 +106,7 @@
 
 <span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">_ModelConfig</span>
 <span class="kn">from</span> <span class="nn">.model</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span>
-<span class="kn">from</span> <span class="nn">.response</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">ModelResponse</span><span class="p">,</span>
-    <span class="n">ResponseParsingError</span><span class="p">,</span>
-    <span class="n">ResponseParser</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.response</span> <span class="kn">import</span> <span class="n">ModelResponse</span>
 <span class="kn">from</span> <span class="nn">.post_model</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">PostAPIModelWrapperBase</span><span class="p">,</span>
     <span class="n">PostAPIChatWrapper</span><span class="p">,</span>
@@ -139,8 +137,6 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;ModelWrapperBase&quot;</span><span class="p">,</span>
     <span class="s2">&quot;ModelResponse&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ResponseParser&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ResponseParsingError&quot;</span><span class="p">,</span>
     <span class="s2">&quot;PostAPIModelWrapperBase&quot;</span><span class="p">,</span>
     <span class="s2">&quot;PostAPIChatWrapper&quot;</span><span class="p">,</span>
     <span class="s2">&quot;OpenAIWrapperBase&quot;</span><span class="p">,</span>
@@ -243,6 +239,8 @@
     <span class="k">if</span> <span class="n">clear_existing</span><span class="p">:</span>
         <span class="n">clear_model_configs</span><span class="p">()</span>
 
+    <span class="n">cfgs</span> <span class="o">=</span> <span class="kc">None</span>
+
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">cfgs</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
@@ -256,6 +254,13 @@
                 <span class="s2">&quot;The model config unit should be a dict.&quot;</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="n">cfgs</span> <span class="o">=</span> <span class="n">configs</span>
+
+    <span class="k">if</span> <span class="n">cfgs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Invalid type of model_configs, it could be a dict, a list of &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;dicts, or a path to a json file (containing a dict or a list &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;of dicts), but got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">configs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="n">format_configs</span> <span class="o">=</span> <span class="n">_ModelConfig</span><span class="o">.</span><span class="n">format_configs</span><span class="p">(</span><span class="n">configs</span><span class="o">=</span><span class="n">cfgs</span><span class="p">)</span>
 

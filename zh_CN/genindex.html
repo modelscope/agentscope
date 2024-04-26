@@ -63,6 +63,8 @@
 <li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc</a></li>
@@ -159,6 +161,12 @@
 </li>
       <li><a href="agentscope.agents.html#agentscope.agents.UserAgent.__init__">__init__() （agentscope.agents.UserAgent 方法）</a>
 </li>
+      <li><a href="agentscope.exception.html#agentscope.exception.FunctionCallError.__init__">__init__() （agentscope.exception.FunctionCallError 方法）</a>
+</li>
+      <li><a href="agentscope.exception.html#agentscope.exception.ResponseParsingError.__init__">__init__() （agentscope.exception.ResponseParsingError 方法）</a>
+</li>
+      <li><a href="agentscope.exception.html#agentscope.exception.TagNotFoundError.__init__">__init__() （agentscope.exception.TagNotFoundError 方法）</a>
+</li>
       <li><a href="agentscope.memory.memory.html#agentscope.memory.memory.MemoryBase.__init__">__init__() （agentscope.memory.memory.MemoryBase 方法）</a>
 </li>
       <li><a href="agentscope.memory.html#agentscope.memory.MemoryBase.__init__">__init__() （agentscope.memory.MemoryBase 方法）</a>
@@ -201,18 +209,34 @@
 </li>
       <li><a href="agentscope.models.response.html#agentscope.models.response.ModelResponse.__init__">__init__() （agentscope.models.response.ModelResponse 方法）</a>
 </li>
-      <li><a href="agentscope.models.response.html#agentscope.models.response.ResponseParsingError.__init__">__init__() （agentscope.models.response.ResponseParsingError 方法）</a>
-</li>
-      <li><a href="agentscope.models.html#agentscope.models.ResponseParsingError.__init__">__init__() （agentscope.models.ResponseParsingError 方法）</a>
-</li>
       <li><a href="agentscope.msghub.html#agentscope.msghub.MsgHubManager.__init__">__init__() （agentscope.msghub.MsgHubManager 方法）</a>
+</li>
+      <li><a href="agentscope.parsers.code_block_parser.html#agentscope.parsers.code_block_parser.MarkdownCodeBlockParser.__init__">__init__() （agentscope.parsers.code_block_parser.MarkdownCodeBlockParser 方法）</a>
+</li>
+      <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.__init__">__init__() （agentscope.parsers.json_object_parser.MarkdownJsonDictParser 方法）</a>
+</li>
+      <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.__init__">__init__() （agentscope.parsers.json_object_parser.MarkdownJsonObjectParser 方法）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownCodeBlockParser.__init__">__init__() （agentscope.parsers.MarkdownCodeBlockParser 方法）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonDictParser.__init__">__init__() （agentscope.parsers.MarkdownJsonDictParser 方法）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonObjectParser.__init__">__init__() （agentscope.parsers.MarkdownJsonObjectParser 方法）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MultiTaggedContentParser.__init__">__init__() （agentscope.parsers.MultiTaggedContentParser 方法）</a>
+</li>
+      <li><a href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.MultiTaggedContentParser.__init__">__init__() （agentscope.parsers.tagged_content_parser.MultiTaggedContentParser 方法）</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.TaggedContent.__init__">__init__() （agentscope.parsers.tagged_content_parser.TaggedContent 方法）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.TaggedContent.__init__">__init__() （agentscope.parsers.TaggedContent 方法）</a>
 </li>
       <li><a href="agentscope.pipelines.html#agentscope.pipelines.ForLoopPipeline.__init__">__init__() （agentscope.pipelines.ForLoopPipeline 方法）</a>
 </li>
       <li><a href="agentscope.pipelines.html#agentscope.pipelines.IfElsePipeline.__init__">__init__() （agentscope.pipelines.IfElsePipeline 方法）</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.pipelines.pipeline.html#agentscope.pipelines.pipeline.ForLoopPipeline.__init__">__init__() （agentscope.pipelines.pipeline.ForLoopPipeline 方法）</a>
 </li>
       <li><a href="agentscope.pipelines.pipeline.html#agentscope.pipelines.pipeline.IfElsePipeline.__init__">__init__() （agentscope.pipelines.pipeline.IfElsePipeline 方法）</a>
@@ -249,7 +273,13 @@
 </li>
       <li><a href="agentscope.service.service_response.html#agentscope.service.service_response.ServiceResponse.__init__">__init__() （agentscope.service.service_response.ServiceResponse 方法）</a>
 </li>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceFunction.__init__">__init__() （agentscope.service.service_toolkit.ServiceFunction 方法）</a>
+</li>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceToolkit.__init__">__init__() （agentscope.service.service_toolkit.ServiceToolkit 方法）</a>
+</li>
       <li><a href="agentscope.service.html#agentscope.service.ServiceResponse.__init__">__init__() （agentscope.service.ServiceResponse 方法）</a>
+</li>
+      <li><a href="agentscope.service.html#agentscope.service.ServiceToolkit.__init__">__init__() （agentscope.service.ServiceToolkit 方法）</a>
 </li>
       <li><a href="agentscope.utils.monitor.html#agentscope.utils.monitor.QuotaExceededError.__init__">__init__() （agentscope.utils.monitor.QuotaExceededError 方法）</a>
 </li>
@@ -316,6 +346,10 @@
       <li><a href="agentscope.memory.html#agentscope.memory.TemporaryMemory.add">add() （agentscope.memory.TemporaryMemory 方法）</a>
 </li>
       <li><a href="agentscope.msghub.html#agentscope.msghub.MsgHubManager.add">add() （agentscope.msghub.MsgHubManager 方法）</a>
+</li>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceToolkit.add">add() （agentscope.service.service_toolkit.ServiceToolkit 方法）</a>
+</li>
+      <li><a href="agentscope.service.html#agentscope.service.ServiceToolkit.add">add() （agentscope.service.ServiceToolkit 方法）</a>
 </li>
       <li><a href="agentscope.utils.monitor.html#agentscope.utils.monitor.MonitorBase.add">add() （agentscope.utils.monitor.MonitorBase 方法）</a>
 </li>
@@ -412,6 +446,13 @@
 
       <ul>
         <li><a href="agentscope.constants.html#module-agentscope.constants">module</a>
+</li>
+      </ul></li>
+      <li>
+    agentscope.exception
+
+      <ul>
+        <li><a href="agentscope.exception.html#module-agentscope.exception">module</a>
 </li>
       </ul></li>
       <li>
@@ -520,6 +561,41 @@
 </li>
       </ul></li>
       <li>
+    agentscope.parsers
+
+      <ul>
+        <li><a href="agentscope.parsers.html#module-agentscope.parsers">module</a>
+</li>
+      </ul></li>
+      <li>
+    agentscope.parsers.code_block_parser
+
+      <ul>
+        <li><a href="agentscope.parsers.code_block_parser.html#module-agentscope.parsers.code_block_parser">module</a>
+</li>
+      </ul></li>
+      <li>
+    agentscope.parsers.json_object_parser
+
+      <ul>
+        <li><a href="agentscope.parsers.json_object_parser.html#module-agentscope.parsers.json_object_parser">module</a>
+</li>
+      </ul></li>
+      <li>
+    agentscope.parsers.parser_base
+
+      <ul>
+        <li><a href="agentscope.parsers.parser_base.html#module-agentscope.parsers.parser_base">module</a>
+</li>
+      </ul></li>
+      <li>
+    agentscope.parsers.tagged_content_parser
+
+      <ul>
+        <li><a href="agentscope.parsers.tagged_content_parser.html#module-agentscope.parsers.tagged_content_parser">module</a>
+</li>
+      </ul></li>
+      <li>
     agentscope.pipelines
 
       <ul>
@@ -561,6 +637,8 @@
         <li><a href="agentscope.rpc.rpc_agent_client.html#module-agentscope.rpc.rpc_agent_client">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     agentscope.rpc.rpc_agent_pb2
 
@@ -582,8 +660,6 @@
         <li><a href="agentscope.service.html#module-agentscope.service">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     agentscope.service.execute_code
 
@@ -655,13 +731,6 @@
 </li>
       </ul></li>
       <li>
-    agentscope.service.service_factory
-
-      <ul>
-        <li><a href="agentscope.service.service_factory.html#module-agentscope.service.service_factory">module</a>
-</li>
-      </ul></li>
-      <li>
     agentscope.service.service_response
 
       <ul>
@@ -673,6 +742,13 @@
 
       <ul>
         <li><a href="agentscope.service.service_status.html#module-agentscope.service.service_status">module</a>
+</li>
+      </ul></li>
+      <li>
+    agentscope.service.service_toolkit
+
+      <ul>
+        <li><a href="agentscope.service.service_toolkit.html#module-agentscope.service.service_toolkit">module</a>
 </li>
       </ul></li>
       <li>
@@ -866,6 +942,10 @@
       </ul></li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WorkflowNodeType.AGENT">AGENT（agentscope.web.workstation.workflow_node.WorkflowNodeType 属性）</a>
 </li>
+      <li><a href="agentscope.exception.html#agentscope.exception.ArgumentNotFoundError">ArgumentNotFoundError</a>
+</li>
+      <li><a href="agentscope.exception.html#agentscope.exception.ArgumentTypeError">ArgumentTypeError</a>
+</li>
       <li><a href="agentscope.service.html#agentscope.service.arxiv_search">arxiv_search()（在 agentscope.service 模块中）</a>
 </li>
       <li><a href="agentscope.service.web.arxiv.html#agentscope.service.web.arxiv.arxiv_search">arxiv_search()（在 agentscope.service.web.arxiv 模块中）</a>
@@ -974,8 +1054,6 @@
 </li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.PythonServiceNode.compile">compile() （agentscope.web.workstation.workflow_node.PythonServiceNode 方法）</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.ReActAgentNode.compile">compile() （agentscope.web.workstation.workflow_node.ReActAgentNode 方法）</a>
 </li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.ReadTextServiceNode.compile">compile() （agentscope.web.workstation.workflow_node.ReadTextServiceNode 方法）</a>
@@ -984,6 +1062,8 @@
 </li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.SwitchPipelineNode.compile">compile() （agentscope.web.workstation.workflow_node.SwitchPipelineNode 方法）</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.TextToImageAgentNode.compile">compile() （agentscope.web.workstation.workflow_node.TextToImageAgentNode 方法）</a>
 </li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.UserAgentNode.compile">compile() （agentscope.web.workstation.workflow_node.UserAgentNode 方法）</a>
@@ -1027,6 +1107,22 @@
       <li><a href="agentscope.models.post_model.html#agentscope.models.post_model.PostAPIChatWrapper.config_name">config_name（agentscope.models.post_model.PostAPIChatWrapper 属性）</a>
 </li>
       <li><a href="agentscope.models.post_model.html#agentscope.models.post_model.PostAPIModelWrapperBase.config_name">config_name（agentscope.models.post_model.PostAPIModelWrapperBase 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.code_block_parser.html#agentscope.parsers.code_block_parser.MarkdownCodeBlockParser.content_hint">content_hint（agentscope.parsers.code_block_parser.MarkdownCodeBlockParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.content_hint">content_hint（agentscope.parsers.json_object_parser.MarkdownJsonDictParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.content_hint">content_hint（agentscope.parsers.json_object_parser.MarkdownJsonObjectParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownCodeBlockParser.content_hint">content_hint（agentscope.parsers.MarkdownCodeBlockParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonDictParser.content_hint">content_hint（agentscope.parsers.MarkdownJsonDictParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonObjectParser.content_hint">content_hint（agentscope.parsers.MarkdownJsonObjectParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.TaggedContent.content_hint">content_hint（agentscope.parsers.tagged_content_parser.TaggedContent 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.TaggedContent.content_hint">content_hint（agentscope.parsers.TaggedContent 属性）</a>
 </li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.CopyNode">CopyNode（agentscope.web.workstation.workflow_node 中的类）</a>
 </li>
@@ -1152,30 +1248,22 @@
 </li>
       <li><a href="agentscope.models.response.html#agentscope.models.response.ModelResponse.embedding">embedding（agentscope.models.response.ModelResponse 属性）</a>
 </li>
-      <li><a href="agentscope.models.response.html#agentscope.models.response.ResponseParsingError.error_info">error_info（agentscope.models.response.ResponseParsingError 属性）</a>
-</li>
-      <li><a href="agentscope.models.html#agentscope.models.ResponseParsingError.error_info">error_info（agentscope.models.ResponseParsingError 属性）</a>
-</li>
       <li><a href="agentscope.service.service_status.html#agentscope.service.service_status.ServiceExecStatus.ERROR">ERROR（agentscope.service.service_status.ServiceExecStatus 属性）</a>
 </li>
       <li><a href="agentscope.service.html#agentscope.service.ServiceExecStatus.ERROR">ERROR（agentscope.service.ServiceExecStatus 属性）</a>
 </li>
       <li><a href="agentscope.web.workstation.workflow_dag.html#agentscope.web.workstation.workflow_dag.ASDiGraph.exec_node">exec_node() （agentscope.web.workstation.workflow_dag.ASDiGraph 方法）</a>
 </li>
-      <li><a href="agentscope.agents.react_agent.html#agentscope.agents.react_agent.ReActAgent.execute_func">execute_func() （agentscope.agents.react_agent.ReActAgent 方法）</a>
-</li>
-      <li><a href="agentscope.agents.html#agentscope.agents.ReActAgent.execute_func">execute_func() （agentscope.agents.ReActAgent 方法）</a>
-</li>
       <li><a href="agentscope.service.html#agentscope.service.execute_python_code">execute_python_code()（在 agentscope.service 模块中）</a>
 </li>
       <li><a href="agentscope.service.execute_code.exec_python.html#agentscope.service.execute_code.exec_python.execute_python_code">execute_python_code()（在 agentscope.service.execute_code.exec_python 模块中）</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.service.html#agentscope.service.execute_shell_command">execute_shell_command()（在 agentscope.service 模块中）</a>
 </li>
       <li><a href="agentscope.service.execute_code.exec_shell.html#agentscope.service.execute_code.exec_shell.execute_shell_command">execute_shell_command()（在 agentscope.service.execute_code.exec_shell 模块中）</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.utils.monitor.html#agentscope.utils.monitor.MonitorBase.exists">exists() （agentscope.utils.monitor.MonitorBase 方法）</a>
 </li>
       <li><a href="agentscope.utils.monitor.html#agentscope.utils.monitor.SqliteMonitor.exists">exists() （agentscope.utils.monitor.SqliteMonitor 方法）</a>
@@ -1230,8 +1318,6 @@
 </li>
       <li><a href="agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiChatWrapper.format">format() （agentscope.models.gemini_model.GeminiChatWrapper 方法）</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.models.html#agentscope.models.GeminiChatWrapper.format">format() （agentscope.models.GeminiChatWrapper 方法）</a>
 </li>
       <li><a href="agentscope.models.model.html#agentscope.models.model.ModelWrapperBase.format">format() （agentscope.models.model.ModelWrapperBase 方法）</a>
@@ -1242,6 +1328,8 @@
 </li>
       <li><a href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaEmbeddingWrapper.format">format() （agentscope.models.ollama_model.OllamaEmbeddingWrapper 方法）</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaGenerationWrapper.format">format() （agentscope.models.ollama_model.OllamaGenerationWrapper 方法）</a>
 </li>
       <li><a href="agentscope.models.html#agentscope.models.OllamaChatWrapper.format">format() （agentscope.models.OllamaChatWrapper 方法）</a>
@@ -1263,6 +1351,24 @@
       <li><a href="agentscope.models.post_model.html#agentscope.models.post_model.PostAPIDALLEWrapper.format">format() （agentscope.models.post_model.PostAPIDALLEWrapper 方法）</a>
 </li>
       <li><a href="agentscope.models.html#agentscope.models.PostAPIChatWrapper.format">format() （agentscope.models.PostAPIChatWrapper 方法）</a>
+</li>
+      <li><a href="agentscope.parsers.code_block_parser.html#agentscope.parsers.code_block_parser.MarkdownCodeBlockParser.format_instruction">format_instruction（agentscope.parsers.code_block_parser.MarkdownCodeBlockParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.format_instruction">format_instruction（agentscope.parsers.json_object_parser.MarkdownJsonObjectParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownCodeBlockParser.format_instruction">format_instruction（agentscope.parsers.MarkdownCodeBlockParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonObjectParser.format_instruction">format_instruction（agentscope.parsers.MarkdownJsonObjectParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MultiTaggedContentParser.format_instruction">format_instruction（agentscope.parsers.MultiTaggedContentParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.MultiTaggedContentParser.format_instruction">format_instruction（agentscope.parsers.tagged_content_parser.MultiTaggedContentParser 属性）</a>
+</li>
+      <li><a href="agentscope.exception.html#agentscope.exception.FunctionCallError">FunctionCallError</a>
+</li>
+      <li><a href="agentscope.exception.html#agentscope.exception.FunctionCallFormatError">FunctionCallFormatError</a>
+</li>
+      <li><a href="agentscope.exception.html#agentscope.exception.FunctionNotFoundError">FunctionNotFoundError</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1290,9 +1396,13 @@
 </li>
       <li><a href="agentscope.models.html#agentscope.models.GeminiChatWrapper.generation_method">generation_method（agentscope.models.GeminiChatWrapper 属性）</a>
 </li>
-      <li><a href="agentscope.service.service_factory.html#agentscope.service.service_factory.ServiceFactory.get">get()（agentscope.service.service_factory.ServiceFactory 类方法）</a>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceFactory.get">get()（agentscope.service.service_toolkit.ServiceFactory 类方法）</a>
+</li>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceToolkit.get">get()（agentscope.service.service_toolkit.ServiceToolkit 类方法）</a>
 </li>
       <li><a href="agentscope.service.html#agentscope.service.ServiceFactory.get">get()（agentscope.service.ServiceFactory 类方法）</a>
+</li>
+      <li><a href="agentscope.service.html#agentscope.service.ServiceToolkit.get">get()（agentscope.service.ServiceToolkit 类方法）</a>
 </li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.get_all_agents">get_all_agents()（在 agentscope.web.workstation.workflow_node 模块中）</a>
 </li>
@@ -1320,10 +1430,10 @@
 </li>
       <li><a href="agentscope.memory.html#agentscope.memory.TemporaryMemory.get_memory">get_memory() （agentscope.memory.TemporaryMemory 方法）</a>
 </li>
-      <li><a href="agentscope.utils.monitor.html#agentscope.utils.monitor.MonitorBase.get_metric">get_metric() （agentscope.utils.monitor.MonitorBase 方法）</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.utils.monitor.html#agentscope.utils.monitor.MonitorBase.get_metric">get_metric() （agentscope.utils.monitor.MonitorBase 方法）</a>
+</li>
       <li><a href="agentscope.utils.monitor.html#agentscope.utils.monitor.SqliteMonitor.get_metric">get_metric() （agentscope.utils.monitor.SqliteMonitor 方法）</a>
 </li>
       <li><a href="agentscope.utils.html#agentscope.utils.MonitorBase.get_metric">get_metric() （agentscope.utils.MonitorBase 方法）</a>
@@ -1384,8 +1494,6 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="agentscope.utils.common.html#agentscope.utils.common.if_change_database">if_change_database()（在 agentscope.utils.common 模块中）</a>
-</li>
       <li><a href="agentscope.pipelines.html#agentscope.pipelines.ifelsepipeline">ifelsepipeline()（在 agentscope.pipelines 模块中）</a>
 </li>
       <li><a href="agentscope.pipelines.functional.html#agentscope.pipelines.functional.ifelsepipeline">ifelsepipeline()（在 agentscope.pipelines.functional 模块中）</a>
@@ -1398,10 +1506,10 @@
 </li>
       <li><a href="agentscope.models.html#agentscope.models.ModelResponse.image_urls">image_urls（agentscope.models.ModelResponse 属性）</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.models.response.html#agentscope.models.response.ModelResponse.image_urls">image_urls（agentscope.models.response.ModelResponse 属性）</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.web.studio.studio.html#agentscope.web.studio.studio.import_function_from_path">import_function_from_path()（在 agentscope.web.studio.studio 模块中）</a>
 </li>
       <li><a href="agentscope.html#agentscope.init">init()（在 agentscope 模块中）</a>
@@ -1428,13 +1536,23 @@
 </li>
       <li><a href="agentscope.prompt.html#agentscope.prompt.PromptEngine.join_to_str">join_to_str() （agentscope.prompt.PromptEngine 方法）</a>
 </li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MultiTaggedContentParser.json_required_hint">json_required_hint（agentscope.parsers.MultiTaggedContentParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.MultiTaggedContentParser.json_required_hint">json_required_hint（agentscope.parsers.tagged_content_parser.MultiTaggedContentParser 属性）</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceToolkit.json_schemas">json_schemas（agentscope.service.service_toolkit.ServiceToolkit 属性）</a>
+</li>
+      <li><a href="agentscope.service.html#agentscope.service.ServiceToolkit.json_schemas">json_schemas（agentscope.service.ServiceToolkit 属性）</a>
+</li>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceFunction.json_schema">json_schema（agentscope.service.service_toolkit.ServiceFunction 属性）</a>
+</li>
+      <li><a href="agentscope.exception.html#agentscope.exception.JsonParsingError">JsonParsingError</a>
+</li>
+      <li><a href="agentscope.exception.html#agentscope.exception.JsonTypeError">JsonTypeError</a>
+</li>
       <li><a href="agentscope.constants.html#agentscope.constants.ResponseFormat.JSON">JSON（agentscope.constants.ResponseFormat 属性）</a>
-</li>
-      <li><a href="agentscope.models.html#agentscope.models.ModelResponse.json">json（agentscope.models.ModelResponse 属性）</a>
-</li>
-      <li><a href="agentscope.models.response.html#agentscope.models.response.ModelResponse.json">json（agentscope.models.response.ModelResponse 属性）</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1510,6 +1628,18 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.web.workstation.workflow.html#agentscope.web.workstation.workflow.main">main()（在 agentscope.web.workstation.workflow 模块中）</a>
 </li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownCodeBlockParser">MarkdownCodeBlockParser（agentscope.parsers 中的类）</a>
+</li>
+      <li><a href="agentscope.parsers.code_block_parser.html#agentscope.parsers.code_block_parser.MarkdownCodeBlockParser">MarkdownCodeBlockParser（agentscope.parsers.code_block_parser 中的类）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonDictParser">MarkdownJsonDictParser（agentscope.parsers 中的类）</a>
+</li>
+      <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonDictParser">MarkdownJsonDictParser（agentscope.parsers.json_object_parser 中的类）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonObjectParser">MarkdownJsonObjectParser（agentscope.parsers 中的类）</a>
+</li>
+      <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser">MarkdownJsonObjectParser（agentscope.parsers.json_object_parser 中的类）</a>
+</li>
       <li><a href="agentscope.memory.html#agentscope.memory.MemoryBase">MemoryBase（agentscope.memory 中的类）</a>
 </li>
       <li><a href="agentscope.memory.memory.html#agentscope.memory.memory.MemoryBase">MemoryBase（agentscope.memory.memory 中的类）</a>
@@ -1517,6 +1647,10 @@
       <li><a href="agentscope.message.html#agentscope.message.MessageBase">MessageBase（agentscope.message 中的类）</a>
 </li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WorkflowNodeType.MESSAGE">MESSAGE（agentscope.web.workstation.workflow_node.WorkflowNodeType 属性）</a>
+</li>
+      <li><a href="agentscope.exception.html#agentscope.exception.TagNotFoundError.missing_begin_tag">missing_begin_tag（agentscope.exception.TagNotFoundError 属性）</a>
+</li>
+      <li><a href="agentscope.exception.html#agentscope.exception.TagNotFoundError.missing_end_tag">missing_end_tag（agentscope.exception.TagNotFoundError 属性）</a>
 </li>
       <li><a href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeChatWrapper.model_name">model_name（agentscope.models.dashscope_model.DashScopeChatWrapper 属性）</a>
 </li>
@@ -1654,6 +1788,8 @@
 </li>
         <li><a href="agentscope.constants.html#module-agentscope.constants">agentscope.constants</a>
 </li>
+        <li><a href="agentscope.exception.html#module-agentscope.exception">agentscope.exception</a>
+</li>
         <li><a href="agentscope.file_manager.html#module-agentscope.file_manager">agentscope.file_manager</a>
 </li>
         <li><a href="agentscope.memory.html#module-agentscope.memory">agentscope.memory</a>
@@ -1683,6 +1819,16 @@
         <li><a href="agentscope.models.response.html#module-agentscope.models.response">agentscope.models.response</a>
 </li>
         <li><a href="agentscope.msghub.html#module-agentscope.msghub">agentscope.msghub</a>
+</li>
+        <li><a href="agentscope.parsers.html#module-agentscope.parsers">agentscope.parsers</a>
+</li>
+        <li><a href="agentscope.parsers.code_block_parser.html#module-agentscope.parsers.code_block_parser">agentscope.parsers.code_block_parser</a>
+</li>
+        <li><a href="agentscope.parsers.json_object_parser.html#module-agentscope.parsers.json_object_parser">agentscope.parsers.json_object_parser</a>
+</li>
+        <li><a href="agentscope.parsers.parser_base.html#module-agentscope.parsers.parser_base">agentscope.parsers.parser_base</a>
+</li>
+        <li><a href="agentscope.parsers.tagged_content_parser.html#module-agentscope.parsers.tagged_content_parser">agentscope.parsers.tagged_content_parser</a>
 </li>
         <li><a href="agentscope.pipelines.html#module-agentscope.pipelines">agentscope.pipelines</a>
 </li>
@@ -1722,11 +1868,11 @@
 </li>
         <li><a href="agentscope.service.retrieval.similarity.html#module-agentscope.service.retrieval.similarity">agentscope.service.retrieval.similarity</a>
 </li>
-        <li><a href="agentscope.service.service_factory.html#module-agentscope.service.service_factory">agentscope.service.service_factory</a>
-</li>
         <li><a href="agentscope.service.service_response.html#module-agentscope.service.service_response">agentscope.service.service_response</a>
 </li>
         <li><a href="agentscope.service.service_status.html#module-agentscope.service.service_status">agentscope.service.service_status</a>
+</li>
+        <li><a href="agentscope.service.service_toolkit.html#module-agentscope.service.service_toolkit">agentscope.service.service_toolkit</a>
 </li>
         <li><a href="agentscope.service.sql_query.html#module-agentscope.service.sql_query">agentscope.service.sql_query</a>
 </li>
@@ -1813,12 +1959,34 @@
 </li>
       <li><a href="agentscope.message.html#agentscope.message.Msg">Msg（agentscope.message 中的类）</a>
 </li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MultiTaggedContentParser">MultiTaggedContentParser（agentscope.parsers 中的类）</a>
+</li>
+      <li><a href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.MultiTaggedContentParser">MultiTaggedContentParser（agentscope.parsers.tagged_content_parser 中的类）</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.parsers.code_block_parser.html#agentscope.parsers.code_block_parser.MarkdownCodeBlockParser.name">name（agentscope.parsers.code_block_parser.MarkdownCodeBlockParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.name">name（agentscope.parsers.json_object_parser.MarkdownJsonDictParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.name">name（agentscope.parsers.json_object_parser.MarkdownJsonObjectParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownCodeBlockParser.name">name（agentscope.parsers.MarkdownCodeBlockParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonDictParser.name">name（agentscope.parsers.MarkdownJsonDictParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonObjectParser.name">name（agentscope.parsers.MarkdownJsonObjectParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.TaggedContent.name">name（agentscope.parsers.tagged_content_parser.TaggedContent 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.TaggedContent.name">name（agentscope.parsers.TaggedContent 属性）</a>
+</li>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceFunction.name">name（agentscope.service.service_toolkit.ServiceFunction 属性）</a>
+</li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.BingSearchServiceNode.node_type">node_type（agentscope.web.workstation.workflow_node.BingSearchServiceNode 属性）</a>
 </li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.CopyNode.node_type">node_type（agentscope.web.workstation.workflow_node.CopyNode 属性）</a>
@@ -1833,6 +2001,8 @@
 </li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.IfElsePipelineNode.node_type">node_type（agentscope.web.workstation.workflow_node.IfElsePipelineNode 属性）</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.ModelNode.node_type">node_type（agentscope.web.workstation.workflow_node.ModelNode 属性）</a>
 </li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.MsgHubNode.node_type">node_type（agentscope.web.workstation.workflow_node.MsgHubNode 属性）</a>
@@ -1843,8 +2013,6 @@
 </li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.PythonServiceNode.node_type">node_type（agentscope.web.workstation.workflow_node.PythonServiceNode 属性）</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.ReActAgentNode.node_type">node_type（agentscope.web.workstation.workflow_node.ReActAgentNode 属性）</a>
 </li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.ReadTextServiceNode.node_type">node_type（agentscope.web.workstation.workflow_node.ReadTextServiceNode 属性）</a>
@@ -1899,10 +2067,10 @@
 </li>
       <li><a href="agentscope.models.html#agentscope.models.OpenAIChatWrapper">OpenAIChatWrapper（agentscope.models 中的类）</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIChatWrapper">OpenAIChatWrapper（agentscope.models.openai_model 中的类）</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.models.html#agentscope.models.OpenAIDALLEWrapper">OpenAIDALLEWrapper（agentscope.models 中的类）</a>
 </li>
       <li><a href="agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIDALLEWrapper">OpenAIDALLEWrapper（agentscope.models.openai_model 中的类）</a>
@@ -1927,21 +2095,57 @@
 </li>
       <li><a href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaWrapperBase.options">options（agentscope.models.ollama_model.OllamaWrapperBase 属性）</a>
 </li>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceFunction.original_func">original_func（agentscope.service.service_toolkit.ServiceFunction 属性）</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.parsers.code_block_parser.html#agentscope.parsers.code_block_parser.MarkdownCodeBlockParser.parse">parse() （agentscope.parsers.code_block_parser.MarkdownCodeBlockParser 方法）</a>
+</li>
+      <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.parse">parse() （agentscope.parsers.json_object_parser.MarkdownJsonDictParser 方法）</a>
+</li>
+      <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.parse">parse() （agentscope.parsers.json_object_parser.MarkdownJsonObjectParser 方法）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownCodeBlockParser.parse">parse() （agentscope.parsers.MarkdownCodeBlockParser 方法）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonDictParser.parse">parse() （agentscope.parsers.MarkdownJsonDictParser 方法）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonObjectParser.parse">parse() （agentscope.parsers.MarkdownJsonObjectParser 方法）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MultiTaggedContentParser.parse">parse() （agentscope.parsers.MultiTaggedContentParser 方法）</a>
+</li>
+      <li><a href="agentscope.parsers.parser_base.html#agentscope.parsers.parser_base.ParserBase.parse">parse() （agentscope.parsers.parser_base.ParserBase 方法）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.ParserBase.parse">parse() （agentscope.parsers.ParserBase 方法）</a>
+</li>
+      <li><a href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.MultiTaggedContentParser.parse">parse() （agentscope.parsers.tagged_content_parser.MultiTaggedContentParser 方法）</a>
+</li>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceToolkit.parse_and_call_func">parse_and_call_func() （agentscope.service.service_toolkit.ServiceToolkit 方法）</a>
+</li>
+      <li><a href="agentscope.service.html#agentscope.service.ServiceToolkit.parse_and_call_func">parse_and_call_func() （agentscope.service.ServiceToolkit 方法）</a>
+</li>
       <li><a href="agentscope.agents.dict_dialog_agent.html#agentscope.agents.dict_dialog_agent.parse_dict">parse_dict()（在 agentscope.agents.dict_dialog_agent 模块中）</a>
-</li>
-      <li><a href="agentscope.models.response.html#agentscope.models.response.ResponseParsingError.parse_func">parse_func（agentscope.models.response.ResponseParsingError 属性）</a>
-</li>
-      <li><a href="agentscope.models.html#agentscope.models.ResponseParsingError.parse_func">parse_func（agentscope.models.ResponseParsingError 属性）</a>
 </li>
       <li><a href="agentscope.service.html#agentscope.service.parse_html_to_text">parse_html_to_text()（在 agentscope.service 模块中）</a>
 </li>
       <li><a href="agentscope.service.web.web_digest.html#agentscope.service.web.web_digest.parse_html_to_text">parse_html_to_text()（在 agentscope.service.web.web_digest 模块中）</a>
+</li>
+      <li><a href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.TaggedContent.parse_json">parse_json（agentscope.parsers.tagged_content_parser.TaggedContent 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.TaggedContent.parse_json">parse_json（agentscope.parsers.TaggedContent 属性）</a>
+</li>
+      <li><a href="agentscope.models.html#agentscope.models.ModelResponse.parsed">parsed（agentscope.models.ModelResponse 属性）</a>
+</li>
+      <li><a href="agentscope.models.response.html#agentscope.models.response.ModelResponse.parsed">parsed（agentscope.models.response.ModelResponse 属性）</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.ParserBase">ParserBase（agentscope.parsers 中的类）</a>
+</li>
+      <li><a href="agentscope.parsers.parser_base.html#agentscope.parsers.parser_base.ParserBase">ParserBase（agentscope.parsers.parser_base 中的类）</a>
 </li>
       <li><a href="agentscope.pipelines.html#agentscope.pipelines.PipelineBase">PipelineBase（agentscope.pipelines 中的类）</a>
 </li>
@@ -1955,8 +2159,6 @@
 </li>
       <li><a href="agentscope.message.html#agentscope.message.PlaceholderMessage">PlaceholderMessage（agentscope.message 中的类）</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.PlaceHolderNode">PlaceHolderNode（agentscope.web.workstation.workflow_node 中的类）</a>
 </li>
       <li><a href="agentscope.models.html#agentscope.models.PostAPIChatWrapper">PostAPIChatWrapper（agentscope.models 中的类）</a>
@@ -1969,11 +2171,9 @@
 </li>
       <li><a href="agentscope.models.post_model.html#agentscope.models.post_model.PostAPIModelWrapperBase">PostAPIModelWrapperBase（agentscope.models.post_model 中的类）</a>
 </li>
-      <li><a href="agentscope.agents.react_agent.html#agentscope.agents.react_agent.ReActAgent.prepare_funcs_prompt">prepare_funcs_prompt() （agentscope.agents.react_agent.ReActAgent 方法）</a>
-</li>
-      <li><a href="agentscope.agents.html#agentscope.agents.ReActAgent.prepare_funcs_prompt">prepare_funcs_prompt() （agentscope.agents.ReActAgent 方法）</a>
-</li>
       <li><a href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.RpcServerSideWrapper.process_messages">process_messages() （agentscope.agents.rpc_agent.RpcServerSideWrapper 方法）</a>
+</li>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceFunction.processed_func">processed_func（agentscope.service.service_toolkit.ServiceFunction 属性）</a>
 </li>
       <li><a href="agentscope.prompt.html#agentscope.prompt.PromptEngine">PromptEngine（agentscope.prompt 中的类）</a>
 </li>
@@ -2009,6 +2209,8 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.exception.html#agentscope.exception.ResponseParsingError.raw_response">raw_response（agentscope.exception.ResponseParsingError 属性）</a>
+</li>
       <li><a href="agentscope.models.html#agentscope.models.ModelResponse.raw">raw（agentscope.models.ModelResponse 属性）</a>
 </li>
       <li><a href="agentscope.models.response.html#agentscope.models.response.ModelResponse.raw">raw（agentscope.models.response.ModelResponse 属性）</a>
@@ -2077,11 +2279,19 @@
 </li>
       <li><a href="agentscope.agents.user_agent.html#agentscope.agents.user_agent.UserAgent.reply">reply() （agentscope.agents.user_agent.UserAgent 方法）</a>
 </li>
-      <li><a href="agentscope.agents.html#agentscope.agents.UserAgent.reply">reply() （agentscope.agents.UserAgent 方法）</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.agents.html#agentscope.agents.UserAgent.reply">reply() （agentscope.agents.UserAgent 方法）</a>
+</li>
       <li><a href="agentscope.utils.common.html#agentscope.utils.common.requests_get">requests_get()（在 agentscope.utils.common 模块中）</a>
+</li>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceFunction.require_args">require_args（agentscope.service.service_toolkit.ServiceFunction 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.required_keys">required_keys（agentscope.parsers.json_object_parser.MarkdownJsonDictParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonDictParser.required_keys">required_keys（agentscope.parsers.MarkdownJsonDictParser 属性）</a>
+</li>
+      <li><a href="agentscope.exception.html#agentscope.exception.RequiredFieldNotFoundError">RequiredFieldNotFoundError</a>
 </li>
       <li><a href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.reset_audience">reset_audience() （agentscope.agents.agent.AgentBase 方法）</a>
 </li>
@@ -2093,19 +2303,11 @@
 </li>
       <li><a href="agentscope.constants.html#agentscope.constants.ResponseFormat">ResponseFormat（agentscope.constants 中的类）</a>
 </li>
-      <li><a href="agentscope.models.html#agentscope.models.ResponseParser">ResponseParser（agentscope.models 中的类）</a>
-</li>
-      <li><a href="agentscope.models.response.html#agentscope.models.response.ResponseParser">ResponseParser（agentscope.models.response 中的类）</a>
-</li>
-      <li><a href="agentscope.models.html#agentscope.models.ResponseParsingError">ResponseParsingError</a>, <a href="agentscope.models.response.html#agentscope.models.response.ResponseParsingError">[1]</a>
+      <li><a href="agentscope.exception.html#agentscope.exception.ResponseParsingError">ResponseParsingError</a>
 </li>
       <li><a href="agentscope.rpc.html#agentscope.rpc.ResponseStub">ResponseStub（agentscope.rpc 中的类）</a>
 </li>
       <li><a href="agentscope.rpc.rpc_agent_client.html#agentscope.rpc.rpc_agent_client.ResponseStub">ResponseStub（agentscope.rpc.rpc_agent_client 中的类）</a>
-</li>
-      <li><a href="agentscope.models.response.html#agentscope.models.response.ResponseParsingError.response">response（agentscope.models.response.ResponseParsingError 属性）</a>
-</li>
-      <li><a href="agentscope.models.html#agentscope.models.ResponseParsingError.response">response（agentscope.models.ResponseParsingError 属性）</a>
 </li>
       <li><a href="agentscope.memory.temporary_memory.html#agentscope.memory.temporary_memory.TemporaryMemory.retrieve_by_embedding">retrieve_by_embedding() （agentscope.memory.temporary_memory.TemporaryMemory 方法）</a>
 </li>
@@ -2191,17 +2393,27 @@
 </li>
       <li><a href="agentscope.message.html#agentscope.message.serialize">serialize()（在 agentscope.message 模块中）</a>
 </li>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceToolkit.service_funcs">service_funcs（agentscope.service.service_toolkit.ServiceToolkit 属性）</a>
+</li>
+      <li><a href="agentscope.service.html#agentscope.service.ServiceToolkit.service_funcs">service_funcs（agentscope.service.ServiceToolkit 属性）</a>
+</li>
       <li><a href="agentscope.service.html#agentscope.service.ServiceExecStatus">ServiceExecStatus（agentscope.service 中的类）</a>
 </li>
       <li><a href="agentscope.service.service_status.html#agentscope.service.service_status.ServiceExecStatus">ServiceExecStatus（agentscope.service.service_status 中的类）</a>
 </li>
       <li><a href="agentscope.service.html#agentscope.service.ServiceFactory">ServiceFactory（agentscope.service 中的类）</a>
 </li>
-      <li><a href="agentscope.service.service_factory.html#agentscope.service.service_factory.ServiceFactory">ServiceFactory（agentscope.service.service_factory 中的类）</a>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceFactory">ServiceFactory（agentscope.service.service_toolkit 中的类）</a>
+</li>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceFunction">ServiceFunction（agentscope.service.service_toolkit 中的类）</a>
 </li>
       <li><a href="agentscope.service.html#agentscope.service.ServiceResponse">ServiceResponse（agentscope.service 中的类）</a>
 </li>
       <li><a href="agentscope.service.service_response.html#agentscope.service.service_response.ServiceResponse">ServiceResponse（agentscope.service.service_response 中的类）</a>
+</li>
+      <li><a href="agentscope.service.html#agentscope.service.ServiceToolkit">ServiceToolkit（agentscope.service 中的类）</a>
+</li>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceToolkit">ServiceToolkit（agentscope.service.service_toolkit 中的类）</a>
 </li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WorkflowNodeType.SERVICE">SERVICE（agentscope.web.workstation.workflow_node.WorkflowNodeType 属性）</a>
 </li>
@@ -2213,12 +2425,12 @@
 </li>
       <li><a href="agentscope.rpc.html#agentscope.rpc.ResponseStub.set_response">set_response() （agentscope.rpc.ResponseStub 方法）</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.rpc.rpc_agent_client.html#agentscope.rpc.rpc_agent_client.ResponseStub.set_response">set_response() （agentscope.rpc.rpc_agent_client.ResponseStub 方法）</a>
 </li>
       <li><a href="agentscope.utils.html#agentscope.utils.setup_logger">setup_logger()（在 agentscope.utils 模块中）</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.utils.logging_utils.html#agentscope.utils.logging_utils.setup_logger">setup_logger()（在 agentscope.utils.logging_utils 模块中）</a>
 </li>
       <li><a href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.setup_rpc_agent_server">setup_rpc_agent_server()（在 agentscope.agents.rpc_agent 模块中）</a>
@@ -2287,8 +2499,48 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.parsers.code_block_parser.html#agentscope.parsers.code_block_parser.MarkdownCodeBlockParser.tag_begin">tag_begin（agentscope.parsers.code_block_parser.MarkdownCodeBlockParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.tag_begin">tag_begin（agentscope.parsers.json_object_parser.MarkdownJsonDictParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.tag_begin">tag_begin（agentscope.parsers.json_object_parser.MarkdownJsonObjectParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownCodeBlockParser.tag_begin">tag_begin（agentscope.parsers.MarkdownCodeBlockParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonDictParser.tag_begin">tag_begin（agentscope.parsers.MarkdownJsonDictParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonObjectParser.tag_begin">tag_begin（agentscope.parsers.MarkdownJsonObjectParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.TaggedContent.tag_begin">tag_begin（agentscope.parsers.tagged_content_parser.TaggedContent 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.TaggedContent.tag_begin">tag_begin（agentscope.parsers.TaggedContent 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.code_block_parser.html#agentscope.parsers.code_block_parser.MarkdownCodeBlockParser.tag_end">tag_end（agentscope.parsers.code_block_parser.MarkdownCodeBlockParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.tag_end">tag_end（agentscope.parsers.json_object_parser.MarkdownJsonDictParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.tag_end">tag_end（agentscope.parsers.json_object_parser.MarkdownJsonObjectParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownCodeBlockParser.tag_end">tag_end（agentscope.parsers.MarkdownCodeBlockParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonDictParser.tag_end">tag_end（agentscope.parsers.MarkdownJsonDictParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.MarkdownJsonObjectParser.tag_end">tag_end（agentscope.parsers.MarkdownJsonObjectParser 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.TaggedContent.tag_end">tag_end（agentscope.parsers.tagged_content_parser.TaggedContent 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.TaggedContent.tag_end">tag_end（agentscope.parsers.TaggedContent 属性）</a>
+</li>
+      <li><a href="agentscope.parsers.html#agentscope.parsers.TaggedContent">TaggedContent（agentscope.parsers 中的类）</a>
+</li>
+      <li><a href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.TaggedContent">TaggedContent（agentscope.parsers.tagged_content_parser 中的类）</a>
+</li>
+      <li><a href="agentscope.exception.html#agentscope.exception.TagNotFoundError">TagNotFoundError</a>
+</li>
       <li><a href="agentscope.memory.html#agentscope.memory.TemporaryMemory">TemporaryMemory（agentscope.memory 中的类）</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.memory.temporary_memory.html#agentscope.memory.temporary_memory.TemporaryMemory">TemporaryMemory（agentscope.memory.temporary_memory 中的类）</a>
 </li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.TextToImageAgentNode">TextToImageAgentNode（agentscope.web.workstation.workflow_node 中的类）</a>
@@ -2307,19 +2559,9 @@
 </li>
       <li><a href="agentscope.utils.tools.html#agentscope.utils.tools.to_dialog_str">to_dialog_str()（在 agentscope.utils.tools 模块中）</a>
 </li>
-      <li><a href="agentscope.models.response.html#agentscope.models.response.ResponseParser.to_dict">to_dict()（agentscope.models.response.ResponseParser 类方法）</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="agentscope.models.html#agentscope.models.ResponseParser.to_dict">to_dict()（agentscope.models.ResponseParser 类方法）</a>
-</li>
       <li><a href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.to_dist">to_dist() （agentscope.agents.agent.AgentBase 方法）</a>
 </li>
       <li><a href="agentscope.agents.html#agentscope.agents.AgentBase.to_dist">to_dist() （agentscope.agents.AgentBase 方法）</a>
-</li>
-      <li><a href="agentscope.models.response.html#agentscope.models.response.ResponseParser.to_list">to_list()（agentscope.models.response.ResponseParser 类方法）</a>
-</li>
-      <li><a href="agentscope.models.html#agentscope.models.ResponseParser.to_list">to_list()（agentscope.models.ResponseParser 类方法）</a>
 </li>
       <li><a href="agentscope.utils.tools.html#agentscope.utils.tools.to_openai_dict">to_openai_dict()（在 agentscope.utils.tools 模块中）</a>
 </li>
@@ -2330,6 +2572,14 @@
       <li><a href="agentscope.message.html#agentscope.message.PlaceholderMessage.to_str">to_str() （agentscope.message.PlaceholderMessage 方法）</a>
 </li>
       <li><a href="agentscope.message.html#agentscope.message.Tht.to_str">to_str() （agentscope.message.Tht 方法）</a>
+</li>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceToolkit.tools_calling_format">tools_calling_format（agentscope.service.service_toolkit.ServiceToolkit 属性）</a>
+</li>
+      <li><a href="agentscope.service.html#agentscope.service.ServiceToolkit.tools_calling_format">tools_calling_format（agentscope.service.ServiceToolkit 属性）</a>
+</li>
+      <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceToolkit.tools_instruction">tools_instruction（agentscope.service.service_toolkit.ServiceToolkit 属性）</a>
+</li>
+      <li><a href="agentscope.service.html#agentscope.service.ServiceToolkit.tools_instruction">tools_instruction（agentscope.service.ServiceToolkit 属性）</a>
 </li>
       <li><a href="agentscope.constants.html#agentscope.constants.ShrinkPolicy.TRUNCATE">TRUNCATE（agentscope.constants.ShrinkPolicy 属性）</a>
 </li>

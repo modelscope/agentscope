@@ -73,6 +73,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.agents.html">agentscope.agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.exception.html">agentscope.exception</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.rpc.html">agentscope.rpc</a></li>
@@ -227,29 +229,39 @@ AgentScope and how to use them to enhance the capabilities of your agents.</p>
 </section>
 <section id="how-to-use-service-functions">
 <h2>How to use Service Functions<a class="headerlink" href="#how-to-use-service-functions" title="Link to this heading"></a></h2>
-<p>AgentScope provides two service classes for Service functions,
-<code class="docutils literal notranslate"><span class="pre">ServiceFactory</span></code> and <code class="docutils literal notranslate"><span class="pre">ServiceResponse</span></code>.</p>
+<p>AgentScope provides two classes for service functions,
+<code class="docutils literal notranslate"><span class="pre">ServiceToolkit</span></code> and <code class="docutils literal notranslate"><span class="pre">ServiceResponse</span></code>.</p>
+<section id="about-service-toolkit">
+<h3>About Service Toolkit<a class="headerlink" href="#about-service-toolkit" title="Link to this heading"></a></h3>
+<p>The use of tools for LLM usually involves five steps:</p>
+<ol class="arabic simple">
+<li><p><strong>Prepare tool functions</strong>. That is, developers should pre-process the
+functions by providing necessary parameters, e.g. api key, username,
+password, etc.</p></li>
+<li><p><strong>Prepare instruction for LLM</strong>. A detailed description for these tool
+functions are required for the LLM to understand them properly.</p></li>
+<li><p><strong>Guide LLM how to use tool functions</strong>. A format description for calling
+functions is required.</p></li>
+<li><p><strong>Parse LLM response</strong>. Once the LLM generates a response,
+we need to parse it according to above format in the third step.</p></li>
+<li><p><strong>Call functions and handle exceptions</strong>. Calling the functions, return
+the results, and handle exceptions.</p></li>
+</ol>
+<p>To simplify the above steps and improve reusability, AgentScope introduces
+<code class="docutils literal notranslate"><span class="pre">ServiceToolkit</span></code>. It can</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">ServiceFactory</span></code> is mainly used to convert general Python functions into
-a form that can be directly used by large-scale models, and automatically
-generate function descriptions in JSON schema format.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ServiceResponse</span></code> is a subclass of a dictionary, providing a unified call
-result interface for all Service functions.</p></li>
+<li><p>register python functions</p></li>
+<li><p>generate tool function descriptions in both string and JSON schema format</p></li>
+<li><p>generate usage instruction for LLM</p></li>
+<li><p>parse the model response, call the tool functions, and handle exceptions</p></li>
 </ul>
-<section id="about-service-factory">
-<h3>About Service Factory<a class="headerlink" href="#about-service-factory" title="Link to this heading"></a></h3>
-<p>The tools used by agents are generally of the function type. Developers
-need to prepare functions that can be called directly by large models, and
-provide descriptions of the functions. However, general functions often
-require developers to provide some parameters (such as keys, usernames,
-specific URLs, etc.), and then the large model can use them. At the same
-time, it is also a tedious task to generate specific format descriptions
-for multiple functions.</p>
-<p>To tackle the above problems, AgentScope introduces <code class="docutils literal notranslate"><span class="pre">ServiceFactory</span></code>. For a
-given Service function, it allows developers to specify some parameters,
-generate a function that can be called directly by large models, and
-automatically generate function descriptions based on the Docstring. Take
-the Bing web search function as an example.</p>
+<section id="how-to-use">
+<h4>How to use<a class="headerlink" href="#how-to-use" title="Link to this heading"></a></h4>
+<p>Follow the steps below to use <code class="docutils literal notranslate"><span class="pre">ServiceToolkit</span></code>:</p>
+<ol class="arabic simple">
+<li><p>Init a <code class="docutils literal notranslate"><span class="pre">ServiceToolkit</span></code> object and register service functions with necessary
+parameters. Take the following Bing search function as an example.</p></li>
+</ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">bing_search</span><span class="p">(</span>
     <span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -275,66 +287,113 @@ the Bing web search function as an example.</p>
 <span class="sd">    &quot;&quot;&quot;</span>
 </pre></div>
 </div>
-<p>In the above function, <code class="docutils literal notranslate"><span class="pre">question</span></code> is the field filled in by the large model,
-while <code class="docutils literal notranslate"><span class="pre">api_key</span></code> and <code class="docutils literal notranslate"><span class="pre">num_results</span></code> are the parameters that the developer needs to provide.
-We use the <code class="docutils literal notranslate"><span class="pre">get</span></code> function of <code class="docutils literal notranslate"><span class="pre">ServiceFactory</span></code> to process it:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.service</span> <span class="kn">import</span> <span class="n">ServiceFactory</span>
+<p>We register the function in a <code class="docutils literal notranslate"><span class="pre">ServiceToolkit</span></code> object by providing <code class="docutils literal notranslate"><span class="pre">api_key</span></code> and <code class="docutils literal notranslate"><span class="pre">num_results</span></code> as necessary parameters.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.service</span> <span class="kn">import</span> <span class="n">ServiceToolkit</span>
 
-<span class="n">func</span><span class="p">,</span> <span class="n">func_intro</span> <span class="o">=</span> <span class="n">ServiceFactory</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+<span class="n">service_toolkit</span> <span class="o">=</span> <span class="n">ServiceToolkit</span><span class="p">()</span>
+
+<span class="n">service_toolkit</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
     <span class="n">bing_search</span><span class="p">,</span>
     <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;xxx&quot;</span><span class="p">,</span>
-    <span class="n">num_results</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">num_results</span><span class="o">=</span><span class="mi">3</span>
+<span class="p">)</span>
 </pre></div>
 </div>
-<p>In the above code, the <code class="docutils literal notranslate"><span class="pre">func</span></code> generated by ServiceFactory is equivalent to the following function:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">bing_search</span><span class="p">(</span><span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Search question in Bing Search API and return the searching results</span>
+<ol class="arabic simple" start="2">
+<li><p>Use the <code class="docutils literal notranslate"><span class="pre">tools_instruction</span></code> attribute to instruct LLM in prompt, or use the <code class="docutils literal notranslate"><span class="pre">json_schemas</span></code> attribute to get the JSON schema format descriptions to construct customized instruction or directly use in model APIs (e.g. OpenAI Chat API).</p></li>
+</ol>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt;&gt; print(service_toolkit.tools_instruction)
+## Tool Functions:
+The following tool functions are available in the format of
+```
+{index}. {function name}: {function description}
+{argument1 name} ({argument type}): {argument description}
+{argument2 name} ({argument type}): {argument description}
+...
+```
 
-<span class="sd">    Args:</span>
-<span class="sd">        question (`str`):</span>
-<span class="sd">            The search query string.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">bing_search</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;xxx&quot;</span><span class="p">,</span> <span class="n">num_results</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+1. bing_search: Search question in Bing Search API and return the searching results
+    question (str): The search query string.
 </pre></div>
 </div>
-<p>The generated JSON schema format is as follows, which can be directly used
-in the <code class="docutils literal notranslate"><span class="pre">tools</span></code> field of the OpenAI API.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># print(func_intro)</span>
-<span class="p">{</span>
-    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;function&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;bing_search&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Search question in Bing Search API and return the searching results&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;question&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;The search query string.&quot;</span>
-                <span class="p">}</span>
-            <span class="p">},</span>
-            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="s2">&quot;question&quot;</span>
-            <span class="p">]</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt;&gt; print(service_toolkit.json_schemas)
+{
+  &quot;bing_search&quot;: {
+      &quot;type&quot;: &quot;function&quot;,
+      &quot;function&quot;: {
+          &quot;name&quot;: &quot;bing_search&quot;,
+          &quot;description&quot;: &quot;Search question in Bing Search API and return the searching results&quot;,
+          &quot;parameters&quot;: {
+              &quot;type&quot;: &quot;object&quot;,
+              &quot;properties&quot;: {
+                  &quot;question&quot;: {
+                      &quot;type&quot;: &quot;string&quot;,
+                      &quot;description&quot;: &quot;The search query string.&quot;
+                  }
+              },
+              &quot;required&quot;: [
+                  &quot;question&quot;
+              ]
+          }
+      }
+  }
+}
 </pre></div>
 </div>
-<p><strong>Note</strong>:
-The description of the function and arguments are extracted from
-its docstring automatically, which should be well-formatted in
-<strong>Google style</strong>. Otherwise, their descriptions in the returned
-dictionary will be empty.</p>
-<p><strong>Suggestions</strong>:</p>
+<ol class="arabic simple" start="3">
+<li><p>Guide LLM how to use tool functions by the <code class="docutils literal notranslate"><span class="pre">tools_calling_format</span></code> attribute.
+The ServiceToolkit module requires LLM to return a list of dictionaries in
+JSON format, where each dictionary represents a function call. It must
+contain two fields, <code class="docutils literal notranslate"><span class="pre">name</span></code> and <code class="docutils literal notranslate"><span class="pre">arguments</span></code>, where <code class="docutils literal notranslate"><span class="pre">name</span></code> is the function name
+and <code class="docutils literal notranslate"><span class="pre">arguments</span></code> is a dictionary that maps from the argument name to the
+argument value.</p></li>
+</ol>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt;&gt; print(service_toolkit.tools_calling_format)
+[{&quot;name&quot;: &quot;{function name}&quot;, &quot;arguments&quot;: {&quot;{argument1 name}&quot;: xxx, &quot;{argument2 name}&quot;: xxx}}]
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p>Parse the LLM response and call functions by its <code class="docutils literal notranslate"><span class="pre">parse_and_call_func</span></code>
+method. This function takes a string or a parsed dictionary as input.</p></li>
+</ol>
+<ul class="simple">
+<li><p>When the input is a string, this function will parse it accordingly and execute the function with the parsed arguments.</p></li>
+<li><p>While if the input is a parse dictionary, it will call the function directly.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># a string input</span>
+<span class="n">string_input</span> <span class="o">=</span> <span class="s1">&#39;[{&quot;name&quot;: &quot;bing_search&quot;, &quot;arguments&quot;: {&quot;question&quot;: &quot;xxx&quot;}}]&#39;</span>
+<span class="n">res_of_string_input</span> <span class="o">=</span> <span class="n">service_toolkit</span><span class="o">.</span><span class="n">parse_and_call_func</span><span class="p">(</span><span class="n">string_input</span><span class="p">)</span>
+
+<span class="c1"># or a parsed dictionary</span>
+<span class="n">dict_input</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;bing_search&quot;</span><span class="p">,</span> <span class="s2">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;question&quot;</span><span class="p">:</span> <span class="s2">&quot;xxx&quot;</span><span class="p">}}]</span>
+<span class="c1"># res_of_dict_input is the same as res_of_string_input</span>
+<span class="n">res_of_dict_input</span> <span class="o">=</span> <span class="n">service_toolkit</span><span class="o">.</span><span class="n">parse_and_call_func</span><span class="p">(</span><span class="n">dict_input</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">res_of_string_input</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">1.</span> <span class="n">Execute</span> <span class="n">function</span> <span class="n">bing_search</span>
+    <span class="p">[</span><span class="n">ARGUMENTS</span><span class="p">]:</span>
+        <span class="n">question</span><span class="p">:</span> <span class="n">xxx</span>
+    <span class="p">[</span><span class="n">STATUS</span><span class="p">]:</span> <span class="n">SUCCESS</span>
+    <span class="p">[</span><span class="n">RESULT</span><span class="p">]:</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>More specific examples refer to the <code class="docutils literal notranslate"><span class="pre">ReActAgent</span></code> class in <code class="docutils literal notranslate"><span class="pre">agentscope.agents</span></code>.</p>
+</section>
+<section id="create-new-service-function">
+<h4>Create new Service Function<a class="headerlink" href="#create-new-service-function" title="Link to this heading"></a></h4>
+<p>A new service function that can be used by <code class="docutils literal notranslate"><span class="pre">ServiceToolkit</span></code> should meet the following requirements:</p>
 <ol class="arabic simple">
+<li><p>Well-formatted docstring (Google style is recommended), so that the
+<code class="docutils literal notranslate"><span class="pre">ServiceToolkit</span></code> can extract both the function descriptions.</p></li>
 <li><p>The name of the service function should be self-explanatory,
-so that the agent can understand the function and use it properly.</p></li>
+so that the LLM can understand the function and use it properly.</p></li>
 <li><p>The typing of the arguments should be provided when defining
 the function (e.g. <code class="docutils literal notranslate"><span class="pre">def</span> <span class="pre">func(a:</span> <span class="pre">int,</span> <span class="pre">b:</span> <span class="pre">str,</span> <span class="pre">c:</span> <span class="pre">bool)</span></code>), so that
 the agent can specify the arguments properly.</p></li>
 </ol>
+</section>
 </section>
 <section id="about-serviceresponse">
 <h3>About ServiceResponse<a class="headerlink" href="#about-serviceresponse" title="Link to this heading"></a></h3>
