@@ -42,7 +42,12 @@ doc_requires = [
 
 test_requires = ["pytest", "pytest-cov", "pre-commit"]
 
-gradio_requires = ["gradio==4.19.1", "modelscope_studio==0.0.5"]
+gradio_requires = [
+    "networkx",
+    "gradio==4.19.1",
+    "modelscope_studio==0.0.5",
+    "black",
+]
 
 # released requires
 minimal_requires = [
@@ -113,6 +118,7 @@ setuptools.setup(
     entry_points={
         "console_scripts": [
             "as_studio=agentscope.web.studio.studio:run_app",
+            "as_workflow=agentscope.web.workstation.workflow:main",
         ],
     },
 )

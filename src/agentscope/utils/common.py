@@ -9,7 +9,6 @@ import sys
 import tempfile
 import threading
 from typing import Any, Generator, Optional, Union
-from loguru import logger
 import requests
 
 from agentscope.service.service_response import ServiceResponse
@@ -157,14 +156,13 @@ def requests_get(
         # This will raise an exception for HTTP error codes
         response.raise_for_status()
     except requests.RequestException as e:
-        logger.error(e)
         return str(e)
     # Parse the JSON response
     search_results = response.json()
     return search_results
 
 
-def if_change_database(sql_query: str) -> bool:
+def _if_change_database(sql_query: str) -> bool:
     """Check whether SQL query only contains SELECT query"""
     # Compile the regex pattern outside the function for better performance
     pattern_unsafe_sql = re.compile(
