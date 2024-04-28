@@ -72,7 +72,7 @@ In the current AgentScope, the supported `model_type` types, the corresponding
 
 | API                    | Task            | Model Wrapper                                                                                                                   | `model_type`                  | Some Supported Models                            |
 |------------------------|-----------------|---------------------------------------------------------------------------------------------------------------------------------|-------------------------------|--------------------------------------------------|
-| OpenAI API             | Chat            | [`OpenAIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)                 | `"openai_chat"`                    | gpt-4, gpt-3.5-turbo, ...                        |
+| OpenAI API             | Chat            | [`OpenAIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)                 | `"openai_chat"`               | gpt-4, gpt-3.5-turbo, ...                        |
 |                        | Embedding       | [`OpenAIEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)            | `"openai_embedding"`          | text-embedding-ada-002, ...                      |
 |                        | DALL·E          | [`OpenAIDALLEWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)                | `"openai_dall_e"`             | dall-e-2, dall-e-3                               |
 | DashScope API          | Chat            | [`DashScopeChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py)           | `"dashscope_chat"`            | qwen-plus, qwen-max, ...                         |
@@ -84,7 +84,10 @@ In the current AgentScope, the supported `model_type` types, the corresponding
 | ollama                 | Chat            | [`OllamaChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)                 | `"ollama_chat"`               | llama2, ...                                      |
 |                        | Embedding       | [`OllamaEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)            | `"ollama_embedding"`          | llama2, ...                                      |
 |                        | Generation      | [`OllamaGenerationWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)           | `"ollama_generate"`           | llama2, ...                                      |
-| Post Request based API | -               | [`PostAPIModelWrapperBase`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)             | `"post_api"`                  | -                                                |
+| Post Request based API | General         | [`PostAPIModelWrapperBase`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)             | `"post_api"`                  | -                                                |
+|                        | Chat            | [`PostAPIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)                  | `post_api_chat`               | -                                                |
+|                        | Image Synthesis | [`PostAPIDALLEWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)                   | `post_api_dall_e`             | -                                                |                                                  |
+|                        | Embedding       | [`PostAPIEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)             | `post_api_embedding`          | -                                                |
 
 #### Detailed Parameters
 
@@ -378,6 +381,70 @@ Here we provide example configurations for different model wrappers.
 {
     "config_name": "my_postapiwrapper_config",
     "model_type": "post_api",
+
+    # Required parameters
+    "api_url": "https://xxx.xxx",
+    "headers": {
+        # e.g. "Authorization": "Bearer xxx",
+    },
+
+    # Optional parameters
+    "messages_key": "messages",
+}
+```
+
+</details>
+<details>
+<summary>Post request API for Chat (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIModelWrapperBase</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_postapiwrapper_config",
+    "model_type": "post_api_chat",
+
+    # Required parameters
+    "api_url": "https://xxx.xxx",
+    "headers": {
+        # e.g. "Authorization": "Bearer xxx",
+    },
+
+    # Optional parameters
+    "messages_key": "messages",
+}
+```
+
+</details>
+
+</details>
+<details>
+<summary>Post request API for Image Synthesis (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIDALLEWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_postapiwrapper_config",
+    "model_type": "post_api_dall_e",
+
+    # Required parameters
+    "api_url": "https://xxx.xxx",
+    "headers": {
+        # e.g. "Authorization": "Bearer xxx",
+    },
+
+    # Optional parameters
+    "messages_key": "messages",
+}
+```
+
+</details>
+
+</details>
+<details>
+<summary>Post request API for Embedding (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIEmbeddingWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_postapiwrapper_config",
+    "model_type": "post_api_embedding",
 
     # Required parameters
     "api_url": "https://xxx.xxx",
