@@ -4,24 +4,30 @@
     "args": {
       "name": "Tutorial-Assistant",
       "description": "Tutorial-Assistant is an agent that can provide answer based on English tutorial material, mainly the markdown files. It can answer general questions about AgentScope.",
-      "sys_prompt": "You're an assistant helping new users to use AgentScope. You need to generate answers based on the provided context. You only provide the most relevant information. The answer is limited to be less than 100 words. If the key words of the question can be found in the provided context, the answer should contain the section which contains the answer, for example, saying 'You may refer to SECTION_NAME for more details.' The answers must to be itemized.",
+      "sys_prompt": "You're an assistant helping new users to use AgentScope. The language style is helpful and cheerful. You generate answers based on the provided context. The answer is expected to be no longer than 100 words. If the key words of the question can be found in the provided context, the answer should contain the section name which contains the answer. For example, 'You may refer to SECTION_NAME for more details.'",
       "model_config_name": "qwen_config",
       "emb_model_config_name": "qwen_emb_config",
       "rag_config": {
-            "load_data": {
-              "loader": {
-                "create_object": true,
-                "module": "llama_index.core",
-                "class": "SimpleDirectoryReader",
-                "init_args": {
-                  "input_dir": "../../docs/sphinx_doc/en/source/tutorial",
-                  "required_exts": [".md"]
+            "index_config": [
+              {
+                "load_data": {
+                  "loader": {
+                    "create_object": true,
+                    "module": "llama_index.core",
+                    "class": "SimpleDirectoryReader",
+                    "init_args": {
+                      "input_dir": "../../docs/sphinx_doc/en/source/tutorial",
+                      "required_exts": [
+                        ".md"
+                      ]
+                    }
+                  }
                 }
               }
-            },
+            ],
             "chunk_size": 2048,
             "chunk_overlap": 40,
-            "similarity_top_k": 10,
+            "similarity_top_k": 5,
             "log_retrieval": false,
             "recent_n_mem": 1,
             "persist_dir": "./rag_storage/tutorial_assist"
@@ -32,39 +38,45 @@
     "class": "LlamaIndexAgent",
     "args": {
       "name": "Code-Search-Assistant",
-      "description": "Code-Search-Assistant is an agent that can provide answer based on AgentScope code base. It can answer questions about specific functions and classes in AgentScope.",
-      "sys_prompt": "You're an assistant answering coding questions about AgentScope. The answer is sturucted as follows. (1) the key features, (2) an example showing how to use it, (3) where to find the example, and source codes.",
+      "description": "Code-Search-Assistant is an agent that can provide answer based on AgentScope code base. It can answer questions about specific modules in AgentScope.",
+      "sys_prompt": "You're a coding assistant of AgentScope. The answer starts with appreciation for the question, then provide details regarding the functionality and features of the modules mentioned in the question. The language should be in a professional and simple style. The answer is limited to be less than 100 words.",
       "model_config_name": "qwen_config",
       "emb_model_config_name": "qwen_emb_config",
       "rag_config": {
-            "load_data": {
-              "loader": {
-                "create_object": true,
-                "module": "llama_index.core",
-                "class": "SimpleDirectoryReader",
-                "init_args": {
-                  "input_dir": "../../src/agentscope",
-                  "recursive": true,
-                  "required_exts": [".py"]
+            "index_config": [
+              {
+                "load_data": {
+                  "loader": {
+                    "create_object": true,
+                    "module": "llama_index.core",
+                    "class": "SimpleDirectoryReader",
+                    "init_args": {
+                      "input_dir": "../../src/agentscope",
+                      "recursive": true,
+                      "required_exts": [
+                        ".py"
+                      ]
+                    }
+                  }
+                },
+                "store_and_index": {
+                  "transformations": [
+                    {
+                      "create_object": true,
+                      "module": "llama_index.core.node_parser",
+                      "class": "CodeSplitter",
+                      "init_args": {
+                        "language": "python",
+                        "chunk_lines": 100
+                      }
+                    }
+                  ]
                 }
               }
-            },
-            "store_and_index": {
-              "transformations": [
-                {
-                  "create_object": true,
-                  "module": "llama_index.core.node_parser",
-                  "class": "CodeSplitter",
-                  "init_args": {
-                    "language": "python",
-                    "chunk_lines": 100
-                  }
-                }
-              ]
-            },
+            ],
             "chunk_size": 2048,
             "chunk_overlap": 40,
-            "similarity_top_k": 10,
+            "similarity_top_k": 5,
             "log_retrieval": false,
             "recent_n_mem": 1,
             "persist_dir": "./rag_storage/code_assist"
@@ -75,53 +87,111 @@
     "class": "LlamaIndexAgent",
     "args": {
       "name": "API-Assistant",
-      "description": "API-Assistant is an agent that can provide answer based on docstrings of Agentscope. It can answer questions about whether there is any function in AgentScope and how to call the functions.",
-      "sys_prompt": "You're an assistant that know every API, function and class in AgentScope. You need to generate answers based on the provided context. You provide the most relevant information and tell people how to use the function or how to create objects of classes. You need to provide the name of module and give detailed information of how to find the function or class. The answer is limited to be less than 200 words.",
+      "description": "API-Assistant is an agent that can answer questions about APIs in AgentScope. It can answer general questions about AgentScope.",
+      "sys_prompt": "You're an assistant providing answers to the questions related to APIs (functions and classes) in AgentScope. The language style is helpful and cheerful. You generate answers based on the provided context. The answer is expected to be no longer than 200 words. If the key words of the question can be found in the provided context, the answer should contain the module of the API. For example, 'You may refer to MODULE_NAME for more details.'",
       "model_config_name": "qwen_config",
       "emb_model_config_name": "qwen_emb_config",
       "rag_config": {
-            "load_data": {
-              "loader": {
-                "create_object": true,
-                "module": "llama_index.readers.docstring_walker",
-                "class": "DocstringWalker",
-                "init_args": {}
-              },
-              "query": "../../src/agentscope"
-            },
-            "store_and_index": {
-              "transformations": [
-                {
+          "index_config": [
+            {
+              "load_data": {
+                "loader": {
                   "create_object": true,
-                  "module": "llama_index.core.node_parser",
-                  "class": "TokenTextSplitter",
+                  "module": "llama_index.core",
+                  "class": "SimpleDirectoryReader",
                   "init_args": {
-                    "chunk_size": 1024,
-                    "chunk_overlap": 20,
-                    "separator": " "
+                    "input_dir": "../../docs/docstring_html/",
+                    "required_exts": [
+                      ".html"
+                    ]
                   }
                 }
-              ]
-            },
-            "chunk_size": 2048,
-            "chunk_overlap": 40,
-            "similarity_top_k": 4,
-            "log_retrieval": true,
-            "recent_n_mem": 1,
-            "persist_dir": "./rag_storage/docstring_assist",
-            "repo_base": "../../",
-            "file_dir": "../../docs/docstring_html/"
-      }
+              }
+            }
+          ],
+          "chunk_size": 2048,
+          "chunk_overlap": 40,
+          "similarity_top_k": 3,
+          "log_retrieval": true,
+          "recent_n_mem": 1,
+          "persist_dir": "../../rag_storage/api_assist",
+          "repo_base": "../../",
+          "file_dir": "../../docs/docstring_html/"
+          }
     }
   },
   {
     "class": "DialogAgent",
     "args": {
-      "name": "Guide-Assistant",
-      "description": "Guide-Assistant is an agent that can summarize multiple RAG agents' answers.",
-      "sys_prompt": "You summarize the answers of the previous two messages and remove the redundant information. The answer need to be simple and itemized. The answer needs to be less than 100 words.ex .",
+      "name": "Agent-Guiding-Assistant",
+      "description": "Agent-Guiding-Assistant is an agent that decide which agent should provide the answer next. It can answer questions about specific functions and classes in AgentScope.",
+      "sys_prompt": "You're an assistant guiding the user to specific agent for help. The answer is in a cheerful styled language. The output starts with appreciation for the question. Next, rephrase the question in a simple declarative Sentence for example, 'I think you are asking...'. Last, if the question is about detailed code or example in AgentScope Framework, output '@ Code-Search-Assistant you might be suitable for answering the question'; if the question is about API or function calls (Example: 'Is there function related...' or 'how can I initialize ...' ) in AgentScope, output '@ API-Assistant, I think you are more suitable for the question, please tell us more about it'; if question is about where to find some context (Example:'where can I find...'), output '@ Searching-Assistant, we need your help', otherwise, output '@ Tutorial-Assistant, I think you are more suitable for the question, can you tell us more about it?'. The answer is expected to be only one sentence",
       "model_config_name": "qwen_config",
-      "use_memory": true
+      "use_memory": false
+    }
+  },
+{
+    "class": "LlamaIndexAgent",
+    "args": {
+      "name": "Searching-Assistant",
+      "description": "Search-Assistant is an agent that can provide answer based on AgentScope code and tutorial. It can answer questions about everything in AgentScope codes and tutorials.",
+      "sys_prompt": "You're a helpful assistant of AgentScope. The answer starts with appreciation for the question, then provide output the location of the code or section that the most relevant to the question. The answer is limited to be less than 50 words.",
+      "model_config_name": "qwen_config",
+      "emb_model_config_name": "qwen_emb_config",
+      "rag_config": {
+            "index_config": [
+              {
+                "load_data": {
+                  "loader": {
+                    "create_object": true,
+                    "module": "llama_index.core",
+                    "class": "SimpleDirectoryReader",
+                    "init_args": {
+                      "input_dir": "../../docs/sphinx_doc/en/source/tutorial",
+                      "required_exts": [
+                        ".md"
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "load_data": {
+                  "loader": {
+                    "create_object": true,
+                    "module": "llama_index.core",
+                    "class": "SimpleDirectoryReader",
+                    "init_args": {
+                      "input_dir": "../../src/agentscope",
+                      "recursive": true,
+                      "required_exts": [
+                        ".py"
+                      ]
+                    }
+                  }
+                },
+                "store_and_index": {
+                  "transformations": [
+                    {
+                      "create_object": true,
+                      "module": "llama_index.core.node_parser",
+                      "class": "CodeSplitter",
+                      "init_args": {
+                        "language": "python",
+                        "chunk_lines": 100
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "chunk_size": 2048,
+            "chunk_overlap": 40,
+            "similarity_top_k": 5,
+            "log_retrieval": false,
+            "recent_n_mem": 1,
+            "persist_dir": "./rag_storage/searching_assist"
+          }
     }
   }
 ]

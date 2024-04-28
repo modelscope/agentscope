@@ -83,7 +83,11 @@ def main() -> None:
 
     # define a guide agent
     rag_agent_descriptions = [
-        "agent名字：" + agent.name + "\n agent描述：" + agent.description + "\n"
+        "agent name: "
+        + agent.name
+        + "\n agent description："
+        + agent.description
+        + "\n"
         for agent in rag_agents
     ]
     agent_configs[3]["args"].pop("description")
@@ -100,8 +104,8 @@ def main() -> None:
         # The workflow is the following:
         # 1. user input a message,
         # 2. if it mentions one of the agents, then the agent will be called
-        # 3. otherwise, the guide agent will be decide which agent to call
-        # 4. the called agent will response to the user
+        # 3. otherwise, the guide agent will decide which agent to call
+        # 4. the called agent will respond to the user
         # 5. repeat
         x = user_agent()
         x.role = "user"  # to enforce dashscope requirement on roles
@@ -109,7 +113,6 @@ def main() -> None:
             break
         speak_list = filter_agents(x.get("content", ""), rag_agents)
         if len(speak_list) == 0:
-            x["content"] = "用户问题:" + x["content"]
             guide_response = guide_agent(x)
             # Only one agent can be called in the current version,
             # we may support multi-agent conversation later

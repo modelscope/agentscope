@@ -7,16 +7,11 @@ import os.path
 from typing import Any, Optional, List, Union
 from loguru import logger
 
-
 try:
     from llama_index.core.readers.base import BaseReader
     from llama_index.core.base.base_retriever import BaseRetriever
     from llama_index.core.base.embeddings.base import BaseEmbedding, Embedding
     from llama_index.core.ingestion import IngestionPipeline
-    from llama_index.core.vector_stores.types import (
-        BasePydanticVectorStore,
-        VectorStore,
-    )
     from llama_index.core.bridge.pydantic import PrivateAttr
     from llama_index.core.node_parser.interface import NodeParser
     from llama_index.core.node_parser import SentenceSplitter
@@ -30,7 +25,8 @@ except ImportError:
     BaseEmbedding, Embedding = None, None
     IngestionPipeline, BasePydanticVectorStore, VectorStore = None, None, None
     NodeParser, SentenceSplitter = None, None
-    VectorStoreIndex = None
+    VectorStoreIndex, StorageContext = None, None
+    load_index_from_storage = None
     PrivateAttr = None
 
 from agentscope.rag import RAGBase
@@ -203,26 +199,26 @@ class LlamaIndexRAG(RAGBase):
 
     def store_and_index(
         self,
-        docs: Any,
-        vector_store: Union[BasePydanticVectorStore, VectorStore, None] = None,
-        retriever: Optional[BaseRetriever] = None,
-        transformations: Optional[list[NodeParser]] = None,
+        docs_list: Any,
+        retriever: Any = None,
+        store_and_index_args_list: Any = None,
         **kwargs: Any,
     ) -> Any:
         """
         Preprocessing the loaded documents.
         Args:
-            docs (Any):
+            docs_list (Any):
                 documents to be processed, usually expected to be in
                  llama index Documents.
-            vector_store (Union[BasePydanticVectorStore, VectorStore, None]):
-                vector store in llama index
             retriever (Optional[BaseRetriever]):
                 optional, specifies the retriever in llama index to be used
             transformations (Optional[list[NodeParser]]):
                 optional, specifies the transformations (operators) to
                 process documents (e.g., split the documents into smaller
                 chunks)
+            store_and_index_args_list (Optional[list]):
+                optional, specifies the indexing configurations in llama
+                index for each document type
 
         Return:
             Any: return the index of the processed document
@@ -230,54 +226,32 @@ class LlamaIndexRAG(RAGBase):
         In LlamaIndex terms, an Index is a data structure composed
         of Document objects, designed to enable querying by an LLM.
         For example:
-        1) preprocessing documents with
-        2) generate embedding,
-        3) store the embedding-content to vdb
+        1) preprocessing documents with data loaders
+        2) generate embedding by configuring pipline with embedding models
+        3) store the embedding-content to vector database
         """
-        # build and run preprocessing pipeline
-        if transformations is None:
-            transformations = [
-                SentenceSplitter(
-                    chunk_size=self.config.get(
-                        "chunk_size",
-                        DEFAULT_CHUNK_SIZE,
-                    ),
-                    chunk_overlap=self.config.get(
-                        "chunk_overlap",
-                        DEFAULT_CHUNK_OVERLAP,
-                    ),
-                ),
-            ]
 
-        # adding embedding model as the last step of transformation
-        # https://docs.llamaindex.ai/en/stable/module_guides/loading/ingestion_pipeline/root.html
-        transformations.append(self.emb_model)
-
+        # if persist_dir does not exist, calculate the index
         if not os.path.exists(self.persist_dir):
-            # check if index is persisted, if not, calculate the index
-            if vector_store is None:
-                # No vector_store is provide,
-                # use in memory to construct an index
-                pipeline = IngestionPipeline(
-                    transformations=transformations,
+            # nodes, or called chunks, is a presentation of the documents
+            nodes = []
+            # we build nodes by using the IngestionPipeline for each document
+            for i, doc in enumerate(docs_list):
+                nodes = nodes + self.docs_to_nodes(
+                    docs=doc,
+                    transformations=store_and_index_args_list[i].get(
+                        "transformations",
+                        None,
+                    ),
                 )
-                nodes = pipeline.run(documents=docs)
-                self.index = VectorStoreIndex(
-                    nodes=nodes,
-                    embed_model=self.emb_model,
-                )
-            else:
-                # use vector_store to construct an index
-                pipeline = IngestionPipeline(
-                    transformations=transformations,
-                    vector_store=vector_store,
-                )
-                _ = pipeline.run(docs)
-                self.index = VectorStoreIndex.from_vector_store(
-                    vector_store=vector_store,
-                )
+
+            # feed all the nodes to embedding model to calculate index
+            self.index = VectorStoreIndex(
+                nodes=nodes,
+                embed_model=self.emb_model,
+            )
             # persist the calculated index
-            self.index.storage_context.persist(persist_dir=self.persist_dir)
+            self.persist_to_dir()
         else:
             # load the storage_context
             storage_context = StorageContext.from_defaults(
@@ -305,6 +279,87 @@ class LlamaIndexRAG(RAGBase):
         else:
             self.retriever = retriever
         return self.index
+
+    def persist_to_dir(self) -> None:
+        """
+        Persist the index to the directory.
+        """
+        self.index.storage_context.persist(persist_dir=self.persist_dir)
+
+    def load_docs(self, index_config: dict) -> Any:
+        """
+        Load the documents by configurations.
+        Args:
+            index_config (dict):
+                the index configuration
+        Return:
+            Any: the loaded documents
+        """
+
+        if "load_data" in index_config:
+            load_data_args = self._prepare_args_from_config(
+                index_config["load_data"],
+            )
+        else:
+            try:
+                from llama_index.core import SimpleDirectoryReader
+            except ImportError as exc_inner:
+                raise ImportError(
+                    " LlamaIndexAgent requires llama-index to be install."
+                    "Please run `pip install llama-index`",
+                ) from exc_inner
+            load_data_args = {
+                "loader": SimpleDirectoryReader(
+                    index_config["set_default_data_path"],
+                ),
+            }
+        logger.info(f"rag.load_data args: {load_data_args}")
+        docs = self.load_data(**load_data_args)
+        return docs
+
+    def docs_to_nodes(
+        self,
+        docs: Any,
+        transformations: Optional[list[NodeParser]] = None,
+    ) -> Any:
+        """
+        Convert the documents to nodes.
+        Args:
+            docs (Any):
+                documents to be processed, usually expected to be in
+                 llama index Documents.
+            transformations (list[NodeParser]):
+                specifies the transformations (operators) to
+                process documents (e.g., split the documents into smaller
+                chunks)
+        Return:
+            Any: return the index of the processed document
+        """
+        # if it is not specified, use the default configuration
+        if transformations is None:
+            transformations = [
+                SentenceSplitter(
+                    chunk_size=self.config.get(
+                        "chunk_size",
+                        DEFAULT_CHUNK_SIZE,
+                    ),
+                    chunk_overlap=self.config.get(
+                        "chunk_overlap",
+                        DEFAULT_CHUNK_OVERLAP,
+                    ),
+                ),
+            ]
+        # adding embedding model as the last step of transformation
+        # https://docs.llamaindex.ai/en/stable/module_guides/loading/ingestion_pipeline/root.html
+        transformations.append(self.emb_model)
+
+        # use in memory to construct an index
+        pipeline = IngestionPipeline(
+            transformations=transformations,
+        )
+        # stack up the nodes from the pipline
+        nodes = pipeline.run(documents=docs)
+        return nodes
 
     def set_retriever(self, retriever: BaseRetriever) -> None:
         """
