@@ -74,10 +74,13 @@ def main() -> None:
     # define an API agent
     api_agent = LlamaIndexAgent(**agent_configs[2]["args"])
 
+    searching_agent = LlamaIndexAgent(**agent_configs[4]["args"])
+
     rag_agents = [
         tutorial_agent,
         code_explain_agent,
         api_agent,
+        searching_agent,
     ]
     rag_agent_names = [agent.name for agent in rag_agents]
 

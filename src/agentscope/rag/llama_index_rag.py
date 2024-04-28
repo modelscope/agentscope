@@ -201,7 +201,7 @@ class LlamaIndexRAG(RAGBase):
         self,
         docs_list: Any,
         retriever: Any = None,
-        store_and_index_args_list: Any = None,
+        store_and_index_args_list: list[dict] = None,
         **kwargs: Any,
     ) -> Any:
         """
@@ -297,7 +297,7 @@ class LlamaIndexRAG(RAGBase):
         """
 
         if "load_data" in index_config:
-            load_data_args = self._prepare_args_from_config(
+            load_data_args = self.prepare_args_from_config(
                 index_config["load_data"],
             )
         else:
