@@ -6,12 +6,29 @@ One agent is a tutorial assistant, the other is a code explainer.
 import json
 import os
 
-from rag_agents import LlamaIndexAgent
 from groupchat_utils import filter_agents
 
 import agentscope
-from agentscope.agents import UserAgent
-from agentscope.agents import DialogAgent
+from agentscope.agents import UserAgent, DialogAgent, LlamaIndexAgent
+
+
+AGENT_CHOICE_PROMPT = """
+There are following available agents. You need to choose the most appropriate
+agent(s) to answer the user's question.
+
+agent descriptions:{}
+
+First, rephrase the user's question, which must contain the key information.
+The you need to think step by step. If you believe some of the agents are
+good candidates to answer the question (e.g., AGENT_1 and AGENT_2), then
+you need to follow the following format to generate your output:
+
+'
+Because $YOUR_REASONING.
+I believe @AGENT_1 and @AGENT_2 are the most appropriate agents to answer
+your question.
+'
+"""
 
 
 def prepare_docstring_html(repo_path: str, html_dir: str) -> None:
@@ -49,20 +66,14 @@ def main() -> None:
     tutorial_agent = LlamaIndexAgent(**agent_configs[0]["args"])
     code_explain_agent = LlamaIndexAgent(**agent_configs[1]["args"])
 
-    # NOTE: before defining api-assist, we need to prepare the docstring html
-    # first
+    # prepare html for api agent
     prepare_docstring_html(
-        "../../",
-        "../../docs/docstring_html/",
+        agent_configs[2]["args"]["rag_config"]["repo_base"],
+        agent_configs[2]["args"]["rag_config"]["file_dir"],
     )
     # define an API agent
     api_agent = LlamaIndexAgent(**agent_configs[2]["args"])
 
-    # define a guide agent
-    agent_configs[3]["args"].pop("description")
-    guide_agent = DialogAgent(**agent_configs[3]["args"])
-
-    # define a searching agent
     searching_agent = LlamaIndexAgent(**agent_configs[4]["args"])
 
     rag_agents = [
@@ -72,6 +83,24 @@ def main() -> None:
         searching_agent,
     ]
     rag_agent_names = [agent.name for agent in rag_agents]
+
+    # define a guide agent
+    rag_agent_descriptions = [
+        "agent name: "
+        + agent.name
+        + "\n agent description："
+        + agent.description
+        + "\n"
+        for agent in rag_agents
+    ]
+    agent_configs[3]["args"].pop("description")
+    agent_configs[3]["args"]["sys_prompt"] = agent_configs[3]["args"][
+        "sys_prompt"
+    ] + AGENT_CHOICE_PROMPT.format(
+        "".join(rag_agent_descriptions),
+    )
+
+    guide_agent = DialogAgent(**agent_configs[3]["args"])
 
     user_agent = UserAgent()
     while True:

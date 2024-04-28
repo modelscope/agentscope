@@ -3,21 +3,15 @@
 This module is an integration of the Llama index RAG
 into AgentScope package
 """
-
+import os.path
 from typing import Any, Optional, List, Union
 from loguru import logger
-import importlib
-import os.path
 
 try:
     from llama_index.core.readers.base import BaseReader
     from llama_index.core.base.base_retriever import BaseRetriever
     from llama_index.core.base.embeddings.base import BaseEmbedding, Embedding
     from llama_index.core.ingestion import IngestionPipeline
-    from llama_index.core.vector_stores.types import (
-        BasePydanticVectorStore,
-        VectorStore,
-    )
     from llama_index.core.bridge.pydantic import PrivateAttr
     from llama_index.core.node_parser.interface import NodeParser
     from llama_index.core.node_parser import SentenceSplitter
@@ -35,8 +29,8 @@ except ImportError:
     load_index_from_storage = None
     PrivateAttr = None
 
-from rag import RAGBase
-from rag.rag import (
+from agentscope.rag import RAGBase
+from agentscope.rag.rag import (
     DEFAULT_CHUNK_SIZE,
     DEFAULT_CHUNK_OVERLAP,
     DEFAULT_TOP_K,
@@ -206,9 +200,8 @@ class LlamaIndexRAG(RAGBase):
     def store_and_index(
         self,
         docs_list: Any,
-        retriever: Optional[BaseRetriever] = None,
-        transformations: Optional[list[NodeParser]] = None,
-        store_and_index_args_list: Optional[list] = None,
+        retriever: Any = None,
+        store_and_index_args_list: list[dict] = None,
         **kwargs: Any,
     ) -> Any:
         """
@@ -243,11 +236,13 @@ class LlamaIndexRAG(RAGBase):
             # nodes, or called chunks, is a presentation of the documents
             nodes = []
             # we build nodes by using the IngestionPipeline for each document
-            for i in range(len(docs_list)):
+            for i, doc in enumerate(docs_list):
                 nodes = nodes + self.docs_to_nodes(
-                    docs=docs_list[i],
+                    docs=doc,
                     transformations=store_and_index_args_list[i].get(
-                        "transformations", None)
+                        "transformations",
+                        None,
+                    ),
                 )
 
             # feed all the nodes to embedding model to calculate index
@@ -261,7 +256,7 @@ class LlamaIndexRAG(RAGBase):
             # load the storage_context
             storage_context = StorageContext.from_defaults(
                 persist_dir=self.persist_dir,
-                )
+            )
             # construct index from
             self.index = load_index_from_storage(
                 storage_context=storage_context,
@@ -285,7 +280,7 @@ class LlamaIndexRAG(RAGBase):
             self.retriever = retriever
         return self.index
 
-    def persist_to_dir(self):
+    def persist_to_dir(self) -> None:
         """
         Persist the index to the directory.
         """
@@ -302,7 +297,7 @@ class LlamaIndexRAG(RAGBase):
         """
 
         if "load_data" in index_config:
-            load_data_args = self._prepare_args_from_config(
+            load_data_args = self.prepare_args_from_config(
                 index_config["load_data"],
             )
         else:
@@ -315,16 +310,17 @@ class LlamaIndexRAG(RAGBase):
                 ) from exc_inner
             load_data_args = {
                 "loader": SimpleDirectoryReader(
-                    index_config["set_default_data_path"]),
+                    index_config["set_default_data_path"],
+                ),
             }
         logger.info(f"rag.load_data args: {load_data_args}")
         docs = self.load_data(**load_data_args)
         return docs
 
     def docs_to_nodes(
-            self,
-            docs: Any,
-            transformations: Optional[list[NodeParser]] = None
+        self,
+        docs: Any,
+        transformations: Optional[list[NodeParser]] = None,
     ) -> Any:
         """
         Convert the documents to nodes.
@@ -397,59 +393,3 @@ class LlamaIndexRAG(RAGBase):
                 results.append(node.get_text())
             return results
         return retrieved
-
-    def _prepare_args_from_config(
-        self,
-        config: dict,
-    ) -> Any:
-        """
-        Helper function to build args for the two functions:
-        load_data(...) and store_and_index(docs, ...)
-        in RAG classes.
-        Args:
-            config (dict): a dictionary containing configurations
-
-        Returns:
-            Any: an object that is parsed/built to be an element
-                of input to the function of RAG module.
-        """
-        if not isinstance(config, dict):
-            return config
-
-        if "create_object" in config:
-            # if a term in args is a object,
-            # recursively create object with args from config
-            module_name = config.get("module", "")
-            class_name = config.get("class", "")
-            init_args = config.get("init_args", {})
-            try:
-                cur_module = importlib.import_module(module_name)
-                cur_class = getattr(cur_module, class_name)
-                init_args = self._prepare_args_from_config(init_args)
-                logger.info(
-                    f"load and build object{cur_module, cur_class, init_args}",
-                )
-                return cur_class(**init_args)
-            except ImportError as exc_inner:
-                logger.error(
-                    f"Fail to load class {class_name} "
-                    f"from module {module_name}",
-                )
-                raise ImportError(
-                    f"Fail to load class {class_name} "
-                    f"from module {module_name}",
-                ) from exc_inner
-        else:
-            prepared_args = {}
-            for key, value in config.items():
-                if isinstance(value, list):
-                    prepared_args[key] = []
-                    for c in value:
-                        prepared_args[key].append(
-                            self._prepare_args_from_config(c),
-                        )
-                elif isinstance(value, dict):
-                    prepared_args[key] = self._prepare_args_from_config(value)
-                else:
-                    prepared_args[key] = value
-            return prepared_args

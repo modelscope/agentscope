@@ -4,7 +4,6 @@ from .rag import RAGBase
 
 from .llama_index_rag import LlamaIndexRAG
 
-
 try:
     from .langchain_rag import LangChainRAG
 except Exception:

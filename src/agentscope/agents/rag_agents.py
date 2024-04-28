@@ -8,10 +8,9 @@ Notice, this is a Beta version of RAG agent.
 
 from abc import ABC, abstractmethod
 from typing import Optional, Any
-import importlib
 from loguru import logger
 
-from rag import RAGBase, LlamaIndexRAG
+from agentscope.rag import RAGBase, LlamaIndexRAG
 
 from agentscope.agents.agent import AgentBase
 from agentscope.message import Msg
@@ -255,13 +254,13 @@ class LlamaIndexAgent(RAGAgentBase):
         # NOTE: as each selected file type may need to use a different loader
         # and transformations, the length of the list depends on
         # the total count of loaded data.
-        for index_config_i in range(len(index_config)):
-            docs = rag.load_docs(index_config = index_config[index_config_i])
+        for index_config_i, _ in enumerate(index_config):
+            docs = rag.load_docs(index_config=index_config[index_config_i])
             docs_list.append(docs)
 
             # store and indexing for each file type
             if "store_and_index" in index_config[index_config_i]:
-                store_and_index_args = self._prepare_args_from_config(
+                store_and_index_args = rag.prepare_args_from_config(
                     index_config[index_config_i]["store_and_index"],
                 )
             else:
@@ -272,8 +271,10 @@ class LlamaIndexAgent(RAGAgentBase):
         logger.info(f"store_and_index_args args: {store_and_index_args_list}")
 
         # pass the loaded documents and arguments to store_and_index
-        rag.store_and_index(docs_list=docs_list,
-                            store_and_index_args_list=store_and_index_args_list)
+        rag.store_and_index(
+            docs_list=docs_list,
+            store_and_index_args_list=store_and_index_args_list,
+        )
         return rag
 
     def reply(
