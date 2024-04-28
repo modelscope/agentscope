@@ -142,7 +142,7 @@ In AgentScope, you can load the model with the following model configs: `./flask
 
 ```json
 {
-    "model_type": "post_api",
+    "model_type": "post_api_chat",
     "config_name": "flask_llama2-7b-chat-hf",
     "api_url": "http://127.0.0.1:8000/llm/",
     "json_args": {
@@ -188,7 +188,7 @@ In AgentScope, you can load the model with the following model configs:
 
 ```json
 {
-    "model_type": "post_api",
+    "model_type": "post_api_chat",
     "config_name": "flask_llama2-7b-chat-ms",
     "api_url": "http://127.0.0.1:8000/llm/",
     "json_args": {
@@ -303,7 +303,7 @@ following model config in AgentScope.
 
 ```json
 {
-    "model_type": "post_api",
+    "model_type": "post_api_chat",
     "config_name": "gpt2",
     "headers": {
         "Authorization": "Bearer {YOUR_API_TOKEN}"

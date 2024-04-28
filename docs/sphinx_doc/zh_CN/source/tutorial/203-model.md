@@ -105,6 +105,7 @@ API如下：
 |                        | Embedding       | [`OllamaEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)            | `"ollama_embedding"`          | llama2, ...                                      |
 |                        | Generation      | [`OllamaGenerationWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)           | `"ollama_generate"`           | llama2, ...                                      |
 | Post Request based API | -               | [`PostAPIModelWrapperBase`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)             | `"post_api"`                  | -                                                |
+|  | Chat | [`PostAPIChatModelWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py) | `"post_api_chat"` | meta-llama/Meta-Llama-3-8B-Instruct, ... |
 
 #### 详细参数
 
@@ -413,6 +414,34 @@ API如下：
 </details>
 
 <br/>
+
+#### Post Request Chat API
+
+<details>
+<summary>Post request Chat API (<code><a href="https://github.
+com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIChatModelWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_postapichatwrapper_config",
+    "model_type": "post_api_chat",
+
+    # 必要参数
+    "api_url": "https://xxx.xxx",
+    "headers": {
+        # 例如："Authorization": "Bearer xxx",
+    },
+
+    # 可选参数
+    "messages_key": "messages",
+}
+```
+
+</details>
+
+<br/>
+
+
 
 ## 从零搭建模型服务
 
