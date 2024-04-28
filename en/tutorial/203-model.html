@@ -257,6 +257,12 @@ It corresponds to the <code class="docutils literal notranslate"><span class="pr
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;post_api&quot;</span></code></p></td>
 <td><p>-</p></td>
 </tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p>Chat</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py"><code class="docutils literal notranslate"><span class="pre">PostAPIChatWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;post_api_chat&quot;</span></code></p></td>
+<td><p>meta-llama/Meta-Llama-3-8B-Instruct, …</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -514,6 +520,29 @@ Here we provide example configurations for different model wrappers.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_postapiwrapper_config&quot;</span><span class="p">,</span>
     <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;post_api&quot;</span><span class="p">,</span>
+
+    <span class="c1"># Required parameters</span>
+    <span class="s2">&quot;api_url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://xxx.xxx&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;headers&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="c1"># e.g. &quot;Authorization&quot;: &quot;Bearer xxx&quot;,</span>
+    <span class="p">},</span>
+
+    <span class="c1"># Optional parameters</span>
+    <span class="s2">&quot;messages_key&quot;</span><span class="p">:</span> <span class="s2">&quot;messages&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</details>
+<br/>
+</section>
+<section id="post-request-chat-api">
+<h4>Post Request Chat API<a class="headerlink" href="#post-request-chat-api" title="Link to this heading"></a></h4>
+<details>
+<summary>Post request Chat API (<code><a href="https://github.
+com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIChatModelWrapper</a></code>)</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_postapichatwrapper_config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;post_api_chat&quot;</span><span class="p">,</span>
 
     <span class="c1"># Required parameters</span>
     <span class="s2">&quot;api_url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://xxx.xxx&quot;</span><span class="p">,</span>
