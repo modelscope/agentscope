@@ -20,9 +20,9 @@ except ImportError:
 __all__ = [
     "RpcAgentClient",
     "ResponseStub",
-    "call_in_thread",
     "RpcMsg",
     "RpcAgentServicer",
     "RpcAgentStub",
+    "call_in_thread",
     "add_RpcAgentServicer_to_server",
 ]

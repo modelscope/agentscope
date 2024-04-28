@@ -245,8 +245,8 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                 {
                     "role": "user",
                     "content": (
-                        "## Dialogue History\n"
-                        "Bob: Hi, how can I help you?\n"
+                        "## Dialogue History\\n"
+                        "Bob: Hi, how can I help you?\\n"
                         "user: What's the date today?"
                     )
                 }
@@ -267,6 +267,8 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         # Parse all information into a list of messages
         input_msgs = []
         for _ in args:
+            if _ is None:
+                continue
             if isinstance(_, MessageBase):
                 input_msgs.append(_)
             elif isinstance(_, list) and all(
@@ -664,25 +666,27 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
         """Format the messages for DashScope Multimodal API.
 
         The multimodal API has the following requirements:
-        - The roles of messages must alternate between "user" and
-        "assistant".
-        - The message with the role "system" should be the first message
-        in the list.
+
+            - The roles of messages must alternate between "user" and
+                "assistant".
+            - The message with the role "system" should be the first message
+                in the list.
             - If the system message exists, then the second message must
-            have the role "user".
-        - The last message in the list should have the role "user".
-        - In each message, more than one figure is allowed.
+                have the role "user".
+            - The last message in the list should have the role "user".
+            - In each message, more than one figure is allowed.
 
         With the above requirements, we format the messages as follows:
-        - If the first message is a system message, then we will keep it as
-        system prompt.
-        - We merge all messages into a dialogue history prompt in a single
-        message with the role "user".
-        - When there are multiple figures in the given messages, we will
-        attach it to the user message by order. Note if there are multiple
-        figures, this strategy may cause misunderstanding for the model. For
-        advanced solutions, developers are encouraged to implement their own
-        prompt engineering strategies.
+
+            - If the first message is a system message, then we will keep it as
+                system prompt.
+            - We merge all messages into a dialogue history prompt in a single
+                message with the role "user".
+            - When there are multiple figures in the given messages, we will
+                attach it to the user message by order. Note if there are
+                multiple figures, this strategy may cause misunderstanding for
+                the model. For advanced solutions, developers are encouraged to
+                implement their own prompt engineering strategies.
 
         The following is an example:
 
@@ -725,8 +729,8 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
                         {"image": "figure3"},
                         {
                             "text": (
-                                "## Dialogue History\n"
-                                "Bob: How about this picture?\n"
+                                "## Dialogue History\\n"
+                                "Bob: How about this picture?\\n"
                                 "user: It's wonderful! How about mine?"
                             )
                         },
@@ -752,6 +756,8 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
         # Parse all information into a list of messages
         input_msgs = []
         for _ in args:
+            if _ is None:
+                continue
             if isinstance(_, MessageBase):
                 input_msgs.append(_)
             elif isinstance(_, list) and all(

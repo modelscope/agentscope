@@ -6,28 +6,30 @@ This document will introduce how to fast build their local API serving with prov
 Table of Contents
 =================
 
-- [Local Model API Serving](#local-model-api-serving)
-  - [ollama](#ollama)
-    - [Install Libraries and Set up Serving](#install-libraries-and-set-up-serving)
-    - [How to use in AgentScope](#how-to-use-in-agentscope)
-  - [Flask-based Model API Serving](#flask-based-model-api-serving)
-    - [With Transformers Library](#with-transformers-library)
+- [Set up Local Model API Serving](#set-up-local-model-api-serving)
+- [Table of Contents](#table-of-contents)
+  - [Local Model API Serving](#local-model-api-serving)
+    - [ollama](#ollama)
       - [Install Libraries and Set up Serving](#install-libraries-and-set-up-serving)
-      - [How to use in AgentScope](#how-to-use-in-agentscope-1)
-      - [Note](#note)
-    - [With ModelScope Library](#with-modelscope-library)
-      - [Install Libraries and Set up Serving](#install-libraries-and-set-up-serving-1)
-      - [How to use in AgentScope](#how-to-use-in-agentscope-2)
-      - [Note](#note-1)
-  - [FastChat](#fastchat)
-    - [Install Libraries and Set up Serving](#install-libraries-and-set-up-serving-2)
-    - [Supported Models](#supported-models)
-    - [How to use in AgentScope](#how-to-use-in-agentscope-3)
-  - [vllm](#vllm)
-    - [Install Libraries and Set up Serving](#install-libraries-and-set-up-serving-3)
-    - [Supported models](#supported-models-1)
-    - [How to use in AgentScope](#how-to-use-in-agentscope-4)
-- [Model Inference API](#model-inference-api)
+      - [How to use in AgentScope](#how-to-use-in-agentscope)
+    - [Flask-based Model API Serving](#flask-based-model-api-serving)
+      - [With Transformers Library](#with-transformers-library)
+        - [Install Libraries and Set up Serving](#install-libraries-and-set-up-serving-1)
+        - [How to use in AgentScope](#how-to-use-in-agentscope-1)
+        - [Note](#note)
+      - [With ModelScope Library](#with-modelscope-library)
+        - [Install Libraries and Set up Serving](#install-libraries-and-set-up-serving-2)
+        - [How to use in AgentScope](#how-to-use-in-agentscope-2)
+        - [Note](#note-1)
+    - [FastChat](#fastchat)
+      - [Install Libraries and Set up Serving](#install-libraries-and-set-up-serving-3)
+      - [Supported Models](#supported-models)
+      - [How to use in AgentScope](#how-to-use-in-agentscope-3)
+    - [vllm](#vllm)
+      - [Install Libraries and Set up Serving](#install-libraries-and-set-up-serving-4)
+      - [Supported models](#supported-models-1)
+      - [How to use in AgentScope](#how-to-use-in-agentscope-4)
+  - [Model Inference API](#model-inference-api)
 
 ## Local Model API Serving
 
@@ -61,7 +63,7 @@ In AgentScope, you can use the following model configurations to load the model.
 
     # Optional parameters
     "options": {                                # Parameters passed to the model when calling
-        # e.g. "temperature": 0., "seed": "123",
+        # e.g. "temperature": 0., "seed": 123,
     },
     "keep_alive": "5m",                         # Controls how long the model will stay loaded into memory
 }
@@ -79,7 +81,7 @@ In AgentScope, you can use the following model configurations to load the model.
 
     # Optional parameters
     "options": {                                # Parameters passed to the model when calling
-        # "temperature": 0., "seed": "123",
+        # "temperature": 0., "seed": 123,
     },
     "keep_alive": "5m",                         # Controls how long the model will stay loaded into memory
 }
@@ -97,7 +99,7 @@ In AgentScope, you can use the following model configurations to load the model.
 
     # Optional parameters
     "options": {                                # Parameters passed to the model when calling
-        # "temperature": 0., "seed": "123",
+        # "temperature": 0., "seed": 123,
     },
     "keep_alive": "5m",                         # Controls how long the model will stay loaded into memory
 }
@@ -235,6 +237,7 @@ Now you can load the model in AgentScope by the following model config: `fastcha
 {
     "model_type": "openai_chat",
     "config_name": "fastchat_llama2-7b-chat-hf",
+    "model_name": "meta-llama/Llama-2-7b-chat-hf",
     "api_key": "EMPTY",
     "client_args": {
         "base_url": "http://127.0.0.1:8000/v1/"
@@ -278,7 +281,8 @@ Now you can load the model in AgentScope by the following model config: `vllm/mo
 ```json
 {
     "model_type": "openai_chat",
-    "config_name": "meta-llama/Llama-2-7b-chat-hf",
+    "config_name": "vllm_llama2-7b-chat-hf",
+    "model_name": "meta-llama/Llama-2-7b-chat-hf",
     "api_key": "EMPTY",
     "client_args": {
         "base_url": "http://127.0.0.1:8000/v1/"

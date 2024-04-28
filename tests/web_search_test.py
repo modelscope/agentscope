@@ -6,7 +6,7 @@ from unittest.mock import Mock, patch, MagicMock
 from agentscope.service import ServiceResponse, arxiv_search
 from agentscope.service import bing_search, google_search
 from agentscope.service.service_status import ServiceExecStatus
-from agentscope.service.web_search.arxiv import _reformat_query
+from agentscope.service.web.arxiv import _reformat_query
 
 
 class TestWebSearches(unittest.TestCase):
