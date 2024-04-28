@@ -24,17 +24,19 @@
 
 ## 新闻
 
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-04-27]** [AgentScope Workstation](https://agentscope.aliyun.com/)上线了！ 欢迎使用 Workstation 体验如何在*拖拉拽编程平台* 零代码搭建多智体应用，也欢迎大家通过*copilot*查询AgentScope各种小知识！
+
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-04-19]** AgentScope现已经支持Llama3！我们提供了面向CPU推理和GPU推理的[脚本](./examples/model_llama3)和[模型配置](./examples/model_llama3)，一键式开启Llama3的探索，在我们的样例中尝试Llama3吧！
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-04-06]** 我们现在发布了**AgentScope** v0.0.3版本！
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-04-06]** 新的样例“[五子棋](./examples/game_gomoku)”，“[与ReAct智能体对话](./examples/conversation_with_react_agent)”，“[与RAG智能体对话](./examples/conversation_with_RAG_agents)”，“[分布式并行搜索](./examples/distributed_search)”上线了！
 
-- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-03-19]** 我们现在发布了**AgentScope** v0.0.2版本！在这个新版本中，AgentScope支持了[ollama](https://modelscope.github.io/agentscope/en/tutorial/203-model.html#supported-models)（本地CPU推理引擎），[DashScope](https://modelscope.github.io/agentscope/en/tutorial/203-model.html#supported-models)和[Gemini](https://modelscope.github.io/agentscope/en/tutorial/203-model.html#supported-models) APIs。
+- **[2024-03-19]** 我们现在发布了**AgentScope** v0.0.2版本！在这个新版本中，AgentScope支持了[ollama](https://modelscope.github.io/agentscope/en/tutorial/203-model.html#supported-models)（本地CPU推理引擎），[DashScope](https://modelscope.github.io/agentscope/en/tutorial/203-model.html#supported-models)和[Gemini](https://modelscope.github.io/agentscope/en/tutorial/203-model.html#supported-models) APIs。
 
-- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-03-19]** 新的样例“[带有@功能的自主对话](./examples/conversation_with_mentions)”和“[兼容LangChain的基础对话](./examples/conversation_with_langchain)”上线了！
+- **[2024-03-19]** 新的样例“[带有@功能的自主对话](./examples/conversation_with_mentions)”和“[兼容LangChain的基础对话](./examples/conversation_with_langchain)”上线了！
 
-- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-03-19]** AgentScope的[中文教程](https://modelscope.github.io/agentscope/zh_CN/index.html)上线了！
+- **[2024-03-19]** AgentScope的[中文教程](https://modelscope.github.io/agentscope/zh_CN/index.html)上线了！
 
 - **[2024-02-27]** 我们现在发布了**AgentScope** v0.0.1版本！现在，AgentScope也可以在[PyPI](https://pypi.org/project/agentscope/)上下载
 
@@ -46,7 +48,7 @@
 
 AgentScope是一个创新的多智能体开发平台，旨在赋予开发人员使用大模型轻松构建多智能体应用的能力。
 
-- 🤝 **高易用**： AgentScope专为开发人员设计，提供了[丰富的组件](https://modelscope.github.io/agentscope/en/tutorial/204-service.html#), [全面的文档](https://modelscope.github.io/agentscope/zh_CN/index.html)和广泛的兼容性。
+- 🤝 **高易用**： AgentScope专为开发人员设计，提供了[丰富的组件](https://modelscope.github.io/agentscope/en/tutorial/204-service.html#), [全面的文档](https://modelscope.github.io/agentscope/zh_CN/index.html)和广泛的兼容性。同时，[AgentScope Workstation](https://agentscope.aliyun.com/)提供了在线拖拉拽编程和在线小助手(copilot)功能，帮助开发者迅速上手！
 
 - ✅ **高鲁棒**：支持自定义的容错控制和重试机制，以提高应用程序的稳定性。
 

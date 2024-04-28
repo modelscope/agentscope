@@ -22,8 +22,8 @@ class MsgHubManager:
         Args:
             participants (`Sequence[AgentBase]`):
                 The Sequence of participants in the msghub.
-            announcement (`Optional[Union[list[dict], dict]]`, defaults to
-            `None`):
+            announcement
+                (`Optional[Union[list[dict], dict]]`, defaults to `None`):
                 The message that will be broadcast to all participants at
                 the first without requiring response.
         """
