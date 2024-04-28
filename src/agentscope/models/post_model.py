@@ -243,11 +243,39 @@ class PostAPIDALLEWrapper(PostAPIModelWrapperBase):
 
 
 class PostAPIEmbeddingWrapper(PostAPIModelWrapperBase):
-    """A post api model wrapper for embedding model"""
+    """
+    A post api model wrapper for embedding model
+    """
 
     model_type: str = "post_api_embedding"
 
     def _parse_response(self, response: dict) -> ModelResponse:
+        """
+        Parse the response json data into ModelResponse with embedding.
+        Args:
+            response (`dict`):
+            The response obtained from the API. This parsing assume the
+            structure of the response is as following:
+        {
+            "code": 200,
+            "data": {
+                ...
+                "response": {
+                    "data": [
+                        {
+                            "embedding": [
+                                0.001,
+                                ...
+                            ],
+                            ...
+                        }
+                    ],
+                    "model": "xxxx",
+                    ...
+                },
+            },
+        }
+        """
         if "data" not in response["data"]["response"]:
             if "error" in response["data"]["response"]:
                 error_msg = response["data"]["response"]["error"]["message"]
@@ -256,7 +284,7 @@ class PostAPIEmbeddingWrapper(PostAPIModelWrapperBase):
             logger.error(f"Error in embedding API call:\n{error_msg}")
             raise ValueError(f"Error in embedding API call:\n{error_msg}")
         embeddings = [
-            emb["embedding"] for emb in response["data"]["response"]["data"]
+            data["embedding"] for data in response["data"]["response"]["data"]
         ]
         return ModelResponse(
             embedding=embeddings,

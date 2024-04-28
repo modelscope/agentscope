@@ -505,18 +505,10 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapperBase):
         )
 
         # step5: return response
-        if len(response.output["embeddings"]) == 0:
-            return ModelResponse(
-                embedding=response.output["embedding"][0],
-                raw=response,
-            )
-        else:
-            return ModelResponse(
-                embedding=[
-                    _["embedding"] for _ in response.output["embeddings"]
-                ],
-                raw=response,
-            )
+        return ModelResponse(
+            embedding=[_["embedding"] for _ in response.output["embeddings"]],
+            raw=response,
+        )
 
 
 class DashScopeMultiModalWrapper(DashScopeWrapperBase):
