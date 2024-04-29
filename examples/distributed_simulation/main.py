@@ -7,7 +7,7 @@ from concurrent import futures
 from concurrent.futures import as_completed
 from loguru import logger
 
-from participant import Moderator
+from participant import Moderator, RandomParticipant, LLMParticipant
 
 import agentscope
 from agentscope.agents import AgentBase
@@ -56,6 +56,7 @@ def setup_participant_agent_server(host: str, port: int) -> None:
         host=host,
         port=port,
         max_pool_size=16384,
+        custom_agents=[Moderator, RandomParticipant, LLMParticipant],
     )
     assistant_server_launcher.launch(in_subprocess=False)
     assistant_server_launcher.wait_until_terminate()
@@ -77,9 +78,10 @@ def init_moderator(
         agent_type=agent_type,
         max_value=max_value,
         sleep_time=sleep_time,
-        to_dist=True,
-        host=host,
-        port=port,
+        to_dist={
+            "host": host,
+            "port": port,
+        },
     )
 
 
