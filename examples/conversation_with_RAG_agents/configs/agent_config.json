@@ -16,6 +16,7 @@
                     "module": "llama_index.core",
                     "class": "SimpleDirectoryReader",
                     "init_args": {
+                      "filename_as_id": true,
                       "input_dir": "../../docs/sphinx_doc/en/source/tutorial",
                       "required_exts": [
                         ".md"

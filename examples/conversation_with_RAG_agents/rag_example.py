@@ -50,15 +50,16 @@ def main() -> None:
 
     # code_explain_agent = LlamaIndexAgent(**agent_configs[1]["args"])
 
-    # NOTE: before defining api-assist, we need to prepare the docstring html
-    # first
+    # NOTE: before defining api-assist,
+    # we need to prepare the docstring html first
     # prepare_docstring_html(
     #     "../../",
     #     "../../docs/docstring_html/",
     # )
+
     # define an API agent
     # api_agent = LlamaIndexAgent(**agent_configs[2]["args"])
-    #
+
     # define a guide agent
     agent_configs[3]["args"].pop("description")
     guide_agent = DialogAgent(**agent_configs[3]["args"])

@@ -4,36 +4,39 @@ This module is an integration of the Llama index RAG
 into AgentScope package
 """
 
-from typing import Any, Optional, List, Union, Sequence
-from loguru import logger
 import importlib
 import os.path
+from typing import Any, Optional, List, Union
+from loguru import logger
 
 try:
-    from llama_index.core.readers.base import BaseReader
     from llama_index.core.base.base_retriever import BaseRetriever
-    from llama_index.core.base.embeddings.base import BaseEmbedding, Embedding
-    from llama_index.core.ingestion import IngestionPipeline
-    from llama_index.core.vector_stores.types import (
-        BasePydanticVectorStore,
-        VectorStore,
+    from llama_index.core.base.embeddings.base import (
+        BaseEmbedding,
+        Embedding,
     )
+    from llama_index.core.ingestion import IngestionPipeline
+
     from llama_index.core.bridge.pydantic import PrivateAttr
-    from llama_index.core.node_parser.interface import NodeParser
     from llama_index.core.node_parser import SentenceSplitter
     from llama_index.core import (
         VectorStoreIndex,
         StorageContext,
         load_index_from_storage,
     )
+    from llama_index.core.schema import (
+        Document,
+        TransformComponent,
+    )
 except ImportError:
-    BaseReader, BaseRetriever = None, None
+    BaseRetriever = None
     BaseEmbedding, Embedding = None, None
-    IngestionPipeline, BasePydanticVectorStore, VectorStore = None, None, None
-    NodeParser, SentenceSplitter = None, None
+    IngestionPipeline = None
+    SentenceSplitter = None
     VectorStoreIndex, StorageContext = None, None
     load_index_from_storage = None
     PrivateAttr = None
+    Document, TransformComponent = None, None
 
 from rag import RAGBase
 from rag.rag import (
@@ -53,9 +56,9 @@ class _EmbeddingModel(BaseEmbedding):
     _emb_model_wrapper: ModelWrapperBase = PrivateAttr()
 
     def __init__(
-            self,
-            emb_model: ModelWrapperBase,
-            embed_batch_size: int = 1,
+        self,
+        emb_model: ModelWrapperBase,
+        embed_batch_size: int = 1,
     ) -> None:
         """
         Dummy wrapper to convert a ModelWrapperBase to llama Index
@@ -109,8 +112,8 @@ class _EmbeddingModel(BaseEmbedding):
         return self._get_text_embedding(text)
 
     async def _aget_text_embeddings(
-            self,
-            texts: List[str],
+        self,
+        texts: List[str],
     ) -> List[List[float]]:
         """Asynchronously get text embeddings."""
         return self._get_text_embeddings(texts)
@@ -122,12 +125,12 @@ class LlamaIndexRAG(RAGBase):
     """
 
     def __init__(
-            self,
-            model: Optional[ModelWrapperBase],
-            emb_model: Union[ModelWrapperBase, BaseEmbedding, None] = None,
-            rag_config: Optional[dict] = None,
-            index_config: Optional[dict] = None,
-            **kwargs: Any,
+        self,
+        model: Optional[ModelWrapperBase],
+        emb_model: Union[ModelWrapperBase, BaseEmbedding, None] = None,
+        rag_config: dict = None,
+        index_config: dict = None,
+        **kwargs: Any,
     ) -> None:
         """
         RAG component based on llama index.
@@ -139,7 +142,7 @@ class LlamaIndexRAG(RAGBase):
             rag_config (dict):
                 The configuration for llama index rag
             index_config (dict):
-                The configuration for caculating the index
+                The configuration to generate the index
         """
         super().__init__(model, emb_model, rag_config, **kwargs)
         self.retriever = None
@@ -148,7 +151,7 @@ class LlamaIndexRAG(RAGBase):
         self.emb_model = emb_model
         self.rag_config = rag_config
         self.index_config = index_config
-
+        self.override_existing_index = False
         # ensure the emb_model is compatible with LlamaIndex
         if isinstance(emb_model, ModelWrapperBase):
             self.emb_model = _EmbeddingModel(emb_model)
@@ -164,18 +167,15 @@ class LlamaIndexRAG(RAGBase):
         """
         Initialize the RAG.
         """
-        # initiate the loaded document/store_and_index arguments list,
-        docs_list, store_and_index_args_list = [], []
-
-        # NOTE: as each selected file type may need to use a different loader
-        # and transformations, the length of the list depends on
-        # the total count of loaded data.
         if os.path.exists(self.persist_dir):
-            self.load_index()
+            self._load_index()
+            logger.info(f"index loaded from {self.persist_dir}")
+            self.refresh_index()
         else:
-            self.data_to_index()
+            self._data_to_index()
+        self._set_retriever()
 
-    def load_index(self):
+    def _load_index(self) -> None:
         """
         Load the index from persist_dir.
         """
@@ -189,51 +189,46 @@ class LlamaIndexRAG(RAGBase):
             embed_model=self.emb_model,
         )
 
-    def data_to_index(self):
+    def _data_to_index(self) -> None:
         """
         Convert the data to index by configs.
         """
-        # load the data
-        docs_list, store_and_index_args_list = [], []
-        for index_config_i in range(len(self.index_config)):
-            docs = self.load_data(
-                config=self.index_config[index_config_i])
-            docs_list.append(docs)
-
-            # store and indexing for each file type
-            if "store_and_index" in self.index_config[index_config_i]:
-                store_and_index_args = self._prepare_args_from_config(
-                    self.index_config[index_config_i]["store_and_index"],
-                )
-            else:
-                store_and_index_args = {"transformations": None}
-            store_and_index_args_list.append(store_and_index_args)
-
-        # display the arguments for store_and_index_list
-        logger.info(f"store_and_index_args args: {store_and_index_args_list}")
-
-        # pass the loaded documents and arguments to store_and_index
-        self.index = self.store_and_index(
-            docs_list=docs_list,
-            store_and_index_args_list=store_and_index_args_list
+        # NOTE: as each selected file type may need to use a different loader
+        # and transformations, the length of the list depends on
+        # the total count of loaded data.
+        nodes = []
+        for config in self.index_config:
+            documents = self._data_to_docs(config=config)
+            # # store and indexing for each file type
+            transformations = self._set_transformations(config=config).get(
+                "transformations",
+            )
+            nodes_docs = self._docs_to_nodes(
+                documents=documents,
+                transformations=transformations,
+            )
+            nodes = nodes + nodes_docs
+        # convert nodes to index
+        self.index = VectorStoreIndex(
+            nodes=nodes,
+            embed_model=self.emb_model,
         )
+        logger.info("index calculation completed.")
+        # persist the calculated index
+        self.index.storage_context.persist(persist_dir=self.persist_dir)
+        logger.info("index persisted.")
 
-    def load_data(
-            self,
-            loader: Optional[BaseReader] = None,
-            query: Optional[str] = None,
-            config: Optional[dict] = None,
-            **kwargs: Any,
+    def _data_to_docs(
+        self,
+        query: Optional[str] = None,
+        config: dict = None,
     ) -> Any:
         """
         Accept a loader, loading the desired data (no chunking)
         Args:
-            loader (Optional[BaseReader]):
-                object to load data, expected be an instance of class
-                inheriting from BaseReader in llama index.
             query (Optional[str]):
                 optional, used when the data is in a database.
-            config (Optional[dict]):
+            config (dict):
                 optional, used when the loader config is in a config file.
         Returns:
             Any: loaded documents
@@ -262,57 +257,33 @@ class LlamaIndexRAG(RAGBase):
             )
         ```
         """
-        loader_config = config.get("load_data", {})
-        if loader_config is not None:
-            # we prepare the loader from the configs
-            load_data_args = self._prepare_args_from_config(
-                config=loader_config,
-            )
-        else:
-            # we prepare the loader by default
-            try:
-                from llama_index.core import SimpleDirectoryReader
-            except ImportError as exc_inner:
-                raise ImportError(
-                    " LlamaIndexAgent requires llama-index to be install."
-                    "Please run `pip install llama-index`",
-                ) from exc_inner
-            load_data_args = {
-                "loader": SimpleDirectoryReader(
-                    input_dir="set_default_data_path"),
-            }
-        logger.info(f"rag.load_data args: {load_data_args}")
-        loader = load_data_args["loader"]
+        loader = self._set_loader(config=config).get("loader")
+        # let the doc_id be the filename for each document
+        loader.filename_as_id = True
         if query is None:
             documents = loader.load_data()
         else:
+            # this is for querying a database,
+            # does not work for loading a document directory
             documents = loader.load_data(query)
         logger.info(f"loaded {len(documents)} documents")
         return documents
 
-    def store_and_index(
-            self,
-            docs_list: Any,
-            retriever: Optional[BaseRetriever] = None,
-            transformations: Optional[list[NodeParser]] = None,
-            store_and_index_args_list: Optional[list] = None,
-            **kwargs: Any,
+    @staticmethod
+    def _docs_to_nodes(
+        documents: List[Document],
+        transformations: Optional[list[TransformComponent]] = None,
     ) -> Any:
         """
         Preprocessing the loaded documents.
         Args:
-            docs_list (Any):
+            documents (List[Document]):
                 documents to be processed, usually expected to be in
                  llama index Documents.
-            retriever (Optional[BaseRetriever]):
-                optional, specifies the retriever in llama index to be used
-            transformations (Optional[list[NodeParser]]):
+            transformations (Optional[list[TransformComponent]]):
                 optional, specifies the transformations (operators) to
                 process documents (e.g., split the documents into smaller
                 chunks)
-            store_and_index_args_list (Optional[list]):
-                optional, specifies the indexing configurations in llama
-                index for each document type
 
         Return:
             Any: return the index of the processed document
@@ -324,80 +295,60 @@ class LlamaIndexRAG(RAGBase):
         2) generate embedding by configuring pipline with embedding models
         3) store the embedding-content to vector database
         """
+        # nodes, or called chunks, is a presentation of the documents
+        # we build nodes by using the IngestionPipeline
+        # for each document with corresponding transformations
+        pipeline = IngestionPipeline(
+            transformations=transformations,
+        )
+        # stack up the nodes from the pipline
+        nodes = pipeline.run(
+            documents=documents,
+            show_progress=True,
+        )
+        logger.info("nodes generated.")
+        return nodes
 
-        # if persist_dir does not exist, calculate the index
-        if not os.path.exists(self.persist_dir):
-            # nodes, or called chunks, is a presentation of the documents
-            nodes = []
-            # we build nodes by using the IngestionPipeline for each document
-            for i in range(len(docs_list)):
-                nodes = nodes + self.docs_to_nodes(
-                    docs=docs_list[i],
-                    transformations=store_and_index_args_list[i].get(
-                        "transformations", None)
-                )
-
-            # feed all the nodes to embedding model to calculate index
-            self.index = VectorStoreIndex(
-                nodes=nodes,
-                embed_model=self.emb_model,
-            )
-            # persist the calculated index
-            self.persist_to_dir()
-        else:
-            # load the storage_context
-            storage_context = StorageContext.from_defaults(
-                persist_dir=self.persist_dir,
-            )
-            # construct index from
-            self.index = load_index_from_storage(
-                storage_context=storage_context,
-                embed_model=self.emb_model,
-            )
-
-        # set the retriever
-        if retriever is None:
-            logger.info(
-                f'{self.rag_config.get("similarity_top_k", DEFAULT_TOP_K)}',
-            )
-            self.retriever = self.index.as_retriever(
-                embed_model=self.emb_model,
-                similarity_top_k=self.rag_config.get(
-                    "similarity_top_k",
-                    DEFAULT_TOP_K,
-                ),
-                **kwargs,
-            )
-        else:
-            self.retriever = retriever
-        return self.index
-
-    def persist_to_dir(self):
+    def _set_loader(self, config: dict) -> Any:
         """
-        Persist the index to the directory.
-        """
-        self.index.storage_context.persist(persist_dir=self.persist_dir)
-
-    def docs_to_nodes(
-            self,
-            docs: Any,
-            transformations: Optional[list[NodeParser]] = None
-    ) -> Any:
-        """
-        Convert the documents to nodes.
+        set the loader as needed, or just use the default setting.
         Args:
-            docs (Any):
-                documents to be processed, usually expected to be in
-                 llama index Documents.
-            transformations (list[NodeParser]):
-                specifies the transformations (operators) to
-                process documents (e.g., split the documents into smaller
-                chunks)
-        Return:
-            Any: return the index of the processed document
+            config (dict): a dictionary containing configurations
         """
-        # if it is not specified, use the default configuration
-        if transformations is None:
+        if "load_data" in config:
+            # we prepare the loader from the configs
+            loader = self._prepare_args_from_config(
+                config=config.get("load_data", {}),
+            )
+        else:
+            # we prepare the loader by default
+            try:
+                from llama_index.core import SimpleDirectoryReader
+            except ImportError as exc_inner:
+                raise ImportError(
+                    " LlamaIndexAgent requires llama-index to be install."
+                    "Please run `pip install llama-index`",
+                ) from exc_inner
+            loader = {
+                "loader": SimpleDirectoryReader(
+                    input_dir="set_default_data_path",
+                ),
+            }
+        logger.info("loaders ready.")
+        return loader
+
+    def _set_transformations(self, config: dict) -> Any:
+        """
+        set the transformations as needed, or just use the default setting.
+        Args:
+            config (dict): a dictionary containing configurations
+        """
+        if "store_and_index" in config:
+            temp = self._prepare_args_from_config(
+                config=config.get("store_and_index", {}),
+            )
+            transformations = temp.get("transformations")
+        else:
             transformations = [
                 SentenceSplitter(
                     chunk_size=self.rag_config.get(
@@ -413,35 +364,39 @@ class LlamaIndexRAG(RAGBase):
         # adding embedding model as the last step of transformation
         # https://docs.llamaindex.ai/en/stable/module_guides/loading/ingestion_pipeline/root.html
         transformations.append(self.emb_model)
+        logger.info("transformations ready.")
+        # as the last step, we need to repackage the transformations in dict
+        transformations = {"transformations": transformations}
+        return transformations
 
-        # use in memory to construct an index
-        pipeline = IngestionPipeline(
-            transformations=transformations,
-        )
-        # stack up the nodes from the pipline
-        nodes = pipeline.run(documents=docs)
-        return nodes
-
-    def nodes_to_index(
-            self,
-            nodes,
+    def _set_retriever(
+        self,
+        retriever: Optional[BaseRetriever] = None,
+        **kwargs: Any,
     ) -> None:
         """
-        Convert the nodes to index.
-        """
-        # feed all the nodes to embedding model to calculate index
-        self.index = VectorStoreIndex(
-            nodes=nodes,
-            embed_model=self.emb_model,
-        )
-
-    def set_retriever(self, retriever: BaseRetriever) -> None:
-        """
-        Reset the retriever if necessary.
+        set the retriever as needed, or just use the default setting.
         Args:
-            retriever (BaseRetriever): passing a retriever in llama index.
+            retriever (Optional[BaseRetriever]): passing a retriever in llama
+            index.
         """
-        self.retriever = retriever
+        # set the retriever
+        if retriever is None:
+            logger.info(
+                f"similarity_top_k"
+                f'={self.rag_config.get("similarity_top_k", DEFAULT_TOP_K)}',
+            )
+            self.retriever = self.index.as_retriever(
+                embed_model=self.emb_model,
+                similarity_top_k=self.rag_config.get(
+                    "similarity_top_k",
+                    DEFAULT_TOP_K,
+                ),
+                **kwargs,
+            )
+        else:
+            self.retriever = retriever
+        logger.info("retrievers ready.")
 
     def retrieve(self, query: str, to_list_strs: bool = False) -> list[Any]:
         """
@@ -456,7 +411,6 @@ class LlamaIndexRAG(RAGBase):
         Return:
             list[Any]: list of str or NodeWithScore
 
-
         More advanced query processing can refer to
         https://docs.llamaindex.ai/en/stable/examples/query_transformations/query_transform_cookbook.html
         """
@@ -468,10 +422,7 @@ class LlamaIndexRAG(RAGBase):
             return results
         return retrieved
 
-    def _prepare_args_from_config(
-            self,
-            config: dict,
-    ) -> Any:
+    def _prepare_args_from_config(self, config: dict) -> Any:
         """
         Helper function to build args for the two functions:
         load_data(...) and store_and_index(docs, ...)
@@ -487,7 +438,7 @@ class LlamaIndexRAG(RAGBase):
             return config
 
         if "create_object" in config:
-            # if a term in args is a object,
+            # if a term in args is an object,
             # recursively create object with args from config
             module_name = config.get("module", "")
             class_name = config.get("class", "")
@@ -523,3 +474,73 @@ class LlamaIndexRAG(RAGBase):
                 else:
                     prepared_args[key] = value
             return prepared_args
+
+    def refresh_index(self) -> None:
+        """
+        Refresh the index.
+        """
+        for config in self.index_config:
+            documents = self._data_to_docs(config=config)
+            # store and indexing for each file type
+            transformations = self._set_transformations(config=config).get(
+                "transformations",
+            )
+            self._insert_docs_to_index(
+                documents=documents,
+                transformations=transformations,
+            )
+
+    def _insert_docs_to_index(
+        self,
+        documents: List[Document],
+        transformations: TransformComponent,
+    ) -> None:
+        """
+        Add documents to the index.
+        Args:
+            documents (List[Document]): list of documents to be added.
+            transformations (TransformComponent): transformations that
+            convert the documents into nodes.
+        """
+        pipeline = IngestionPipeline(
+            transformations=transformations,
+        )
+        insert_docs_list = []
+        for doc in documents:
+            if doc.doc_id not in self.index.ref_doc_info.keys():
+                insert_docs_list.append(doc)
+                # stack up the nodes from the pipline
+                logger.info(f"add doc_id={doc.doc_id}")
+            else:
+                if self.override_existing_index:
+                    self.index.delete_ref_doc(
+                        ref_doc_id=doc.doc_id,
+                        delete_from_docstore=True,
+                    )
+                    insert_docs_list.append(doc)
+                    logger.info(f"replace current doc_id={doc.doc_id}")
+        nodes = pipeline.run(
+            documents=insert_docs_list,
+            show_progress=True,
+        )
+        self.index.insert_nodes(nodes=nodes)
+        logger.info("nodes added to index.")
+
+    def _delete_docs_from_index(
+        self,
+        documents: List[Document],
+    ) -> None:
+        """
+        Delete the nodes that are associated with documents.
+        Args:
+            documents (List[Document]): list of documents to be deleted.
+        """
+        doc_id_list = [doc.doc_id for doc in documents]
+        logger.info(f"doc_id_list={doc_id_list}\n")
+        for key in self.index.ref_doc_info.keys():
+            if key in doc_id_list:
+                self.index.delete_ref_doc(
+                    ref_doc_id=key,
+                    delete_from_docstore=True,
+                )
+                logger.info(f"removed docs deleted doc_id={key}")

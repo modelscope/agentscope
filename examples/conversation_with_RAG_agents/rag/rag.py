@@ -40,53 +40,19 @@ class RAGBase(ABC):
         self.rag_config = rag_config or {}
 
     @abstractmethod
-    def load_data(
+    def _init_rag(
         self,
-        loader: Optional[Any],
-        query: Any,
-        config: Optional[dict] = None,
         **kwargs: Any,
     ) -> Any:
         """
-        Load data (documents) from disk to memory and chunking them
-        Args:
-            loader (Any): data loader, depending on the package
-            query (str): query for getting data from DB
-            config (dict): config for data loader
-
-        Returns:
-            Any: loaded documents
-        """
-
-    @abstractmethod
-    def store_and_index(
-        self,
-        docs: Any,
-        vector_store: Any,
-        **kwargs: Any,
-    ) -> Any:
-        """
-        Store and index the documents.
-        Args:
-            docs (Any):
-                documents to be processed, stored and indexed
-            vector_store (Any):
-                vector store to store the index and/or documents
-
-        Returns:
-            Any: can be indices, depending on the RAG package
-
-        preprocessing the loaded documents, for example:
-        1) chunking,
-        2) generate embedding,
-        3) store the embedding-content to vdb
+        Initiate the RAG process
         """
 
     @abstractmethod
     def retrieve(
-            self,
-            query: Any,
-            to_list_strs: bool = False,
+        self,
+        query: Any,
+        to_list_strs: bool = False,
     ) -> list[Any]:
         """
         retrieve list of content from vdb to memory

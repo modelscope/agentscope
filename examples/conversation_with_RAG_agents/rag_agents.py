@@ -8,7 +8,6 @@ Notice, this is a Beta version of RAG agent.
 
 from abc import ABC, abstractmethod
 from typing import Optional, Any
-import importlib
 from loguru import logger
 
 from rag import RAGBase, LlamaIndexRAG
@@ -245,7 +244,7 @@ class LlamaIndexAgent(RAGAgentBase):
             model=self.model,
             emb_model=self.emb_model,
             rag_config=self.rag_config,
-            index_config=self.rag_config.get("index_config")
+            index_config=self.rag_config.get("index_config"),
         )
         return rag
 
