@@ -309,7 +309,7 @@ class LlamaIndexAgent(RAGAgentBase):
 
             if max(scores) < 0.4:
                 # if the max score is lower than 0.4, then we let LLM
-                # to decide whether the retrieved content is relevant
+                # decide whether the retrieved content is relevant
                 # to the user input.
                 CHECKING_PROMPT = """
                 Does the retrieved content is relevant to the query?

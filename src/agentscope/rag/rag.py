@@ -45,7 +45,7 @@ class RAGBase(ABC):
         **kwargs: Any,
     ) -> Any:
         """
-        Initiate the RAG process
+        Initiate the RAG module.
         """
 
     @abstractmethod
@@ -55,7 +55,7 @@ class RAGBase(ABC):
         to_list_strs: bool = False,
     ) -> list[Any]:
         """
-        retrieve list of content from vdb to memory
+        retrieve list of content from database (vector stored index) to memory
         Args:
             query (Any): query to retrieve
             to_list_strs (bool): whether return a list of str
