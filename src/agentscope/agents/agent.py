@@ -37,6 +37,8 @@ class _AgentMeta(ABCMeta):
 
     def __call__(cls, *args: tuple, **kwargs: dict) -> Any:
         to_dist = kwargs.pop("to_dist", False)
+        if to_dist is True:
+            to_dist = DistConf()
         if to_dist is not False and to_dist is not None:
             from .rpc_agent import RpcAgent
 

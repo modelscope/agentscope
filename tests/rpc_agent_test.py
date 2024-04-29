@@ -172,7 +172,8 @@ class BasicRpcAgentTest(unittest.TestCase):
         """test setup a single rpc agent"""
         agent_a = DemoRpcAgent(
             name="a",
-        ).to_dist()
+            to_dist=True,
+        )
         self.assertIsNotNone(agent_a)
         msg = Msg(
             name="System",
@@ -360,7 +361,8 @@ class BasicRpcAgentTest(unittest.TestCase):
         ).to_dist()
         agent_c = DemoRpcAgentWithMemory(
             name="c",
-        ).to_dist()
+            to_dist=True,
+        )
         participants = [agent_a, agent_b, agent_c]
         annonuncement_msgs = [
             Msg(name="System", content="Announcement 1", role="system"),
