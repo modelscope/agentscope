@@ -241,6 +241,7 @@ class LlamaIndexAgent(RAGAgentBase):
         # dynamic loading loader
         # initiate RAG related attributes
         rag = LlamaIndexRAG(
+            name=self.name,
             model=self.model,
             emb_model=self.emb_model,
             rag_config=self.rag_config,

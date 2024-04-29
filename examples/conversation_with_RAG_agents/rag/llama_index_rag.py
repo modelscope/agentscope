@@ -126,7 +126,8 @@ class LlamaIndexRAG(RAGBase):
 
     def __init__(
         self,
-        model: Optional[ModelWrapperBase],
+        name: str,
+        model: ModelWrapperBase,
         emb_model: Union[ModelWrapperBase, BaseEmbedding, None] = None,
         rag_config: dict = None,
         index_config: dict = None,
@@ -145,6 +146,7 @@ class LlamaIndexRAG(RAGBase):
                 The configuration to generate the index
         """
         super().__init__(model, emb_model, rag_config, **kwargs)
+        self.name = name
         self.retriever = None
         self.index = None
         self.persist_dir = rag_config.get("persist_dir", "/")
@@ -174,6 +176,7 @@ class LlamaIndexRAG(RAGBase):
         else:
             self._data_to_index()
         self._set_retriever()
+        logger.info(f"RAGagent {self.name} initialization completed!\n")
 
     def _load_index(self) -> None:
         """
@@ -448,7 +451,7 @@ class LlamaIndexRAG(RAGBase):
                 cur_class = getattr(cur_module, class_name)
                 init_args = self._prepare_args_from_config(init_args)
                 logger.info(
-                    f"load and build object{cur_module, cur_class, init_args}",
+                    f"load and build object{cur_module}",
                 )
                 return cur_class(**init_args)
             except ImportError as exc_inner:

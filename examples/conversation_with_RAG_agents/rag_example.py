@@ -48,30 +48,30 @@ def main() -> None:
     # define RAG-based agents for tutorial and code
     tutorial_agent = LlamaIndexAgent(**agent_configs[0]["args"])
 
-    # code_explain_agent = LlamaIndexAgent(**agent_configs[1]["args"])
+    code_explain_agent = LlamaIndexAgent(**agent_configs[1]["args"])
 
     # NOTE: before defining api-assist,
     # we need to prepare the docstring html first
-    # prepare_docstring_html(
-    #     "../../",
-    #     "../../docs/docstring_html/",
-    # )
+    prepare_docstring_html(
+        "../../",
+        "../../docs/docstring_html/",
+    )
 
     # define an API agent
-    # api_agent = LlamaIndexAgent(**agent_configs[2]["args"])
+    api_agent = LlamaIndexAgent(**agent_configs[2]["args"])
 
     # define a guide agent
     agent_configs[3]["args"].pop("description")
     guide_agent = DialogAgent(**agent_configs[3]["args"])
 
     # define a searching agent
-    # searching_agent = LlamaIndexAgent(**agent_configs[4]["args"])
+    searching_agent = LlamaIndexAgent(**agent_configs[4]["args"])
 
     rag_agents = [
         tutorial_agent,
-        # code_explain_agent,
-        # api_agent,
-        # searching_agent,
+        code_explain_agent,
+        api_agent,
+        searching_agent,
     ]
     rag_agent_names = [agent.name for agent in rag_agents]
 
@@ -87,8 +87,7 @@ def main() -> None:
         x.role = "user"  # to enforce dashscope requirement on roles
         if len(x["content"]) == 0 or str(x["content"]).startswith("exit"):
             break
-        # speak_list = filter_agents(x.get("content", ""), rag_agents)
-        speak_list = rag_agents
+        speak_list = filter_agents(x.get("content", ""), rag_agents)
         if len(speak_list) == 0:
             guide_response = guide_agent(x)
             # Only one agent can be called in the current version,
