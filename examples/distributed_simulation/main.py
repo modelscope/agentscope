@@ -51,6 +51,7 @@ def setup_participant_agent_server(host: str, port: int) -> None:
     """Set up agent server"""
     agentscope.init(
         model_configs="configs/model_configs.json",
+        use_monitor=False,
     )
     assistant_server_launcher = RpcAgentServerLauncher(
         host=host,
@@ -85,7 +86,7 @@ def init_moderator(
     )
 
 
-def run_main_process_new(
+def run_main_process(
     hosts: list[str],
     base_port: int,
     server_per_host: int,
@@ -99,6 +100,7 @@ def run_main_process_new(
     """Run main process"""
     agentscope.init(
         model_configs="configs/model_configs.json",
+        use_monitor=False,
     )
     host_num = len(hosts)
     total_agent_server_num = server_per_host * host_num
@@ -192,7 +194,7 @@ if __name__ == "__main__":
     if args.role == "participant":
         setup_participant_agent_server(args.hosts[0], args.base_port)
     elif args.role == "main":
-        run_main_process_new(
+        run_main_process(
             hosts=args.hosts,
             base_port=args.base_port,
             participant_num=args.participant_num,
