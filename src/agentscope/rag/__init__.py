@@ -1,17 +1,11 @@
 # -*- coding: utf-8 -*-
 """ Import all pipeline related modules in the package. """
 from .rag import RAGBase
-
 from .llama_index_rag import LlamaIndexRAG
-
-try:
-    from .langchain_rag import LangChainRAG
-except Exception:
-    LangChainRAG = None  # type: ignore # NOQA
-
+from .knowledge_bank import KnowledgeBank
 
 __all__ = [
     "RAGBase",
     "LlamaIndexRAG",
-    "LangChainRAG",
+    "KnowledgeBank",
 ]

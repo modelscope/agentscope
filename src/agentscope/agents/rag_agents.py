@@ -62,11 +62,11 @@ class RAGAgentBase(AgentBase, ABC):
         # setup RAG configurations
         self.rag_config = rag_config or {}
 
-        # use LlamaIndexAgent OR LangChainAgent
-        self.rag = self.init_rag()
+        # rag module to be initialized later
+        self.rag = None
 
     @abstractmethod
-    def init_rag(self) -> RAGBase:
+    def init_rag(self, **kwargs: Any) -> RAGBase:
         """initialize RAG with configuration"""
 
     def reply(
@@ -182,49 +182,17 @@ class LlamaIndexAgent(RAGAgentBase):
             memory_config (dict):
                 memory configuration
             rag_config (dict):
-                config for RAG. It contains the parameters for
-                RAG modules functions:
-                rag.load_data(...) and rag.store_and_index(docs, ...)
-                 If not provided, the default setting will be used.
-                An example of the config for retrieving code files
-                is as following:
-
-                "rag_config":{
-                    "index_configs": [
-                      {
-                        "load_data": {
-                          "loader": {
-                            "create_object": true,
-                            "module": "llama_index.core",
-                            "class": "SimpleDirectoryReader",
-                            "init_args": {
-                              "input_dir": "path/to/data",
-                              "recursive": true
-                              ...
-                            }
-                          }
-                        },
-                        "store_and_index": {
-                          "transformations": [
-                            {
-                              "create_object": true,
-                              "module": "llama_index.core.node_parser",
-                              "class": "CodeSplitter",
-                              "init_args": {
-                                "language": "python",
-                                "chunk_lines": 100
-                              }
-                            }
-                          ]
-                        }
-                      }
-                    ],
-                    "chunk_size": 2048,
-                    "chunk_overlap": 40,
-                    "similarity_top_k": 10,
-                    "log_retrieval": true,
-                    "recent_n_mem": 1
-                  }
+                config for RAG module. It contains at least
+                the following parameters:
+                "knowledge_id" (str):
+                    identifier of the knowledge in KnowledgeBank,
+                "similarity_top_k" (int):
+                    how many nodes/document to retrieved,
+                "log_retrieval" (bool):
+                    whether log the retrieved content,
+                "recent_n_mem" (int):
+                    how many memory used to query (default is 1,
+                    using only the current input to reply)
         """
         super().__init__(
             name=name,
@@ -236,17 +204,27 @@ class LlamaIndexAgent(RAGAgentBase):
         )
         self.description = kwargs.get("description", "")
 
-    def init_rag(self) -> LlamaIndexRAG:
+    def init_rag(
+        self,
+        rag_module: Optional[RAGBase] = None,
+        index_config: Optional[dict] = None,
+        **kwargs: Any,
+    ) -> None:
         # dynamic loading loader
         # initiate RAG related attributes
-        rag = LlamaIndexRAG(
-            name=self.name,
-            model=self.model,
-            emb_model=self.emb_model,
-            rag_config=self.rag_config,
-            index_config=self.rag_config.get("index_config"),
-        )
-        return rag
+        if rag_module is None and index_config is not None:
+            self.rag = LlamaIndexRAG(
+                name=self.name,
+                model=self.model,
+                emb_model=self.emb_model,
+                rag_config=self.rag_config,
+                index_config=index_config,
+            )
+        elif rag_module is not None:
+            self.rag = rag_module
+            self.rag.rag_config = self.rag_config
+        else:
+            raise ValueError("Expected either rag_module or index_config")
 
     def reply(
         self,

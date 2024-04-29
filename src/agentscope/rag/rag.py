@@ -30,7 +30,7 @@ class RAGBase(ABC):
 
     def __init__(
         self,
-        model: Optional[ModelWrapperBase],
+        model: Optional[ModelWrapperBase] = None,
         emb_model: Any = None,
         rag_config: Optional[dict] = None,
         **kwargs: Any,
@@ -64,6 +64,9 @@ class RAGBase(ABC):
         Returns:
             return a list with retrieved documents (in strings)
         """
+
+    def set_retriever(self, **kwargs: Any) -> None:
+        """update retriever of RAG module"""
 
     def post_processing(
         self,
