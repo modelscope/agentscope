@@ -7,6 +7,7 @@ from flask import Flask
 from flask import request
 
 import transformers
+from agentscope.utils.tools import reform_dialogue
 
 
 def create_timestamp(format_: str = "%Y-%m-%d %H:%M:%S") -> str:
@@ -25,6 +26,8 @@ def get_response() -> dict:
     inputs = json.pop("inputs")
 
     global model, tokenizer
+
+    inputs = reform_dialogue(inputs)
 
     if hasattr(tokenizer, "apply_chat_template"):
         prompt = tokenizer.apply_chat_template(

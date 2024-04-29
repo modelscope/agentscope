@@ -7,6 +7,7 @@ from flask import Flask
 from flask import request
 
 import modelscope
+from agentscope.utils.tools import reform_dialogue
 
 
 def create_timestamp(format_: str = "%Y-%m-%d %H:%M:%S") -> str:
@@ -22,35 +23,80 @@ def get_response() -> dict:
     """Receive post request and return response"""
     json = request.get_json()
 
-    prompt = json.pop("inputs")
+    inputs = json.pop("inputs")
+
+    inputs = reform_dialogue(inputs)
 
     global model, tokenizer
 
+    if hasattr(tokenizer, "apply_chat_template"):
+        prompt = tokenizer.apply_chat_template(
+            inputs,
+            tokenize=False,
+            add_generation_prompt=True,
+        )
+    else:
+        prompt = ""
+        for msg in inputs:
+            prompt += (
+                f"{msg.get('name', msg.get('role', 'system'))}: "
+                f"{msg.get('content', '')}\n"
+            )
+
+    print("=" * 80)
+    print(f"[PROMPT]:\n{prompt}")
+
     prompt_tokenized = tokenizer(prompt, return_tensors="pt").to(model.device)
+    prompt_tokens_input_ids = prompt_tokenized.input_ids[0]
 
     response_ids = model.generate(
         prompt_tokenized.input_ids,
         **json,
     )
 
+    new_response_ids = response_ids[:, len(prompt_tokens_input_ids) :]
+
     response = tokenizer.batch_decode(
-        response_ids,
+        new_response_ids,
         skip_special_tokens=True,
         clean_up_tokenization_spaces=False,
     )[0]
 
-    response = response.removeprefix(prompt)
-
-    print("=" * 80)
-    print(f"[PROMPT]:\n{prompt}")
     print(f"[RESPONSE]:\n{response}")
     print("=" * 80)
 
     return {
-        "response": response,
-        "n_token_response": len(response_ids[0]),
-        "n_token_prompt": len(prompt_tokenized.input_ids[0]),
-        "timestamp": create_timestamp(),
+        "data": {
+            "completion_tokens": len(response_ids[0]),
+            "messages": {},
+            "prompt_tokens": len(prompt_tokens_input_ids),
+            "response": {
+                "choices": [
+                    {
+                        "message": {
+                            "content": response,
+                        },
+                    },
+                ],
+                "created": "",
+                "id": create_timestamp(),
+                "model": "flask_model",
+                "object": "text_completion",
+                "usage": {
+                    "completion_tokens": len(response_ids[0]),
+                    "prompt_tokens": len(prompt_tokens_input_ids),
+                    "total_tokens": len(response_ids[0])
+                    + len(
+                        prompt_tokens_input_ids,
+                    ),
+                },
+            },
+            "total_tokens": len(response_ids[0])
+            + len(
+                prompt_tokens_input_ids,
+            ),
+            "username": "",
+        },
     }
 
 
