@@ -10,7 +10,8 @@ mkdir -p log
 
 for ((i=0; i<8; i++)); do
     port=$((base_port + i))
-    export CUDA_VISIBLE_DEVICES=$i && /usr/bin/python -m vllm.entrypoints.openai.api_server --model "${model_path}" --port ${port} --enforce-eager > log/vllm-${port}.log 2>&1 &
+    export CUDA_VISIBLE_DEVICES=$i
+    python -m vllm.entrypoints.openai.api_server --model "${model_path}" --port ${port} --enforce-eager > log/vllm-${port}.log 2>&1 &
     echo $! >> .vllm_pid
     echo "Started vllm server on port ${port} with PID $!"
 done
