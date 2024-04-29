@@ -11,7 +11,6 @@ from typing import Optional, Any
 from loguru import logger
 
 from agentscope.rag import RAGBase, LlamaIndexRAG
-
 from agentscope.agents.agent import AgentBase
 from agentscope.message import Msg
 from agentscope.models import load_model_by_config_name
@@ -241,39 +240,11 @@ class LlamaIndexAgent(RAGAgentBase):
         # dynamic loading loader
         # initiate RAG related attributes
         rag = LlamaIndexRAG(
+            name=self.name,
             model=self.model,
             emb_model=self.emb_model,
-            config=self.rag_config,
-        )
-        # initiate the loaded document/store_and_index arguments list,
-        docs_list, store_and_index_args_list = [], []
-
-        # load the indexing configurations
-        index_config = self.rag_config["index_config"]
-
-        # NOTE: as each selected file type may need to use a different loader
-        # and transformations, the length of the list depends on
-        # the total count of loaded data.
-        for index_config_i, _ in enumerate(index_config):
-            docs = rag.load_docs(index_config=index_config[index_config_i])
-            docs_list.append(docs)
-
-            # store and indexing for each file type
-            if "store_and_index" in index_config[index_config_i]:
-                store_and_index_args = rag.prepare_args_from_config(
-                    index_config[index_config_i]["store_and_index"],
-                )
-            else:
-                store_and_index_args = {"transformations": None}
-            store_and_index_args_list.append(store_and_index_args)
-
-        # display the arguments for store_and_index_list
-        logger.info(f"store_and_index_args args: {store_and_index_args_list}")
-
-        # pass the loaded documents and arguments to store_and_index
-        rag.store_and_index(
-            docs_list=docs_list,
-            store_and_index_args_list=store_and_index_args_list,
+            rag_config=self.rag_config,
+            index_config=self.rag_config.get("index_config"),
         )
         return rag
 
@@ -338,7 +309,7 @@ class LlamaIndexAgent(RAGAgentBase):
 
             if max(scores) < 0.4:
                 # if the max score is lower than 0.4, then we let LLM
-                # to decide whether the retrieved content is relevant
+                # decide whether the retrieved content is relevant
                 # to the user input.
                 CHECKING_PROMPT = """
                 Does the retrieved content is relevant to the query?

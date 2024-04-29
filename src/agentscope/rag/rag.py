@@ -16,7 +16,6 @@ import importlib
 from abc import ABC, abstractmethod
 from typing import Any, Optional
 from loguru import logger
-
 from agentscope.models import ModelWrapperBase
 
 DEFAULT_CHUNK_SIZE = 1024
@@ -33,58 +32,31 @@ class RAGBase(ABC):
         self,
         model: Optional[ModelWrapperBase],
         emb_model: Any = None,
-        config: Optional[dict] = None,
+        rag_config: Optional[dict] = None,
         **kwargs: Any,
     ) -> None:
         # pylint: disable=unused-argument
         self.postprocessing_model = model
         self.emb_model = emb_model
-        self.config = config or {}
+        self.rag_config = rag_config or {}
 
     @abstractmethod
-    def load_data(
+    def _init_rag(
         self,
-        loader: Any,
+        **kwargs: Any,
+    ) -> Any:
+        """
+        Initiate the RAG module.
+        """
+
+    @abstractmethod
+    def retrieve(
+        self,
         query: Any,
-        **kwargs: Any,
-    ) -> Any:
+        to_list_strs: bool = False,
+    ) -> list[Any]:
         """
-        Load data (documents) from disk to memory and chunking them
-        Args:
-            loader (Any): data loader, depending on the package
-            query (str): query for getting data from DB
-
-        Returns:
-            Any: loaded documents
-        """
-
-    @abstractmethod
-    def store_and_index(
-        self,
-        docs_list: Any,
-        **kwargs: Any,
-    ) -> Any:
-        """
-        Store and index the documents.
-        Args:
-            docs (Any):
-                documents to be processed, stored and indexed
-            vector_store (Any):
-                vector store to store the index and/or documents
-
-        Returns:
-            Any: can be indices, depending on the RAG package
-
-        preprocessing the loaded documents, for example:
-        1) chunking,
-        2) generate embedding,
-        3) store the embedding-content to vdb
-        """
-
-    @abstractmethod
-    def retrieve(self, query: Any, to_list_strs: bool = False) -> list[Any]:
-        """
-        retrieve list of content from vdb to memory
+        retrieve list of content from database (vector stored index) to memory
         Args:
             query (Any): query to retrieve
             to_list_strs (bool): whether return a list of str
@@ -118,17 +90,12 @@ class RAGBase(ABC):
         prompt = prompt.format("\n".join(retrieved_docs))
         return self.postprocessing_model(prompt, **kwargs).text
 
-    def prepare_args_from_config(
-        self,
-        config: dict,
-    ) -> Any:
+    def _prepare_args_from_config(self, config: dict) -> Any:
         """
-        Helper function to build args for the two functions:
-        load_data(...) and store_and_index(docs, ...)
-        in RAG classes.
+        Helper function to build objects in RAG classes.
+
         Args:
             config (dict): a dictionary containing configurations
-
         Returns:
             Any: an object that is parsed/built to be an element
                 of input to the function of RAG module.
@@ -137,7 +104,7 @@ class RAGBase(ABC):
             return config
 
         if "create_object" in config:
-            # if a term in args is a object,
+            # if a term in args is an object,
             # recursively create object with args from config
             module_name = config.get("module", "")
             class_name = config.get("class", "")
@@ -145,9 +112,9 @@ class RAGBase(ABC):
             try:
                 cur_module = importlib.import_module(module_name)
                 cur_class = getattr(cur_module, class_name)
-                init_args = self.prepare_args_from_config(init_args)
+                init_args = self._prepare_args_from_config(init_args)
                 logger.info(
-                    f"load and build object{cur_module, cur_class, init_args}",
+                    f"load and build object: {class_name}",
                 )
                 return cur_class(**init_args)
             except ImportError as exc_inner:
@@ -166,10 +133,10 @@ class RAGBase(ABC):
                     prepared_args[key] = []
                     for c in value:
                         prepared_args[key].append(
-                            self.prepare_args_from_config(c),
+                            self._prepare_args_from_config(c),
                         )
                 elif isinstance(value, dict):
-                    prepared_args[key] = self.prepare_args_from_config(value)
+                    prepared_args[key] = self._prepare_args_from_config(value)
                 else:
                     prepared_args[key] = value
             return prepared_args
