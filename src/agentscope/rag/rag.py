@@ -12,9 +12,10 @@ document chunks;
 generate an answer.
 """
 
+import importlib
 from abc import ABC, abstractmethod
 from typing import Any, Optional
-
+from loguru import logger
 from agentscope.models import ModelWrapperBase
 
 DEFAULT_CHUNK_SIZE = 1024
@@ -88,3 +89,54 @@ class RAGBase(ABC):
         assert self.postprocessing_model
         prompt = prompt.format("\n".join(retrieved_docs))
         return self.postprocessing_model(prompt, **kwargs).text
+
+    def _prepare_args_from_config(self, config: dict) -> Any:
+        """
+        Helper function to build objects in RAG classes.
+
+        Args:
+            config (dict): a dictionary containing configurations
+        Returns:
+            Any: an object that is parsed/built to be an element
+                of input to the function of RAG module.
+        """
+        if not isinstance(config, dict):
+            return config
+
+        if "create_object" in config:
+            # if a term in args is an object,
+            # recursively create object with args from config
+            module_name = config.get("module", "")
+            class_name = config.get("class", "")
+            init_args = config.get("init_args", {})
+            try:
+                cur_module = importlib.import_module(module_name)
+                cur_class = getattr(cur_module, class_name)
+                init_args = self._prepare_args_from_config(init_args)
+                logger.info(
+                    f"load and build object: {class_name}",
+                )
+                return cur_class(**init_args)
+            except ImportError as exc_inner:
+                logger.error(
+                    f"Fail to load class {class_name} "
+                    f"from module {module_name}",
+                )
+                raise ImportError(
+                    f"Fail to load class {class_name} "
+                    f"from module {module_name}",
+                ) from exc_inner
+        else:
+            prepared_args = {}
+            for key, value in config.items():
+                if isinstance(value, list):
+                    prepared_args[key] = []
+                    for c in value:
+                        prepared_args[key].append(
+                            self._prepare_args_from_config(c),
+                        )
+                elif isinstance(value, dict):
+                    prepared_args[key] = self._prepare_args_from_config(value)
+                else:
+                    prepared_args[key] = value
+            return prepared_args
