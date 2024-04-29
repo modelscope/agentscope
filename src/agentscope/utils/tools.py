@@ -246,6 +246,42 @@ def _convert_to_str(content: Any) -> str:
         return str(content)
 
 
+def reform_dialogue(input_msgs: list[dict]) -> list[dict]:
+    """record dialog history as a list of strings"""
+    messages = []
+
+    dialogue = []
+    for i, unit in enumerate(input_msgs):
+        if i == 0 and unit["role"] == "system":
+            # system prompt
+            messages.append(
+                {
+                    "role": unit["role"],
+                    "content": _convert_to_str(unit["content"]),
+                },
+            )
+        else:
+            # Merge all messages into a dialogue history prompt
+            dialogue.append(
+                f"{unit['name']}: {_convert_to_str(unit['content'])}",
+            )
+
+    dialogue_history = "\n".join(dialogue)
+
+    user_content_template = "## Dialogue History\n{dialogue_history}"
+
+    messages.append(
+        {
+            "role": "user",
+            "content": user_content_template.format(
+                dialogue_history=dialogue_history,
+            ),
+        },
+    )
+
+    return messages
+
+
 def _join_str_with_comma_and(elements: List[str]) -> str:
     """Return the JSON string with comma, and use " and " between the last two
     elements."""

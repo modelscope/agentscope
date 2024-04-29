@@ -85,6 +85,7 @@ In the current AgentScope, the supported `model_type` types, the corresponding
 |                        | Embedding       | [`OllamaEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)            | `"ollama_embedding"`          | llama2, ...                                      |
 |                        | Generation      | [`OllamaGenerationWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)           | `"ollama_generate"`           | llama2, ...                                      |
 | Post Request based API | -               | [`PostAPIModelWrapperBase`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)             | `"post_api"`                  | -                                                |
+|  | Chat | [`PostAPIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py) | `"post_api_chat"` | meta-llama/Meta-Llama-3-8B-Instruct, ... |
 
 #### Detailed Parameters
 
@@ -378,6 +379,32 @@ Here we provide example configurations for different model wrappers.
 {
     "config_name": "my_postapiwrapper_config",
     "model_type": "post_api",
+
+    # Required parameters
+    "api_url": "https://xxx.xxx",
+    "headers": {
+        # e.g. "Authorization": "Bearer xxx",
+    },
+
+    # Optional parameters
+    "messages_key": "messages",
+}
+```
+
+</details>
+
+<br/>
+
+#### Post Request Chat API
+
+<details>
+<summary>Post request Chat API (<code><a href="https://github.
+com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIChatModelWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_postapichatwrapper_config",
+    "model_type": "post_api_chat",
 
     # Required parameters
     "api_url": "https://xxx.xxx",
