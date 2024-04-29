@@ -23,12 +23,12 @@ except ImportError:
     TextSplitter = None
     CharacterTextSplitter = None
 
-from examples.conversation_with_RAG_agents.rag import RAGBase
-from examples.conversation_with_RAG_agents.rag.rag import (
+from agentscope.models import ModelWrapperBase
+from .rag import RAGBase
+from .rag import (
     DEFAULT_CHUNK_OVERLAP,
     DEFAULT_CHUNK_SIZE,
 )
-from agentscope.models import ModelWrapperBase
 
 
 class _LangChainEmbModel(Embeddings):
@@ -133,7 +133,7 @@ class LangChainRAG(RAGBase):
 
     def store_and_index(
         self,
-        docs: Any,
+        docs_list: Any,
         vector_store: Optional[VectorStore] = None,
         splitter: Optional[TextSplitter] = None,
         **kwargs: Any,
@@ -142,7 +142,7 @@ class LangChainRAG(RAGBase):
         """
         Preprocessing the loaded documents.
         Args:
-            docs (Any):
+            docs_list (Any):
                 documents to be processed
             vector_store (Optional[VectorStore]):
                 vector store in LangChain RAG
@@ -167,7 +167,9 @@ class LangChainRAG(RAGBase):
                 DEFAULT_CHUNK_OVERLAP,
             ),
         )
-        all_splits = self.splitter.split_documents(docs)
+        all_splits = []
+        for docs in docs_list:
+            all_splits = all_splits + self.splitter.split_documents(docs)
 
         # indexing the chunks and store them into the vector store
         if vector_store is None:

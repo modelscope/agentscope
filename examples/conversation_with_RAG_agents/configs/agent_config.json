@@ -31,7 +31,7 @@
             "similarity_top_k": 5,
             "log_retrieval": false,
             "recent_n_mem": 1,
-            "persist_dir": "../../rag_storage/tutorial_assist"
+            "persist_dir": "./rag_storage/tutorial_assist"
       }
     }
   },
@@ -80,8 +80,8 @@
             "similarity_top_k": 5,
             "log_retrieval": false,
             "recent_n_mem": 1,
-            "persist_dir": "../../rag_storage/code_assist"
-          }
+            "persist_dir": "./rag_storage/code_assist"
+      }
     }
   },
   {
@@ -116,7 +116,8 @@
           "log_retrieval": true,
           "recent_n_mem": 1,
           "persist_dir": "../../rag_storage/api_assist",
-          "repo_base": "../../"
+          "repo_base": "../../",
+          "file_dir": "../../docs/docstring_html/"
           }
     }
   },
@@ -190,7 +191,7 @@
             "similarity_top_k": 5,
             "log_retrieval": false,
             "recent_n_mem": 1,
-            "persist_dir": "../../rag_storage/searching_assist"
+            "persist_dir": "./rag_storage/searching_assist"
           }
     }
   }

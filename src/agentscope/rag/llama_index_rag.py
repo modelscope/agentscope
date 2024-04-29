@@ -38,8 +38,8 @@ except ImportError:
     PrivateAttr = None
     Document, TransformComponent = None, None
 
-from rag import RAGBase
-from rag.rag import (
+from agentscope.rag import RAGBase
+from agentscope.rag.rag import (
     DEFAULT_CHUNK_SIZE,
     DEFAULT_CHUNK_OVERLAP,
     DEFAULT_TOP_K,

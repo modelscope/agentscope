@@ -10,8 +10,7 @@ from abc import ABC, abstractmethod
 from typing import Optional, Any
 from loguru import logger
 
-from rag import RAGBase, LlamaIndexRAG
-
+from agentscope.rag import RAGBase, LlamaIndexRAG
 from agentscope.agents.agent import AgentBase
 from agentscope.message import Msg
 from agentscope.models import load_model_by_config_name
