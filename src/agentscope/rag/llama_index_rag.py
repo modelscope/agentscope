@@ -172,9 +172,11 @@ class LlamaIndexRAG(RAGBase):
             emb_model (Optional[ModelWrapperBase]):
                 The embedding model used for generate embeddings
             index_config (dict):
-                The configuration to generate the index
+                The configuration for llama-index to
+                generate or load the index.
             rag_config (dict):
-                The configuration for llama index rag
+                The configuration for llama-index to
+                retrieval data (retriever).
             overwrite_index (Optional[bool]):
                 Whether to overwrite the index while refreshing
             showprogress (Optional[bool]):

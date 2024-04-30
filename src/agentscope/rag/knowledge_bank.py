@@ -62,8 +62,9 @@ class KnowledgeBank:
             model_name (Optional[str]):
                 name of the LLM for potential post-processing or query rewrite
             data_dirs_and_types (dict[str, list[str]]):
-                dictionary of data paths and the data types (file extensions)
-                for knowledgebase (e.g., [".md", ".py", ".html"])
+                dictionary of data paths (keys) to the data types
+                (file extensions) for knowledgebase
+                (e.g., [".md", ".py", ".html"])
             persist_dir (Optional[str]):
                 path for storing the embedding and indexing information
             index_config (ptional[dict]):
@@ -114,6 +115,10 @@ class KnowledgeBank:
                 unique id for the RAG
             duplicate (bool):
                 whether return a copy of of the RAG.
+
+        Returns: RAGBase
+            an RAGBase object with built indexing,
+            ready to be used by the agent
         """
         if knowledge_id not in self.stored_knowledge:
             raise ValueError(f"{knowledge_id} has not been added yet.")
