@@ -286,7 +286,11 @@ class PlaceholderMessage(MessageBase):
             self._port: int = port
             self._task_id: int = task_id
         else:
-            self._stub = call_in_thread(client, x, "_reply")
+            self._stub = call_in_thread(
+                client,
+                x.serialize() if x is not None else "",
+                "_reply",
+            )
             self._host = client.host
             self._port = client.port
             self._task_id = None
@@ -344,7 +348,15 @@ class PlaceholderMessage(MessageBase):
 
     def __update_task_id(self) -> None:
         if self._stub is not None:
-            resp = deserialize(self._stub.get_response())
+            try:
+                resp = deserialize(self._stub.get_response())
+            except Exception as e:
+                logger.error(
+                    f"Failed to get task_id: {self._stub.get_response()}",
+                )
+                raise ValueError(
+                    f"Failed to get task_id: {self._stub.get_response()}",
+                ) from e
             self._task_id = resp["task_id"]  # type: ignore[call-overload]
             self._stub = None
 

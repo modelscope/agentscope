@@ -126,6 +126,7 @@ the following libraries.
   - [Distributed Conversation](./examples/distributed_basic)
   - [Distributed Debate](./examples/distributed_debate)
   - [Distributed Parallel Search](./examples/distributed_search)
+  - [Distributed Large Scale Simulation](./examples/distributed_simulation)
 
 More models, services and examples are coming soon!
 
