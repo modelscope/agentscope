@@ -6,6 +6,7 @@ import argparse
 from user_proxy_agent import UserProxyAgent
 
 import agentscope
+from agentscope.agents import DialogAgent
 from agentscope.msghub import msghub
 from agentscope.agents.rpc_agent import RpcAgentServerLauncher
 from agentscope.message import Msg
@@ -77,7 +78,7 @@ def setup_server(parsed_args: argparse.Namespace) -> None:
     server_launcher = RpcAgentServerLauncher(
         host=host,
         port=port,
-        custom_agents=[UserProxyAgent],
+        custom_agents=[UserProxyAgent, DialogAgent],
     )
     server_launcher.launch(in_subprocess=False)
     server_launcher.wait_until_terminate()
