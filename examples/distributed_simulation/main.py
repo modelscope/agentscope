@@ -50,6 +50,11 @@ def parse_args() -> argparse.Namespace:
 def setup_participant_agent_server(host: str, port: int) -> None:
     """Set up agent server"""
     agentscope.init(
+        project="simulation",
+        name="server",
+        runtime_id=str(port),
+        save_code=False,
+        save_api_invoke=False,
         model_configs="configs/model_configs.json",
         use_monitor=False,
     )
@@ -99,6 +104,10 @@ def run_main_process(
 ) -> None:
     """Run main process"""
     agentscope.init(
+        project="simulation",
+        name="main",
+        save_code=False,
+        save_api_invoke=False,
         model_configs="configs/model_configs.json",
         use_monitor=False,
     )

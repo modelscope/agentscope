@@ -28,6 +28,7 @@ def init(
     save_api_invoke: bool = True,
     use_monitor: bool = True,
     logger_level: LOG_LEVEL = _DEFAULT_LOG_LEVEL,
+    runtime_id: Optional[str] = None,
     agent_configs: Optional[Union[str, list, dict]] = None,
 ) -> Sequence[AgentBase]:
     """A unified entry to initialize the package, including model configs,
@@ -41,6 +42,9 @@ def init(
             The project name, which is used to identify the project.
         name (`Optional[str]`, defaults to `None`):
             The name for runtime, which is used to identify this runtime.
+        runtime_id (`Optional[str]`, defaults to `None`):
+            The id for runtime, which is used to identify this runtime. Use
+            `None` will generate a random id.
         save_dir (`str`, defaults to `./runs`):
             The directory to save logs, files, codes, and api invocations.
             If `dir` is `None`, when saving logs, files, codes, and api
@@ -66,6 +70,7 @@ def init(
         model_configs=model_configs,
         project=project,
         name=name,
+        runtime_id=runtime_id,
         save_dir=save_dir,
         save_api_invoke=save_api_invoke,
         save_log=save_log,
@@ -149,14 +154,6 @@ def init_process(
         logger_level (`LOG_LEVEL`, defaults to `"INFO"`):
             The logging level of logger.
     """
-    # Init logger
-    dir_log = str(file_manager.dir_log) if save_log else None
-    setup_logger(dir_log, logger_level)
-
-    # Load model configs if needed
-    if model_configs is not None:
-        read_model_configs(model_configs)
-
     # Init the runtime
     if project is not None:
         _runtime.project = project
@@ -164,6 +161,14 @@ def init_process(
         _runtime.name = name
     if runtime_id is not None:
         _runtime.runtime_id = runtime_id
+
+    # Init logger
+    dir_log = str(file_manager.dir_log) if save_log else None
+    setup_logger(dir_log, logger_level)
+
+    # Load model configs if needed
+    if model_configs is not None:
+        read_model_configs(model_configs)
 
     # Init file manager and save configs by default
     file_manager.init(save_dir, save_api_invoke)
