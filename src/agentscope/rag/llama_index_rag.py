@@ -125,7 +125,7 @@ class LlamaIndexRAG(RAGBase):
 
     def __init__(
         self,
-        name: str,
+        knowledge_id: str,
         model: Optional[ModelWrapperBase] = None,
         emb_model: Union[ModelWrapperBase, BaseEmbedding, None] = None,
         index_config: dict = None,
@@ -149,8 +149,8 @@ class LlamaIndexRAG(RAGBase):
             3) store the embedding-content to vector database
 
         Args:
-            name (str):
-                The name of the RAG agent
+            knowledge_id (str):
+                The id of the RAG knowledge unit.
             model (ModelWrapperBase):
                 The language model used for final synthesis
             emb_model (Optional[ModelWrapperBase]):
@@ -164,11 +164,10 @@ class LlamaIndexRAG(RAGBase):
             showprogress (Optional[bool]):
                 Whether to show the indexing progress
         """
-        super().__init__(model, emb_model, rag_config, **kwargs)
-        self.name = name
+        super().__init__(model, emb_model, index_config, rag_config, **kwargs)
+        self.knowledge_id = knowledge_id
         self.persist_dir = index_config.get("persist_dir", "/")
         self.emb_model = emb_model
-        self.index_config = index_config
         self.overwrite_index = overwrite_index
         self.showprogress = showprogress
         self.retriever = None
@@ -207,7 +206,10 @@ class LlamaIndexRAG(RAGBase):
         else:
             self._data_to_index()
         self.set_retriever()
-        logger.info(f"RAG agent {self.name} initialization completed!\n")
+        logger.info(
+            f"RAG with knowledge id {self.knowledge_id} "
+            f"initialization completed!\n",
+        )
 
     def _load_index(self) -> None:
         """
