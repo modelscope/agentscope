@@ -35,8 +35,10 @@ Get a monitor instance from `MonitorFactory` to begin monitoring, and note that 
 monitor = MonitorFactory.get_monitor()
 ```
 
-> Currently the above code returns a `SqliteMonitor` instance, which is initialized in `agentscope.init`.
-> The `SqliteMonitor` class is the default implementation of `MonitorBase` class, which is based on Sqlite3.
+Currently the above code returns a `SqliteMonitor` instance, which is initialized in `agentscope.init`.
+The `SqliteMonitor` class is the default implementation of `MonitorBase` class, which is based on Sqlite3.
+
+If you don't want to use monitor, you can set `use_monitor=False` in `agentscope.init` to disable the monitor. And in this case, the `MonitorFactory.get_monitor` method will return an instance of `DummyMonitor` which has the same interface as the `SqliteMonitor` class, but does nothing inside.
 
 ### Basic Usage
 

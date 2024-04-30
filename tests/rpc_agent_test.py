@@ -8,7 +8,7 @@ import shutil
 from loguru import logger
 
 import agentscope
-from agentscope.agents import AgentBase
+from agentscope.agents import AgentBase, DistConf
 from agentscope.agents.rpc_agent import RpcAgentServerLauncher
 from agentscope.message import Msg
 from agentscope.message import PlaceholderMessage
@@ -95,6 +95,55 @@ class DemoRpcAgentWithMonitor(AgentBase):
         return x
 
 
+class DemoGeneratorAgent(AgentBase):
+    """A demo agent to generate a number"""
+
+    def __init__(self, name: str, value: int) -> None:
+        super().__init__(name)
+        self.value = value
+
+    def reply(self, _: dict = None) -> dict:
+        time.sleep(1)
+        return Msg(
+            name=self.name,
+            role="assistant",
+            content={
+                "value": self.value,
+            },
+        )
+
+
+class DemoGatherAgent(AgentBase):
+    """A demo agent to gather value"""
+
+    def __init__(
+        self,
+        name: str,
+        agents: list[DemoGeneratorAgent],
+        to_dist: dict = None,
+    ) -> None:
+        super().__init__(name, to_dist=to_dist)
+        self.agents = agents
+
+    def reply(self, _: dict = None) -> dict:
+        result = []
+        stime = time.time()
+        for agent in self.agents:
+            result.append(agent())
+        value = 0
+        for r in result:
+            value += r.content["value"]
+        etime = time.time()
+        return Msg(
+            name=self.name,
+            role="assistant",
+            content={
+                "value": value,
+                "time": etime - stime,
+            },
+        )
+
+
 class DemoErrorAgent(AgentBase):
     """A demo Rpc agent that raise Error"""
 
@@ -121,13 +170,9 @@ class BasicRpcAgentTest(unittest.TestCase):
 
     def test_single_rpc_agent_server(self) -> None:
         """test setup a single rpc agent"""
-        host = "localhost"
-        port = 12001
         agent_a = DemoRpcAgent(
             name="a",
-        ).to_dist(
-            host=host,
-            port=port,
+            to_dist=True,
         )
         self.assertIsNotNone(agent_a)
         msg = Msg(
@@ -177,13 +222,10 @@ class BasicRpcAgentTest(unittest.TestCase):
         """test connecting to an existing server"""
         launcher = RpcAgentServerLauncher(
             # choose port automatically
-            agent_class=DemoRpcAgent,
-            agent_kwargs={
-                "name": "a",
-            },
-            local_mode=False,
             host="127.0.0.1",
             port=12010,
+            local_mode=False,
+            custom_agents=[DemoRpcAgent],
         )
         launcher.launch()
         agent_a = DemoRpcAgent(
@@ -191,7 +233,6 @@ class BasicRpcAgentTest(unittest.TestCase):
         ).to_dist(
             host="127.0.0.1",
             port=launcher.port,
-            launch_server=False,
         )
         msg = Msg(
             name="System",
@@ -226,29 +267,19 @@ class BasicRpcAgentTest(unittest.TestCase):
 
     def test_multi_rpc_agent(self) -> None:
         """test setup multi rpc agent"""
-        host = "localhost"
-        port1 = 12001
-        port2 = 12002
-        port3 = 12003
         agent_a = DemoRpcAgentAdd(
             name="a",
         ).to_dist(
-            host=host,
-            port=port1,
             lazy_launch=False,
         )
         agent_b = DemoRpcAgentAdd(
             name="b",
         ).to_dist(
-            host=host,
-            port=port2,
             lazy_launch=False,
         )
         agent_c = DemoRpcAgentAdd(
             name="c",
         ).to_dist(
-            host=host,
-            port=port3,
             lazy_launch=False,
         )
 
@@ -292,17 +323,9 @@ class BasicRpcAgentTest(unittest.TestCase):
 
     def test_mix_rpc_agent_and_local_agent(self) -> None:
         """test to use local and rpc agent simultaneously"""
-        host = "localhost"
-        # use the same port, agents should choose available ports
-        # automatically
-        port1 = 12001
-        port2 = 12001
-        # rpc agent a
         agent_a = DemoRpcAgentAdd(
             name="a",
         ).to_dist(
-            host=host,
-            port=port1,
             lazy_launch=False,
         )
         # local agent b
@@ -310,12 +333,11 @@ class BasicRpcAgentTest(unittest.TestCase):
             name="b",
         )
         # rpc agent c
-        agent_c = DemoRpcAgentAdd(
+        agent_c = DemoRpcAgentAdd(  # pylint: disable=E1123
             name="c",
-        ).to_dist(
-            host=host,
-            port=port2,
-            lazy_launch=False,
+            to_dist=DistConf(
+                lazy_launch=False,
+            ),
         )
         msg = Msg(
             name="System",
@@ -339,7 +361,8 @@ class BasicRpcAgentTest(unittest.TestCase):
         ).to_dist()
         agent_c = DemoRpcAgentWithMemory(
             name="c",
-        ).to_dist()
+            to_dist=True,
+        )
         participants = [agent_a, agent_b, agent_c]
         annonuncement_msgs = [
             Msg(name="System", content="Announcement 1", role="system"),
@@ -368,24 +391,16 @@ class BasicRpcAgentTest(unittest.TestCase):
         """test compatibility with agentscope.init"""
         monitor = MonitorFactory.get_monitor()
         monitor.register("msg_num", quota=10)
-        host = "localhost"
-        # automatically
-        port1 = 12001
-        port2 = 12002
         # rpc agent a
         agent_a = DemoRpcAgentWithMonitor(
             name="a",
         ).to_dist(
-            host=host,
-            port=port1,
             lazy_launch=False,
         )
         # local agent b
         agent_b = DemoRpcAgentWithMonitor(
             name="b",
         ).to_dist(
-            host=host,
-            port=port2,
             lazy_launch=False,
         )
         msg = Msg(name="System", content={"msg_num": 0}, role="system")
@@ -403,17 +418,13 @@ class BasicRpcAgentTest(unittest.TestCase):
         logger.chat(msg)
         self.assertTrue(msg["content"]["quota_exceeded"])
 
-    def test_multi_agent(self) -> None:
+    def test_multi_agent_in_same_server(self) -> None:
         """test agent server with multi agent"""
         launcher = RpcAgentServerLauncher(
-            # choose port automatically
-            agent_class=DemoRpcAgentWithMemory,
-            agent_kwargs={
-                "name": "a",
-            },
-            local_mode=False,
             host="127.0.0.1",
             port=12010,
+            local_mode=False,
+            custom_agents=[DemoRpcAgentWithMemory],
         )
         launcher.launch()
         # although agent1 and agent2 connect to the same server
@@ -425,16 +436,15 @@ class BasicRpcAgentTest(unittest.TestCase):
         agent1 = agent1.to_dist(
             host="127.0.0.1",
             port=launcher.port,
-            launch_server=False,
         )
         self.assertEqual(oid, agent1.agent_id)
         self.assertEqual(oid, agent1.client.agent_id)
-        agent2 = DemoRpcAgentWithMemory(
+        agent2 = DemoRpcAgentWithMemory(  # pylint: disable=E1123
             name="a",
-        ).to_dist(
-            host="127.0.0.1",
-            port=launcher.port,
-            launch_server=False,
+            to_dist={
+                "host": "127.0.0.1",
+                "port": launcher.port,
+            },
         )
         # agent3 has the same agent id as agent1
         # so it share the same memory with agent1
@@ -443,7 +453,6 @@ class BasicRpcAgentTest(unittest.TestCase):
         ).to_dist(
             host="127.0.0.1",
             port=launcher.port,
-            launch_server=False,
         )
         agent3._agent_id = agent1.agent_id  # pylint: disable=W0212
         agent3.client.agent_id = agent1.client.agent_id
@@ -463,7 +472,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         agent2.client.delete_agent()
         msg2 = Msg(name="System", content="First Msg for agent2")
         res2 = agent2(msg2)
-        self.assertEqual(res2.content["mem_size"], 1)
+        self.assertRaises(ValueError, res2.__getattr__, "content")
 
         # should override remote default parameter(e.g. name field)
         agent4 = DemoRpcAgentWithMemory(
@@ -471,7 +480,6 @@ class BasicRpcAgentTest(unittest.TestCase):
         ).to_dist(
             host="127.0.0.1",
             port=launcher.port,
-            launch_server=False,
         )
         msg5 = Msg(name="System", content="Second Msg for agent4")
         res5 = agent4(msg5)
@@ -523,9 +531,76 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertNotEqual(agent4.agent_id, agent.agent_id)
         self.assertIsNone(agent3.server_launcher)
         self.assertIsNone(agent4.server_launcher)
+        msg3 = Msg(name="System", content="First Msg for agent3")
+        res3 = agent3(msg3)
+        self.assertEqual(res1.content["mem_size"], 1)
+        msg4 = Msg(name="System", content="First Msg for agent4")
+        res4 = agent4(msg4)
+        self.assertEqual(res3.content["mem_size"], 1)
+        self.assertEqual(res4.content["mem_size"], 1)
 
     def test_error_handling(self) -> None:
         """Test error handling"""
         agent = DemoErrorAgent(name="a").to_dist()
         x = agent()
         self.assertRaises(RuntimeError, x.__getattr__, "content")
+
+    def test_agent_nesting(self) -> None:
+        """Test agent nesting"""
+        host = "localhost"
+        launcher1 = RpcAgentServerLauncher(
+            # choose port automatically
+            host=host,
+            port=12010,
+            local_mode=False,
+            custom_agents=[DemoGatherAgent, DemoGeneratorAgent],
+        )
+        launcher2 = RpcAgentServerLauncher(
+            # choose port automatically
+            host=host,
+            port=12011,
+            local_mode=False,
+            custom_agents=[DemoGatherAgent, DemoGeneratorAgent],
+        )
+        launcher1.launch()
+        launcher2.launch()
+        agents = []
+        for i in range(8):
+            if i % 2:
+                agents.append(
+                    DemoGeneratorAgent(name=f"a_{i}", value=i).to_dist(
+                        host=host,
+                        port=launcher1.port,
+                    ),
+                )
+            else:
+                agents.append(
+                    DemoGeneratorAgent(name=f"a_{i}", value=i).to_dist(
+                        host=host,
+                        port=launcher2.port,
+                    ),
+                )
+        gather1 = DemoGatherAgent(  # pylint: disable=E1123
+            name="g1",
+            agents=agents[:4],
+            to_dist=DistConf(
+                host=host,
+                port=launcher1.port,
+            ),
+        )
+        gather2 = DemoGatherAgent(  # pylint: disable=E1123
+            name="g2",
+            agents=agents[4:],
+            to_dist={
+                "host": host,
+                "port": launcher2.port,
+            },
+        )
+        r1 = gather1()
+        r2 = gather2()
+        self.assertEqual(r1.content["value"], 6)
+        self.assertEqual(r2.content["value"], 22)
+        self.assertTrue(0.5 < r1.content["time"] < 2)
+        self.assertTrue(0.5 < r2.content["time"] < 2)
+        launcher1.shutdown()
+        launcher2.shutdown()

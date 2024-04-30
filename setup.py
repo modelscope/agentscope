@@ -22,6 +22,7 @@ rpc_requires = [
     "grpcio-tools==1.60.0",
     "protobuf==4.25.0",
     "expiringdict",
+    "dill",
 ]
 
 service_requires = [
