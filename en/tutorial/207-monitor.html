@@ -140,10 +140,9 @@
 <span class="n">monitor</span> <span class="o">=</span> <span class="n">MonitorFactory</span><span class="o">.</span><span class="n">get_monitor</span><span class="p">()</span>
 </pre></div>
 </div>
-<blockquote>
-<div><p>Currently the above code returns a <code class="docutils literal notranslate"><span class="pre">SqliteMonitor</span></code> instance, which is initialized in <code class="docutils literal notranslate"><span class="pre">agentscope.init</span></code>.
+<p>Currently the above code returns a <code class="docutils literal notranslate"><span class="pre">SqliteMonitor</span></code> instance, which is initialized in <code class="docutils literal notranslate"><span class="pre">agentscope.init</span></code>.
 The <code class="docutils literal notranslate"><span class="pre">SqliteMonitor</span></code> class is the default implementation of <code class="docutils literal notranslate"><span class="pre">MonitorBase</span></code> class, which is based on Sqlite3.</p>
-</div></blockquote>
+<p>If you don’t want to use monitor, you can set <code class="docutils literal notranslate"><span class="pre">use_monitor=False</span></code> in <code class="docutils literal notranslate"><span class="pre">agentscope.init</span></code> to disable the monitor. And in this case, the <code class="docutils literal notranslate"><span class="pre">MonitorFactory.get_monitor</span></code> method will return an instance of <code class="docutils literal notranslate"><span class="pre">DummyMonitor</span></code> which has the same interface as the <code class="docutils literal notranslate"><span class="pre">SqliteMonitor</span></code> class, but does nothing inside.</p>
 </section>
 <section id="basic-usage">
 <h3>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading"></a></h3>

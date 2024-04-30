@@ -121,62 +121,140 @@
 <p>This tutorial will introduce the implementation and usage of AgentScope distributed in detail.</p>
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
-<p>In AgentScope, the process that runs the application flow is called the “main process”, and all agents will run in separate processes.
-According to the different relationships between the main process and the agent process, AgentScope supports two distributed modes: Master-Slave and Peer-to-Peer mode.
-In the Master-Slave mode, developers can start all agent processes from the main process, while in the Peer-to-Peer mode, the agent process is independent of the main process and developers need to start the agent service on the corresponding machine.</p>
-<p>The above concepts may seem complex, but don’t worry, for application developers, they only have minor differences when creating agents. Below we introduce how to create distributed agents.</p>
-<section id="step-1-create-a-distributed-agent">
-<h3>Step 1: Create a Distributed Agent<a class="headerlink" href="#step-1-create-a-distributed-agent" title="Link to this heading"></a></h3>
-<p>First, the developer’s agent must inherit the <code class="docutils literal notranslate"><span class="pre">agentscope.agents.AgentBase</span></code> class. <code class="docutils literal notranslate"><span class="pre">AgentBase</span></code> provides the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> method to convert the agent into its distributed version. <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> mainly relies on the following parameters to implement the distributed deployment of the agent:</p>
+<p>In AgentScope, the process that runs the application flow is called the <strong>main process</strong>, and each agent can run in a separate process named <strong>agent server process</strong>.
+According to the different relationships between the main process and the agent server process, AgentScope supports two modes for each agent: <strong>Child Process</strong> and <strong>Independent Process</strong> mode.</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">host</span></code>: the hostname or IP address of the machine where the agent runs, defaults to <code class="docutils literal notranslate"><span class="pre">localhost</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">port</span></code>: the port of this agent’s RPC server, defaults to <code class="docutils literal notranslate"><span class="pre">80</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">launch_server</span></code>: whether to launch an RPC server locally, defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p>In the Child Process Mode, agent server processes will be automatically started as sub-processes from the main process.</p></li>
+<li><p>While in the Independent Process Mode, the agent server process is independent of the main process and developers need to start the agent server process on the corresponding machine.</p></li>
 </ul>
+<p>The above concepts may seem complex, but don’t worry, for application developers, you only need to convert your existing agent to its distributed version.</p>
+<section id="step-1-convert-your-agent-to-its-distributed-version">
+<h3>Step 1: Convert your agent to its distributed version<a class="headerlink" href="#step-1-convert-your-agent-to-its-distributed-version" title="Link to this heading"></a></h3>
+<p>All agents in AgentScope can automatically convert to its distributed version by calling its <a class="reference internal" href="../agentscope.agents.html#agentscope.agents.AgentBase.to_dist" title="agentscope.agents.AgentBase.to_dist"><code class="xref py py-func docutils literal notranslate"><span class="pre">to_dist</span></code></a> method.
+But note that your agent must inherit from the <a class="reference internal" href="../agentscope.agents.html#agentscope.agents.AgentBase" title="agentscope.agents.AgentBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">agentscope.agents.AgentBase</span></code></a> class, because the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> method is provided by the <code class="docutils literal notranslate"><span class="pre">AgentBase</span></code> class.</p>
 <p>Suppose there are two agent classes <code class="docutils literal notranslate"><span class="pre">AgentA</span></code> and <code class="docutils literal notranslate"><span class="pre">AgentB</span></code>, both of which inherit from <code class="docutils literal notranslate"><span class="pre">AgentBase</span></code>.</p>
-<section id="master-slave-mode">
-<h4>Master-Slave Mode<a class="headerlink" href="#master-slave-mode" title="Link to this heading"></a></h4>
-<p>In the Master-Slave mode, since all agent processes depend on the main process, all processes actually run on the same machine.
-We can start all agent processes from the main process, that is, the default parameters <code class="docutils literal notranslate"><span class="pre">launch_server=True</span></code> and <code class="docutils literal notranslate"><span class="pre">host=&quot;localhost&quot;</span></code>, and we can omit the <code class="docutils literal notranslate"><span class="pre">port</span></code> parameter. AgentScope will automatically find an available local port for the agent process.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">AgentA</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;A&quot;</span>
+    <span class="c1"># ...</span>
+<span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">AgentB</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;B&quot;</span>
+    <span class="c1"># ...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Next we will introduce the conversion details of both modes.</p>
+<section id="child-process-mode">
+<h4>Child Process Mode<a class="headerlink" href="#child-process-mode" title="Link to this heading"></a></h4>
+<p>To use this mode, you only need to call each agent’s <code class="docutils literal notranslate"><span class="pre">to_dist()</span></code> method without any input parameter. AgentScope will automatically start all agent server processes from the main process.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Child Process mode</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">AgentA</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;A&quot;</span>
+    <span class="c1"># ...</span>
+<span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">()</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">AgentB</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;B&quot;</span>
     <span class="c1"># ...</span>
 <span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">()</span>
 </pre></div>
 </div>
 </section>
-<section id="peer-to-peer-mode">
-<h4>Peer-to-Peer Mode<a class="headerlink" href="#peer-to-peer-mode" title="Link to this heading"></a></h4>
-<p>In the Peer-to-Peer mode, we need to start the service of the corresponding agent on the target machine first. For example, deploy an instance of <code class="docutils literal notranslate"><span class="pre">AgentA</span></code> on the machine with IP <code class="docutils literal notranslate"><span class="pre">a.b.c.d</span></code>, and its corresponding port is 12001. Run the following code on this target machine:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.agents</span> <span class="kn">import</span> <span class="n">RpcAgentServerLauncher</span>
+<section id="independent-process-mode">
+<h4>Independent Process Mode<a class="headerlink" href="#independent-process-mode" title="Link to this heading"></a></h4>
+<p>In the Independent Process Mode, we need to start the agent server process on the target machine first.
+For example, start two agent server processes on the two different machines with IP <code class="docutils literal notranslate"><span class="pre">ip_a</span></code> and <code class="docutils literal notranslate"><span class="pre">ip_b</span></code>(called <code class="docutils literal notranslate"><span class="pre">Machine1</span></code> and <code class="docutils literal notranslate"><span class="pre">Machine2</span></code> accrodingly).
+You can run the following code on <code class="docutils literal notranslate"><span class="pre">Machine1</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import some packages</span>
 
+<span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="o">...</span>
+<span class="p">)</span>
 <span class="c1"># Create an agent service process</span>
-<span class="n">server_a</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
-    <span class="n">agent_class</span><span class="o">=</span><span class="n">AgentA</span><span class="p">,</span>
-    <span class="n">agent_kwargs</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span>
-        <span class="o">...</span>
-    <span class="p">},</span>
-    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;a.b.c.d&quot;</span><span class="p">,</span>
-    <span class="n">port</span><span class="o">=</span><span class="mi">12001</span><span class="p">,</span>
+<span class="n">server</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
+    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;ip_a&quot;</span><span class="p">,</span>
+    <span class="n">port</span><span class="o">=</span><span class="mi">12001</span><span class="p">,</span>  <span class="c1"># choose an available port</span>
 <span class="p">)</span>
 
 <span class="c1"># Start the service</span>
-<span class="n">server_a</span><span class="o">.</span><span class="n">launch</span><span class="p">()</span>
-<span class="n">server_a</span><span class="o">.</span><span class="n">wait_until_terminate</span><span class="p">()</span>
+<span class="n">server</span><span class="o">.</span><span class="n">launch</span><span class="p">()</span>
+<span class="n">server</span><span class="o">.</span><span class="n">wait_until_terminate</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Then, we can connect to the agent service in the main process with the following code. At this time, the object <code class="docutils literal notranslate"><span class="pre">a</span></code> created in the main process can be used as a local proxy for the agent, allowing developers to write the application flow in a centralized way in the main process.</p>
+<p>And run the following code on <code class="docutils literal notranslate"><span class="pre">Machine2</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import some packages</span>
+
+<span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+<span class="c1"># Create an agent service process</span>
+<span class="n">server</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
+    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;ip_b&quot;</span><span class="p">,</span>
+    <span class="n">port</span><span class="o">=</span><span class="mi">12002</span><span class="p">,</span> <span class="c1"># choose an available port</span>
+<span class="p">)</span>
+
+<span class="c1"># Start the service</span>
+<span class="n">server</span><span class="o">.</span><span class="n">launch</span><span class="p">()</span>
+<span class="n">server</span><span class="o">.</span><span class="n">wait_until_terminate</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Then, you can connect to the agent servers from the main process with the following code.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">AgentA</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;A&quot;</span><span class="p">,</span>
     <span class="c1"># ...</span>
 <span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">(</span>
-    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;a.b.c.d&quot;</span><span class="p">,</span>
+    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;ip_a&quot;</span><span class="p">,</span>
     <span class="n">port</span><span class="o">=</span><span class="mi">12001</span><span class="p">,</span>
-    <span class="n">launch_server</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">AgentB</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
+    <span class="c1"># ...</span>
+<span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">(</span>
+    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;ip_b&quot;</span><span class="p">,</span>
+    <span class="n">port</span><span class="o">=</span><span class="mi">12002</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
+<p>The above code will deploy <code class="docutils literal notranslate"><span class="pre">AgentA</span></code> on the agent server process of <code class="docutils literal notranslate"><span class="pre">Machine1</span></code> and <code class="docutils literal notranslate"><span class="pre">AgentB</span></code> on the agent server process of <code class="docutils literal notranslate"><span class="pre">Machine2</span></code>.
+And developers just need to write the application flow in a centralized way in the main process.</p>
+</section>
+<section id="advanced-usage-of-to-dist">
+<h4>Advanced Usage of <code class="docutils literal notranslate"><span class="pre">to_dist</span></code><a class="headerlink" href="#advanced-usage-of-to-dist" title="Link to this heading"></a></h4>
+<p>All examples described above convert initialized agents into their distributed version through the <a class="reference internal" href="../agentscope.agents.html#agentscope.agents.AgentBase.to_dist" title="agentscope.agents.AgentBase.to_dist"><code class="xref py py-func docutils literal notranslate"><span class="pre">to_dist</span></code></a> method, which is equivalent to initialize the agent twice, once in the main process and once in the agent server process.
+For agents whose initialization process is time-consuming, the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> method is inefficient. Therefore, AgentScope also provides a method to convert the Agent instance into its distributed version while initializing it, that is, passing in <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> parameter to the Agent’s initialization function.</p>
+<p>In Child Process Mode, just pass <code class="docutils literal notranslate"><span class="pre">to_dist=True</span></code> to the Agent’s initialization function.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Child Process mode</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">AgentA</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;A&quot;</span><span class="p">,</span>
+    <span class="c1"># ...</span>
+    <span class="n">to_dist</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">AgentB</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
+    <span class="c1"># ...</span>
+    <span class="n">to_dist</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>In Independent Process Mode, you need to encapsulate the parameters of the <code class="docutils literal notranslate"><span class="pre">to_dist()</span></code> method in  <a class="reference internal" href="../agentscope.agents.html#agentscope.agents.DistConf" title="agentscope.agents.DistConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">DistConf</span></code></a> instance and pass it into the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> field, for example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">AgentA</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;A&quot;</span><span class="p">,</span>
+    <span class="c1"># ...</span>
+    <span class="n">to_dist</span><span class="o">=</span><span class="n">DistConf</span><span class="p">(</span>
+        <span class="n">host</span><span class="o">=</span><span class="s2">&quot;ip_a&quot;</span><span class="p">,</span>
+        <span class="n">port</span><span class="o">=</span><span class="mi">12001</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">AgentB</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
+    <span class="c1"># ...</span>
+    <span class="n">to_dist</span><span class="o">=</span><span class="n">DistConf</span><span class="p">(</span>
+        <span class="n">host</span><span class="o">=</span><span class="s2">&quot;ip_b&quot;</span><span class="p">,</span>
+        <span class="n">port</span><span class="o">=</span><span class="mi">12002</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Compared with the original <code class="docutils literal notranslate"><span class="pre">to_dist()</span></code> function call, this method just initializes the agent once in the agent server process.</p>
 </section>
 </section>
 <section id="step-2-orchestrate-distributed-application-flow">
@@ -185,7 +263,7 @@ We can start all agent processes from the main process, that is, the default par
 At the same time, AgentScope allows the use of a mixture of locally and distributed deployed agents, and developers do not need to distinguish which agents are local and which are distributed.</p>
 <p>The following is the complete code for two agents to communicate with each other in different modes. It can be seen that AgentScope supports zero-cost migration of distributed application flow from centralized to distributed.</p>
 <ul class="simple">
-<li><p>All agents are centralized:</p></li>
+<li><p>All agents are centralized</p></li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create agent objects</span>
 <span class="n">a</span> <span class="o">=</span> <span class="n">AgentA</span><span class="p">(</span>
@@ -206,7 +284,12 @@ At the same time, AgentScope allows the use of a mixture of locally and distribu
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>Agents are deployed in a distributed manner (Master-Slave mode):</p></li>
+<li><p>Agents are deployed in a distributed manner</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">AgentA</span></code> in Child Process mode</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AgentB</span></code> in Independent Process Mode</p></li>
+</ul>
+</li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create agent objects</span>
 <span class="n">a</span> <span class="o">=</span> <span class="n">AgentA</span><span class="p">(</span>
@@ -217,7 +300,10 @@ At the same time, AgentScope allows the use of a mixture of locally and distribu
 <span class="n">b</span> <span class="o">=</span> <span class="n">AgentB</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
     <span class="c1"># ...</span>
-<span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">()</span>
+<span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">(</span>
+    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;ip_b&quot;</span><span class="p">,</span>
+    <span class="n">port</span><span class="o">=</span><span class="mi">12002</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="c1"># Application flow orchestration</span>
 <span class="n">x</span> <span class="o">=</span> <span class="kc">None</span>
@@ -246,9 +332,20 @@ By implementing each Agent as an Actor, an Agent will automatically wait for its
 </section>
 <section id="placeholder">
 <h4>PlaceHolder<a class="headerlink" href="#placeholder" title="Link to this heading"></a></h4>
-<p>Meanwhile, to support centralized application orchestration, AgentScope introduces the concept of Placeholder. A Placeholder is a special message that contains the address and port number of the agent that generated the Placeholder, which is used to indicate that the input message of the Agent is not ready yet.
-When the input message of the Agent is ready, the Placeholder will be replaced by the real message, and then the actual <code class="docutils literal notranslate"><span class="pre">reply</span></code> method will be executed.</p>
+<p>Meanwhile, to support centralized application orchestration, AgentScope introduces the concept of <a class="reference internal" href="../agentscope.message.html#agentscope.message.PlaceholderMessage" title="agentscope.message.PlaceholderMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">Placeholder</span></code></a>.
+A Placeholder is a special message that contains the address and port number of the agent that generated the placeholder, which is used to indicate that the output message of the Agent is not ready yet.
+When calling the <code class="docutils literal notranslate"><span class="pre">reply</span></code> method of a distributed agent, a placeholder is returned immediately without blocking the main process.
+The interface of placeholder is exactly the same as the message, so that the orchestration flow can be written in a centralized way.
+When getting values from a placeholder, the placeholder will send a request to get the real values from the source agent.
+A placeholder itself is also a message, and it can be sent to other agents, and let other agents to get the real values, which can avoid sending the real values multiple times.</p>
 <p>About more detailed technical implementation solutions, please refer to our <a class="reference external" href="https://arxiv.org/abs/2402.14034">paper</a>.</p>
+</section>
+<section id="agent-server">
+<h4>Agent Server<a class="headerlink" href="#agent-server" title="Link to this heading"></a></h4>
+<p>In agentscope, the agent server provides a running platform for various types of agents.
+Multiple agents can run in the same agent server and hold independent memory and other local states but they will share the same computation resources.
+As long as the code is not modified, an agent server can provide services for multiple main processes.
+This means that when running mutliple applications, you only need to start the agent server for the first time, and it can be reused subsequently.</p>
 <p><a class="reference internal" href="#distribute-en">[Back to the top]</a></p>
 </section>
 </section>

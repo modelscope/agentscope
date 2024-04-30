@@ -127,7 +127,9 @@
     <span class="n">save_log</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">save_code</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">save_api_invoke</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">use_monitor</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">logger_level</span><span class="p">:</span> <span class="n">LOG_LEVEL</span> <span class="o">=</span> <span class="n">_DEFAULT_LOG_LEVEL</span><span class="p">,</span>
+    <span class="n">runtime_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">agent_configs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">AgentBase</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A unified entry to initialize the package, including model configs,</span>
@@ -141,6 +143,9 @@
 <span class="sd">            The project name, which is used to identify the project.</span>
 <span class="sd">        name (`Optional[str]`, defaults to `None`):</span>
 <span class="sd">            The name for runtime, which is used to identify this runtime.</span>
+<span class="sd">        runtime_id (`Optional[str]`, defaults to `None`):</span>
+<span class="sd">            The id for runtime, which is used to identify this runtime. Use</span>
+<span class="sd">            `None` will generate a random id.</span>
 <span class="sd">        save_dir (`str`, defaults to `./runs`):</span>
 <span class="sd">            The directory to save logs, files, codes, and api invocations.</span>
 <span class="sd">            If `dir` is `None`, when saving logs, files, codes, and api</span>
@@ -152,6 +157,8 @@
 <span class="sd">        save_api_invoke (`bool`, defaults to `False`):</span>
 <span class="sd">            Whether to save api invocations locally, including model and web</span>
 <span class="sd">            search invocation.</span>
+<span class="sd">        use_monitor (`bool`, defaults to `True`):</span>
+<span class="sd">            Whether to activate the monitor.</span>
 <span class="sd">        logger_level (`LOG_LEVEL`, defaults to `&quot;INFO&quot;`):</span>
 <span class="sd">            The logging level of logger.</span>
 <span class="sd">        agent_configs (`Optional[Union[str, list, dict]]`, defaults to `None`):</span>
@@ -164,9 +171,11 @@
         <span class="n">model_configs</span><span class="o">=</span><span class="n">model_configs</span><span class="p">,</span>
         <span class="n">project</span><span class="o">=</span><span class="n">project</span><span class="p">,</span>
         <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">runtime_id</span><span class="o">=</span><span class="n">runtime_id</span><span class="p">,</span>
         <span class="n">save_dir</span><span class="o">=</span><span class="n">save_dir</span><span class="p">,</span>
         <span class="n">save_api_invoke</span><span class="o">=</span><span class="n">save_api_invoke</span><span class="p">,</span>
         <span class="n">save_log</span><span class="o">=</span><span class="n">save_log</span><span class="p">,</span>
+        <span class="n">use_monitor</span><span class="o">=</span><span class="n">use_monitor</span><span class="p">,</span>
         <span class="n">logger_level</span><span class="o">=</span><span class="n">logger_level</span><span class="p">,</span>
     <span class="p">)</span>
 
@@ -219,6 +228,7 @@
     <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_DEFAULT_DIR</span><span class="p">,</span>
     <span class="n">save_api_invoke</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">save_log</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">use_monitor</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">logger_level</span><span class="p">:</span> <span class="n">LOG_LEVEL</span> <span class="o">=</span> <span class="n">_DEFAULT_LOG_LEVEL</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An entry to initialize the package in a process.</span>
@@ -241,17 +251,11 @@
 <span class="sd">            A sequence of pre-init model configs.</span>
 <span class="sd">        save_log (`bool`, defaults to `False`):</span>
 <span class="sd">            Whether to save logs locally.</span>
+<span class="sd">        use_monitor (`bool`, defaults to `True`):</span>
+<span class="sd">            Whether to activate the monitor.</span>
 <span class="sd">        logger_level (`LOG_LEVEL`, defaults to `&quot;INFO&quot;`):</span>
 <span class="sd">            The logging level of logger.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Init logger</span>
-    <span class="n">dir_log</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">file_manager</span><span class="o">.</span><span class="n">dir_log</span><span class="p">)</span> <span class="k">if</span> <span class="n">save_log</span> <span class="k">else</span> <span class="kc">None</span>
-    <span class="n">setup_logger</span><span class="p">(</span><span class="n">dir_log</span><span class="p">,</span> <span class="n">logger_level</span><span class="p">)</span>
-
-    <span class="c1"># Load model configs if needed</span>
-    <span class="k">if</span> <span class="n">model_configs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">read_model_configs</span><span class="p">(</span><span class="n">model_configs</span><span class="p">)</span>
-
     <span class="c1"># Init the runtime</span>
     <span class="k">if</span> <span class="n">project</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">_runtime</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
@@ -260,11 +264,22 @@
     <span class="k">if</span> <span class="n">runtime_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">_runtime</span><span class="o">.</span><span class="n">runtime_id</span> <span class="o">=</span> <span class="n">runtime_id</span>
 
+    <span class="c1"># Init logger</span>
+    <span class="n">dir_log</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">file_manager</span><span class="o">.</span><span class="n">dir_log</span><span class="p">)</span> <span class="k">if</span> <span class="n">save_log</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">setup_logger</span><span class="p">(</span><span class="n">dir_log</span><span class="p">,</span> <span class="n">logger_level</span><span class="p">)</span>
+
+    <span class="c1"># Load model configs if needed</span>
+    <span class="k">if</span> <span class="n">model_configs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">read_model_configs</span><span class="p">(</span><span class="n">model_configs</span><span class="p">)</span>
+
     <span class="c1"># Init file manager and save configs by default</span>
     <span class="n">file_manager</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">save_api_invoke</span><span class="p">)</span>
 
     <span class="c1"># Init monitor</span>
-    <span class="n">_</span> <span class="o">=</span> <span class="n">MonitorFactory</span><span class="o">.</span><span class="n">get_monitor</span><span class="p">(</span><span class="n">db_path</span><span class="o">=</span><span class="n">file_manager</span><span class="o">.</span><span class="n">path_db</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">MonitorFactory</span><span class="o">.</span><span class="n">get_monitor</span><span class="p">(</span>
+        <span class="n">db_path</span><span class="o">=</span><span class="n">file_manager</span><span class="o">.</span><span class="n">path_db</span><span class="p">,</span>
+        <span class="n">impl_type</span><span class="o">=</span><span class="s2">&quot;sqlite&quot;</span> <span class="k">if</span> <span class="n">use_monitor</span> <span class="k">else</span> <span class="s2">&quot;dummy&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
 </pre></div>
 
            </div>

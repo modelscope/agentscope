@@ -150,10 +150,9 @@
 <span class="n">monitor</span> <span class="o">=</span> <span class="n">MonitorFactory</span><span class="o">.</span><span class="n">get_monitor</span><span class="p">()</span>
 </pre></div>
 </div>
-<blockquote>
-<div><p>目前上述代码返回的是 <code class="docutils literal notranslate"><span class="pre">SqliteMonitor</span></code> 实例，它在 <code class="docutils literal notranslate"><span class="pre">agentscope.init</span></code> 中初始化。
-<code class="docutils literal notranslate"><span class="pre">SqliteMonitor</span></code>  类是基于Sqlite3的 <code class="docutils literal notranslate"><span class="pre">MonitorBase</span></code> 类的默认实现。</p>
-</div></blockquote>
+<p>目前上述代码将会返回一个 <code class="docutils literal notranslate"><span class="pre">SqliteMonitor</span></code> 实例，该实例在 <code class="docutils literal notranslate"><span class="pre">agentscope.init</span></code> 中初始化。
+<code class="docutils literal notranslate"><span class="pre">SqliteMonitor</span></code> 是一个基于 Sqlite3 的 <code class="docutils literal notranslate"><span class="pre">MonitorBase</span></code> 实现，也是当前的默认 Monitor。</p>
+<p>如果不需要使用 Monitor 的相关功能，可以通过向 <code class="docutils literal notranslate"><span class="pre">agentscope.init</span></code> 中传入 <code class="docutils literal notranslate"><span class="pre">use_monitor=False</span></code> 来关闭 monitor 组件。在这种情况下，<code class="docutils literal notranslate"><span class="pre">MonitorFactory.get_monitor</span></code> 将返回一个 <code class="docutils literal notranslate"><span class="pre">DummyMonitor</span></code> 实例，该实例对外接口与 <code class="docutils literal notranslate"><span class="pre">SqliteMonitor</span></code> 完全相同，但内部不会执行任何操作。</p>
 </section>
 <section id="id4">
 <h3>基本使用<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>

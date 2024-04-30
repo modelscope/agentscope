@@ -444,6 +444,101 @@
 
 
 
+<div class="viewcode-block" id="DummyMonitor">
+<a class="viewcode-back" href="../../../agentscope.utils.monitor.html#agentscope.utils.DummyMonitor">[docs]</a>
+<span class="k">class</span> <span class="nc">DummyMonitor</span><span class="p">(</span><span class="n">MonitorBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A monitor that does nothing&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="DummyMonitor.register">
+<a class="viewcode-back" href="../../../agentscope.utils.monitor.html#agentscope.utils.DummyMonitor.register">[docs]</a>
+    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">metric_unit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">quota</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="DummyMonitor.exists">
+<a class="viewcode-back" href="../../../agentscope.utils.monitor.html#agentscope.utils.DummyMonitor.exists">[docs]</a>
+    <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="DummyMonitor.add">
+<a class="viewcode-back" href="../../../agentscope.utils.monitor.html#agentscope.utils.DummyMonitor.add">[docs]</a>
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="DummyMonitor.update">
+<a class="viewcode-back" href="../../../agentscope.utils.monitor.html#agentscope.utils.DummyMonitor.update">[docs]</a>
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="DummyMonitor.clear">
+<a class="viewcode-back" href="../../../agentscope.utils.monitor.html#agentscope.utils.DummyMonitor.clear">[docs]</a>
+    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="DummyMonitor.remove">
+<a class="viewcode-back" href="../../../agentscope.utils.monitor.html#agentscope.utils.DummyMonitor.remove">[docs]</a>
+    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="DummyMonitor.get_value">
+<a class="viewcode-back" href="../../../agentscope.utils.monitor.html#agentscope.utils.DummyMonitor.get_value">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="mf">0.0</span></div>
+
+
+<div class="viewcode-block" id="DummyMonitor.get_unit">
+<a class="viewcode-back" href="../../../agentscope.utils.monitor.html#agentscope.utils.DummyMonitor.get_unit">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="DummyMonitor.get_quota">
+<a class="viewcode-back" href="../../../agentscope.utils.monitor.html#agentscope.utils.DummyMonitor.get_quota">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_quota</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="mf">0.0</span></div>
+
+
+<div class="viewcode-block" id="DummyMonitor.set_quota">
+<a class="viewcode-back" href="../../../agentscope.utils.monitor.html#agentscope.utils.DummyMonitor.set_quota">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_quota</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">quota</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="DummyMonitor.get_metric">
+<a class="viewcode-back" href="../../../agentscope.utils.monitor.html#agentscope.utils.DummyMonitor.get_metric">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">{}</span></div>
+
+
+<div class="viewcode-block" id="DummyMonitor.get_metrics">
+<a class="viewcode-back" href="../../../agentscope.utils.monitor.html#agentscope.utils.DummyMonitor.get_metrics">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_regex</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{}</span></div>
+
+
+<div class="viewcode-block" id="DummyMonitor.register_budget">
+<a class="viewcode-back" href="../../../agentscope.utils.monitor.html#agentscope.utils.DummyMonitor.register_budget">[docs]</a>
+    <span class="k">def</span> <span class="nf">register_budget</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;local&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+</div>
+
+
+
 <div class="viewcode-block" id="SqliteMonitor">
 <a class="viewcode-back" href="../../../agentscope.utils.monitor.html#agentscope.utils.SqliteMonitor">[docs]</a>
 <span class="k">class</span> <span class="nc">SqliteMonitor</span><span class="p">(</span><span class="n">MonitorBase</span><span class="p">):</span>
@@ -851,6 +946,8 @@
         <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">impl_type</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">impl_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;sqlite&quot;</span><span class="p">:</span>
                 <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="n">SqliteMonitor</span><span class="p">(</span><span class="n">db_path</span><span class="o">=</span><span class="n">db_path</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">impl_type</span> <span class="o">==</span> <span class="s2">&quot;dummy&quot;</span><span class="p">:</span>
+                <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="n">DummyMonitor</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
                     <span class="s2">&quot;Monitor with type [</span><span class="si">{type}</span><span class="s2">] is not implemented.&quot;</span><span class="p">,</span>
