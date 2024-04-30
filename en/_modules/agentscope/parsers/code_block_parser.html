@@ -114,7 +114,7 @@
     <span class="n">tag_begin</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;```</span><span class="si">{language_name}</span><span class="s2">&quot;</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The beginning tag.&quot;&quot;&quot;</span>
 
-    <span class="n">content_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;${your_</span><span class="si">{language_name}</span><span class="s2">_CODE}&quot;</span>
+    <span class="n">content_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;${{your_</span><span class="si">{language_name}</span><span class="s2">_code}}&quot;</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The hint of the content.&quot;&quot;&quot;</span>
 
     <span class="n">tag_end</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;```&quot;</span>
@@ -123,7 +123,7 @@
     <span class="n">format_instruction</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span>
         <span class="s2">&quot;You should generate </span><span class="si">{language_name}</span><span class="s2"> code in a </span><span class="si">{language_name}</span><span class="s2"> fenced &quot;</span>
         <span class="s2">&quot;code block as follows: </span><span class="se">\n</span><span class="s2">```</span><span class="si">{language_name}</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="s2">&quot;${your_</span><span class="si">{language_name}</span><span class="s2">_CODE}</span><span class="se">\n</span><span class="s2">```&quot;</span>
+        <span class="s2">&quot;${{your_</span><span class="si">{language_name}</span><span class="s2">_code}}</span><span class="se">\n</span><span class="s2">```&quot;</span>
     <span class="p">)</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The instruction for the format of the code block.&quot;&quot;&quot;</span>
 
