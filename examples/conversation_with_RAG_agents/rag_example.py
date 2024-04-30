@@ -10,6 +10,7 @@ from groupchat_utils import filter_agents
 
 import agentscope
 from agentscope.agents import UserAgent, DialogAgent, LlamaIndexAgent
+from agentscope.rag import KnowledgeBank
 
 
 AGENT_CHOICE_PROMPT = """
@@ -59,6 +60,31 @@ def main() -> None:
             config["api_key"] = f"{os.environ.get('DASHSCOPE_API_KEY')}"
     agentscope.init(model_configs=model_configs)
 
+    # initialize knowledge bank (for RAG)
+    knowledge_bank = KnowledgeBank()
+    # a simple example of importing data to RAG
+    knowledge_bank.add_data_for_rag(
+        knowledge_id="agentscope_tutorial_rag",
+        emb_model_name="qwen_emb_config",
+        data_dirs_and_types={
+            "../../docs/sphinx_doc/en/source/tutorial": [".md"],
+        },
+        persist_dir="./rag_storage/tutorial_assist",
+    )
+    # more detailed configuration can be achieved by loading config file
+    with open(
+        "configs/detailed_rag_config_example.json",
+        "r",
+        encoding="utf-8",
+    ) as f:
+        knowledge_configs = json.load(f)
+    for config in knowledge_configs:
+        knowledge_bank.add_data_for_rag(
+            knowledge_id=config["knowledge_id"],
+            emb_model_name="qwen_emb_config",
+            index_config=config,
+        )
+
     with open("configs/agent_config.json", "r", encoding="utf-8") as f:
         agent_configs = json.load(f)
 
@@ -76,13 +102,20 @@ def main() -> None:
 
     searching_agent = LlamaIndexAgent(**agent_configs[4]["args"])
 
-    rag_agents = [
+    rag_agent_list = [
         tutorial_agent,
         code_explain_agent,
         api_agent,
         searching_agent,
     ]
-    rag_agent_names = [agent.name for agent in rag_agents]
+    rag_agent_names = [agent.name for agent in rag_agent_list]
+
+    for rag_agent in rag_agent_list:
+        rag_agent.init_rag(
+            rag_module=knowledge_bank.get_rag(
+                rag_agent.rag_config["knowledge_id"],
+            ),
+        )
 
     # define a guide agent
     rag_agent_descriptions = [
@@ -91,7 +124,7 @@ def main() -> None:
         + "\n agent description："
         + agent.description
         + "\n"
-        for agent in rag_agents
+        for agent in rag_agent_list
     ]
     agent_configs[3]["args"].pop("description")
     agent_configs[3]["args"]["sys_prompt"] = agent_configs[3]["args"][
@@ -114,14 +147,14 @@ def main() -> None:
         x.role = "user"  # to enforce dashscope requirement on roles
         if len(x["content"]) == 0 or str(x["content"]).startswith("exit"):
             break
-        speak_list = filter_agents(x.get("content", ""), rag_agents)
+        speak_list = filter_agents(x.get("content", ""), rag_agent_list)
         if len(speak_list) == 0:
             guide_response = guide_agent(x)
             # Only one agent can be called in the current version,
             # we may support multi-agent conversation later
             speak_list = filter_agents(
                 guide_response.get("content", ""),
-                rag_agents,
+                rag_agent_list,
             )
         agent_name_list = [agent.name for agent in speak_list]
         for agent_name, agent in zip(agent_name_list, speak_list):

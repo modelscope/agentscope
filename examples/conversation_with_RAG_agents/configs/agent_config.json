@@ -8,29 +8,10 @@
       "model_config_name": "qwen_config",
       "emb_model_config_name": "qwen_emb_config",
       "rag_config": {
-            "index_config": [
-              {
-                "load_data": {
-                  "loader": {
-                    "create_object": true,
-                    "module": "llama_index.core",
-                    "class": "SimpleDirectoryReader",
-                    "init_args": {
-                      "input_dir": "../../docs/sphinx_doc/en/source/tutorial",
-                      "required_exts": [
-                        ".md"
-                      ]
-                    }
-                  }
-                }
-              }
-            ],
-            "chunk_size": 2048,
-            "chunk_overlap": 40,
+            "knowledge_id": "agentscope_tutorial_rag",
             "similarity_top_k": 5,
             "log_retrieval": false,
-            "recent_n_mem": 1,
-            "persist_dir": "./rag_storage/tutorial_assist"
+            "recent_n_mem": 1
       }
     }
   },
@@ -43,43 +24,10 @@
       "model_config_name": "qwen_config",
       "emb_model_config_name": "qwen_emb_config",
       "rag_config": {
-            "index_config": [
-              {
-                "load_data": {
-                  "loader": {
-                    "create_object": true,
-                    "module": "llama_index.core",
-                    "class": "SimpleDirectoryReader",
-                    "init_args": {
-                      "input_dir": "../../src/agentscope",
-                      "recursive": true,
-                      "required_exts": [
-                        ".py"
-                      ]
-                    }
-                  }
-                },
-                "store_and_index": {
-                  "transformations": [
-                    {
-                      "create_object": true,
-                      "module": "llama_index.core.node_parser",
-                      "class": "CodeSplitter",
-                      "init_args": {
-                        "language": "python",
-                        "chunk_lines": 100
-                      }
-                    }
-                  ]
-                }
-              }
-            ],
-            "chunk_size": 2048,
-            "chunk_overlap": 40,
+            "knowledge_id": "agentscope_code_rag",
             "similarity_top_k": 5,
             "log_retrieval": false,
-            "recent_n_mem": 1,
-            "persist_dir": "./rag_storage/code_assist"
+            "recent_n_mem": 1
       }
     }
   },
@@ -92,32 +40,13 @@
       "model_config_name": "qwen_config",
       "emb_model_config_name": "qwen_emb_config",
       "rag_config": {
-          "index_config": [
-            {
-              "load_data": {
-                "loader": {
-                  "create_object": true,
-                  "module": "llama_index.core",
-                  "class": "SimpleDirectoryReader",
-                  "init_args": {
-                    "input_dir": "../../docs/docstring_html/",
-                    "required_exts": [
-                      ".html"
-                    ]
-                  }
-                }
-              }
-            }
-          ],
-          "chunk_size": 2048,
-          "chunk_overlap": 40,
+          "knowledge_id": "agentscope_api_rag",
           "similarity_top_k": 3,
           "log_retrieval": true,
           "recent_n_mem": 1,
-          "persist_dir": "./rag_storage/api_assist",
           "repo_base": "../../",
           "file_dir": "../../docs/docstring_html/"
-          }
+      }
     }
   },
   {
@@ -139,54 +68,7 @@
       "model_config_name": "qwen_config",
       "emb_model_config_name": "qwen_emb_config",
       "rag_config": {
-            "index_config": [
-              {
-                "load_data": {
-                  "loader": {
-                    "create_object": true,
-                    "module": "llama_index.core",
-                    "class": "SimpleDirectoryReader",
-                    "init_args": {
-                      "input_dir": "../../docs/sphinx_doc/en/source/tutorial",
-                      "required_exts": [
-                        ".md"
-                      ]
-                    }
-                  }
-                }
-              },
-              {
-                "load_data": {
-                  "loader": {
-                    "create_object": true,
-                    "module": "llama_index.core",
-                    "class": "SimpleDirectoryReader",
-                    "init_args": {
-                      "input_dir": "../../src/agentscope",
-                      "recursive": true,
-                      "required_exts": [
-                        ".py"
-                      ]
-                    }
-                  }
-                },
-                "store_and_index": {
-                  "transformations": [
-                    {
-                      "create_object": true,
-                      "module": "llama_index.core.node_parser",
-                      "class": "CodeSplitter",
-                      "init_args": {
-                        "language": "python",
-                        "chunk_lines": 100
-                      }
-                    }
-                  ]
-                }
-              }
-            ],
-            "chunk_size": 2048,
-            "chunk_overlap": 40,
+            "knowledge_id": "agentscope_global_rag",
             "similarity_top_k": 5,
             "log_retrieval": false,
             "recent_n_mem": 1,

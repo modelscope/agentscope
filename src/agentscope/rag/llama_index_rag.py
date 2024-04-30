@@ -126,10 +126,10 @@ class LlamaIndexRAG(RAGBase):
     def __init__(
         self,
         name: str,
-        model: ModelWrapperBase,
+        model: Optional[ModelWrapperBase] = None,
         emb_model: Union[ModelWrapperBase, BaseEmbedding, None] = None,
-        rag_config: dict = None,
         index_config: dict = None,
+        rag_config: Optional[dict] = None,
         overwrite_index: Optional[bool] = False,
         showprogress: Optional[bool] = True,
         **kwargs: Any,
@@ -155,20 +155,19 @@ class LlamaIndexRAG(RAGBase):
                 The language model used for final synthesis
             emb_model (Optional[ModelWrapperBase]):
                 The embedding model used for generate embeddings
-            rag_config (dict):
-                The configuration for llama index rag
             index_config (dict):
                 The configuration to generate the index
+            rag_config (dict):
+                The configuration for llama index rag
             overwrite_index (Optional[bool]):
-                Whether to overwrite the index whiel refreshing
+                Whether to overwrite the index while refreshing
             showprogress (Optional[bool]):
                 Whether to show the indexing progress
         """
         super().__init__(model, emb_model, rag_config, **kwargs)
         self.name = name
-        self.persist_dir = rag_config.get("persist_dir", "/")
+        self.persist_dir = index_config.get("persist_dir", "/")
         self.emb_model = emb_model
-        self.rag_config = rag_config
         self.index_config = index_config
         self.overwrite_index = overwrite_index
         self.showprogress = showprogress
@@ -207,7 +206,7 @@ class LlamaIndexRAG(RAGBase):
             self.refresh_index()
         else:
             self._data_to_index()
-        self._set_retriever()
+        self.set_retriever()
         logger.info(f"RAG agent {self.name} initialization completed!\n")
 
     def _load_index(self) -> None:
@@ -239,7 +238,7 @@ class LlamaIndexRAG(RAGBase):
         nodes = []
         # load data to documents and set transformations
         # using information in index_config
-        for config in self.index_config:
+        for config in self.index_config.get("data_processing"):
             documents = self._data_to_docs(config=config)
             transformations = self._set_transformations(config=config).get(
                 "transformations",
@@ -371,11 +370,11 @@ class LlamaIndexRAG(RAGBase):
         else:
             transformations = [
                 SentenceSplitter(
-                    chunk_size=self.rag_config.get(
+                    chunk_size=self.index_config.get(
                         "chunk_size",
                         DEFAULT_CHUNK_SIZE,
                     ),
-                    chunk_overlap=self.rag_config.get(
+                    chunk_overlap=self.index_config.get(
                         "chunk_overlap",
                         DEFAULT_CHUNK_OVERLAP,
                     ),
@@ -389,7 +388,7 @@ class LlamaIndexRAG(RAGBase):
         transformations = {"transformations": transformations}
         return transformations
 
-    def _set_retriever(
+    def set_retriever(
         self,
         retriever: Optional[BaseRetriever] = None,
         **kwargs: Any,
@@ -447,7 +446,7 @@ class LlamaIndexRAG(RAGBase):
         """
         Refresh the index when needed.
         """
-        for config in self.index_config:
+        for config in self.index_config.get("data_processing"):
             documents = self._data_to_docs(config=config)
             # store and indexing for each file type
             transformations = self._set_transformations(config=config).get(
