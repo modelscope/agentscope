@@ -500,16 +500,18 @@ class LlamaIndexRAG(RAGBase):
                     logger.info(
                         f"replace document in index, " f"doc_id={doc.doc_id}",
                     )
+        logger.info("documents scan completed.")
         # we generate nodes for documents on the list
         nodes = pipeline.run(
             documents=insert_docs_list,
             show_progress=True,
         )
+        logger.info("nodes generated.")
         # insert the new nodes to index
         self.index.insert_nodes(nodes=nodes)
+        logger.info("nodes inserted to index.")
         # persist the updated index
         self.index.storage_context.persist(persist_dir=self.persist_dir)
-        logger.info("nodes added to index.")
 
     def _delete_docs_from_index(
         self,
