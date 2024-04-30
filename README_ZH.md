@@ -115,6 +115,7 @@ AgentScope支持使用以下库快速部署本地模型服务。
   - [分布式对话](./examples/distributed_basic)
   - [分布式辩论](./examples/distributed_debate)
   - [分布式并行搜索](./examples/distributed_search)
+  - [分布式大规模仿真](./examples/distributed_simulation)
 
 更多模型API、服务和示例即将推出！
 

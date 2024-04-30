@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """ Import all agent related modules in the package. """
-from .agent import AgentBase
+from .agent import AgentBase, DistConf
 from .operator import Operator
 from .dialog_agent import DialogAgent
 from .dict_dialog_agent import DictDialogAgent
@@ -18,6 +18,7 @@ __all__ = [
     "TextToImageAgent",
     "UserAgent",
     "ReActAgent",
+    "DistConf",
     "RpcAgent",
     "RpcAgentServerLauncher",
 ]
