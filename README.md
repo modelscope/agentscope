@@ -27,6 +27,8 @@ Welcome to join our community on
 
 ## News
 
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-04-30]** We release **AgentScope** v0.0.4 now!
+
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-04-27]** [AgentScope Workstation](https://agentscope.aliyun.com/) is now online! You are welcome to try building your multi-agent application simply with our *drag-and-drop platform* and ask our *copilot* questions about AgentScope!
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-04-19]** AgentScope supports Llama3 now! We provide [scripts](./examples/model_llama3) and example [model configuration](./examples/model_llama3) for quick set-up. Feel free to try llama3 in our examples!
@@ -134,8 +136,8 @@ More models, services and examples are coming soon!
 
 AgentScope requires **Python 3.9** or higher.
 
-**_Note: This project is currently in active development, it's recommended to
-install AgentScope from source._**
+***Note: This project is currently in active development, it's recommended to
+install AgentScope from source.***
 
 ### From source
 
