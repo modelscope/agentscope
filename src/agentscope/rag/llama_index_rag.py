@@ -46,76 +46,92 @@ from agentscope.rag.rag import (
 from agentscope.models import ModelWrapperBase
 
 
-class _EmbeddingModel(BaseEmbedding):
-    """
-    wrapper for ModelWrapperBase to an embedding model can be used
-    in Llama Index pipeline.
-    """
+try:
 
-    _emb_model_wrapper: ModelWrapperBase = PrivateAttr()
-
-    def __init__(
-        self,
-        emb_model: ModelWrapperBase,
-        embed_batch_size: int = 1,
-    ) -> None:
+    class _EmbeddingModel(BaseEmbedding):
         """
-        Dummy wrapper to convert a ModelWrapperBase to llama Index
-        embedding model
-
-        Args:
-            emb_model (ModelWrapperBase): embedding model in ModelWrapperBase
-            embed_batch_size (int): batch size, defaults to 1
+        wrapper for ModelWrapperBase to an embedding model can be used
+        in Llama Index pipeline.
         """
-        super().__init__(
-            model_name="Temporary_embedding_wrapper",
-            embed_batch_size=embed_batch_size,
-        )
-        self._emb_model_wrapper = emb_model
 
-    def _get_query_embedding(self, query: str) -> List[float]:
-        """
-        get embedding for query
-        Args:
-            query (str): query to be embedded
-        """
-        # Note: AgentScope embedding model wrapper returns list of embedding
-        return list(self._emb_model_wrapper(query).embedding[0])
+        _emb_model_wrapper: ModelWrapperBase = PrivateAttr()
 
-    def _get_text_embeddings(self, texts: List[str]) -> List[Embedding]:
-        """
-        get embedding for list of strings
-        Args:
-             texts ( List[str]): texts to be embedded
-        """
-        results = [
-            list(self._emb_model_wrapper(t).embedding[0]) for t in texts
-        ]
-        return results
+        def __init__(
+            self,
+            emb_model: ModelWrapperBase,
+            embed_batch_size: int = 1,
+        ) -> None:
+            """
+            Dummy wrapper to convert a ModelWrapperBase to llama Index
+            embedding model
 
-    def _get_text_embedding(self, text: str) -> Embedding:
+            Args:
+                emb_model (ModelWrapperBase):
+                    embedding model in ModelWrapperBase
+                embed_batch_size (int):
+                    batch size, defaults to 1
+            """
+            super().__init__(
+                model_name="Temporary_embedding_wrapper",
+                embed_batch_size=embed_batch_size,
+            )
+            self._emb_model_wrapper = emb_model
+
+        def _get_query_embedding(self, query: str) -> List[float]:
+            """
+            get embedding for query
+            Args:
+                query (str): query to be embedded
+            """
+            # Note: AgentScope embedding model wrapper returns list
+            # of embedding
+            return list(self._emb_model_wrapper(query).embedding[0])
+
+        def _get_text_embeddings(self, texts: List[str]) -> List[Embedding]:
+            """
+            get embedding for list of strings
+            Args:
+                 texts ( List[str]): texts to be embedded
+            """
+            results = [
+                list(self._emb_model_wrapper(t).embedding[0]) for t in texts
+            ]
+            return results
+
+        def _get_text_embedding(self, text: str) -> Embedding:
+            """
+            get embedding for a single string
+            Args:
+                 text (str): texts to be embedded
+            """
+            return list(self._emb_model_wrapper(text).embedding[0])
+
+        # TODO: use proper async methods, but depends on model wrapper
+        async def _aget_query_embedding(self, query: str) -> List[float]:
+            """The asynchronous version of _get_query_embedding."""
+            return self._get_query_embedding(query)
+
+        async def _aget_text_embedding(self, text: str) -> List[float]:
+            """Asynchronously get text embedding."""
+            return self._get_text_embedding(text)
+
+        async def _aget_text_embeddings(
+            self,
+            texts: List[str],
+        ) -> List[List[float]]:
+            """Asynchronously get text embeddings."""
+            return self._get_text_embeddings(texts)
+
+except TypeError:
+
+    class _EmbeddingModel:  # type: ignore[no-redef]
         """
-        get embedding for a single string
-        Args:
-             text (str): texts to be embedded
+        A dummy embedding model for passing tests when
+        llama-index is not install
         """
-        return list(self._emb_model_wrapper(text).embedding[0])
 
-    # TODO: use proper async methods, but depends on model wrapper
-    async def _aget_query_embedding(self, query: str) -> List[float]:
-        """The asynchronous version of _get_query_embedding."""
-        return self._get_query_embedding(query)
-
-    async def _aget_text_embedding(self, text: str) -> List[float]:
-        """Asynchronously get text embedding."""
-        return self._get_text_embedding(text)
-
-    async def _aget_text_embeddings(
-        self,
-        texts: List[str],
-    ) -> List[List[float]]:
-        """Asynchronously get text embeddings."""
-        return self._get_text_embeddings(texts)
+        def __init__(self, emb_model: ModelWrapperBase):
+            self._emb_model_wrapper = emb_model
 
 
 class LlamaIndexRAG(RAGBase):
