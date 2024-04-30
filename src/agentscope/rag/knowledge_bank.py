@@ -56,11 +56,23 @@ class KnowledgeBank:
         Transform data in a directory to be ready to work with RAG.
         Args:
             knowledge_id (str):
+                user-defined unique id for the knowledge with RAG
             emb_model_name (str):
+                name of the embedding model
             model_name (Optional[str]):
+                name of the LLM for potential post-processing or query rewrite
             data_dirs_and_types (dict[str, list[str]]):
+                dictionary of data paths and the data types (file extensions)
+                for knowledgebase (e.g., [".md", ".py", ".html"])
             persist_dir (Optional[str]):
+                path for storing the embedding and indexing information
             index_config (ptional[dict]):
+                complete indexing configuration, used for more advanced
+                applications. Users can customize
+                - loader,
+                - transformations,
+                - ...
+                Examples can refer to../examples/conversation_with_RAG_agents/
         """
         if knowledge_id in self.stored_knowledge:
             raise ValueError(f"knowledge_id {knowledge_id} already exists.")
@@ -82,7 +94,7 @@ class KnowledgeBank:
             index_config["persist_dir"] = persist_dir
 
         self.stored_knowledge[knowledge_id] = LlamaIndexRAG(
-            name=knowledge_id,
+            knowledge_id=knowledge_id,
             emb_model=load_model_by_config_name(emb_model_name),
             model=load_model_by_config_name(model_name)
             if model_name

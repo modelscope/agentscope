@@ -32,20 +32,24 @@ your question.
 """
 
 
-def prepare_docstring_html(repo_path: str, html_dir: str) -> None:
+def prepare_docstring_html() -> None:
     """prepare docstring in html for API assistant"""
     os.system(
-        f"sphinx-apidoc -f -o {repo_path}/docs/sphinx_doc/en/source "
-        f"{repo_path}/src/agentscope -t template",
+        "sphinx-apidoc -f -o ../../docs/sphinx_doc/en/source "
+        "../../src/agentscope -t template",
     )
     os.system(
-        f"sphinx-build -b html  {repo_path}/docs/sphinx_doc/en/source "
-        f"{html_dir} -W --keep-going",
+        "sphinx-build -b html  ../../docs/sphinx_doc/en/source "
+        "../../docs/docstring_html/ -W --keep-going",
     )
 
 
 def main() -> None:
     """A RAG multi-agent demo"""
+    # prepare html for api agent
+    prepare_docstring_html()
+
+    # prepare models
     with open("configs/model_config.json", "r", encoding="utf-8") as f:
         model_configs = json.load(f)
     # for internal API
@@ -88,19 +92,11 @@ def main() -> None:
     with open("configs/agent_config.json", "r", encoding="utf-8") as f:
         agent_configs = json.load(f)
 
-    # define RAG-based agents for tutorial and code
+    # define RAG-based agents for tutorial, code, API and general search
     tutorial_agent = LlamaIndexAgent(**agent_configs[0]["args"])
     code_explain_agent = LlamaIndexAgent(**agent_configs[1]["args"])
-
-    # prepare html for api agent
-    prepare_docstring_html(
-        agent_configs[2]["args"]["rag_config"]["repo_base"],
-        agent_configs[2]["args"]["rag_config"]["file_dir"],
-    )
-    # define an API agent
     api_agent = LlamaIndexAgent(**agent_configs[2]["args"])
-
-    searching_agent = LlamaIndexAgent(**agent_configs[4]["args"])
+    searching_agent = LlamaIndexAgent(**agent_configs[3]["args"])
 
     rag_agent_list = [
         tutorial_agent,
@@ -126,14 +122,14 @@ def main() -> None:
         + "\n"
         for agent in rag_agent_list
     ]
-    agent_configs[3]["args"].pop("description")
-    agent_configs[3]["args"]["sys_prompt"] = agent_configs[3]["args"][
+    agent_configs[4]["args"].pop("description")
+    agent_configs[4]["args"]["sys_prompt"] = agent_configs[4]["args"][
         "sys_prompt"
     ] + AGENT_CHOICE_PROMPT.format(
         "".join(rag_agent_descriptions),
     )
 
-    guide_agent = DialogAgent(**agent_configs[3]["args"])
+    guide_agent = DialogAgent(**agent_configs[4]["args"])
 
     user_agent = UserAgent()
     while True:

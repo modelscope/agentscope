@@ -49,6 +49,10 @@ gradio_requires = [
     "black",
 ]
 
+rag_requires = [
+    "llama-index",
+]
+
 # released requires
 minimal_requires = [
     "docstring_parser",
@@ -81,6 +85,7 @@ full_requires = (
     + doc_requires
     + test_requires
     + gradio_requires
+    + rag_requires
 )
 
 with open("README.md", "r", encoding="UTF-8") as fh:

@@ -214,7 +214,7 @@ class LlamaIndexAgent(RAGAgentBase):
         # initiate RAG related attributes
         if rag_module is None and index_config is not None:
             self.rag = LlamaIndexRAG(
-                name=self.name,
+                knowledge_id=self.name,
                 model=self.model,
                 emb_model=self.emb_model,
                 rag_config=self.rag_config,
