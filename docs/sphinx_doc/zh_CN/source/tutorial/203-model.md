@@ -358,7 +358,7 @@ API如下：
     "model_name": "{model_name}",               # The model name in ZhipuAI API, e.g. embedding-2
 
     # Optional parameters
-    "api_key": "{your_api_key}",                #
+    "api_key": "{your_api_key}",
 }
 ```
 

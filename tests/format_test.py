@@ -175,7 +175,7 @@ class ExampleTest(unittest.TestCase):
             model.format(*self.wrong_inputs)  # type: ignore[arg-type]
 
     def test_zhipuai_chat(self) -> None:
-        """Unit test for the format function in dashscope chat api wrapper."""
+        """Unit test for the format function in zhipu chat api wrapper."""
         model = ZhipuAIChatWrapper(
             config_name="",
             model_name="glm-4",

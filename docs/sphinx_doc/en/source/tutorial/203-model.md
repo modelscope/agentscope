@@ -338,7 +338,7 @@ Here we provide example configurations for different model wrappers.
     "model_name": "{model_name}",               # The model name in ZhipuAI API, e.g. embedding-2
 
     # Optional parameters
-    "api_key": "{your_api_key}",                #
+    "api_key": "{your_api_key}",
 }
 ```
 

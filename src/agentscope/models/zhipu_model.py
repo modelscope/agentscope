@@ -57,6 +57,7 @@ class ZhipuAIWrapperBase(ModelWrapperBase, ABC):
 
         self.client = zhipuai.ZhipuAI(
             api_key=api_key,
+            **kwargs,
         )
 
         self._register_default_metrics()
@@ -316,16 +317,10 @@ class ZhipuAIEmbeddingWrapper(ZhipuAIWrapperBase):
 
         # step5: return response
         response_json = response.model_dump()
-        if len(response_json["data"]) == 0:
-            return ModelResponse(
-                embedding=response_json["data"]["embedding"][0],
-                raw=response_json,
-            )
-        else:
-            return ModelResponse(
-                embedding=[_["embedding"] for _ in response_json["data"]],
-                raw=response_json,
-            )
+        return ModelResponse(
+            embedding=[_["embedding"] for _ in response_json["data"]],
+            raw=response_json,
+        )
 
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly

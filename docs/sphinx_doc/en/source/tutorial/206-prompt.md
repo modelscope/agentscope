@@ -373,7 +373,6 @@ print(prompt)
 - Require `role` and `content` fields, and `role` must be either `"user"`
   `"system"` or `"assistant"`.
 - There must be at least one `user` message.
-- The `user` must speak in the beginning and end of the input messages list.
 
 #### Prompt Strategy
 
