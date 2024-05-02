@@ -1,0 +1,18 @@
+[
+    {
+        "model_type": "huggingface",
+        "config_name": "my_custom_model",
+
+        "model_id": "openlm-research/open_llama_3b_v2",
+
+        "max_length": 128,
+        "device": "cuda",
+
+        "data_path": "databricks/databricks-dolly-15k",
+
+        "fine_tune_config": {
+            "lora_config": {"r": 20, "lora_alpha": 40},
+            "training_args": {"max_steps": 1000, "logging_steps": 1}
+        }
+    }
+]

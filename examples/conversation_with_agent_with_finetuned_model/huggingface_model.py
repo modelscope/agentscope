@@ -2,16 +2,9 @@
 """
 This module provides a HuggingFaceWrapper to manage
 and operate Hugging Face Transformers models, enabling loading,
-fine-tuning, and response generation. It includes the
-Finetune_DialogAgent class, which extends DialogAgent to
-enhance fine-tuning capabilities with custom hyperparameters.
+fine-tuning, and response generation.
 Key features include handling model and tokenizer operations,
 adapting to specialized datasets, and robust error management.
-
-Classes:
-- HuggingFaceWrapper: Manages Hugging Face models and tokenizers.
-- Finetune_DialogAgent: Extends DialogAgent for model fine-tuning.
-
 """
 from typing import Sequence, Any, Union, List, Optional, Dict
 import os
@@ -73,7 +66,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
         self.model_id = model_id
         relative_path = os.path.join(
             os.path.dirname(__file__),
-            "../load_finetune_huggingface_model/.env",
+            "../conversation_with_agent_with_finetuned_model/.env",
         )
         dotenv_path = os.path.normpath(relative_path)
         _ = load_dotenv(dotenv_path)  # read local .env file
@@ -144,7 +137,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
             )
             # Decode the generated tokens to a string
             generated_text = self.tokenizer.decode(
-                outputs[0][input_ids.shape[1]:],
+                outputs[0][input_ids.shape[1] :],  # noqa: E203
                 skip_special_tokens=True,
             )
             return ModelResponse(text=generated_text, raw=outputs)
@@ -291,6 +284,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
                     f"Successfully loaded new tokenizer for model "
                     f"'{model_id}' from Hugging Face",
                 )
+
             else:
                 self.tokenizer = AutoTokenizer.from_pretrained(
                     local_tokenizer_path,
@@ -300,6 +294,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
                     f"Successfully loaded new tokenizer for model "
                     f"'{model_id}' from '{local_tokenizer_path}'",
                 )
+            self.tokenizer.add_special_tokens({"pad_token": "[PAD]"})
 
         except Exception as e:
             # Handle exceptions during model loading,
@@ -394,6 +389,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
         import json
 
         dataset = load_dataset(data_path, token=token)
+        dataset = dataset["train"].train_test_split(test_size=0.1)
 
         from peft import LoraConfig
 
@@ -406,24 +402,25 @@ class HuggingFaceWrapper(ModelWrapperBase):
         }
 
         if fine_tune_config is not None:
-            if fine_tune_config["lora_config"] is not None:
+            if fine_tune_config.get("lora_config") is not None:
                 lora_config_default.update(fine_tune_config["lora_config"])
 
         training_defaults = {
             "per_device_train_batch_size": 1,
-            "gradient_accumulation_steps": 1,
+            # "gradient_accumulation_steps": 1,
             "gradient_checkpointing": False,
-            "max_steps": 10,
+            # "max_steps": 10,
+            "num_train_epochs": 10,
             "output_dir": "./",
             "optim": "paged_adamw_8bit",
             "fp16": True,
             "logging_steps": 1,
-            # "learning_rate": 2e-6,
+            "learning_rate": 1e-5,
             # "num_train_epochs": 10.0,
         }
 
         if fine_tune_config is not None:
-            if fine_tune_config["training_args"] is not None:
+            if fine_tune_config.get("training_args") is not None:
                 training_defaults.update(fine_tune_config["training_args"])
 
         from peft import get_peft_model
@@ -445,25 +442,53 @@ class HuggingFaceWrapper(ModelWrapperBase):
                 output_texts.append(text)
             return output_texts
 
-        response_template = " ### Answer:"
-        collator = DataCollatorForCompletionOnlyLM(
-            response_template,
-            tokenizer=tokenizer,
-        )
+        def formatting_func(example):
+            if example.get("context", "") != "":
+                input_prompt = (
+                    f"Below is an instruction that describes a task, "
+                    f"paired with an input that provides further context. "
+                    f"Write a response that appropriately "
+                    f"completes the request.\n\n"
+                    f"### Instruction:\n"
+                    f"{example['instruction']}\n\n"
+                    f"### Input: \n"
+                    f"{example['context']}\n\n"
+                    f"### Response: \n"
+                    f"{example['response']}"
+                )
+
+            else:
+                input_prompt = (
+                    f"Below is an instruction that describes a task. "
+                    "Write a response that appropriately "
+                    f"completes the request.\n\n"
+                    "### Instruction:\n"
+                    f"{example['instruction']}\n\n"
+                    f"### Response:\n"
+                    f"{example['response']}"
+                )
+
+            return {"text": input_prompt}
+
+        formatted_dataset = dataset.map(formatting_func)
 
         trainer_args = transformers.TrainingArguments(**training_defaults)
 
         trainer = SFTTrainer(
             model,
-            train_dataset=dataset["train"],
-            eval_dataset=dataset["train"],
-            formatting_func=formatting_prompts_func,
-            data_collator=collator,
+            train_dataset=formatted_dataset["train"],
+            eval_dataset=formatted_dataset["test"],
+            # formatting_func=formatting_prompts_func,
+            # data_collator=collator,
             peft_config=lora_config,
             args=trainer_args,
+            dataset_text_field="text",
+            max_seq_length=512,
         )
 
-        print("fine-tuning model")
+        logger.info(
+            "fine-tuning model",
+        )
 
         trainer.train()
 
@@ -498,116 +523,3 @@ class HuggingFaceWrapper(ModelWrapperBase):
         return model
 
 
-class Finetune_DialogAgent(DialogAgent):
-    """
-    A dialog agent capable of fine-tuning its
-    underlying model based on provided data.
-
-    Inherits from DialogAgent and adds functionality for
-    fine-tuning with custom hyperparameters.
-    """
-
-    def __init__(
-        self,
-        name: str,
-        sys_prompt: str,
-        model_config_name: str,
-        use_memory: bool = True,
-        memory_config: Optional[dict] = None,
-    ):
-        """
-        Initializes a new Finetune_DialogAgent with specified configuration.
-
-        Arguments:
-            name (str): Name of the agent.
-            sys_prompt (str): System prompt or description of the agent's role.
-            model_config_name (str): The configuration name for
-                                     the underlying model.
-            use_memory (bool, optional): Indicates whether to utilize
-                                         memory features. Defaults to True.
-            memory_config (dict, optional): Configuration for memory
-                                            functionalities if
-                                            `use_memory` is True.
-
-        Note:
-            Refer to `class DialogAgent(AgentBase)` for more information.
-        """
-
-        super().__init__(
-            name,
-            sys_prompt,
-            model_config_name,
-            use_memory,
-            memory_config,
-        )
-
-    def load_model(
-        self,
-        model_id: Optional[str] = None,
-        local_model_path: Optional[str] = None,
-    ) -> None:
-        """
-        Load a new model into the agent.
-
-        Arguments:
-            model_id (str): The Hugging Face model ID or a custom identifier.
-                            Needed if loading model from Hugging Face.
-            local_model_path (str, optional): Path to a locally saved model.
-
-        Raises:
-            Exception: If the model loading process fails or if the
-                       model wrapper does not support dynamic loading.
-        """
-
-        if hasattr(self.model, "load_model"):
-            self.model.load_model(model_id, local_model_path)
-        else:
-            logger.error(
-                "The model wrapper does not support dynamic model loading.",
-            )
-
-    def load_tokenizer(
-        self,
-        model_id: Optional[str] = None,
-        local_tokenizer_path: Optional[str] = None,
-    ) -> None:
-        """
-        Load a new tokenizer for the agent.
-
-        Arguments:
-            model_id (str): The Hugging Face model ID or a custom identifier.
-                            Needed if loading tokenizer from Hugging Face.
-            local_tokenizer_path (str, optional): Path to a locally saved
-                                                  tokenizer.
-
-        Raises:
-            Exception: If the model tokenizer process fails or if the
-                       model wrapper does not support dynamic loading.
-        """
-
-        if hasattr(self.model, "load_tokenizer"):
-            self.model.load_tokenizer(model_id, local_tokenizer_path)
-        else:
-            logger.error("The model wrapper does not support dynamic loading.")
-
-    def fine_tune(
-        self,
-        data_path: Optional[str] = None,
-        fine_tune_config: Optional[Dict[str, Any]] = None,
-    ) -> None:
-        """
-        Fine-tune the agent's underlying model.
-
-        Arguments:
-            data_path (str): The path to the training data.
-
-        Raises:
-            Exception: If fine-tuning fails or if the
-                       model wrapper does not support fine-tuning.
-        """
-
-        if hasattr(self.model, "fine_tune"):
-            self.model.fine_tune(data_path, fine_tune_config)
-            logger.info("Fine-tuning completed successfully.")
-        else:
-            logger.error("The model wrapper does not support fine-tuning.")
