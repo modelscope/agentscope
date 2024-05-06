@@ -14,7 +14,6 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from loguru import logger
 from dotenv import load_dotenv
 
-from agentscope.agents import DialogAgent
 from agentscope.models import ModelWrapperBase, ModelResponse
 from agentscope.message import MessageBase
 from agentscope.utils.tools import _convert_to_str
@@ -428,21 +427,10 @@ class HuggingFaceWrapper(ModelWrapperBase):
         lora_config = LoraConfig(**lora_config_default)
         model = get_peft_model(model, lora_config)
 
-        from trl import SFTTrainer, DataCollatorForCompletionOnlyLM
+        from trl import SFTTrainer
         import transformers
 
-        def formatting_prompts_func(
-            example: Dict[str, List[List[str]]],
-        ) -> List[str]:
-            output_texts = []
-            for i in range(len(example["conversations"])):
-                question = f"### Question: {example['conversations'][i][0]}"
-                answer = f"### Answer: {example['conversations'][i][1]}"
-                text = f"{question}\n {answer}"
-                output_texts.append(text)
-            return output_texts
-
-        def formatting_func(example):
+        def formatting_func(example: Dict[str, Any]) -> Dict[str, str]:
             if example.get("context", "") != "":
                 input_prompt = (
                     f"Below is an instruction that describes a task, "
@@ -456,7 +444,6 @@ class HuggingFaceWrapper(ModelWrapperBase):
                     f"### Response: \n"
                     f"{example['response']}"
                 )
-
             else:
                 input_prompt = (
                     f"Below is an instruction that describes a task. "
@@ -478,7 +465,6 @@ class HuggingFaceWrapper(ModelWrapperBase):
             model,
             train_dataset=formatted_dataset["train"],
             eval_dataset=formatted_dataset["test"],
-            # formatting_func=formatting_prompts_func,
             # data_collator=collator,
             peft_config=lora_config,
             args=trainer_args,
@@ -521,5 +507,3 @@ class HuggingFaceWrapper(ModelWrapperBase):
         tokenizer.save_pretrained(tokenizer_path)
 
         return model
-
-

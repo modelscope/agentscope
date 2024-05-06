@@ -1,21 +1,15 @@
 # -*- coding: utf-8 -*-
 """
-This module provides the Finetune_DialogAgent class, 
-which extends DialogAgent to enhance fine-tuning 
+This module provides the Finetune_DialogAgent class,
+which extends DialogAgent to enhance fine-tuning
 capabilities with custom hyperparameters.
 """
-from typing import Sequence, Any, Union, List, Optional, Dict
-import os
+from typing import Any, Optional, Dict
 
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
 from loguru import logger
-from dotenv import load_dotenv
 
 from agentscope.agents import DialogAgent
-from agentscope.models import ModelWrapperBase, ModelResponse
-from agentscope.message import MessageBase
-from agentscope.utils.tools import _convert_to_str
+
 
 class Finetune_DialogAgent(DialogAgent):
     """
