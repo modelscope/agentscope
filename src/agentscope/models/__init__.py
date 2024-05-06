@@ -33,6 +33,10 @@ from .gemini_model import (
     GeminiChatWrapper,
     GeminiEmbeddingWrapper,
 )
+from .zhipu_model import (
+    ZhipuAIChatWrapper,
+    ZhipuAIEmbeddingWrapper,
+)
 
 
 __all__ = [
@@ -53,6 +57,8 @@ __all__ = [
     "OllamaGenerationWrapper",
     "GeminiChatWrapper",
     "GeminiEmbeddingWrapper",
+    "ZhipuAIChatWrapper",
+    "ZhipuAIEmbeddingWrapper",
     "load_model_by_config_name",
     "read_model_configs",
     "clear_model_configs",
