@@ -13,7 +13,7 @@ class MarkdownCodeBlockParser(ParserBase):
     tag_begin: str = "```{language_name}"
     """The beginning tag."""
 
-    content_hint: str = "${your_{language_name}_CODE}"
+    content_hint: str = "${{your_{language_name}_code}}"
     """The hint of the content."""
 
     tag_end: str = "```"
@@ -22,7 +22,7 @@ class MarkdownCodeBlockParser(ParserBase):
     format_instruction: str = (
         "You should generate {language_name} code in a {language_name} fenced "
         "code block as follows: \n```{language_name}\n"
-        "${your_{language_name}_CODE}\n```"
+        "${{your_{language_name}_code}}\n```"
     )
     """The instruction for the format of the code block."""
 

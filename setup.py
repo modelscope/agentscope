@@ -22,6 +22,7 @@ rpc_requires = [
     "grpcio-tools==1.60.0",
     "protobuf==4.25.0",
     "expiringdict",
+    "dill",
 ]
 
 service_requires = [
@@ -68,6 +69,7 @@ minimal_requires = [
     "openai>=1.3.0",
     "ollama>=0.1.7",
     "google-generativeai>=0.4.0",
+    "zhipuai",
 ]
 
 distribute_requires = minimal_requires + rpc_requires

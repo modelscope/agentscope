@@ -272,7 +272,7 @@ def sanitize_node_data(raw_info: dict) -> dict:
         ),
     )
     for key, value in copied_info["data"].get("args", {}).items():
-        if not value:
+        if value == "":
             raw_info["data"]["args"].pop(key)
             raw_info["data"]["source"].pop(key)
         elif is_callable_expression(value):

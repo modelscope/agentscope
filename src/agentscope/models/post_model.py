@@ -161,7 +161,7 @@ class PostAPIModelWrapperBase(ModelWrapperBase, ABC):
 
 
 class PostAPIChatWrapper(PostAPIModelWrapperBase):
-    """A post api model wrapper compatilble with openai chat, e.g., vLLM,
+    """A post api model wrapper compatible with openai chat, e.g., vLLM,
     FastChat."""
 
     model_type: str = "post_api_chat"

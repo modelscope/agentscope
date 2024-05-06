@@ -9,6 +9,7 @@ from agentscope.models import (
     OllamaChatWrapper,
     OllamaGenerationWrapper,
     GeminiChatWrapper,
+    ZhipuAIChatWrapper,
     DashScopeChatWrapper,
     DashScopeMultiModalWrapper,
 )
@@ -148,6 +149,36 @@ class ExampleTest(unittest.TestCase):
         model = DashScopeChatWrapper(
             config_name="",
             model_name="qwen-max",
+            api_key="xxx",
+        )
+
+        ground_truth = [
+            {
+                "content": "You are a helpful assistant",
+                "role": "system",
+            },
+            {
+                "content": (
+                    "## Dialogue History\n"
+                    "user: What is the weather today?\n"
+                    "assistant: It is sunny today"
+                ),
+                "role": "user",
+            },
+        ]
+
+        prompt = model.format(*self.inputs)
+        self.assertListEqual(prompt, ground_truth)
+
+        # wrong format
+        with self.assertRaises(TypeError):
+            model.format(*self.wrong_inputs)  # type: ignore[arg-type]
+
+    def test_zhipuai_chat(self) -> None:
+        """Unit test for the format function in zhipu chat api wrapper."""
+        model = ZhipuAIChatWrapper(
+            config_name="",
+            model_name="glm-4",
             api_key="xxx",
         )
 

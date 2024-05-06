@@ -35,8 +35,10 @@
 monitor = MonitorFactory.get_monitor()
 ```
 
-> 目前上述代码返回的是 `SqliteMonitor` 实例，它在 `agentscope.init` 中初始化。
-> `SqliteMonitor`  类是基于Sqlite3的 `MonitorBase` 类的默认实现。
+目前上述代码将会返回一个 `SqliteMonitor` 实例，该实例在 `agentscope.init` 中初始化。
+`SqliteMonitor` 是一个基于 Sqlite3 的 `MonitorBase` 实现，也是当前的默认 Monitor。
+
+如果不需要使用 Monitor 的相关功能，可以通过向 `agentscope.init` 中传入 `use_monitor=False` 来关闭 monitor 组件。在这种情况下，`MonitorFactory.get_monitor` 将返回一个 `DummyMonitor` 实例，该实例对外接口与 `SqliteMonitor` 完全相同，但内部不会执行任何操作。
 
 ### 基本使用
 

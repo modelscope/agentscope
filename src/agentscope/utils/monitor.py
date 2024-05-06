@@ -288,6 +288,59 @@ def sqlite_cursor(db_path: str, timeout: float = 30.0) -> Generator:
         conn.close()
 
 
+class DummyMonitor(MonitorBase):
+    """A monitor that does nothing"""
+
+    def register(
+        self,
+        metric_name: str,
+        metric_unit: Optional[str] = None,
+        quota: Optional[float] = None,
+    ) -> bool:
+        return True
+
+    def exists(self, metric_name: str) -> bool:
+        return True
+
+    def add(self, metric_name: str, value: float) -> bool:
+        return True
+
+    def update(self, values: dict, prefix: Optional[str] = None) -> None:
+        return None
+
+    def clear(self, metric_name: str) -> bool:
+        return True
+
+    def remove(self, metric_name: str) -> bool:
+        return True
+
+    def get_value(self, metric_name: str) -> Optional[float]:
+        return 0.0
+
+    def get_unit(self, metric_name: str) -> Optional[str]:
+        return ""
+
+    def get_quota(self, metric_name: str) -> Optional[float]:
+        return 0.0
+
+    def set_quota(self, metric_name: str, quota: float) -> bool:
+        return True
+
+    def get_metric(self, metric_name: str) -> Optional[dict]:
+        return {}
+
+    def get_metrics(self, filter_regex: Optional[str] = None) -> dict:
+        return {}
+
+    def register_budget(
+        self,
+        model_name: str,
+        value: float,
+        prefix: Optional[str] = "local",
+    ) -> bool:
+        return True
+
+
 class SqliteMonitor(MonitorBase):
     """A monitor based on sqlite"""
 
@@ -646,6 +699,8 @@ class MonitorFactory:
         if cls._instance is None:
             if impl_type is None or impl_type.lower() == "sqlite":
                 cls._instance = SqliteMonitor(db_path=db_path)
+            elif impl_type == "dummy":
+                cls._instance = DummyMonitor()
             else:
                 raise NotImplementedError(
                     "Monitor with type [{type}] is not implemented.",
