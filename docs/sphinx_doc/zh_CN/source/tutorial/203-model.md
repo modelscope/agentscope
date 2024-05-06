@@ -440,29 +440,6 @@ API如下：
 #### Post Request API
 
 <details>
-<summary>Post Request API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIModelWrapperBase</a></code>)</summary>
-
-```python
-{
-    "config_name": "my_postapiwrapper_config",
-    "model_type": "post_api",
-
-    # 必要参数
-    "api_url": "https://xxx.xxx",
-    "headers": {
-        # 例如："Authorization": "Bearer xxx",
-    },
-
-    # 可选参数
-    "messages_key": "messages",
-}
-```
-
-</details>
-
-> ⚠️ Post request API 返回原生的 HTTP 响应值， 且没有实现 `.format()`. 当运行examples例子时，推荐使用 `Post Request Chat API`.
-
-<details>
 <summary>Post Request Chat API  (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIModelWrapperBase</a></code>)</summary>
 
 ```python
@@ -480,10 +457,13 @@ API如下：
     "messages_key": "messages",
 }
 ```
+> ⚠️ Post Request Chat model wrapper (`PostAPIChatWrapper`) 有以下特性：
+> 1) 它的 `.format()` 方法会确保输入的信息（messages）会被转换成字典列表（a list of dict）.
+> 2) 它的 `._parse_response()` 方法假设了生成的文字内容会在 `response["data"]["response"]["choices"][0]["message"]["content"]`
 
 </details>
 
-</details>
+
 <details>
 <summary>Post Request Image Synthesis API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIDALLEWrapper</a></code>)</summary>
 
@@ -502,6 +482,9 @@ API如下：
     "messages_key": "messages",
 }
 ```
+> ⚠️  Post Request Image Synthesis model wrapper (`PostAPIDALLEWrapper`) 有以下特性:
+> 1) 它的 `._parse_response()` 方法假设生成的图片都以url的形式表示在`response["data"]["response"]["data"][i]["url"]`
+
 
 </details>
 
@@ -524,7 +507,38 @@ API如下：
 }
 ```
 
+> ⚠️ Post Request Embedding model wrapper (`PostAPIEmbeddingWrapper`) 有以下特性:
+> 1) 它的 `._parse_response()`方法假设生成的特征向量会存放在 `response["data"]["response"]["data"][i]["embedding"]`
+
 </details>
+
+<details>
+<summary>Post Request API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIModelWrapperBase</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_postapiwrapper_config",
+    "model_type": "post_api",
+
+    # 必要参数
+    "api_url": "https://xxx.xxx",
+    "headers": {
+        # 例如："Authorization": "Bearer xxx",
+    },
+
+    # 可选参数
+    "messages_key": "messages",
+}
+```
+> ⚠️ Post request model wrapper (`PostAPIModelWrapperBase`) 返回原生的 HTTP 响应值， 且没有实现 `.format()`. 当运行样例时，推荐使用 `Post Request Chat API`.
+> 使用`PostAPIModelWrapperBase`时，需要注意
+> 1) `.format()` 方法不能被调用；
+> 2) 或开发者希望实习自己的`.format()`和/或`._parse_response()`
+
+</details>
+
+
+
 
 
 <br/>

@@ -420,29 +420,6 @@ Here we provide example configurations for different model wrappers.
 #### Post Request API
 
 <details>
-<summary>Post Request API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIModelWrapperBase</a></code>)</summary>
-
-```python
-{
-    "config_name": "my_postapiwrapper_config",
-    "model_type": "post_api",
-
-    # Required parameters
-    "api_url": "https://xxx.xxx",
-    "headers": {
-        # e.g. "Authorization": "Bearer xxx",
-    },
-
-    # Optional parameters
-    "messages_key": "messages",
-}
-```
-
-</details>
-
-> ⚠️ Post request API returns raw HTTP response from the API in ModelResponse, and the `.format()` is not implemented. It is recommended to use `Post Request Chat API` when running examples with chats.
-
-<details>
 <summary>Post Request Chat API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIModelWrapperBase</a></code>)</summary>
 
 ```python
@@ -460,8 +437,12 @@ Here we provide example configurations for different model wrappers.
     "messages_key": "messages",
 }
 ```
+> ⚠️ The Post Request Chat model wrapper (`PostAPIChatWrapper`) has the following properties:
+> 1) The `.format()` function makes sure the input messages become a list of dicts.
+> 2) The `._parse_response()` function assumes the generated text will be in `response["data"]["response"]["choices"][0]["message"]["content"]`
 
 </details>
+
 
 
 <details>
@@ -482,6 +463,8 @@ Here we provide example configurations for different model wrappers.
     "messages_key": "messages",
 }
 ```
+> ⚠️ The Post Request Image Synthesis model wrapper (`PostAPIDALLEWrapper`) has the following properties:
+> 1) The `._parse_response()` function assumes the generated image will be presented as urls in `response["data"]["response"]["data"][i]["url"]`
 
 </details>
 
@@ -504,8 +487,36 @@ Here we provide example configurations for different model wrappers.
     "messages_key": "messages",
 }
 ```
+> ⚠️ The Post Request Embedding model wrapper (`PostAPIEmbeddingWrapper`) has the following properties:
+> 1) The `._parse_response()` function assumes the generated embeddings will be in `response["data"]["response"]["data"][i]["embedding"]`
 
 </details>
+
+<details>
+<summary>Post Request API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIModelWrapperBase</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_postapiwrapper_config",
+    "model_type": "post_api",
+
+    # Required parameters
+    "api_url": "https://xxx.xxx",
+    "headers": {
+        # e.g. "Authorization": "Bearer xxx",
+    },
+
+    # Optional parameters
+    "messages_key": "messages",
+}
+```
+> ⚠️ Post Request model wrapper (`PostAPIModelWrapperBase`) returns raw HTTP responses from the API in ModelResponse, and the `.format()` is not implemented. It is recommended to use `Post Request Chat API` when running examples with chats.
+> `PostAPIModelWrapperBase` can be used when
+> 1) only the raw HTTP response is wanted and `.format()` is not called;
+> 2) Or, the developers want to overwrite the `.format()` and/or `._parse_response()` functions.
+
+</details>
+
 
 <br/>
 
