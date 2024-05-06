@@ -23,10 +23,15 @@ class ZhipuAIWrapperBase(ModelWrapperBase, ABC):
         config_name: str,
         model_name: str = None,
         api_key: str = None,
+        client_args: dict = None,
         generate_args: dict = None,
         **kwargs: Any,
     ) -> None:
         """Initialize the zhipuai client.
+        To init the ZhipuAi client, the api_key is required.
+        Other client args include base_url and timeout.
+        The base_url is set to https://open.bigmodel.cn/api/paas/v4
+        if not specified. The timeout arg is set for http request timeout.
 
         Args:
             config_name (`str`):
@@ -36,6 +41,8 @@ class ZhipuAIWrapperBase(ModelWrapperBase, ABC):
             api_key (`str`, default `None`):
                 The API key for ZhipuAI API. If not specified, it will
                 be read from the environment variable.
+            client_args (`dict`, default `None`):
+                The extra keyword arguments to initialize the OpenAI client.
             generate_args (`dict`, default `None`):
                 The extra keyword arguments used in zhipuai api generation,
                 e.g. `temperature`, `seed`.
@@ -57,7 +64,7 @@ class ZhipuAIWrapperBase(ModelWrapperBase, ABC):
 
         self.client = zhipuai.ZhipuAI(
             api_key=api_key,
-            **kwargs,
+            **(client_args or {}),
         )
 
         self._register_default_metrics()
