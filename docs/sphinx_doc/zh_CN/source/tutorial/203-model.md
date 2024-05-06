@@ -440,7 +440,7 @@ API如下：
 #### Post Request API
 
 <details>
-<summary>Post request API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIModelWrapperBase</a></code>)</summary>
+<summary>Post Request API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIModelWrapperBase</a></code>)</summary>
 
 ```python
 {
@@ -459,8 +459,11 @@ API如下：
 ```
 
 </details>
+
+> ⚠️ Post request API 返回原生的 HTTP 响应值， 且没有实现 `.format()`. 当运行examples例子时，推荐使用 `Post Request Chat API`.
+
 <details>
-<summary>Post request API for Chat (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIModelWrapperBase</a></code>)</summary>
+<summary>Post Request Chat API  (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIModelWrapperBase</a></code>)</summary>
 
 ```python
 {
@@ -482,7 +485,7 @@ API如下：
 
 </details>
 <details>
-<summary>Post request API for Image Synthesis (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIDALLEWrapper</a></code>)</summary>
+<summary>Post Request Image Synthesis API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIDALLEWrapper</a></code>)</summary>
 
 ```python
 {
@@ -502,9 +505,8 @@ API如下：
 
 </details>
 
-</details>
 <details>
-<summary>Post request API for Embedding (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIEmbeddingWrapper</a></code>)</summary>
+<summary>Post Request Embedding API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIEmbeddingWrapper</a></code>)</summary>
 
 ```python
 {
@@ -524,7 +526,6 @@ API如下：
 
 </details>
 
-</details>
 
 <br/>
 
