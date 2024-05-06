@@ -14,6 +14,7 @@ Currently, AgentScope supports the following model service APIs:
 - OpenAI API, including chat, image generation (DALL-E), and Embedding.
 - DashScope API, including chat, image sythesis and text embedding.
 - Gemini API, including chat and embedding.
+- ZhipuAI API, including chat and embedding.
 - Ollama API, including chat, embedding and generation.
 - Post Request API, model inference services based on Post
   requests, including Huggingface/ModelScope Inference API and various
@@ -81,6 +82,8 @@ In the current AgentScope, the supported `model_type` types, the corresponding
 |                        | Multimodal      | [`DashScopeMultiModalWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py)     | `"dashscope_multimodal"`      | qwen-vl-plus, qwen-vl-max, qwen-audio-turbo, ... |
 | Gemini API             | Chat            | [`GeminiChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py)                 | `"gemini_chat"`               | gemini-pro, ...                                  |
 |                        | Embedding       | [`GeminiEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py)            | `"gemini_embedding"`          | models/embedding-001, ...                        |
+| ZhipuAI API             | Chat            | [`ZhipuAIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/zhipu_model.py)                 | `"zhipuai_chat"`               | glm4, ...                                  |
+|                        | Embedding       | [`ZhipuAIEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/zhipu_model.py)            | `"zhipuai_embedding"`          | embedding-2, ...                        |
 | ollama                 | Chat            | [`OllamaChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)                 | `"ollama_chat"`               | llama2, ...                                      |
 |                        | Embedding       | [`OllamaEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)            | `"ollama_embedding"`          | llama2, ...                                      |
 |                        | Generation      | [`OllamaGenerationWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)           | `"ollama_generate"`           | llama2, ...                                      |
@@ -302,6 +305,48 @@ Here we provide example configurations for different model wrappers.
 </details>
 
 <br/>
+
+
+#### ZhipuAI API
+
+<details>
+<summary>ZhipuAI Chat API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/zhipu_model.py">agentscope.models.ZhipuAIChatWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_zhipuai_chat_config",
+    "model_type": "zhipuai_chat",
+
+    # Required parameters
+    "model_name": "{model_name}",               # The model name in ZhipuAI API, e.g. glm-4
+
+    # Optional parameters
+    "api_key": "{your_api_key}"
+}
+```
+
+</details>
+
+<details>
+<summary>ZhipuAI Embedding API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/zhipu_model.py">agentscope.models.ZhipuAIEmbeddingWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_zhipuai_embedding_config",
+    "model_type": "zhipuai_embedding",
+
+    # Required parameters
+    "model_name": "{model_name}",               # The model name in ZhipuAI API, e.g. embedding-2
+
+    # Optional parameters
+    "api_key": "{your_api_key}",
+}
+```
+
+</details>
+
+<br/>
+
 
 #### Ollama API
 
