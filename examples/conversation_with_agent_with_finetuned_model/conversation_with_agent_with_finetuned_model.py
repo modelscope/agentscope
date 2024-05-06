@@ -10,9 +10,9 @@ Features include model and tokenizer loading,
 and fine-tuning on the databricks-dolly-15k dataset with adjustable parameters.
 """
 from finetune_dialogagent import Finetune_DialogAgent
-from huggingface_model import (
-    HuggingFaceWrapper,
-)  # pylint: disable=unused-import
+
+# pylint: disable=unused-import
+from huggingface_model import HuggingFaceWrapper
 import agentscope
 from agentscope.agents.user_agent import UserAgent
 from agentscope.pipelines.functional import sequentialpipeline
