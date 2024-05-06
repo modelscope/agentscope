@@ -42,7 +42,7 @@ class ZhipuAIWrapperBase(ModelWrapperBase, ABC):
                 The API key for ZhipuAI API. If not specified, it will
                 be read from the environment variable.
             client_args (`dict`, default `None`):
-                The extra keyword arguments to initialize the OpenAI client.
+                The extra keyword arguments to initialize the ZhipuAI client.
             generate_args (`dict`, default `None`):
                 The extra keyword arguments used in zhipuai api generation,
                 e.g. `temperature`, `seed`.
