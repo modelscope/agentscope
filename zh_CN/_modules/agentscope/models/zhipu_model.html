@@ -1,0 +1,499 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.models.zhipu_model &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=7d86a446"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/translations.js?v=beaddf03"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../../../en/_modules/agentscope/models/zhipu_model.html">English</a></li> |
+    <a href="../../../../zh_CN/_modules/agentscope/models/zhipu_model.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/quick_start.html">快速上手</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/advance.html">进阶使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.exception.html">agentscope.exception</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">模块代码</a></li>
+          <li class="breadcrumb-item"><a href="../models.html">agentscope.models</a></li>
+      <li class="breadcrumb-item active">agentscope.models.zhipu_model</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>agentscope.models.zhipu_model 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Model wrapper for ZhipuAI models&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span>
+
+<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+
+<span class="kn">from</span> <span class="nn">.model</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ModelResponse</span>
+<span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">MessageBase</span>
+<span class="kn">from</span> <span class="nn">..utils.tools</span> <span class="kn">import</span> <span class="n">_convert_to_str</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">zhipuai</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">zhipuai</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="ZhipuAIWrapperBase">
+<a class="viewcode-back" href="../../../agentscope.models.zhipu_model.html#agentscope.models.ZhipuAIWrapperBase">[文档]</a>
+<span class="k">class</span> <span class="nc">ZhipuAIWrapperBase</span><span class="p">(</span><span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for ZhipuAI API.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ZhipuAIWrapperBase.__init__">
+<a class="viewcode-back" href="../../../agentscope.models.zhipu_model.html#agentscope.models.ZhipuAIWrapperBase.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">client_args</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">generate_args</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the zhipuai client.</span>
+<span class="sd">        To init the ZhipuAi client, the api_key is required.</span>
+<span class="sd">        Other client args include base_url and timeout.</span>
+<span class="sd">        The base_url is set to https://open.bigmodel.cn/api/paas/v4</span>
+<span class="sd">        if not specified. The timeout arg is set for http request timeout.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            config_name (`str`):</span>
+<span class="sd">                The name of the model config.</span>
+<span class="sd">            model_name (`str`, default `None`):</span>
+<span class="sd">                The name of the model to use in ZhipuAI API.</span>
+<span class="sd">            api_key (`str`, default `None`):</span>
+<span class="sd">                The API key for ZhipuAI API. If not specified, it will</span>
+<span class="sd">                be read from the environment variable.</span>
+<span class="sd">            client_args (`dict`, default `None`):</span>
+<span class="sd">                The extra keyword arguments to initialize the ZhipuAI client.</span>
+<span class="sd">            generate_args (`dict`, default `None`):</span>
+<span class="sd">                The extra keyword arguments used in zhipuai api generation,</span>
+<span class="sd">                e.g. `temperature`, `seed`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">model_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">model_name</span> <span class="o">=</span> <span class="n">config_name</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;model_name is not set, use config_name instead.&quot;</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_name</span><span class="o">=</span><span class="n">config_name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">zhipuai</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot find zhipuai package in current python environment.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="n">model_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_args</span> <span class="o">=</span> <span class="n">generate_args</span> <span class="ow">or</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">zhipuai</span><span class="o">.</span><span class="n">ZhipuAI</span><span class="p">(</span>
+            <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span>
+            <span class="o">**</span><span class="p">(</span><span class="n">client_args</span> <span class="ow">or</span> <span class="p">{}),</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_default_metrics</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ZhipuAIWrapperBase.format">
+<a class="viewcode-back" href="../../../agentscope.models.zhipu_model.html#agentscope.models.ZhipuAIWrapperBase.format">[文档]</a>
+    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">]],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Model Wrapper [</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">] doesn&#39;t &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;need to format the input. Please try to use the &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;model wrapper directly.&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ZhipuAIChatWrapper">
+<a class="viewcode-back" href="../../../agentscope.models.zhipu_model.html#agentscope.models.ZhipuAIChatWrapper">[文档]</a>
+<span class="k">class</span> <span class="nc">ZhipuAIChatWrapper</span><span class="p">(</span><span class="n">ZhipuAIWrapperBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for ZhipuAI&#39;s chat API.&quot;&quot;&quot;</span>
+
+    <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;zhipuai_chat&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_register_default_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Set monitor accordingly</span>
+        <span class="c1"># TODO: set quota to the following metrics</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;call_counter&quot;</span><span class="p">),</span>
+            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;times&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;prompt_tokens&quot;</span><span class="p">),</span>
+            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;completion_tokens&quot;</span><span class="p">),</span>
+            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;total_tokens&quot;</span><span class="p">),</span>
+            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Processes a list of messages to construct a payload for the ZhipuAI</span>
+<span class="sd">        API call. It then makes a request to the ZhipuAI API and returns the</span>
+<span class="sd">        response. This method also updates monitoring metrics based on the</span>
+<span class="sd">        API response.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            messages (`list`):</span>
+<span class="sd">                A list of messages to process.</span>
+<span class="sd">            **kwargs (`Any`):</span>
+<span class="sd">                The keyword arguments to ZhipuAI chat completions API,</span>
+<span class="sd">                e.g. `temperature`, `max_tokens`, `top_p`, etc. Please refer to</span>
+<span class="sd">                https://open.bigmodel.cn/dev/api</span>
+<span class="sd">                for more detailed arguments.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `ModelResponse`:</span>
+<span class="sd">                The response text in text field, and the raw response in</span>
+<span class="sd">                raw field.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            `parse_func`, `fault_handler` and `max_retries` are reserved for</span>
+<span class="sd">            `_response_parse_decorator` to parse and check the response</span>
+<span class="sd">            generated by model wrapper. Their usages are listed as follows:</span>
+<span class="sd">                - `parse_func` is a callable function used to parse and check</span>
+<span class="sd">                the response generated by the model, which takes the response</span>
+<span class="sd">                as input.</span>
+<span class="sd">                - `max_retries` is the maximum number of retries when the</span>
+<span class="sd">                `parse_func` raise an exception.</span>
+<span class="sd">                - `fault_handler` is a callable function which is called</span>
+<span class="sd">                when the response generated by the model is invalid after</span>
+<span class="sd">                `max_retries` retries.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># step1: prepare keyword arguments</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">generate_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">}</span>
+
+        <span class="c1"># step2: checking messages</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;ZhipuAI `messages` field expected type `list`, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;got `</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span><span class="si">}</span><span class="s2">` instead.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="s2">&quot;role&quot;</span> <span class="ow">in</span> <span class="n">msg</span> <span class="ow">and</span> <span class="s2">&quot;content&quot;</span> <span class="ow">in</span> <span class="n">msg</span> <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">messages</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Each message in the &#39;messages&#39; list must contain a &#39;role&#39; &quot;</span>
+                <span class="s2">&quot;and &#39;content&#39; key for ZhipuAI API.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># step3: forward to generate response</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+            <span class="n">messages</span><span class="o">=</span><span class="n">messages</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># step4: record the api invocation if needed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_model_invocation</span><span class="p">(</span>
+            <span class="n">arguments</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+                <span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="n">messages</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># step5: update monitor accordingly</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_monitor</span><span class="p">(</span><span class="n">call_counter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">model_dump</span><span class="p">())</span>
+
+        <span class="c1"># step6: return response</span>
+        <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
+            <span class="n">text</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">content</span><span class="p">,</span>
+            <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(),</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="ZhipuAIChatWrapper.format">
+<a class="viewcode-back" href="../../../agentscope.models.zhipu_model.html#agentscope.models.ZhipuAIChatWrapper.format">[文档]</a>
+    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">]],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the input string and dictionary into the format that</span>
+<span class="sd">        ZhipuAI Chat API required.</span>
+
+<span class="sd">        In this format function, the input messages are formatted into a</span>
+<span class="sd">        single system messages with format &quot;{name}: {content}&quot; for each</span>
+<span class="sd">        message. Note this strategy maybe not suitable for all scenarios,</span>
+<span class="sd">        and developers are encouraged to implement their own prompt</span>
+<span class="sd">        engineering strategies.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            args (`Union[MessageBase, Sequence[MessageBase]]`):</span>
+<span class="sd">                The input arguments to be formatted, where each argument</span>
+<span class="sd">                should be a `Msg` object, or a list of `Msg` objects.</span>
+<span class="sd">                In distribution, placeholder is also allowed.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `List[dict]`:</span>
+<span class="sd">                The formatted messages in the format that ZhipuAI Chat API</span>
+<span class="sd">                required.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Parse all information into a list of messages</span>
+        <span class="n">input_msgs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">MessageBase</span><span class="p">):</span>
+                <span class="n">input_msgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span>
+                <span class="nb">isinstance</span><span class="p">(</span><span class="n">__</span><span class="p">,</span> <span class="n">MessageBase</span><span class="p">)</span> <span class="k">for</span> <span class="n">__</span> <span class="ow">in</span> <span class="n">_</span>
+            <span class="p">):</span>
+                <span class="n">input_msgs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;The input should be a Msg object or a list &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;of Msg objects, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="n">messages</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># record dialog history as a list of strings</span>
+        <span class="n">dialogue</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">unit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_msgs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">unit</span><span class="o">.</span><span class="n">role</span> <span class="o">==</span> <span class="s2">&quot;system&quot;</span><span class="p">:</span>
+                <span class="c1"># system prompt</span>
+                <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="n">unit</span><span class="o">.</span><span class="n">role</span><span class="p">,</span>
+                        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">_convert_to_str</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">content</span><span class="p">),</span>
+                    <span class="p">},</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Merge all messages into a dialogue history prompt</span>
+                <span class="n">dialogue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">unit</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">_convert_to_str</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">content</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="n">dialogue_history</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dialogue</span><span class="p">)</span>
+
+        <span class="n">user_content_template</span> <span class="o">=</span> <span class="s2">&quot;## Dialogue History</span><span class="se">\n</span><span class="si">{dialogue_history}</span><span class="s2">&quot;</span>
+
+        <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">user_content_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">dialogue_history</span><span class="o">=</span><span class="n">dialogue_history</span><span class="p">,</span>
+                <span class="p">),</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">messages</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ZhipuAIEmbeddingWrapper">
+<a class="viewcode-back" href="../../../agentscope.models.zhipu_model.html#agentscope.models.ZhipuAIEmbeddingWrapper">[文档]</a>
+<span class="k">class</span> <span class="nc">ZhipuAIEmbeddingWrapper</span><span class="p">(</span><span class="n">ZhipuAIWrapperBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for ZhipuAI embedding API.&quot;&quot;&quot;</span>
+
+    <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;zhipuai_embedding&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">texts</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Embed the messages with ZhipuAI embedding API.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            texts (`str`):</span>
+<span class="sd">                The messages used to embed.</span>
+<span class="sd">            **kwargs (`Any`):</span>
+<span class="sd">                The keyword arguments to ZhipuAI embedding API,</span>
+<span class="sd">                e.g. `encoding_format`, `user`. Please refer to</span>
+<span class="sd">                https://open.bigmodel.cn/dev/api#text_embedding</span>
+<span class="sd">                for more detailed arguments.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `ModelResponse`:</span>
+<span class="sd">                A list of embeddings in embedding field and the</span>
+<span class="sd">                raw response in raw field.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            `parse_func`, `fault_handler` and `max_retries` are reserved for</span>
+<span class="sd">            `_response_parse_decorator` to parse and check the response</span>
+<span class="sd">            generated by model wrapper. Their usages are listed as follows:</span>
+<span class="sd">                - `parse_func` is a callable function used to parse and check</span>
+<span class="sd">                the response generated by the model, which takes the response</span>
+<span class="sd">                as input.</span>
+<span class="sd">                - `max_retries` is the maximum number of retries when the</span>
+<span class="sd">                `parse_func` raise an exception.</span>
+<span class="sd">                - `fault_handler` is a callable function which is called</span>
+<span class="sd">                when the response generated by the model is invalid after</span>
+<span class="sd">                `max_retries` retries.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># step1: prepare keyword arguments</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">generate_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">}</span>
+
+        <span class="c1"># step2: forward to generate response</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">embeddings</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="nb">input</span><span class="o">=</span><span class="n">texts</span><span class="p">,</span>
+            <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># step3: record the model api invocation if needed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_model_invocation</span><span class="p">(</span>
+            <span class="n">arguments</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+                <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">texts</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># step4: update monitor accordingly</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_monitor</span><span class="p">(</span><span class="n">call_counter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">model_dump</span><span class="p">())</span>
+
+        <span class="c1"># step5: return response</span>
+        <span class="n">response_json</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
+            <span class="n">embedding</span><span class="o">=</span><span class="p">[</span><span class="n">_</span><span class="p">[</span><span class="s2">&quot;embedding&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">response_json</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]],</span>
+            <span class="n">raw</span><span class="o">=</span><span class="n">response_json</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_register_default_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Set monitor accordingly</span>
+        <span class="c1"># TODO: set quota to the following metrics</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;call_counter&quot;</span><span class="p">),</span>
+            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;times&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;prompt_tokens&quot;</span><span class="p">),</span>
+            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;completion_tokens&quot;</span><span class="p">),</span>
+            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;total_tokens&quot;</span><span class="p">),</span>
+            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

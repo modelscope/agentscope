@@ -121,6 +121,7 @@ model services.</p>
 <li><p>OpenAI API, including chat, image generation (DALL-E), and Embedding.</p></li>
 <li><p>DashScope API, including chat, image sythesis and text embedding.</p></li>
 <li><p>Gemini API, including chat and embedding.</p></li>
+<li><p>ZhipuAI API, including chat and embedding.</p></li>
 <li><p>Ollama API, including chat, embedding and generation.</p></li>
 <li><p>Post Request API, model inference services based on Post
 requests, including Huggingface/ModelScope Inference API and various
@@ -232,6 +233,18 @@ It corresponds to the <code class="docutils literal notranslate"><span class="pr
 <td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py"><code class="docutils literal notranslate"><span class="pre">GeminiEmbeddingWrapper</span></code></a></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;gemini_embedding&quot;</span></code></p></td>
 <td><p>models/embedding-001, …</p></td>
+</tr>
+<tr class="row-odd"><td><p>ZhipuAI API</p></td>
+<td><p>Chat</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/zhipu_model.py"><code class="docutils literal notranslate"><span class="pre">ZhipuAIChatWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;zhipuai_chat&quot;</span></code></p></td>
+<td><p>glm4, …</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p>Embedding</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/zhipu_model.py"><code class="docutils literal notranslate"><span class="pre">ZhipuAIEmbeddingWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;zhipuai_embedding&quot;</span></code></p></td>
+<td><p>embedding-2, …</p></td>
 </tr>
 <tr class="row-odd"><td><p>ollama</p></td>
 <td><p>Chat</p></td>
@@ -449,6 +462,40 @@ Here we provide example configurations for different model wrappers.</p>
 
     <span class="c1"># Optional parameters</span>
     <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{your_api_key}</span><span class="s2">&quot;</span><span class="p">,</span>                <span class="c1"># If not provided, the API key will be read from the environment variable GEMINI_API_KEY</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</details>
+<br/>
+</section>
+<section id="zhipuai-api">
+<h4>ZhipuAI API<a class="headerlink" href="#zhipuai-api" title="Link to this heading"></a></h4>
+<details>
+<summary>ZhipuAI Chat API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/zhipu_model.py">agentscope.models.ZhipuAIChatWrapper</a></code>)</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_zhipuai_chat_config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;zhipuai_chat&quot;</span><span class="p">,</span>
+
+    <span class="c1"># Required parameters</span>
+    <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{model_name}</span><span class="s2">&quot;</span><span class="p">,</span>               <span class="c1"># The model name in ZhipuAI API, e.g. glm-4</span>
+
+    <span class="c1"># Optional parameters</span>
+    <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{your_api_key}</span><span class="s2">&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</details>
+<details>
+<summary>ZhipuAI Embedding API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/zhipu_model.py">agentscope.models.ZhipuAIEmbeddingWrapper</a></code>)</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_zhipuai_embedding_config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;zhipuai_embedding&quot;</span><span class="p">,</span>
+
+    <span class="c1"># Required parameters</span>
+    <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{model_name}</span><span class="s2">&quot;</span><span class="p">,</span>               <span class="c1"># The model name in ZhipuAI API, e.g. embedding-2</span>
+
+    <span class="c1"># Optional parameters</span>
+    <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{your_api_key}</span><span class="s2">&quot;</span><span class="p">,</span>
 <span class="p">}</span>
 </pre></div>
 </div>

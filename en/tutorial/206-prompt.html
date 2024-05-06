@@ -148,6 +148,7 @@ generation model APIs.</p>
 <li><p><a class="reference internal" href="#ollamachatwrapper"><span class="xref myst">OllamaChatWrapper</span></a></p></li>
 <li><p><a class="reference internal" href="#ollamagenerationwrapper"><span class="xref myst">OllamaGenerationWrapper</span></a></p></li>
 <li><p><a class="reference internal" href="#geminichatwrapper"><span class="xref myst">GeminiChatWrapper</span></a></p></li>
+<li><p><a class="reference internal" href="#zhipuaichatwrapper"><span class="xref myst">ZhipuAIChatWrapper</span></a></p></li>
 </ul>
 <p>These strategies are implemented in the <code class="docutils literal notranslate"><span class="pre">format</span></code> functions of the model
 wrapper classes.
@@ -460,6 +461,45 @@ prompt according to their needs.</p>
 <span class="w">      </span><span class="s2">&quot;You are a helpful assistant\n## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!&quot;</span>
 <span class="w">    </span><span class="o">]</span>
 <span class="w">  </span><span class="o">}</span>
+<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="zhipuaichatwrapper">
+<h3><code class="docutils literal notranslate"><span class="pre">ZhipuAIChatWrapper</span></code><a class="headerlink" href="#zhipuaichatwrapper" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">ZhipuAIChatWrapper</span></code> encapsulates the ZhipuAI chat API, which takes a list of messages as input. The message must obey the following rules:</p>
+<ul class="simple">
+<li><p>Require <code class="docutils literal notranslate"><span class="pre">role</span></code> and <code class="docutils literal notranslate"><span class="pre">content</span></code> fields, and <code class="docutils literal notranslate"><span class="pre">role</span></code> must be either <code class="docutils literal notranslate"><span class="pre">&quot;user&quot;</span></code>
+<code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;assistant&quot;</span></code>.</p></li>
+<li><p>There must be at least one <code class="docutils literal notranslate"><span class="pre">user</span></code> message.</p></li>
+</ul>
+<section id="id6">
+<h4>Prompt Strategy<a class="headerlink" href="#id6" title="Link to this heading"></a></h4>
+<p>If the role field of the first message is <code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>, it will be converted into a single message with the <code class="docutils literal notranslate"><span class="pre">role</span></code> field as <code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code> and the <code class="docutils literal notranslate"><span class="pre">content</span></code> field as the system message. The rest of the messages will be converted into a message with the <code class="docutils literal notranslate"><span class="pre">role</span></code> field as <code class="docutils literal notranslate"><span class="pre">&quot;user&quot;</span></code> and the <code class="docutils literal notranslate"><span class="pre">content</span></code> field as the dialogue history.</p>
+<p>An example is shown below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ZhipuAIChatWrapper</span>
+<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">ZhipuAIChatWrapper</span><span class="p">(</span>
+    <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="c1"># empty since we directly initialize the model wrapper</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;glm-4&quot;</span><span class="p">,</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;your api key&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">prompt</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+   <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;You&#39;re a helpful assistant&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">),</span>   <span class="c1"># Msg object</span>
+   <span class="p">[</span>                                                             <span class="c1"># a list of Msg objects</span>
+      <span class="n">Msg</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Bob&quot;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s2">&quot;Hi!&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">),</span>
+      <span class="n">Msg</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s2">&quot;Nice to meet you!&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">),</span>
+   <span class="p">],</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>
+<span class="w">  </span><span class="o">{</span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;system&quot;</span>,<span class="w"> </span><span class="s2">&quot;content&quot;</span>:<span class="w"> </span><span class="s2">&quot;You are a helpful assistant&quot;</span><span class="o">}</span>,
+<span class="w">  </span><span class="o">{</span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;user&quot;</span>,<span class="w"> </span><span class="s2">&quot;content&quot;</span>:<span class="w"> </span><span class="s2">&quot;## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!&quot;</span><span class="o">}</span>,
 <span class="o">]</span>
 </pre></div>
 </div>
