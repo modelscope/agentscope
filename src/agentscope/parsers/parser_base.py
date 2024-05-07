@@ -54,7 +54,7 @@ class ParserBase(ABC):
             raise TagNotFoundError(
                 f"Missing "
                 f"tag{'' if len(missing_tags)==1 else 's'} "
-                f"{' and '.join(missing_tags)} in response.",
+                f"{' and '.join(missing_tags)} in response: {text}",
                 raw_response=text,
                 missing_begin_tag=index_start == -1,
                 missing_end_tag=index_end == -1,
