@@ -13,26 +13,20 @@ from agentscope.utils.common import requests_get
 def dblp_search_publications(
     question: str,
     num_results: int = 30,
-    first_hit: int = 0,
+    start: int = 0,
     num_completion: int = 10,
 ) -> ServiceResponse:
-    """
-    Search publications in the DBLP database
-    via its public API and return structured
-    publication data.
+    """Search publications in the DBLP database.
 
     Args:
         question (`str`):
-            The search query string to look up
-            in the DBLP database.
+            The search query string.
         num_results (`int`, defaults to `30`):
-            The number of search results to fetch.
-        firts_hit (`int`, defaults to `0`):
-            The first hit in the numbered sequence
-            of search results to return
+            The number of search results to return.
+        start (`int`, defaults to `0`):
+            The index of the first search result to return.
         num_completion (`int`, defaults to `10`):
-            The number of completions to generate
-            for the search query.
+            The number of completions to generate.
 
     Returns:
         `ServiceResponse`: A dictionary containing `status` and `content`.
@@ -95,7 +89,7 @@ def dblp_search_publications(
         "q": question,
         "format": "json",
         "h": num_results,
-        "f": first_hit,
+        "f": start,
         "c": num_completion,
     }
     search_results = requests_get(url, params)
@@ -141,25 +135,21 @@ def dblp_search_publications(
 def dblp_search_authors(
     question: str,
     num_results: int = 30,
-    first_hit: int = 0,
+    start: int = 0,
     num_completion: int = 10,
 ) -> ServiceResponse:
-    """
-    Search for author information in the DBLP database
-    via its public API and return structured author data.
+    """Search for author information in the DBLP database.
 
     Args:
         question (`str`):
-            The search query string to look up
-            authors in the DBLP database.
+            The search query string.
         num_results (`int`, defaults to `30`):
-            The total number of search results to fetch.
-        firts_hit (`int`, defaults to `0`):
-            The first hit in the numbered sequence
-            of search results to return
+            The number of search results to return.
+        start (`int`, defaults to `0`):
+            The index of the first search result to return.
         num_completion (`int`, defaults to `10`):
-            The number of completions to generate
-            for the search query.
+            The number of completions to generate.
+
 
     Returns:
         `ServiceResponse`: A dictionary containing `status` and `content`.
@@ -211,7 +201,7 @@ def dblp_search_authors(
         "q": question,
         "format": "json",
         "h": num_results,
-        "f": first_hit,
+        "f": start,
         "c": num_completion,
     }
     search_results = requests_get(url, params)
@@ -243,22 +233,20 @@ def dblp_search_authors(
 def dblp_search_venues(
     question: str,
     num_results: int = 30,
-    first_hit: int = 0,
+    start: int = 0,
     num_completion: int = 10,
 ) -> ServiceResponse:
-    """
-    Search for venue information in the DBLP database
-    via its public API and return structured venue data.
+    """Search for venue information in the DBLP database.
 
     Args:
         question (`str`):
-            The search query string to look up venues in the DBLP database.
+            The search query string.
         num_results (`int`, defaults to `30`):
-            The total number of search results to fetch.
-        firts_hit (`int`, defaults to `0`):
-            The first hit in the numbered sequence of search results to return
+            The number of search results to return.
+        start (`int`, defaults to `0`):
+            The index of the first search result to return.
         num_completion (`int`, defaults to `10`):
-            The number of completions to generate for the search query.
+            The number of completions to generate.
 
     Returns:
         `ServiceResponse`: A dictionary containing `status` and `content`.
@@ -306,7 +294,7 @@ def dblp_search_venues(
         "q": question,
         "format": "json",
         "h": num_results,
-        "f": first_hit,
+        "f": start,
         "c": num_completion,
     }
     search_results = requests_get(url, params)
