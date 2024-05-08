@@ -192,12 +192,14 @@ class Tht(MessageBase):
         self,
         content: Any,
         timestamp: Optional[str] = None,
+        **kwargs: Any,
     ) -> None:
         super().__init__(
             name="thought",
             content=content,
             role="assistant",
             timestamp=timestamp,
+            **kwargs,
         )
 
     def to_str(self) -> str:
@@ -399,7 +401,7 @@ def deserialize(s: str) -> Union[MessageBase, Sequence]:
         return [deserialize(s) for s in js_msg["__value"]]
     elif msg_type not in _MSGS:
         raise NotImplementedError(
-            "Deserialization of {msg_type} is not supported.",
+            f"Deserialization of {msg_type} is not supported.",
         )
     return _MSGS[msg_type](**js_msg)
 

@@ -16,6 +16,7 @@ from .memory import MemoryBase
 from ..models import load_model_by_config_name
 from ..service.retrieval.retrieval_from_list import retrieve_from_list
 from ..service.retrieval.similarity import Embedding
+from ..message import deserialize, serialize, Msg, Tht, PlaceholderMessage
 
 
 class TemporaryMemory(MemoryBase):
@@ -46,7 +47,7 @@ class TemporaryMemory(MemoryBase):
         if memories is None:
             return
 
-        if not isinstance(memories, list):
+        if not isinstance(memories, Sequence):
             record_memories = [memories]
         else:
             record_memories = memories
@@ -54,6 +55,12 @@ class TemporaryMemory(MemoryBase):
         # if memory doesn't have id attribute, we skip the checking
         memories_idx = set(_.id for _ in self._content if hasattr(_, "id"))
         for memory_unit in record_memories:
+            if "_is_placeholder" in memory_unit:
+                memory_unit = PlaceholderMessage(**memory_unit)
+            elif "name" in memory_unit and memory_unit["name"] == "thought":
+                memory_unit = Tht(**memory_unit)
+            else:
+                memory_unit = Msg(**memory_unit)
             # add to memory if it's new
             if (
                 not hasattr(memory_unit, "id")
@@ -110,7 +117,7 @@ class TemporaryMemory(MemoryBase):
 
         if to_mem is False and file_path is not None:
             with open(file_path, "w", encoding="utf-8") as f:
-                json.dump(self._content, f, indent=4)
+                f.write(serialize(self._content))
         else:
             raise NotImplementedError(
                 "file type only supports "
@@ -126,10 +133,10 @@ class TemporaryMemory(MemoryBase):
         if isinstance(memories, str):
             if os.path.isfile(memories):
                 with open(memories, "r", encoding="utf-8") as f:
-                    self.add(json.load(f))
+                    load_memories = deserialize(f.read())
             else:
                 try:
-                    load_memories = json.loads(memories)
+                    load_memories = deserialize(memories)
                     if not isinstance(load_memories, dict) and not isinstance(
                         load_memories,
                         list,
