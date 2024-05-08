@@ -76,7 +76,7 @@ logger.error("The agent encountered an unexpected error while processing a reque
 import agentscope
 
 agentscope.web.init(
-    path_save="YOUR_SAVE_PATH"
+    path_save="YOUR_output_dir"
 )
 ```
 

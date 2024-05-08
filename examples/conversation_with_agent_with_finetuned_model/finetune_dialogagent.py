@@ -56,15 +56,16 @@ class Finetune_DialogAgent(DialogAgent):
 
     def load_model(
         self,
-        model_id: Optional[str] = None,
+        pretrained_model_name_or_path: Optional[str] = None,
         local_model_path: Optional[str] = None,
     ) -> None:
         """
         Load a new model into the agent.
 
         Arguments:
-            model_id (str): The Hugging Face model ID or a custom identifier.
-                            Needed if loading model from Hugging Face.
+            pretrained_model_name_or_path (str): The Hugging Face
+                             model ID or a custom identifier.
+                             Needed if loading model from Hugging Face.
             local_model_path (str, optional): Path to a locally saved model.
 
         Raises:
@@ -73,7 +74,10 @@ class Finetune_DialogAgent(DialogAgent):
         """
 
         if hasattr(self.model, "load_model"):
-            self.model.load_model(model_id, local_model_path)
+            self.model.load_model(
+                pretrained_model_name_or_path,
+                local_model_path,
+            )
         else:
             logger.error(
                 "The model wrapper does not support dynamic model loading.",
@@ -81,14 +85,15 @@ class Finetune_DialogAgent(DialogAgent):
 
     def load_tokenizer(
         self,
-        model_id: Optional[str] = None,
+        pretrained_model_name_or_path: Optional[str] = None,
         local_tokenizer_path: Optional[str] = None,
     ) -> None:
         """
         Load a new tokenizer for the agent.
 
         Arguments:
-            model_id (str): The Hugging Face model ID or a custom identifier.
+            pretrained_model_name_or_path (str): The Hugging Face model
+                            ID or a custom identifier.
                             Needed if loading tokenizer from Hugging Face.
             local_tokenizer_path (str, optional): Path to a locally saved
                                                   tokenizer.
@@ -99,13 +104,17 @@ class Finetune_DialogAgent(DialogAgent):
         """
 
         if hasattr(self.model, "load_tokenizer"):
-            self.model.load_tokenizer(model_id, local_tokenizer_path)
+            self.model.load_tokenizer(
+                pretrained_model_name_or_path,
+                local_tokenizer_path,
+            )
         else:
             logger.error("The model wrapper does not support dynamic loading.")
 
     def fine_tune(
         self,
         data_path: Optional[str] = None,
+        output_dir: Optional[str] = None,
         fine_tune_config: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
@@ -113,6 +122,11 @@ class Finetune_DialogAgent(DialogAgent):
 
         Arguments:
             data_path (str): The path to the training data.
+            output_dir (str, optional): User specified path
+                                       to save the fine-tuned model
+                                       and its tokenizer. By default
+                                       save to this example's
+                                       directory if not specified.
 
         Raises:
             Exception: If fine-tuning fails or if the
@@ -120,7 +134,7 @@ class Finetune_DialogAgent(DialogAgent):
         """
 
         if hasattr(self.model, "fine_tune"):
-            self.model.fine_tune(data_path, fine_tune_config)
+            self.model.fine_tune(data_path, output_dir, fine_tune_config)
             logger.info("Fine-tuning completed successfully.")
         else:
             logger.error("The model wrapper does not support fine-tuning.")

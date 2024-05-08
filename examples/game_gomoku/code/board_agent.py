@@ -25,7 +25,7 @@ NAME_TO_PIECE = {
 EMPTY_PIECE = "0"
 
 
-def board2img(board: np.ndarray, save_path: str) -> str:
+def board2img(board: np.ndarray, output_dir: str) -> str:
     """Convert the board to an image and save it to the specified path."""
 
     size = board.shape[0]
@@ -63,9 +63,9 @@ def board2img(board: np.ndarray, save_path: str) -> str:
     ax.set_xticklabels(range(size))
     ax.set_yticklabels(range(size))
     ax.invert_yaxis()
-    plt.savefig(save_path, bbox_inches="tight", pad_inches=0.1)
+    plt.savefig(output_dir, bbox_inches="tight", pad_inches=0.1)
     plt.close(fig)  # Close the figure to free memory
-    return save_path
+    return output_dir
 
 
 class BoardAgent(AgentBase):
