@@ -37,6 +37,9 @@ from .zhipu_model import (
     ZhipuAIChatWrapper,
     ZhipuAIEmbeddingWrapper,
 )
+from .anthropic_model import (
+    AnthropicChatWrapper,
+)
 
 
 __all__ = [

@@ -1,0 +1,7 @@
+[{
+    "config_name": "anthropic_chat-claude3-opus",
+    "model_type": "anthropic_chat",
+    "model_name": "claude-3-opus-20240229",
+    "api_key": "{your_api_key}"
+}
+]
