@@ -39,7 +39,7 @@ def board2img(board: np.ndarray, save_path: str) -> str:
 
     for y in range(size):
         for x in range(size):
-            if board[y, x] == NAME_TO_PIECE[NAME_WHITE]:  # white player
+            if board[y, x] == NAME_TO_PIECE[NAME_BLACK]:  # black player
                 circle = patches.Circle(
                     (x, y),
                     0.45,
@@ -48,7 +48,7 @@ def board2img(board: np.ndarray, save_path: str) -> str:
                     zorder=10,
                 )
                 ax.add_patch(circle)
-            elif board[y, x] == NAME_TO_PIECE[NAME_BLACK]:  # black player
+            elif board[y, x] == NAME_TO_PIECE[NAME_WHITE]:  # white player
                 circle = patches.Circle(
                     (x, y),
                     0.45,
