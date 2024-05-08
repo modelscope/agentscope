@@ -12,68 +12,155 @@ AgentScope实现了基于Actor模式的智能体分布式部署和并行优化�
 
 ## 使用方法
 
-AgentScope中，我们将运行应用流程的进程称为“主进程”，而所有的智能体都会运行在独立的进程当中。
-根据主进程和智能体进程之间关系的不同，AgentScope支持两种分布式模式：主从模式（Master-Slave）和对等模式（Peer-to-Peer，P2P）。
-主从模式中，开发者可以从主进程中启动所有的智能体进程，而对等模式中，智能体进程相对主进程来说是独立的，需要在对应的机器上启动智能体的服务。
+AgentScope中，我们将运行应用流程的进程称为**主进程 (Main Process)**，而所有的智能体都会运行在额外的 **智能体服务器进程 (Agent Server Process)** 中。
+根据主进程域智能体服务器进程之间的关系，AgentScope 为每个 Agent 提供了两种启动模式：**子进程模式 (Child)** 和 **独立进程模式 (Indpendent)**。
+子进程模式中，开发者可以从主进程中启动所有的智能体服务器进程，而独立进程模式中，智能体服务器进程相对主进程来说是独立的，需要在对应的机器上启动智能体服务器进程。
 
-上述概念有些复杂，但是不用担心，对于应用开发者而言，它们仅仅在创建智能体阶段有微小的差别。下面我们介绍如何创建分布式智能体。
+上述概念有些复杂，但是不用担心，对于应用开发者而言，仅需将已有的智能体转化为对应的分布式版本，其余操作都和正常的单机版本完全一致。
 
-### 步骤1: 创建分布式智能体
+### 步骤1: 转化为分布式版本
 
-首先，开发者的智能体必须继承`agentscope.agents.AgentBase`类，`AgentBase`提供了`to_dist`方法将该Agent转化为其分布式版本。`to_dist`主要依靠以下的参数实现智能体分布式部署：
-
-- `host`: 用于部署智能体的机器IP地址，默认为`localhost`。
-- `port`: 智能体的RPC服务器端口，默认为`80`。
-- `launch_server`: 是否在本地启动RPC服务器，默认为`True`。
+AgentScope 中所有智能体都可以通过 {func}`to_dist<agentscope.agents.AgentBase.to_dist>` 方法转化为对应的分布式版本。
+但需要注意，你的智能体必须继承自 {class}`agentscope.agents.AgentBase<agentscope.agents.AgentBase>` 类，因为是 `AgentBase` 提供了 `to_dist` 方法。
 
 假设有两个智能体类`AgentA`和`AgentB`，它们都继承自 `AgentBase`。
-
-#### 主从模式
-
-主从模式中，由于所有智能体进程依赖于主进程，因此所有进程实际运行在一台机器上。
-我们可以在主进程中启动所有智能体进程，即默认参数`launch_server=True`和`host="localhost"`，同时我们可以省略`port`参数，AgentScope将会为智能体进程自动寻找空闲的本地端口。
 
 ```python
 a = AgentA(
     name="A"
     # ...
+)
+b = AgentB(
+    name="B"
+    # ...
+)
+```
+
+接下来我们将介绍如何将智能体转化到两种分布式模式。
+
+#### 子进程模式
+
+要使用该模式，你只需要调用各智能体的 `to_dist()` 方法，并且不需要提供任何参数。
+AgentScope 会自动帮你从主进程中启动智能体服务器进程并将智能体部署到对应的子进程上。
+
+```python
+# Subprocess mode
+a = AgentA(
+    name="A"
+    # ...
+).to_dist()
+b = AgentB(
+    name="B"
+    # ...
 ).to_dist()
 ```
 
-#### 对等模式
+#### 独立进程模式
 
-对等模式中，我们需要首先在目标机器上启动对应智能体的服务，例如将`AgentA`的实例部署在IP为`a.b.c.d`的机器上，其对应的端口为12001。在这台目标机器上运行以下代码：
+在独立进程模式中，需要首先在目标机器上启动智能体服务器进程。
+例如想要将两个智能体服务进程部署在 IP 分别为 `ip_a` 和 `ip_b` 的机器上（假设这两台机器分别为`Machine1` 和 `Machine2`）。
+你可以先在 `Machine1` 上运行如下代码：
 
 ```python
-from agentscope.agents import RpcAgentServerLauncher
+# import some packages
 
-# 创建智能体服务进程
-server_a = RpcAgentServerLauncher(
-    agent_class=AgentA,
-    agent_kwargs={
-        "name": "A"
-        ...
-    },
-    host="a.b.c.d",
-    port=12001,
+agentscope.init(
+    ...
 )
-# 启动服务
-server_a.launch()
-server_a.wait_until_terminate()
+# Create an agent service process
+server = RpcAgentServerLauncher(
+    host="ip_a",
+    port=12001,  # choose an available port
+)
+
+# Start the service
+server.launch()
+server.wait_until_terminate()
 ```
 
-然后，我们可以在主进程当中用以下的代码连接智能体服务，此时主进程中创建的对象`a`可以当做智能体的本地代理，允许开发者可以在主进程中采取中心化的方式编写应用流程。
+之后在 `Machine2` 上运行如下代码：
+
+```python
+# import some packages
+
+agentscope.init(
+    ...
+)
+# Create an agent service process
+server = RpcAgentServerLauncher(
+    host="ip_b",
+    port=12002, # choose an available port
+)
+
+# Start the service
+server.launch()
+server.wait_until_terminate()
+```
+
+接下来，就可以使用如下代码从主进程中连接这两个智能体服务器进程。
 
 ```python
 a = AgentA(
     name="A",
-    ...
+    # ...
 ).to_dist(
-    host="a.b.c.d",
+    host="ip_a",
     port=12001,
-    launch_server=False,
+)
+b = AgentB(
+    name="B",
+    # ...
+).to_dist(
+    host="ip_b",
+    port=12002,
 )
 ```
+
+上述代码将会把 `AgentA` 部署到 `Machine1` 的智能体服务器进程上，并将 `AgentB` 部署到 `Machine2` 的智能体服务器进程上。
+开发者在这之后只需要用中心化的方法编排各智能体的交互逻辑即可。
+
+#### `to_dist` 进阶用法
+
+上面介绍的案例都是将一个已经初始化的 Agent 通过 {func}`to_dist<agentscope.agents.AgentBase.to_dist>` 方法转化为其分布式版本，相当于要执行两次初始化操作，一次在主进程中，一次在智能体进程中。如果 Agent 的初始化过程耗时较长，直接使用 `to_dist` 方法会严重影响运行效率。为此 AgentScope 也提供了在初始化 Agent 实例的同时将其转化为其分布式版本的方法，即在原 Agent 实例初始化时传入 `to_dist` 参数。
+
+子进程模式下，只需要在 Agent 初始化函数中传入 `to_dist=True` 即可：
+
+```python
+# Child Process mode
+a = AgentA(
+    name="A",
+    # ...
+    to_dist=True
+)
+b = AgentB(
+    name="B",
+    # ...
+    to_dist=True
+)
+```
+
+独立进程模式下， 则需要将原来 `to_dist()` 函数的参数以 {class}`DistConf<agentscope.agents.DistConf>` 实例的形式传入 Agent 初始化函数的 `to_dist` 域：
+
+```python
+a = AgentA(
+    name="A",
+    # ...
+    to_dist=DistConf(
+        host="ip_a",
+        port=12001,
+    ),
+)
+b = AgentB(
+    name="B",
+    # ...
+    to_dist=DistConf(
+        host="ip_b",
+        port=12002,
+    ),
+)
+```
+
+相较于原有的 `to_dist()` 函数调用，该方法只会在智能体进程中初始化一次 Agent，避免了重复初始化现象。
 
 ### 步骤2: 编排分布式应用流程
 
@@ -103,7 +190,9 @@ while x is None or x.content == "exit":
     x = b(x)
 ```
 
-- 智能体分布式部署（主从模式下）：
+- 智能体分布式部署
+  - `AgentA` 使用子进程模式部署
+  - `AgentB` 使用独立进程模式部署
 
 ```python
 # 创建智能体对象
@@ -115,7 +204,10 @@ a = AgentA(
 b = AgentB(
     name="B",
     # ...
-).to_dist()
+).to_dist(
+    host="ip_b",
+    port=12002,
+)
 
 # 应用流程编排
 x = None
@@ -148,9 +240,18 @@ D-->F
 
 #### PlaceHolder
 
-同时，为了支持中心化的应用编排，AgentScope引入了Placeholder这一概念。Placeholder是一个特殊的消息，它包含了产生该Placeholder的智能体的地址和端口号，用于表示Agent的输入消息还未准备好。
-当Agent的输入消息准备好后，Placeholder会被替换为真实的消息，然后运行实际的`reply`方法
+同时，为了支持中心化的应用编排，AgentScope 引入了 {class}`Placeholder<agentscope.message.PlaceholderMessage>` 这一概念。
+Placeholder 可以理解为消息的指针，指向消息真正产生的位置，其对外接口与传统模式中的消息完全一致，因此可以按照传统中心化的消息使用方式编排应用。
+Placeholder 内部包含了该消息产生方的联络方法，可以通过网络获取到被指向消息的真正值。
+每个分布式部署的 Agent 在收到其他 Agent 发来的消息时都会立即返回一个 Placeholder，从而避免阻塞请求发起方。
+而请求发起方可以借助返回的 Placeholder 在真正需要消息内容时再去向原 Agent 发起请求，请求发起方甚至可以将 Placholder 发送给其他 Agent 让其他 Agent 代为获取消息内容，从而减少消息真实内容的不必要转发。
 
 关于更加详细的技术实现方案，请参考我们的[论文](https://arxiv.org/abs/2402.14034)。
+
+#### Agent Server
+
+Agent Server 也就是智能体服务器。在 AgentScope 中，Agent Server 提供了一个让不同 Agent 实例运行的平台。多个不同类型的 Agent 可以运行在同一个 Agent Server 中并保持独立的记忆以及其他本地状态信息，但是他们将共享同一份计算资源。
+只要没有对代码进行修改，一个已经启动的 Agent Server 可以为多个主流程提供服务。
+这意味着在运行多个应用时，只需要在第一次运行前启动 Agent Server，后续这些 Agent Server 进程就可以持续复用。
 
 [[回到顶部]](#208-distribute-zh)

@@ -6,9 +6,12 @@ Unit tests for Monitor classes
 import unittest
 import uuid
 import os
-from agentscope.utils import MonitorBase, QuotaExceededError, MonitorFactory
+import shutil
+from loguru import logger
 
-from agentscope.utils.monitor import SqliteMonitor
+import agentscope
+from agentscope.utils import MonitorBase, QuotaExceededError, MonitorFactory
+from agentscope.utils.monitor import SqliteMonitor, DummyMonitor
 
 
 class MonitorFactoryTest(unittest.TestCase):
@@ -17,10 +20,10 @@ class MonitorFactoryTest(unittest.TestCase):
     def setUp(self) -> None:
         MonitorFactory._instance = None  # pylint: disable=W0212
         self.db_path = f"test-{uuid.uuid4()}.db"
-        _ = MonitorFactory.get_monitor(db_path=self.db_path)
 
     def test_get_monitor(self) -> None:
         """Test get monitor method of MonitorFactory."""
+        _ = MonitorFactory.get_monitor(db_path=self.db_path)
         monitor1 = MonitorFactory.get_monitor()
         monitor2 = MonitorFactory.get_monitor()
         self.assertEqual(monitor1, monitor2)
@@ -31,9 +34,57 @@ class MonitorFactoryTest(unittest.TestCase):
         self.assertTrue(monitor2.remove("token_num"))
         self.assertFalse(monitor1.exists("token_num"))
 
+    def test_monitor_type(self) -> None:
+        """Test get different type of monitor"""
+        monitor = MonitorFactory.get_monitor(impl_type="dummy")
+        self.assertTrue(isinstance(monitor, DummyMonitor))
+        MonitorFactory._instance = None  # pylint: disable=W0212
+        monitor = MonitorFactory.get_monitor(
+            impl_type="sqlite",
+            db_path=self.db_path,
+        )
+        self.assertTrue(isinstance(monitor, SqliteMonitor))
+
     def tearDown(self) -> None:
         MonitorFactory._instance = None  # pylint: disable=W0212
         os.remove(self.db_path)
+
+
+class DummyMonitorTest(unittest.TestCase):
+    """Test class for DummyMonitor"""
+
+    def setUp(self) -> None:
+        MonitorFactory._instance = None  # pylint: disable=W0212
+        agentscope.init(
+            project="test",
+            name="monitor",
+            save_dir="./test_runs",
+            save_log=True,
+            use_monitor=False,
+        )
+
+    def test_dummy_monitor(self) -> None:
+        """test dummy monitor"""
+        monitor = MonitorFactory.get_monitor()
+        self.assertTrue(
+            monitor.register_budget(
+                model_name="qwen",
+                value=100.0,
+                prefix="xxx",
+            ),
+        )
+        self.assertTrue(
+            monitor.register(
+                "prompt_tokens",
+                metric_unit="token",
+            ),
+        )
+        monitor.update({"call_counter": 1})
+
+    def tearDown(self) -> None:
+        MonitorFactory._instance = None  # pylint: disable=W0212
+        logger.remove()
+        shutil.rmtree("./test_runs")
 
 
 class MonitorTestBase(unittest.TestCase):

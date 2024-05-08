@@ -85,23 +85,20 @@ class DictDialogAgent(AgentBase):
                 Whether the agent has memory.
             memory_config (`Optional[dict]`, defaults to `None`):
                 The config of memory.
-            parse_func (`Optional[Callable[..., Any]]`,
-            defaults to `parse_dict`):
+            parse_func (`Optional[Callable[..., Any]]`, defaults to `parse_dict`):
                 The function used to parse the model output,
                 e.g. `json.loads`, which is used to extract json from the
                 output.
-            fault_handler (`Optional[Callable[..., Any]]`,
-            defaults to `default_response`):
+            fault_handler (`Optional[Callable[..., Any]]`, defaults to `default_response`):
                 The function used to handle the fault when parse_func fails
                 to parse the model output.
             max_retries (`Optional[int]`, defaults to `None`):
                 The maximum number of retries when failed to parse the model
                 output.
-            prompt_type (`Optional[PromptType]`, defaults to
-            `PromptType.LIST`):
+            prompt_type (`Optional[PromptType]`, defaults to `PromptType.LIST`):
                 The type of the prompt organization, chosen from
                 `PromptType.LIST` or `PromptType.STRING`.
-        """
+        """  # noqa
         super().__init__(
             name=name,
             sys_prompt=sys_prompt,
