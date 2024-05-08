@@ -76,22 +76,22 @@ def main() -> None:
         model_config_name="my_custom_model",
     )
 
-    # (Optional) can load another model after
-    # the agent has been instantiated if needed
-    dialog_agent.load_model(
-        pretrained_model_name_or_path="google/gemma-7b",
-        local_model_path=None,
-    )  # load model gemma-2b-it from Hugging Face
-    dialog_agent.load_tokenizer(
-        pretrained_model_name_or_path="google/gemma-7b",
-        local_tokenizer_path=None,
-    )  # load tokenizer for gemma-2b-it from Hugging Face
+    # # (Optional) can load another model after
+    # # the agent has been instantiated if needed
+    # dialog_agent.load_model(
+    #     pretrained_model_name_or_path="google/gemma-7b",
+    #     local_model_path=None,
+    # )  # load model gemma-2b-it from Hugging Face
+    # dialog_agent.load_tokenizer(
+    #     pretrained_model_name_or_path="google/gemma-7b",
+    #     local_tokenizer_path=None,
+    # )  # load tokenizer for gemma-2b-it from Hugging Face
 
-    # fine-tune loaded model with databricks-dolly-15k dataset
+    # fine-tune loaded model with lima dataset
     # with default hyperparameters
     # dialog_agent.fine_tune(data_path="GAIR/lima")
 
-    # fine-tune loaded model with databricks-dolly-15k dataset
+    # fine-tune loaded model with lima dataset
     # with customized hyperparameters
     # (`fine_tune_config` argument is optional. Defaults to None.)
     # dialog_agent.fine_tune(
