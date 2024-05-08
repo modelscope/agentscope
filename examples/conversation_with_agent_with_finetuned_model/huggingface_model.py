@@ -8,6 +8,8 @@ adapting to specialized datasets, and robust error management.
 """
 from typing import Sequence, Any, Union, List, Optional, Dict
 import os
+from datetime import datetime
+import json
 
 import torch
 from transformers import (
@@ -15,6 +17,9 @@ from transformers import (
     AutoTokenizer,
     BitsAndBytesConfig,
 )
+import transformers
+from trl import SFTTrainer, DataCollatorForCompletionOnlyLM
+from datasets import load_dataset
 from loguru import logger
 from dotenv import load_dotenv
 
@@ -489,9 +494,6 @@ class HuggingFaceWrapper(ModelWrapperBase):
             directory with the specific timestamp at saving time
             as part of the log/model fodler name.
         """
-        from datasets import load_dataset
-        from datetime import datetime
-        import json
 
         dataset = load_dataset(data_path, split="train", token=token)
 
@@ -538,9 +540,6 @@ class HuggingFaceWrapper(ModelWrapperBase):
 
         lora_config = LoraConfig(**lora_config_default)
         model = get_peft_model(model, lora_config)
-
-        import transformers
-        from trl import SFTTrainer, DataCollatorForCompletionOnlyLM
 
         collator = DataCollatorForCompletionOnlyLM(
             response_template=" ### Answer:",
