@@ -3,27 +3,18 @@
 and act iteratively to solve problems. More details can be found in the paper
 https://arxiv.org/abs/2210.03629.
 """
-import json
-from typing import Tuple, List
+from typing import Any
 
+from loguru import logger
+
+from agentscope.exception import ResponseParsingError, FunctionCallError
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
-from agentscope.models import ResponseParser, ResponseParsingError
-from agentscope.service import ServiceResponse, ServiceExecStatus
+from agentscope.parsers import MarkdownJsonDictParser
+from agentscope.service import ServiceToolkit
+from agentscope.service.service_toolkit import ServiceFunction
 
-
-DEFAULT_TOOL_PROMPT = """The following tool functions are available in the format of
-```
-{{index}}. {{function name}}: {{function description}}
-    {{argument1 name}} ({{argument type}}): {{argument description}}
-    {{argument2 name}} ({{argument type}}): {{argument description}}
-    ...
-```
-
-## Tool Functions:
-{function_prompt}
-
-## What You Should Do:
+INSTRUCTION_PROMPT = """## What You Should Do:
 1. First, analyze the current situation, and determine your goal.
 2. Then, check if your goal is already achieved. If so, try to generate a response. Otherwise, think about how to achieve it with the help of provided tool functions.
 3. Respond in the required format.
@@ -34,36 +25,7 @@ DEFAULT_TOOL_PROMPT = """The following tool functions are available in the forma
 3. Make sure the types and values of the arguments you provided to the tool functions are correct.
 4. Don't take things for granted. For example, where you are, what's the time now, etc. You can try to use the tool functions to get information.
 5. If the function execution fails, you should analyze the error and try to solve it.
-
 """  # noqa
-
-TOOL_HINT_PROMPT = """
-## Response Format:
-You should respond with a JSON object in the following format, which can be loaded by `json.loads` in Python directly. If no tool function is used, the "function" field should be an empty list.
-{
-    "thought": "what you thought",
-    "speak": "what you said",
-    "function": [{"name": "{function name}", "arguments": {"{argument1 name}": xxx, "{argument2 name}": xxx}}]
-}"""  # noqa
-
-FUNCTION_RESULT_TITLE_PROMPT = """Execution Results:
-"""
-
-FUNCTION_RESULT_PROMPT = """{index}. {function_name}:
-    [EXECUTE STATUS]: {status}
-    [EXECUTE RESULT]: {result}
-"""
-
-ERROR_INFO_PROMPT = """Your response is not a JSON object, and cannot be parsed by `json.loads` in parse function:
-## Your Response:
-[YOUR RESPONSE BEGIN]
-{response}
-[YOUR RESPONSE END]
-
-## Error Information:
-{error_info}
-
-Analyze the reason, and re-correct your response in the correct format."""  # pylint: disable=all  # noqa
 
 
 class ReActAgent(AgentBase):
@@ -80,10 +42,11 @@ class ReActAgent(AgentBase):
         self,
         name: str,
         model_config_name: str,
-        tools: List[Tuple],
+        service_toolkit: ServiceToolkit = None,
         sys_prompt: str = "You're a helpful assistant. Your name is {name}.",
         max_iters: int = 10,
         verbose: bool = True,
+        **kwargs: Any,
     ) -> None:
         """Initialize the ReAct agent with the given name, model config name
         and tools.
@@ -96,13 +59,14 @@ class ReActAgent(AgentBase):
             model_config_name (`str`):
                 The name of the model config, which is used to load model from
                 configuration.
-            tools (`List[Tuple]`):
-                A list of tuples, each containing the name of a tool and the
-                tool's description in JSON schema format.
+            service_toolkit (`ServiceToolkit`):
+                A `ServiceToolkit` object that contains the tool functions.
             max_iters (`int`, defaults to `10`):
                 The maximum number of iterations of the reasoning-acting loops.
             verbose (`bool`, defaults to `True`):
-                Whether to print the output of the tools.
+                Whether to print the detailed information during reasoning and
+                acting steps. If `False`, only the content in speak field will
+                be print out.
         """
         super().__init__(
             name=name,
@@ -110,64 +74,135 @@ class ReActAgent(AgentBase):
             model_config_name=model_config_name,
         )
 
-        self.tools = tools
+        # TODO: To compatible with the old version, which will be deprecated
+        #  soon
+        if "tools" in kwargs:
+            logger.warning(
+                "The argument `tools` will be deprecated soon. "
+                "Please use `service_toolkit` instead. Example refers to "
+                "https://github.com/modelscope/agentscope/blob/main/"
+                "examples/conversation_with_react_agent/code/"
+                "conversation_with_react_agent.py",
+            )
+
+            service_funcs = {}
+            for func, json_schema in kwargs["tools"]:
+                name = json_schema["function"]["name"]
+                service_funcs[name] = ServiceFunction(
+                    name=name,
+                    original_func=func,
+                    processed_func=func,
+                    json_schema=json_schema,
+                )
+
+            if service_toolkit is None:
+                service_toolkit = ServiceToolkit()
+                service_toolkit.service_funcs = service_funcs
+            else:
+                service_toolkit.service_funcs.update(service_funcs)
+
+        elif service_toolkit is None:
+            raise ValueError(
+                "The argument `service_toolkit` is required to initialize "
+                "the ReActAgent.",
+            )
+
+        self.service_toolkit = service_toolkit
         self.verbose = verbose
         self.max_iters = max_iters
 
-        func_prompt, self.func_name_mapping = self.prepare_funcs_prompt(tools)
+        if not sys_prompt.endswith("\n"):
+            sys_prompt = sys_prompt + "\n"
 
-        # Prepare system prompt
-        tools_prompt = DEFAULT_TOOL_PROMPT.format(function_prompt=func_prompt)
-
-        if sys_prompt.endswith("\n"):
-            self.sys_prompt = sys_prompt.format(name=self.name) + tools_prompt
-        else:
-            self.sys_prompt = (
-                sys_prompt.format(name=self.name) + "\n" + tools_prompt
-            )
+        self.sys_prompt = "\n".join(
+            [
+                # The brief intro of the role and target
+                sys_prompt.format(name=self.name),
+                # The instruction prompt for tools
+                self.service_toolkit.tools_instruction,
+                # The detailed instruction prompt for the agent
+                INSTRUCTION_PROMPT,
+            ],
+        )
 
         # Put sys prompt into memory
         self.memory.add(Msg("system", self.sys_prompt, role="system"))
+
+        # Initialize a parser object to formulate the response from the model
+        self.parser = MarkdownJsonDictParser(
+            content_hint={
+                "thought": "what you thought",
+                "speak": "what you speak",
+                "function": service_toolkit.tools_calling_format,
+            },
+            required_keys=["thought", "speak", "function"],
+        )
 
     def reply(self, x: dict = None) -> dict:
         """The reply function that achieves the ReAct algorithm.
         The more details please refer to https://arxiv.org/abs/2210.03629"""
 
-        if self.memory:
-            self.memory.add(x)
+        self.memory.add(x)
 
         for _ in range(self.max_iters):
             # Step 1: Thought
+            if self.verbose:
+                self.speak(f" ITER {_+1}, STEP 1: REASONING ".center(70, "#"))
 
-            self.speak(f" ITER {_+1}, STEP 1: REASONING ".center(70, "#"))
+            # Prepare hint to remind model what the response format is
+            # Won't be recorded in memory to save tokens
+            hint_msg = Msg(
+                "system",
+                self.parser.format_instruction,
+                role="system",
+            )
+            if self.verbose:
+                self.speak(hint_msg)
 
+            # Prepare prompt for the model
+            prompt = self.model.format(self.memory.get_memory(), hint_msg)
+
+            # Generate and parse the response
             try:
-                hint_msg = Msg("system", TOOL_HINT_PROMPT, role="system")
-                self.memory.add(hint_msg)
-
-                # Generate LLM response
-                prompt = self.model.format(self.memory.get_memory())
                 res = self.model(
                     prompt,
-                    parse_func=ResponseParser.to_dict,
+                    parse_func=self.parser.parse,
                     max_retries=1,
-                ).json
+                )
 
+                # Record the response in memory
+                msg_response = Msg(self.name, res.text, "assistant")
+                self.memory.add(msg_response)
+
+                # Print out the response
+                if self.verbose:
+                    self.speak(msg_response)
+                else:
+                    self.speak(
+                        Msg(self.name, res.parsed["speak"], "assistant"),
+                    )
+
+                # Skip the next steps if no need to call tools
+                # The parsed field is a dictionary
+                arg_function = res.parsed["function"]
+                if (
+                    isinstance(arg_function, str)
+                    and arg_function in ["[]", ""]
+                    or isinstance(arg_function, list)
+                    and len(arg_function) == 0
+                ):
+                    # Only the speak field is exposed to users or other agents
+                    return Msg(self.name, res.parsed["speak"], "assistant")
+
+            # Only catch the response parsing error and expose runtime
+            # errors to developers for debugging
             except ResponseParsingError as e:
-                # Record the wrong response from the model
-                response_msg = Msg(self.name, e.response.text, "assistant")
+                # Print out raw response from models for developers to debug
+                response_msg = Msg(self.name, e.raw_response, "assistant")
                 self.speak(response_msg)
 
                 # Re-correct by model itself
-                error_msg = Msg(
-                    "system",
-                    ERROR_INFO_PROMPT.format(
-                        parse_func=ResponseParser.to_dict,
-                        error_info=e.error_info,
-                        response=e.response.text,
-                    ),
-                    "system",
-                )
+                error_msg = Msg("system", str(e), "system")
                 self.speak(error_msg)
 
                 self.memory.add([response_msg, error_msg])
@@ -175,151 +210,48 @@ class ReActAgent(AgentBase):
                 # Skip acting step to re-correct the response
                 continue
 
-            # Record the response in memory
-            msg_thought = Msg(self.name, res, role="assistant")
+            # Step 2: Acting
+            if self.verbose:
+                self.speak(f" ITER {_+1}, STEP 2: ACTING ".center(70, "#"))
 
-            # To better display the response, we reformat it by json.dumps here
-            self.speak(
-                Msg(self.name, json.dumps(res, indent=4), role="assistant"),
-            )
+            # Parse, check and execute the tool functions in service toolkit
+            try:
+                execute_results = self.service_toolkit.parse_and_call_func(
+                    res.parsed["function"],
+                )
 
-            if self.memory:
-                self.memory.add(msg_thought)
+                # Note: Observing the execution results and generate response
+                # are finished in the next reasoning step. We just put the
+                # execution results into memory, and wait for the next loop
+                # to generate response.
 
-            # Skip the next steps if no need to call tools
-            if len(res.get("function", [])) == 0:
-                return msg_thought
-
-            # Step 2: Action
-
-            self.speak(f" ITER {_+1}, STEP 2: ACTION ".center(70, "#"))
-
-            # Execute functions
-            # TODO: check the provided arguments and re-correct them if needed
-            execute_results = []
-            for i, func in enumerate(res["function"]):
-                # Execute the function
-                func_res = self.execute_func(i, func)
-                execute_results.append(func_res)
-
-            # Prepare prompt for execution results
-            execute_results_prompt = "\n".join(
-                [
-                    FUNCTION_RESULT_PROMPT.format_map(res)
-                    for res in execute_results
-                ],
-            )
-            # Add title
-            execute_results_prompt = (
-                FUNCTION_RESULT_TITLE_PROMPT + execute_results_prompt
-            )
-
-            # Note: Observing the execution results and generate response are
-            # finished in the next loop. We just put the execution results
-            # into memory, and wait for the next loop to generate response.
-
-            # Record execution results into memory as a message from the system
-            msg_res = Msg(
-                name="system",
-                content=execute_results_prompt,
-                role="system",
-            )
-            self.speak(msg_res)
-            if self.memory:
+                # Record execution results into memory as system message
+                msg_res = Msg("system", execute_results, "system")
+                self.speak(msg_res)
                 self.memory.add(msg_res)
 
-        return Msg(
+            except FunctionCallError as e:
+                # Catch the function calling error that can be handled by
+                # the model
+                error_msg = Msg("system", str(e), "system")
+                self.speak(error_msg)
+                self.memory.add(error_msg)
+
+        # Exceed the maximum iterations
+        hint_msg = Msg(
             "system",
-            "The agent has reached the maximum iterations.",
+            "You have failed to generate a response in the maximum "
+            "iterations. Now generate a reply by summarizing the current "
+            "situation.",
             role="system",
         )
+        if self.verbose:
+            self.speak(hint_msg)
 
-    def execute_func(self, index: int, func_call: dict) -> dict:
-        """Execute the tool function and return the result.
+        # Generate a reply by summarizing the current situation
+        prompt = self.model.format(self.memory.get_memory(), hint_msg)
+        res = self.model(prompt)
+        res_msg = Msg(self.name, res.text, "assistant")
+        self.speak(res_msg)
 
-        Args:
-            index (`int`):
-                The index of the tool function.
-            func_call (`dict`):
-                The function call dictionary with keys 'name' and 'arguments'.
-
-        Returns:
-            `ServiceResponse`: The execution results.
-        """
-        # Extract the function name and arguments
-        func_name = func_call["name"]
-        func_args = func_call["arguments"]
-
-        self.speak(f">>> Executing function {func_name} ...")
-
-        try:
-            func_res = self.func_name_mapping[func_name](**func_args)
-        except Exception as e:
-            func_res = ServiceResponse(
-                status=ServiceExecStatus.ERROR,
-                content=str(e),
-            )
-
-        self.speak(">>> END ")
-
-        status = (
-            "SUCCESS"
-            if func_res.status == ServiceExecStatus.SUCCESS
-            else "FAILED"
-        )
-
-        # return the result of the function
-        return {
-            "index": index + 1,
-            "function_name": func_name,
-            "status": status,
-            "result": func_res.content,
-        }
-
-    def prepare_funcs_prompt(self, tools: List[Tuple]) -> Tuple[str, dict]:
-        """Convert function descriptions from json schema format to
-        string prompt format.
-
-        Args:
-            tools (`List[Tuple]`):
-                The list of tool functions and their descriptions in JSON
-                schema format.
-
-        Returns:
-            `Tuple[str, dict]`:
-                The string prompt for the tool functions and a function name
-                mapping dict.
-
-            .. code-block:: python
-
-                {index}. {function name}: {function description}
-                    {argument name} ({argument type}): {argument description}
-                    ...
-
-        """
-        tools_prompt = []
-        func_name_mapping = {}
-        for i, (func, desc) in enumerate(tools):
-            func_name = desc["function"]["name"]
-            func_name_mapping[func_name] = func
-
-            func_desc = desc["function"]["description"]
-            args_desc = desc["function"]["parameters"]["properties"]
-
-            args_list = [f"{i + 1}. {func_name}: {func_desc}"]
-            for args_name, args_info in args_desc.items():
-                if "type" in args_info:
-                    args_line = (
-                        f'\t{args_name} ({args_info["type"]}): '
-                        f'{args_info.get("description", "")}'
-                    )
-                else:
-                    args_line = (
-                        f'\t{args_name}: {args_info.get("description", "")}'
-                    )
-                args_list.append(args_line)
-
-            func_prompt = "\n".join(args_list)
-            tools_prompt.append(func_prompt)
-
-        return "\n".join(tools_prompt), func_name_mapping
+        return res_msg

@@ -29,7 +29,7 @@ class PromptEngine:
         max_summary_length: int = 200,
         summarize_model: Optional[ModelWrapperBase] = None,
     ) -> None:
-        """
+        """Init PromptEngine.
 
         Args:
             model (`ModelWrapperBase`):
@@ -52,34 +52,40 @@ class PromptEngine:
                 set to `model`.
 
         Note:
+
             1. TODO: Shrink function is still under development.
+
             2. If the argument `max_length` and `prompt_type` are not given,
             they will be set according to the given model.
+
             3. `shrink_policy` is used when the prompt is too long, it can
             be set to `ShrinkPolicy.TRUNCATE` or `ShrinkPolicy.SUMMARIZE`.
+
                 a. `ShrinkPolicy.TRUNCATE` will truncate the prompt to the
                 desired length.
+
                 b. `ShrinkPolicy.SUMMARIZE` will summarize partial of the
                 dialog history to save space. The summarization model
                 defaults to `model` if not given.
 
         Example:
+
             With prompt engine, we encapsulate different operations for
             string- and list-style prompt, and block the prompt engineering
             process from the user.
             As a user, you can just combine you prompt as follows.
 
-            ```python
-            # prepare the component
-            system_prompt = "You're a helpful assistant ..."
-            hint_prompt = "You should response in Json format."
-            prefix = "assistant: "
+            .. code-block:: python
 
-            # initialize the prompt engine and join the prompt
-            engine = PromptEngine(model)
-            prompt = engine.join(system_prompt, memory.get_memory(),
-            hint_prompt, prefix)
-            ```
+                # prepare the component
+                system_prompt = "You're a helpful assistant ..."
+                hint_prompt = "You should response in Json format."
+                prefix = "assistant: "
+
+                # initialize the prompt engine and join the prompt
+                engine = PromptEngine(model)
+                prompt = engine.join(system_prompt, memory.get_memory(),
+                hint_prompt, prefix)
         """
         self.model = model
         self.shrink_policy = shrink_policy

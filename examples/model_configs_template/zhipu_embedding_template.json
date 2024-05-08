@@ -1,0 +1,7 @@
+[{
+    "config_name": "zhipu-embedding",
+    "model_type": "zhipuai_embedding",
+    "model_name": "embedding-2",
+    "api_key": "{your_api_key}"
+}
+]

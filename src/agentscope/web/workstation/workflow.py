@@ -2,9 +2,10 @@
 """ Workflow"""
 import argparse
 import json
+import os
 
 from loguru import logger
-from agentscope.web.workstation.workflow_utils import build_dag
+from agentscope.web.workstation.workflow_dag import build_dag
 
 
 def load_config(config_path: str) -> dict:
@@ -37,6 +38,22 @@ def start_workflow(config: dict) -> None:
     logger.info("Finished.")
 
 
+def compile_workflow(config: dict, compiled_filename: str = "main.py") -> None:
+    """Generates Python code based on the given configuration.
+
+    Args:
+        config: A dictionary containing the application configuration.
+        compiled_filename: complied file name.
+
+    """
+    logger.info("Compiling...")
+
+    dag = build_dag(config)
+    dag.compile(compiled_filename)
+
+    logger.info("Finished.")
+
+
 def main() -> None:
     """Parse command-line arguments and launch the application workflow.
 
@@ -53,10 +70,38 @@ def main() -> None:
         help="Path to the config file.",
         nargs="?",
     )
+    parser.add_argument(
+        "--compile",
+        type=str,
+        help="Compile the json code to python file, e.g. main.py",
+        default=False,
+        nargs="?",
+        const="",
+    )
     args = parser.parse_args()
-    if args.cfg:
-        config = load_config(args.cfg)
-        start_workflow(config)
+    cfg_path = args.cfg
+    compiled_filename = args.compile
+
+    if cfg_path:
+        config = load_config(cfg_path)
+        if not compiled_filename:
+            start_workflow(config)
+        else:
+            if os.path.exists(compiled_filename):
+                while True:
+                    user_input = input(
+                        f"File 【{compiled_filename}】already exists, are you "
+                        f"sure to overwrite? (yes/no)",
+                    )
+                    if user_input.lower() in ["no", "n", "false"]:
+                        raise FileExistsError(compiled_filename)
+
+                    if user_input.lower() in ["", "yes", "y", "true"]:
+                        logger.warning(f"Overwrite 【{compiled_filename}】!")
+                        break
+
+                    logger.info("Invalid input.")
+            compile_workflow(config, compiled_filename)
     else:
         raise FileNotFoundError("Please provide config file.")
 

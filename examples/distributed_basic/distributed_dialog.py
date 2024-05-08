@@ -37,13 +37,6 @@ def setup_assistant_server(assistant_host: str, assistant_port: int) -> None:
         model_configs="configs/model_configs.json",
     )
     assistant_server_launcher = RpcAgentServerLauncher(
-        agent_class=DialogAgent,
-        agent_kwargs={
-            "name": "Assitant",
-            "sys_prompt": "You are a helpful assistant.",
-            "model_config_name": "qwen",
-            "use_memory": True,
-        },
         host=assistant_host,
         port=assistant_port,
     )
@@ -64,7 +57,6 @@ def run_main_process(assistant_host: str, assistant_port: int) -> None:
     ).to_dist(
         host=assistant_host,
         port=assistant_port,
-        launch_server=False,
     )
     user_agent = UserAgent(
         name="User",
