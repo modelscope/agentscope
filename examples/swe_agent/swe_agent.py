@@ -193,9 +193,12 @@ class SWEAgent(AgentBase):
         action = res.get("action")
 
         obs = self.prase_command(res["action"])
+        self.speak(
+            Msg(self.name, "\n====Observation====\n" + obs, role="assistant"),
+        )
 
         # add msg to context windows
-        self.running_memory.append(str(action, obs))
+        self.running_memory.append(str(action) + str(obs))
         return msg_res
 
     def reply(self, x: dict = None) -> dict:

@@ -287,7 +287,7 @@ def write_file(
         file_path (`str`): The path to the file to write to.
         content (`str`): The content to write to the file.
         start_line (`Optional[int]`, defaults to `0`): The start line of the file to be replace with <content>.
-        end_line (`Optional[int]`, defaults to `-1`): The end line of the file to be replace with <content>.
+        end_line (`Optional[int]`, defaults to `-1`): The end line of the file to be replace with <content>. end_line = -1 means the end of the file, otherwise it should be a positive integer indicating the line number.
     """  # noqa
     try:
         mode = "w" if not os.path.exists(file_path) else "r+"
@@ -297,7 +297,8 @@ def write_file(
                 all_lines = file.readlines()
                 new_file = [""] if start_line == 0 else all_lines[:start_line]
                 new_file += [i + "\n" for i in insert]
-                new_file += [""] if end_line == -1 else all_lines[end_line:]
+                last_line = end_line + 1
+                new_file += [""] if end_line == -1 else all_lines[last_line:]
             else:
                 new_file = insert
 
