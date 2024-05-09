@@ -21,6 +21,11 @@ from .sql_query.sqlite import query_sqlite
 from .sql_query.mongodb import query_mongodb
 from .web.search import bing_search, google_search
 from .web.arxiv import arxiv_search
+from .web.dblp import (
+    dblp_search_publications,
+    dblp_search_authors,
+    dblp_search_venues,
+)
 from .service_response import ServiceResponse
 from .service_toolkit import ServiceToolkit
 from .service_toolkit import ServiceFactory
@@ -70,6 +75,9 @@ __all__ = [
     "load_web",
     "parse_html_to_text",
     "download_from_url",
+    "dblp_search_publications",
+    "dblp_search_authors",
+    "dblp_search_venues",
     # to be deprecated
     "ServiceFactory",
 ]
