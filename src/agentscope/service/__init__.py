@@ -77,4 +77,6 @@ __all__ = [
     "dblp_search_publications",
     "dblp_search_authors",
     "dblp_search_venues",
+    # to be deprecated
+    "ServiceFactory",
 ]
