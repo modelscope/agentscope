@@ -1,3 +1,7 @@
+<h1 align="center">
+<img src="https://img.alicdn.com/imgextra/i4/O1CN01JmDKMT1oCc8lw6RMf_!!6000000005189-0-tps-1550-1542.jpg"width="400" alt="agentscope-logo">
+</h1>
+
 English | [**中文**](README_ZH.md)
 
 # AgentScope
