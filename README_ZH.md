@@ -3,7 +3,7 @@
 # AgentScope
 
 <h1 align="center">
-<img src="https://img.alicdn.com/imgextra/i1/O1CN01cGftVz1nabGdULttp_!!6000000005106-0-tps-1024-1024.jpg" width="600" height="450" alt="agentscope-logo">
+<img src="https://img.alicdn.com/imgextra/i1/O1CN01cGftVz1nabGdULttp_!!6000000005106-0-tps-1024-1024.jpg" width="500" height="450" alt="agentscope-logo">
 </h1>
 
 更简单地构建基于LLM的多智能体应用。
