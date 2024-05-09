@@ -155,7 +155,7 @@ class MarkdownJsonDictParser(MarkdownJsonObjectParser, _DictFilterMixin):
         required_keys: List[str] = None,
         keys_to_speak: Optional[Union[str, Sequence[str]]] = None,
         keys_to_memory: Optional[Union[str, Sequence[str]]] = None,
-        keys_to_others: Optional[Union[str, Sequence[str]]] = None,
+        keys_to_content: Optional[Union[str, Sequence[str]]] = None,
         keys_to_control: Optional[Union[str, Sequence[str]]] = None,
     ) -> None:
         """Initialize the parser with the content hint.
@@ -179,7 +179,7 @@ class MarkdownJsonDictParser(MarkdownJsonObjectParser, _DictFilterMixin):
             self,
             keys_to_speak=keys_to_speak,
             keys_to_memory=keys_to_memory,
-            keys_to_others=keys_to_others,
+            keys_to_content=keys_to_content,
             keys_to_control=keys_to_control,
         )
 

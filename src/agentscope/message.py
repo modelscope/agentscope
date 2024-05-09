@@ -99,6 +99,7 @@ class Msg(MessageBase):
         url: Optional[Union[Sequence[str], str]] = None,
         timestamp: Optional[str] = None,
         echo: bool = False,
+        control: Optional[dict] = None,
         **kwargs: Any,
     ) -> None:
         """Initialize the message object
@@ -117,6 +118,11 @@ class Msg(MessageBase):
             timestamp (`Optional[str]`, defaults to `None`):
                 The timestamp of the message, if None, it will be set to
                 current time.
+            echo (`bool`, defaults to `False`):
+                Whether to print the message to the console.
+            control (`Optional[dict]`, defaults to `None`):
+                To save the information used in controlling the application
+                workflow, e.g. "finish_discussion", "finish_task", etc.
             **kwargs (`Any`):
                 Other attributes of the message.
         """
@@ -134,6 +140,7 @@ class Msg(MessageBase):
             role=role or "assistant",
             url=url,
             timestamp=timestamp,
+            control=control or {},
             **kwargs,
         )
         if echo:

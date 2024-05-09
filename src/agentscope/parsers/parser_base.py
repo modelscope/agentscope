@@ -80,7 +80,7 @@ class _DictFilterMixin:
         self,
         keys_to_speak: Union[str, Sequence[str]],
         keys_to_memory: Union[str, Sequence[str]],
-        keys_to_others: Union[str, Sequence[str]],
+        keys_to_content: Union[str, Sequence[str]],
         keys_to_control: Union[str, Sequence[str]],
     ) -> None:
         """Initialize the mixin class with the keys to be filtered during
@@ -95,10 +95,10 @@ class _DictFilterMixin:
                 The key or keys to be filtered during storing in memory. If
                 a single key is provided, the corresponding value will be
                 returned. Otherwise, a filtered dictionary will be returned.
-            keys_to_others (`Union[str, Sequence[str]]`):
+            keys_to_content (`Union[str, Sequence[str]]`):
                 The key or keys that will be exposed to other agents in the
-                msg content field. If a single key is provided, the
-                corresponding value will be returned. Otherwise, a filtered
+                returned message content field. If a single key is provided,
+                the corresponding value will be returned. Otherwise, a filtered
                 dictionary will be returned.
             keys_to_control (`Union[str, Sequence[str]]`):
                 The key or keys that will be fed into the returned message
@@ -107,7 +107,7 @@ class _DictFilterMixin:
         """
         self.keys_to_speak = keys_to_speak
         self.keys_to_memory = keys_to_memory
-        self.keys_to_others = keys_to_others
+        self.keys_to_content = keys_to_content
         self.keys_to_control = keys_to_control
 
     def to_speak(
@@ -134,7 +134,7 @@ class _DictFilterMixin:
             allow_missing=allow_missing,
         )
 
-    def to_others(
+    def to_content(
         self,
         parsed_response: dict,
         allow_missing: bool = False,
@@ -144,7 +144,7 @@ class _DictFilterMixin:
         """
         return self._filter_content_by_names(
             parsed_response,
-            self.keys_to_others,
+            self.keys_to_content,
             allow_missing=allow_missing,
         )
 
