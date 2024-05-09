@@ -7,10 +7,12 @@ TODO: data structure to organize multiple memory pieces in memory class
 """
 
 from abc import ABC, abstractmethod
-from typing import Iterable
+from typing import Iterable, Sequence
 from typing import Optional
 from typing import Union
 from typing import Callable
+
+from ..message import MessageBase
 
 
 class MemoryBase(ABC):
@@ -48,7 +50,10 @@ class MemoryBase(ABC):
         """
 
     @abstractmethod
-    def add(self, memories: Union[list[dict], dict, None]) -> None:
+    def add(
+        self,
+        memories: Union[Sequence[MessageBase], MessageBase, None],
+    ) -> None:
         """
         Adding new memory fragment, depending on how the memory are stored
         """
@@ -63,7 +68,7 @@ class MemoryBase(ABC):
     @abstractmethod
     def load(
         self,
-        memories: Union[str, dict, list],
+        memories: Union[str, list, MessageBase],
         overwrite: bool = False,
     ) -> None:
         """

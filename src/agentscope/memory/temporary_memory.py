@@ -16,7 +16,7 @@ from .memory import MemoryBase
 from ..models import load_model_by_config_name
 from ..service.retrieval.retrieval_from_list import retrieve_from_list
 from ..service.retrieval.similarity import Embedding
-from ..message import deserialize, serialize, Msg, Tht, PlaceholderMessage
+from ..message import deserialize, serialize, MessageBase, Msg, Tht
 
 
 class TemporaryMemory(MemoryBase):
@@ -55,12 +55,19 @@ class TemporaryMemory(MemoryBase):
         # if memory doesn't have id attribute, we skip the checking
         memories_idx = set(_.id for _ in self._content if hasattr(_, "id"))
         for memory_unit in record_memories:
-            if "_is_placeholder" in memory_unit:
-                memory_unit = PlaceholderMessage(**memory_unit)
-            elif "name" in memory_unit and memory_unit["name"] == "thought":
-                memory_unit = Tht(**memory_unit)
-            else:
-                memory_unit = Msg(**memory_unit)
+            if type(memory_unit) is not MessageBase:
+                try:
+                    if (
+                        "name" in memory_unit
+                        and memory_unit["name"] == "thought"
+                    ):
+                        memory_unit = Tht(**memory_unit)
+                    else:
+                        memory_unit = Msg(**memory_unit)
+                except Exception as exc:
+                    raise ValueError(
+                        f"Cannot add {memory_unit} to memory",
+                    ) from exc
             # add to memory if it's new
             if (
                 not hasattr(memory_unit, "id")
@@ -127,7 +134,7 @@ class TemporaryMemory(MemoryBase):
 
     def load(
         self,
-        memories: Union[str, dict, list],
+        memories: Union[str, list, MessageBase],
         overwrite: bool = False,
     ) -> None:
         if isinstance(memories, str):

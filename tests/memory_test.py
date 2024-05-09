@@ -29,17 +29,6 @@ class TemporaryMemoryTest(unittest.TestCase):
             role="assistant",
         )
 
-        self.dict_1 = {
-            "name": "dict1",
-            "content": "dict 1",
-            "role": "assistant",
-        }
-        self.dict_2 = {
-            "name": "dict2",
-            "content": "dict 2",
-            "role": "assistant",
-        }
-
         self.invalid = {"invalid_key": "invalid_value"}
 
     def test_add(self) -> None:
@@ -51,18 +40,11 @@ class TemporaryMemoryTest(unittest.TestCase):
             [self.msg_1],
         )
 
-        # add dict
-        self.memory.add(self.dict_1)
-        self.assertEqual(
-            self.memory.get_memory(),
-            [self.msg_1, self.dict_1],
-        )
-
         # add list
         self.memory.add([self.msg_2, self.msg_3])
         self.assertEqual(
             self.memory.get_memory(),
-            [self.msg_1, self.dict_1, self.msg_2, self.msg_3],
+            [self.msg_1, self.msg_2, self.msg_3],
         )
 
     @patch("loguru.logger.warning")
