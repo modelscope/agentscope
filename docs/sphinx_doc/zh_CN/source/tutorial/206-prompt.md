@@ -235,9 +235,11 @@ print(prompt)
 
 ```bash
 [
-  {"role": "system", "content": "You are a helpful assistant"},
-  {"role": "assistant", "content": "Hi."},
-  {"role": "assistant", "content": "Nice to meet you!", "images": ["https://example.com/image.jpg"]},
+  {
+    "role": "system", 
+    "content": "You are a helpful assistant\n\n## Dialogue History\nBob: Hi.\nAlice: Nice to meet you!", 
+    "images": ["https://example.com/image.jpg"]
+  },
 ]
 ```
 
