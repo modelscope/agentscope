@@ -12,8 +12,9 @@ python conversation.py
 ## Tested Models
 
 These models are tested in this example. For other models, some modifications may be needed.
-- dashscope_chat(qwen-max)
+- dashscope_chat (qwen-max)
 - ollama_chat (ollama_llama3_8b)
+- gemini_chat (models/gemini-pro)
 
 ## Prerequisites
 To set up model serving with open-source LLMs, follow the guidance in
