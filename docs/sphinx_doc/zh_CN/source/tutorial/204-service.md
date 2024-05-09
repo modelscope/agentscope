@@ -23,7 +23,10 @@
 |            | `arxiv_search`        | 使用arxiv搜索。                              |
 |            | `download_from_url`   | 从指定的 URL 下载文件。                          |
 |            | `load_web`            | 爬取并解析指定的网页链接 （目前仅支持爬取 HTML 页面）          |
-|            | `digest_webpage`      | 对已经爬取好的网页生成摘要信息（目前仅支持 HTML 页面）          |
+|            | `digest_webpage`      | 对已经爬取好的网页生成摘要信息（目前仅支持 HTML 页面
+|            | `dblp_search_publications`      |  在dblp数据库里搜索文献。
+|            | `dblp_search_authors`      |  在dblp数据库里搜索作者。    |
+|            | `dblp_search_venues`      |  在dblp数据库里搜索期刊，会议及研讨会。     |
 | 文件处理       | `create_file`         | 在指定路径创建一个新文件，并可选择添加初始内容。                |
 |            | `delete_file`         | 删除由文件路径指定的文件。                           |
 |            | `move_file`           | 将文件从一个路径移动或重命名到另一个路径。                   |
