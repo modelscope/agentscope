@@ -16,6 +16,7 @@ Currently, AgentScope supports the following model service APIs:
 - Gemini API, including chat and embedding.
 - ZhipuAI API, including chat and embedding.
 - Ollama API, including chat, embedding and generation.
+- LiteLLM API, including chat, with various model APIs.
 - Post Request API, model inference services based on Post
   requests, including Huggingface/ModelScope Inference API and various
   post request based model APIs.
@@ -87,6 +88,7 @@ In the current AgentScope, the supported `model_type` types, the corresponding
 | ollama                 | Chat            | [`OllamaChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)                 | `"ollama_chat"`               | llama2, ...                                      |
 |                        | Embedding       | [`OllamaEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)            | `"ollama_embedding"`          | llama2, ...                                      |
 |                        | Generation      | [`OllamaGenerationWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)           | `"ollama_generate"`           | llama2, ...                                      |
+| LiteLLM API | Chat               | [`LiteLLMModelWrapperChat`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py)             | `"litellm_chat"`                  | -                                                |
 | Post Request based API | -               | [`PostAPIModelWrapperBase`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)             | `"post_api"`                  | -                                                |
 |  | Chat | [`PostAPIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py) | `"post_api_chat"` | meta-llama/Meta-Llama-3-8B-Instruct, ... |
 
@@ -439,6 +441,28 @@ Here we provide example configurations for different model wrappers.
 </details>
 
 <br/>
+
+
+#### LiteLLM Chat API
+
+<details>
+<summary>LiteLLM Chat API (<code><a href="https://github.
+com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py">agentscope.models.LiteLLMChatModelWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "lite_llm_openai_chat_gpt-3.5-turbo",
+    "model_type": "litellm_chat",
+    "model_name": "gpt-3.5-turbo",
+    "api_key": "{your_api_key}",
+    "api_key_name": "OPENAI_API_KEY"
+},
+```
+
+</details>
+
+<br/>
+
 
 #### Post Request Chat API
 
