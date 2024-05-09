@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """Search question in the web"""
 from typing import Any
-
 from agentscope.service.service_response import ServiceResponse
 from agentscope.utils.common import requests_get
 from agentscope.service.service_status import ServiceExecStatus
