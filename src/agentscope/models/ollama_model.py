@@ -286,7 +286,7 @@ class OllamaEmbeddingWrapper(OllamaWrapperBase):
 
         # step5: return response
         return ModelResponse(
-            embedding=response["embedding"],
+            embedding=[response["embedding"]],
             raw=response,
         )
 
