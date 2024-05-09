@@ -98,6 +98,9 @@
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.service.load_web"><code class="docutils literal notranslate"><span class="pre">load_web()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.service.parse_html_to_text"><code class="docutils literal notranslate"><span class="pre">parse_html_to_text()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.service.download_from_url"><code class="docutils literal notranslate"><span class="pre">download_from_url()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.service.dblp_search_publications"><code class="docutils literal notranslate"><span class="pre">dblp_search_publications()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.service.dblp_search_authors"><code class="docutils literal notranslate"><span class="pre">dblp_search_authors()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.service.dblp_search_venues"><code class="docutils literal notranslate"><span class="pre">dblp_search_venues()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.service.ServiceFactory"><code class="docutils literal notranslate"><span class="pre">ServiceFactory</span></code></a></li>
 </ul>
 </li>
@@ -1088,6 +1091,188 @@ results or error message.</p>
 <dd class="field-odd"><p><cite>ServiceResponse</cite></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.dblp_search_publications">
+<span class="sig-prename descclassname"><span class="pre">agentscope.service.</span></span><span class="sig-name descname"><span class="pre">dblp_search_publications</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">question</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_completion</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.service.service_response.html#agentscope.service.service_response.ServiceResponse" title="agentscope.service.service_response.ServiceResponse"><span class="pre">ServiceResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/service/web/dblp.html#dblp_search_publications"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.service.dblp_search_publications" title="Link to this definition"></a></dt>
+<dd><p>Search publications in the DBLP database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>question</strong> (<cite>str</cite>) – The search query string.</p></li>
+<li><p><strong>num_results</strong> (<cite>int</cite>, defaults to <cite>30</cite>) – The number of search results to return.</p></li>
+<li><p><strong>start</strong> (<cite>int</cite>, defaults to <cite>0</cite>) – The index of the first search result to return.</p></li>
+<li><p><strong>num_completion</strong> (<cite>int</cite>, defaults to <cite>10</cite>) – The number of completions to generate.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary containing <cite>status</cite> and <cite>content</cite>.
+The <cite>status</cite> attribute is from the ServiceExecStatus enum,
+indicating success or error.
+The <cite>content</cite> is a list of parsed publication data if successful,
+or an error message if failed.
+Each item in the list contains publication information
+includes title, authors, venue, pages, year, type, DOI, and URL.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>It returns the following structure:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">:</span> <span class="mi">1</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s1">&#39;content&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Power transformers fault diagnosis</span>
+            <span class="n">based</span> <span class="n">on</span> <span class="n">a</span> <span class="n">meta</span><span class="o">-</span><span class="n">learning</span> <span class="n">approach</span> <span class="n">to</span> <span class="n">kernel</span>
+            <span class="n">extreme</span> <span class="n">learning</span> <span class="n">machine</span> <span class="k">with</span> <span class="n">opposition</span><span class="o">-</span><span class="n">based</span>
+            <span class="n">learning</span> <span class="n">sparrow</span> <span class="n">search</span> <span class="n">algorithm</span><span class="o">.</span><span class="s1">&#39;,</span>
+            <span class="s1">&#39;venue&#39;</span><span class="p">:</span> <span class="s1">&#39;J. Intell. Fuzzy Syst.&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;pages&#39;</span><span class="p">:</span> <span class="s1">&#39;455-466&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="s1">&#39;2023&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;Journal Articles&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;doi&#39;</span><span class="p">:</span> <span class="s1">&#39;10.3233/JIFS-211862&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;https://dblp.org/rec/journals/jifs/YuTZTCH23&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;authors&#39;</span><span class="p">:</span> <span class="s1">&#39;Song Yu, Weimin Tan, Chengming Zhang,</span>
+            <span class="n">Chao</span> <span class="n">Tang</span><span class="p">,</span> <span class="n">Lihong</span> <span class="n">Cai</span><span class="p">,</span> <span class="n">Dong</span> <span class="n">Hu</span><span class="s1">&#39;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Performance comparison of Extreme Learning</span>
+            <span class="n">Machinesand</span> <span class="n">other</span> <span class="n">machine</span> <span class="n">learning</span> <span class="n">methods</span>
+            <span class="n">on</span> <span class="n">WBCD</span> <span class="n">data</span> <span class="nb">set</span><span class="o">.</span><span class="s1">&#39;,</span>
+            <span class="s1">&#39;venue&#39;</span><span class="p">:</span> <span class="s1">&#39;SIU&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;pages&#39;</span><span class="p">:</span> <span class="s1">&#39;1-4&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="s1">&#39;2021&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;Conference and Workshop Papers&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;doi&#39;</span><span class="p">:</span> <span class="s1">&#39;10.1109/SIU53274.2021.9477984&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;https://dblp.org/rec/conf/siu/KeskinDAY21&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;authors&#39;</span><span class="p">:</span> <span class="s1">&#39;Ömer Selim Keskin, Akif Durdu,</span>
+            <span class="n">Muhammet</span> <span class="n">Fatih</span> <span class="n">Aslan</span><span class="p">,</span> <span class="n">Abdullah</span> <span class="n">Yusefi</span><span class="s1">&#39;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.dblp_search_authors">
+<span class="sig-prename descclassname"><span class="pre">agentscope.service.</span></span><span class="sig-name descname"><span class="pre">dblp_search_authors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">question</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_completion</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.service.service_response.html#agentscope.service.service_response.ServiceResponse" title="agentscope.service.service_response.ServiceResponse"><span class="pre">ServiceResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/service/web/dblp.html#dblp_search_authors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.service.dblp_search_authors" title="Link to this definition"></a></dt>
+<dd><p>Search for author information in the DBLP database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>question</strong> (<cite>str</cite>) – The search query string.</p></li>
+<li><p><strong>num_results</strong> (<cite>int</cite>, defaults to <cite>30</cite>) – The number of search results to return.</p></li>
+<li><p><strong>start</strong> (<cite>int</cite>, defaults to <cite>0</cite>) – The index of the first search result to return.</p></li>
+<li><p><strong>num_completion</strong> (<cite>int</cite>, defaults to <cite>10</cite>) – The number of completions to generate.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary containing <cite>status</cite> and <cite>content</cite>.
+The <cite>status</cite> attribute is from the
+ServiceExecStatus enum, indicating the success or error of the search.
+The <cite>content</cite> is a list of parsed author
+data if successful, or an error message if failed.
+Each item in the list contains author information
+including their name, URL, and affiliations.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">search_results</span> <span class="o">=</span> <span class="n">dblp_search_authors</span><span class="p">(</span><span class="n">question</span><span class="o">=</span><span class="s2">&quot;Liu ZiWei&quot;</span><span class="p">,</span>
+                                     <span class="n">num_results</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                                     <span class="n">results_per_page</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                     <span class="n">num_completion</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">search_results</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It returns the following structure:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">:</span> <span class="mi">1</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s1">&#39;content&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;author&#39;</span><span class="p">:</span> <span class="s1">&#39;Ziwei Liu 0001&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;https://dblp.org/pid/05/6300-1&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;affiliations&#39;</span><span class="p">:</span> <span class="s1">&#39;Advantech Singapore Pte Ltd,</span>
+            <span class="n">Singapore</span><span class="p">;</span>
+            <span class="n">National</span> <span class="n">University</span> <span class="n">of</span> <span class="n">Singapore</span><span class="p">,</span>
+            <span class="n">Department</span> <span class="n">of</span> <span class="n">Computer</span> <span class="n">Science</span><span class="p">,</span> <span class="n">Singapore</span><span class="s1">&#39;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;author&#39;</span><span class="p">:</span> <span class="s1">&#39;Ziwei Liu 0002&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;https://dblp.org/pid/05/6300-2&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;affiliations&#39;</span><span class="p">:</span> <span class="s1">&#39;Nanyang Technological University,</span>
+            <span class="n">S</span><span class="o">-</span><span class="n">Lab</span><span class="p">,</span> <span class="n">Singapore</span><span class="p">;</span>
+            <span class="n">Chinese</span> <span class="n">University</span> <span class="n">of</span> <span class="n">Hong</span> <span class="n">Kong</span><span class="p">,</span>
+            <span class="n">Department</span> <span class="n">of</span> <span class="n">Information</span> <span class="n">Engineering</span><span class="p">,</span>
+            <span class="n">Hong</span> <span class="n">Kong</span><span class="s1">&#39;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.dblp_search_venues">
+<span class="sig-prename descclassname"><span class="pre">agentscope.service.</span></span><span class="sig-name descname"><span class="pre">dblp_search_venues</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">question</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_completion</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.service.service_response.html#agentscope.service.service_response.ServiceResponse" title="agentscope.service.service_response.ServiceResponse"><span class="pre">ServiceResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/service/web/dblp.html#dblp_search_venues"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.service.dblp_search_venues" title="Link to this definition"></a></dt>
+<dd><p>Search for venue information in the DBLP database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>question</strong> (<cite>str</cite>) – The search query string.</p></li>
+<li><p><strong>num_results</strong> (<cite>int</cite>, defaults to <cite>30</cite>) – The number of search results to return.</p></li>
+<li><p><strong>start</strong> (<cite>int</cite>, defaults to <cite>0</cite>) – The index of the first search result to return.</p></li>
+<li><p><strong>num_completion</strong> (<cite>int</cite>, defaults to <cite>10</cite>) – The number of completions to generate.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary containing <cite>status</cite> and <cite>content</cite>.
+The <cite>status</cite> attribute is from the ServiceExecStatus enum,
+indicating the success or error of the search.
+The <cite>content</cite> is a list of parsed venue data if successful,
+or an error message if failed.
+Each item in the list contains venue information including
+its name, acronym, type, and URL.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">search_results</span> <span class="o">=</span> <span class="n">dblp_search_venues</span><span class="p">(</span><span class="n">question</span><span class="o">=</span><span class="s2">&quot;AAAI&quot;</span><span class="p">,</span>
+                                     <span class="n">num_results</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                     <span class="n">results_per_page</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                     <span class="n">num_completion</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">search_results</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It returns the following structure:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">:</span> <span class="mi">1</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s1">&#39;content&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;venue&#39;</span><span class="p">:</span> <span class="s1">&#39;AAAI Conference on Artificial Intelligence</span>
+            <span class="p">(</span><span class="n">AAAI</span><span class="p">)</span><span class="s1">&#39;,</span>
+            <span class="s1">&#39;acronym&#39;</span><span class="p">:</span> <span class="s1">&#39;AAAI&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;Conference or Workshop&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;https://dblp.org/db/conf/aaai/&#39;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;venue&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="n">AAAI</span> <span class="n">Fall</span> <span class="n">Symposium</span> <span class="n">Series</span><span class="s1">&#39;,</span>
+            <span class="s1">&#39;acronym&#39;</span><span class="p">:</span> <span class="s1">&#39;No acronym available&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;Conference or Workshop&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;https://dblp.org/db/conf/aaaifs/&#39;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py class">

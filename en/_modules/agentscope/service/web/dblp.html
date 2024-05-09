@@ -1,0 +1,457 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.service.web.dblp &mdash; AgentScope  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../../../../en/_modules/agentscope/service/web/dblp.html">English</a></li> |
+    <a href="../../../../../zh_CN/_modules/agentscope/service/web/dblp.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/quick_start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/advance.html">Advanced Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/contribute.html">Get Involved</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.exception.html">agentscope.exception</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.utils.html">agentscope.utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../service.html">agentscope.service</a></li>
+      <li class="breadcrumb-item active">agentscope.service.web.dblp</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for agentscope.service.web.dblp</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot; Search papers, authors and venues in DBLP API.</span>
+<span class="sd">For detail usage of the DBLP API</span>
+<span class="sd">please refer to https://dblp.org/faq/How+can+I+fetch+DBLP+data.html</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">agentscope.service.service_response</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ServiceResponse</span><span class="p">,</span>
+    <span class="n">ServiceExecStatus</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">agentscope.utils.common</span> <span class="kn">import</span> <span class="n">requests_get</span>
+
+
+<div class="viewcode-block" id="dblp_search_publications">
+<a class="viewcode-back" href="../../../../agentscope.service.web.dblp.html#agentscope.service.dblp_search_publications">[docs]</a>
+<span class="k">def</span> <span class="nf">dblp_search_publications</span><span class="p">(</span>
+    <span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">num_results</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
+    <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">num_completion</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Search publications in the DBLP database.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        question (`str`):</span>
+<span class="sd">            The search query string.</span>
+<span class="sd">        num_results (`int`, defaults to `30`):</span>
+<span class="sd">            The number of search results to return.</span>
+<span class="sd">        start (`int`, defaults to `0`):</span>
+<span class="sd">            The index of the first search result to return.</span>
+<span class="sd">        num_completion (`int`, defaults to `10`):</span>
+<span class="sd">            The number of completions to generate.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `ServiceResponse`: A dictionary containing `status` and `content`.</span>
+<span class="sd">        The `status` attribute is from the ServiceExecStatus enum,</span>
+<span class="sd">        indicating success or error.</span>
+<span class="sd">        The `content` is a list of parsed publication data if successful,</span>
+<span class="sd">        or an error message if failed.</span>
+<span class="sd">        Each item in the list contains publication information</span>
+<span class="sd">        includes title, authors, venue, pages, year, type, DOI, and URL.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        .. code-block:: python</span>
+<span class="sd">            search_results = dblp_search_publications(question=&quot;Extreme</span>
+<span class="sd">            Learning Machine&quot;,</span>
+<span class="sd">                                                      num_results=3,</span>
+<span class="sd">                                                      results_per_page=1,</span>
+<span class="sd">                                                      num_completion=1)</span>
+<span class="sd">            print(search_results)</span>
+
+<span class="sd">        It returns the following structure:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &#39;status&#39;: &lt;ServiceExecStatus.SUCCESS: 1&gt;,</span>
+<span class="sd">                &#39;content&#39;: [</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &#39;title&#39;: &#39;Power transformers fault diagnosis</span>
+<span class="sd">                        based on a meta-learning approach to kernel</span>
+<span class="sd">                        extreme learning machine with opposition-based</span>
+<span class="sd">                        learning sparrow search algorithm.&#39;,</span>
+<span class="sd">                        &#39;venue&#39;: &#39;J. Intell. Fuzzy Syst.&#39;,</span>
+<span class="sd">                        &#39;pages&#39;: &#39;455-466&#39;,</span>
+<span class="sd">                        &#39;year&#39;: &#39;2023&#39;,</span>
+<span class="sd">                        &#39;type&#39;: &#39;Journal Articles&#39;,</span>
+<span class="sd">                        &#39;doi&#39;: &#39;10.3233/JIFS-211862&#39;,</span>
+<span class="sd">                        &#39;url&#39;: &#39;https://dblp.org/rec/journals/jifs/YuTZTCH23&#39;,</span>
+<span class="sd">                        &#39;authors&#39;: &#39;Song Yu, Weimin Tan, Chengming Zhang,</span>
+<span class="sd">                        Chao Tang, Lihong Cai, Dong Hu&#39;</span>
+<span class="sd">                    },</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &#39;title&#39;: &#39;Performance comparison of Extreme Learning</span>
+<span class="sd">                        Machinesand other machine learning methods</span>
+<span class="sd">                        on WBCD data set.&#39;,</span>
+<span class="sd">                        &#39;venue&#39;: &#39;SIU&#39;,</span>
+<span class="sd">                        &#39;pages&#39;: &#39;1-4&#39;,</span>
+<span class="sd">                        &#39;year&#39;: &#39;2021&#39;,</span>
+<span class="sd">                        &#39;type&#39;: &#39;Conference and Workshop Papers&#39;,</span>
+<span class="sd">                        &#39;doi&#39;: &#39;10.1109/SIU53274.2021.9477984&#39;,</span>
+<span class="sd">                        &#39;url&#39;: &#39;https://dblp.org/rec/conf/siu/KeskinDAY21&#39;,</span>
+<span class="sd">                        &#39;authors&#39;: &#39;Ömer Selim Keskin, Akif Durdu,</span>
+<span class="sd">                        Muhammet Fatih Aslan, Abdullah Yusefi&#39;</span>
+<span class="sd">                    }</span>
+<span class="sd">                ]</span>
+<span class="sd">            }</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://dblp.org/search/publ/api&quot;</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;q&quot;</span><span class="p">:</span> <span class="n">question</span><span class="p">,</span>
+        <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;h&quot;</span><span class="p">:</span> <span class="n">num_results</span><span class="p">,</span>
+        <span class="s2">&quot;f&quot;</span><span class="p">:</span> <span class="n">start</span><span class="p">,</span>
+        <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="n">num_completion</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">search_results</span> <span class="o">=</span> <span class="n">requests_get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">search_results</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span> <span class="n">search_results</span><span class="p">)</span>
+
+    <span class="n">hits</span> <span class="o">=</span> <span class="n">search_results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;result&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;hits&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;hit&quot;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="n">parsed_data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">hit</span> <span class="ow">in</span> <span class="n">hits</span><span class="p">:</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="n">hit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;title&quot;</span><span class="p">,</span> <span class="s2">&quot;No title available&quot;</span><span class="p">)</span>
+        <span class="n">venue</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;venue&quot;</span><span class="p">,</span> <span class="s2">&quot;No venue available&quot;</span><span class="p">)</span>
+        <span class="n">pages</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pages&quot;</span><span class="p">,</span> <span class="s2">&quot;No page information&quot;</span><span class="p">)</span>
+        <span class="n">year</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;year&quot;</span><span class="p">,</span> <span class="s2">&quot;Year not specified&quot;</span><span class="p">)</span>
+        <span class="n">pub_type</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;Type not specified&quot;</span><span class="p">)</span>
+        <span class="n">doi</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;doi&quot;</span><span class="p">,</span> <span class="s2">&quot;No DOI available&quot;</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;No URL available&quot;</span><span class="p">)</span>
+        <span class="n">authors</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;authors&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;author&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">authors_info</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;authors&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;author&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">authors_info</span><span class="p">,</span>
+            <span class="nb">dict</span><span class="p">,</span>
+        <span class="p">):</span>  <span class="c1"># Check if there&#39;s only one author in a dict format</span>
+            <span class="n">authors_info</span> <span class="o">=</span> <span class="p">[</span><span class="n">authors_info</span><span class="p">]</span>
+        <span class="n">authors</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">author</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">author</span> <span class="ow">in</span> <span class="n">authors_info</span> <span class="k">if</span> <span class="s2">&quot;text&quot;</span> <span class="ow">in</span> <span class="n">author</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span>
+            <span class="s2">&quot;venue&quot;</span><span class="p">:</span> <span class="n">venue</span><span class="p">,</span>
+            <span class="s2">&quot;pages&quot;</span><span class="p">:</span> <span class="n">pages</span><span class="p">,</span>
+            <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="n">year</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">pub_type</span><span class="p">,</span>
+            <span class="s2">&quot;doi&quot;</span><span class="p">:</span> <span class="n">doi</span><span class="p">,</span>
+            <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span>
+            <span class="s2">&quot;authors&quot;</span><span class="p">:</span> <span class="n">authors</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">parsed_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span> <span class="n">parsed_data</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="dblp_search_authors">
+<a class="viewcode-back" href="../../../../agentscope.service.web.dblp.html#agentscope.service.dblp_search_authors">[docs]</a>
+<span class="k">def</span> <span class="nf">dblp_search_authors</span><span class="p">(</span>
+    <span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">num_results</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
+    <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">num_completion</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Search for author information in the DBLP database.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        question (`str`):</span>
+<span class="sd">            The search query string.</span>
+<span class="sd">        num_results (`int`, defaults to `30`):</span>
+<span class="sd">            The number of search results to return.</span>
+<span class="sd">        start (`int`, defaults to `0`):</span>
+<span class="sd">            The index of the first search result to return.</span>
+<span class="sd">        num_completion (`int`, defaults to `10`):</span>
+<span class="sd">            The number of completions to generate.</span>
+
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `ServiceResponse`: A dictionary containing `status` and `content`.</span>
+<span class="sd">        The `status` attribute is from the</span>
+<span class="sd">        ServiceExecStatus enum, indicating the success or error of the search.</span>
+<span class="sd">        The `content` is a list of parsed author</span>
+<span class="sd">        data if successful, or an error message if failed.</span>
+<span class="sd">        Each item in the list contains author information</span>
+<span class="sd">        including their name, URL, and affiliations.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            search_results = dblp_search_authors(question=&quot;Liu ZiWei&quot;,</span>
+<span class="sd">                                                 num_results=3,</span>
+<span class="sd">                                                 results_per_page=1,</span>
+<span class="sd">                                                 num_completion=1)</span>
+<span class="sd">            print(search_results)</span>
+
+<span class="sd">        It returns the following structure:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &#39;status&#39;: &lt;ServiceExecStatus.SUCCESS: 1&gt;,</span>
+<span class="sd">                &#39;content&#39;: [</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &#39;author&#39;: &#39;Ziwei Liu 0001&#39;,</span>
+<span class="sd">                        &#39;url&#39;: &#39;https://dblp.org/pid/05/6300-1&#39;,</span>
+<span class="sd">                        &#39;affiliations&#39;: &#39;Advantech Singapore Pte Ltd,</span>
+<span class="sd">                        Singapore;</span>
+<span class="sd">                        National University of Singapore,</span>
+<span class="sd">                        Department of Computer Science, Singapore&#39;</span>
+<span class="sd">                    },</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &#39;author&#39;: &#39;Ziwei Liu 0002&#39;,</span>
+<span class="sd">                        &#39;url&#39;: &#39;https://dblp.org/pid/05/6300-2&#39;,</span>
+<span class="sd">                        &#39;affiliations&#39;: &#39;Nanyang Technological University,</span>
+<span class="sd">                        S-Lab, Singapore;</span>
+<span class="sd">                        Chinese University of Hong Kong,</span>
+<span class="sd">                        Department of Information Engineering,</span>
+<span class="sd">                        Hong Kong&#39;</span>
+<span class="sd">                    }</span>
+<span class="sd">                ]</span>
+<span class="sd">            }</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://dblp.org/search/author/api&quot;</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;q&quot;</span><span class="p">:</span> <span class="n">question</span><span class="p">,</span>
+        <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;h&quot;</span><span class="p">:</span> <span class="n">num_results</span><span class="p">,</span>
+        <span class="s2">&quot;f&quot;</span><span class="p">:</span> <span class="n">start</span><span class="p">,</span>
+        <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="n">num_completion</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">search_results</span> <span class="o">=</span> <span class="n">requests_get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">search_results</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span> <span class="n">search_results</span><span class="p">)</span>
+    <span class="n">hits</span> <span class="o">=</span> <span class="n">search_results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;result&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;hits&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;hit&quot;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="n">parsed_data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">hit</span> <span class="ow">in</span> <span class="n">hits</span><span class="p">:</span>
+        <span class="n">author</span> <span class="o">=</span> <span class="n">hit</span><span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">][</span><span class="s2">&quot;author&quot;</span><span class="p">]</span>
+        <span class="n">author_url</span> <span class="o">=</span> <span class="n">hit</span><span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">][</span><span class="s2">&quot;url&quot;</span><span class="p">]</span>
+        <span class="n">affiliations</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">notes</span> <span class="o">=</span> <span class="n">hit</span><span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;notes&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">note_entries</span> <span class="o">=</span> <span class="n">notes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;note&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">note_entries</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">note_entries</span> <span class="o">=</span> <span class="p">[</span><span class="n">note_entries</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">note</span> <span class="ow">in</span> <span class="n">note_entries</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">note</span><span class="p">[</span><span class="s2">&quot;@type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;affiliation&quot;</span><span class="p">:</span>
+                <span class="n">affiliations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">note</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">])</span>
+        <span class="n">affiliations</span> <span class="o">=</span> <span class="s2">&quot;; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">affiliations</span><span class="p">)</span>
+        <span class="n">entry_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;author&quot;</span><span class="p">:</span> <span class="n">author</span><span class="p">,</span>
+            <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">author_url</span><span class="p">,</span>
+            <span class="s2">&quot;affiliations&quot;</span><span class="p">:</span> <span class="n">affiliations</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">parsed_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry_dict</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span> <span class="n">parsed_data</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="dblp_search_venues">
+<a class="viewcode-back" href="../../../../agentscope.service.web.dblp.html#agentscope.service.dblp_search_venues">[docs]</a>
+<span class="k">def</span> <span class="nf">dblp_search_venues</span><span class="p">(</span>
+    <span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">num_results</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
+    <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">num_completion</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Search for venue information in the DBLP database.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        question (`str`):</span>
+<span class="sd">            The search query string.</span>
+<span class="sd">        num_results (`int`, defaults to `30`):</span>
+<span class="sd">            The number of search results to return.</span>
+<span class="sd">        start (`int`, defaults to `0`):</span>
+<span class="sd">            The index of the first search result to return.</span>
+<span class="sd">        num_completion (`int`, defaults to `10`):</span>
+<span class="sd">            The number of completions to generate.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `ServiceResponse`: A dictionary containing `status` and `content`.</span>
+<span class="sd">        The `status` attribute is from the ServiceExecStatus enum,</span>
+<span class="sd">        indicating the success or error of the search.</span>
+<span class="sd">        The `content` is a list of parsed venue data if successful,</span>
+<span class="sd">        or an error message if failed.</span>
+<span class="sd">        Each item in the list contains venue information including</span>
+<span class="sd">        its name, acronym, type, and URL.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            search_results = dblp_search_venues(question=&quot;AAAI&quot;,</span>
+<span class="sd">                                                 num_results=1,</span>
+<span class="sd">                                                 results_per_page=1,</span>
+<span class="sd">                                                 num_completion=1)</span>
+<span class="sd">            print(search_results)</span>
+
+<span class="sd">        It returns the following structure:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &#39;status&#39;: &lt;ServiceExecStatus.SUCCESS: 1&gt;,</span>
+<span class="sd">                &#39;content&#39;: [</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &#39;venue&#39;: &#39;AAAI Conference on Artificial Intelligence</span>
+<span class="sd">                        (AAAI)&#39;,</span>
+<span class="sd">                        &#39;acronym&#39;: &#39;AAAI&#39;,</span>
+<span class="sd">                        &#39;type&#39;: &#39;Conference or Workshop&#39;,</span>
+<span class="sd">                        &#39;url&#39;: &#39;https://dblp.org/db/conf/aaai/&#39;</span>
+<span class="sd">                    },</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &#39;venue&#39;: &#39;&#39;AAAI Fall Symposium Series&#39;,</span>
+<span class="sd">                        &#39;acronym&#39;: &#39;No acronym available&#39;,</span>
+<span class="sd">                        &#39;type&#39;: &#39;Conference or Workshop&#39;,</span>
+<span class="sd">                        &#39;url&#39;: &#39;https://dblp.org/db/conf/aaaifs/&#39;</span>
+<span class="sd">                    }</span>
+<span class="sd">                ]</span>
+<span class="sd">            }</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://dblp.org/search/venue/api&quot;</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;q&quot;</span><span class="p">:</span> <span class="n">question</span><span class="p">,</span>
+        <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;h&quot;</span><span class="p">:</span> <span class="n">num_results</span><span class="p">,</span>
+        <span class="s2">&quot;f&quot;</span><span class="p">:</span> <span class="n">start</span><span class="p">,</span>
+        <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="n">num_completion</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">search_results</span> <span class="o">=</span> <span class="n">requests_get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">search_results</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span> <span class="n">search_results</span><span class="p">)</span>
+
+    <span class="n">hits</span> <span class="o">=</span> <span class="n">search_results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;result&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;hits&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;hit&quot;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="n">parsed_data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">hit</span> <span class="ow">in</span> <span class="n">hits</span><span class="p">:</span>
+        <span class="n">venue</span> <span class="o">=</span> <span class="n">hit</span><span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">][</span><span class="s2">&quot;venue&quot;</span><span class="p">]</span>
+        <span class="n">acronym</span> <span class="o">=</span> <span class="n">hit</span><span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;acronym&quot;</span><span class="p">,</span> <span class="s2">&quot;No acronym available&quot;</span><span class="p">)</span>
+        <span class="n">venue_type</span> <span class="o">=</span> <span class="n">hit</span><span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;Type not specified&quot;</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">hit</span><span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">][</span><span class="s2">&quot;url&quot;</span><span class="p">]</span>
+        <span class="n">entry_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;venue&quot;</span><span class="p">:</span> <span class="n">venue</span><span class="p">,</span>
+            <span class="s2">&quot;acronym&quot;</span><span class="p">:</span> <span class="n">acronym</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">venue_type</span><span class="p">,</span>
+            <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">parsed_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry_dict</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span> <span class="n">parsed_data</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Alibaba Tongyi Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
