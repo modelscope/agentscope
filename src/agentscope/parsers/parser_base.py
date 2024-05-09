@@ -80,7 +80,8 @@ class _DictFilterMixin:
         self,
         keys_to_speak: Union[str, Sequence[str]],
         keys_to_memory: Union[str, Sequence[str]],
-        keys_to_return: Union[str, Sequence[str]],
+        keys_to_others: Union[str, Sequence[str]],
+        keys_to_control: Union[str, Sequence[str]],
     ) -> None:
         """Initialize the mixin class with the keys to be filtered during
         speaking, storing in memory, and returning in the agent reply function.
@@ -94,22 +95,27 @@ class _DictFilterMixin:
                 The key or keys to be filtered during storing in memory. If
                 a single key is provided, the corresponding value will be
                 returned. Otherwise, a filtered dictionary will be returned.
-            keys_to_return (`Union[str, Sequence[str]]`):
-                The key or keys to be filtered during returning in the agent
-                reply function. If a single key is provided, the
+            keys_to_others (`Union[str, Sequence[str]]`):
+                The key or keys that will be exposed to other agents in the
+                msg content field. If a single key is provided, the
                 corresponding value will be returned. Otherwise, a filtered
                 dictionary will be returned.
+            keys_to_control (`Union[str, Sequence[str]]`):
+                The key or keys that will be fed into the returned message
+                object, it will be used to control the application workflow but
+                not exposed to other agents.
         """
         self.keys_to_speak = keys_to_speak
         self.keys_to_memory = keys_to_memory
-        self.keys_to_return = keys_to_return
+        self.keys_to_others = keys_to_others
+        self.keys_to_control = keys_to_control
 
     def to_speak(
         self,
         parsed_response: dict,
         allow_missing: bool = False,
     ) -> Union[str, dict]:
-        """Return the content to speak."""
+        """Filter the fields that will be spoken."""
         return self._filter_content_by_names(
             parsed_response,
             self.keys_to_speak,
@@ -121,22 +127,37 @@ class _DictFilterMixin:
         parsed_response: dict,
         allow_missing: bool = False,
     ) -> Union[str, dict]:
-        """Return the content to store in memory."""
+        """Filter the fields that will be stored in memory."""
         return self._filter_content_by_names(
             parsed_response,
-            self.content_to_memory,
+            self.keys_to_memory,
             allow_missing=allow_missing,
         )
 
-    def to_return(
+    def to_others(
         self,
         parsed_response: dict,
         allow_missing: bool = False,
     ) -> Union[str, dict]:
-        """Return the content to return."""
+        """Filter the fields that will be fed into the content field in the
+        returned message, which will be exposed to other agents.
+        """
         return self._filter_content_by_names(
             parsed_response,
-            self.content_to_return,
+            self.keys_to_others,
+            allow_missing=allow_missing,
+        )
+
+    def to_control(
+        self,
+        parsed_response: dict,
+        allow_missing: bool = False,
+    ) -> Union[str, dict]:
+        """Filter the fields that will be fed into the returned message
+        directly to control the application workflow."""
+        return self._filter_content_by_names(
+            parsed_response,
+            self.keys_to_control,
             allow_missing=allow_missing,
         )
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """The parser for tagged content in the model response."""
 import json
-from typing import Union, Sequence
+from typing import Union, Sequence, Optional
 
 from agentscope.exception import JsonParsingError
 from agentscope.models import ModelResponse
@@ -84,9 +84,9 @@ class MultiTaggedContentParser(ParserBase, _DictFilterMixin):
     def __init__(
         self,
         *tagged_contents: TaggedContent,
-        content_name_to_memory: Union[str, Sequence[str]] = None,
-        content_name_to_speak: Union[str, Sequence[str]] = None,
-        content_name_to_return: Union[str, Sequence[str]] = None,
+        content_name_to_memory: Optional[Union[str, Sequence[str]]] = None,
+        content_name_to_speak: Optional[Union[str, Sequence[str]]] = None,
+        content_name_to_return: Optional[Union[str, Sequence[str]]] = None,
     ) -> None:
         """Initialize the parser with tags.
 
@@ -119,7 +119,7 @@ class MultiTaggedContentParser(ParserBase, _DictFilterMixin):
             self,
             keys_to_speak=content_name_to_speak,
             keys_to_memory=content_name_to_memory,
-            keys_to_return=content_name_to_return,
+            keys_to_others=content_name_to_return,
         )
 
         self.tagged_contents = list(tagged_contents)

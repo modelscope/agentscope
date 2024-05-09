@@ -2,7 +2,7 @@
 """The parser for JSON object in the model response."""
 import json
 from copy import deepcopy
-from typing import Optional, Any, List
+from typing import Optional, Any, List, Sequence, Union
 
 from loguru import logger
 
@@ -153,9 +153,9 @@ class MarkdownJsonDictParser(MarkdownJsonObjectParser, _DictFilterMixin):
         self,
         content_hint: Optional[Any] = None,
         required_keys: List[str] = None,
-        keys_to_speak: Optional[dict] = None,
-        keys_to_memory: Optional[dict] = None,
-        keys_to_return: Optional[dict] = None,
+        keys_to_speak: Optional[Union[str, Sequence[str]]] = None,
+        keys_to_memory: Optional[Union[str, Sequence[str]]] = None,
+        keys_to_others: Optional[Union[str, Sequence[str]]] = None,
     ) -> None:
         """Initialize the parser with the content hint.
 
@@ -178,7 +178,7 @@ class MarkdownJsonDictParser(MarkdownJsonObjectParser, _DictFilterMixin):
             self,
             keys_to_speak=keys_to_speak,
             keys_to_memory=keys_to_memory,
-            keys_to_return=keys_to_return,
+            keys_to_others=keys_to_others,
         )
 
         self.required_keys = required_keys or []

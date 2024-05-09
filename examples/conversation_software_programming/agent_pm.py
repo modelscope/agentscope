@@ -1,4 +1,4 @@
-from agentscope.agents import AgentBase, UserAgent
+from agentscope.agents import UserAgent, DictDialogAgent
 from agentscope.message import Msg
 from agentscope.parsers import MarkdownJsonDictParser, \
     MultiTaggedContentParser, TaggedContent
@@ -18,66 +18,39 @@ SYSTEM_PROMPT = (
     "determine how many ghosts should be involved, and how large the map "
     "should be, etc.\n"
     "4. Determine the requirements by asking questions to the user. Note ask "
-    "one question at a time. \n"
+    "one question at a time, but if the user ask to generate all requirements "
+    "at once, just follow user's request. \n"
 )
 
+discuss_parser = MarkdownJsonDictParser(
+    content_hint="""{
+        "speak": "what you speak to the user",
+        "finish": true/false, once you finish asking questions and ready to generate requirements list, set to true, otherwise false,
+    }""",
+    required_keys=["speak", "finish"],
+    keys_to_speak="speak",
+    keys_to_others=["speak", "finish"],
+)
 
-class PMAgent(AgentBase):
-
-    def __init__(self, model_config_name: str):
-        name = "Manager"
-        super().__init__(
-            name=name,
-            sys_prompt=SYSTEM_PROMPT.format(name=name),
-            model_config_name=model_config_name,
-            use_memory=True,
-        )
-
-        self.memory.add(Msg("system", self.sys_prompt, "system"))
-
-        self.parser = MarkdownJsonDictParser(
-            content_hint="""{
-                "speak": "what you speak to the user",
-                "finish asking": true/false, once you finish asking questions and ready to generate requirements list, set to true, otherwise false,
-            }""",
-            required_keys=["speak", "finish asking"],
-        )
-
-    def reply(self, x: dict = None) -> dict:
-        self.memory.add(x)
-
-        prompt = self.model.format(
-            self.memory.get_memory(),
-            Msg("system", self.parser.format_instruction, "system"),
-        )
-
-        res = self.model(
-            prompt,
-            parse_func=self.parser.parse,
-            max_retries=1,
-        )
-
-        self.speak(Msg(self.name, self.parser.to_speak(res.parsed)), "system")
-
-        msg = Msg(self.name, content=self.parser.to_memory(res.parsed), role="system", **res.parsed)
-
-        self.memory.add(msg)
-        return Msg(self.name, content=self.parser.to_return(res.parsed), role="system", **res.parsed)
-
-
-from init import *
-
-user = UserAgent()
-manager = PMAgent("qwen")
-
-parser_generate = MultiTaggedContentParser(
+generate_parser = MultiTaggedContentParser(
     TaggedContent(
         "requirements",
         "[requirements]",
         "1. {requirement title}: {description}\n2. {requirement title}: {description}\n...",
         "[/requirements]",
-    )
+    ),
 )
+
+from init import *
+
+user = UserAgent()
+manager = DictDialogAgent(
+    name="Manager",
+    sys_prompt=SYSTEM_PROMPT.format(name="Manager"),
+    model_config_name="qwen"
+)
+
+manager.set_parser(discuss_parser)
 
 x = None
 while True:
@@ -85,7 +58,7 @@ while True:
     if x == "exit":
         break
     x = manager(x)
-    if x["finish asking"]:
+    if x.content.get("finish", False):
         break
 
 msg = Msg(
@@ -95,9 +68,9 @@ msg = Msg(
     "system",
     echo=True,
 )
-
-manager.parser = parser_generate
+manager.set_parser(generate_parser)
 
 res = manager(msg)
+
 
 print(res.content)
