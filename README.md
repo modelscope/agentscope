@@ -3,7 +3,7 @@ English | [**中文**](README_ZH.md)
 # AgentScope
 
 <h1 align="center">
-<img src="https://img.alicdn.com/imgextra/i4/O1CN011XPI2H26w6YwQFCie_!!6000000007725-2-tps-501-498.png" width="700" height="550" alt="agentscope-logo">
+<img src="https://img.alicdn.com/imgextra/i1/O1CN01cGftVz1nabGdULttp_!!6000000005106-0-tps-1024-1024.jpg" width="600" height="450" alt="agentscope-logo">
 </h1>
 
 Start building LLM-empowered multi-agent applications in an easier way.
