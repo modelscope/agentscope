@@ -39,9 +39,9 @@ except ImportError:
 
 from agentscope.rag import RAGBase
 from agentscope.rag.rag import (
+    DEFAULT_TOP_K,
     DEFAULT_CHUNK_SIZE,
     DEFAULT_CHUNK_OVERLAP,
-    DEFAULT_TOP_K,
 )
 from agentscope.models import ModelWrapperBase
 
@@ -145,7 +145,6 @@ class LlamaIndexRAG(RAGBase):
         model: Optional[ModelWrapperBase] = None,
         emb_model: Union[ModelWrapperBase, BaseEmbedding, None] = None,
         index_config: dict = None,
-        rag_config: Optional[dict] = None,
         overwrite_index: Optional[bool] = False,
         showprogress: Optional[bool] = True,
         **kwargs: Any,
@@ -174,17 +173,14 @@ class LlamaIndexRAG(RAGBase):
             index_config (dict):
                 The configuration for llama-index to
                 generate or load the index.
-            rag_config (dict):
-                The configuration for llama-index to
-                retrieval data (retriever).
             overwrite_index (Optional[bool]):
                 Whether to overwrite the index while refreshing
             showprogress (Optional[bool]):
                 Whether to show the indexing progress
         """
-        super().__init__(model, emb_model, index_config, rag_config, **kwargs)
+        super().__init__(model, emb_model, index_config, **kwargs)
         self.knowledge_id = knowledge_id
-        self.persist_dir = index_config.get("persist_dir", "/")
+        self.persist_dir = "./rag_storage/" + knowledge_id
         self.emb_model = emb_model
         self.overwrite_index = overwrite_index
         self.showprogress = showprogress
@@ -219,13 +215,12 @@ class LlamaIndexRAG(RAGBase):
         """
         if os.path.exists(self.persist_dir):
             self._load_index()
-            logger.info(f"index loaded from {self.persist_dir}")
-            self.refresh_index()
+            # self.refresh_index()
         else:
             self._data_to_index()
-        self.set_retriever()
+        self._set_retriever()
         logger.info(
-            f"RAG with knowledge id {self.knowledge_id} "
+            f"RAG with knowledge ids: {self.knowledge_id} "
             f"initialization completed!\n",
         )
 
@@ -242,6 +237,7 @@ class LlamaIndexRAG(RAGBase):
             storage_context=storage_context,
             embed_model=self.emb_model,
         )
+        logger.info(f"index loaded from {self.persist_dir}")
 
     def _data_to_index(self) -> None:
         """
@@ -408,7 +404,7 @@ class LlamaIndexRAG(RAGBase):
         transformations = {"transformations": transformations}
         return transformations
 
-    def set_retriever(
+    def _set_retriever(
         self,
         retriever: Optional[BaseRetriever] = None,
         **kwargs: Any,

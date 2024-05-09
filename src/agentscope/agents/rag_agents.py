@@ -10,10 +10,10 @@ from abc import ABC, abstractmethod
 from typing import Optional, Any
 from loguru import logger
 
-from agentscope.rag import RAGBase, LlamaIndexRAG
 from agentscope.agents.agent import AgentBase
 from agentscope.message import Msg
 from agentscope.models import load_model_by_config_name
+from agentscope.rag import KnowledgeBank
 
 
 class RAGAgentBase(AgentBase, ABC):
@@ -66,8 +66,20 @@ class RAGAgentBase(AgentBase, ABC):
         self.rag = None
 
     @abstractmethod
-    def init_rag(self, **kwargs: Any) -> RAGBase:
-        """initialize RAG with configuration"""
+    def retrieve(
+        self,
+        query: Any,
+        to_list_strs: bool = False,
+    ) -> list[Any]:
+        """
+        retrieve list of content from database (vector stored index) to memory
+        Args:
+            query (Any): query to retrieve
+            to_list_strs (bool): whether return a list of str
+
+        Returns:
+            return a list with retrieved documents (in strings)
+        """
 
     def reply(
         self,
@@ -163,6 +175,7 @@ class LlamaIndexAgent(RAGAgentBase):
         name: str,
         sys_prompt: str,
         model_config_name: str,
+        knowledge_bank: Optional[KnowledgeBank],
         emb_model_config_name: str = None,
         memory_config: Optional[dict] = None,
         rag_config: Optional[dict] = None,
@@ -202,29 +215,45 @@ class LlamaIndexAgent(RAGAgentBase):
             memory_config=memory_config,
             rag_config=rag_config,
         )
+        self.rag_list = []
+        self.knowledge_bank = knowledge_bank
         self.description = kwargs.get("description", "")
+        self._init_rag()
 
-    def init_rag(
-        self,
-        rag_module: Optional[RAGBase] = None,
-        index_config: Optional[dict] = None,
-        **kwargs: Any,
-    ) -> None:
-        # dynamic loading loader
-        # initiate RAG related attributes
-        if rag_module is None and index_config is not None:
-            self.rag = LlamaIndexRAG(
-                knowledge_id=self.name,
-                model=self.model,
-                emb_model=self.emb_model,
-                rag_config=self.rag_config,
-                index_config=index_config,
-            )
-        elif rag_module is not None:
-            self.rag = rag_module
-            self.rag.rag_config = self.rag_config
-        else:
-            raise ValueError("Expected either rag_module or index_config")
+    def _init_rag(self) -> None:
+        self.retriever_list = []
+        for knowledge_id in self.rag_config.get("knowledge_id", None):
+            rag = self.knowledge_bank.get_rag(knowledge_id)
+            self.retriever_list.append(rag.retriever)
+        logger.info(f"retrievers for {self.name} are ready.\n")
+        if len(self.retriever_list) == 0:
+            raise ValueError("retrievers are empty!")
+
+    def retrieve(self, query: str, to_list_strs: bool = False) -> list[Any]:
+        """
+        This is a basic retrieve function for RAG agent.
+
+        Args:
+            query (str):
+                query is expected to be a question in string
+            to_list_strs (book):
+                whether returns the list of strings;
+                if False, return NodeWithScore
+        Return:
+            list[Any]: list of str or NodeWithScore
+
+        More advanced query processing can refer to
+        https://docs.llamaindex.ai/en/stable/examples/query_transformations/query_transform_cookbook.html
+        """
+        results = []
+        retrieved_list = []
+        for retriever in self.retriever_list:
+            retrieved = retriever.retrieve(str(query))
+            retrieved_list += retrieved
+            if to_list_strs:
+                for node in retrieved:
+                    results.append(node.get_text())
+        return results if to_list_strs else retrieved_list
 
     def reply(
         self,
@@ -271,7 +300,7 @@ class LlamaIndexAgent(RAGAgentBase):
 
         if len(query) > 0:
             # when content has information, do retrieval
-            retrieved_docs = self.rag.retrieve(query)
+            retrieved_docs = self.retrieve(query)
             scores = []
             for content in retrieved_docs:
                 scores.append(content.score)

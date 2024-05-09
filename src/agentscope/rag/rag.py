@@ -51,25 +51,6 @@ class RAGBase(ABC):
         Initiate the RAG module.
         """
 
-    @abstractmethod
-    def retrieve(
-        self,
-        query: Any,
-        to_list_strs: bool = False,
-    ) -> list[Any]:
-        """
-        retrieve list of content from database (vector stored index) to memory
-        Args:
-            query (Any): query to retrieve
-            to_list_strs (bool): whether return a list of str
-
-        Returns:
-            return a list with retrieved documents (in strings)
-        """
-
-    def set_retriever(self, **kwargs: Any) -> None:
-        """update retriever of RAG module"""
-
     def post_processing(
         self,
         retrieved_docs: list[str],

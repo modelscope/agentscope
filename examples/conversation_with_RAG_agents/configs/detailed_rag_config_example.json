@@ -1,7 +1,6 @@
 [
   {
     "knowledge_id": "agentscope_code_rag",
-    "persist_dir": "./rag_storage/code_assist",
     "chunk_size": 2048,
     "chunk_overlap": 40,
     "data_processing": [
@@ -38,7 +37,6 @@
   },
   {
     "knowledge_id": "agentscope_api_rag",
-    "persist_dir": "./rag_storage/api_assist",
     "chunk_size": 2048,
     "chunk_overlap": 40,
     "data_processing": [
@@ -61,7 +59,6 @@
   },
   {
     "knowledge_id": "agentscope_global_rag",
-    "persist_dir": "./rag_storage/searching_assist",
     "chunk_size": 2048,
     "chunk_overlap": 40,
     "data_processing": [

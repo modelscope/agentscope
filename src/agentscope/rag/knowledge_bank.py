@@ -4,11 +4,9 @@ Knowledge bank for making RAG module easier to use
 """
 import copy
 from typing import Optional
-
+from loguru import logger
 from agentscope.models import load_model_by_config_name
-from .rag import RAGBase
 from .llama_index_rag import LlamaIndexRAG
-
 
 DEFAULT_INDEX_CONFIG = {
     "knowledge_id": "",
@@ -36,12 +34,27 @@ class KnowledgeBank:
     """
     KnowledgeBank enables
     1) provide an easy and fast way to initialize the RAG model;
-    2) make RAG model reusable and sharable for multiple agent.
+    2) make RAG model reusable and sharable for multiple agents.
     """
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        configs: dict,
+    ) -> None:
         """initialize the knowledge bank"""
-        self.stored_knowledge: dict[str, RAGBase] = {}
+        self.configs = configs
+        self.stored_knowledge: dict[str, LlamaIndexRAG] = {}
+        self._init_knowledge()
+
+    def _init_knowledge(self) -> None:
+        """initialize the knowledge bank"""
+        for config in self.configs:
+            self.add_data_for_rag(
+                knowledge_id=config["knowledge_id"],
+                emb_model_name="qwen_emb_config",
+                index_config=config,
+            )
+        logger.info("knowledge bank initialization completed.\n ")
 
     def add_data_for_rag(
         self,
@@ -67,7 +80,7 @@ class KnowledgeBank:
                 (e.g., [".md", ".py", ".html"])
             persist_dir (Optional[str]):
                 path for storing the embedding and indexing information
-            index_config (ptional[dict]):
+            index_config (optional[dict]):
                 complete indexing configuration, used for more advanced
                 applications. Users can customize
                 - loader,
@@ -79,7 +92,7 @@ class KnowledgeBank:
             raise ValueError(f"knowledge_id {knowledge_id} already exists.")
 
         if persist_dir is None:
-            persist_dir = "./rag_storage/"
+            persist_dir = "./rag_storage/" + knowledge_id
 
         assert data_dirs_and_types is not None or index_config is not None
 
@@ -102,29 +115,30 @@ class KnowledgeBank:
             else None,
             index_config=index_config,
         )
+        logger.info(f"data loaded for knowledge_id = {knowledge_id}.")
 
     def get_rag(
         self,
         knowledge_id: str,
         duplicate: bool = False,
-    ) -> RAGBase:
+    ) -> LlamaIndexRAG:
         """
         Get a RAG from the knowledge bank.
         Args:
             knowledge_id (str):
                 unique id for the RAG
             duplicate (bool):
-                whether return a copy of of the RAG.
-
-        Returns: RAGBase
-            an RAGBase object with built indexing,
-            ready to be used by the agent
+                whether return a copy of the RAG.
+        Returns:
+            LlamaIndexRAG:
+                the RAG object defined with Llama-index
         """
         if knowledge_id not in self.stored_knowledge:
-            raise ValueError(f"{knowledge_id} has not been added yet.")
-
+            raise ValueError(
+                f"{knowledge_id} does not exist in the " f"knowledge bank.",
+            )
         rag = self.stored_knowledge[knowledge_id]
         if duplicate:
             rag = copy.deepcopy(rag)
-
+        logger.info(f"knowledge bank loaded: {knowledge_id}.")
         return rag

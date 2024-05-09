@@ -34,14 +34,15 @@ your question.
 
 def prepare_docstring_html() -> None:
     """prepare docstring in html for API assistant"""
-    os.system(
-        "sphinx-apidoc -f -o ../../docs/sphinx_doc/en/source "
-        "../../src/agentscope -t template",
-    )
-    os.system(
-        "sphinx-build -b html  ../../docs/sphinx_doc/en/source "
-        "../../docs/docstring_html/ -W --keep-going",
-    )
+    if not os.path.exists("../../docs/docstring_html/"):
+        os.system(
+            "sphinx-apidoc -f -o ../../docs/sphinx_doc/en/source "
+            "../../src/agentscope -t template",
+        )
+        os.system(
+            "sphinx-build -b html  ../../docs/sphinx_doc/en/source "
+            "../../docs/docstring_html/ -W --keep-going",
+        )
 
 
 def main() -> None:
@@ -64,9 +65,16 @@ def main() -> None:
             config["api_key"] = f"{os.environ.get('DASHSCOPE_API_KEY')}"
     agentscope.init(model_configs=model_configs)
 
-    # initialize knowledge bank (for RAG)
-    knowledge_bank = KnowledgeBank()
-    # a simple example of importing data to RAG
+    # more detailed configuration can be achieved by loading config file
+    with open(
+        "configs/detailed_rag_config_example.json",
+        "r",
+        encoding="utf-8",
+    ) as f:
+        knowledge_configs = json.load(f)
+    knowledge_bank = KnowledgeBank(configs=knowledge_configs)
+
+    # a simple example of importing data to RAG:
     knowledge_bank.add_data_for_rag(
         knowledge_id="agentscope_tutorial_rag",
         emb_model_name="qwen_emb_config",
@@ -75,28 +83,27 @@ def main() -> None:
         },
         persist_dir="./rag_storage/tutorial_assist",
     )
-    # more detailed configuration can be achieved by loading config file
-    with open(
-        "configs/detailed_rag_config_example.json",
-        "r",
-        encoding="utf-8",
-    ) as f:
-        knowledge_configs = json.load(f)
-    for config in knowledge_configs:
-        knowledge_bank.add_data_for_rag(
-            knowledge_id=config["knowledge_id"],
-            emb_model_name="qwen_emb_config",
-            index_config=config,
-        )
 
     with open("configs/agent_config.json", "r", encoding="utf-8") as f:
         agent_configs = json.load(f)
 
     # define RAG-based agents for tutorial, code, API and general search
-    tutorial_agent = LlamaIndexAgent(**agent_configs[0]["args"])
-    code_explain_agent = LlamaIndexAgent(**agent_configs[1]["args"])
-    api_agent = LlamaIndexAgent(**agent_configs[2]["args"])
-    searching_agent = LlamaIndexAgent(**agent_configs[3]["args"])
+    tutorial_agent = LlamaIndexAgent(
+        knowledge_bank=knowledge_bank,
+        **agent_configs[0]["args"],
+    )
+    code_explain_agent = LlamaIndexAgent(
+        knowledge_bank=knowledge_bank,
+        **agent_configs[1]["args"],
+    )
+    api_agent = LlamaIndexAgent(
+        knowledge_bank=knowledge_bank,
+        **agent_configs[2]["args"],
+    )
+    searching_agent = LlamaIndexAgent(
+        knowledge_bank=knowledge_bank,
+        **agent_configs[3]["args"],
+    )
 
     rag_agent_list = [
         tutorial_agent,
@@ -106,12 +113,12 @@ def main() -> None:
     ]
     rag_agent_names = [agent.name for agent in rag_agent_list]
 
-    for rag_agent in rag_agent_list:
-        rag_agent.init_rag(
-            rag_module=knowledge_bank.get_rag(
-                rag_agent.rag_config["knowledge_id"],
-            ),
-        )
+    # for rag_agent in rag_agent_list:
+    #     rag_agent.init_rag(
+    #         rag_module=knowledge_bank.get_rag(
+    #             rag_agent.rag_config["knowledge_id"],
+    #         ),
+    #     )
 
     # define a guide agent
     rag_agent_descriptions = [

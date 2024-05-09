@@ -8,7 +8,7 @@
       "model_config_name": "qwen_config",
       "emb_model_config_name": "qwen_emb_config",
       "rag_config": {
-            "knowledge_id": "agentscope_tutorial_rag",
+            "knowledge_id": ["agentscope_tutorial_rag"],
             "similarity_top_k": 5,
             "log_retrieval": false,
             "recent_n_mem": 1
@@ -24,7 +24,7 @@
       "model_config_name": "qwen_config",
       "emb_model_config_name": "qwen_emb_config",
       "rag_config": {
-            "knowledge_id": "agentscope_code_rag",
+            "knowledge_id": ["agentscope_code_rag"],
             "similarity_top_k": 5,
             "log_retrieval": false,
             "recent_n_mem": 1
@@ -40,7 +40,7 @@
       "model_config_name": "qwen_config",
       "emb_model_config_name": "qwen_emb_config",
       "rag_config": {
-          "knowledge_id": "agentscope_api_rag",
+          "knowledge_id": ["agentscope_api_rag"],
           "similarity_top_k": 3,
           "log_retrieval": true,
           "recent_n_mem": 1
@@ -56,7 +56,7 @@
       "model_config_name": "qwen_config",
       "emb_model_config_name": "qwen_emb_config",
       "rag_config": {
-            "knowledge_id": "agentscope_global_rag",
+            "knowledge_id": ["agentscope_global_rag"],
             "similarity_top_k": 5,
             "log_retrieval": false,
             "recent_n_mem": 1,
