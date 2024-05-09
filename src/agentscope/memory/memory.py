@@ -52,7 +52,7 @@ class MemoryBase(ABC):
     @abstractmethod
     def add(
         self,
-        memories: Union[Sequence[MessageBase], MessageBase, None],
+        memories: Union[Sequence[dict], dict, None],
     ) -> None:
         """
         Adding new memory fragment, depending on how the memory are stored

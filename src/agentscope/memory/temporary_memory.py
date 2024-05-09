@@ -55,7 +55,7 @@ class TemporaryMemory(MemoryBase):
         # if memory doesn't have id attribute, we skip the checking
         memories_idx = set(_.id for _ in self._content if hasattr(_, "id"))
         for memory_unit in record_memories:
-            if type(memory_unit) is not MessageBase:
+            if not issubclass(type(memory_unit), MessageBase):
                 try:
                     if (
                         "name" in memory_unit
@@ -66,7 +66,8 @@ class TemporaryMemory(MemoryBase):
                         memory_unit = Msg(**memory_unit)
                 except Exception as exc:
                     raise ValueError(
-                        f"Cannot add {memory_unit} to memory",
+                        f"Cannot add {memory_unit} to memory, "
+                        f"must be with subclass of MessageBase",
                     ) from exc
             # add to memory if it's new
             if (

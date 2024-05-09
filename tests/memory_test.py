@@ -66,17 +66,11 @@ class TemporaryMemoryTest(unittest.TestCase):
 
     def test_invalid(self) -> None:
         """Test invalid operations for memory"""
-        self.memory.add(self.invalid)
         # test invalid add
-        self.assertEqual(
-            self.memory.get_memory(),
-            [self.invalid],
-        )
-
-        # test print
-        self.assertEqual(
-            self.memory.get_memory(),
-            [{"invalid_key": "invalid_value"}],
+        with self.assertRaises(Exception) as context:
+            self.memory.add(self.invalid)
+        self.assertTrue(
+            f"Cannot add {self.invalid} to memory" in str(context.exception),
         )
 
     def test_load_export(self) -> None:
@@ -84,11 +78,11 @@ class TemporaryMemoryTest(unittest.TestCase):
         Test load and export function of TemporaryMemory
         """
         memory = TemporaryMemory()
-        user_input = {"name": "user", "content": "Hello"}
-        agent_input = {
-            "name": "agent",
-            "content": "Hello! How can I help you?",
-        }
+        user_input = Msg(name="user", content="Hello")
+        agent_input = Msg(
+            name="agent",
+            content="Hello! How can I help you?",
+        )
         memory.load([user_input, agent_input])
         retrieved_mem = memory.export(to_mem=True)
         self.assertEqual(
