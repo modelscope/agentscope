@@ -374,10 +374,10 @@ print(prompt)
 
 ### `AnthropicChatWrapper`
 
-`AnthropicChatWrapper` 封装了ZhipuAi聊天API，它接受消息列表作为输入。传递消息列表时，它必须遵守以下规则:
+`AnthropicChatWrapper` 封装了Anthropic 聊天API，它接受消息列表作为输入。传递消息列表时，它必须遵守以下规则:
 
-- Require `role` and `content` fields, and `role` must be either `"user"` or `"assistant"`.
-- 必须有 role 和 content 字段，且 role 必须是 "user"、 或 "assistant" 中的一个。
+
+- 必须有 `role` 和 `content` 字段，且 `role` 必须是 "user"、 或 "assistant" 中的一个。
 - **注意**: API 并不支持`system` role. 如果需要系统提示，请在使用模型的`__call__`函数时填写`system`字段。详情请参见`anthropic_model.py`。
 
 
