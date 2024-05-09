@@ -2,7 +2,7 @@ English | [**中文**](README_ZH.md)
 
 # AgentScope
 
-<h1 align="center">
+<h1 align="left">
 <img src="https://img.alicdn.com/imgextra/i1/O1CN01cGftVz1nabGdULttp_!!6000000005106-0-tps-1024-1024.jpg" width="500" height="450" alt="agentscope-logo">
 </h1>
 
