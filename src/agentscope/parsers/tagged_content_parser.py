@@ -82,10 +82,11 @@ class MultiTaggedContentParser(ParserBase, _DictFilterMixin):
     generate JSON object."""
 
     def __init__(
-            self, *tagged_contents: TaggedContent,
-            content_name_to_memory: Union[str, Sequence[str]] = None,
-            content_name_to_speak: Union[str, Sequence[str]] = None,
-            content_name_to_return: Union[str, Sequence[str]] = None,
+        self,
+        *tagged_contents: TaggedContent,
+        content_name_to_memory: Union[str, Sequence[str]] = None,
+        content_name_to_speak: Union[str, Sequence[str]] = None,
+        content_name_to_return: Union[str, Sequence[str]] = None,
     ) -> None:
         """Initialize the parser with tags.
 
