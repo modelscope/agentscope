@@ -27,7 +27,8 @@ from .web.dblp import (
     dblp_search_venues,
 )
 from .service_response import ServiceResponse
-from .service_factory import ServiceFactory
+from .service_toolkit import ServiceToolkit
+from .service_toolkit import ServiceFactory
 from .retrieval.similarity import cos_sim
 from .text_processing.summarization import summarization
 from .retrieval.retrieval_from_list import retrieve_from_list
@@ -45,7 +46,7 @@ def get_help() -> None:
 __all__ = [
     "ServiceResponse",
     "ServiceExecStatus",
-    "ServiceFactory",
+    "ServiceToolkit",
     "get_help",
     "execute_python_code",
     "execute_shell_command",
@@ -74,6 +75,7 @@ __all__ = [
     "load_web",
     "parse_html_to_text",
     "download_from_url",
+
     "dblp_search_publications",
     "dblp_search_authors",
     "dblp_search_venues",

@@ -1,5 +1,5 @@
 {
-    "model_type": "post_api",
+    "model_type": "post_api_chat",
     "config_name": "flask_llama-2-chat-7b-hf",
     "api_url": "http://127.0.0.1:8000/llm/",
     "json_args": {
