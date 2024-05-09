@@ -235,23 +235,25 @@ class OllamaChatWrapper(OllamaWrapperBase):
                 )
 
         # record dialog history as a list of strings
-        system_prompt = None
+        system_content_template = []
         dialogue = []
+        # TODO: here we default the url links to images
+        images = []
         for i, unit in enumerate(input_msgs):
             if i == 0 and unit.role == "system":
                 # system prompt
                 system_prompt = _convert_to_str(unit.content)
                 if not system_prompt.endswith("\n"):
                     system_prompt += "\n"
+                system_content_template.append(system_prompt)
             else:
                 # Merge all messages into a dialogue history prompt
                 dialogue.append(
                     f"{unit.name}: {_convert_to_str(unit.content)}",
                 )
 
-        system_content_template = []
-        if system_prompt is not None:
-            system_content_template.append("{system_prompt}")
+            if unit.url is not None:
+                images.append(unit.url)
 
         if len(dialogue) != 0:
             system_content_template.extend(
@@ -262,15 +264,17 @@ class OllamaChatWrapper(OllamaWrapperBase):
 
         system_content_template = "\n".join(system_content_template)
 
-        return [
-            {
-                "role": "system",
-                "content": system_content_template.format(
-                    system_prompt=system_prompt,
-                    dialogue_history=dialogue_history,
-                ),
-            },
-        ]
+        system_message = {
+            "role": "system",
+            "content": system_content_template.format(
+                dialogue_history=dialogue_history,
+            ),
+        }
+
+        if len(images) != 0:
+            system_message["images"] = images
+
+        return [system_message]
 
 
 class OllamaEmbeddingWrapper(OllamaWrapperBase):
