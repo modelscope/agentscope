@@ -62,6 +62,7 @@ __all__ = [
     "GeminiEmbeddingWrapper",
     "ZhipuAIChatWrapper",
     "ZhipuAIEmbeddingWrapper",
+    "AnthropicChatWrapper",
     "load_model_by_config_name",
     "read_model_configs",
     "clear_model_configs",

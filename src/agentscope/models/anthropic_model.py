@@ -193,12 +193,12 @@ class AnthropicChatWrapper(AnthropicWrapperBase):
         and developers are encouraged to implement their own prompt
         engineering strategies.
 
-        Also note that the antropic Chat API does not support 'system' role.
+        **Also note that the antropic Chat API does not support 'system' role.
         If the system prompt is nesserary, you should add it
         in the generative_args as {"system: "..."} when initalizing the client,
         or add it in the **kwars when using the __call__ function.
         You can refere to
-        https://docs.anthropic.com/claude/docs/system-prompts for details.
+        https://docs.anthropic.com/claude/docs/system-prompts for details.**
 
         Args:
             args (`Union[MessageBase, Sequence[MessageBase]]`):
@@ -257,12 +257,10 @@ class AnthropicChatWrapper(AnthropicWrapperBase):
         messages = [
             {
                 "role": "user",
-                "parts": [
-                    user_content_template.format(
-                        sys_prompt=sys_prompt,
-                        dialogue_history=dialogue_history,
-                    ),
-                ],
+                "content": user_content_template.format(
+                    sys_prompt=sys_prompt,
+                    dialogue_history=dialogue_history,
+                ),
             },
         ]
 

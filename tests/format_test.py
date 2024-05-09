@@ -10,6 +10,7 @@ from agentscope.models import (
     OllamaGenerationWrapper,
     GeminiChatWrapper,
     ZhipuAIChatWrapper,
+    AnthropicChatWrapper,
     DashScopeChatWrapper,
     DashScopeMultiModalWrapper,
 )
@@ -194,6 +195,32 @@ class ExampleTest(unittest.TestCase):
                     "assistant: It is sunny today"
                 ),
                 "role": "user",
+            },
+        ]
+
+        prompt = model.format(*self.inputs)
+        self.assertListEqual(prompt, ground_truth)
+
+        # wrong format
+        with self.assertRaises(TypeError):
+            model.format(*self.wrong_inputs)  # type: ignore[arg-type]
+
+    def test_anthropic_chat(self) -> None:
+        """Unit test for the format function in anthropic chat api wrapper"""
+        model = AnthropicChatWrapper(
+            config_name="anthropic_chat",
+            model_name="claude-3-opus-20240229",
+            api_key="xxx",
+        )
+
+        ground_truth = [
+            {
+                "role": "user",
+                "content": (
+                    "You are a helpful assistant\n\n"
+                    "## Dialogue History\nuser: What is the weather today?\n"
+                    "assistant: It is sunny today"
+                ),
             },
         ]
 

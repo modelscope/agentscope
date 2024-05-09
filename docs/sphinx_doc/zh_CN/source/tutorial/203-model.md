@@ -12,6 +12,7 @@ AgentScope中，模型的部署和调用是通过`ModelWrapper`来解耦开的�
 - DashScope API，包括对话（Chat）和图片生成（Image Sythesis)和文本嵌入（Text Embedding)。
 - Gemini API，包括对话（Chat）和嵌入（Embedding）。
 - ZhipuAi API，包括对话（Chat）和嵌入（Embedding）。
+- Anthropic API，包括对话（Chat）。
 - Ollama API，包括对话（Chat），嵌入（Embedding）和生成（Generation）。
 - Post请求API，基于Post请求实现的模型推理服务，包括Huggingface/ModelScope
   Inference API和各种符合Post请求格式的API。
@@ -104,6 +105,7 @@ API如下：
 |                        | Embedding       | [`GeminiEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py)            | `"gemini_embedding"`          | models/embedding-001, ...                        |
 | ZhipuAI API             | Chat            | [`ZhipuAIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/zhipu_model.py)                 | `"zhipuai_chat"`               | glm-4, ...                                  |
 |                        | Embedding       | [`ZhipuAIEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/zhipu_model.py)            | `"zhipuai_embedding"`          | embedding-2, ...                        |
+| Anthropic API             | Chat            | [`AnthropicChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/anthropic_model.py)                 | `"anthropic_chat"`               | claude-3-opus-20240229, ...                                  |
 | ollama                 | Chat            | [`OllamaChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)                 | `"ollama_chat"`               | llama2, ...                                      |
 |                        | Embedding       | [`OllamaEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)            | `"ollama_embedding"`          | llama2, ...                                      |
 |                        | Generation      | [`OllamaGenerationWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)           | `"ollama_generate"`           | llama2, ...                                      |
@@ -360,6 +362,27 @@ API如下：
 
     # Optional parameters
     "api_key": "{your_api_key}",
+}
+```
+
+</details>
+
+<br/>
+
+
+#### Anthropic API
+
+<details>
+<summary>Anthropic Chat API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/anthropic_model.py">agentscope.models.AnthropicChatWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "anthropic_chat-claude3-opus",
+    "model_type": "anthropic_chat",
+    # Required parameters
+    "model_name": "claude-3-opus-20240229",
+    # Optional parameters
+    "api_key": "{your_api_key}"
 }
 ```
 

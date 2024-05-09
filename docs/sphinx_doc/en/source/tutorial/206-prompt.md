@@ -45,6 +45,7 @@ generation model APIs.
 - [OllamaGenerationWrapper](#ollamagenerationwrapper)
 - [GeminiChatWrapper](#geminichatwrapper)
 - [ZhipuAIChatWrapper](#zhipuaichatwrapper)
+- [AnthropicChatWrapper](#anthropicchatwrapper)
 
 These strategies are implemented in the `format` functions of the model
 wrapper classes.
@@ -406,6 +407,20 @@ print(prompt)
   {"role": "user", "content": "## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!"},
 ]
 ```
+
+
+
+### `AnthropicChatWrapper`
+
+`AnthropicChatWrapper` encapsulates the Anthropic chat API, which takes a list of messages as input. The message must obey the following rules:
+
+- Require `role` and `content` fields, and `role` must be either `"user"` or `"assistant"`.
+- **NOTE**: The `system` role is not supported. If system prompt is needed, please fill in the `system` field when using the `__call__` function of the model. Please refer to `anthropic_model.py` for details.
+
+#### Prompt Strategy
+
+All of the messages will be converted into a message with the `role` field as `"user"` and the `content` field as the dialogue history.
+
 
 ## Prompt Engine (Will be deprecated in the future)
 

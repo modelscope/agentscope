@@ -30,6 +30,7 @@ AgentScope为以下的模型API提供了内置的提示构建策略。
 - [OllamaGenerationWrapper](#ollamagenerationwrapper)
 - [GeminiChatWrapper](#geminichatwrapper)
 - [ZhipuAIChatWrapper](#zhipuaichatwrapper)
+- [AnthropicChatWrapper](#anthropicchatwrapper)
 
 这些策略是在对应Model Wrapper类的`format`函数中实现的。它接受`Msg`对象，`Msg`对象的列表或它们的混合作为输入。在`format`函数将会把输入重新组织成一个`Msg`对象的列表，因此为了方便解释，我们在下面的章节中认为`format`函数的输入是`Msg`对象的列表。
 
@@ -332,15 +333,15 @@ print(prompt)
 
 `ZhipuAIChatWrapper`封装了ZhipuAi聊天API，它接受消息列表或字符串提示作为输入。与DashScope聊天API类似，如果我们传递消息列表，它必须遵守以下规则：
 
-- 必须有 role 和 content 字段，且 role 必须是 "user"、"system" 或 "assistant" 中的一个。
-- 至少有一个 user 消息。
+- 必须有 `role` 和 `content` 字段，且 `role` 必须是 "user"、"system" 或 "assistant" 中的一个。
+- 至少有一个 `user` 消息。
 
 当代理可能扮演多种不同角色并连续发言时，这些要求使得构建多代理对话变得困难。
 因此，我们决定在内置的`format`函数中将消息列表转换为字符串提示，并且封装在一条user信息中。
 
 #### 提示的构建策略
 
-如果第一条消息的 role 字段是 "system"，它将被转换为带有 role 字段为 "system" 和 content 字段为系统消息的单个消息。其余的消息会被转化为带有 role 字段为 "user" 和 content 字段为对话历史的消息。
+如果第一条消息的 `role` 字段是 "system"，它将被转换为带有 `role` 字段为 "system" 和 `content` 字段为系统消息的单个消息。其余的消息会被转化为带有 `role` 字段为 "user" 和 `content` 字段为对话历史的消息。
 下面展示了一个示例：
 
 ```python
@@ -369,6 +370,21 @@ print(prompt)
   {"role": "user", "content": "## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!"},
 ]
 ```
+
+
+### `AnthropicChatWrapper`
+
+`AnthropicChatWrapper` 封装了ZhipuAi聊天API，它接受消息列表作为输入。传递消息列表时，它必须遵守以下规则:
+
+- Require `role` and `content` fields, and `role` must be either `"user"` or `"assistant"`.
+- 必须有 role 和 content 字段，且 role 必须是 "user"、 或 "assistant" 中的一个。
+- **注意**: API 并不支持`system` role. 如果需要系统提示，请在使用模型的`__call__`函数时填写`system`字段。详情请参见`anthropic_model.py`。
+
+
+#### 提示的构建策略
+
+所有的消息会被转化为带有 role 字段为 "user" 和 content 字段为对话历史的消息。
+
 
 ## 关于`PromptEngine`类 （将会在未来版本弃用）
 
