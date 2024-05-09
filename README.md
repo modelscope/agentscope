@@ -1,5 +1,5 @@
 <h1 align="center">
-<img src="https://img.alicdn.com/imgextra/i1/O1CN01HgIZeW1km6MinmtvT_!!6000000004725-2-tps-500-497.png"width="400" alt="agentscope-logo">
+<img src="https://img.alicdn.com/imgextra/i4/O1CN011XPI2H26w6YwQFCie_!!6000000007725-2-tps-501-498.png"width="400" alt="agentscope-logo">
 </h1>
 
 English | [**中文**](README_ZH.md)
