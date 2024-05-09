@@ -121,8 +121,12 @@ class DictDialogAgent(AgentBase):
 
         # Filter the parsed response by keys before speaking, storing in
         # memory, and returning to other agents
-        self.speak(Msg(self.name, self.parser.to_speak(res.parsed), "assistant"))
+        self.speak(
+            Msg(self.name, self.parser.to_speak(res.parsed), "assistant"),
+        )
 
-        self.memory.add(Msg(self.name, self.parser.to_memory(res.parsed), "assistant"))
+        self.memory.add(
+            Msg(self.name, self.parser.to_memory(res.parsed), "assistant"),
+        )
 
         return Msg(self.name, self.parser.to_return(res.parsed), "assistant")

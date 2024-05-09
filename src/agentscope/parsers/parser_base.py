@@ -105,40 +105,46 @@ class _DictFilterMixin:
         self.keys_to_return = keys_to_return
 
     def to_speak(
-            self,
-            parsed_response: dict,
-            allow_missing: bool = False,
+        self,
+        parsed_response: dict,
+        allow_missing: bool = False,
     ) -> Union[str, dict]:
         """Return the content to speak."""
-        return self._filter_content_by_names(parsed_response,
-                                             self.keys_to_speak,
-                                             allow_missing=allow_missing)
+        return self._filter_content_by_names(
+            parsed_response,
+            self.keys_to_speak,
+            allow_missing=allow_missing,
+        )
 
     def to_memory(
-            self,
-            parsed_response: dict,
-            allow_missing: bool = False
+        self,
+        parsed_response: dict,
+        allow_missing: bool = False,
     ) -> Union[str, dict]:
         """Return the content to store in memory."""
-        return self._filter_content_by_names(parsed_response,
-                                             self.content_to_memory,
-                                             allow_missing=allow_missing)
+        return self._filter_content_by_names(
+            parsed_response,
+            self.content_to_memory,
+            allow_missing=allow_missing,
+        )
 
     def to_return(
-            self,
-            parsed_response: dict,
-            allow_missing: bool = False
+        self,
+        parsed_response: dict,
+        allow_missing: bool = False,
     ) -> Union[str, dict]:
         """Return the content to return."""
-        return self._filter_content_by_names(parsed_response,
-                                             self.content_to_return,
-                                             allow_missing=allow_missing)
+        return self._filter_content_by_names(
+            parsed_response,
+            self.content_to_return,
+            allow_missing=allow_missing,
+        )
 
     def _filter_content_by_names(
-            self,
-            parsed_response: dict,
-            keys: Union[str, Sequence[str]],
-            allow_missing: bool = False,
+        self,
+        parsed_response: dict,
+        keys: Union[str, Sequence[str]],
+        allow_missing: bool = False,
     ) -> Union[str, dict]:
         """Filter the parsed response by keys. If only one key is provided, the
         returned content will be a single corresponding value. Otherwise,
@@ -172,9 +178,12 @@ class _DictFilterMixin:
                 if allow_missing:
                     logger.warning(
                         f"Content name {name} not found in the response. Skip "
-                        f"it."
+                        f"it.",
                     )
                 else:
                     raise ValueError(f"Name {name} not found in the response.")
-        return {name: parsed_response[name] for name in keys if
-                name in parsed_response}
+        return {
+            name: parsed_response[name]
+            for name in keys
+            if name in parsed_response
+        }
