@@ -86,7 +86,8 @@ class MultiTaggedContentParser(ParserBase, _DictFilterMixin):
         *tagged_contents: TaggedContent,
         content_name_to_memory: Optional[Union[str, Sequence[str]]] = None,
         content_name_to_speak: Optional[Union[str, Sequence[str]]] = None,
-        content_name_to_return: Optional[Union[str, Sequence[str]]] = None,
+        content_name_to_others: Optional[Union[str, Sequence[str]]] = None,
+        content_name_to_control: Optional[Union[str, Sequence[str]]] = None,
     ) -> None:
         """Initialize the parser with tags.
 
@@ -105,7 +106,7 @@ class MultiTaggedContentParser(ParserBase, _DictFilterMixin):
                 The name of the content that will be spoken. If more than one
                 name is provided, the content will be spoken as a dictionary in
                 the content field. Otherwise, it will be spoken as a string.
-            content_name_to_return (`Union[str, Sequence[str]]`, defaults to
+            content_name_to_others (`Union[str, Sequence[str]]`, defaults to
             `None`)
                 The name of the content that will be returned in the reply
                 function. If more than one name is provided, the content
@@ -119,7 +120,8 @@ class MultiTaggedContentParser(ParserBase, _DictFilterMixin):
             self,
             keys_to_speak=content_name_to_speak,
             keys_to_memory=content_name_to_memory,
-            keys_to_others=content_name_to_return,
+            keys_to_others=content_name_to_others,
+            keys_to_control=content_name_to_control,
         )
 
         self.tagged_contents = list(tagged_contents)

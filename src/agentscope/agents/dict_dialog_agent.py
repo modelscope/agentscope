@@ -129,5 +129,9 @@ class DictDialogAgent(AgentBase):
             Msg(self.name, self.parser.to_memory(res.parsed), "assistant"),
         )
 
-        return Msg(self.name, self.parser.to_others(res.parsed), "assistant",
-                   **self.parser.to_control(res.parsed))
+        return Msg(
+            self.name,
+            self.parser.to_others(res.parsed),
+            "assistant",
+            **self.parser.to_control(res.parsed),
+        )
