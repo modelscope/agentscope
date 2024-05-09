@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 """The parser for tagged content in the model response."""
 import json
+from typing import Union, Sequence
 
 from agentscope.exception import JsonParsingError
 from agentscope.models import ModelResponse
 from agentscope.parsers import ParserBase
+from agentscope.parsers.parser_base import _DictFilterMixin
 
 
 class TaggedContent:
@@ -60,7 +62,7 @@ class TaggedContent:
         return f"{self.tag_begin}{self.content_hint}{self.tag_end}"
 
 
-class MultiTaggedContentParser(ParserBase):
+class MultiTaggedContentParser(ParserBase, _DictFilterMixin):
     """Parse response text by multiple tags, and return a dict of their
     content. Asking llm to generate JSON dictionary object directly maybe not a
     good idea due to involving escape characters and other issues. So we can
@@ -79,14 +81,46 @@ class MultiTaggedContentParser(ParserBase):
     equals to `True`, this instruction will be used to remind the model to
     generate JSON object."""
 
-    def __init__(self, *tagged_contents: TaggedContent) -> None:
+    def __init__(
+            self, *tagged_contents: TaggedContent,
+            content_name_to_memory: Union[str, Sequence[str]] = None,
+            content_name_to_speak: Union[str, Sequence[str]] = None,
+            content_name_to_return: Union[str, Sequence[str]] = None,
+    ) -> None:
         """Initialize the parser with tags.
 
         Args:
             tags (`dict[str, Tuple[str, str]]`):
                 A dictionary of tags, the key is the tag name, and the value is
                 a tuple of starting tag and end tag.
+            content_name_to_memory (`Union[str, Sequence[str]]`, defaults to
+            `None`)
+                The name of the content that will be stored in memory. If more
+                than one name is provided, the content will be stored in
+                memory as a dictionary in the content field. Otherwise, it will
+                be stored in memory as a string.
+            content_name_to_speak (`Union[str, Sequence[str]]`, defaults to
+            `None`)
+                The name of the content that will be spoken. If more than one
+                name is provided, the content will be spoken as a dictionary in
+                the content field. Otherwise, it will be spoken as a string.
+            content_name_to_return (`Union[str, Sequence[str]]`, defaults to
+            `None`)
+                The name of the content that will be returned in the reply
+                function. If more than one name is provided, the content
+                will be returned as a dictionary in the content field of the
+                return `Msg` object. Otherwise, it will be returned as a
+                string.
+
         """
+        # Initialize the mixin class
+        _DictFilterMixin.__init__(
+            self,
+            keys_to_speak=content_name_to_speak,
+            keys_to_memory=content_name_to_memory,
+            keys_to_return=content_name_to_return,
+        )
+
         self.tagged_contents = list(tagged_contents)
 
         # Prepare the format instruction according to the tagged contents

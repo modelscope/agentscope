@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """The base class for model response parser."""
 from abc import ABC, abstractmethod
+from typing import Union, Sequence
+
+from loguru import logger
 
 from agentscope.exception import TagNotFoundError
 from agentscope.models import ModelResponse
@@ -65,3 +68,113 @@ class ParserBase(ABC):
         ]
 
         return extract_text
+
+
+class _DictFilterMixin:
+    """A mixin class to filter the parsed response by keys. It allows users
+    to set keys to be filtered during speaking, storing in memory, and
+    returning in the agent reply function.
+    """
+
+    def __init__(
+        self,
+        keys_to_speak: Union[str, Sequence[str]],
+        keys_to_memory: Union[str, Sequence[str]],
+        keys_to_return: Union[str, Sequence[str]],
+    ) -> None:
+        """Initialize the mixin class with the keys to be filtered during
+        speaking, storing in memory, and returning in the agent reply function.
+
+        Args:
+            keys_to_speak (`Union[str, Sequence[str]]`):
+                The key or keys to be filtered during speaking. If a single key
+                is provided, the corresponding value will be returned.
+                Otherwise, a filtered dictionary will be returned.
+            keys_to_memory (`Union[str, Sequence[str]]`):
+                The key or keys to be filtered during storing in memory. If
+                a single key is provided, the corresponding value will be
+                returned. Otherwise, a filtered dictionary will be returned.
+            keys_to_return (`Union[str, Sequence[str]]`):
+                The key or keys to be filtered during returning in the agent
+                reply function. If a single key is provided, the
+                corresponding value will be returned. Otherwise, a filtered
+                dictionary will be returned.
+        """
+        self.keys_to_speak = keys_to_speak
+        self.keys_to_memory = keys_to_memory
+        self.keys_to_return = keys_to_return
+
+    def to_speak(
+            self,
+            parsed_response: dict,
+            allow_missing: bool = False,
+    ) -> Union[str, dict]:
+        """Return the content to speak."""
+        return self._filter_content_by_names(parsed_response,
+                                             self.keys_to_speak,
+                                             allow_missing=allow_missing)
+
+    def to_memory(
+            self,
+            parsed_response: dict,
+            allow_missing: bool = False
+    ) -> Union[str, dict]:
+        """Return the content to store in memory."""
+        return self._filter_content_by_names(parsed_response,
+                                             self.content_to_memory,
+                                             allow_missing=allow_missing)
+
+    def to_return(
+            self,
+            parsed_response: dict,
+            allow_missing: bool = False
+    ) -> Union[str, dict]:
+        """Return the content to return."""
+        return self._filter_content_by_names(parsed_response,
+                                             self.content_to_return,
+                                             allow_missing=allow_missing)
+
+    def _filter_content_by_names(
+            self,
+            parsed_response: dict,
+            keys: Union[str, Sequence[str]],
+            allow_missing: bool = False,
+    ) -> Union[str, dict]:
+        """Filter the parsed response by keys. If only one key is provided, the
+        returned content will be a single corresponding value. Otherwise,
+        the returned content will be a dictionary with the filtered keys and
+        their corresponding values.
+
+        Args:
+            keys (`Union[str, Sequence[str]]`):
+                The key or keys to be filtered. If a single key
+                is provided, the parsed response will be filtered by the key,
+                and the corresponding value will be returned. Otherwise, the
+                parsed response will be filtered by the keys, and the
+                corresponding values will be returned as a dictionary.
+            allow_missing (`bool`, defaults to `False`):
+                Whether to allow missing keys in the response. If set to
+                `True`, the method will skip the missing keys in the response.
+                Otherwise, it will raise a `ValueError` when a key is missing.
+
+        Returns:
+            `Union[str, dict]`: The filtered content.
+        """
+        if keys is None:
+            return parsed_response
+
+        if isinstance(keys, str):
+            return parsed_response[keys]
+
+        # check if the required names are in the response
+        for name in keys:
+            if name not in parsed_response:
+                if allow_missing:
+                    logger.warning(
+                        f"Content name {name} not found in the response. Skip "
+                        f"it."
+                    )
+                else:
+                    raise ValueError(f"Name {name} not found in the response.")
+        return {name: parsed_response[name] for name in keys if
+                name in parsed_response}

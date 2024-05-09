@@ -14,6 +14,7 @@ from agentscope.exception import (
 )
 from agentscope.models import ModelResponse
 from agentscope.parsers import ParserBase
+from agentscope.parsers.parser_base import _DictFilterMixin
 from agentscope.utils.tools import _join_str_with_comma_and
 
 
@@ -121,7 +122,7 @@ class MarkdownJsonObjectParser(ParserBase):
         )
 
 
-class MarkdownJsonDictParser(MarkdownJsonObjectParser):
+class MarkdownJsonDictParser(MarkdownJsonObjectParser, _DictFilterMixin):
     """A class used to parse a JSON dictionary object in a markdown fenced
     code"""
 
@@ -152,6 +153,9 @@ class MarkdownJsonDictParser(MarkdownJsonObjectParser):
         self,
         content_hint: Optional[Any] = None,
         required_keys: List[str] = None,
+        keys_to_speak: Optional[dict] = None,
+        keys_to_memory: Optional[dict] = None,
+        keys_to_return: Optional[dict] = None,
     ) -> None:
         """Initialize the parser with the content hint.
 
@@ -166,7 +170,16 @@ class MarkdownJsonDictParser(MarkdownJsonObjectParser):
                 response misses any of the required keys, it will raise a
                 RequiredFieldNotFoundError.
         """
-        super().__init__(content_hint)
+        # Initialize the markdown json object parser
+        MarkdownJsonObjectParser.__init__(self, content_hint)
+
+        # Initialize the mixin class to allow filtering the parsed response
+        _DictFilterMixin.__init__(
+            self,
+            keys_to_speak=keys_to_speak,
+            keys_to_memory=keys_to_memory,
+            keys_to_return=keys_to_return,
+        )
 
         self.required_keys = required_keys or []
 
