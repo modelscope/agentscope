@@ -153,7 +153,6 @@ class MarkdownJsonDictParser(MarkdownJsonObjectParser, _DictFilterMixin):
         self,
         content_hint: Optional[Any] = None,
         required_keys: List[str] = None,
-        keys_to_speak: Optional[Union[str, Sequence[str]]] = None,
         keys_to_memory: Optional[Union[str, Sequence[str]]] = None,
         keys_to_content: Optional[Union[str, Sequence[str]]] = None,
         keys_to_control: Optional[Union[str, Sequence[str]]] = None,
@@ -170,6 +169,23 @@ class MarkdownJsonDictParser(MarkdownJsonObjectParser, _DictFilterMixin):
                 A list of required keys in the JSON dictionary object. If the
                 response misses any of the required keys, it will raise a
                 RequiredFieldNotFoundError.
+            keys_to_memory (`Optional[Union[str, Sequence[str]]]`, defaults to
+            `None`):
+                The key or keys to be filtered during storing in memory. If a
+                single key is provided, the corresponding value will be
+                returned. Otherwise, a filtered dictionary will be returned.
+            keys_to_content (`Optional[Union[str, Sequence[str]]`, defaults to
+            `None`):
+                The key or keys that will be exposed to other agents in the
+                returned message content field. If a single key is provided,
+                the corresponding value will be returned. Otherwise, a filtered
+                dictionary will be returned.
+            keys_to_control (`Optional[Union[str, Sequence[str]]`, defaults to
+            `None`):
+                The key or keys that will be fed into the control field in the
+                returned message object, it will be used to control the
+                application workflow.
+
         """
         # Initialize the markdown json object parser
         MarkdownJsonObjectParser.__init__(self, content_hint)
@@ -177,7 +193,6 @@ class MarkdownJsonDictParser(MarkdownJsonObjectParser, _DictFilterMixin):
         # Initialize the mixin class to allow filtering the parsed response
         _DictFilterMixin.__init__(
             self,
-            keys_to_speak=keys_to_speak,
             keys_to_memory=keys_to_memory,
             keys_to_content=keys_to_content,
             keys_to_control=keys_to_control,
