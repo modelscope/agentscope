@@ -24,7 +24,7 @@ class _AgentMeta(ABCMeta):
     """
 
     def __init__(cls, name: Any, bases: Any, attrs: Any) -> None:
-        if not hasattr(cls, "registry"):
+        if not hasattr(cls, "_registry"):
             cls._registry = {}
         else:
             if name in cls._registry:
@@ -245,7 +245,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
         """
         agent_class_name = agent_class.__name__
         if agent_class_name in cls._registry:
-            logger.warning(
+            logger.info(
                 f"Agent class with name [{agent_class_name}] already exists.",
             )
         else:

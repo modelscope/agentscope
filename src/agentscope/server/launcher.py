@@ -24,7 +24,7 @@ except ModuleNotFoundError:
     add_RpcAgentServicer_to_server = Any
 
 
-def setup_rpc_agent_server(
+def setup_agent_server(
     host: str,
     port: int,
     init_settings: dict = None,
@@ -36,7 +36,7 @@ def setup_rpc_agent_server(
     max_timeout_seconds: int = 1800,
     custom_agents: list = None,
 ) -> None:
-    """Setup gRPC server rpc agent.
+    """Setup agent server.
 
     Args:
         host (`str`, defaults to `"localhost"`):
@@ -63,7 +63,7 @@ def setup_rpc_agent_server(
             A list of custom agent classes that are not in `agentscope.agents`.
     """
     asyncio.run(
-        setup_rpc_agent_server_async(
+        setup_agent_server_async(
             host=host,
             port=port,
             init_settings=init_settings,
@@ -78,7 +78,7 @@ def setup_rpc_agent_server(
     )
 
 
-async def setup_rpc_agent_server_async(
+async def setup_agent_server_async(
     host: str,
     port: int,
     init_settings: dict = None,
@@ -90,7 +90,7 @@ async def setup_rpc_agent_server_async(
     max_timeout_seconds: int = 1800,
     custom_agents: list = None,
 ) -> None:
-    """Setup gRPC server rpc agent in an async way.
+    """Setup agent server in an async way.
 
     Args:
         host (`str`, defaults to `"localhost"`):
@@ -207,7 +207,7 @@ def check_port(port: Optional[int] = None) -> int:
     return port
 
 
-class RpcAgentServerLauncher:
+class AgentServerLauncher:
     """The launcher of AgentPlatform (formerly RpcAgentServer)."""
 
     def __init__(
@@ -222,7 +222,7 @@ class RpcAgentServerLauncher:
         agent_args: tuple = (),
         agent_kwargs: dict = None,
     ) -> None:
-        """Init a rpc agent server launcher.
+        """Init a launcher of agent server.
 
         Args:
             host (`str`, defaults to `"localhost"`):
@@ -262,7 +262,7 @@ class RpcAgentServerLauncher:
         ):
             logger.warning(
                 "`agent_class`, `agent_args` and `agent_kwargs` is deprecated"
-                " in `RpcAgentServerLauncher`",
+                " in `AgentServerLauncher`",
             )
 
     def _launch_in_main(self) -> None:
@@ -271,7 +271,7 @@ class RpcAgentServerLauncher:
             f"Launching agent server at [{self.host}:{self.port}]...",
         )
         asyncio.run(
-            setup_rpc_agent_server_async(
+            setup_agent_server_async(
                 host=self.host,
                 port=self.port,
                 max_pool_size=self.max_pool_size,
@@ -289,7 +289,7 @@ class RpcAgentServerLauncher:
         self.parent_con, child_con = Pipe()
         start_event = Event()
         server_process = Process(
-            target=setup_rpc_agent_server,
+            target=setup_agent_server,
             kwargs={
                 "host": self.host,
                 "port": self.port,

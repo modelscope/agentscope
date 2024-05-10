@@ -8,7 +8,7 @@ from user_proxy_agent import UserProxyAgent
 import agentscope
 from agentscope.agents import DialogAgent
 from agentscope.msghub import msghub
-from agentscope.server import RpcAgentServerLauncher
+from agentscope.server import AgentServerLauncher
 from agentscope.message import Msg
 from agentscope.utils.logging_utils import logger
 
@@ -75,7 +75,7 @@ def setup_server(parsed_args: argparse.Namespace) -> None:
     )
     host = getattr(parsed_args, f"{parsed_args.role}_host")
     port = getattr(parsed_args, f"{parsed_args.role}_port")
-    server_launcher = RpcAgentServerLauncher(
+    server_launcher = AgentServerLauncher(
         host=host,
         port=port,
         custom_agents=[UserProxyAgent, DialogAgent],
