@@ -119,19 +119,19 @@ class DictDialogAgent(AgentBase):
             max_retries=self.max_retries,
         )
 
-        # Filter the parsed response by keys before speaking, storing in
-        # memory, and returning to other agents
-        self.speak(
-            Msg(self.name, self.parser.to_speak(res.parsed), "assistant"),
-        )
-
+        # Filter the parsed response by keys for storing in memory, returning
+        # in the reply function, and feeding into the control field in the
+        # returned message object.
         self.memory.add(
             Msg(self.name, self.parser.to_memory(res.parsed), "assistant"),
         )
 
-        return Msg(
+        msg = Msg(
             self.name,
-            self.parser.to_content(res.parsed),
-            "assistant",
+            content=self.parser.to_content(res.parsed),
+            role="assistant",
             control=self.parser.to_control(res.parsed),
         )
+        self.speak(msg)
+
+        return msg

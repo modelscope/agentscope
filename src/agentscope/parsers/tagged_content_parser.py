@@ -14,7 +14,8 @@ class TaggedContent:
     and tag end."""
 
     name: str
-    """The name of the tagged content."""
+    """The name of the tagged content, which will be used as the key in
+    extracted dictionary."""
 
     tag_begin: str
     """The beginning tag."""
@@ -84,10 +85,9 @@ class MultiTaggedContentParser(ParserBase, _DictFilterMixin):
     def __init__(
         self,
         *tagged_contents: TaggedContent,
-        content_name_to_memory: Optional[Union[str, Sequence[str]]] = None,
-        content_name_to_speak: Optional[Union[str, Sequence[str]]] = None,
-        content_name_to_content: Optional[Union[str, Sequence[str]]] = None,
-        content_name_to_control: Optional[Union[str, Sequence[str]]] = None,
+        keys_to_memory: Optional[Union[str, Sequence[str]]] = None,
+        keys_to_content: Optional[Union[str, Sequence[str]]] = None,
+        keys_to_control: Optional[Union[str, Sequence[str]]] = None,
     ) -> None:
         """Initialize the parser with tags.
 
@@ -95,33 +95,29 @@ class MultiTaggedContentParser(ParserBase, _DictFilterMixin):
             tags (`dict[str, Tuple[str, str]]`):
                 A dictionary of tags, the key is the tag name, and the value is
                 a tuple of starting tag and end tag.
-            content_name_to_memory (`Union[str, Sequence[str]]`, defaults to
+            keys_to_memory (`Union[str, Sequence[str]]`, defaults to
             `None`)
                 The name of the content that will be stored in memory. If more
                 than one name is provided, the content will be stored in
                 memory as a dictionary in the content field. Otherwise, it will
                 be stored in memory as a string.
-            content_name_to_speak (`Union[str, Sequence[str]]`, defaults to
-            `None`)
-                The name of the content that will be spoken. If more than one
-                name is provided, the content will be spoken as a dictionary in
-                the content field. Otherwise, it will be spoken as a string.
-            content_name_to_content (`Union[str, Sequence[str]]`, defaults to
+            keys_to_content (`Union[str, Sequence[str]]`, defaults to
             `None`)
                 The name of the content that will be returned in the reply
                 function. If more than one name is provided, the content
                 will be returned as a dictionary in the content field of the
                 return `Msg` object. Otherwise, it will be returned as a
                 string.
-
+            keys_to_control (`Union[str, Sequence[str]]`, defaults to `None`)
+                The name of the content that will be used to control the
+                application workflow.
         """
         # Initialize the mixin class
         _DictFilterMixin.__init__(
             self,
-            keys_to_speak=content_name_to_speak,
-            keys_to_memory=content_name_to_memory,
-            keys_to_content=content_name_to_content,
-            keys_to_control=content_name_to_control,
+            keys_to_memory=keys_to_memory,
+            keys_to_content=keys_to_content,
+            keys_to_control=keys_to_control,
         )
 
         self.tagged_contents = list(tagged_contents)
