@@ -67,6 +67,7 @@ Before running this example, ensure you have installed the following packages:
 - `python-dotenv`
 - `datasets`
 - `trl`
+- `bitsandbytes`
 
 Additionally, set `HUGGINGFACE_TOKEN` in the `agentscope/examples/conversation_with_agent_with_finetuned_model/.env`.
 
