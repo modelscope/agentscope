@@ -63,7 +63,6 @@ The example is tested using specific Hugging Face model `google/gemma-7b` on dat
 Before running this example, ensure you have installed the following packages:
 
 - `transformers`
-- `peft`
 - `python-dotenv`
 - `datasets`
 - `trl`
