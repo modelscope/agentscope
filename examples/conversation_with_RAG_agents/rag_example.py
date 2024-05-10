@@ -113,13 +113,6 @@ def main() -> None:
     ]
     rag_agent_names = [agent.name for agent in rag_agent_list]
 
-    # for rag_agent in rag_agent_list:
-    #     rag_agent.init_rag(
-    #         rag_module=knowledge_bank.get_rag(
-    #             rag_agent.rag_config["knowledge_id"],
-    #         ),
-    #     )
-
     # define a guide agent
     rag_agent_descriptions = [
         "agent name: "
