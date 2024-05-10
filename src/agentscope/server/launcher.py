@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """ Server of distributed agent"""
+import os
 from multiprocessing import Process, Event, Pipe
 from multiprocessing.synchronize import Event as EventClass
 import socket
@@ -149,11 +150,13 @@ async def setup_agent_server_async(
         await server.stop(grace=5)
 
     loop = asyncio.get_running_loop()
-    for sig in (signal.SIGINT, signal.SIGTERM):
-        loop.add_signal_handler(
-            sig,
-            lambda: asyncio.create_task(shutdown_signal_handler()),
-        )
+    if os.name != "nt":
+        # windows does not support add_signal_handler
+        for sig in (signal.SIGINT, signal.SIGTERM):
+            loop.add_signal_handler(
+                sig,
+                lambda: asyncio.create_task(shutdown_signal_handler()),
+            )
     while True:
         try:
             port = check_port(port)
@@ -184,7 +187,7 @@ async def setup_agent_server_async(
         logger.info(
             f"Stopping agent server at [{host}:{port}]",
         )
-        await server.stop(10.0)
+        await server.stop(grace=10.0)
     else:
         await server.wait_for_termination()
     logger.info(
