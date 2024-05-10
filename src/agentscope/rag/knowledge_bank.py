@@ -105,7 +105,6 @@ class KnowledgeBank:
                 loader_init["required_exts"] = types
                 loader_config["load_data"]["loader"]["init_args"] = loader_init
                 index_config["data_processing"].append(loader_config)
-            index_config["persist_dir"] = persist_dir
 
         self.stored_knowledge[knowledge_id] = LlamaIndexRAG(
             knowledge_id=knowledge_id,
