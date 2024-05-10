@@ -34,8 +34,8 @@ except ModuleNotFoundError:
     RpcAgentServicer = Any
 
 
-class AgentPlatform(RpcAgentServicer):
-    """A platform for agent to run on (formerly RpcServerSideWrapper)"""
+class AgentServerServicer(RpcAgentServicer):
+    """A Servicer for agent to run on (formerly RpcServerSideWrapper)"""
 
     def __init__(
         self,
@@ -44,7 +44,7 @@ class AgentPlatform(RpcAgentServicer):
         max_pool_size: int = 8192,
         max_timeout_seconds: int = 1800,
     ):
-        """Init the AgentPlatform.
+        """Init the AgentServerServicer.
 
         Args:
             host (`str`, defaults to "localhost"):

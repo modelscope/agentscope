@@ -9,7 +9,7 @@ from agentscope.message import (
     serialize,
 )
 from agentscope.rpc import RpcAgentClient
-from agentscope.server.launcher import AgentServerLauncher
+from agentscope.server.launcher import RpcAgentServerLauncher
 
 
 def rpc_servicer_method(  # type: ignore[no-untyped-def]
@@ -89,7 +89,7 @@ class RpcAgent(AgentBase):
         launch_server = port is None
         if launch_server:
             self.host = "localhost"
-            self.server_launcher = AgentServerLauncher(
+            self.server_launcher = RpcAgentServerLauncher(
                 host=self.host,
                 port=port,
                 max_pool_size=max_pool_size,

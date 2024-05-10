@@ -9,7 +9,7 @@ from loguru import logger
 
 import agentscope
 from agentscope.agents import AgentBase, DistConf
-from agentscope.server import AgentServerLauncher
+from agentscope.server import RpcAgentServerLauncher
 from agentscope.message import Msg
 from agentscope.message import PlaceholderMessage
 from agentscope.message import deserialize
@@ -220,7 +220,7 @@ class BasicRpcAgentTest(unittest.TestCase):
 
     def test_connect_to_an_existing_rpc_server(self) -> None:
         """test connecting to an existing server"""
-        launcher = AgentServerLauncher(
+        launcher = RpcAgentServerLauncher(
             # choose port automatically
             host="127.0.0.1",
             port=12010,
@@ -420,7 +420,7 @@ class BasicRpcAgentTest(unittest.TestCase):
 
     def test_multi_agent_in_same_server(self) -> None:
         """test agent server with multi agent"""
-        launcher = AgentServerLauncher(
+        launcher = RpcAgentServerLauncher(
             host="127.0.0.1",
             port=12010,
             local_mode=False,
@@ -548,14 +548,14 @@ class BasicRpcAgentTest(unittest.TestCase):
     def test_agent_nesting(self) -> None:
         """Test agent nesting"""
         host = "localhost"
-        launcher1 = AgentServerLauncher(
+        launcher1 = RpcAgentServerLauncher(
             # choose port automatically
             host=host,
             port=12010,
             local_mode=False,
             custom_agents=[DemoGatherAgent, DemoGeneratorAgent],
         )
-        launcher2 = AgentServerLauncher(
+        launcher2 = RpcAgentServerLauncher(
             # choose port automatically
             host=host,
             port=12011,

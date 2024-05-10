@@ -16,7 +16,7 @@ try:
 except ImportError:
     grpc = None
 
-from .servicer import AgentPlatform
+from .servicer import AgentServerServicer
 from ..agents.agent import AgentBase
 from ..utils.tools import _get_timestamp
 
@@ -131,7 +131,7 @@ async def setup_agent_server_async(
 
     if init_settings is not None:
         init_process(**init_settings)
-    servicer = AgentPlatform(
+    servicer = AgentServerServicer(
         host=host,
         port=port,
         max_pool_size=max_pool_size,
@@ -231,8 +231,8 @@ def check_port(port: Optional[int] = None) -> int:
     return port
 
 
-class AgentServerLauncher:
-    """The launcher of AgentPlatform (formerly RpcAgentServer)."""
+class RpcAgentServerLauncher:
+    """The launcher of AgentServer."""
 
     def __init__(
         self,
@@ -293,7 +293,7 @@ class AgentServerLauncher:
         ):
             logger.warning(
                 "`agent_class`, `agent_args` and `agent_kwargs` is deprecated"
-                " in `AgentServerLauncher`",
+                " in `RpcAgentServerLauncher`",
             )
 
     def generate_server_id(self) -> str:
@@ -436,7 +436,7 @@ def as_server() -> None:
         help="whether the started agent server only listens to local requests",
     )
     args = parser.parse_args()
-    launcher = AgentServerLauncher(
+    launcher = RpcAgentServerLauncher(
         host=args.host,
         port=args.port,
         max_pool_size=args.max_pool_size,

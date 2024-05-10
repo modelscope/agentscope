@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """Import all server related modules in the package."""
-from .launcher import AgentServerLauncher, as_server
-from .servicer import AgentPlatform
+from .launcher import RpcAgentServerLauncher, as_server
+from .servicer import AgentServerServicer
 
 __all__ = [
-    "AgentServerLauncher",
-    "AgentPlatform",
+    "RpcAgentServerLauncher",
+    "AgentServerServicer",
     "as_server",
 ]

@@ -69,7 +69,7 @@ agentscope.init(
     ...
 )
 # Create an agent service process
-server = AgentServerLauncher(
+server = RpcAgentServerLauncher(
     host="ip_a",
     port=12001,  # choose an available port
 )
@@ -94,7 +94,7 @@ agentscope.init(
     ...
 )
 # Create an agent service process
-server = AgentServerLauncher(
+server = RpcAgentServerLauncher(
     host="ip_b",
     port=12002, # choose an available port
 )

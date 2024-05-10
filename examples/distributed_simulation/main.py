@@ -11,7 +11,7 @@ from participant import Moderator, RandomParticipant, LLMParticipant
 
 import agentscope
 from agentscope.agents import AgentBase
-from agentscope.server import AgentServerLauncher
+from agentscope.server import RpcAgentServerLauncher
 from agentscope.message import Msg
 
 
@@ -58,7 +58,7 @@ def setup_participant_agent_server(host: str, port: int) -> None:
         model_configs="configs/model_configs.json",
         use_monitor=False,
     )
-    assistant_server_launcher = AgentServerLauncher(
+    assistant_server_launcher = RpcAgentServerLauncher(
         host=host,
         port=port,
         max_pool_size=16384,
