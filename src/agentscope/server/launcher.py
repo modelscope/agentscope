@@ -17,6 +17,7 @@ except ImportError:
 
 from .servicer import AgentPlatform
 from ..agents.agent import AgentBase
+from ..utils.tools import _get_timestamp
 
 try:
     from ..rpc.rpc_agent_pb2_grpc import (
@@ -29,6 +30,7 @@ except ModuleNotFoundError:
 def setup_agent_server(
     host: str,
     port: int,
+    server_id: str,
     init_settings: dict = None,
     start_event: EventClass = None,
     stop_event: EventClass = None,
@@ -45,6 +47,8 @@ def setup_agent_server(
             Hostname of the rpc agent server.
         port (`int`):
             The socket port monitored by grpc server.
+        server_id (`str`):
+            The id of the server.
         init_settings (`dict`, defaults to `None`):
             Init settings for agentscope.init.
         start_event (`EventClass`, defaults to `None`):
@@ -68,6 +72,7 @@ def setup_agent_server(
         setup_agent_server_async(
             host=host,
             port=port,
+            server_id=server_id,
             init_settings=init_settings,
             start_event=start_event,
             stop_event=stop_event,
@@ -83,6 +88,7 @@ def setup_agent_server(
 async def setup_agent_server_async(
     host: str,
     port: int,
+    server_id: str,
     init_settings: dict = None,
     start_event: EventClass = None,
     stop_event: EventClass = None,
@@ -99,6 +105,8 @@ async def setup_agent_server_async(
             Hostname of the rpc agent server.
         port (`int`):
             The socket port monitored by grpc server.
+        server_id (`str`):
+            The id of the server.
         init_settings (`dict`, defaults to `None`):
             Init settings for agentscope.init.
         start_event (`EventClass`, defaults to `None`):
@@ -166,7 +174,7 @@ async def setup_agent_server_async(
                 f"try another port",
             )
     logger.info(
-        f"agent server at [{host}:{port}] started successfully",
+        f"agent server [{server_id}] at {host}:{port} started successfully",
     )
     if start_event is not None:
         pipe.send(port)
@@ -180,7 +188,7 @@ async def setup_agent_server_async(
     else:
         await server.wait_for_termination()
     logger.info(
-        f"agent server at [{host}:{port}] stopped successfully",
+        f"agent server [{server_id}] at {host}:{port} stopped successfully",
     )
 
 
@@ -231,6 +239,7 @@ class AgentServerLauncher:
         max_timeout_seconds: int = 1800,
         local_mode: bool = False,
         custom_agents: list = None,
+        server_id: str = None,
         agent_class: Type[AgentBase] = None,
         agent_args: tuple = (),
         agent_kwargs: dict = None,
@@ -252,6 +261,9 @@ class AgentServerLauncher:
             custom_agents (`list`, defaults to `None`):
                 A list of custom agent classes that are not in
                 `agentscope.agents`.
+            server_id (`str`, defaults to `None`):
+                The id of the agent server. If not specified, a random id
+                will be generated.
             agent_class (`Type[AgentBase]`, deprecated):
                 The AgentBase subclass encapsulated by this wrapper.
             agent_args (`tuple`, deprecated): The args tuple used to
@@ -268,6 +280,9 @@ class AgentServerLauncher:
         self.stop_event = None
         self.parent_con = None
         self.custom_agents = custom_agents
+        self.server_id = (
+            self.generate_server_id() if server_id is None else server_id
+        )
         if (
             agent_class is not None
             or len(agent_args) > 0
@@ -278,6 +293,10 @@ class AgentServerLauncher:
                 " in `AgentServerLauncher`",
             )
 
+    def generate_server_id(self) -> str:
+        """Generate server id"""
+        return f"{self.host}:{self.port}-{_get_timestamp('%y%m%d-%H:%M:%S')}"
+
     def _launch_in_main(self) -> None:
         """Launch gRPC server in main-process"""
         logger.info(
@@ -287,6 +306,7 @@ class AgentServerLauncher:
             setup_agent_server_async(
                 host=self.host,
                 port=self.port,
+                server_id=self.server_id,
                 max_pool_size=self.max_pool_size,
                 max_timeout_seconds=self.max_timeout_seconds,
                 local_mode=self.local_mode,
@@ -306,6 +326,7 @@ class AgentServerLauncher:
             kwargs={
                 "host": self.host,
                 "port": self.port,
+                "server_id": self.server_id,
                 "init_settings": _INIT_SETTINGS,
                 "start_event": start_event,
                 "stop_event": self.stop_event,
