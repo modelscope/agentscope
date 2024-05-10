@@ -57,15 +57,16 @@ b = AgentB(
 
 #### 独立进程模式
 
-在独立进程模式中，需要首先在目标机器上启动智能体服务器进程。
+在独立进程模式中，需要首先在目标机器上启动智能体服务器进程，启动时需要提供该服务器能够使用的模型的配置信息，以及服务器的 IP 和端口号。
 例如想要将两个智能体服务进程部署在 IP 分别为 `ip_a` 和 `ip_b` 的机器上（假设这两台机器分别为`Machine1` 和 `Machine2`）。
-你可以先在 `Machine1` 上运行如下代码：
+你可以先在 `Machine1` 上运行如下代码，运行之前请确保已经将模型配置文件放置在 `model_config_path_a` 位置。：
 
 ```python
 # import some packages
 
+# register models which can be used in the server
 agentscope.init(
-    ...
+    model_configs=model_config_path_a,
 )
 # Create an agent service process
 server = RpcAgentServerLauncher(
@@ -81,16 +82,17 @@ server.wait_until_terminate()
 > 为了进一步简化使用，可以在命令行中输入如下指令来代替上述代码：
 >
 > ```shell
-> as_server --host ip_a --port 12001
+> as_server --host ip_a --port 12001  --model-config-path model_config_path_a
 > ```
 
-之后在 `Machine2` 上运行如下代码：
+在 `Machine2` 上运行如下代码，这里同样要确保已经将模型配置文件放置在 `model_config_path_b` 位置。
 
 ```python
 # import some packages
 
+# register models which can be used in the server
 agentscope.init(
-    ...
+    model_configs=model_config_path_b,
 )
 # Create an agent service process
 server = RpcAgentServerLauncher(
@@ -106,7 +108,7 @@ server.wait_until_terminate()
 > 这里也同样可以用如下指令来代替上面的代码。
 >
 > ```shell
-> as_server --host ip_b --port 12002
+> as_server --host ip_b --port 12002 --model-config-path model_config_path_b
 > ```
 
 接下来，就可以使用如下代码从主进程中连接这两个智能体服务器进程。

@@ -59,14 +59,16 @@ b = AgentB(
 #### Independent Process Mode
 
 In the Independent Process Mode, we need to start the agent server process on the target machine first.
+When starting the agent server process, you need to specify a model config file, which contains the models which can be used in the agent server, the IP address and port of the agent server process
 For example, start two agent server processes on the two different machines with IP `ip_a` and `ip_b`(called `Machine1` and `Machine2` accrodingly).
-You can run the following code on `Machine1`:
+You can run the following code on `Machine1`, and make sure you have put your model config file in `model_config_path_a`.
 
 ```python
 # import some packages
 
+# register models which can be used in the server
 agentscope.init(
-    ...
+    model_configs=model_config_path_a,
 )
 # Create an agent service process
 server = RpcAgentServerLauncher(
@@ -82,16 +84,17 @@ server.wait_until_terminate()
 > For similarity, you can run the following command in your terminal rather than the above code:
 >
 > ```shell
-> as_server --host ip_a --port 12001
+> as_server --host ip_a --port 12001 --model-config-path model_config_path_a
 > ```
 
-And run the following code on `Machine2`:
+And put your model config file accordingly in `model_config_path_b` and run the following code on `Machine2`.
 
 ```python
 # import some packages
 
+# register models which can be used in the server
 agentscope.init(
-    ...
+    model_configs=model_config_path_b,
 )
 # Create an agent service process
 server = RpcAgentServerLauncher(
@@ -107,7 +110,7 @@ server.wait_until_terminate()
 > Similarly, you can run the following command in your terminal to setup the agent server:
 >
 > ```shell
-> as_server --host ip_b --port 12002
+> as_server --host ip_b --port 12002 --model-config-path model_config_path_b
 > ```
 
 Then, you can connect to the agent servers from the main process with the following code.

@@ -16,12 +16,13 @@ try:
 except ImportError:
     grpc = None
 
-from .servicer import AgentServerServicer
-from ..agents.agent import AgentBase
-from ..utils.tools import _get_timestamp
+import agentscope
+from agentscope.server.servicer import AgentServerServicer
+from agentscope.agents.agent import AgentBase
+from agentscope.utils.tools import _get_timestamp
 
 try:
-    from ..rpc.rpc_agent_pb2_grpc import (
+    from agentscope.rpc.rpc_agent_pb2_grpc import (
         add_RpcAgentServicer_to_server,
     )
 except ModuleNotFoundError:
@@ -390,20 +391,21 @@ def as_server() -> None:
 
         * `--host`: the hostname of the server.
         * `--port`: the socket port of the server.
-        * `--max_pool_size`: max number of task results that the server can
+        * `--max-pool-size`: max number of task results that the server can
           accommodate.
-        * `--max_timeout_seconds`: max timeout seconds of a task.
-        * `--local_mode`: whether the started agent server only listens to
+        * `--max-timeout-seconds`: max timeout seconds of a task.
+        * `--local-mode`: whether the started agent server only listens to
           local requests.
+        * `--model-config-path`: the path to the model config json file
 
-        In most cases, you only need to specify the `--host` and `--port`.
+        In most cases, you only need to specify the `--host`, `--port` and
+        `--model-config-path`.
 
         .. code-block:: shell
 
-            as_server --host localhost --port 12345
+            as_server --host localhost --port 12345 --model-config-path config.json
 
-    """
-
+    """  # noqa
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--host",
@@ -418,24 +420,37 @@ def as_server() -> None:
         help="socket port of the server",
     )
     parser.add_argument(
-        "--max_pool_size",
+        "--max-pool-size",
         type=int,
         default=8192,
         help="max number of task results that the server can accommodate",
     )
     parser.add_argument(
-        "--max_timeout_seconds",
+        "--max-timeout-seconds",
         type=int,
         default=1800,
         help="max timeout for task results",
     )
     parser.add_argument(
-        "--local_mode",
+        "--local-mode",
         type=bool,
         default=False,
         help="whether the started agent server only listens to local requests",
     )
+    parser.add_argument(
+        "--model-config-path",
+        type=str,
+        help="path to the model config json file",
+    )
     args = parser.parse_args()
+    agentscope.init(
+        project="agent_server",
+        name=f"server_{args.host}:{args.port}",
+        runtime_id=_get_timestamp(
+            "server_{}_{}_%y%m%d-%H%M%S",
+        ).format(args.host, args.port),
+        model_configs=args.model_config_path,
+    )
     launcher = RpcAgentServerLauncher(
         host=args.host,
         port=args.port,
