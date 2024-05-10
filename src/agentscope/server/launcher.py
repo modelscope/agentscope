@@ -399,7 +399,7 @@ def as_server() -> None:
 
             as_server --host localhost --port 12345
 
-    """  # noqa
+    """
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
