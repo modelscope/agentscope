@@ -33,8 +33,4 @@ You can adjust the behavior and parameters of the NPC agents and conversation mo
 ### Changing User Input Time Limit
 
 Adjust the `USER_TIME_TO_SPEAK` variable in the `main.py` script to change the time limit for user input.
-
-### Setting a Default Topic for the Chat Room
-
-Modify the `DEFAULT_TOPIC` variable in the `main.py` script to set the initial topic of the chat room.
 ###
