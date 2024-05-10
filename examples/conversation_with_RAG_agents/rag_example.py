@@ -65,7 +65,7 @@ def main() -> None:
             config["api_key"] = f"{os.environ.get('DASHSCOPE_API_KEY')}"
     agentscope.init(model_configs=model_configs)
 
-    # more detailed configuration can be achieved by loading config file
+    # the knowledge bank can be configured by loading config file
     with open(
         "configs/detailed_rag_config_example.json",
         "r",
@@ -74,6 +74,16 @@ def main() -> None:
         knowledge_configs = json.load(f)
     knowledge_bank = KnowledgeBank(configs=knowledge_configs)
 
+    # alternatively, we can easily input the configs to add data to RAG
+    knowledge_bank.add_data_for_rag(
+        knowledge_id="agentscope_tutorial_rag",
+        emb_model_name="qwen_emb_config",
+        data_dirs_and_types={
+            "../../docs/sphinx_doc/en/source/tutorial": [".md"],
+        },
+    )
+
+    # with knowledge bank loaded with RAGs, we config the agents
     with open("configs/agent_config.json", "r", encoding="utf-8") as f:
         agent_configs = json.load(f)
 

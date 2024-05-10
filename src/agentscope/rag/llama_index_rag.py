@@ -172,7 +172,7 @@ class LlamaIndexRAG(RAGBase):
                 The root directory for index persisting
             model (ModelWrapperBase):
                 The language model used for final synthesis
-            emb_model (Optional[ModelWrapperBase]):
+            emb_model (ModelWrapperBase):
                 The embedding model used for generate embeddings
             index_config (dict):
                 The configuration for llama-index to
