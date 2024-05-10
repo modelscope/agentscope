@@ -1,5 +1,27 @@
 [
   {
+    "knowledge_id": "agentscope_tutorial_rag",
+    "chunk_size": 2048,
+    "chunk_overlap": 40,
+    "data_processing": [
+      {
+        "load_data": {
+          "loader": {
+            "create_object": true,
+            "module": "llama_index.core",
+            "class": "SimpleDirectoryReader",
+            "init_args": {
+              "input_dir": "../../docs/sphinx_doc/en/source/tutorial",
+              "required_exts": [
+                ".md"
+              ]
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
     "knowledge_id": "agentscope_code_rag",
     "chunk_size": 2048,
     "chunk_overlap": 40,

@@ -74,16 +74,6 @@ def main() -> None:
         knowledge_configs = json.load(f)
     knowledge_bank = KnowledgeBank(configs=knowledge_configs)
 
-    # a simple example of importing data to RAG:
-    knowledge_bank.add_data_for_rag(
-        knowledge_id="agentscope_tutorial_rag",
-        emb_model_name="qwen_emb_config",
-        data_dirs_and_types={
-            "../../docs/sphinx_doc/en/source/tutorial": [".md"],
-        },
-        persist_dir="./rag_storage/tutorial_assist",
-    )
-
     with open("configs/agent_config.json", "r", encoding="utf-8") as f:
         agent_configs = json.load(f)
 

@@ -10,7 +10,6 @@ from .llama_index_rag import LlamaIndexRAG
 
 DEFAULT_INDEX_CONFIG = {
     "knowledge_id": "",
-    "persist_dir": "",
     "data_processing": [],
 }
 DEFAULT_LOADER_CONFIG = {
@@ -62,7 +61,6 @@ class KnowledgeBank:
         emb_model_name: str,
         data_dirs_and_types: dict[str, list[str]] = None,
         model_name: Optional[str] = None,
-        persist_dir: Optional[str] = None,
         index_config: Optional[dict] = None,
     ) -> None:
         """
@@ -78,8 +76,6 @@ class KnowledgeBank:
                 dictionary of data paths (keys) to the data types
                 (file extensions) for knowledgebase
                 (e.g., [".md", ".py", ".html"])
-            persist_dir (Optional[str]):
-                path for storing the embedding and indexing information
             index_config (optional[dict]):
                 complete indexing configuration, used for more advanced
                 applications. Users can customize
@@ -87,12 +83,21 @@ class KnowledgeBank:
                 - transformations,
                 - ...
                 Examples can refer to../examples/conversation_with_RAG_agents/
+
+            a simple example of importing data to RAG:
+            ''
+                knowledge_bank.add_data_for_rag(
+                    knowledge_id="agentscope_tutorial_rag",
+                    emb_model_name="qwen_emb_config",
+                    data_dirs_and_types={
+                        "../../docs/sphinx_doc/en/source/tutorial": [".md"],
+                    },
+                    persist_dir="./rag_storage/tutorial_assist",
+                )
+            ''
         """
         if knowledge_id in self.stored_knowledge:
             raise ValueError(f"knowledge_id {knowledge_id} already exists.")
-
-        if persist_dir is None:
-            persist_dir = "./rag_storage/" + knowledge_id
 
         assert data_dirs_and_types is not None or index_config is not None
 

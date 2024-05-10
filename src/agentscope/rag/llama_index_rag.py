@@ -142,6 +142,7 @@ class LlamaIndexRAG(RAGBase):
     def __init__(
         self,
         knowledge_id: str,
+        persist_root: str = "./rag_storage/",
         model: Optional[ModelWrapperBase] = None,
         emb_model: Union[ModelWrapperBase, BaseEmbedding, None] = None,
         index_config: dict = None,
@@ -162,10 +163,13 @@ class LlamaIndexRAG(RAGBase):
             1) preprocessing documents with data loaders
             2) generate embedding by configuring pipline with embedding models
             3) store the embedding-content to vector database
+                the default dir is "./rag_storage/knowledge_id"
 
         Args:
             knowledge_id (str):
                 The id of the RAG knowledge unit.
+            persist_root (str):
+                The root directory for index persisting
             model (ModelWrapperBase):
                 The language model used for final synthesis
             emb_model (Optional[ModelWrapperBase]):
@@ -180,7 +184,7 @@ class LlamaIndexRAG(RAGBase):
         """
         super().__init__(model, emb_model, index_config, **kwargs)
         self.knowledge_id = knowledge_id
-        self.persist_dir = "./rag_storage/" + knowledge_id
+        self.persist_dir = persist_root + knowledge_id
         self.emb_model = emb_model
         self.overwrite_index = overwrite_index
         self.showprogress = showprogress
