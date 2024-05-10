@@ -533,7 +533,7 @@ API如下：
 > ⚠️ Post request model wrapper (`PostAPIModelWrapperBase`) 返回原生的 HTTP 响应值， 且没有实现 `.format()`. 当运行样例时，推荐使用 `Post Request Chat API`.
 > 使用`PostAPIModelWrapperBase`时，需要注意
 > 1) `.format()` 方法不能被调用；
-> 2) 或开发者希望实习自己的`.format()`和/或`._parse_response()`
+> 2) 或开发者希望实现自己的`.format()`和/或`._parse_response()`
 
 </details>
 
