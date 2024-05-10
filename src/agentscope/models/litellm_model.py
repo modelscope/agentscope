@@ -214,36 +214,35 @@ class LiteLLMChatWrapper(LiteLLMWrapperBase):
                     f"of Msg objects, got {type(_)}.",
                 )
 
-            # record dialog history as a list of strings
-        sys_prompt = None
+        # record dialog history as a list of strings
+        system_content_template = []
         dialogue = []
         for i, unit in enumerate(input_msgs):
             if i == 0 and unit.role == "system":
                 # system prompt
-                sys_prompt = _convert_to_str(unit.content)
+                system_prompt = _convert_to_str(unit.content)
+                if not system_prompt.endswith("\n"):
+                    system_prompt += "\n"
+                system_content_template.append(system_prompt)
             else:
                 # Merge all messages into a dialogue history prompt
                 dialogue.append(
                     f"{unit.name}: {_convert_to_str(unit.content)}",
                 )
 
+        if len(dialogue) != 0:
+            system_content_template.extend(
+                ["## Dialogue History", "{dialogue_history}"],
+            )
+
         dialogue_history = "\n".join(dialogue)
 
-        if sys_prompt is None:
-            user_content_template = "## Dialogue History\n{dialogue_history}"
-        else:
-            user_content_template = (
-                "{sys_prompt}\n"
-                "\n"
-                "## Dialogue History\n"
-                "{dialogue_history}"
-            )
+        system_content_template = "\n".join(system_content_template)
 
         messages = [
             {
                 "role": "user",
-                "content": user_content_template.format(
-                    sys_prompt=sys_prompt,
+                "content": system_content_template.format(
                     dialogue_history=dialogue_history,
                 ),
             },
