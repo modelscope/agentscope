@@ -68,7 +68,7 @@ class RAGBase(ABC):
         """
 
     @abstractmethod
-    def set_retriever(self, **kwargs: Any) -> None:
+    def _set_retriever(self, **kwargs: Any) -> None:
         """update retriever of RAG module"""
 
     def post_processing(
