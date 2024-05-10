@@ -39,9 +39,9 @@ except ImportError:
 
 from agentscope.rag import RAGBase
 from agentscope.rag.rag import (
+    DEFAULT_TOP_K,
     DEFAULT_CHUNK_SIZE,
     DEFAULT_CHUNK_OVERLAP,
-    DEFAULT_TOP_K,
 )
 from agentscope.models import ModelWrapperBase
 
@@ -142,10 +142,10 @@ class LlamaIndexRAG(RAGBase):
     def __init__(
         self,
         knowledge_id: str,
+        persist_root: str = "./rag_storage/",
         model: Optional[ModelWrapperBase] = None,
         emb_model: Union[ModelWrapperBase, BaseEmbedding, None] = None,
         index_config: dict = None,
-        rag_config: Optional[dict] = None,
         overwrite_index: Optional[bool] = False,
         showprogress: Optional[bool] = True,
         **kwargs: Any,
@@ -163,28 +163,28 @@ class LlamaIndexRAG(RAGBase):
             1) preprocessing documents with data loaders
             2) generate embedding by configuring pipline with embedding models
             3) store the embedding-content to vector database
+                the default dir is "./rag_storage/knowledge_id"
 
         Args:
             knowledge_id (str):
                 The id of the RAG knowledge unit.
+            persist_root (str):
+                The root directory for index persisting
             model (ModelWrapperBase):
                 The language model used for final synthesis
-            emb_model (Optional[ModelWrapperBase]):
+            emb_model (ModelWrapperBase):
                 The embedding model used for generate embeddings
             index_config (dict):
                 The configuration for llama-index to
                 generate or load the index.
-            rag_config (dict):
-                The configuration for llama-index to
-                retrieval data (retriever).
             overwrite_index (Optional[bool]):
                 Whether to overwrite the index while refreshing
             showprogress (Optional[bool]):
                 Whether to show the indexing progress
         """
-        super().__init__(model, emb_model, index_config, rag_config, **kwargs)
+        super().__init__(model, emb_model, index_config, **kwargs)
         self.knowledge_id = knowledge_id
-        self.persist_dir = index_config.get("persist_dir", "/")
+        self.persist_dir = persist_root + knowledge_id
         self.emb_model = emb_model
         self.overwrite_index = overwrite_index
         self.showprogress = showprogress
@@ -219,13 +219,12 @@ class LlamaIndexRAG(RAGBase):
         """
         if os.path.exists(self.persist_dir):
             self._load_index()
-            logger.info(f"index loaded from {self.persist_dir}")
-            self.refresh_index()
+            # self.refresh_index()
         else:
             self._data_to_index()
-        self.set_retriever()
+        self._set_retriever()
         logger.info(
-            f"RAG with knowledge id {self.knowledge_id} "
+            f"RAG with knowledge ids: {self.knowledge_id} "
             f"initialization completed!\n",
         )
 
@@ -242,6 +241,7 @@ class LlamaIndexRAG(RAGBase):
             storage_context=storage_context,
             embed_model=self.emb_model,
         )
+        logger.info(f"index loaded from {self.persist_dir}")
 
     def _data_to_index(self) -> None:
         """
@@ -408,7 +408,7 @@ class LlamaIndexRAG(RAGBase):
         transformations = {"transformations": transformations}
         return transformations
 
-    def set_retriever(
+    def _set_retriever(
         self,
         retriever: Optional[BaseRetriever] = None,
         **kwargs: Any,
@@ -436,7 +436,7 @@ class LlamaIndexRAG(RAGBase):
             )
         else:
             self.retriever = retriever
-        logger.info("retrievers are ready.")
+        logger.info("retriever is ready.")
 
     def retrieve(self, query: str, to_list_strs: bool = False) -> list[Any]:
         """
@@ -520,16 +520,18 @@ class LlamaIndexRAG(RAGBase):
                     logger.info(
                         f"replace document in index, " f"doc_id={doc.doc_id}",
                     )
+        logger.info("documents scan completed.")
         # we generate nodes for documents on the list
         nodes = pipeline.run(
             documents=insert_docs_list,
             show_progress=True,
         )
+        logger.info("nodes generated.")
         # insert the new nodes to index
         self.index.insert_nodes(nodes=nodes)
+        logger.info("nodes inserted to index.")
         # persist the updated index
         self.index.storage_context.persist(persist_dir=self.persist_dir)
-        logger.info("nodes added to index.")
 
     def _delete_docs_from_index(
         self,
