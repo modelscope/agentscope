@@ -44,9 +44,9 @@ def setup_agent_server(
 
     Args:
         host (`str`, defaults to `"localhost"`):
-            Hostname of the rpc agent server.
+            Hostname of the agent server.
         port (`int`):
-            The socket port monitored by grpc server.
+            The socket port monitored by the agent server.
         server_id (`str`):
             The id of the server.
         init_settings (`dict`, defaults to `None`):
@@ -102,9 +102,9 @@ async def setup_agent_server_async(
 
     Args:
         host (`str`, defaults to `"localhost"`):
-            Hostname of the rpc agent server.
+            Hostname of the agent server.
         port (`int`):
-            The socket port monitored by grpc server.
+            The socket port monitored by the agent server.
         server_id (`str`):
             The id of the server.
         init_settings (`dict`, defaults to `None`):
@@ -214,7 +214,7 @@ def check_port(port: Optional[int] = None) -> int:
     if port is None:
         new_port = find_available_port()
         logger.warning(
-            "gRpc server port is not provided, automatically select "
+            "agent server port is not provided, automatically select "
             f"[{new_port}] as the port number.",
         )
         return new_port
@@ -248,15 +248,15 @@ class AgentServerLauncher:
 
         Args:
             host (`str`, defaults to `"localhost"`):
-                Hostname of the rpc agent server.
+                Hostname of the agent server.
             port (`int`, defaults to `None`):
-                Port of the rpc agent server.
+                Socket port of the agent server.
             max_pool_size (`int`, defaults to `8192`):
                 Max number of task results that the server can accommodate.
             max_timeout_seconds (`int`, defaults to `1800`):
                 Timeout for task results.
             local_mode (`bool`, defaults to `False`):
-                Whether the started rpc server only listens to local
+                Whether the started server only listens to local
                 requests.
             custom_agents (`list`, defaults to `None`):
                 A list of custom agent classes that are not in
@@ -298,7 +298,7 @@ class AgentServerLauncher:
         return f"{self.host}:{self.port}-{_get_timestamp('%y%m%d-%H:%M:%S')}"
 
     def _launch_in_main(self) -> None:
-        """Launch gRPC server in main-process"""
+        """Launch agent server in main-process"""
         logger.info(
             f"Launching agent server at [{self.host}:{self.port}]...",
         )
@@ -315,7 +315,7 @@ class AgentServerLauncher:
         )
 
     def _launch_in_sub(self) -> None:
-        """Launch gRPC server in sub-process."""
+        """Launch an agent server in sub-process."""
         from agentscope._init import _INIT_SETTINGS
 
         self.stop_event = Event()
@@ -346,7 +346,7 @@ class AgentServerLauncher:
         )
 
     def launch(self, in_subprocess: bool = True) -> None:
-        """launch a rpc agent server.
+        """launch an agent server.
 
         Args:
             in_subprocess (bool, optional): launch the server in subprocess.
@@ -364,7 +364,7 @@ class AgentServerLauncher:
             self.server.join()
 
     def shutdown(self) -> None:
-        """Shutdown the rpc agent server."""
+        """Shutdown the agent server."""
         if self.server is not None:
             if self.stop_event is not None:
                 self.stop_event.set()
@@ -378,8 +378,28 @@ class AgentServerLauncher:
             self.server = None
 
 
-def launch() -> None:
-    """Launch an agent server"""
+def as_server() -> None:
+    """Launch an agent server with terminal command.
+
+    Note:
+
+        The arguments of `as_server` are listed as follows:
+
+        * `\-\-host`: the hostname of the server.
+        * `\-\-port`: the socket port of the server.
+        * `\-\-max_pool_size`: max number of task results that the server can
+          accommodate.
+        * `\-\-max_timeout_seconds`: max timeout seconds of a task.
+        * `\-\-local_mode`: whether the started agent server only listens to
+          local requests.
+
+        In most cases, you only need to specify the `\-\-host` and `\-\-port`.
+
+        .. code-block:: shell
+
+            as_server --host localhost --port 12345
+
+    """
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -410,7 +430,7 @@ def launch() -> None:
         "--local_mode",
         type=bool,
         default=False,
-        help="whether the started rpc server only listens to local requests",
+        help="whether the started agent server only listens to local requests",
     )
     args = parser.parse_args()
     launcher = AgentServerLauncher(

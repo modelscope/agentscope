@@ -79,6 +79,12 @@ server.launch()
 server.wait_until_terminate()
 ```
 
+> For similarity, you can run the following command in your terminal rather than the above code:
+>
+> ```shell
+> as_server --host ip_a --port 12001
+> ```
+
 And run the following code on `Machine2`:
 
 ```python
@@ -97,6 +103,12 @@ server = AgentServerLauncher(
 server.launch()
 server.wait_until_terminate()
 ```
+
+> Similarly, you can run the following command in your terminal to setup the agent server:
+>
+> ```shell
+> as_server --host ip_b --port 12002
+> ```
 
 Then, you can connect to the agent servers from the main process with the following code.
 
@@ -254,6 +266,9 @@ About more detailed technical implementation solutions, please refer to our [pap
 
 In agentscope, the agent server provides a running platform for various types of agents.
 Multiple agents can run in the same agent server and hold independent memory and other local states but they will share the same computation resources.
+
+After installing the distributed version of AgentScope, you can use the `as_server` command to start the agent server, and the detailed startup arguments can be found in the documentation of the {func}`as_server<agentscope.server.launcher.as_server>` function.
+
 As long as the code is not modified, an agent server can provide services for multiple main processes.
 This means that when running mutliple applications, you only need to start the agent server for the first time, and it can be reused subsequently.
 

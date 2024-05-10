@@ -78,6 +78,12 @@ server.launch()
 server.wait_until_terminate()
 ```
 
+> 为了进一步简化使用，可以在命令行中输入如下指令来代替上述代码：
+>
+> ```shell
+> as_server --host ip_a --port 12001
+> ```
+
 之后在 `Machine2` 上运行如下代码：
 
 ```python
@@ -96,6 +102,12 @@ server = AgentServerLauncher(
 server.launch()
 server.wait_until_terminate()
 ```
+
+> 这里也同样可以用如下指令来代替上面的代码。
+>
+> ```shell
+> as_server --host ip_b --port 12002
+> ```
 
 接下来，就可以使用如下代码从主进程中连接这两个智能体服务器进程。
 
@@ -251,6 +263,9 @@ Placeholder 内部包含了该消息产生方的联络方法，可以通过网�
 #### Agent Server
 
 Agent Server 也就是智能体服务器。在 AgentScope 中，Agent Server 提供了一个让不同 Agent 实例运行的平台。多个不同类型的 Agent 可以运行在同一个 Agent Server 中并保持独立的记忆以及其他本地状态信息，但是他们将共享同一份计算资源。
+
+在安装 AgentScope 的分布式版本后就可以通过 `as_server` 命令来启动 Agent Server，具体的启动参数在 {func}`as_server<agentscope.server.launcher.as_server>` 函数文档中可以找到。
+
 只要没有对代码进行修改，一个已经启动的 Agent Server 可以为多个主流程提供服务。
 这意味着在运行多个应用时，只需要在第一次运行前启动 Agent Server，后续这些 Agent Server 进程就可以持续复用。
 
