@@ -453,9 +453,7 @@ com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py">agen
 {
     "config_name": "lite_llm_openai_chat_gpt-3.5-turbo",
     "model_type": "litellm_chat",
-    "model_name": "gpt-3.5-turbo",
-    "api_key": "{your_api_key}",
-    "api_key_name": "OPENAI_API_KEY"
+    "model_name": "gpt-3.5-turbo" # You should note that for different models, you should set the corresponding environment variables, such as OPENAI_API_KEY, etc. You may refer to https://docs.litellm.ai/docs/ for this.
 },
 ```
 

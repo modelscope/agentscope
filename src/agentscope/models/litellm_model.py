@@ -2,7 +2,6 @@
 """Model wrapper based on litellm https://docs.litellm.ai/docs/"""
 from abc import ABC
 from typing import Union, Any, List, Sequence
-import os
 
 from loguru import logger
 
@@ -23,24 +22,32 @@ class LiteLLMWrapperBase(ModelWrapperBase, ABC):
         self,
         config_name: str,
         model_name: str = None,
-        api_key: str = None,
-        api_key_name: str = None,
         generate_args: dict = None,
         **kwargs: Any,
     ) -> None:
         """
+        To use the LiteLLM wrapper, environent variables must be set.
+        Different model_name could be using different environment variables.
+        For example:
+            - for model_name: "gpt-3.5-turbo", you need to set "OPENAI_API_KEY"
+            ```
+            os.environ["OPENAI_API_KEY"] = "your-api-key"
+            ```
+            - for model_name: "claude-2", you need to set "ANTHROPIC_API_KEY"
+            - for Azure OpenAI, you need to set "AZURE_API_KEY",
+            "AZURE_API_BASE", "AZURE_API_VERSION"
+        You should refer to the docs in https://docs.litellm.ai/docs/ .
         Args:
             config_name (`str`):
                 The name of the model config.
             model_name (`str`, default `None`):
                 The name of the model to use in OpenAI API.
-            api_key (`str`, default `None`):
-                The API key used.
-            api_key_name (`str`, default `None`):
-                The API key name used, related to the model_name.
             generate_args (`dict`, default `None`):
                 The extra keyword arguments used in litellm api generation,
                 e.g. `temperature`, `seed`.
+                For generate_args, please refer to
+                https://docs.litellm.ai/docs/completion/input
+                for more detailes.
 
         """
 
@@ -57,10 +64,6 @@ class LiteLLMWrapperBase(ModelWrapperBase, ABC):
 
         self.model_name = model_name
         self.generate_args = generate_args or {}
-        self.api_key = api_key
-        self.api_key_name = api_key_name
-        if api_key is not None and api_key_name is not None:
-            os.environ[api_key_name] = api_key
         self._register_default_metrics()
 
     def format(
@@ -75,7 +78,19 @@ class LiteLLMWrapperBase(ModelWrapperBase, ABC):
 
 
 class LiteLLMChatWrapper(LiteLLMWrapperBase):
-    """The model wrapper based on litellm chat API."""
+    """The model wrapper based on litellm chat API.
+    To use the LiteLLM wrapper, environent variables must be set.
+    Different model_name could be using different environment variables.
+    For example:
+        - for model_name: "gpt-3.5-turbo", you need to set "OPENAI_API_KEY"
+        ```
+        os.environ["OPENAI_API_KEY"] = "your-api-key"
+        ```
+        - for model_name: "claude-2", you need to set "ANTHROPIC_API_KEY"
+        - for Azure OpenAI, you need to set "AZURE_API_KEY",
+        "AZURE_API_BASE", "AZURE_API_VERSION"
+    You should refer to the docs in https://docs.litellm.ai/docs/ .
+    """
 
     model_type: str = "litellm_chat"
 
