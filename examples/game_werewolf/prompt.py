@@ -19,7 +19,6 @@ class Prompts:
             "not (true/false)",
         },
         required_keys=["thought", "speak", "agreement"],
-        keys_to_speak="speak",
         keys_to_content="speak",
         keys_to_control="agreement",
     )
@@ -32,7 +31,6 @@ class Prompts:
             "speak": "player_name",
         },
         required_keys=["thought", "speak"],
-        keys_to_speak="speak",
         keys_to_content="speak",
     )
 
@@ -50,7 +48,6 @@ class Prompts:
             "resurrect": "whether to resurrect player or not (true/false)",
         },
         required_keys=["thought", "speak", "resurrect"],
-        keys_to_speak="speak",
         keys_to_content="speak",
         keys_to_control="resurrect",
     )
@@ -64,7 +61,6 @@ class Prompts:
             "eliminate": "true/false",
         },
         required_keys=["thought", "speak", "eliminate"],
-        keys_to_speak="speak",
         keys_to_content="speak",
         keys_to_control="eliminate",
     )
@@ -80,7 +76,6 @@ class Prompts:
             "speak": "player_name",
         },
         required_keys=["thought", "speak"],
-        keys_to_speak="speak",
         keys_to_content="speak",
     )
 
@@ -110,7 +105,6 @@ class Prompts:
             "speak": "what you speak",
         },
         required_keys=["thought", "speak"],
-        keys_to_speak="speak",
         keys_to_content="speak",
     )
 
@@ -120,7 +114,6 @@ class Prompts:
             "speak": "player_name",
         },
         required_keys=["thought", "speak"],
-        keys_to_speak="speak",
         keys_to_content="speak",
     )
 
