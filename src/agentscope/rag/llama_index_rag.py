@@ -432,7 +432,7 @@ class LlamaIndexRAG(RAGBase):
             )
         else:
             self.retriever = retriever
-        logger.info("retrievers are ready.")
+        logger.info("retriever is ready.")
 
     def retrieve(self, query: str, to_list_strs: bool = False) -> list[Any]:
         """

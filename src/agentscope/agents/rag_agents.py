@@ -215,13 +215,12 @@ class LlamaIndexAgent(RAGAgentBase):
             memory_config=memory_config,
             rag_config=rag_config,
         )
-        self.rag_list = []
+        self.retriever_list = []
         self.knowledge_bank = knowledge_bank
         self.description = kwargs.get("description", "")
         self._init_rag()
 
     def _init_rag(self) -> None:
-        self.retriever_list = []
         for knowledge_id in self.rag_config.get("knowledge_id", None):
             rag = self.knowledge_bank.get_rag(knowledge_id)
             self.retriever_list.append(rag.retriever)
@@ -255,10 +254,7 @@ class LlamaIndexAgent(RAGAgentBase):
                     results.append(node.get_text())
         return results if to_list_strs else retrieved_list
 
-    def reply(
-        self,
-        x: dict = None,
-    ) -> dict:
+    def reply(self, x: dict = None) -> dict:
         """
         Reply function of the RAG agent.
         Processes the input data,
