@@ -106,10 +106,12 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Sequence</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+
+<span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">MessageBase</span>
 
 
 <div class="viewcode-block" id="MemoryBase">
@@ -139,6 +141,8 @@
     <span class="k">def</span> <span class="nf">update_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Configure memory as specified in config</span>
+<span class="sd">        Args:</span>
+<span class="sd">            config (`dict`): Configuration of resetting this memory</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span></div>
 
@@ -152,17 +156,32 @@
         <span class="n">filter_func</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return a certain range (`recent_n` or all) of memory, filtered by</span>
-<span class="sd">        `filter_func`</span>
+<span class="sd">        Return a certain range (`recent_n` or all) of memory,</span>
+<span class="sd">        filtered by `filter_func`</span>
+<span class="sd">        Args:</span>
+<span class="sd">            recent_n (int, optional):</span>
+<span class="sd">                indicate the most recent N memory pieces to be returned.</span>
+<span class="sd">            filter_func (Optional[Callable[[int, dict], bool]]):</span>
+<span class="sd">                filter function to decide which pieces of memory should</span>
+<span class="sd">                be returned, taking the index and a piece of memory as</span>
+<span class="sd">                input and return True (return this memory) or False</span>
+<span class="sd">                (does not return)</span>
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
 
 <div class="viewcode-block" id="MemoryBase.add">
 <a class="viewcode-back" href="../../../agentscope.memory.memory.html#agentscope.memory.MemoryBase.add">[docs]</a>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">memories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adding new memory fragment, depending on how the memory are stored</span>
+<span class="sd">        Args:</span>
+<span class="sd">            memories (Union[Sequence[dict], dict, None]):</span>
+<span class="sd">                Memories to be added. If the memory is not in MessageBase,</span>
+<span class="sd">                it will first be converted into a message type.</span>
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
 
@@ -173,6 +192,9 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Delete memory fragment, depending on how the memory are stored</span>
 <span class="sd">        and matched</span>
+<span class="sd">        Args:</span>
+<span class="sd">            index (Union[Iterable, int]):</span>
+<span class="sd">                indices of the memory fragments to delete</span>
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
 
@@ -181,12 +203,22 @@
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">load</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">memories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span>
+        <span class="n">memories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">],</span> <span class="n">MessageBase</span><span class="p">],</span>
         <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load memory, depending on how the memory are passed, design to load</span>
 <span class="sd">        from both file or dict</span>
+<span class="sd">        Args:</span>
+<span class="sd">            memories (Union[str, list[MessageBase], MessageBase]):</span>
+<span class="sd">                memories to be loaded.</span>
+<span class="sd">                If it is in str type, it will be first checked if it is a</span>
+<span class="sd">                file; otherwise it will be deserialized as messages.</span>
+<span class="sd">                Otherwise, memories must be either in message type or list</span>
+<span class="sd">                 of messages.</span>
+<span class="sd">            overwrite (bool):</span>
+<span class="sd">                if True, clear the current memory before loading the new ones;</span>
+<span class="sd">                if False, memories will be appended to the old one at the end.</span>
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
 
@@ -195,10 +227,19 @@
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">export</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">to_mem</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">file_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">to_mem</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Export memory, depending on how the memory are stored&quot;&quot;&quot;</span></div>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Export memory, depending on how the memory are stored</span>
+<span class="sd">        Args:</span>
+<span class="sd">            file_path (Optional[str]):</span>
+<span class="sd">                file path to save the memory to.</span>
+<span class="sd">            to_mem (Optional[str]):</span>
+<span class="sd">                if True, just return the list of messages in memory</span>
+<span class="sd">        Notice: this method prevents file_path is None when to_mem</span>
+<span class="sd">        is False.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
 
 
 <div class="viewcode-block" id="MemoryBase.clear">

@@ -116,6 +116,14 @@
 <span class="kn">from</span> <span class="nn">..models</span> <span class="kn">import</span> <span class="n">load_model_by_config_name</span>
 <span class="kn">from</span> <span class="nn">..service.retrieval.retrieval_from_list</span> <span class="kn">import</span> <span class="n">retrieve_from_list</span>
 <span class="kn">from</span> <span class="nn">..service.retrieval.similarity</span> <span class="kn">import</span> <span class="n">Embedding</span>
+<span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">deserialize</span><span class="p">,</span>
+    <span class="n">serialize</span><span class="p">,</span>
+    <span class="n">MessageBase</span><span class="p">,</span>
+    <span class="n">Msg</span><span class="p">,</span>
+    <span class="n">Tht</span><span class="p">,</span>
+    <span class="n">PlaceholderMessage</span><span class="p">,</span>
+<span class="p">)</span>
 
 
 <div class="viewcode-block" id="TemporaryMemory">
@@ -132,6 +140,16 @@
         <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">embedding_model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Temporary memory module for conversation.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            config (dict):</span>
+<span class="sd">                configuration of the memory</span>
+<span class="sd">            embedding_model (Union[str, Callable])</span>
+<span class="sd">                if the temporary memory needs to be embedded,</span>
+<span class="sd">                then either pass the name of embedding model or</span>
+<span class="sd">                the embedding model itself.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_content</span> <span class="o">=</span> <span class="p">[]</span>
@@ -150,10 +168,20 @@
         <span class="n">memories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
         <span class="n">embed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># pylint: disable=too-many-branches</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adding new memory fragment, depending on how the memory are stored</span>
+<span class="sd">        Args:</span>
+<span class="sd">            memories (Union[Sequence[dict], dict, None]):</span>
+<span class="sd">                memories to be added. If the memory is not in MessageBase,</span>
+<span class="sd">                it will first be converted into a message type.</span>
+<span class="sd">            embed (bool):</span>
+<span class="sd">                whether to generate embedding for the new added memories</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">memories</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">memories</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">memories</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
             <span class="n">record_memories</span> <span class="o">=</span> <span class="p">[</span><span class="n">memories</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">record_memories</span> <span class="o">=</span> <span class="n">memories</span>
@@ -161,6 +189,27 @@
         <span class="c1"># if memory doesn&#39;t have id attribute, we skip the checking</span>
         <span class="n">memories_idx</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_content</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">memory_unit</span> <span class="ow">in</span> <span class="n">record_memories</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">memory_unit</span><span class="p">),</span> <span class="n">MessageBase</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="p">(</span>
+                        <span class="s2">&quot;name&quot;</span> <span class="ow">in</span> <span class="n">memory_unit</span>
+                        <span class="ow">and</span> <span class="n">memory_unit</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;thought&quot;</span>
+                    <span class="p">):</span>
+                        <span class="n">memory_unit</span> <span class="o">=</span> <span class="n">Tht</span><span class="p">(</span><span class="o">**</span><span class="n">memory_unit</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">memory_unit</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="o">**</span><span class="n">memory_unit</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Cannot add </span><span class="si">{</span><span class="n">memory_unit</span><span class="si">}</span><span class="s2"> to memory, &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;must be with subclass of MessageBase&quot;</span><span class="p">,</span>
+                    <span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
+
+            <span class="c1"># in case this is a PlaceholderMessage, try to update</span>
+            <span class="c1"># the values first</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">memory_unit</span><span class="p">,</span> <span class="n">PlaceholderMessage</span><span class="p">):</span>
+                <span class="n">memory_unit</span><span class="o">.</span><span class="n">update_value</span><span class="p">()</span>
+                <span class="n">memory_unit</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="o">**</span><span class="n">memory_unit</span><span class="p">)</span>
+
             <span class="c1"># add to memory if it&#39;s new</span>
             <span class="k">if</span> <span class="p">(</span>
                 <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">memory_unit</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">)</span>
@@ -181,6 +230,13 @@
 <div class="viewcode-block" id="TemporaryMemory.delete">
 <a class="viewcode-back" href="../../../agentscope.memory.temporary_memory.html#agentscope.memory.TemporaryMemory.delete">[文档]</a>
     <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete memory fragment, depending on how the memory are stored</span>
+<span class="sd">        and matched</span>
+<span class="sd">        Args:</span>
+<span class="sd">            index (Union[Iterable, int]):</span>
+<span class="sd">                indices of the memory fragments to delete</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="s2">&quot;The memory is empty, and the delete operation is &quot;</span>
@@ -214,16 +270,26 @@
 <a class="viewcode-back" href="../../../agentscope.memory.temporary_memory.html#agentscope.memory.TemporaryMemory.export">[文档]</a>
     <span class="k">def</span> <span class="nf">export</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">to_mem</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">file_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">to_mem</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Export memory to json file&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Export memory, depending on how the memory are stored</span>
+<span class="sd">        Args:</span>
+<span class="sd">            file_path (Optional[str]):</span>
+<span class="sd">                file path to save the memory to. The messages will</span>
+<span class="sd">                be serialized and written to the file.</span>
+<span class="sd">            to_mem (Optional[str]):</span>
+<span class="sd">                if True, just return the list of messages in memory</span>
+<span class="sd">        Notice: this method prevents file_path is None when to_mem</span>
+<span class="sd">        is False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">to_mem</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_content</span>
 
         <span class="k">if</span> <span class="n">to_mem</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">file_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_content</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">serialize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_content</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
                 <span class="s2">&quot;file type only supports &quot;</span>
@@ -236,16 +302,30 @@
 <a class="viewcode-back" href="../../../agentscope.memory.temporary_memory.html#agentscope.memory.TemporaryMemory.load">[文档]</a>
     <span class="k">def</span> <span class="nf">load</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">memories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span>
+        <span class="n">memories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">],</span> <span class="n">MessageBase</span><span class="p">],</span>
         <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load memory, depending on how the memory are passed, design to load</span>
+<span class="sd">        from both file or dict</span>
+<span class="sd">        Args:</span>
+<span class="sd">            memories (Union[str, list[MessageBase], MessageBase]):</span>
+<span class="sd">                memories to be loaded.</span>
+<span class="sd">                If it is in str type, it will be first checked if it is a</span>
+<span class="sd">                file; otherwise it will be deserialized as messages.</span>
+<span class="sd">                Otherwise, memories must be either in message type or list</span>
+<span class="sd">                 of messages.</span>
+<span class="sd">            overwrite (bool):</span>
+<span class="sd">                if True, clear the current memory before loading the new ones;</span>
+<span class="sd">                if False, memories will be appended to the old one at the end.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">memories</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">memories</span><span class="p">):</span>
                 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">memories</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+                    <span class="n">load_memories</span> <span class="o">=</span> <span class="n">deserialize</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">load_memories</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">memories</span><span class="p">)</span>
+                    <span class="n">load_memories</span> <span class="o">=</span> <span class="n">deserialize</span><span class="p">(</span><span class="n">memories</span><span class="p">)</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">load_memories</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
                         <span class="n">load_memories</span><span class="p">,</span>
                         <span class="nb">list</span><span class="p">,</span>

@@ -319,12 +319,18 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">content</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
         <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;name&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;role&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;role&quot;</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="s2">&quot;thought&quot;</span><span class="p">,</span>
             <span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">,</span>
             <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
             <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 
@@ -551,7 +557,7 @@
         <span class="k">return</span> <span class="p">[</span><span class="n">deserialize</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">js_msg</span><span class="p">[</span><span class="s2">&quot;__value&quot;</span><span class="p">]]</span>
     <span class="k">elif</span> <span class="n">msg_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_MSGS</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s2">&quot;Deserialization of </span><span class="si">{msg_type}</span><span class="s2"> is not supported.&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;Deserialization of </span><span class="si">{</span><span class="n">msg_type</span><span class="si">}</span><span class="s2"> is not supported.&quot;</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">return</span> <span class="n">_MSGS</span><span class="p">[</span><span class="n">msg_type</span><span class="p">](</span><span class="o">**</span><span class="n">js_msg</span><span class="p">)</span></div>
 
