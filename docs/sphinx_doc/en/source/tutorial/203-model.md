@@ -419,6 +419,24 @@ Here we provide example configurations for different model wrappers.
 
 <br/>
 
+#### LiteLLM Chat API
+
+<details>
+<summary>LiteLLM Chat API (<code><a href="https://github.
+com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py">agentscope.models.LiteLLMChatModelWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "lite_llm_openai_chat_gpt-3.5-turbo",
+    "model_type": "litellm_chat",
+    "model_name": "gpt-3.5-turbo" # You should note that for different models, you should set the corresponding environment variables, such as OPENAI_API_KEY, etc. You may refer to https://docs.litellm.ai/docs/ for this.
+},
+```
+
+</details>
+
+<br/>
+
 #### Post Request API
 
 <details>
@@ -494,29 +512,6 @@ Here we provide example configurations for different model wrappers.
 
 </details>
 
-<br/>
-
-
-#### LiteLLM Chat API
-
-<details>
-<summary>LiteLLM Chat API (<code><a href="https://github.
-com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py">agentscope.models.LiteLLMChatModelWrapper</a></code>)</summary>
-
-```python
-{
-    "config_name": "lite_llm_openai_chat_gpt-3.5-turbo",
-    "model_type": "litellm_chat",
-    "model_name": "gpt-3.5-turbo" # You should note that for different models, you should set the corresponding environment variables, such as OPENAI_API_KEY, etc. You may refer to https://docs.litellm.ai/docs/ for this.
-},
-```
-
-</details>
-
-<br/>
-
-
-#### Post Request Chat API
 
 <details>
 <summary>Post Request API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIModelWrapperBase</a></code>)</summary>
