@@ -186,7 +186,7 @@ class TemporaryMemory(MemoryBase):
 
     def load(
         self,
-        memories: Union[str, list, MessageBase],
+        memories: Union[str, list[MemoryBase], MessageBase],
         overwrite: bool = False,
     ) -> None:
         """
