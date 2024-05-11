@@ -245,7 +245,7 @@ messages as input. The message must obey the following rules (updated in
 it will be treated as system prompt and the other messages will consist
 dialogue history in the system message prefixed by "## Dialogue History".
 - If the `url` attribute of messages is not `None`, we will gather all urls in
-the `images" field in the returned dictionary.
+the `"images"` field in the returned dictionary.
 
 ```python
 from agentscope.models import OllamaChatWrapper
