@@ -241,11 +241,11 @@ messages as input. The message must obey the following rules (updated in
 
 #### Prompt Strategy
 
-Given a list of messages, we will parse each message as follows:
-
-- `Msg`:  Fill the `role` and `content` fields directly. If it has an `url`
-  field, which refers to an image, we will add it to the message.
-- `List`: Parse each element in the list according to the above rules.
+- If the role field of the first input message is `"system"`,
+it will be treated as system prompt and the other messages will consist
+dialogue history in the system message prefixed by "## Dialogue History".
+- If the `url` attribute of messages is not `None`, we will gather all urls in
+the `"images"` field in the returned dictionary.
 
 ```python
 from agentscope.models import OllamaChatWrapper
@@ -268,9 +268,11 @@ print(prompt)
 
 ```bash
 [
-  {"role": "system", "content": "You are a helpful assistant"},
-  {"role": "assistant", "content": "Hi."},
-  {"role": "assistant", "content": "Nice to meet you!", "images": ["https://example.com/image.jpg"]},
+  {
+    "role": "system",
+    "content": "You are a helpful assistant\n\n## Dialogue History\nBob: Hi.\nAlice: Nice to meet you!",
+    "images": ["https://example.com/image.jpg"]
+  },
 ]
 ```
 

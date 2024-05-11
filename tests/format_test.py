@@ -84,9 +84,16 @@ class ExampleTest(unittest.TestCase):
 
         # correct format
         ground_truth = [
-            {"role": "system", "content": "You are a helpful assistant"},
-            {"role": "user", "content": "What is the weather today?"},
-            {"role": "assistant", "content": "It is sunny today"},
+            {
+                "role": "system",
+                "content": (
+                    "You are a helpful assistant\n"
+                    "\n"
+                    "## Dialogue History\n"
+                    "user: What is the weather today?\n"
+                    "assistant: It is sunny today"
+                ),
+            },
         ]
         prompt = model.format(*self.inputs)  # type: ignore[arg-type]
         self.assertEqual(prompt, ground_truth)
