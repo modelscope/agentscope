@@ -2,11 +2,12 @@
 """
 Unit tests for memory classes and functions
 """
-
+import tempfile
+import os
 import unittest
 from unittest.mock import patch, MagicMock
 
-from agentscope.message import Msg
+from agentscope.message import Msg, Tht
 from agentscope.memory import TemporaryMemory
 
 
@@ -89,6 +90,56 @@ class TemporaryMemoryTest(unittest.TestCase):
             retrieved_mem,
             [user_input, agent_input],
         )
+
+        outfile_path = tempfile.mkstemp()[1]
+        try:
+            memory.export(file_path=outfile_path)
+            memory.clear()
+            self.assertEqual(
+                memory.get_memory(),
+                [],
+            )
+            memory.load(outfile_path)
+            self.assertEqual(
+                memory.get_memory(),
+                [user_input, agent_input],
+            )
+        finally:
+            # NOTE: To retain the tempfile if the test fails,
+            # remove the try-finally clauses
+            os.remove(outfile_path)
+
+    def test_tht_memory(self) -> None:
+        """
+        Test temporary memory with Tht,
+        add, clear, export, loading
+        """
+        memory = TemporaryMemory()
+        thought = Tht("testing")
+        memory.add(thought)
+
+        self.assertEqual(
+            memory.get_memory(),
+            [thought],
+        )
+
+        outfile_path = tempfile.mkstemp()[1]
+        try:
+            memory.export(file_path=outfile_path)
+            memory.clear()
+            self.assertEqual(
+                memory.get_memory(),
+                [],
+            )
+            memory.load(outfile_path)
+            self.assertEqual(
+                memory.get_memory(),
+                [thought],
+            )
+        finally:
+            # NOTE: To retain the tempfile if the test fails,
+            # remove the try-finally clauses
+            os.remove(outfile_path)
 
 
 if __name__ == "__main__":

@@ -194,6 +194,10 @@ class Tht(MessageBase):
         timestamp: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
+        if "name" in kwargs:
+            kwargs.pop("name")
+        if "role" in kwargs:
+            kwargs.pop("role")
         super().__init__(
             name="thought",
             content=content,
