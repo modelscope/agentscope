@@ -130,6 +130,7 @@
 <li><p>Gemini API，包括对话（Chat）和嵌入（Embedding）。</p></li>
 <li><p>ZhipuAi API，包括对话（Chat）和嵌入（Embedding）。</p></li>
 <li><p>Ollama API，包括对话（Chat），嵌入（Embedding）和生成（Generation）。</p></li>
+<li><p>LiteLLM API, 包括对话（Chat）, 支持各种模型的API.</p></li>
 <li><p>Post请求API，基于Post请求实现的模型推理服务，包括Huggingface/ModelScope
 Inference API和各种符合Post请求格式的API。</p></li>
 </ul>
@@ -292,13 +293,19 @@ API如下：</p>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;ollama_generate&quot;</span></code></p></td>
 <td><p>llama2, …</p></td>
 </tr>
-<tr class="row-even"><td><p>Post Request based API</p></td>
+<tr class="row-even"><td><p>LiteLLM API</p></td>
+<td><p>Chat</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py"><code class="docutils literal notranslate"><span class="pre">LiteLLMChatWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;litellm_chat&quot;</span></code></p></td>
+<td><p>-</p></td>
+</tr>
+<tr class="row-odd"><td><p>Post Request based API</p></td>
 <td><p>-</p></td>
 <td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py"><code class="docutils literal notranslate"><span class="pre">PostAPIModelWrapperBase</span></code></a></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;post_api&quot;</span></code></p></td>
 <td><p>-</p></td>
 </tr>
-<tr class="row-odd"><td><p></p></td>
+<tr class="row-even"><td><p></p></td>
 <td><p>Chat</p></td>
 <td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py"><code class="docutils literal notranslate"><span class="pre">PostAPIChatModelWrapper</span></code></a></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;post_api_chat&quot;</span></code></p></td>
@@ -583,6 +590,21 @@ API如下：</p>
     <span class="p">},</span>
     <span class="s2">&quot;keep_alive&quot;</span><span class="p">:</span> <span class="s2">&quot;5m&quot;</span><span class="p">,</span>                         <span class="c1"># 控制一次调用后模型在内存中的存活时间</span>
 <span class="p">}</span>
+</pre></div>
+</div>
+</details>
+<br/>
+</section>
+<section id="litellm-chat-api">
+<h4>LiteLLM Chat API<a class="headerlink" href="#litellm-chat-api" title="Link to this heading"></a></h4>
+<details>
+<summary>LiteLLM Chat API (<code><a href="https://github.
+com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py">agentscope.models.LiteLLMChatModelWrapper</a></code>)</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;lite_llm_openai_chat_gpt-3.5-turbo&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;litellm_chat&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-3.5-turbo&quot;</span> <span class="c1"># You should note that for different models, you should set the corresponding environment variables, such as OPENAI_API_KEY, etc. You may refer to https://docs.litellm.ai/docs/ for this.</span>
+<span class="p">},</span>
 </pre></div>
 </div>
 </details>
