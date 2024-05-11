@@ -2,7 +2,7 @@
 """
 Unit tests for memory classes and functions
 """
-import tempfile
+
 import os
 import unittest
 from unittest.mock import patch, MagicMock
@@ -18,6 +18,8 @@ class TemporaryMemoryTest(unittest.TestCase):
 
     def setUp(self) -> None:
         self.memory = TemporaryMemory()
+        self.file_name_1 = "tmp_mem_file1.txt"
+        self.file_name_2 = "tmp_mem_file2.txt"
         self.msg_1 = Msg("user", "Hello", role="user")
         self.msg_2 = Msg(
             "agent",
@@ -31,6 +33,13 @@ class TemporaryMemoryTest(unittest.TestCase):
         )
 
         self.invalid = {"invalid_key": "invalid_value"}
+
+    def tearDown(self) -> None:
+        """Clean up before & after tests."""
+        if os.path.exists(self.file_name_1):
+            os.remove(self.file_name_1)
+        if os.path.exists(self.file_name_2):
+            os.remove(self.file_name_2)
 
     def test_add(self) -> None:
         """Test add different types of object"""
@@ -91,23 +100,17 @@ class TemporaryMemoryTest(unittest.TestCase):
             [user_input, agent_input],
         )
 
-        outfile_path = tempfile.mkstemp()[1]
-        try:
-            memory.export(file_path=outfile_path)
-            memory.clear()
-            self.assertEqual(
-                memory.get_memory(),
-                [],
-            )
-            memory.load(outfile_path)
-            self.assertEqual(
-                memory.get_memory(),
-                [user_input, agent_input],
-            )
-        finally:
-            # NOTE: To retain the tempfile if the test fails,
-            # remove the try-finally clauses
-            os.remove(outfile_path)
+        memory.export(file_path=self.file_name_1)
+        memory.clear()
+        self.assertEqual(
+            memory.get_memory(),
+            [],
+        )
+        memory.load(self.file_name_1)
+        self.assertEqual(
+            memory.get_memory(),
+            [user_input, agent_input],
+        )
 
     def test_tht_memory(self) -> None:
         """
@@ -123,23 +126,17 @@ class TemporaryMemoryTest(unittest.TestCase):
             [thought],
         )
 
-        outfile_path = tempfile.mkstemp()[1]
-        try:
-            memory.export(file_path=outfile_path)
-            memory.clear()
-            self.assertEqual(
-                memory.get_memory(),
-                [],
-            )
-            memory.load(outfile_path)
-            self.assertEqual(
-                memory.get_memory(),
-                [thought],
-            )
-        finally:
-            # NOTE: To retain the tempfile if the test fails,
-            # remove the try-finally clauses
-            os.remove(outfile_path)
+        memory.export(file_path=self.file_name_2)
+        memory.clear()
+        self.assertEqual(
+            memory.get_memory(),
+            [],
+        )
+        memory.load(self.file_name_2)
+        self.assertEqual(
+            memory.get_memory(),
+            [thought],
+        )
 
 
 if __name__ == "__main__":
