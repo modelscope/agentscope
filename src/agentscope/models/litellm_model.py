@@ -58,18 +58,13 @@ class LiteLLMWrapperBase(ModelWrapperBase, ABC):
         super().__init__(config_name=config_name)
 
         if litellm is None:
-            logger.error(
+            raise ImportError(
                 "Cannot import litellm package in current python environment."
                 "You should try:"
                 "1. Install litellm by `pip install litellm`"
                 "2. If you still have import error, you should try to "
                 "update the openai to higher version, e.g. "
                 "by runing `pip install openai==1.25.1",
-            )
-            raise ImportError(
-                "Cannot import litellm package in current python environment."
-                "You should try to install litellm by `pip install litellm`"
-                "and update openai package by `pip install openai==1.25.1",
             )
 
         self.model_name = model_name
