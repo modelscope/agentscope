@@ -170,9 +170,36 @@ class in model configuration.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.ollama_model.OllamaChatWrapper.format">
 <span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.html#agentscope.message.MessageBase" title="agentscope.message.MessageBase"><span class="pre">MessageBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.html#agentscope.message.MessageBase" title="agentscope.message.MessageBase"><span class="pre">MessageBase</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/models/ollama_model.html#OllamaChatWrapper.format"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.models.ollama_model.OllamaChatWrapper.format" title="Link to this definition"></a></dt>
-<dd><p>A basic strategy to format the input into the required format of
-Ollama Chat API.</p>
-<p>Note for ollama chat api, the content field shouldn’t be empty string.</p>
+<dd><p>Format the messages for ollama Chat API.</p>
+<p>All messages will be formatted into a single system message with
+system prompt and dialogue history.</p>
+<p>Note:
+1. This strategy maybe not suitable for all scenarios,
+and developers are encouraged to implement their own prompt
+engineering strategies.
+2. For ollama chat api, the content field shouldn’t be empty string.</p>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">prompt</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;You&#39;re a helpful assistant&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">),</span>
+    <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;Bob&quot;</span><span class="p">,</span> <span class="s2">&quot;Hi, how can I help you?&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">),</span>
+    <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;What&#39;s the date today?&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The prompt will be as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="s2">&quot;You&#39;re a helpful assistant</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;## Dialogue History</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;Bob: Hi, how can I help you?</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;user: What&#39;s the date today?&quot;</span>
+        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">参数<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>args</strong> (<cite>Union[MessageBase, Sequence[MessageBase]]</cite>) – The input arguments to be formatted, where each argument

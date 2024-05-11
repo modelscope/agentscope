@@ -339,8 +339,10 @@ AgentScope内置策略的目标是<strong>使初学者能够顺利调用模型AP
 <h4>提示的构建策略<a class="headerlink" href="#id7" title="Link to this heading"></a></h4>
 <p>给定一个消息列表，我们将按照以下规则解析每个消息：</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">Msg</span></code>：直接填充<code class="docutils literal notranslate"><span class="pre">role</span></code>和<code class="docutils literal notranslate"><span class="pre">content</span></code>字段。如果它有一个<code class="docutils literal notranslate"><span class="pre">url</span></code>字段，指向一个图片，我们将把它添加到消息中。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">List</span></code>：根据上述规则解析列表中的每个元素。</p></li>
+<li><p>如果输入的第一条信息的<code class="docutils literal notranslate"><span class="pre">role</span></code>字段是<code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>，该条信息将被视为系统提示（system
+prompt），其他信息将一起组成对话历史。对话历史将添加<code class="docutils literal notranslate"><span class="pre">&quot;##</span> <span class="pre">Dialogue</span> <span class="pre">History&quot;</span></code>的前缀，并与
+系统提示一起组成一条<code class="docutils literal notranslate"><span class="pre">role</span></code>为<code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>的信息。</p></li>
+<li><p>如果输入信息中的<code class="docutils literal notranslate"><span class="pre">url</span></code>字段不为<code class="docutils literal notranslate"><span class="pre">None</span></code>，则这些url将一起被置于<code class="docutils literal notranslate"><span class="pre">&quot;images&quot;</span></code>对应的键值中。</p></li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">OllamaChatWrapper</span>
 
@@ -361,9 +363,11 @@ AgentScope内置策略的目标是<strong>使初学者能够顺利调用模型AP
 </pre></div>
 </div>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>
-<span class="w">  </span><span class="o">{</span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;system&quot;</span>,<span class="w"> </span><span class="s2">&quot;content&quot;</span>:<span class="w"> </span><span class="s2">&quot;You are a helpful assistant&quot;</span><span class="o">}</span>,
-<span class="w">  </span><span class="o">{</span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;assistant&quot;</span>,<span class="w"> </span><span class="s2">&quot;content&quot;</span>:<span class="w"> </span><span class="s2">&quot;Hi.&quot;</span><span class="o">}</span>,
-<span class="w">  </span><span class="o">{</span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;assistant&quot;</span>,<span class="w"> </span><span class="s2">&quot;content&quot;</span>:<span class="w"> </span><span class="s2">&quot;Nice to meet you!&quot;</span>,<span class="w"> </span><span class="s2">&quot;images&quot;</span>:<span class="w"> </span><span class="o">[</span><span class="s2">&quot;https://example.com/image.jpg&quot;</span><span class="o">]}</span>,
+<span class="w">  </span><span class="o">{</span>
+<span class="w">    </span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;system&quot;</span>,
+<span class="w">    </span><span class="s2">&quot;content&quot;</span>:<span class="w"> </span><span class="s2">&quot;You are a helpful assistant\n\n## Dialogue History\nBob: Hi.\nAlice: Nice to meet you!&quot;</span>,
+<span class="w">    </span><span class="s2">&quot;images&quot;</span>:<span class="w"> </span><span class="o">[</span><span class="s2">&quot;https://example.com/image.jpg&quot;</span><span class="o">]</span>
+<span class="w">  </span><span class="o">}</span>,
 <span class="o">]</span>
 </pre></div>
 </div>

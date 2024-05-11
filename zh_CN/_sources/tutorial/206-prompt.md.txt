@@ -211,8 +211,10 @@ print(prompt)
 
 给定一个消息列表，我们将按照以下规则解析每个消息：
 
-- `Msg`：直接填充`role`和`content`字段。如果它有一个`url`字段，指向一个图片，我们将把它添加到消息中。
-- `List`：根据上述规则解析列表中的每个元素。
+- 如果输入的第一条信息的`role`字段是`"system"`，该条信息将被视为系统提示（system
+ prompt），其他信息将一起组成对话历史。对话历史将添加`"## Dialogue History"`的前缀，并与
+系统提示一起组成一条`role`为`"system"`的信息。
+- 如果输入信息中的`url`字段不为`None`，则这些url将一起被置于`"images"`对应的键值中。
 
 ```python
 from agentscope.models import OllamaChatWrapper
@@ -235,9 +237,11 @@ print(prompt)
 
 ```bash
 [
-  {"role": "system", "content": "You are a helpful assistant"},
-  {"role": "assistant", "content": "Hi."},
-  {"role": "assistant", "content": "Nice to meet you!", "images": ["https://example.com/image.jpg"]},
+  {
+    "role": "system",
+    "content": "You are a helpful assistant\n\n## Dialogue History\nBob: Hi.\nAlice: Nice to meet you!",
+    "images": ["https://example.com/image.jpg"]
+  },
 ]
 ```
 
