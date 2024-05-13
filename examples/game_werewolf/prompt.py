@@ -19,6 +19,7 @@ class Prompts:
             "agreement or not (true/false)",
         },
         required_keys=["thought", "speak", "finish_discussion"],
+        keys_to_memory="speak",
         keys_to_content="speak",
         keys_to_metadata=["finish_discussion"],
     )
@@ -31,6 +32,7 @@ class Prompts:
             "speak": "player_name",
         },
         required_keys=["thought", "speak"],
+        keys_to_memory="speak",
         keys_to_content="speak",
     )
 
@@ -44,12 +46,13 @@ class Prompts:
     witch_resurrect_parser = MarkdownJsonDictParser(
         content_hint={
             "thought": "what you thought",
-            "speak": "whether to resurrect player or not",
-            "resurrect": "whether to resurrect player or not (true/false)",
+            "speak": "play_name",
+            "resurrect": "whether to resurrect the player or not (true/false)",
         },
         required_keys=["thought", "speak", "resurrect"],
+        keys_to_memory="speak",
         keys_to_content="speak",
-        keys_to_metadata="resurrect",
+        keys_to_metadata=["resurrect"],
     )
 
     to_witch_poison = "Would you like to eliminate one player?"
@@ -58,11 +61,12 @@ class Prompts:
         content_hint={
             "thought": "what you thought",
             "speak": "what you speak",
-            "eliminate": "true/false",
+            "eliminate": "whether to eliminate a player or not (true/false)",
         },
         required_keys=["thought", "speak", "eliminate"],
+        keys_to_memory="speak",
         keys_to_content="speak",
-        keys_to_metadata="eliminate",
+        keys_to_metadata=["eliminate"],
     )
 
     to_seer = (
@@ -76,6 +80,7 @@ class Prompts:
             "speak": "player_name",
         },
         required_keys=["thought", "speak"],
+        keys_to_memory="speak",
         keys_to_content="speak",
     )
 
@@ -105,6 +110,7 @@ class Prompts:
             "speak": "what you speak",
         },
         required_keys=["thought", "speak"],
+        keys_to_memory="speak",
         keys_to_content="speak",
     )
 
@@ -114,6 +120,7 @@ class Prompts:
             "speak": "player_name",
         },
         required_keys=["thought", "speak"],
+        keys_to_memory="speak",
         keys_to_content="speak",
     )
 
