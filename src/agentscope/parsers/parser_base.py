@@ -126,7 +126,7 @@ class DictFilterMixin:
             if _FIRST_TIME_TO_REPORT_MEMORY:
                 logger.warning(
                     "The argument keys_to_memory is None, which means no "
-                    "valid content will be stored in agent's memory."
+                    "valid content will be stored in agent's memory.",
                 )
                 _FIRST_TIME_TO_REPORT_MEMORY = False
 
@@ -153,7 +153,7 @@ class DictFilterMixin:
             if _FIRST_TIME_TO_REPORT_CONTENT:
                 logger.warning(
                     "The argument keys_to_content is None, which means no "
-                    "valid content will be returned in the agent's reply."
+                    "valid content will be returned in the agent's reply.",
                 )
             _FIRST_TIME_TO_REPORT_CONTENT = False
 

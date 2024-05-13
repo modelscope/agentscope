@@ -104,7 +104,7 @@ class Msg(MessageBase):
     """The role of the message sender."""
 
     metadata: Optional[dict]
-    """Save the information for application's control flow, or other 
+    """Save the information for application's control flow, or other
     purposes."""
 
     url: Optional[Union[Sequence[str], str]]
@@ -112,7 +112,6 @@ class Msg(MessageBase):
 
     timestamp: str
     """The timestamp of the message."""
-
 
     def __init__(
         self,

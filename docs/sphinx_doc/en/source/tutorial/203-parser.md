@@ -253,7 +253,7 @@ In AgentScope, we achieve post-processing by calling the `to_content`, `to_memor
 >   > def
 >   >
 >   > {"thought": "abc", "speak": "def"}
->   > 
+>   >
 >   > None
 
 
