@@ -6,7 +6,7 @@ from typing import Union, Sequence, Optional
 from agentscope.exception import JsonParsingError
 from agentscope.models import ModelResponse
 from agentscope.parsers import ParserBase
-from agentscope.parsers.parser_base import _DictFilterMixin
+from agentscope.parsers.parser_base import DictFilterMixin
 
 
 class TaggedContent:
@@ -63,7 +63,7 @@ class TaggedContent:
         return f"{self.tag_begin}{self.content_hint}{self.tag_end}"
 
 
-class MultiTaggedContentParser(ParserBase, _DictFilterMixin):
+class MultiTaggedContentParser(ParserBase, DictFilterMixin):
     """Parse response text by multiple tags, and return a dict of their
     content. Asking llm to generate JSON dictionary object directly maybe not a
     good idea due to involving escape characters and other issues. So we can
@@ -87,7 +87,7 @@ class MultiTaggedContentParser(ParserBase, _DictFilterMixin):
         *tagged_contents: TaggedContent,
         keys_to_memory: Optional[Union[str, Sequence[str]]] = None,
         keys_to_content: Optional[Union[str, Sequence[str]]] = None,
-        keys_to_control: Optional[Union[str, Sequence[str]]] = None,
+        keys_to_metadata: Optional[Union[str, Sequence[str]]] = None,
     ) -> None:
         """Initialize the parser with tags.
 
@@ -108,16 +108,16 @@ class MultiTaggedContentParser(ParserBase, _DictFilterMixin):
                 will be returned as a dictionary in the content field of the
                 return `Msg` object. Otherwise, it will be returned as a
                 string.
-            keys_to_control (`Union[str, Sequence[str]]`, defaults to `None`)
+            keys_to_metadata (`Union[str, Sequence[str]]`, defaults to `None`)
                 The name of the content that will be used to control the
                 application workflow.
         """
         # Initialize the mixin class
-        _DictFilterMixin.__init__(
+        DictFilterMixin.__init__(
             self,
             keys_to_memory=keys_to_memory,
             keys_to_content=keys_to_content,
-            keys_to_control=keys_to_control,
+            keys_to_metadata=keys_to_metadata,
         )
 
         self.tagged_contents = list(tagged_contents)
