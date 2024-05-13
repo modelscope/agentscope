@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-"""A dict dialog agent that using `parse_func` and `fault_handler` to
-parse the model response."""
+"""An agent that replies in a dictionary format."""
 from typing import Optional
 
 from ..message import Msg
@@ -10,22 +9,10 @@ from ..parsers import ParserBase
 
 class DictDialogAgent(AgentBase):
     """An agent that generates response in a dict format, where user can
-    specify the required fields in the response via prompt, e.g.
+    specify the required fields in the response via specifying the parser
 
-    .. code-block:: python
-
-        prompt = "... Response in the following format that can be loaded by
-        python json.loads()
-        {
-            "thought": "thought",
-            "speak": "thoughts summary to say to others",
-            # ...
-        }"
-
-    This agent class is an example for using `parse_func` and `fault_handler`
-    to parse the output from the model, and handling the fault when parsing
-    fails. We take "speak" as a required field in the response, and print
-    the speak field as the output response.
+    About parser, please refer to our
+    [tutorial](https://modelscope.github.io/agentscope/en/tutorial/203-parser.html)
 
     For usage example, please refer to the example of werewolf in
     `examples/game_werewolf`"""
@@ -71,8 +58,8 @@ class DictDialogAgent(AgentBase):
 
     def set_parser(self, parser: ParserBase) -> None:
         """Set response parser, which will provide 1) format instruction; 2)
-        response parsing; 3) filtering fields when calling `self.speak`,
-        `self.memory.add`, and `return`. So developers only need to change the
+        response parsing; 3) filtering fields when returning message, storing
+        message in memory. So developers only need to change the
         parser, and the agent will work as expected.
         """
         self.parser = parser

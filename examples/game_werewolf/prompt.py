@@ -43,10 +43,13 @@ class Prompts:
         "Would you like to resurrect {dead_name}?"
     )
 
+    to_witch_resurrect_no = "The witch has chosen not to resurrect the player."
+    to_witch_resurrect_yes = "The witch has chosen to resurrect the player."
+
     witch_resurrect_parser = MarkdownJsonDictParser(
         content_hint={
             "thought": "what you thought",
-            "speak": "play_name",
+            "speak": "whether to resurrect the player and the reason",
             "resurrect": "whether to resurrect the player or not (true/false)",
         },
         required_keys=["thought", "speak", "resurrect"],
