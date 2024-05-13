@@ -2,6 +2,33 @@
 
 # 模型结果解析
 
+## 目录
+
+---
+- [背景](#背景)
+- [解析器模块](#解析器模块)
+  - [功能说明](#功能说明)
+  - [字符串类型](#字符串str类型)
+    - [MarkdownCodeBlockParser](#summary-markdowncodeblockparser-summary)
+      - [初始化](#初始化)
+      - [响应格式模版](#响应格式模版)
+      - [解析函数](#解析函数)
+  - [字典类型](#字典dict类型)
+    - [MarkdownJsonDictParser](#summary-markdownjsondictparser-summary)
+      - [初始化 & 响应格式模版](#初始化--响应格式模版)
+    - [MultiTaggedContentParser](#summary-multitaggedcontentparser-summary)
+      - [初始化 & 响应格式模版](#初始化--响应格式模版-1)
+      - [解析函数](#解析函数-1)
+  - [JSON / Python 对象类型](#json--python-对象类型)
+    - [MarkdownJsonObjectParser](#summary-markdownjsonobjectparser-summary)
+      - [初始化 & 响应格式模版](#初始化--响应格式模版-2)
+      - [解析函数](#解析函数-2)
+- [典型使用样例](#典型使用样例)
+  - [狼人杀游戏](#狼人杀游戏)
+  - [ReAct 智能体和工具使用](#react-智能体和工具使用)
+- [自定义解析器](#自定义解析器)
+
+
 ## 背景
 
 利用LLM构建应用的过程中，将 LLM 产生的字符串解析成指定的格式，提取出需要的信息，是一个非常重要的环节。
@@ -39,9 +66,6 @@ AgentScope中，解析器模块的设计原则是：
 
 3. 针对字典格式的后处理功能。在将文本解析成字典后，其中不同的字段可能有不同的用处
 
-
-### 解析器类型
-
 AgentScope提供了多种不同解析器，开发者可以根据自己的需求进行选择。
 
 | 目标格式              | 解析器                        | 说明                                                                          |
@@ -58,9 +82,10 @@ AgentScope提供了多种不同解析器，开发者可以根据自己的需求�
 ### 字符串（`str`）类型
 
 <details>
-<summary> MarkdownCodeBlockParser </summary>
 
-#### 初始化
+#### <summary> MarkdownCodeBlockParser </summary>
+
+##### 初始化
 
 - `MarkdownCodeBlockParser`采用 Markdown 代码块的形式，要求 LLM 将指定文本产生到指定的代码块中。可以通过`language_name`参数指定不同的语言，从而利用大模型代码能力产生对应的输出。例如要求大模型产生 Python 代码时，初始化如下：
 
@@ -70,7 +95,7 @@ AgentScope提供了多种不同解析器，开发者可以根据自己的需求�
     parser = MarkdownCodeBlockParser(language_name="python")
     ```
 
-#### 响应格式模版
+##### 响应格式模版
 
 - `MarkdownCodeBlockParser`类提供如下的“响应格式说明”模版，在用户调用`format_instruction`属性时，会将`{language_name}`替换为初始化时输入的字符串：
 
@@ -96,7 +121,7 @@ AgentScope提供了多种不同解析器，开发者可以根据自己的需求�
     >
     > \```
 
-#### 解析函数
+##### 解析函数
 
 - `MarkdownCodeBlockParser`类提供`parse`方法，用于解析LLM产生的文本，返回的是字符串。
 
@@ -234,9 +259,9 @@ AgentScope中，我们通过调用`to_content`，`to_memory`和`to_metadata`方�
 
 <details>
 
-<summary>MarkdownJsonDictParser</summary>
+#### <summary> MarkdownJsonDictParser </summary>
 
-#### 初始化 & 响应格式模版
+##### 初始化 & 响应格式模版
 
 - `MarkdownJsonDictParser`要求 LLM 在 \```json 和 \``` 标识的代码块中产生指定内容的字典。
 - 除了`to_content`，`to_memory`和`to_metadata`参数外，可以通过提供 `content_hint` 参数提供响应结果样例和说明，即提示LLM应该产生什么样子的字典，该参数可以是字符串，也可以是字典，在构建响应格式提示的时候将会被自动转换成字符串进行拼接。
@@ -273,11 +298,11 @@ AgentScope中，我们通过调用`to_content`，`to_memory`和`to_metadata`方�
 
 <details>
 
-<summary>MultiTaggedContentParser</summary>
+#### <summary> MultiTaggedContentParser </summary>
 
 `MultiTaggedContentParser`要求 LLM 在多个指定的标签对中产生指定的内容，这些不同标签的内容将一同被解析为一个 Python 字典。使用方法与`MarkdownJsonDictParser`类似，只是初始化方法不同，更适合能力较弱的LLM，或是比较复杂的返回内容。
 
-#### 初始化 & 响应格式说明
+##### 初始化 & 响应格式模版
 
 `MultiTaggedContentParser`中，每一组标签将会以`TaggedContent`对象的形式传入，其中`TaggedContent`对象包含了
 - 标签名（`name`），即返回字典中的key值
@@ -321,7 +346,7 @@ print(parser.format_instruction)
 >
 > [FINISH_DISCUSSION]true/false, whether the discussion is finished[/FINISH_DISCUSSION]
 
-#### 解析函数
+##### 解析函数
 
 - `MultiTaggedContentParser`的解析结果为字典，其中key为`TaggedContent`对象的`name`的值，以下是狼人杀中解析 LLM 返回的样例：
 
@@ -354,11 +379,11 @@ print(res_dict)
 
 <details>
 
-<summary>MarkdownJsonObjectParser</summary>
+#### <summary> MarkdownJsonObjectParser </summary>
 
 `MarkdownJsonObjectParser`同样采用 Markdown 的```json和```标识，但是不限制解析的内容的类型，可以是列表，字典，数值，字符串等可以通过`json.loads`进行解析字符串。
 
-#### 初始化 & 响应格式说明
+##### 初始化 & 响应格式模版
 
 ```python
 from agentscope.parsers import MarkdownJsonObjectParser
@@ -378,7 +403,7 @@ print(parser.format_instruction)
 >
 > \```
 
-#### 解析函数
+##### 解析函数
 
 ````python
 res = parser.parse(
