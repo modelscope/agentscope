@@ -232,9 +232,9 @@ In AgentScope, we achieve post-processing by calling the `to_content`, `to_memor
   ```
 
 > **Note**: `keys_to_content`, `keys_to_memory`, and `keys_to_metadata` parameters can be a list, a string, or the default `None` value.
+> - For the default `None`, the `to_content`, `to_memory`, and `to_metadata` methods will directly return `None`.
 > - For a string, the `to_content`, `to_memory`, and `to_metadata` methods will directly extract the corresponding value. For example, if `keys_to_content="speak"`, the `to_content` method will put `res.parsed["speak"]` into the `content` field of the `Msg` object, and the `content` field will be a string rather than a dictionary.
 > - For a list, the `to_content`, `to_memory`, and `to_metadata` methods will filter the dictionary according to the list of keys.
-> - For the default `None`, the `to_content`, `to_memory`, and `to_metadata` methods will directly return the input dictionary without filtering.
 >   ```python
 >     parser = MarkdownJsonDictParser(
 >        content_hint={
@@ -246,12 +246,15 @@ In AgentScope, we achieve post-processing by calling the `to_content`, `to_memor
 >     )
 >
 >     example_dict = {"thought": "abc", "speak": "def"}
->     print(parser.to_content(example_dict)) # def
->     print(parser.to_memory(example_dict))  # {"thought": "abc", "speak": "def"}
+>     print(parser.to_content(example_dict))   # def
+>     print(parser.to_memory(example_dict))    # {"thought": "abc", "speak": "def"}
+>     print(parser.to_metadata(example_dict))  # None
 >   ```
 >   > def
 >   >
 >   > {"thought": "abc", "speak": "def"}
+>   >
+>   > None
 
 
 Next we will introduce two parsers for dictionary type.

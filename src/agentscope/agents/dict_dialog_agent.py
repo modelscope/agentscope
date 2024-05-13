@@ -120,7 +120,7 @@ class DictDialogAgent(AgentBase):
         )
 
         # Filter the parsed response by keys for storing in memory, returning
-        # in the reply function, and feeding into the control field in the
+        # in the reply function, and feeding into the metadata field in the
         # returned message object.
         self.memory.add(
             Msg(self.name, self.parser.to_memory(res.parsed), "assistant"),
@@ -130,7 +130,7 @@ class DictDialogAgent(AgentBase):
             self.name,
             content=self.parser.to_content(res.parsed),
             role="assistant",
-            control=self.parser.to_metadata(res.parsed),
+            metadata=self.parser.to_metadata(res.parsed),
         )
         self.speak(msg)
 
