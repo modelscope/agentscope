@@ -8,6 +8,10 @@ from loguru import logger
 from agentscope.exception import TagNotFoundError
 from agentscope.models import ModelResponse
 
+# TODO: Support one-time warning in logger rather than setting global variable
+_FIRST_TIME_TO_REPORT_CONTENT = True
+_FIRST_TIME_TO_REPORT_MEMORY = True
+
 
 class ParserBase(ABC):
     """The base class for model response parser."""
@@ -78,27 +82,32 @@ class DictFilterMixin:
 
     def __init__(
         self,
-        keys_to_memory: Union[str, Sequence[str]],
-        keys_to_content: Union[str, Sequence[str]],
-        keys_to_metadata: Union[str, Sequence[str]],
+        keys_to_memory: Union[str, Sequence[str], None],
+        keys_to_content: Union[str, Sequence[str], None],
+        keys_to_metadata: Union[str, Sequence[str], None],
     ) -> None:
         """Initialize the mixin class with the keys to be filtered during
         speaking, storing in memory, and returning in the agent reply function.
 
         Args:
-            keys_to_memory (`Union[str, Sequence[str]]`):
+            keys_to_memory (`Union[str, Sequence[str], None]`):
                 The key or keys to be filtered during storing in memory. If
-                a single key is provided, the corresponding value will be
+                it's `None`, `None` will be returned in the `to_memory` method.
+                If a single key is provided, the corresponding value will be
                 returned. Otherwise, a filtered dictionary will be returned.
-            keys_to_content (`Union[str, Sequence[str]]`):
+            keys_to_content (`Union[str, Sequence[str], None]`):
                 The key or keys that will be exposed to other agents in the
-                returned message content field. If a single key is provided,
-                the corresponding value will be returned. Otherwise, a filtered
-                dictionary will be returned.
-            keys_to_metadata (`Union[str, Sequence[str]]`):
-                The key or keys that will be fed into the returned message
-                object, it will be used to control the application workflow but
-                not exposed to other agents.
+                returned message content field. If it's `None`, `None` will
+                be returned in the `to_content` method. If a single key is
+                provided, the corresponding value will be returned.
+                Otherwise, a filtered dictionary will be returned.
+            keys_to_metadata (`Union[str, Sequence[str], None]`):
+                The key or keys that will be fed into the metadata field in
+                the returned message object for application workflow control or
+                other purposes. If it's `None`, an empty dictionary will be
+                returned. If a single key is provided, the corresponding
+                value will be returned. Otherwise, a filtered dictionary will
+                be returned.
         """
         self.keys_to_memory = keys_to_memory
         self.keys_to_content = keys_to_content
@@ -108,8 +117,21 @@ class DictFilterMixin:
         self,
         parsed_response: dict,
         allow_missing: bool = False,
-    ) -> Union[str, dict]:
+    ) -> Union[str, dict, None]:
         """Filter the fields that will be stored in memory."""
+
+        global _FIRST_TIME_TO_REPORT_MEMORY
+
+        if self.keys_to_memory is None:
+            if _FIRST_TIME_TO_REPORT_MEMORY:
+                logger.warning(
+                    "The argument keys_to_memory is None, which means no "
+                    "valid content will be stored in agent's memory."
+                )
+                _FIRST_TIME_TO_REPORT_MEMORY = False
+
+            return None
+
         return self._filter_content_by_names(
             parsed_response,
             self.keys_to_memory,
@@ -120,10 +142,23 @@ class DictFilterMixin:
         self,
         parsed_response: dict,
         allow_missing: bool = False,
-    ) -> Union[str, dict]:
+    ) -> Union[str, dict, None]:
         """Filter the fields that will be fed into the content field in the
         returned message, which will be exposed to other agents.
         """
+
+        global _FIRST_TIME_TO_REPORT_CONTENT
+
+        if self.keys_to_content is None:
+            if _FIRST_TIME_TO_REPORT_CONTENT:
+                logger.warning(
+                    "The argument keys_to_content is None, which means no "
+                    "valid content will be returned in the agent's reply."
+                )
+            _FIRST_TIME_TO_REPORT_CONTENT = False
+
+            return None
+
         return self._filter_content_by_names(
             parsed_response,
             self.keys_to_content,
@@ -134,9 +169,13 @@ class DictFilterMixin:
         self,
         parsed_response: dict,
         allow_missing: bool = False,
-    ) -> Union[str, dict]:
+    ) -> Union[str, dict, None]:
         """Filter the fields that will be fed into the returned message
         directly to control the application workflow."""
+
+        if self.keys_to_metadata is None:
+            return None
+
         return self._filter_content_by_names(
             parsed_response,
             self.keys_to_metadata,
@@ -169,8 +208,6 @@ class DictFilterMixin:
         Returns:
             `Union[str, dict]`: The filtered content.
         """
-        if keys is None:
-            return parsed_response
 
         if isinstance(keys, str):
             return parsed_response[keys]

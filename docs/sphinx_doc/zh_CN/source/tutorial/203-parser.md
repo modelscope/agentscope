@@ -233,9 +233,9 @@ AgentScope中，我们通过调用`to_content`，`to_memory`和`to_metadata`方�
 
 
 > **Note**: `keys_to_content`，`keys_to_memory`和`keys_to_metadata`参数可以是列表，字符串，也可以是默认的`None`值。
+> - 如果是默认的`None`，则会直接返回`None`值
 > - 如果是字符串类型，则`to_content`，`to_memory`和`to_metadata`方法将会把字符串对应的键值直接放入到对应的位置，例如`keys_to_content="speak"`，则`to_content`方法将会把`res.parsed["speak"]`放入到`Msg`对象的`content`字段中，`content`字段会是字符串而不是字典。
 > - 如果是列表类型，则`to_content`，`to_memory`和`to_metadata`方法实现的将是过滤功能，对应过滤后的结果是字典
-> - 如果是默认的`None`，则会直接将`res.parsed`放入到对应的位置，即不进行过滤。
 >   ```python
 >     parser = MarkdownJsonDictParser(
 >        content_hint={
@@ -247,12 +247,15 @@ AgentScope中，我们通过调用`to_content`，`to_memory`和`to_metadata`方�
 >     )
 >
 >     example_dict = {"thought": "abc", "speak": "def"}
->     print(parser.to_content(example_dict)) # def
->     print(parser.to_memory(example_dict))  # {"thought": "abc", "speak": "def"}
+>     print(parser.to_content(example_dict))  # def
+>     print(parser.to_memory(example_dict))   # {"thought": "abc", "speak": "def"}
+>     print(parser.to_metadata(example_dict)) # None
 >   ```
 >   > def
 >   >
 >   > {"thought": "abc", "speak": "def"}
+>   >
+>   > None
 
 下面我们具体介绍两种字典类型的解析器。
 
