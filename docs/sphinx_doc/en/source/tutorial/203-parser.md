@@ -8,18 +8,18 @@
 - [Parser Module](#parser-module)
   - [Overview](#overview)
   - [String Type](#string-type)
-    - [MarkdownCodeBlockParser](#summary-markdowncodeblockparser-summary)
+    - [MarkdownCodeBlockParser](#markdowncodeblockparser)
       - [Initialization](#initialization)
       - [Format Instruction Template](#format-instruction-template)
       - [Parse Function](#parse-function)
   - [Dictionary Type](#dictionary-type)
-    - [MarkdownJsonDictParser](#summary-markdownjsondictparser-summary)
+    - [MarkdownJsonDictParser](#markdownjsondictparser)
       - [Initialization & Format Instruction Template](#initialization--format-instruction-template)
-    - [MultiTaggedContentParser](#summary-multitaggedcontentparser-summary)
+    - [MultiTaggedContentParser](#multitaggedcontentparser)
       - [Initialization & Format Instruction Template](#initialization--format-instruction-template-1)
       - [Parse Function](#parse-function-1)
   - [JSON / Python Object Type](#json--python-object-type)
-    - [MarkdownJsonObjectParser](#summary-markdownjsonobjectparser-summary)
+    - [MarkdownJsonObjectParser](#markdownjsonobjectparser)
       - [Initialization & Format Instruction Template](#initialization--format-instruction-template-2)
       - [Parse Function](#parse-function-2)
 - [Typical Use Cases](#typical-use-cases)
@@ -84,7 +84,7 @@ In the following sections, we will introduce the usage of these parsers based on
 
 <details>
 
-#### <summary> MarkdownCodeBlockParser </summary>
+<summary id="markdowncodeblockparser"> MarkdownCodeBlockParser </summary>
 
 ##### Initialization
 
@@ -261,8 +261,7 @@ Next we will introduce two parsers for dictionary type.
 
 <details>
 
-#### <summary> MarkdownJsonDictParser </summary>
-
+<summary id="markdownjsondictparser"> MarkdownJsonDictParser </summary>
 
 ##### Initialization & Format Instruction Template
 
@@ -304,7 +303,7 @@ This parameter can be a string or a dictionary. For dictionary, it will be autom
 
 <details>
 
-#### <summary> MultiTaggedContentParser </summary>
+<summary id="multitaggedcontentparser"> MultiTaggedContentParser </summary>
 
 `MultiTaggedContentParser` asks LLM to generate specific content within multiple tag pairs. The content from different tag pairs will be parsed into a single Python dictionary. Its usage is similar to `MarkdownJsonDictParser`, but the initialization method is different, and it is more suitable for weak LLMs or complex return content.
 
@@ -386,7 +385,7 @@ print(res_dict)
 
 <details>
 
-#### <summary> MarkdownJsonObjectParser </summary>
+<summary id="markdownjsonobjectparser"> MarkdownJsonObjectParser </summary>
 
 `MarkdownJsonObjectParser` also uses the ```json and ``` tags in Markdown, but does not limit the content type. It can be a list, dictionary, number, string, etc., which can be parsed into a Python object via `json.loads`.
 
