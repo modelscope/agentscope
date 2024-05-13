@@ -4,7 +4,6 @@
 
 ## Table of Contents
 
----
 - [Background](#background)
 - [Parser Module](#parser-module)
   - [Overview](#overview)
