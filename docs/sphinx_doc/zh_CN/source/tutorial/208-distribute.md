@@ -59,7 +59,7 @@ b = AgentB(
 
 在独立进程模式中，需要首先在目标机器上启动智能体服务器进程，启动时需要提供该服务器能够使用的模型的配置信息，以及服务器的 IP 和端口号。
 例如想要将两个智能体服务进程部署在 IP 分别为 `ip_a` 和 `ip_b` 的机器上（假设这两台机器分别为`Machine1` 和 `Machine2`）。
-你可以先在 `Machine1` 上运行如下代码，运行之前请确保已经将模型配置文件放置在 `model_config_path_a` 位置。：
+你可以先在 `Machine1` 上运行如下代码，运行之前请确保已经将模型配置文件放置在 `model_config_path_a` 位置，模型配置文件样例可参考 `examples/model_configs_template`。
 
 ```python
 # import some packages
