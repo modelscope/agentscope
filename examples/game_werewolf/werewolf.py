@@ -42,7 +42,7 @@ def main() -> None:
             set_parsers(wolves, Prompts.wolves_discuss_parser)
             for _ in range(MAX_WEREWOLF_DISCUSSION_ROUND):
                 x = sequentialpipeline(wolves)
-                if x.get("control", False):
+                if x.metadata.get("finish_discussion", False):
                     break
 
             set_parsers(wolves, Prompts.wolves_vote_parser)
@@ -70,7 +70,7 @@ def main() -> None:
                     ),
                 )
                 set_parsers(witch, Prompts.witch_resurrect_parser)
-                if witch(hint).get("control", False):
+                if witch(hint).metadata.get("recurrent", False):
                     healing_used_tonight = True
                     dead_player.pop()
                     healing = False
@@ -78,7 +78,7 @@ def main() -> None:
             if poison and not healing_used_tonight:
                 set_parsers(witch, Prompts.witch_poison_parser)
                 x = witch(HostMsg(content=Prompts.to_witch_poison))
-                if x.get("control", False):
+                if x.metadata.get("eliminate", False):
                     dead_player.append(extract_name_and_id(x.content)[0])
                     poison = False
 

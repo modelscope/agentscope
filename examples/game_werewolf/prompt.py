@@ -15,12 +15,12 @@ class Prompts:
         content_hint={
             "thought": "what you thought",
             "speak": "what you speak",
-            "agreement": "whether the discussion reached an agreement or "
-            "not (true/false)",
+            "finish_discussion": "whether the discussion reached an "
+            "agreement or not (true/false)",
         },
-        required_keys=["thought", "speak", "agreement"],
+        required_keys=["thought", "speak", "finish_discussion"],
         keys_to_content="speak",
-        keys_to_control="agreement",
+        keys_to_metadata=["finish_discussion"],
     )
 
     to_wolves_vote = "Which player do you vote to kill?"
@@ -49,7 +49,7 @@ class Prompts:
         },
         required_keys=["thought", "speak", "resurrect"],
         keys_to_content="speak",
-        keys_to_control="resurrect",
+        keys_to_metadata="resurrect",
     )
 
     to_witch_poison = "Would you like to eliminate one player?"
@@ -62,7 +62,7 @@ class Prompts:
         },
         required_keys=["thought", "speak", "eliminate"],
         keys_to_content="speak",
-        keys_to_control="eliminate",
+        keys_to_metadata="eliminate",
     )
 
     to_seer = (
