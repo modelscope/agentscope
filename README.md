@@ -1,4 +1,4 @@
-English | [**中文**](README_ZH.md)
+English | [**中文**](https://github.com/modelscope/agentscope/blob/main/README_ZH.md)
 
 # AgentScope
 
@@ -15,7 +15,7 @@ Start building LLM-empowered multi-agent applications in an easier way.
 [![](https://img.shields.io/badge/Docs-API_Reference-blue?logo=markdown)](https://modelscope.github.io/agentscope/)
 [![](https://img.shields.io/badge/ModelScope-Demos-4e29ff.svg?logo=data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjI0IDEyMS4zMyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KCTxwYXRoIGQ9Im0wIDQ3Ljg0aDI1LjY1djI1LjY1aC0yNS42NXoiIGZpbGw9IiM2MjRhZmYiIC8+Cgk8cGF0aCBkPSJtOTkuMTQgNzMuNDloMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzYyNGFmZiIgLz4KCTxwYXRoIGQ9Im0xNzYuMDkgOTkuMTRoLTI1LjY1djIyLjE5aDQ3Ljg0di00Ny44NGgtMjIuMTl6IiBmaWxsPSIjNjI0YWZmIiAvPgoJPHBhdGggZD0ibTEyNC43OSA0Ny44NGgyNS42NXYyNS42NWgtMjUuNjV6IiBmaWxsPSIjMzZjZmQxIiAvPgoJPHBhdGggZD0ibTAgMjIuMTloMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzM2Y2ZkMSIgLz4KCTxwYXRoIGQ9Im0xOTguMjggNDcuODRoMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzYyNGFmZiIgLz4KCTxwYXRoIGQ9Im0xOTguMjggMjIuMTloMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzM2Y2ZkMSIgLz4KCTxwYXRoIGQ9Im0xNTAuNDQgMHYyMi4xOWgyNS42NXYyNS42NWgyMi4xOXYtNDcuODR6IiBmaWxsPSIjNjI0YWZmIiAvPgoJPHBhdGggZD0ibTczLjQ5IDQ3Ljg0aDI1LjY1djI1LjY1aC0yNS42NXoiIGZpbGw9IiMzNmNmZDEiIC8+Cgk8cGF0aCBkPSJtNDcuODQgMjIuMTloMjUuNjV2LTIyLjE5aC00Ny44NHY0Ny44NGgyMi4xOXoiIGZpbGw9IiM2MjRhZmYiIC8+Cgk8cGF0aCBkPSJtNDcuODQgNzMuNDloLTIyLjE5djQ3Ljg0aDQ3Ljg0di0yMi4xOWgtMjUuNjV6IiBmaWxsPSIjNjI0YWZmIiAvPgo8L3N2Zz4K)](https://modelscope.cn/studios?name=agentscope&page=1&sort=latest)
 
-[![](https://img.shields.io/badge/license-Apache--2.0-black)](./LICENSE)
+[![](https://img.shields.io/badge/license-Apache--2.0-black)](https://github.com/modelscope/agentscope/blob/main/LICENSE)
 [![](https://img.shields.io/badge/Contribute-Welcome-green)](https://modelscope.github.io/agentscope/tutorial/contribute.html)
 
 If you find our work helpful, please kindly
@@ -35,16 +35,16 @@ Welcome to join our community on
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-04-27]** [AgentScope Workstation](https://agentscope.aliyun.com/) is now online! You are welcome to try building your multi-agent application simply with our *drag-and-drop platform* and ask our *copilot* questions about AgentScope!
 
-- **[2024-04-19]** AgentScope supports Llama3 now! We provide [scripts](./examples/model_llama3) and example [model configuration](./examples/model_llama3) for quick set-up. Feel free to try llama3 in our examples!
+- **[2024-04-19]** AgentScope supports Llama3 now! We provide [scripts](https://github.com/modelscope/agentscope/blob/main/examples/model_llama3) and example [model configuration](https://github.com/modelscope/agentscope/blob/main/examples/model_llama3) for quick set-up. Feel free to try llama3 in our examples!
 
 - **[2024-04-06]** We release **AgentScope** v0.0.3 now!
 
-- **[2024-04-06]** New examples [Gomoku](./examples/game_gomoku), [Conversation with ReAct Agent](./examples/conversation_with_react_agent), [Conversation with RAG Agent](./examples/conversation_with_RAG_agents) and [Distributed Parallel Search](./examples/distributed_search) are available now!
+- **[2024-04-06]** New examples [Gomoku](https://github.com/modelscope/agentscope/blob/main/examples/game_gomoku), [Conversation with ReAct Agent](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_react_agent), [Conversation with RAG Agent](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_RAG_agents) and [Distributed Parallel Search](https://github.com/modelscope/agentscope/blob/main/examples/distributed_search) are available now!
 
 - **[2024-03-19]** We release **AgentScope** v0.0.2 now! In this new version,
 AgentScope supports [ollama](https://modelscope.github.io/agentscope/en/tutorial/203-model.html#supported-models)(A local CPU inference engine), [DashScope](https://modelscope.github.io/agentscope/en/tutorial/203-model.html#supported-models) and Google [Gemini](https://modelscope.github.io/agentscope/en/tutorial/203-model.html#supported-models) APIs.
 
-- **[2024-03-19]** New examples ["Autonomous Conversation with Mentions"](./examples/conversation_with_mentions) and ["Basic Conversation with LangChain library"](./examples/conversation_with_langchain) are available now!
+- **[2024-03-19]** New examples ["Autonomous Conversation with Mentions"](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_mentions) and ["Basic Conversation with LangChain library"](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_langchain) are available now!
 
 - **[2024-03-19]** The [Chinese tutorial](https://modelscope.github.io/agentscope/zh_CN/index.html) of AgentScope is online now!
 
@@ -117,26 +117,26 @@ the following libraries.
 **Example Applications**
 
 - Model
-  - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Using Llama3 in AgentScope](./examples/model_llama3)
+  - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Using Llama3 in AgentScope](https://github.com/modelscope/agentscope/blob/main/examples/model_llama3)
 
 - Conversation
-  - [Basic Conversation](./examples/conversation_basic)
-  - [Autonomous Conversation with Mentions](./examples/conversation_with_mentions)
-  - [Self-Organizing Conversation](./examples/conversation_self_organizing)
-  - [Basic Conversation with LangChain library](./examples/conversation_with_langchain)
-  - [Conversation with ReAct Agent](./examples/conversation_with_react_agent)
-  - [Conversation in Natural Language to Query SQL](./examples/conversation_nl2sql/)
-  - [Conversation with RAG Agent](./examples/conversation_with_RAG_agents)
+  - [Basic Conversation](https://github.com/modelscope/agentscope/blob/main/examples/conversation_basic)
+  - [Autonomous Conversation with Mentions](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_mentions)
+  - [Self-Organizing Conversation](https://github.com/modelscope/agentscope/blob/main/examples/conversation_self_organizing)
+  - [Basic Conversation with LangChain library](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_langchain)
+  - [Conversation with ReAct Agent](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_react_agent)
+  - [Conversation in Natural Language to Query SQL](https://github.com/modelscope/agentscope/blob/main/examples/conversation_nl2sql/)
+  - [Conversation with RAG Agent](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_RAG_agents)
 
 - Game
-  - [Gomoku](./examples/game_gomoku)
-  - [Werewolf](./examples/game_werewolf)
+  - [Gomoku](https://github.com/modelscope/agentscope/blob/main/examples/game_gomoku)
+  - [Werewolf](https://github.com/modelscope/agentscope/blob/main/examples/game_werewolf)
 
 - Distribution
-  - [Distributed Conversation](./examples/distributed_basic)
-  - [Distributed Debate](./examples/distributed_debate)
-  - [Distributed Parallel Search](./examples/distributed_search)
-  - [Distributed Large Scale Simulation](./examples/distributed_simulation)
+  - [Distributed Conversation](https://github.com/modelscope/agentscope/blob/main/examples/distributed_basic)
+  - [Distributed Debate](https://github.com/modelscope/agentscope/blob/main/examples/distributed_debate)
+  - [Distributed Parallel Search](https://github.com/modelscope/agentscope/blob/main/examples/distributed_search)
+  - [Distributed Large Scale Simulation](https://github.com/modelscope/agentscope/blob/main/examples/distributed_simulation)
 
 More models, services and examples are coming soon!
 
@@ -283,7 +283,7 @@ as_studio  path/to/your/script.py
 Then the studio will be launched at `localhost:xxxx`, and you can see the UI similar to the
 following:
 ![](https://gw.alicdn.com/imgextra/i3/O1CN01X673v81WaHV1oCxEN_!!6000000002804-0-tps-2992-1498.jpg)
-To be able to use the `as_studio` functionality, please implement the `main` function in your code. More detail can be found in [src/agentscope/web/README.md](src/agentscope/web/README.md).
+To be able to use the `as_studio` functionality, please implement the `main` function in your code. More detail can be found in [src/agentscope/web/README.md](https://github.com/modelscope/agentscope/blob/main/src/agentscope/web/README.md).
 
 ## Tutorial
 
