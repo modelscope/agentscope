@@ -70,7 +70,7 @@ class ParserBase(ABC):
         return extract_text
 
 
-class _DictFilterMixin:
+class DictFilterMixin:
     """A mixin class to filter the parsed response by keys. It allows users
     to set keys to be filtered during speaking, storing in memory, and
     returning in the agent reply function.
@@ -80,7 +80,7 @@ class _DictFilterMixin:
         self,
         keys_to_memory: Union[str, Sequence[str]],
         keys_to_content: Union[str, Sequence[str]],
-        keys_to_control: Union[str, Sequence[str]],
+        keys_to_metadata: Union[str, Sequence[str]],
     ) -> None:
         """Initialize the mixin class with the keys to be filtered during
         speaking, storing in memory, and returning in the agent reply function.
@@ -95,14 +95,14 @@ class _DictFilterMixin:
                 returned message content field. If a single key is provided,
                 the corresponding value will be returned. Otherwise, a filtered
                 dictionary will be returned.
-            keys_to_control (`Union[str, Sequence[str]]`):
+            keys_to_metadata (`Union[str, Sequence[str]]`):
                 The key or keys that will be fed into the returned message
                 object, it will be used to control the application workflow but
                 not exposed to other agents.
         """
         self.keys_to_memory = keys_to_memory
         self.keys_to_content = keys_to_content
-        self.keys_to_control = keys_to_control
+        self.keys_to_metadata = keys_to_metadata
 
     def to_memory(
         self,
@@ -130,7 +130,7 @@ class _DictFilterMixin:
             allow_missing=allow_missing,
         )
 
-    def to_control(
+    def to_metadata(
         self,
         parsed_response: dict,
         allow_missing: bool = False,
@@ -139,7 +139,7 @@ class _DictFilterMixin:
         directly to control the application workflow."""
         return self._filter_content_by_names(
             parsed_response,
-            self.keys_to_control,
+            self.keys_to_metadata,
             allow_missing=allow_missing,
         )
 

@@ -130,7 +130,7 @@ class DictDialogAgent(AgentBase):
             self.name,
             content=self.parser.to_content(res.parsed),
             role="assistant",
-            control=self.parser.to_control(res.parsed),
+            control=self.parser.to_metadata(res.parsed),
         )
         self.speak(msg)
 

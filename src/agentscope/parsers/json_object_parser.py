@@ -14,7 +14,7 @@ from agentscope.exception import (
 )
 from agentscope.models import ModelResponse
 from agentscope.parsers import ParserBase
-from agentscope.parsers.parser_base import _DictFilterMixin
+from agentscope.parsers.parser_base import DictFilterMixin
 from agentscope.utils.tools import _join_str_with_comma_and
 
 
@@ -122,7 +122,7 @@ class MarkdownJsonObjectParser(ParserBase):
         )
 
 
-class MarkdownJsonDictParser(MarkdownJsonObjectParser, _DictFilterMixin):
+class MarkdownJsonDictParser(MarkdownJsonObjectParser, DictFilterMixin):
     """A class used to parse a JSON dictionary object in a markdown fenced
     code"""
 
@@ -155,7 +155,7 @@ class MarkdownJsonDictParser(MarkdownJsonObjectParser, _DictFilterMixin):
         required_keys: List[str] = None,
         keys_to_memory: Optional[Union[str, Sequence[str]]] = None,
         keys_to_content: Optional[Union[str, Sequence[str]]] = None,
-        keys_to_control: Optional[Union[str, Sequence[str]]] = None,
+        keys_to_metadata: Optional[Union[str, Sequence[str]]] = None,
     ) -> None:
         """Initialize the parser with the content hint.
 
@@ -180,7 +180,7 @@ class MarkdownJsonDictParser(MarkdownJsonObjectParser, _DictFilterMixin):
                 returned message content field. If a single key is provided,
                 the corresponding value will be returned. Otherwise, a filtered
                 dictionary will be returned.
-            keys_to_control (`Optional[Union[str, Sequence[str]]`, defaults to
+            keys_to_metadata (`Optional[Union[str, Sequence[str]]`, defaults to
             `None`):
                 The key or keys that will be fed into the control field in the
                 returned message object, it will be used to control the
@@ -191,11 +191,11 @@ class MarkdownJsonDictParser(MarkdownJsonObjectParser, _DictFilterMixin):
         MarkdownJsonObjectParser.__init__(self, content_hint)
 
         # Initialize the mixin class to allow filtering the parsed response
-        _DictFilterMixin.__init__(
+        DictFilterMixin.__init__(
             self,
             keys_to_memory=keys_to_memory,
             keys_to_content=keys_to_content,
-            keys_to_control=keys_to_control,
+            keys_to_metadata=keys_to_metadata,
         )
 
         self.required_keys = required_keys or []
