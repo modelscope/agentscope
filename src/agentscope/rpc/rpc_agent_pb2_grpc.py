@@ -4,7 +4,9 @@
 try:
     import grpc
 except ImportError:
-    grpc = None
+    from agentscope.utils.tools import ImportErrorReporter
+
+    grpc = ImportErrorReporter("grpcio", "distribute")
 
 import agentscope.rpc.rpc_agent_pb2 as rpc__agent__pb2
 
