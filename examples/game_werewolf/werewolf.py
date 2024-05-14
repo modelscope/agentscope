@@ -78,7 +78,6 @@ def main() -> None:
                 else:
                     HostMsg(content=Prompts.to_witch_resurrect_no)
 
-
             if poison and not healing_used_tonight:
                 set_parsers(witch, Prompts.witch_poison_parser)
                 x = witch(HostMsg(content=Prompts.to_witch_poison))
