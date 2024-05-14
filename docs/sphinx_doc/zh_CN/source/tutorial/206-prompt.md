@@ -99,7 +99,7 @@ prompt = model.format(
    Msg("system", "You're a helpful assistant", role="system"),   # Msg 对象
    [                                                             # Msg 对象的列表
       Msg(name="user", content="Describe this image", role="user", url="https://xxx.png"),
-      Msg(name="user", content="And these images", role="user", urls=["/Users/xxx/test.png", "/Users/xxx/test.mp3"]),
+      Msg(name="user", content="And these images", role="user", url=["/Users/xxx/test.png", "/Users/xxx/test.mp3"]),
    ],
 )
 print(prompt)
