@@ -73,9 +73,9 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#promptengine">关于<code class="docutils literal notranslate"><span class="pre">PromptEngine</span></code>类 （将会在未来版本弃用）</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id11">提示工程的关键特性</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id12">初始化</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id13">合并提示组件</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id12">提示工程的关键特性</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id13">初始化</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id14">合并提示组件</a></li>
 </ul>
 </li>
 </ul>
@@ -165,6 +165,8 @@ AgentScope内置策略的目标是<strong>使初学者能够顺利调用模型AP
 </ul>
 <section id="id4">
 <h4>提示的构建策略<a class="headerlink" href="#id4" title="Link to this heading"></a></h4>
+<section id="vision">
+<h5>非视觉（Vision）模型<a class="headerlink" href="#vision" title="Link to this heading"></a></h5>
 <p>在OpenAI Chat API中，<code class="docutils literal notranslate"><span class="pre">name</span></code>字段使模型能够区分对话中的不同发言者。因此，<code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper</span></code>中<code class="docutils literal notranslate"><span class="pre">format</span></code>函数的策略很简单：</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">Msg</span></code>: 直接将带有<code class="docutils literal notranslate"><span class="pre">role</span></code>、<code class="docutils literal notranslate"><span class="pre">content</span></code>和<code class="docutils literal notranslate"><span class="pre">name</span></code>字段的字典传递给API。</p></li>
@@ -197,6 +199,72 @@ AgentScope内置策略的目标是<strong>使初学者能够顺利调用模型AP
 </pre></div>
 </div>
 </section>
+<section id="id5">
+<h5>视觉（Vision）模型<a class="headerlink" href="#id5" title="Link to this heading"></a></h5>
+<p>对支持视觉的模型而言，如果输入消息包含图像url，生成的<code class="docutils literal notranslate"><span class="pre">content</span></code>字段将是一个字典的列表，其中包含文本和图像url。</p>
+<p>具体来说，如果是网络图片url，将直接传递给OpenAI Chat API，而本地图片url将被转换为base64格式。更多细节请参考<a class="reference external" href="https://platform.openai.com/docs/guides/vision">官方指南</a>。</p>
+<p>注意无效的图片url（例如<code class="docutils literal notranslate"><span class="pre">/Users/xxx/test.mp3</span></code>）将被忽略。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">OpenAIChatWrapper</span>
+<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">OpenAIChatWrapper</span><span class="p">(</span>
+    <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="c1"># 为空，因为我们直接初始化model wrapper</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;gpt-4o&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">prompt</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+   <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;You&#39;re a helpful assistant&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">),</span>   <span class="c1"># Msg 对象</span>
+   <span class="p">[</span>                                                             <span class="c1"># Msg 对象的列表</span>
+      <span class="n">Msg</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s2">&quot;Describe this image&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="s2">&quot;https://xxx.png&quot;</span><span class="p">),</span>
+      <span class="n">Msg</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s2">&quot;And these images&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;/Users/xxx/test.png&quot;</span><span class="p">,</span> <span class="s2">&quot;/Users/xxx/test.mp3&quot;</span><span class="p">]),</span>
+   <span class="p">],</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;You are a helpful assistant&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Describe this image&quot;</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;image_url&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;image_url&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://xxx.png&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+        <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;And these images&quot;</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;image_url&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;image_url&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;data:image/png;base64,YWJjZGVm...&quot;</span> <span class="c1"># 对应 /Users/xxx/test.png</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+        <span class="p">]</span>
+    <span class="p">},</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</section>
+</section>
 </section>
 <section id="dashscopechatwrapper">
 <h3><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper</span></code><a class="headerlink" href="#dashscopechatwrapper" title="Link to this heading"></a></h3>
@@ -207,8 +275,8 @@ AgentScope内置策略的目标是<strong>使初学者能够顺利调用模型AP
 <li><p>如果一条信息的<code class="docutils literal notranslate"><span class="pre">role</span></code>字段是<code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>，那么这条信息必须也只能出现在消息列表的开头。</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">user</span></code>和<code class="docutils literal notranslate"><span class="pre">assistant</span></code>必须交替发言。</p></li>
 </ul>
-<section id="id5">
-<h4>提示的构建策略<a class="headerlink" href="#id5" title="Link to this heading"></a></h4>
+<section id="id6">
+<h4>提示的构建策略<a class="headerlink" href="#id6" title="Link to this heading"></a></h4>
 <p>如果第一条消息的<code class="docutils literal notranslate"><span class="pre">role</span></code>字段是<code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>，它将被转换为一条消息，其中<code class="docutils literal notranslate"><span class="pre">role</span></code>字段为<code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>，<code class="docutils literal notranslate"><span class="pre">content</span></code>字段为系统消息。其余的消息将被转换为一条消息，其中<code class="docutils literal notranslate"><span class="pre">role</span></code>字段为<code class="docutils literal notranslate"><span class="pre">&quot;user&quot;</span></code>，<code class="docutils literal notranslate"><span class="pre">content</span></code>字段为对话历史。</p>
 <p>样例如下：</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">DashScopeChatWrapper</span>
@@ -281,8 +349,8 @@ AgentScope内置策略的目标是<strong>使初学者能够顺利调用模型AP
 <li><p>消息列表中最后一条消息的<code class="docutils literal notranslate"><span class="pre">role</span></code>字段必须是<code class="docutils literal notranslate"><span class="pre">&quot;user&quot;</span></code>。</p></li>
 <li><p>消息列表中<code class="docutils literal notranslate"><span class="pre">user</span></code>和<code class="docutils literal notranslate"><span class="pre">assistant</span></code>必须交替发言。</p></li>
 </ul>
-<section id="id6">
-<h4>提示的构建策略<a class="headerlink" href="#id6" title="Link to this heading"></a></h4>
+<section id="id7">
+<h4>提示的构建策略<a class="headerlink" href="#id7" title="Link to this heading"></a></h4>
 <p>基于上述API的限制，构建策略如下：</p>
 <ul class="simple">
 <li><p>如果输入的消息列表中第一条消息的<code class="docutils literal notranslate"><span class="pre">role</span></code>字段的值是<code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>，它将被转换为一条系统消息，其中<code class="docutils literal notranslate"><span class="pre">role</span></code>字段为<code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>，<code class="docutils literal notranslate"><span class="pre">content</span></code>字段为系统消息，如果输入<code class="docutils literal notranslate"><span class="pre">Msg</span></code>对象中<code class="docutils literal notranslate"><span class="pre">url</span></code>属性不为<code class="docutils literal notranslate"><span class="pre">None</span></code>，则根据其类型在<code class="docutils literal notranslate"><span class="pre">content</span></code>中增加一个键值为<code class="docutils literal notranslate"><span class="pre">&quot;image&quot;</span></code>或者<code class="docutils literal notranslate"><span class="pre">&quot;audio&quot;</span></code>的字典。</p></li>
@@ -335,8 +403,8 @@ AgentScope内置策略的目标是<strong>使初学者能够顺利调用模型AP
 <li><p>需要<code class="docutils literal notranslate"><span class="pre">role</span></code>和<code class="docutils literal notranslate"><span class="pre">content</span></code>字段，并且<code class="docutils literal notranslate"><span class="pre">role</span></code>必须是<code class="docutils literal notranslate"><span class="pre">&quot;user&quot;</span></code>、<code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>或<code class="docutils literal notranslate"><span class="pre">&quot;assistant&quot;</span></code>之一。</p></li>
 <li><p>可以添加一个可选的<code class="docutils literal notranslate"><span class="pre">images</span></code>字段到消息中。</p></li>
 </ul>
-<section id="id7">
-<h4>提示的构建策略<a class="headerlink" href="#id7" title="Link to this heading"></a></h4>
+<section id="id8">
+<h4>提示的构建策略<a class="headerlink" href="#id8" title="Link to this heading"></a></h4>
 <p>给定一个消息列表，我们将按照以下规则解析每个消息：</p>
 <ul class="simple">
 <li><p>如果输入的第一条信息的<code class="docutils literal notranslate"><span class="pre">role</span></code>字段是<code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>，该条信息将被视为系统提示（system
@@ -376,8 +444,8 @@ prompt），其他信息将一起组成对话历史。对话历史将添加<code
 <section id="ollamagenerationwrapper">
 <h3><code class="docutils literal notranslate"><span class="pre">OllamaGenerationWrapper</span></code><a class="headerlink" href="#ollamagenerationwrapper" title="Link to this heading"></a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">OllamaGenerationWrapper</span></code>封装了Ollama生成API，它接受字符串提示作为输入，没有任何约束(更新于2024/03/22)。</p>
-<section id="id8">
-<h4>提示的构建策略<a class="headerlink" href="#id8" title="Link to this heading"></a></h4>
+<section id="id9">
+<h4>提示的构建策略<a class="headerlink" href="#id9" title="Link to this heading"></a></h4>
 <p>如果第一条消息的<code class="docutils literal notranslate"><span class="pre">role</span></code>字段是<code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>，那么它将会被转化成一条系统提示。其余消息会被拼接成对话历史。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">OllamaGenerationWrapper</span>
 <span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
@@ -417,8 +485,8 @@ Alice:<span class="w"> </span>Nice<span class="w"> </span>to<span class="w"> </s
 </ul>
 <p>当代理可能扮演多种不同角色并连续发言时，这些要求使得构建多代理对话变得困难。
 因此，我们决定在内置的<code class="docutils literal notranslate"><span class="pre">format</span></code>函数中将消息列表转换为字符串提示，并且封装在一条user信息中。</p>
-<section id="id9">
-<h4>提示的构建策略<a class="headerlink" href="#id9" title="Link to this heading"></a></h4>
+<section id="id10">
+<h4>提示的构建策略<a class="headerlink" href="#id10" title="Link to this heading"></a></h4>
 <p>如果第一条消息的<code class="docutils literal notranslate"><span class="pre">role</span></code>字段是<code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>，那么它将会被转化成一条系统提示。其余消息会被拼接成对话历史。</p>
 <p><strong>注意</strong>Gemini Chat API中<code class="docutils literal notranslate"><span class="pre">parts</span></code>字段可以包含图片的url，由于我们将消息转换成字符串格式
 的输入，因此图片url在目前的<code class="docutils literal notranslate"><span class="pre">format</span></code>函数中是不支持的。
@@ -463,8 +531,8 @@ Alice:<span class="w"> </span>Nice<span class="w"> </span>to<span class="w"> </s
 </ul>
 <p>当代理可能扮演多种不同角色并连续发言时，这些要求使得构建多代理对话变得困难。
 因此，我们决定在内置的<code class="docutils literal notranslate"><span class="pre">format</span></code>函数中将消息列表转换为字符串提示，并且封装在一条user信息中。</p>
-<section id="id10">
-<h4>提示的构建策略<a class="headerlink" href="#id10" title="Link to this heading"></a></h4>
+<section id="id11">
+<h4>提示的构建策略<a class="headerlink" href="#id11" title="Link to this heading"></a></h4>
 <p>如果第一条消息的 role 字段是 “system”，它将被转换为带有 role 字段为 “system” 和 content 字段为系统消息的单个消息。其余的消息会被转化为带有 role 字段为 “user” 和 content 字段为对话历史的消息。
 下面展示了一个示例：</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ZhipuAIChatWrapper</span>
@@ -498,26 +566,26 @@ Alice:<span class="w"> </span>Nice<span class="w"> </span>to<span class="w"> </s
 <section id="promptengine">
 <h2>关于<code class="docutils literal notranslate"><span class="pre">PromptEngine</span></code>类 （将会在未来版本弃用）<a class="headerlink" href="#promptengine" title="Link to this heading"></a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">PromptEngine</span></code>类提供了一种结构化的方式来合并不同的提示组件，比如指令、提示、对话历史和用户输入，以适合底层语言模型的格式。</p>
-<section id="id11">
-<h3>提示工程的关键特性<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<section id="id12">
+<h3>提示工程的关键特性<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p><strong>模型兼容性</strong>：可以与任何 <code class="docutils literal notranslate"><span class="pre">ModelWrapperBase</span></code> 的子类一起工作。</p></li>
 <li><p><strong>提示类型</strong>：支持字符串和列表风格的提示，与模型首选的输入格式保持一致。</p></li>
 </ul>
 </section>
-<section id="id12">
-<h3>初始化<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<section id="id13">
+<h3>初始化<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
 <p>当创建 <code class="docutils literal notranslate"><span class="pre">PromptEngine</span></code> 的实例时，您可以指定目标模型，以及（可选的）缩减原则、提示的最大长度、提示类型和总结模型（可以与目标模型相同）。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">OpenAIChatWrapper</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 <span class="n">engine</span> <span class="o">=</span> <span class="n">PromptEngine</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
-<section id="id13">
-<h3>合并提示组件<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">PromptEngine</span></code> 的 <code class="docutils literal notranslate"><span class="pre">join</span></code> 方法提供了一个统一的接口来处理任意数量的组件，以构建最终的提示。</p>
 <section id="id14">
-<h4>输出字符串类型提示<a class="headerlink" href="#id14" title="Link to this heading"></a></h4>
+<h3>合并提示组件<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">PromptEngine</span></code> 的 <code class="docutils literal notranslate"><span class="pre">join</span></code> 方法提供了一个统一的接口来处理任意数量的组件，以构建最终的提示。</p>
+<section id="id15">
+<h4>输出字符串类型提示<a class="headerlink" href="#id15" title="Link to this heading"></a></h4>
 <p>如果模型期望的是字符串类型的提示，组件会通过换行符连接：</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">system_prompt</span> <span class="o">=</span> <span class="s2">&quot;You&#39;re a helpful assistant.&quot;</span>
 <span class="n">memory</span> <span class="o">=</span> <span class="o">...</span> <span class="c1"># 可以是字典、列表或字符串</span>
@@ -528,8 +596,8 @@ Alice:<span class="w"> </span>Nice<span class="w"> </span>to<span class="w"> </s
 </pre></div>
 </div>
 </section>
-<section id="id15">
-<h4>输出列表类型提示<a class="headerlink" href="#id15" title="Link to this heading"></a></h4>
+<section id="id16">
+<h4>输出列表类型提示<a class="headerlink" href="#id16" title="Link to this heading"></a></h4>
 <p>对于使用列表类型提示的模型，比如 OpenAI 和 Huggingface 聊天模型，组件可以转换为 <code class="docutils literal notranslate"><span class="pre">Message</span></code> 对象，其类型是字典列表：</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">system_prompt</span> <span class="o">=</span> <span class="s2">&quot;You&#39;re a helpful assistant.&quot;</span>
 <span class="n">user_messages</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;What&#39;s the weather like today?&quot;</span><span class="p">}]</span>
@@ -539,8 +607,8 @@ Alice:<span class="w"> </span>Nice<span class="w"> </span>to<span class="w"> </s
 </pre></div>
 </div>
 </section>
-<section id="id16">
-<h4>动态格式化提示<a class="headerlink" href="#id16" title="Link to this heading"></a></h4>
+<section id="id17">
+<h4>动态格式化提示<a class="headerlink" href="#id17" title="Link to this heading"></a></h4>
 <p><code class="docutils literal notranslate"><span class="pre">PromptEngine</span></code> 支持使用 <code class="docutils literal notranslate"><span class="pre">format_map</span></code> 参数动态提示，允许您灵活地将各种变量注入到不同场景的提示组件中：</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;London&quot;</span><span class="p">}</span>
 <span class="n">hint_prompt</span> <span class="o">=</span> <span class="s2">&quot;Find the weather in </span><span class="si">{location}</span><span class="s2">.&quot;</span>

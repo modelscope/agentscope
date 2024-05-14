@@ -188,7 +188,9 @@
         <span class="c1"># Input url of file, image, video, audio or website</span>
         <span class="n">url</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">require_url</span><span class="p">:</span>
-            <span class="n">url</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;URL: &quot;</span><span class="p">)</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;URL (or Enter to skip): &quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">url</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># Add additional keys</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span>

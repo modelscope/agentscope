@@ -167,6 +167,8 @@ dictionaries as input, where the dictionary must obey the following rules
 </ul>
 <section id="prompt-strategy">
 <h4>Prompt Strategy<a class="headerlink" href="#prompt-strategy" title="Link to this heading"></a></h4>
+<section id="non-vision-models">
+<h5>Non-Vision Models<a class="headerlink" href="#non-vision-models" title="Link to this heading"></a></h5>
 <p>In OpenAI Chat API, the <code class="docutils literal notranslate"><span class="pre">name</span></code> field enables the model to distinguish
 different speakers in the conversation. Therefore, the strategy of <code class="docutils literal notranslate"><span class="pre">format</span></code>
 function in <code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper</span></code> is simple:</p>
@@ -200,6 +202,72 @@ function in <code class="docutils literal notranslate"><span class="pre">OpenAIC
 <span class="o">]</span>
 </pre></div>
 </div>
+</section>
+<section id="vision-models">
+<h5>Vision Models<a class="headerlink" href="#vision-models" title="Link to this heading"></a></h5>
+<p>For vision models (gpt-4-turbo, gpt-4o, …), if the input message contains image urls, the generated <code class="docutils literal notranslate"><span class="pre">content</span></code> field will be a list of dicts, which contains text and image urls.</p>
+<p>Specifically, the web image urls will be pass to OpenAI Chat API directly, while the local image urls will be converted to base64 format. More details please refer to the <a class="reference external" href="https://platform.openai.com/docs/guides/vision">official guidance</a>.</p>
+<p>Note the invalid image urls (e.g. <code class="docutils literal notranslate"><span class="pre">/Users/xxx/test.mp3</span></code>) will be ignored.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">OpenAIChatWrapper</span>
+<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">OpenAIChatWrapper</span><span class="p">(</span>
+    <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="c1"># empty since we directly initialize the model wrapper</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;gpt-4o&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">prompt</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+   <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;You&#39;re a helpful assistant&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">),</span>   <span class="c1"># Msg object</span>
+   <span class="p">[</span>                                                             <span class="c1"># a list of Msg objects</span>
+      <span class="n">Msg</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s2">&quot;Describe this image&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="s2">&quot;https://xxx.png&quot;</span><span class="p">),</span>
+      <span class="n">Msg</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s2">&quot;And these images&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;/Users/xxx/test.png&quot;</span><span class="p">,</span> <span class="s2">&quot;/Users/xxx/test.mp3&quot;</span><span class="p">]),</span>
+   <span class="p">],</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;You are a helpful assistant&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Describe this image&quot;</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;image_url&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;image_url&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://xxx.png&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+        <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;And these images&quot;</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;image_url&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;image_url&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;data:image/png;base64,YWJjZGVm...&quot;</span> <span class="c1"># for /Users/xxx/test.png</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+        <span class="p">]</span>
+    <span class="p">},</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</section>
 </section>
 </section>
 <section id="dashscopechatwrapper">
