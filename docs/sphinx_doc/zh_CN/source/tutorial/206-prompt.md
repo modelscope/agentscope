@@ -42,6 +42,8 @@ AgentScope为以下的模型API提供了内置的提示构建策略。
 
 #### 提示的构建策略
 
+##### 非视觉（Vision）模型
+
 在OpenAI Chat API中，`name`字段使模型能够区分对话中的不同发言者。因此，`OpenAIChatWrapper`中`format`函数的策略很简单：
 
 - `Msg`: 直接将带有`role`、`content`和`name`字段的字典传递给API。
@@ -73,6 +75,75 @@ print(prompt)
   {"role": "system", "name": "system", "content": "You are a helpful assistant"},
   {"role": "assistant", "name": "Bob", "content": "Hi."},
   {"role": "assistant", "name": "Alice", "content": "Nice to meet you!"),
+]
+```
+
+##### 视觉（Vision）模型
+
+对支持视觉的模型而言，如果输入消息包含图像url，生成的`content`字段将是一个字典的列表，其中包含文本和图像url。
+
+具体来说，如果是网络图片url，将直接传递给OpenAI Chat API，而本地图片url将被转换为base64格式。更多细节请参考[官方指南](https://platform.openai.com/docs/guides/vision)。
+
+注意无效的图片url（例如`/Users/xxx/test.mp3`）将被忽略。
+
+```python
+from agentscope.models import OpenAIChatWrapper
+from agentscope.message import Msg
+
+model = OpenAIChatWrapper(
+    config_name="", # 为空，因为我们直接初始化model wrapper
+    model_name="gpt-4o",
+)
+
+prompt = model.format(
+   Msg("system", "You're a helpful assistant", role="system"),   # Msg 对象
+   [                                                             # Msg 对象的列表
+      Msg(name="user", content="Describe this image", role="user", url="https://xxx.png"),
+      Msg(name="user", content="And these images", role="user", url=["/Users/xxx/test.png", "/Users/xxx/test.mp3"]),
+   ],
+)
+print(prompt)
+```
+
+```python
+[
+    {
+        "role": "system",
+        "name": "system",
+        "content": "You are a helpful assistant"
+    },
+    {
+        "role": "user",
+        "name": "user",
+        "content": [
+            {
+                "type": "text",
+                "text": "Describe this image"
+            },
+            {
+                "type": "image_url",
+                "image_url": {
+                    "url": "https://xxx.png"
+                }
+            },
+        ]
+    },
+    {
+        "role": "user",
+        "name": "user",
+        "content": [
+            {
+                "type": "text",
+                "text": "And these images"
+            },
+            {
+                "type": "image_url",
+                "image_url": {
+                    "url": "data:image/png;base64,YWJjZGVm..." # 对应 /Users/xxx/test.png
+                }
+            },
+        ]
+    },
 ]
 ```
 
