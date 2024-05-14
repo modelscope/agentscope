@@ -387,7 +387,7 @@ print(res_dict)
 
 <summary id="markdownjsonobjectparser"> MarkdownJsonObjectParser </summary>
 
-`MarkdownJsonObjectParser` also uses the ```json and ``` tags in Markdown, but does not limit the content type. It can be a list, dictionary, number, string, etc., which can be parsed into a Python object via `json.loads`.
+`MarkdownJsonObjectParser` also uses the \```json and \``` tags in Markdown, but does not limit the content type. It can be a list, dictionary, number, string, etc., which can be parsed into a Python object via `json.loads`.
 
 ##### Initialization & Format Instruction Template
 

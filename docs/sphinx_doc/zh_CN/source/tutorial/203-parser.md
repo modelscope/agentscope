@@ -383,7 +383,7 @@ print(res_dict)
 
 <summary id="markdownjsonobjectparser"> MarkdownJsonObjectParser </summary>
 
-`MarkdownJsonObjectParser`同样采用 Markdown 的```json和```标识，但是不限制解析的内容的类型，可以是列表，字典，数值，字符串等可以通过`json.loads`进行解析字符串。
+`MarkdownJsonObjectParser`同样采用 Markdown 的\```json和\```标识，但是不限制解析的内容的类型，可以是列表，字典，数值，字符串等可以通过`json.loads`进行解析字符串。
 
 ##### 初始化 & 响应格式模版
 
