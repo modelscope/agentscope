@@ -1,25 +1,38 @@
-[{
-    "config_name": "openai_chat_gpt-4",
-    "model_type": "openai_chat",
-    "model_name": "gpt-4",
-    "api_key": "{your_api_key}",
-    "client_args": {
-        "max_retries": 3
+[
+    {
+        "config_name": "openai_chat_gpt-4",
+        "model_type": "openai_chat",
+        "model_name": "gpt-4",
+        "api_key": "{your_api_key}",
+        "client_args": {
+            "max_retries": 3
+        },
+        "generate_args": {
+            "temperature": 0.7
+        }
     },
-    "generate_args": {
-        "temperature": 0.7
-    }
-},
-{
-    "config_name": "openai_chat_gpt-3.5-turbo",
-    "model_type": "openai_chat",
-    "model_name": "gpt-3.5-turbo",
-    "api_key": "{your_api_key}",
-    "client_args": {
-        "max_retries": 3
+    {
+        "config_name": "openai_chat_gpt-3.5-turbo",
+        "model_type": "openai_chat",
+        "model_name": "gpt-3.5-turbo",
+        "api_key": "{your_api_key}",
+        "client_args": {
+            "max_retries": 3
+        },
+        "generate_args": {
+            "temperature": 0.7
+        }
     },
-    "generate_args": {
-        "temperature": 0.7
+    {
+        "config_name": "openai_chat_gpt-4o",
+        "model_type": "openai_chat",
+        "model_name": "gpt-4o",
+        "api_key": "{your_api_key}",
+        "client_args": {
+            "max_retries": 3
+        },
+        "generate_args": {
+            "temperature": 0.7
+        }
     }
-}
 ]

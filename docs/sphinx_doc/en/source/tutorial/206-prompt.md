@@ -64,6 +64,8 @@ dictionaries as input, where the dictionary must obey the following rules
 
 #### Prompt Strategy
 
+##### Non-Vision Models
+
 In OpenAI Chat API, the `name` field enables the model to distinguish
 different speakers in the conversation. Therefore, the strategy of `format`
 function in `OpenAIChatWrapper` is simple:
@@ -97,6 +99,75 @@ print(prompt)
   {"role": "system", "name": "system", "content": "You are a helpful assistant"},
   {"role": "assistant", "name": "Bob", "content": "Hi."},
   {"role": "assistant", "name": "Alice", "content": "Nice to meet you!"),
+]
+```
+
+##### Vision Models
+
+For vision models (gpt-4-turbo, gpt-4o, ...), if the input message contains image urls, the generated `content` field will be a list of dicts, which contains text and image urls.
+
+Specifically, the web image urls will be pass to OpenAI Chat API directly, while the local image urls will be converted to base64 format. More details please refer to the [official guidance](https://platform.openai.com/docs/guides/vision).
+
+Note the invalid image urls (e.g. `/Users/xxx/test.mp3`) will be ignored.
+
+```python
+from agentscope.models import OpenAIChatWrapper
+from agentscope.message import Msg
+
+model = OpenAIChatWrapper(
+    config_name="", # empty since we directly initialize the model wrapper
+    model_name="gpt-4o",
+)
+
+prompt = model.format(
+   Msg("system", "You're a helpful assistant", role="system"),   # Msg object
+   [                                                             # a list of Msg objects
+      Msg(name="user", content="Describe this image", role="user", url="https://xxx.png"),
+      Msg(name="user", content="And these images", role="user", url=["/Users/xxx/test.png", "/Users/xxx/test.mp3"]),
+   ],
+)
+print(prompt)
+```
+
+```python
+[
+    {
+        "role": "system",
+        "name": "system",
+        "content": "You are a helpful assistant"
+    },
+    {
+        "role": "user",
+        "name": "user",
+        "content": [
+            {
+                "type": "text",
+                "text": "Describe this image"
+            },
+            {
+                "type": "image_url",
+                "image_url": {
+                    "url": "https://xxx.png"
+                }
+            },
+        ]
+    },
+    {
+        "role": "user",
+        "name": "user",
+        "content": [
+            {
+                "type": "text",
+                "text": "And these images"
+            },
+            {
+                "type": "image_url",
+                "image_url": {
+                    "url": "data:image/png;base64,YWJjZGVm..." # for /Users/xxx/test.png
+                }
+            },
+        ]
+    },
 ]
 ```
 
