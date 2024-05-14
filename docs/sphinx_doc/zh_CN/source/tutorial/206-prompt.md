@@ -92,7 +92,7 @@ from agentscope.message import Msg
 
 model = OpenAIChatWrapper(
     config_name="", # 为空，因为我们直接初始化model wrapper
-    model_name="gpt-4",
+    model_name="gpt-4o",
 )
 
 prompt = model.format(

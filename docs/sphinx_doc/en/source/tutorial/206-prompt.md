@@ -116,7 +116,7 @@ from agentscope.message import Msg
 
 model = OpenAIChatWrapper(
     config_name="", # empty since we directly initialize the model wrapper
-    model_name="gpt-4",
+    model_name="gpt-4o",
 )
 
 prompt = model.format(
