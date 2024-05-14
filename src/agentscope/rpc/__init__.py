@@ -8,14 +8,14 @@ try:
     from .rpc_agent_pb2_grpc import RpcAgentServicer
     from .rpc_agent_pb2_grpc import RpcAgentStub
     from .rpc_agent_pb2_grpc import add_RpcAgentServicer_to_server
-except ImportError:
+except ImportError as import_error:
     from agentscope.utils.tools import ImportErrorReporter
 
-    RpcMsg = ImportErrorReporter("protobuf", "distribute")  # type: ignore[misc]
-    RpcAgentServicer = ImportErrorReporter("grpcio", "distribute")
-    RpcAgentStub = ImportErrorReporter("grpcio", "distribute")
+    RpcMsg = ImportErrorReporter(import_error, "distribute")  # type: ignore[misc]
+    RpcAgentServicer = ImportErrorReporter(import_error, "distribute")
+    RpcAgentStub = ImportErrorReporter(import_error, "distribute")
     add_RpcAgentServicer_to_server = ImportErrorReporter(
-        "grpcio",
+        import_error,
         "distribute",
     )
 

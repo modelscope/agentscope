@@ -12,13 +12,13 @@ try:
     from grpc import RpcError
     from agentscope.rpc.rpc_agent_pb2 import RpcMsg  # pylint: disable=E0611
     from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentStub
-except ImportError:
+except ImportError as import_error:
     from agentscope.utils.tools import ImportErrorReporter
 
-    dill = ImportErrorReporter("dill", "distribute")
-    grpc = ImportErrorReporter("grpcio", "distribute")
-    RpcMsg = ImportErrorReporter("protobuf", "distribute")
-    RpcAgentStub = ImportErrorReporter("grpcio", "distribute")
+    dill = ImportErrorReporter(import_error, "distribute")
+    grpc = ImportErrorReporter(import_error, "distribute")
+    RpcMsg = ImportErrorReporter(import_error, "distribute")
+    RpcAgentStub = ImportErrorReporter(import_error, "distribute")
     RpcError = ImportError
 
 

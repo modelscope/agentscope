@@ -18,13 +18,13 @@ try:
     import grpc
     from grpc import ServicerContext
     from expiringdict import ExpiringDict
-except ImportError:
+except ImportError as import_error:
     from agentscope.utils.tools import ImportErrorReporter
 
-    dill = ImportErrorReporter("dill", "distribute")
-    grpc = ImportErrorReporter("grpcio", "distribute")
-    ServicerContext = ImportErrorReporter("grpcio", "distribute")
-    ExpiringDict = ImportErrorReporter("expiringdict", "distribute")
+    dill = ImportErrorReporter(import_error, "distribute")
+    grpc = ImportErrorReporter(import_error, "distribute")
+    ServicerContext = ImportErrorReporter(import_error, "distribute")
+    ExpiringDict = ImportErrorReporter(import_error, "distribute")
 
 from agentscope._init import init_process, _INIT_SETTINGS
 from agentscope.agents.agent import AgentBase

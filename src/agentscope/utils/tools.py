@@ -304,28 +304,31 @@ class ImportErrorReporter:
     the specified extras requirement.
     """
 
-    def __init__(self, package_name: str, extras_require: str = None) -> None:
+    def __init__(self, error: ImportError, extras_require: str = None) -> None:
         """Init the ImportErrorReporter.
 
         Args:
-            package_name (`str`): the name of the package to be imported.
+            error (`ImportError`): the original ImportError.
             extras_require (`str`): the extras requirement.
         """
-        self.package_name = package_name
+        self.error = error
         self.extras_require = extras_require
 
-    def raise_error(self) -> Any:
-        """Raise an ImportError."""
-        msg = f"Failed to import {self.package_name}."
-        if self.extras_require is not None:
-            msg += (
-                f" Please install [{self.extras_require}] version of"
-                " agentscope."
-            )
-        raise ImportError(msg)
-
     def __call__(self, *args: Any, **kwds: Any) -> Any:
-        return self.raise_error()
+        return self._raise_import_error()
 
     def __getattr__(self, name: str) -> Any:
-        return self.raise_error()
+        return self._raise_import_error()
+
+    def __getitem__(self, __key: Any) -> Any:
+        return self._raise_import_error()
+
+    def _raise_import_error(self) -> Any:
+        """Raise the ImportError"""
+        err_msg = f"ImportError occorred: [{self.error.msg}]."
+        if self.extras_require is not None:
+            err_msg += (
+                f" Please install [{self.extras_require}] version"
+                " of agentscope."
+            )
+        raise ImportError(err_msg)
