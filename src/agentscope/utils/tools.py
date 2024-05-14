@@ -296,3 +296,39 @@ def _join_str_with_comma_and(elements: List[str]) -> str:
         return " and ".join(elements)
     else:
         return ", ".join(elements[:-1]) + f", and {elements[-1]}"
+
+
+class ImportErrorReporter:
+    """Used as a placeholder for missing packages.
+    When called, an ImportError will be raised, prompting the user to install
+    the specified extras requirement.
+    """
+
+    def __init__(self, error: ImportError, extras_require: str = None) -> None:
+        """Init the ImportErrorReporter.
+
+        Args:
+            error (`ImportError`): the original ImportError.
+            extras_require (`str`): the extras requirement.
+        """
+        self.error = error
+        self.extras_require = extras_require
+
+    def __call__(self, *args: Any, **kwds: Any) -> Any:
+        return self._raise_import_error()
+
+    def __getattr__(self, name: str) -> Any:
+        return self._raise_import_error()
+
+    def __getitem__(self, __key: Any) -> Any:
+        return self._raise_import_error()
+
+    def _raise_import_error(self) -> Any:
+        """Raise the ImportError"""
+        err_msg = f"ImportError occorred: [{self.error.msg}]."
+        if self.extras_require is not None:
+            err_msg += (
+                f" Please install [{self.extras_require}] version"
+                " of agentscope."
+            )
+        raise ImportError(err_msg)
