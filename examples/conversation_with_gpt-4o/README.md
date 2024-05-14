@@ -3,6 +3,13 @@
 This example will show
 - How to use gpt-4o and other OpenAI vision models in AgentScope
 
+In this example,
+- you can have a conversation with OpenAI vision models.
+- you can show gpt-4o with your drawings or web ui designs and look for its suggestions.
+- you can share your pictures with gpt-4o and ask for its comments,
+
+Just input your image url (both local and web URLs are supported) and talk with gpt-4o.
+
 
 ## Background
 
@@ -36,3 +43,12 @@ First fill your OpenAI API key in `conversation_with_gpt-4o.py`, then execute th
 python conversation_with_gpt-4o.py
 ```
 
+## A Running Example
+
+- Conversation history with gpt-4o.
+
+<img src="https://img.alicdn.com/imgextra/i4/O1CN01oQHcmy1mHXALklkMe_!!6000000004929-2-tps-5112-1276.png" alt="conversation history"/>
+
+- My picture
+
+<img src="https://img.alicdn.com/imgextra/i3/O1CN01UpQaLN27hjidUipMv_!!6000000007829-0-tps-720-1280.jpg" alt="my picture" width="200" />

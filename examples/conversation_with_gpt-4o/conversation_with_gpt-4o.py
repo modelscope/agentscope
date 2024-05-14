@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """An example for conversation with OpenAI vision models, especially for
 GPT-4o."""
+import agentscope
 from agentscope.agents import UserAgent, DialogAgent
 
 # Fill in your OpenAI API key
@@ -16,6 +17,8 @@ model_config = {
     },
 }
 
+agentscope.init(model_configs=model_config)
+
 # Require user to input URL, and press enter to skip the URL input
 user = UserAgent("user", require_url=True)
 
@@ -29,5 +32,5 @@ x = None
 while True:
     x = agent(x)
     x = user(x)
-    if x == "exit":  # type "exit" to break the loop
+    if x.content == "exit":  # type "exit" to break the loop
         break
