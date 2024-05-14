@@ -2,7 +2,6 @@
 
 This example will show
 - How to use gpt-4o and other OpenAI vision models in AgentScope
-- How to process video data with vision models in AgentScope
 
 
 ## Background
