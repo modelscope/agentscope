@@ -124,15 +124,15 @@ the following libraries.
   - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Using Llama3 in AgentScope](https://github.com/modelscope/agentscope/blob/main/examples/model_llama3)
 
 - Conversation
-  - [Basic Conversation](./examples/conversation_basic)
-  - [Autonomous Conversation with Mentions](./examples/conversation_with_mentions)
-  - [Self-Organizing Conversation](./examples/conversation_self_organizing)
-  - [Basic Conversation with LangChain library](./examples/conversation_with_langchain)
-  - [Conversation with ReAct Agent](./examples/conversation_with_react_agent)
-  - [Conversation in Natural Language to Query SQL](./examples/conversation_nl2sql/)
-  - [Conversation with RAG Agent](./examples/conversation_with_RAG_agents)
-  - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Conversation with gpt-4o](./examples/conversation_with_gpt-4o)
-  - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Conversation with Software Engineering Agent](./examples/swe_agent/)
+  - [Basic Conversation](https://github.com/modelscope/agentscope/blob/main/examples/conversation_basic)
+  - [Autonomous Conversation with Mentions](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_mentions)
+  - [Self-Organizing Conversation](https://github.com/modelscope/agentscope/blob/main/examples/conversation_self_organizing)
+  - [Basic Conversation with LangChain library](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_langchain)
+  - [Conversation with ReAct Agent](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_react_agent)
+  - [Conversation in Natural Language to Query SQL](https://github.com/modelscope/agentscope/blob/main/examples/conversation_nl2sql/)
+  - [Conversation with RAG Agent](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_RAG_agents)
+  - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Conversation with gpt-4o](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_gpt-4o)
+  - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Conversation with Software Engineering Agent](https://github.com/modelscope/agentscope/blob/main/examples/swe_agent/)
 
 - Game
   - [Gomoku](https://github.com/modelscope/agentscope/blob/main/examples/game_gomoku)
