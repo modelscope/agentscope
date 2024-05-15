@@ -193,6 +193,7 @@ class ModelResponseParserTest(unittest.TestCase):
         )
 
     def test_DictFilterMixin_default_value(self) -> None:
+        """Test the default value of the DictFilterMixin class"""
         mixin = DictFilterMixin(
             keys_to_memory=True,
             keys_to_content=True,
@@ -202,7 +203,6 @@ class ModelResponseParserTest(unittest.TestCase):
         self.assertDictEqual(mixin.to_memory(self.gt_dict), self.gt_dict)
         self.assertDictEqual(mixin.to_content(self.gt_dict), self.gt_dict)
         self.assertEqual(mixin.to_metadata(self.gt_dict), None)
-
 
 
 if __name__ == "__main__":

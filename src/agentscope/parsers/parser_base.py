@@ -158,7 +158,7 @@ class DictFilterMixin:
     def _filter_content_by_names(
         self,
         parsed_response: dict,
-        keys: Union[str, Sequence[str]],
+        keys: Union[str, bool, Sequence[str]],
         allow_missing: bool = False,
     ) -> Union[str, dict, None]:
         """Filter the parsed response by keys. If only one key is provided, the
@@ -167,7 +167,7 @@ class DictFilterMixin:
         their corresponding values.
 
         Args:
-            keys (`Union[str, Sequence[str]]`):
+            keys (`Union[str, bool, Sequence[str]]`):
                 The key or keys to be filtered. If it's
                 - `False`, `None` will be returned in the `to_content` method
                 - `str`, the corresponding value will be returned
