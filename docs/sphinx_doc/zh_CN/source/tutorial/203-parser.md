@@ -52,13 +52,12 @@ AgentScope中，解析器模块的设计原则是：
 
 1. 提供“响应格式说明”（format instruction），即提示 LLM 应该在什么位置产生什么输出，例如
 
-> You should generate python code in a fenced code block as follows
->
-> \```python
->
-> {your_python_code}
->
-> \```
+````
+You should generate python code in a fenced code block as follows
+```python
+{your_python_code}
+```
+````
 
 
 2. 提供解析函数（parse function），直接将 LLM 产生的文本解析成目标数据格式
@@ -80,9 +79,7 @@ AgentScope提供了多种不同解析器，开发者可以根据自己的需求�
 
 ### 字符串（`str`）类型
 
-<details>
-
-<summary id="markdowncodeblockparser"> MarkdownCodeBlockParser </summary>
+#### MarkdownCodeBlockParser
 
 ##### 初始化
 
@@ -91,34 +88,32 @@ AgentScope提供了多种不同解析器，开发者可以根据自己的需求�
     ```python
     from agentscope.parsers import MarkdownCodeBlockParser
 
-    parser = MarkdownCodeBlockParser(language_name="python")
+    parser = MarkdownCodeBlockParser(language_name="python", content_hint="your python code")
     ```
 
 ##### 响应格式模版
 
 - `MarkdownCodeBlockParser`类提供如下的“响应格式说明”模版，在用户调用`format_instruction`属性时，会将`{language_name}`替换为初始化时输入的字符串：
 
-    > You should generate {language_name} code in a {language_name} fenced code block as follows:
-    >
-    > \```{language_name}
-    >
-    > ${your_{language_name}_code}
-    >
-    > \```
+  ````
+  You should generate {language_name} code in a {language_name} fenced code block as follows:
+  ```{language_name}
+  {content_hint}
+  ```
+  ````
 
 - 例如上述对`language_name`为`"python"`的初始化，调用`format_instruction`属性时，会返回如下字符串：
 
-    ```python
-    print(parser.format_instruction)
-    ```
+  ```python
+  print(parser.format_instruction)
+  ```
 
-    > You should generate python code in a python fenced code block as follows
-    >
-    > \```python
-    >
-    > ${your_python_code}
-    >
-    > \```
+  ````
+  You should generate python code in a python fenced code block as follows
+  ```python
+  your python code
+  ```
+  ````
 
 ##### 解析函数
 
@@ -138,9 +133,9 @@ AgentScope提供了多种不同解析器，开发者可以根据自己的需求�
     print(res.parsed)
     ````
 
-    > print("hello world!")
-
-</details>
+    ```
+    print("hello world!")
+    ```
 
 ### 字典（`dict`）类型
 
@@ -260,17 +255,15 @@ AgentScope中，我们通过调用`to_content`，`to_memory`和`to_metadata`方�
 >     print(parser.to_memory(example_dict))   # {"thought": "abc", "speak": "def"}
 >     print(parser.to_metadata(example_dict)) # None
 >   ```
->   > def
->   >
->   > {"thought": "abc", "speak": "def"}
->   >
->   > None
+>   ```
+>   def
+>   {"thought": "abc", "speak": "def"}
+>   None
+>   ```
 
 下面我们具体介绍两种字典类型的解析器。
 
-<details>
-
-<summary id="markdownjsondictparser"> MarkdownJsonDictParser </summary>
+#### MarkdownJsonDictParser
 
 ##### 初始化 & 响应格式模版
 
@@ -297,19 +290,14 @@ AgentScope中，我们通过调用`to_content`，`to_memory`和`to_metadata`方�
   ```
     - 对应的`instruction_format`属性
 
-  > You should respond a json object in a json fenced code block as follows:
-  >
-  > \```json
-  >
-  > {content_hint}
-  >
-  > \```
+  ````
+  You should respond a json object in a json fenced code block as follows:
+  ```json
+  {content_hint}
+  ```
+  ````
 
-</details>
-
-<details>
-
-<summary id="multitaggedcontentparser"> MultiTaggedContentParser </summary>
+#### MultiTaggedContentParser
 
 `MultiTaggedContentParser`要求 LLM 在多个指定的标签对中产生指定的内容，这些不同标签的内容将一同被解析为一个 Python 字典。使用方法与`MarkdownJsonDictParser`类似，只是初始化方法不同，更适合能力较弱的LLM，或是比较复杂的返回内容。
 
@@ -349,13 +337,12 @@ parser = MultiTaggedContentParser(
 print(parser.format_instruction)
 ```
 
-> Respond with specific tags as outlined below, and the content between [FINISH_DISCUSSION] and [/FINISH_DISCUSSION] MUST be a JSON object:
->
-> [THOUGHT]what you thought[/THOUGHT]
->
-> [SPEAK]what you speak[/SPEAK]
->
-> [FINISH_DISCUSSION]true/false, whether the discussion is finished[/FINISH_DISCUSSION]
+```
+Respond with specific tags as outlined below, and the content between [FINISH_DISCUSSION] and [/FINISH_DISCUSSION] MUST be a JSON object:
+[THOUGHT]what you thought[/THOUGHT]
+[SPEAK]what you speak[/SPEAK]
+[FINISH_DISCUSSION]true/false, whether the discussion is finished[/FINISH_DISCUSSION]
+```
 
 ##### 解析函数
 
@@ -374,23 +361,17 @@ res_dict = parser.parse(
 print(res_dict)
 ```
 
-> {
->
->    "thought": "The others didn't realize I was a werewolf. I should end the discussion soon.",
->
->    "speak": "I agree with you.",
->
->    "finish_discussion": true
->
-> }
-
-</details>
+```
+{
+  "thought": "The others didn't realize I was a werewolf. I should end the discussion soon.",
+  "speak": "I agree with you.",
+  "finish_discussion": true
+}
+```
 
 ### JSON / Python 对象类型
 
-<details>
-
-<summary id="markdownjsonobjectparser"> MarkdownJsonObjectParser </summary>
+#### MarkdownJsonObjectParser
 
 `MarkdownJsonObjectParser`同样采用 Markdown 的\```json和\```标识，但是不限制解析的内容的类型，可以是列表，字典，数值，字符串等可以通过`json.loads`进行解析字符串。
 
@@ -406,13 +387,12 @@ parser = MarkdownJsonObjectParser(
 print(parser.format_instruction)
 ```
 
-> You should respond a json object in a json fenced code block as follows:
->
-> \```json
->
-> {a list of numbers}
->
-> \```
+````
+You should respond a json object in a json fenced code block as follows:
+```json
+{a list of numbers}
+```
+````
 
 ##### 解析函数
 
@@ -429,11 +409,11 @@ res = parser.parse(
 print(type(res))
 print(res)
 ````
-> <class 'list'>
->
-> [1, 2, 3, 4, 5]
 
-</details>
+```
+<class 'list'>
+[1, 2, 3, 4, 5]
+```
 
 ## 典型使用样例
 
