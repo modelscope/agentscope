@@ -9,15 +9,19 @@ try to make it work with wider range of tasks then just fixing github issues.
 
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
-from agentscope.models import ResponseParser, ResponseParsingError
+from agentscope.exception import ResponseParsingError
+from agentscope.parsers import MarkdownJsonDictParser
 from typing import List, Callable
 import json
 from agentscope.service import (
     ServiceFactory,
     execute_shell_command,
+)
+
+from swe_agent_service_func import (
+    exec_py_linting,
     write_file,
     read_file,
-    exec_py_linting,
 )
 
 from swe_agent_prompts import (
@@ -108,6 +112,7 @@ class SWEAgent(AgentBase):
 
         self.main_goal = ""
         self.commands_prompt = ""
+        self.parser = MarkdownJsonDictParser()
         self.get_commands_prompt()
 
     def get_current_file_content(self) -> None:
@@ -157,12 +162,12 @@ class SWEAgent(AgentBase):
             in_prompt = self.model.format(message_list)
             res = self.model(
                 in_prompt,
-                parse_func=ResponseParser.to_dict,
+                parse_func=self.parser.parse,
                 max_retries=1,
-            ).json
+            )
 
         except ResponseParsingError as e:
-            response_msg = Msg(self.name, e.response.text, "assistant")
+            response_msg = Msg(self.name, e.raw_response, "assistant")
             self.speak(response_msg)
 
             # Re-correct by model itself
@@ -171,9 +176,9 @@ class SWEAgent(AgentBase):
                 content={
                     "action": {"name": "error"},
                     "error_msg": ERROR_INFO_PROMPT.format(
-                        parse_func=ResponseParser.to_dict,
-                        error_info=e.error_info,
-                        response=e.response.text,
+                        parse_func=self.parser.parse,
+                        error_info=e.message,
+                        response=e.raw_response,
                     ),
                 },
                 role="system",
@@ -183,16 +188,16 @@ class SWEAgent(AgentBase):
             self.running_memory.append(error_msg)
             return error_msg
 
-        msg_res = Msg(self.name, res, role="assistant")
+        msg_res = Msg(self.name, res.parsed, role="assistant")
 
         self.speak(
-            Msg(self.name, json.dumps(res, indent=4), role="assistant"),
+            Msg(self.name, json.dumps(res.parsed, indent=4), role="assistant"),
         )
 
         # parse and execute action
-        action = res.get("action")
+        action = res.parsed.get("action")
 
-        obs = self.prase_command(res["action"])
+        obs = self.prase_command(res.parsed["action"])
         self.speak(
             Msg(self.name, "\n====Observation====\n" + obs, role="assistant"),
         )

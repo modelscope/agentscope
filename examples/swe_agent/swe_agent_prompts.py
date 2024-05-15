@@ -96,7 +96,7 @@ def get_step_prompt(
 
   5. After modifying python files, you can run `exec_py_linting` to check for errors. If there are errors, fix them and repeat the previous step.
 
-  NOTE THAT THIS ENVIRONMENT DOES NOT SUPPORT INTERACTIVE SESSION COMMANDS, such as "vim" or "python", or "python3". So DONOT execute them by running `execute_shell_command` with `python` command or `python3` command.
+  NOTE THAT THIS ENVIRONMENT DOES NOT SUPPORT INTERACTIVE SESSION COMMANDS, such as "vim" or "python", or "python3". So DONOT execute them by running `execute_shell_command` with `python` command or `python3` command if the code need additional inputs.
   If you want to check whether a python file is valid, you can use `exec_py_linting` to check for errors.
 
   {RESPONSE_FORMAT_PROMPT}

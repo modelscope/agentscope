@@ -13,10 +13,7 @@ from .file.common import (
     move_directory,
     list_directory_content,
     get_current_directory,
-    write_file,
-    read_file,
 )
-from .file.check import exec_py_linting
 from .file.text import read_text_file, write_text_file
 from .file.json import read_json_file, write_json_file
 from .sql_query.mysql import query_mysql
@@ -73,9 +70,6 @@ __all__ = [
     "load_web",
     "parse_html_to_text",
     "download_from_url",
-    "write_file",
-    "read_file",
-    "exec_py_linting",
     # to be deprecated
     "ServiceFactory",
 ]
