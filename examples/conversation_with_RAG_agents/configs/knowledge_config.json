@@ -1,6 +1,7 @@
 [
   {
     "knowledge_id": "agentscope_code_rag",
+    "emb_model_config_name": "qwen_emb_config",
     "chunk_size": 2048,
     "chunk_overlap": 40,
     "data_processing": [
@@ -37,6 +38,7 @@
   },
   {
     "knowledge_id": "agentscope_api_rag",
+    "emb_model_config_name": "qwen_emb_config",
     "chunk_size": 2048,
     "chunk_overlap": 40,
     "data_processing": [
@@ -59,6 +61,7 @@
   },
   {
     "knowledge_id": "agentscope_global_rag",
+    "emb_model_config_name": "qwen_emb_config",
     "chunk_size": 2048,
     "chunk_overlap": 40,
     "data_processing": [

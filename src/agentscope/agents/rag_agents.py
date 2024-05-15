@@ -12,8 +12,15 @@ from loguru import logger
 
 from agentscope.agents.agent import AgentBase
 from agentscope.message import Msg
-from agentscope.models import load_model_by_config_name
 from agentscope.rag import KnowledgeBank
+
+
+CHECKING_PROMPT = """
+                Does the retrieved content is relevant to the query?
+                Retrieved content: {}
+                Query: {}
+                Only answer YES or NO.
+                """
 
 
 class RAGAgentBase(AgentBase, ABC):
@@ -26,7 +33,6 @@ class RAGAgentBase(AgentBase, ABC):
         name: str,
         sys_prompt: str,
         model_config_name: str,
-        emb_model_config_name: str,
         memory_config: Optional[dict] = None,
         rag_config: Optional[dict] = None,
     ) -> None:
@@ -39,8 +45,6 @@ class RAGAgentBase(AgentBase, ABC):
                 system prompt for the RAG agent.
             model_config_name (str):
                 language model for the agent.
-            emb_model_config_name (str):
-                embedding model for the agent.
             memory_config (dict):
                 memory configuration.
             rag_config (dict):
@@ -56,8 +60,6 @@ class RAGAgentBase(AgentBase, ABC):
             use_memory=True,
             memory_config=memory_config,
         )
-        # setup embedding model used in RAG
-        self.emb_model = load_model_by_config_name(emb_model_config_name)
 
         # setup RAG configurations
         self.rag_config = rag_config or {}
@@ -176,7 +178,6 @@ class LlamaIndexAgent(RAGAgentBase):
         sys_prompt: str,
         model_config_name: str,
         knowledge_bank: Optional[KnowledgeBank],
-        emb_model_config_name: str = None,
         memory_config: Optional[dict] = None,
         rag_config: Optional[dict] = None,
         **kwargs: Any,
@@ -190,8 +191,6 @@ class LlamaIndexAgent(RAGAgentBase):
                 system prompt for the RAG agent
             model_config_name (str):
                 language model for the agent
-            emb_model_config_name (str):
-                embedding model for the agent
             memory_config (dict):
                 memory configuration
             rag_config (dict):
@@ -211,7 +210,6 @@ class LlamaIndexAgent(RAGAgentBase):
             name=name,
             sys_prompt=sys_prompt,
             model_config_name=model_config_name,
-            emb_model_config_name=emb_model_config_name,
             memory_config=memory_config,
             rag_config=rag_config,
         )
@@ -314,12 +312,6 @@ class LlamaIndexAgent(RAGAgentBase):
                 # if the max score is lower than 0.4, then we let LLM
                 # decide whether the retrieved content is relevant
                 # to the user input.
-                CHECKING_PROMPT = """
-                Does the retrieved content is relevant to the query?
-                Retrieved content: {}
-                Query: {}
-                Only answer YES or NO.
-                """
                 msg = Msg(
                     name="user",
                     role="user",

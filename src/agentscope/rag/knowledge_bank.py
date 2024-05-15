@@ -50,7 +50,7 @@ class KnowledgeBank:
         for config in self.configs:
             self.add_data_for_rag(
                 knowledge_id=config["knowledge_id"],
-                emb_model_name="qwen_emb_config",
+                emb_model_name=config["emb_model_config_name"],
                 index_config=config,
             )
         logger.info("knowledge bank initialization completed.\n ")
