@@ -37,6 +37,9 @@ from .zhipu_model import (
     ZhipuAIChatWrapper,
     ZhipuAIEmbeddingWrapper,
 )
+from .litellm_model import (
+    LiteLLMChatWrapper,
+)
 
 
 __all__ = [
@@ -59,6 +62,7 @@ __all__ = [
     "GeminiEmbeddingWrapper",
     "ZhipuAIChatWrapper",
     "ZhipuAIEmbeddingWrapper",
+    "LiteLLMChatWrapper",
     "load_model_by_config_name",
     "read_model_configs",
     "clear_model_configs",

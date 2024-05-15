@@ -5,6 +5,7 @@ from typing import Optional
 
 from agentscope.agents import AgentBase
 from agentscope import msghub
+from agentscope.message import Msg
 
 
 class TestAgent(AgentBase):
@@ -33,10 +34,10 @@ class MsgHubTest(unittest.TestCase):
 
     def test_msghub_operation(self) -> None:
         """Test add, delete and broadcast operations"""
-        msg1 = {"msg": 1}
-        msg2 = {"msg": 2}
-        msg3 = {"msg": 3}
-        msg4 = {"msg": 4}
+        msg1 = Msg(name="a1", content="msg1")
+        msg2 = Msg(name="a2", content="msg2")
+        msg3 = Msg(name="a3", content="msg3")
+        msg4 = Msg(name="a4", content="msg4")
 
         with msghub(participants=[self.agent1, self.agent2]) as hub:
             self.agent1(msg1)
@@ -68,11 +69,12 @@ class MsgHubTest(unittest.TestCase):
         """msghub test."""
 
         ground_truth = [
-            {
-                "role": "wisper",
-                "content": "This secret that my password is 123456 can't be"
+            Msg(
+                name="w1",
+                content="This secret that my password is 123456 can't be"
                 " leaked!",
-            },
+                role="wisper",
+            ),
         ]
 
         with msghub(participants=[self.wisper, self.agent1, self.agent2]):

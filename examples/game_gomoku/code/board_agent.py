@@ -85,33 +85,33 @@ class BoardAgent(AgentBase):
         if x is None:
             # Beginning of the game
             content = (
-                "Welcome to the Gomoku game! Black player goes "
-                "first. Please make your move."
+                "Welcome to the Gomoku game! Black player goes first. "
+                "Please make your move."
             )
         else:
             row, col = x["content"]
 
             self.assert_valid_move(row, col)
 
-            if self.check_win(row, col, NAME_TO_PIECE[x["name"]]):
-                content = f"The game ends, {x['name']} wins!"
+            # change the board
+            self.board[row, col] = NAME_TO_PIECE[x["name"]]
+
+            # check if the game ends
+            if self.check_draw():
+                content = "The game ends in a draw!"
                 self.game_end = True
             else:
-                # change the board
-                self.board[row, col] = NAME_TO_PIECE[x["name"]]
+                next_player_name = (
+                    NAME_BLACK if x["name"] == NAME_WHITE else NAME_WHITE
+                )
+                content = CURRENT_BOARD_PROMPT_TEMPLATE.format(
+                    board=self.board2text(),
+                    player=next_player_name,
+                )
 
-                # check if the game ends
-                if self.check_draw():
-                    content = "The game ends in a draw!"
+                if self.check_win(row, col, NAME_TO_PIECE[x["name"]]):
+                    content = f"The game ends, {x['name']} wins!"
                     self.game_end = True
-                else:
-                    next_player_name = (
-                        NAME_BLACK if x["name"] == NAME_WHITE else NAME_WHITE
-                    )
-                    content = CURRENT_BOARD_PROMPT_TEMPLATE.format(
-                        board=self.board2text(),
-                        player=next_player_name,
-                    )
 
         msg_host = Msg(self.name, content, role="assistant")
         self.speak(msg_host)

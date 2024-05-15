@@ -3,8 +3,10 @@
 """Client and server classes corresponding to protobuf-defined services."""
 try:
     import grpc
-except ImportError:
-    grpc = None
+except ImportError as import_error:
+    from agentscope.utils.tools import ImportErrorReporter
+
+    grpc = ImportErrorReporter(import_error, "distribute")
 
 import agentscope.rpc.rpc_agent_pb2 as rpc__agent__pb2
 
