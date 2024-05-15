@@ -101,7 +101,7 @@
 <span class="sd">&quot;&quot;&quot;The parser for JSON object in the model response.&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
@@ -113,6 +113,7 @@
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ModelResponse</span>
 <span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">ParserBase</span>
+<span class="kn">from</span> <span class="nn">agentscope.parsers.parser_base</span> <span class="kn">import</span> <span class="n">DictFilterMixin</span>
 <span class="kn">from</span> <span class="nn">agentscope.utils.tools</span> <span class="kn">import</span> <span class="n">_join_str_with_comma_and</span>
 
 
@@ -231,7 +232,7 @@
 
 <div class="viewcode-block" id="MarkdownJsonDictParser">
 <a class="viewcode-back" href="../../../agentscope.parsers.json_object_parser.html#agentscope.parsers.MarkdownJsonDictParser">[docs]</a>
-<span class="k">class</span> <span class="nc">MarkdownJsonDictParser</span><span class="p">(</span><span class="n">MarkdownJsonObjectParser</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">MarkdownJsonDictParser</span><span class="p">(</span><span class="n">MarkdownJsonObjectParser</span><span class="p">,</span> <span class="n">DictFilterMixin</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A class used to parse a JSON dictionary object in a markdown fenced</span>
 <span class="sd">    code&quot;&quot;&quot;</span>
 
@@ -264,6 +265,9 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">content_hint</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">required_keys</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">keys_to_memory</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">keys_to_content</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">keys_to_metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the parser with the content hint.</span>
 
@@ -277,8 +281,42 @@
 <span class="sd">                A list of required keys in the JSON dictionary object. If the</span>
 <span class="sd">                response misses any of the required keys, it will raise a</span>
 <span class="sd">                RequiredFieldNotFoundError.</span>
+<span class="sd">            keys_to_memory (`Optional[Union[str, bool, Sequence[str]]]`,</span>
+<span class="sd">            defaults to `True`):</span>
+<span class="sd">                The key or keys to be filtered in `to_memory` method. If</span>
+<span class="sd">                it&#39;s</span>
+<span class="sd">                - `False`, `None` will be returned in the `to_memory` method</span>
+<span class="sd">                - `str`, the corresponding value will be returned</span>
+<span class="sd">                - `List[str]`, a filtered dictionary will be returned</span>
+<span class="sd">                - `True`, the whole dictionary will be returned</span>
+<span class="sd">            keys_to_content (`Optional[Union[str, bool, Sequence[str]]`,</span>
+<span class="sd">            defaults to `True`):</span>
+<span class="sd">                The key or keys to be filtered in `to_content` method. If</span>
+<span class="sd">                it&#39;s</span>
+<span class="sd">                - `False`, `None` will be returned in the `to_content` method</span>
+<span class="sd">                - `str`, the corresponding value will be returned</span>
+<span class="sd">                - `List[str]`, a filtered dictionary will be returned</span>
+<span class="sd">                - `True`, the whole dictionary will be returned</span>
+<span class="sd">            keys_to_metadata (`Optional[Union[str, bool, Sequence[str]]`,</span>
+<span class="sd">            defaults to `False`):</span>
+<span class="sd">                The key or keys to be filtered in `to_metadata` method. If</span>
+<span class="sd">                it&#39;s</span>
+<span class="sd">                - `False`, `None` will be returned in the `to_metadata` method</span>
+<span class="sd">                - `str`, the corresponding value will be returned</span>
+<span class="sd">                - `List[str]`, a filtered dictionary will be returned</span>
+<span class="sd">                - `True`, the whole dictionary will be returned</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">content_hint</span><span class="p">)</span>
+        <span class="c1"># Initialize the markdown json object parser</span>
+        <span class="n">MarkdownJsonObjectParser</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content_hint</span><span class="p">)</span>
+
+        <span class="c1"># Initialize the mixin class to allow filtering the parsed response</span>
+        <span class="n">DictFilterMixin</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">keys_to_memory</span><span class="o">=</span><span class="n">keys_to_memory</span><span class="p">,</span>
+            <span class="n">keys_to_content</span><span class="o">=</span><span class="n">keys_to_content</span><span class="p">,</span>
+            <span class="n">keys_to_metadata</span><span class="o">=</span><span class="n">keys_to_metadata</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">required_keys</span> <span class="o">=</span> <span class="n">required_keys</span> <span class="ow">or</span> <span class="p">[]</span></div>
 

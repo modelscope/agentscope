@@ -100,10 +100,12 @@
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;The parser for tagged content in the model response.&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span>
 
-<span class="kn">from</span> <span class="nn">agentscope.exception</span> <span class="kn">import</span> <span class="n">JsonParsingError</span>
+<span class="kn">from</span> <span class="nn">agentscope.exception</span> <span class="kn">import</span> <span class="n">JsonParsingError</span><span class="p">,</span> <span class="n">TagNotFoundError</span>
 <span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ModelResponse</span>
 <span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">ParserBase</span>
+<span class="kn">from</span> <span class="nn">agentscope.parsers.parser_base</span> <span class="kn">import</span> <span class="n">DictFilterMixin</span>
 
 
 <div class="viewcode-block" id="TaggedContent">
@@ -113,7 +115,8 @@
 <span class="sd">    and tag end.&quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The name of the tagged content.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The name of the tagged content, which will be used as the key in</span>
+<span class="sd">    extracted dictionary.&quot;&quot;&quot;</span>
 
     <span class="n">tag_begin</span><span class="p">:</span> <span class="nb">str</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The beginning tag.&quot;&quot;&quot;</span>
@@ -167,7 +170,7 @@
 
 <div class="viewcode-block" id="MultiTaggedContentParser">
 <a class="viewcode-back" href="../../../agentscope.parsers.tagged_content_parser.html#agentscope.parsers.MultiTaggedContentParser">[docs]</a>
-<span class="k">class</span> <span class="nc">MultiTaggedContentParser</span><span class="p">(</span><span class="n">ParserBase</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">MultiTaggedContentParser</span><span class="p">(</span><span class="n">ParserBase</span><span class="p">,</span> <span class="n">DictFilterMixin</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse response text by multiple tags, and return a dict of their</span>
 <span class="sd">    content. Asking llm to generate JSON dictionary object directly maybe not a</span>
 <span class="sd">    good idea due to involving escape characters and other issues. So we can</span>
@@ -188,14 +191,60 @@
 
 <div class="viewcode-block" id="MultiTaggedContentParser.__init__">
 <a class="viewcode-back" href="../../../agentscope.parsers.tagged_content_parser.html#agentscope.parsers.MultiTaggedContentParser.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">tagged_contents</span><span class="p">:</span> <span class="n">TaggedContent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">tagged_contents</span><span class="p">:</span> <span class="n">TaggedContent</span><span class="p">,</span>
+        <span class="n">keys_to_memory</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">keys_to_content</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">keys_to_metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">keys_allow_missing</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the parser with tags.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            tags (`dict[str, Tuple[str, str]]`):</span>
-<span class="sd">                A dictionary of tags, the key is the tag name, and the value is</span>
-<span class="sd">                a tuple of starting tag and end tag.</span>
+<span class="sd">            *tagged_contents (`dict[str, Tuple[str, str]]`):</span>
+<span class="sd">                Multiple TaggedContent objects, each object contains the tag</span>
+<span class="sd">                name, tag begin, content hint and tag end. The name will be</span>
+<span class="sd">                used as the key in the extracted dictionary.</span>
+<span class="sd">            required_keys (`Optional[List[str]]`, defaults to `None`):</span>
+<span class="sd">                A list of required</span>
+<span class="sd">            keys_to_memory (`Optional[Union[str, bool, Sequence[str]]]`,</span>
+<span class="sd">            defaults to `True`):</span>
+<span class="sd">                The key or keys to be filtered in `to_memory` method. If</span>
+<span class="sd">                it&#39;s</span>
+<span class="sd">                - `False`, `None` will be returned in the `to_memory` method</span>
+<span class="sd">                - `str`, the corresponding value will be returned</span>
+<span class="sd">                - `List[str]`, a filtered dictionary will be returned</span>
+<span class="sd">                - `True`, the whole dictionary will be returned</span>
+<span class="sd">            keys_to_content (`Optional[Union[str, bool, Sequence[str]]`,</span>
+<span class="sd">            defaults to `True`):</span>
+<span class="sd">                The key or keys to be filtered in `to_content` method. If</span>
+<span class="sd">                it&#39;s</span>
+<span class="sd">                - `False`, `None` will be returned in the `to_content` method</span>
+<span class="sd">                - `str`, the corresponding value will be returned</span>
+<span class="sd">                - `List[str]`, a filtered dictionary will be returned</span>
+<span class="sd">                - `True`, the whole dictionary will be returned</span>
+<span class="sd">            keys_to_metadata (`Optional[Union[str, bool, Sequence[str]]]`,</span>
+<span class="sd">            defaults to `False`):</span>
+<span class="sd">                The key or keys to be filtered in `to_metadata` method. If</span>
+<span class="sd">                it&#39;s</span>
+<span class="sd">                - `False`, `None` will be returned in the `to_metadata` method</span>
+<span class="sd">                - `str`, the corresponding value will be returned</span>
+<span class="sd">                - `List[str]`, a filtered dictionary will be returned</span>
+<span class="sd">                - `True`, the whole dictionary will be returned</span>
+<span class="sd">            keys_allow_missing (`Optional[List[str]]`, defaults to `None`):</span>
+<span class="sd">                A list of keys that are allowed to be missing in the response.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Initialize the mixin class</span>
+        <span class="n">DictFilterMixin</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">keys_to_memory</span><span class="o">=</span><span class="n">keys_to_memory</span><span class="p">,</span>
+            <span class="n">keys_to_content</span><span class="o">=</span><span class="n">keys_to_content</span><span class="p">,</span>
+            <span class="n">keys_to_metadata</span><span class="o">=</span><span class="n">keys_to_metadata</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">keys_allow_missing</span> <span class="o">=</span> <span class="n">keys_allow_missing</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">tagged_contents</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tagged_contents</span><span class="p">)</span>
 
         <span class="c1"># Prepare the format instruction according to the tagged contents</span>
@@ -235,26 +284,38 @@
             <span class="n">tag_begin</span> <span class="o">=</span> <span class="n">tagged_content</span><span class="o">.</span><span class="n">tag_begin</span>
             <span class="n">tag_end</span> <span class="o">=</span> <span class="n">tagged_content</span><span class="o">.</span><span class="n">tag_end</span>
 
-            <span class="n">extract_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_first_content_by_tag</span><span class="p">(</span>
-                <span class="n">response</span><span class="p">,</span>
-                <span class="n">tag_begin</span><span class="p">,</span>
-                <span class="n">tag_end</span><span class="p">,</span>
-            <span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">extract_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_first_content_by_tag</span><span class="p">(</span>
+                    <span class="n">response</span><span class="p">,</span>
+                    <span class="n">tag_begin</span><span class="p">,</span>
+                    <span class="n">tag_end</span><span class="p">,</span>
+                <span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">tagged_content</span><span class="o">.</span><span class="n">parse_json</span><span class="p">:</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">extract_content</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">extract_content</span><span class="p">)</span>
-                <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                    <span class="n">raw_response</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tag_begin</span><span class="si">}{</span><span class="n">extract_content</span><span class="si">}{</span><span class="n">tag_end</span><span class="si">}</span><span class="s2">&quot;</span>
-                    <span class="k">raise</span> <span class="n">JsonParsingError</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;The content between </span><span class="si">{</span><span class="n">tagged_content</span><span class="o">.</span><span class="n">tag_begin</span><span class="si">}</span><span class="s2"> and &quot;</span>
-                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tagged_content</span><span class="o">.</span><span class="n">tag_end</span><span class="si">}</span><span class="s2"> should be a JSON object.&quot;</span>
-                        <span class="sa">f</span><span class="s1">&#39;When parsing &quot;</span><span class="si">{</span><span class="n">raw_response</span><span class="si">}</span><span class="s1">&quot;, an error occurred: &#39;</span>
-                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                        <span class="n">raw_response</span><span class="o">=</span><span class="n">raw_response</span><span class="p">,</span>
-                    <span class="p">)</span> <span class="kn">from</span> <span class="kc">None</span>
+                <span class="k">if</span> <span class="n">tagged_content</span><span class="o">.</span><span class="n">parse_json</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">extract_content</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">extract_content</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="n">raw_response</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tag_begin</span><span class="si">}{</span><span class="n">extract_content</span><span class="si">}{</span><span class="n">tag_end</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="k">raise</span> <span class="n">JsonParsingError</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;The content between &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tagged_content</span><span class="o">.</span><span class="n">tag_begin</span><span class="si">}</span><span class="s2"> and &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tagged_content</span><span class="o">.</span><span class="n">tag_end</span><span class="si">}</span><span class="s2"> should be a JSON &quot;</span>
+                            <span class="sa">f</span><span class="s1">&#39;object. An error &quot;</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&quot; occurred when parsing: &#39;</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">raw_response</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                            <span class="n">raw_response</span><span class="o">=</span><span class="n">raw_response</span><span class="p">,</span>
+                        <span class="p">)</span> <span class="kn">from</span> <span class="kc">None</span>
 
-            <span class="n">tag_to_content</span><span class="p">[</span><span class="n">tagged_content</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">extract_content</span>
+                <span class="n">tag_to_content</span><span class="p">[</span><span class="n">tagged_content</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">extract_content</span>
+
+            <span class="k">except</span> <span class="n">TagNotFoundError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="c1"># if the key is allowed to be missing, skip the error</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">keys_allow_missing</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="ow">and</span> <span class="n">tagged_content</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys_allow_missing</span>
+                <span class="p">):</span>
+                    <span class="k">continue</span>
+
+                <span class="k">raise</span> <span class="n">e</span> <span class="kn">from</span> <span class="kc">None</span>
 
         <span class="n">response</span><span class="o">.</span><span class="n">parsed</span> <span class="o">=</span> <span class="n">tag_to_content</span>
         <span class="k">return</span> <span class="n">response</span></div>

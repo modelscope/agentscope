@@ -1,0 +1,657 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Model Response Parser &mdash; AgentScope  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Service" href="204-service.html" />
+    <link rel="prev" title="Model" href="203-model.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../en/tutorial/203-parser.html">English</a></li> |
+    <a href="../../zh_CN/tutorial/203-parser.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="advance.html">Advanced Exploration</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="201-agent.html">Customizing Your Own Agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="202-pipeline.html">Pipeline and MsgHub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="203-model.html">Model</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Model Response Parser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="204-service.html">Service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="205-memory.html">Memory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="206-prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="207-monitor.html">Monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="208-distribute.html">Distribution</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">Get Involved</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.exception.html">agentscope.exception</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.utils.html">agentscope.utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="advance.html">Advanced Exploration</a></li>
+      <li class="breadcrumb-item active">Model Response Parser</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorial/203-parser.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="model-response-parser">
+<span id="parser-en"></span><h1>Model Response Parser<a class="headerlink" href="#model-response-parser" title="Link to this heading"></a></h1>
+<section id="table-of-contents">
+<h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="#background"><span class="xref myst">Background</span></a></p></li>
+<li><p><a class="reference internal" href="#parser-module"><span class="xref myst">Parser Module</span></a></p>
+<ul>
+<li><p><a class="reference internal" href="#overview"><span class="xref myst">Overview</span></a></p></li>
+<li><p><a class="reference internal" href="#string-type"><span class="xref myst">String Type</span></a></p>
+<ul>
+<li><p><a class="reference internal" href="#markdowncodeblockparser"><span class="xref myst">MarkdownCodeBlockParser</span></a></p>
+<ul>
+<li><p><a class="reference internal" href="#initialization"><span class="xref myst">Initialization</span></a></p></li>
+<li><p><a class="reference internal" href="#format-instruction-template"><span class="xref myst">Format Instruction Template</span></a></p></li>
+<li><p><a class="reference internal" href="#parse-function"><span class="xref myst">Parse Function</span></a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#dictionary-type"><span class="xref myst">Dictionary Type</span></a></p>
+<ul>
+<li><p><a class="reference internal" href="#markdownjsondictparser"><span class="xref myst">MarkdownJsonDictParser</span></a></p>
+<ul>
+<li><p><a class="reference internal" href="#initialization--format-instruction-template"><span class="xref myst">Initialization &amp; Format Instruction Template</span></a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#multitaggedcontentparser"><span class="xref myst">MultiTaggedContentParser</span></a></p>
+<ul>
+<li><p><a class="reference internal" href="#initialization--format-instruction-template-1"><span class="xref myst">Initialization &amp; Format Instruction Template</span></a></p></li>
+<li><p><a class="reference internal" href="#parse-function-1"><span class="xref myst">Parse Function</span></a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#json--python-object-type"><span class="xref myst">JSON / Python Object Type</span></a></p>
+<ul>
+<li><p><a class="reference internal" href="#markdownjsonobjectparser"><span class="xref myst">MarkdownJsonObjectParser</span></a></p>
+<ul>
+<li><p><a class="reference internal" href="#initialization--format-instruction-template-2"><span class="xref myst">Initialization &amp; Format Instruction Template</span></a></p></li>
+<li><p><a class="reference internal" href="#parse-function-2"><span class="xref myst">Parse Function</span></a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#typical-use-cases"><span class="xref myst">Typical Use Cases</span></a></p>
+<ul>
+<li><p><a class="reference internal" href="#werewolf-game"><span class="xref myst">WereWolf Game</span></a></p></li>
+<li><p><a class="reference internal" href="#react-agent-and-tool-usage"><span class="xref myst">ReAct Agent and Tool Usage</span></a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#customized-parser"><span class="xref myst">Customized Parser</span></a></p></li>
+</ul>
+</section>
+<section id="background">
+<h2>Background<a class="headerlink" href="#background" title="Link to this heading"></a></h2>
+<p>In the process of building LLM-empowered application, parsing the LLM generated string into a specific format and extracting the required information is a very important step.
+However, due to the following reasons, this process is also a very complex process:</p>
+<ol class="arabic simple">
+<li><p><strong>Diversity</strong>: The target format of parsing is diverse, and the information to be extracted may be a specific text, a JSON object, or a complex data structure.</p></li>
+<li><p><strong>Complexity</strong>: The result parsing is not only to convert the text generated by LLM into the target format, but also involves a series of issues such as prompt engineering (reminding LLM what format of output should be generated), error handling, etc.</p></li>
+<li><p><strong>Flexibility</strong>: Even in the same application, different stages may also require the agent to generate output in different formats.</p></li>
+</ol>
+<p>For the convenience of developers, AgentScope provides a parser module to help developers parse LLM response into a specific format. By using the parser module, developers can easily parse the response into the target format by simple configuration, and switch the target format flexibly.</p>
+<p>In AgentScope, the parser module features</p>
+<ol class="arabic simple">
+<li><p><strong>Flexibility</strong>: Developers can flexibly set the required format, flexibly switch the parser without modifying the code of agent class. That is, the specific “target format” and the agent’s <code class="docutils literal notranslate"><span class="pre">reply</span></code> function are decoupled.</p></li>
+<li><p><strong>Freedom</strong>: The format instruction, result parsing and prompt engineering are all explicitly finished in the <code class="docutils literal notranslate"><span class="pre">reply</span></code> function. Developers and users can freely choose to use the parser or parse LLM response by their own code.</p></li>
+<li><p><strong>Transparency</strong>: When using the parser, the process and results of prompt construction are completely visible and transparent to developers in the <code class="docutils literal notranslate"><span class="pre">reply</span></code> function, and developers can precisely debug their applications.</p></li>
+</ol>
+</section>
+<section id="parser-module">
+<h2>Parser Module<a class="headerlink" href="#parser-module" title="Link to this heading"></a></h2>
+<section id="overview">
+<h3>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h3>
+<p>The main functions of the parser module include:</p>
+<ol class="arabic simple">
+<li><p>Provide “format instruction”, that is, remind LLM where to generate what output, for example</p></li>
+</ol>
+<blockquote>
+<div><p>You should generate python code in a fenced code block as follows</p>
+<p>```python</p>
+<p>{your_python_code}</p>
+<p>```</p>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>Provide a parse function, which directly parses the text generated by LLM into the target data format,</p></li>
+<li><p>Post-processing for dictionary format. After parsing the text into a dictionary, different fields may have different uses.</p></li>
+</ol>
+<p>AgentScope provides multiple built-in parsers, and developers can choose according to their needs.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Target Format</p></th>
+<th class="head"><p>Parser Class</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>String</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">MarkdownCodeBlockParser</span></code></p></td>
+<td><p>Requires LLM to generate specified text within a Markdown code block marked by ```. The result is a string.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Dictionary</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser</span></code></p></td>
+<td><p>Requires LLM to produce a specified dictionary within the code block marked by ```json and ```. The result is a Python dictionary.</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">MultiTaggedContentParser</span></code></p></td>
+<td><p>Requires LLM to generate specified content within multiple tags. Contents from different tags will be parsed into a single Python dictionary with different key-value pairs.</p></td>
+</tr>
+<tr class="row-odd"><td><p>JSON / Python Object Type</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">MarkdownJsonObjectParser</span></code></p></td>
+<td><p>Requires LLM to produce specified content within the code block marked by ```json and ```. The result will be converted into a Python object via json.loads.</p></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<div><p><strong>NOTE</strong>: Compared to <code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser</span></code>, <code class="docutils literal notranslate"><span class="pre">MultiTaggedContentParser</span></code> is more suitable for weak LLMs and when the required format is too complex.
+For example, when LLM is required to generate Python code, if the code is returned directly within a dictionary, LLM needs to be aware of escaping characters (\t, \n, …), and the differences between double and single quotes when calling <code class="docutils literal notranslate"><span class="pre">json.loads</span></code></p>
+<p>In contrast, <code class="docutils literal notranslate"><span class="pre">MultiTaggedContentParser</span></code> guides LLM to generate each key-value pair separately in individual tags and then combines them into a dictionary, thus reducing the difficulty.</p>
+</div></blockquote>
+<p>In the following sections, we will introduce the usage of these parsers based on different target formats.</p>
+</section>
+<section id="string-type">
+<h3>String Type<a class="headerlink" href="#string-type" title="Link to this heading"></a></h3>
+<details>
+<summary id="markdowncodeblockparser"> MarkdownCodeBlockParser </summary>
+<section id="initialization">
+<h4>Initialization<a class="headerlink" href="#initialization" title="Link to this heading"></a></h4>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">MarkdownCodeBlockParser</span></code> requires LLM to generate specific text within a specified code block in Markdown format. Different languages can be specified with the <code class="docutils literal notranslate"><span class="pre">language_name</span></code> parameter to utilize the large model’s ability to produce corresponding outputs. For example, when asking the large model to produce Python code, initialize as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">MarkdownCodeBlockParser</span>
+
+<span class="n">parser</span> <span class="o">=</span> <span class="n">MarkdownCodeBlockParser</span><span class="p">(</span><span class="n">language_name</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="format-instruction-template">
+<h4>Format Instruction Template<a class="headerlink" href="#format-instruction-template" title="Link to this heading"></a></h4>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">MarkdownCodeBlockParser</span></code> provides the following format instruction template. When the user calls the <code class="docutils literal notranslate"><span class="pre">format_instruction</span></code> attribute, <code class="docutils literal notranslate"><span class="pre">{language_name}</span></code> will be replaced with the string entered at initialization:</p>
+<blockquote>
+<div><p>You should generate {language_name} code in a {language_name} fenced code block as follows:</p>
+<p>```{language_name}</p>
+<p>${your_{language_name}_code}</p>
+<p>```</p>
+</div></blockquote>
+</li>
+<li><p>For the above initialization with <code class="docutils literal notranslate"><span class="pre">language_name</span></code> as <code class="docutils literal notranslate"><span class="pre">&quot;python&quot;</span></code>, when the <code class="docutils literal notranslate"><span class="pre">format_instruction</span></code> attribute is called, the following string will be returned:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">format_instruction</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>You should generate python code in a python fenced code block as follows</p>
+<p>```python</p>
+<p>${your_python_code}</p>
+<p>```</p>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="parse-function">
+<h4>Parse Function<a class="headerlink" href="#parse-function" title="Link to this heading"></a></h4>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">MarkdownCodeBlockParser</span></code> provides a <code class="docutils literal notranslate"><span class="pre">parse</span></code> method to parse the text generated by LLM。Its input and output are both <code class="docutils literal notranslate"><span class="pre">ModelResponse</span></code> objects, and the parsing result will be mounted on the <code class="docutils literal notranslate"><span class="pre">parsed</span></code> attribute of the output object.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
+    <span class="n">ModelResponse</span><span class="p">(</span>
+        <span class="n">text</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;The following is generated python code</span>
+<span class="s2">```python</span>
+<span class="s2">print(&quot;Hello world!&quot;)</span>
+<span class="s2">```</span>
+<span class="s2">&quot;&quot;&quot;</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">parsed</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>print(“hello world!”)</p>
+</div></blockquote>
+</li>
+</ul>
+</details>
+</section>
+</section>
+<section id="dictionary-type">
+<h3>Dictionary Type<a class="headerlink" href="#dictionary-type" title="Link to this heading"></a></h3>
+<p>Different from string and general JSON/Python object, as a powerful format in LLM applications, AgentScope provides additional post-processing functions for dictionary type.
+When initializing the parser, you can set the <code class="docutils literal notranslate"><span class="pre">keys_to_content</span></code>, <code class="docutils literal notranslate"><span class="pre">keys_to_memory</span></code>, and <code class="docutils literal notranslate"><span class="pre">keys_to_metadata</span></code> parameters to achieve filtering of key-value pairs when calling the parser’s <code class="docutils literal notranslate"><span class="pre">to_content</span></code>, <code class="docutils literal notranslate"><span class="pre">to_memory</span></code>, and <code class="docutils literal notranslate"><span class="pre">to_metadata</span></code> methods.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">keys_to_content</span></code> specifies the key-value pairs that will be placed in the <code class="docutils literal notranslate"><span class="pre">content</span></code> field of the returned <code class="docutils literal notranslate"><span class="pre">Msg</span></code> object. The content field will be returned to other agents, participate in their prompt construction, and will also be called by the <code class="docutils literal notranslate"><span class="pre">self.speak</span></code> function for display.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">keys_to_memory</span></code> specifies the key-value pairs that will be stored in the memory of the agent.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">keys_to_metadata</span></code> specifies the key-value pairs that will be placed in the <code class="docutils literal notranslate"><span class="pre">metadata</span></code> field of the returned <code class="docutils literal notranslate"><span class="pre">Msg</span></code> object, which can be used for application control flow judgment, or mount some information that does not need to be returned to other agents.</p></li>
+</ul>
+<p>The three parameters receive bool values, string and a list of strings. The meaning of their values is as follows:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code>: The corresponding filter function will return <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code>: The whole dictionary will be returned.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">str</span></code>: The corresponding value will be directly returned.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">List[str]</span></code>: A filtered dictionary will be returned according to the list of keys.</p></li>
+</ul>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">keys_to_content</span></code> and <code class="docutils literal notranslate"><span class="pre">keys_to_memory</span></code> are <code class="docutils literal notranslate"><span class="pre">True</span></code>, that is, the whole dictionary will be returned. <code class="docutils literal notranslate"><span class="pre">keys_to_metadata</span></code> defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>, that is, the corresponding filter function will return <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<p>For example, the dictionary generated by the werewolf in the daytime discussion in a werewolf game. In this example,</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;thought&quot;</span></code> should not be returned to other agents, but should be stored in the agent’s memory to ensure the continuity of the werewolf strategy;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;speak&quot;</span></code> should be returned to other agents and stored in the agent’s memory;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;finish_discussion&quot;</span></code> is used in the application’s control flow to determine whether the discussion has ended. To save tokens, this field should not be returned to other agents or stored in the agent’s memory.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;thought&quot;</span><span class="p">:</span> <span class="s2">&quot;The others didn&#39;t realize I was a werewolf. I should end the discussion soon.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;speak&quot;</span><span class="p">:</span> <span class="s2">&quot;I agree with you.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;finish_discussion&quot;</span><span class="p">:</span> <span class="kc">True</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>In AgentScope, we achieve post-processing by calling the <code class="docutils literal notranslate"><span class="pre">to_content</span></code>, <code class="docutils literal notranslate"><span class="pre">to_memory</span></code>, and <code class="docutils literal notranslate"><span class="pre">to_metadata</span></code> methods, as shown in the following code:</p>
+<ul>
+<li><p>The code for the application’s control flow, create the corresponding parser object and load it</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">MarkdownJsonDictParser</span>
+
+<span class="c1"># ...</span>
+
+<span class="n">agent</span> <span class="o">=</span> <span class="n">DictDialogAgent</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+<span class="c1"># Take MarkdownJsonDictParser as example</span>
+<span class="n">parser</span> <span class="o">=</span> <span class="n">MarkdownJsonDictParser</span><span class="p">(</span>
+    <span class="n">content_hint</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;thought&quot;</span><span class="p">:</span> <span class="s2">&quot;what you thought&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;speak&quot;</span><span class="p">:</span> <span class="s2">&quot;what you speak&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;finish_discussion&quot;</span><span class="p">:</span> <span class="s2">&quot;whether the discussion is finished&quot;</span>
+    <span class="p">},</span>
+    <span class="n">keys_to_content</span><span class="o">=</span><span class="s2">&quot;speak&quot;</span><span class="p">,</span>
+    <span class="n">keys_to_memory</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;thought&quot;</span><span class="p">,</span> <span class="s2">&quot;speak&quot;</span><span class="p">],</span>
+    <span class="n">keys_to_metadata</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;finish_discussion&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># Load parser, which is equivalent to specifying the required format</span>
+<span class="n">agent</span><span class="o">.</span><span class="n">set_parser</span><span class="p">(</span><span class="n">parser</span><span class="p">)</span>
+
+<span class="c1"># The discussion process</span>
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="c1"># ...</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">agent</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="c1"># Break the loop according to the finish_discussion field in metadata</span>
+    <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;finish_discussion&quot;</span><span class="p">]:</span>
+        <span class="k">break</span>
+</pre></div>
+</div>
+</li>
+<li><p>Filter the dictionary in the agent’s <code class="docutils literal notranslate"><span class="pre">reply</span></code> function</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># ...</span>
+    <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="c1"># ...</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">parse_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">)</span>
+
+        <span class="c1"># Story the thought and speak fields into memory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+            <span class="n">Msg</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">content</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">to_memory</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">parsed</span><span class="p">),</span>
+                <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Store in content and metadata fields in the returned Msg object</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+          <span class="n">content</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">to_content</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">parsed</span><span class="p">),</span>
+          <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
+          <span class="n">metadata</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">to_metadata</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">parsed</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">msg</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<blockquote>
+<div><p><strong>Note</strong>: <code class="docutils literal notranslate"><span class="pre">keys_to_content</span></code>, <code class="docutils literal notranslate"><span class="pre">keys_to_memory</span></code>, and <code class="docutils literal notranslate"><span class="pre">keys_to_metadata</span></code> parameters can be a string, a list of strings, or a bool value.</p>
+<ul>
+<li><p>For <code class="docutils literal notranslate"><span class="pre">True</span></code>, the <code class="docutils literal notranslate"><span class="pre">to_content</span></code>, <code class="docutils literal notranslate"><span class="pre">to_memory</span></code>, and <code class="docutils literal notranslate"><span class="pre">to_metadata</span></code> methods will directly return the whole dictionary.</p></li>
+<li><p>For <code class="docutils literal notranslate"><span class="pre">False</span></code>, the <code class="docutils literal notranslate"><span class="pre">to_content</span></code>, <code class="docutils literal notranslate"><span class="pre">to_memory</span></code>, and <code class="docutils literal notranslate"><span class="pre">to_metadata</span></code> methods will directly return <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p>For a string, the <code class="docutils literal notranslate"><span class="pre">to_content</span></code>, <code class="docutils literal notranslate"><span class="pre">to_memory</span></code>, and <code class="docutils literal notranslate"><span class="pre">to_metadata</span></code> methods will directly extract the corresponding value. For example, if <code class="docutils literal notranslate"><span class="pre">keys_to_content=&quot;speak&quot;</span></code>, the <code class="docutils literal notranslate"><span class="pre">to_content</span></code> method will put <code class="docutils literal notranslate"><span class="pre">res.parsed[&quot;speak&quot;]</span></code> into the <code class="docutils literal notranslate"><span class="pre">content</span></code> field of the <code class="docutils literal notranslate"><span class="pre">Msg</span></code> object, and the <code class="docutils literal notranslate"><span class="pre">content</span></code> field will be a string rather than a dictionary.</p></li>
+<li><p>For a list of string, the <code class="docutils literal notranslate"><span class="pre">to_content</span></code>, <code class="docutils literal notranslate"><span class="pre">to_memory</span></code>, and <code class="docutils literal notranslate"><span class="pre">to_metadata</span></code> methods will filter the dictionary according to the list of keys.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>  <span class="n">parser</span> <span class="o">=</span> <span class="n">MarkdownJsonDictParser</span><span class="p">(</span>
+     <span class="n">content_hint</span><span class="o">=</span><span class="p">{</span>
+         <span class="s2">&quot;thought&quot;</span><span class="p">:</span> <span class="s2">&quot;what you thought&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;speak&quot;</span><span class="p">:</span> <span class="s2">&quot;what you speak&quot;</span><span class="p">,</span>
+     <span class="p">},</span>
+     <span class="n">keys_to_content</span><span class="o">=</span><span class="s2">&quot;speak&quot;</span><span class="p">,</span>
+     <span class="n">keys_to_memory</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;thought&quot;</span><span class="p">,</span> <span class="s2">&quot;speak&quot;</span><span class="p">],</span>
+  <span class="p">)</span>
+
+  <span class="n">example_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;thought&quot;</span><span class="p">:</span> <span class="s2">&quot;abc&quot;</span><span class="p">,</span> <span class="s2">&quot;speak&quot;</span><span class="p">:</span> <span class="s2">&quot;def&quot;</span><span class="p">}</span>
+  <span class="nb">print</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">to_content</span><span class="p">(</span><span class="n">example_dict</span><span class="p">))</span>   <span class="c1"># def</span>
+  <span class="nb">print</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">to_memory</span><span class="p">(</span><span class="n">example_dict</span><span class="p">))</span>    <span class="c1"># {&quot;thought&quot;: &quot;abc&quot;, &quot;speak&quot;: &quot;def&quot;}</span>
+  <span class="nb">print</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">to_metadata</span><span class="p">(</span><span class="n">example_dict</span><span class="p">))</span>  <span class="c1"># None</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>def</p>
+<p>{“thought”: “abc”, “speak”: “def”}</p>
+<p>None</p>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+<p>Next we will introduce two parsers for dictionary type.</p>
+<details>
+<summary id="markdownjsondictparser"> MarkdownJsonDictParser </summary>
+<section id="initialization-format-instruction-template">
+<h4>Initialization &amp; Format Instruction Template<a class="headerlink" href="#initialization-format-instruction-template" title="Link to this heading"></a></h4>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser</span></code> requires LLM to generate dictionary within a code block fenced by ```json and ``` tags.</p></li>
+<li><p>Except <code class="docutils literal notranslate"><span class="pre">keys_to_content</span></code>, <code class="docutils literal notranslate"><span class="pre">keys_to_memory</span></code> and <code class="docutils literal notranslate"><span class="pre">keys_to_metadata</span></code>, the <code class="docutils literal notranslate"><span class="pre">content_hint</span></code> parameter can be provided to give an example and explanation of the response result, that is, to remind LLM where and what kind of dictionary should be generated.
+This parameter can be a string or a dictionary. For dictionary, it will be automatically converted to a string when constructing the format instruction.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">MarkdownJsonDictParser</span>
+
+<span class="c1"># dictionary as content_hint</span>
+<span class="n">MarkdownJsonDictParser</span><span class="p">(</span>
+    <span class="n">content_hint</span><span class="o">=</span><span class="p">{</span>
+      <span class="s2">&quot;thought&quot;</span><span class="p">:</span> <span class="s2">&quot;what you thought&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;speak&quot;</span><span class="p">:</span> <span class="s2">&quot;what you speak&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+<span class="c1"># or string as content_hint</span>
+<span class="n">MarkdownJsonDictParser</span><span class="p">(</span>
+    <span class="n">content_hint</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;{</span>
+<span class="s2">  &quot;thought&quot;: &quot;what you thought&quot;,</span>
+<span class="s2">  &quot;speak&quot;: &quot;what you speak&quot;,</span>
+<span class="s2">}&quot;&quot;&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>The corresponding <code class="docutils literal notranslate"><span class="pre">instruction_format</span></code> attribute</p></li>
+</ul>
+<blockquote>
+<div><p>You should respond a json object in a json fenced code block as follows:</p>
+<p>```json</p>
+<p>{content_hint}</p>
+<p>```</p>
+</div></blockquote>
+</li>
+</ul>
+</details>
+<details>
+<summary id="multitaggedcontentparser"> MultiTaggedContentParser </summary>
+<p><code class="docutils literal notranslate"><span class="pre">MultiTaggedContentParser</span></code> asks LLM to generate specific content within multiple tag pairs. The content from different tag pairs will be parsed into a single Python dictionary. Its usage is similar to <code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser</span></code>, but the initialization method is different, and it is more suitable for weak LLMs or complex return content.</p>
+</section>
+<section id="id1">
+<h4>Initialization &amp; Format Instruction Template<a class="headerlink" href="#id1" title="Link to this heading"></a></h4>
+<p>Within <code class="docutils literal notranslate"><span class="pre">MultiTaggedContentParser</span></code>, each tag pair will be specified by as <code class="docutils literal notranslate"><span class="pre">TaggedContent</span></code> object, which contains</p>
+<ul class="simple">
+<li><p>Tag name (<code class="docutils literal notranslate"><span class="pre">name</span></code>), the key value in the returned dictionary</p></li>
+<li><p>Start tag (<code class="docutils literal notranslate"><span class="pre">tag_begin</span></code>)</p></li>
+<li><p>Hint for content (<code class="docutils literal notranslate"><span class="pre">content_hint</span></code>)</p></li>
+<li><p>End tag (<code class="docutils literal notranslate"><span class="pre">tag_end</span></code>)</p></li>
+<li><p>Content parsing indication (<code class="docutils literal notranslate"><span class="pre">parse_json</span></code>), default as <code class="docutils literal notranslate"><span class="pre">False</span></code>. When set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, the parser will automatically add hint that requires JSON object between the tags, and its extracted content will be parsed into a Python object via <code class="docutils literal notranslate"><span class="pre">json.loads</span></code></p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">MultiTaggedContentParser</span><span class="p">,</span> <span class="n">TaggedContent</span>
+<span class="n">parser</span> <span class="o">=</span> <span class="n">MultiTaggedContentParser</span><span class="p">(</span>
+  <span class="n">TaggedContent</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;thought&quot;</span><span class="p">,</span>
+    <span class="n">tag_begin</span><span class="o">=</span><span class="s2">&quot;[THOUGHT]&quot;</span><span class="p">,</span>
+    <span class="n">content_hint</span><span class="o">=</span><span class="s2">&quot;what you thought&quot;</span><span class="p">,</span>
+    <span class="n">tag_end</span><span class="o">=</span><span class="s2">&quot;[/THOUGHT]&quot;</span>
+  <span class="p">),</span>
+  <span class="n">TaggedContent</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;speak&quot;</span><span class="p">,</span>
+    <span class="n">tag_begin</span><span class="o">=</span><span class="s2">&quot;[SPEAK]&quot;</span><span class="p">,</span>
+    <span class="n">content_hint</span><span class="o">=</span><span class="s2">&quot;what you speak&quot;</span><span class="p">,</span>
+    <span class="n">tag_end</span><span class="o">=</span><span class="s2">&quot;[/SPEAK]&quot;</span>
+  <span class="p">),</span>
+  <span class="n">TaggedContent</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;finish_discussion&quot;</span><span class="p">,</span>
+    <span class="n">tag_begin</span><span class="o">=</span><span class="s2">&quot;[FINISH_DISCUSSION]&quot;</span><span class="p">,</span>
+    <span class="n">content_hint</span><span class="o">=</span><span class="s2">&quot;true/false, whether the discussion is finished&quot;</span><span class="p">,</span>
+    <span class="n">tag_end</span><span class="o">=</span><span class="s2">&quot;[/FINISH_DISCUSSION]&quot;</span><span class="p">,</span>
+    <span class="n">parse_json</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>         <span class="c1"># we expect the content of this field to be parsed directly into a Python boolean value</span>
+  <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">format_instruction</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Respond with specific tags as outlined below, and the content between [FINISH_DISCUSSION] and [/FINISH_DISCUSSION] MUST be a JSON object:</p>
+<p>[THOUGHT]what you thought[/THOUGHT]</p>
+<p>[SPEAK]what you speak[/SPEAK]</p>
+<p>[FINISH_DISCUSSION]true/false, whether the discussion is finished[/FINISH_DISCUSSION]</p>
+</div></blockquote>
+</section>
+<section id="id2">
+<h4>Parse Function<a class="headerlink" href="#id2" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">MultiTaggedContentParser</span></code>’s parsing result is a dictionary, whose keys are the value of <code class="docutils literal notranslate"><span class="pre">name</span></code> in the <code class="docutils literal notranslate"><span class="pre">TaggedContent</span></code> objects.
+The following is an example of parsing the LLM response in the werewolf game:</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">res_dict</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
+    <span class="n">ModelResponse</span><span class="p">(</span>
+        <span class="n">text</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;As a werewolf, I should keep pretending to be a villager</span>
+<span class="s2">[THOUGHT]The others didn&#39;t realize I was a werewolf. I should end the discussion soon.[/THOUGHT]</span>
+<span class="s2">[SPEAK]I agree with you.[/SPEAK]</span>
+<span class="s2">[FINISH_DISCUSSION]true[/FINISH_DISCUSSION]&quot;&quot;&quot;</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">res_dict</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>{</p>
+<p>“thought”: “The others didn’t realize I was a werewolf. I should end the discussion soon.”,</p>
+<p>“speak”: “I agree with you.”,</p>
+<p>“finish_discussion”: true</p>
+<p>}</p>
+</div></blockquote>
+</details>
+</section>
+</section>
+<section id="json-python-object-type">
+<h3>JSON / Python Object Type<a class="headerlink" href="#json-python-object-type" title="Link to this heading"></a></h3>
+<details>
+<summary id="markdownjsonobjectparser"> MarkdownJsonObjectParser </summary>
+<p><code class="docutils literal notranslate"><span class="pre">MarkdownJsonObjectParser</span></code> also uses the ```json and ``` tags in Markdown, but does not limit the content type. It can be a list, dictionary, number, string, etc., which can be parsed into a Python object via <code class="docutils literal notranslate"><span class="pre">json.loads</span></code>.</p>
+<section id="id3">
+<h4>Initialization &amp; Format Instruction Template<a class="headerlink" href="#id3" title="Link to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">MarkdownJsonObjectParser</span>
+
+<span class="n">parser</span> <span class="o">=</span> <span class="n">MarkdownJsonObjectParser</span><span class="p">(</span>
+  <span class="n">content_hint</span><span class="o">=</span><span class="s2">&quot;{A list of numbers.}&quot;</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">format_instruction</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>You should respond a json object in a json fenced code block as follows:</p>
+<p>```json</p>
+<p>{a list of numbers}</p>
+<p>```</p>
+</div></blockquote>
+</section>
+<section id="id4">
+<h4>Parse Function<a class="headerlink" href="#id4" title="Link to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
+    <span class="n">ModelResponse</span><span class="p">(</span>
+        <span class="n">text</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;Yes, here is the generated list</span>
+<span class="s2">```json</span>
+<span class="s2">[1,2,3,4,5]</span>
+<span class="s2">```</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">res</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>&lt;class ‘list’&gt;</p>
+<p>[1, 2, 3, 4, 5]</p>
+</div></blockquote>
+</details>
+</section>
+</section>
+</section>
+<section id="typical-use-cases">
+<h2>Typical Use Cases<a class="headerlink" href="#typical-use-cases" title="Link to this heading"></a></h2>
+<section id="werewolf-game">
+<h3>WereWolf Game<a class="headerlink" href="#werewolf-game" title="Link to this heading"></a></h3>
+<p>Werewolf game is a classic use case of dictionary parser. In different stages of the game, the same agent needs to generate different identification fields in addition to <code class="docutils literal notranslate"><span class="pre">&quot;thought&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;speak&quot;</span></code>, such as whether the discussion is over, whether the seer uses its ability, whether the witch uses the antidote and poison, and voting.</p>
+<p>AgentScope has built-in examples of <a class="reference external" href="https://github.com/modelscope/agentscope/tree/main/examples/game_werewolf">werewolf game</a>, which uses <code class="docutils literal notranslate"><span class="pre">DictDialogAgent</span></code> class and different parsers to achieve flexible target format switching. By using the post-processing function of the parser, it separates “thought” and “speak”, and controls the progress of the game successfully.
+More details can be found in the werewolf game <a class="reference external" href="https://github.com/modelscope/agentscope/tree/main/examples/game_werewolf">source code</a>.</p>
+</section>
+<section id="react-agent-and-tool-usage">
+<h3>ReAct Agent and Tool Usage<a class="headerlink" href="#react-agent-and-tool-usage" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">ReActAgent</span></code> is an agent class built for tool usage in AgentScope, based on the ReAct algorithm, and can be used with different tool functions. The tool call, format parsing, and implementation of <code class="docutils literal notranslate"><span class="pre">ReActAgent</span></code> are similar to the parser. For detailed implementation, please refer to the <a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/agents/react_agent.py">source code</a>.</p>
+</section>
+</section>
+<section id="customized-parser">
+<h2>Customized Parser<a class="headerlink" href="#customized-parser" title="Link to this heading"></a></h2>
+<p>AgentScope provides a base class <code class="docutils literal notranslate"><span class="pre">ParserBase</span></code> for parsers. Developers can inherit this base class, and implement the <code class="docutils literal notranslate"><span class="pre">format_instruction</span></code> attribute and <code class="docutils literal notranslate"><span class="pre">parse</span></code> method to create their own parser.</p>
+<p>For dictionary type parsing, you can also inherit the <code class="docutils literal notranslate"><span class="pre">agentscope.parser.DictFilterMixin</span></code> class to implement post-processing for dictionary type.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ModelResponse</span>
+
+
+<span class="k">class</span> <span class="nc">ParserBase</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The base class for model response parser.&quot;&quot;&quot;</span>
+
+    <span class="n">format_instruction</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The instruction for the response format.&quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse the response text to a specific object, and stored in the</span>
+<span class="sd">        parsed field of the response object.&quot;&quot;&quot;</span>
+
+    <span class="c1"># ...</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="203-model.html" class="btn btn-neutral float-left" title="Model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="204-service.html" class="btn btn-neutral float-right" title="Service" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Alibaba Tongyi Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

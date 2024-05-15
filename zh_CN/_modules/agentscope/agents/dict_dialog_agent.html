@@ -99,69 +99,22 @@
              
   <h1>agentscope.agents.dict_dialog_agent 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;A dict dialog agent that using `parse_func` and `fault_handler` to</span>
-<span class="sd">parse the model response.&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Callable</span>
-<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="sd">&quot;&quot;&quot;An agent that replies in a dictionary format.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 
 <span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">Msg</span>
 <span class="kn">from</span> <span class="nn">.agent</span> <span class="kn">import</span> <span class="n">AgentBase</span>
-<span class="kn">from</span> <span class="nn">..models</span> <span class="kn">import</span> <span class="n">ModelResponse</span>
-<span class="kn">from</span> <span class="nn">..prompt</span> <span class="kn">import</span> <span class="n">PromptType</span>
-<span class="kn">from</span> <span class="nn">..utils.tools</span> <span class="kn">import</span> <span class="n">_convert_to_str</span>
-
-
-<div class="viewcode-block" id="parse_dict">
-<a class="viewcode-back" href="../../../agentscope.agents.dict_dialog_agent.html#agentscope.agents.parse_dict">[文档]</a>
-<span class="k">def</span> <span class="nf">parse_dict</span><span class="p">(</span><span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse function for DictDialogAgent&quot;&quot;&quot;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">response_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The text field of the response s None: </span><span class="si">{</span><span class="n">response</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-    <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
-        <span class="c1"># Sometimes LLM may return a response with single quotes, which is not</span>
-        <span class="c1"># a valid JSON format. We replace single quotes with double quotes and</span>
-        <span class="c1"># try to load it again.</span>
-        <span class="c1"># TODO: maybe using a more robust json library to handle this case</span>
-        <span class="n">response_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">))</span>
-
-    <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span><span class="n">raw</span><span class="o">=</span><span class="n">response_dict</span><span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="default_response">
-<a class="viewcode-back" href="../../../agentscope.agents.dict_dialog_agent.html#agentscope.agents.default_response">[文档]</a>
-<span class="k">def</span> <span class="nf">default_response</span><span class="p">(</span><span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The default response of fault_handler&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span><span class="n">raw</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;speak&quot;</span><span class="p">:</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">})</span></div>
-
+<span class="kn">from</span> <span class="nn">..parsers</span> <span class="kn">import</span> <span class="n">ParserBase</span>
 
 
 <div class="viewcode-block" id="DictDialogAgent">
 <a class="viewcode-back" href="../../../agentscope.agents.dict_dialog_agent.html#agentscope.agents.DictDialogAgent">[文档]</a>
 <span class="k">class</span> <span class="nc">DictDialogAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An agent that generates response in a dict format, where user can</span>
-<span class="sd">    specify the required fields in the response via prompt, e.g.</span>
+<span class="sd">    specify the required fields in the response via specifying the parser</span>
 
-<span class="sd">    .. code-block:: python</span>
-
-<span class="sd">        prompt = &quot;... Response in the following format that can be loaded by</span>
-<span class="sd">        python json.loads()</span>
-<span class="sd">        {</span>
-<span class="sd">            &quot;thought&quot;: &quot;thought&quot;,</span>
-<span class="sd">            &quot;speak&quot;: &quot;thoughts summary to say to others&quot;,</span>
-<span class="sd">            # ...</span>
-<span class="sd">        }&quot;</span>
-
-<span class="sd">    This agent class is an example for using `parse_func` and `fault_handler`</span>
-<span class="sd">    to parse the output from the model, and handling the fault when parsing</span>
-<span class="sd">    fails. We take &quot;speak&quot; as a required field in the response, and print</span>
-<span class="sd">    the speak field as the output response.</span>
+<span class="sd">    About parser, please refer to our</span>
+<span class="sd">    [tutorial](https://modelscope.github.io/agentscope/en/tutorial/203-parser.html)</span>
 
 <span class="sd">    For usage example, please refer to the example of werewolf in</span>
 <span class="sd">    `examples/game_werewolf`&quot;&quot;&quot;</span>
@@ -175,10 +128,7 @@
         <span class="n">model_config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">use_memory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">memory_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">parse_func</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">parse_dict</span><span class="p">,</span>
-        <span class="n">fault_handler</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">default_response</span><span class="p">,</span>
         <span class="n">max_retries</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
-        <span class="n">prompt_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PromptType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the dict dialog agent.</span>
 
@@ -195,19 +145,9 @@
 <span class="sd">                Whether the agent has memory.</span>
 <span class="sd">            memory_config (`Optional[dict]`, defaults to `None`):</span>
 <span class="sd">                The config of memory.</span>
-<span class="sd">            parse_func (`Optional[Callable[..., Any]]`, defaults to `parse_dict`):</span>
-<span class="sd">                The function used to parse the model output,</span>
-<span class="sd">                e.g. `json.loads`, which is used to extract json from the</span>
-<span class="sd">                output.</span>
-<span class="sd">            fault_handler (`Optional[Callable[..., Any]]`, defaults to `default_response`):</span>
-<span class="sd">                The function used to handle the fault when parse_func fails</span>
-<span class="sd">                to parse the model output.</span>
 <span class="sd">            max_retries (`Optional[int]`, defaults to `None`):</span>
 <span class="sd">                The maximum number of retries when failed to parse the model</span>
 <span class="sd">                output.</span>
-<span class="sd">            prompt_type (`Optional[PromptType]`, defaults to `PromptType.LIST`):</span>
-<span class="sd">                The type of the prompt organization, chosen from</span>
-<span class="sd">                `PromptType.LIST` or `PromptType.STRING`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>  <span class="c1"># noqa</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
@@ -217,19 +157,21 @@
             <span class="n">memory_config</span><span class="o">=</span><span class="n">memory_config</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="c1"># record the func and handler for parsing and handling faults</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parse_func</span> <span class="o">=</span> <span class="n">parse_func</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fault_handler</span> <span class="o">=</span> <span class="n">fault_handler</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">max_retries</span> <span class="o">=</span> <span class="n">max_retries</span>
-
-        <span class="k">if</span> <span class="n">prompt_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;The argument `prompt_type` is deprecated and &quot;</span>
-                <span class="s2">&quot;will be removed in the future.&quot;</span><span class="p">,</span>
-            <span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_retries</span> <span class="o">=</span> <span class="n">max_retries</span></div>
 
 
-    <span class="c1"># TODO change typing from dict to MSG</span>
+<div class="viewcode-block" id="DictDialogAgent.set_parser">
+<a class="viewcode-back" href="../../../agentscope.agents.dict_dialog_agent.html#agentscope.agents.DictDialogAgent.set_parser">[文档]</a>
+    <span class="k">def</span> <span class="nf">set_parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">ParserBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set response parser, which will provide 1) format instruction; 2)</span>
+<span class="sd">        response parsing; 3) filtering fields when returning message, storing</span>
+<span class="sd">        message in memory. So developers only need to change the</span>
+<span class="sd">        parser, and the agent will work as expected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">parser</span></div>
+
+
 <div class="viewcode-block" id="DictDialogAgent.reply">
 <a class="viewcode-back" href="../../../agentscope.agents.dict_dialog_agent.html#agentscope.agents.DictDialogAgent.reply">[文档]</a>
     <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
@@ -264,43 +206,30 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">memory</span>
             <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">get_memory</span><span class="p">()</span>
             <span class="ow">or</span> <span class="n">x</span><span class="p">,</span>  <span class="c1"># type: ignore[arg-type]</span>
+            <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">format_instruction</span><span class="p">,</span> <span class="s2">&quot;system&quot;</span><span class="p">),</span>
         <span class="p">)</span>
 
         <span class="c1"># call llm</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span>
             <span class="n">prompt</span><span class="p">,</span>
-            <span class="n">parse_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parse_func</span><span class="p">,</span>
-            <span class="n">fault_handler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fault_handler</span><span class="p">,</span>
+            <span class="n">parse_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">,</span>
             <span class="n">max_retries</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_retries</span><span class="p">,</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">raw</span>
+        <span class="p">)</span>
 
-        <span class="c1"># logging raw messages in debug mode</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="c1"># Filter the parsed response by keys for storing in memory, returning</span>
+        <span class="c1"># in the reply function, and feeding into the metadata field in the</span>
+        <span class="c1"># returned message object.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+            <span class="n">Msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">to_memory</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">parsed</span><span class="p">),</span> <span class="s2">&quot;assistant&quot;</span><span class="p">),</span>
+        <span class="p">)</span>
 
-        <span class="c1"># In this agent, if the response is a dict, we treat &quot;speak&quot; as a</span>
-        <span class="c1"># special key, which represents the text to be spoken</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;speak&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                <span class="n">response</span><span class="p">[</span><span class="s2">&quot;speak&quot;</span><span class="p">],</span>
-                <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
-                <span class="o">**</span><span class="n">response</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">)</span>
-
-        <span class="c1"># Print/speak the message in this agent&#39;s voice</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">to_content</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">parsed</span><span class="p">),</span>
+            <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
+            <span class="n">metadata</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">to_metadata</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">parsed</span><span class="p">),</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
-        <span class="c1"># record to memory</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="p">:</span>
-            <span class="c1"># Convert the response dict into a string to store in memory</span>
-            <span class="n">msg_memory</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                <span class="n">content</span><span class="o">=</span><span class="n">_convert_to_str</span><span class="p">(</span><span class="n">response</span><span class="p">),</span>
-                <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">msg_memory</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">msg</span></div>
 </div>

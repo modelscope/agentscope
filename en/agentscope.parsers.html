@@ -183,8 +183,8 @@ format_example is provided, it will be used as the example.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="agentscope.parsers.MarkdownJsonDictParser">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.parsers.</span></span><span class="sig-name descname"><span class="pre">MarkdownJsonDictParser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content_hint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required_keys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/parsers/json_object_parser.html#MarkdownJsonDictParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.parsers.MarkdownJsonDictParser" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser" title="agentscope.parsers.json_object_parser.MarkdownJsonObjectParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">MarkdownJsonObjectParser</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.parsers.</span></span><span class="sig-name descname"><span class="pre">MarkdownJsonDictParser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content_hint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required_keys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys_to_memory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys_to_content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys_to_metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/parsers/json_object_parser.html#MarkdownJsonDictParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.parsers.MarkdownJsonDictParser" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser" title="agentscope.parsers.json_object_parser.MarkdownJsonObjectParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">MarkdownJsonObjectParser</span></code></a>, <a class="reference internal" href="agentscope.parsers.parser_base.html#agentscope.parsers.parser_base.DictFilterMixin" title="agentscope.parsers.parser_base.DictFilterMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">DictFilterMixin</span></code></a></p>
 <p>A class used to parse a JSON dictionary object in a markdown fenced
 code</p>
 <dl class="py attribute">
@@ -213,7 +213,7 @@ code</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.parsers.MarkdownJsonDictParser.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content_hint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required_keys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/parsers/json_object_parser.html#MarkdownJsonDictParser.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.parsers.MarkdownJsonDictParser.__init__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content_hint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required_keys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys_to_memory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys_to_content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys_to_metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/parsers/json_object_parser.html#MarkdownJsonDictParser.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.parsers.MarkdownJsonDictParser.__init__" title="Link to this definition"></a></dt>
 <dd><p>Initialize the parser with the content hint.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -225,9 +225,57 @@ string and used as the content hint.</p></li>
 <li><p><strong>required_keys</strong> (<cite>List[str]</cite>, defaults to <cite>[]</cite>) – A list of required keys in the JSON dictionary object. If the
 response misses any of the required keys, it will raise a
 RequiredFieldNotFoundError.</p></li>
+<li><p><strong>(</strong><strong>`Optional</strong><strong>[</strong><strong>Union</strong><strong>[</strong><strong>str</strong> (<em>keys_to_memory</em>) – </p></li>
+<li><p><strong>bool</strong></p></li>
+<li><p><strong>Sequence</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>]</strong><strong>]</strong><strong>`</strong></p></li>
 </ul>
 </dd>
 </dl>
+<p>:param :
+:param defaults to <cite>True</cite>): The key or keys to be filtered in <cite>to_memory</cite> method. If</p>
+<blockquote>
+<div><p>it’s
+- <cite>False</cite>, <cite>None</cite> will be returned in the <cite>to_memory</cite> method
+- <cite>str</cite>, the corresponding value will be returned
+- <cite>List[str]</cite>, a filtered dictionary will be returned
+- <cite>True</cite>, the whole dictionary will be returned</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>(</strong><strong>`Optional</strong><strong>[</strong><strong>Union</strong><strong>[</strong><strong>str</strong> (<em>keys_to_content</em>) – </p></li>
+<li><p><strong>bool</strong></p></li>
+<li><p><strong>Sequence</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>]</strong><strong>`</strong></p></li>
+</ul>
+</dd>
+</dl>
+<p>:param :
+:param defaults to <cite>True</cite>): The key or keys to be filtered in <cite>to_content</cite> method. If</p>
+<blockquote>
+<div><p>it’s
+- <cite>False</cite>, <cite>None</cite> will be returned in the <cite>to_content</cite> method
+- <cite>str</cite>, the corresponding value will be returned
+- <cite>List[str]</cite>, a filtered dictionary will be returned
+- <cite>True</cite>, the whole dictionary will be returned</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>(</strong><strong>`Optional</strong><strong>[</strong><strong>Union</strong><strong>[</strong><strong>str</strong> (<em>keys_to_metadata</em>) – </p></li>
+<li><p><strong>bool</strong></p></li>
+<li><p><strong>Sequence</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>]</strong><strong>`</strong></p></li>
+</ul>
+</dd>
+</dl>
+<p>:param :
+:param defaults to <cite>False</cite>): The key or keys to be filtered in <cite>to_metadata</cite> method. If</p>
+<blockquote>
+<div><p>it’s
+- <cite>False</cite>, <cite>None</cite> will be returned in the <cite>to_metadata</cite> method
+- <cite>str</cite>, the corresponding value will be returned
+- <cite>List[str]</cite>, a filtered dictionary will be returned
+- <cite>True</cite>, the whole dictionary will be returned</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py attribute">
@@ -250,15 +298,9 @@ required keys exists.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="agentscope.parsers.MarkdownCodeBlockParser">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.parsers.</span></span><span class="sig-name descname"><span class="pre">MarkdownCodeBlockParser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">language_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/parsers/code_block_parser.html#MarkdownCodeBlockParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.parsers.MarkdownCodeBlockParser" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.parsers.</span></span><span class="sig-name descname"><span class="pre">MarkdownCodeBlockParser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">language_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content_hint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/parsers/code_block_parser.html#MarkdownCodeBlockParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.parsers.MarkdownCodeBlockParser" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="agentscope.parsers.parser_base.html#agentscope.parsers.parser_base.ParserBase" title="agentscope.parsers.parser_base.ParserBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParserBase</span></code></a></p>
 <p>The base class for parsing the response text by fenced block.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="agentscope.parsers.MarkdownCodeBlockParser.content_hint">
-<span class="sig-name descname"><span class="pre">content_hint</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'${{your_{language_name}_code}}'</span></em><a class="headerlink" href="#agentscope.parsers.MarkdownCodeBlockParser.content_hint" title="Link to this definition"></a></dt>
-<dd><p>The hint of the content.</p>
-</dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.parsers.MarkdownCodeBlockParser.tag_end">
 <span class="sig-name descname"><span class="pre">tag_end</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'```'</span></em><a class="headerlink" href="#agentscope.parsers.MarkdownCodeBlockParser.tag_end" title="Link to this definition"></a></dt>
@@ -267,8 +309,16 @@ required keys exists.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.parsers.MarkdownCodeBlockParser.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">language_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/parsers/code_block_parser.html#MarkdownCodeBlockParser.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.parsers.MarkdownCodeBlockParser.__init__" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">language_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content_hint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/parsers/code_block_parser.html#MarkdownCodeBlockParser.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.parsers.MarkdownCodeBlockParser.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the parser with the language name and the optional
+content hint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>language_name</strong> – The name of the language, which will be used
+in <a href="#id7"><span class="problematic" id="id8">``</span></a><a href="#id9"><span class="problematic" id="id10">`</span></a>{language_name}</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.parsers.MarkdownCodeBlockParser.name">
@@ -283,8 +333,14 @@ required keys exists.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.parsers.MarkdownCodeBlockParser.content_hint">
+<span class="sig-name descname"><span class="pre">content_hint</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'${{your_{language_name}_code}}'</span></em><a class="headerlink" href="#agentscope.parsers.MarkdownCodeBlockParser.content_hint" title="Link to this definition"></a></dt>
+<dd><p>The hint of the content.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.parsers.MarkdownCodeBlockParser.format_instruction">
-<span class="sig-name descname"><span class="pre">format_instruction</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'You</span> <span class="pre">should</span> <span class="pre">generate</span> <span class="pre">{language_name}</span> <span class="pre">code</span> <span class="pre">in</span> <span class="pre">a</span> <span class="pre">{language_name}</span> <span class="pre">fenced</span> <span class="pre">code</span> <span class="pre">block</span> <span class="pre">as</span> <span class="pre">follows:</span> <span class="pre">\n```{language_name}\n${{your_{language_name}_code}}\n```'</span></em><a class="headerlink" href="#agentscope.parsers.MarkdownCodeBlockParser.format_instruction" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format_instruction</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'You</span> <span class="pre">should</span> <span class="pre">generate</span> <span class="pre">{language_name}</span> <span class="pre">code</span> <span class="pre">in</span> <span class="pre">a</span> <span class="pre">{language_name}</span> <span class="pre">fenced</span> <span class="pre">code</span> <span class="pre">block</span> <span class="pre">as</span> <span class="pre">follows:</span> <span class="pre">\n```{language_name}\n{content_hint}\n```'</span></em><a class="headerlink" href="#agentscope.parsers.MarkdownCodeBlockParser.format_instruction" title="Link to this definition"></a></dt>
 <dd><p>The instruction for the format of the code block.</p>
 </dd></dl>
 
@@ -323,7 +379,8 @@ and tag end.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.parsers.TaggedContent.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.parsers.TaggedContent.name" title="Link to this definition"></a></dt>
-<dd><p>The name of the tagged content.</p>
+<dd><p>The name of the tagged content, which will be used as the key in
+extracted dictionary.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -354,8 +411,8 @@ and tag end.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="agentscope.parsers.MultiTaggedContentParser">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.parsers.</span></span><span class="sig-name descname"><span class="pre">MultiTaggedContentParser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">tagged_contents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.TaggedContent" title="agentscope.parsers.tagged_content_parser.TaggedContent"><span class="pre">TaggedContent</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/parsers/tagged_content_parser.html#MultiTaggedContentParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.parsers.MultiTaggedContentParser" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="agentscope.parsers.parser_base.html#agentscope.parsers.parser_base.ParserBase" title="agentscope.parsers.parser_base.ParserBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParserBase</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.parsers.</span></span><span class="sig-name descname"><span class="pre">MultiTaggedContentParser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">tagged_contents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.TaggedContent" title="agentscope.parsers.tagged_content_parser.TaggedContent"><span class="pre">TaggedContent</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys_to_memory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys_to_content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys_to_metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys_allow_missing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/parsers/tagged_content_parser.html#MultiTaggedContentParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.parsers.MultiTaggedContentParser" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="agentscope.parsers.parser_base.html#agentscope.parsers.parser_base.ParserBase" title="agentscope.parsers.parser_base.ParserBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParserBase</span></code></a>, <a class="reference internal" href="agentscope.parsers.parser_base.html#agentscope.parsers.parser_base.DictFilterMixin" title="agentscope.parsers.parser_base.DictFilterMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">DictFilterMixin</span></code></a></p>
 <p>Parse response text by multiple tags, and return a dict of their
 content. Asking llm to generate JSON dictionary object directly maybe not a
 good idea due to involving escape characters and other issues. So we can
@@ -371,12 +428,69 @@ generate JSON object.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.parsers.MultiTaggedContentParser.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">tagged_contents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.TaggedContent" title="agentscope.parsers.tagged_content_parser.TaggedContent"><span class="pre">TaggedContent</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/parsers/tagged_content_parser.html#MultiTaggedContentParser.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.parsers.MultiTaggedContentParser.__init__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">tagged_contents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.TaggedContent" title="agentscope.parsers.tagged_content_parser.TaggedContent"><span class="pre">TaggedContent</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys_to_memory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys_to_content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys_to_metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys_allow_missing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/parsers/tagged_content_parser.html#MultiTaggedContentParser.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.parsers.MultiTaggedContentParser.__init__" title="Link to this definition"></a></dt>
 <dd><p>Initialize the parser with tags.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>tags</strong> (<cite>dict[str, Tuple[str, str]]</cite>) – A dictionary of tags, the key is the tag name, and the value is
-a tuple of starting tag and end tag.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*tagged_contents</strong> (<cite>dict[str, Tuple[str, str]]</cite>) – Multiple TaggedContent objects, each object contains the tag
+name, tag begin, content hint and tag end. The name will be
+used as the key in the extracted dictionary.</p></li>
+<li><p><strong>required_keys</strong> (<cite>Optional[List[str]]</cite>, defaults to <cite>None</cite>) – A list of required</p></li>
+<li><p><strong>(</strong><strong>`Optional</strong><strong>[</strong><strong>Union</strong><strong>[</strong><strong>str</strong> (<em>keys_to_memory</em>) – </p></li>
+<li><p><strong>bool</strong></p></li>
+<li><p><strong>Sequence</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>]</strong><strong>]</strong><strong>`</strong></p></li>
+</ul>
+</dd>
+</dl>
+<p>:param :
+:param defaults to <cite>True</cite>): The key or keys to be filtered in <cite>to_memory</cite> method. If</p>
+<blockquote>
+<div><p>it’s
+- <cite>False</cite>, <cite>None</cite> will be returned in the <cite>to_memory</cite> method
+- <cite>str</cite>, the corresponding value will be returned
+- <cite>List[str]</cite>, a filtered dictionary will be returned
+- <cite>True</cite>, the whole dictionary will be returned</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>(</strong><strong>`Optional</strong><strong>[</strong><strong>Union</strong><strong>[</strong><strong>str</strong> (<em>keys_to_content</em>) – </p></li>
+<li><p><strong>bool</strong></p></li>
+<li><p><strong>Sequence</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>]</strong><strong>`</strong></p></li>
+</ul>
+</dd>
+</dl>
+<p>:param :
+:param defaults to <cite>True</cite>): The key or keys to be filtered in <cite>to_content</cite> method. If</p>
+<blockquote>
+<div><p>it’s
+- <cite>False</cite>, <cite>None</cite> will be returned in the <cite>to_content</cite> method
+- <cite>str</cite>, the corresponding value will be returned
+- <cite>List[str]</cite>, a filtered dictionary will be returned
+- <cite>True</cite>, the whole dictionary will be returned</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>(</strong><strong>`Optional</strong><strong>[</strong><strong>Union</strong><strong>[</strong><strong>str</strong> (<em>keys_to_metadata</em>) – </p></li>
+<li><p><strong>bool</strong></p></li>
+<li><p><strong>Sequence</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>]</strong><strong>]</strong><strong>`</strong></p></li>
+</ul>
+</dd>
+</dl>
+<p>:param :
+:param defaults to <cite>False</cite>): The key or keys to be filtered in <cite>to_metadata</cite> method. If</p>
+<blockquote>
+<div><p>it’s
+- <cite>False</cite>, <cite>None</cite> will be returned in the <cite>to_metadata</cite> method
+- <cite>str</cite>, the corresponding value will be returned
+- <cite>List[str]</cite>, a filtered dictionary will be returned
+- <cite>True</cite>, the whole dictionary will be returned</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>keys_allow_missing</strong> (<cite>Optional[List[str]]</cite>, defaults to <cite>None</cite>) – A list of keys that are allowed to be missing in the response.</p>
 </dd>
 </dl>
 </dd></dl>

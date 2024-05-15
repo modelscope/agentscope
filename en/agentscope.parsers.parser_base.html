@@ -112,6 +112,66 @@ parsed field of the response object.</p>
 
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.parsers.parser_base.DictFilterMixin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.parsers.parser_base.</span></span><span class="sig-name descname"><span class="pre">DictFilterMixin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys_to_memory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys_to_content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys_to_metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/parsers/parser_base.html#DictFilterMixin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.parsers.parser_base.DictFilterMixin" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A mixin class to filter the parsed response by keys. It allows users
+to set keys to be filtered during speaking, storing in memory, and
+returning in the agent reply function.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.parsers.parser_base.DictFilterMixin.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys_to_memory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys_to_content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys_to_metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/parsers/parser_base.html#DictFilterMixin.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.parsers.parser_base.DictFilterMixin.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the mixin class with the keys to be filtered during
+speaking, storing in memory, and returning in the agent reply function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>keys_to_memory</strong> (<cite>Optional[Union[str, bool, Sequence[str]]]</cite>) – The key or keys to be filtered in <cite>to_memory</cite> method. If
+it’s
+- <cite>False</cite>, <cite>None</cite> will be returned in the <cite>to_memory</cite> method
+- <cite>str</cite>, the corresponding value will be returned
+- <cite>List[str]</cite>, a filtered dictionary will be returned
+- <cite>True</cite>, the whole dictionary will be returned</p></li>
+<li><p><strong>keys_to_content</strong> (<cite>Optional[Union[str, bool, Sequence[str]]</cite>) – The key or keys to be filtered in <cite>to_content</cite> method. If
+it’s
+- <cite>False</cite>, <cite>None</cite> will be returned in the <cite>to_content</cite> method
+- <cite>str</cite>, the corresponding value will be returned
+- <cite>List[str]</cite>, a filtered dictionary will be returned
+- <cite>True</cite>, the whole dictionary will be returned</p></li>
+<li><p><strong>keys_to_metadata</strong> (<cite>Optional[Union[str, bool, Sequence[str]]]</cite>) – The key or keys to be filtered in <cite>to_metadata</cite> method. If
+it’s
+- <cite>False</cite>, <cite>None</cite> will be returned in the <cite>to_metadata</cite> method
+- <cite>str</cite>, the corresponding value will be returned
+- <cite>List[str]</cite>, a filtered dictionary will be returned
+- <cite>True</cite>, the whole dictionary will be returned</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.parsers.parser_base.DictFilterMixin.to_memory">
+<span class="sig-name descname"><span class="pre">to_memory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parsed_response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_missing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/parsers/parser_base.html#DictFilterMixin.to_memory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.parsers.parser_base.DictFilterMixin.to_memory" title="Link to this definition"></a></dt>
+<dd><p>Filter the fields that will be stored in memory.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.parsers.parser_base.DictFilterMixin.to_content">
+<span class="sig-name descname"><span class="pre">to_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parsed_response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_missing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/parsers/parser_base.html#DictFilterMixin.to_content"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.parsers.parser_base.DictFilterMixin.to_content" title="Link to this definition"></a></dt>
+<dd><p>Filter the fields that will be fed into the content field in the
+returned message, which will be exposed to other agents.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.parsers.parser_base.DictFilterMixin.to_metadata">
+<span class="sig-name descname"><span class="pre">to_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parsed_response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_missing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/parsers/parser_base.html#DictFilterMixin.to_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.parsers.parser_base.DictFilterMixin.to_metadata" title="Link to this definition"></a></dt>
+<dd><p>Filter the fields that will be fed into the returned message
+directly to control the application workflow.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 

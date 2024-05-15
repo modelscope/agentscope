@@ -240,6 +240,8 @@
                 <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="n">service_toolkit</span><span class="o">.</span><span class="n">tools_calling_format</span><span class="p">,</span>
             <span class="p">},</span>
             <span class="n">required_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;thought&quot;</span><span class="p">,</span> <span class="s2">&quot;speak&quot;</span><span class="p">,</span> <span class="s2">&quot;function&quot;</span><span class="p">],</span>
+            <span class="c1"># Only print the speak field when verbose is False</span>
+            <span class="n">keys_to_content</span><span class="o">=</span><span class="kc">True</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="k">else</span> <span class="s2">&quot;speak&quot;</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 
@@ -262,9 +264,8 @@
                 <span class="s2">&quot;system&quot;</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">format_instruction</span><span class="p">,</span>
                 <span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">,</span>
+                <span class="n">echo</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="n">hint_msg</span><span class="p">)</span>
 
             <span class="c1"># Prepare prompt for the model</span>
             <span class="n">prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">get_memory</span><span class="p">(),</span> <span class="n">hint_msg</span><span class="p">)</span>
@@ -278,16 +279,21 @@
                 <span class="p">)</span>
 
                 <span class="c1"># Record the response in memory</span>
-                <span class="n">msg_response</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s2">&quot;assistant&quot;</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">msg_response</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+                    <span class="n">Msg</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">to_memory</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">parsed</span><span class="p">),</span>
+                        <span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
 
                 <span class="c1"># Print out the response</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="n">msg_response</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span>
-                        <span class="n">Msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">parsed</span><span class="p">[</span><span class="s2">&quot;speak&quot;</span><span class="p">],</span> <span class="s2">&quot;assistant&quot;</span><span class="p">),</span>
-                    <span class="p">)</span>
+                <span class="n">msg_returned</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">to_content</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">parsed</span><span class="p">),</span>
+                    <span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="n">msg_returned</span><span class="p">)</span>
 
                 <span class="c1"># Skip the next steps if no need to call tools</span>
                 <span class="c1"># The parsed field is a dictionary</span>
@@ -299,7 +305,7 @@
                     <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">arg_function</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
                 <span class="p">):</span>
                     <span class="c1"># Only the speak field is exposed to users or other agents</span>
-                    <span class="k">return</span> <span class="n">Msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">parsed</span><span class="p">[</span><span class="s2">&quot;speak&quot;</span><span class="p">],</span> <span class="s2">&quot;assistant&quot;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">msg_returned</span>
 
             <span class="c1"># Only catch the response parsing error and expose runtime</span>
             <span class="c1"># errors to developers for debugging</span>
@@ -351,9 +357,8 @@
             <span class="s2">&quot;iterations. Now generate a reply by summarizing the current &quot;</span>
             <span class="s2">&quot;situation.&quot;</span><span class="p">,</span>
             <span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">,</span>
+            <span class="n">echo</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="n">hint_msg</span><span class="p">)</span>
 
         <span class="c1"># Generate a reply by summarizing the current situation</span>
         <span class="n">prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">get_memory</span><span class="p">(),</span> <span class="n">hint_msg</span><span class="p">)</span>

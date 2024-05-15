@@ -98,44 +98,20 @@
              
   <section id="module-agentscope.agents.dict_dialog_agent">
 <span id="agentscope-agents-dict-dialog-agent"></span><h1>agentscope.agents.dict_dialog_agent<a class="headerlink" href="#module-agentscope.agents.dict_dialog_agent" title="Link to this heading"></a></h1>
-<p>A dict dialog agent that using <cite>parse_func</cite> and <cite>fault_handler</cite> to
-parse the model response.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="agentscope.agents.dict_dialog_agent.parse_dict">
-<span class="sig-prename descclassname"><span class="pre">agentscope.agents.dict_dialog_agent.</span></span><span class="sig-name descname"><span class="pre">parse_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.models.response.html#agentscope.models.response.ModelResponse" title="agentscope.models.response.ModelResponse"><span class="pre">ModelResponse</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.models.response.html#agentscope.models.response.ModelResponse" title="agentscope.models.response.ModelResponse"><span class="pre">ModelResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/agents/dict_dialog_agent.html#parse_dict"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.agents.dict_dialog_agent.parse_dict" title="Link to this definition"></a></dt>
-<dd><p>Parse function for DictDialogAgent</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="agentscope.agents.dict_dialog_agent.default_response">
-<span class="sig-prename descclassname"><span class="pre">agentscope.agents.dict_dialog_agent.</span></span><span class="sig-name descname"><span class="pre">default_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.models.response.html#agentscope.models.response.ModelResponse" title="agentscope.models.response.ModelResponse"><span class="pre">ModelResponse</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.models.response.html#agentscope.models.response.ModelResponse" title="agentscope.models.response.ModelResponse"><span class="pre">ModelResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/agents/dict_dialog_agent.html#default_response"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.agents.dict_dialog_agent.default_response" title="Link to this definition"></a></dt>
-<dd><p>The default response of fault_handler</p>
-</dd></dl>
-
+<p>An agent that replies in a dictionary format.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="agentscope.agents.dict_dialog_agent.DictDialogAgent">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.agents.dict_dialog_agent.</span></span><span class="sig-name descname"><span class="pre">DictDialogAgent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/agents/dict_dialog_agent.html#DictDialogAgent"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.agents.dict_dialog_agent.DictDialogAgent" title="Link to this definition"></a></dt>
 <dd><p>基类：<a class="reference internal" href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase" title="agentscope.agents.agent.AgentBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AgentBase</span></code></a></p>
 <p>An agent that generates response in a dict format, where user can
-specify the required fields in the response via prompt, e.g.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;... Response in the following format that can be loaded by</span>
-<span class="n">python</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="s2">&quot;thought&quot;</span><span class="p">:</span> <span class="s2">&quot;thought&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;speak&quot;</span><span class="p">:</span> <span class="s2">&quot;thoughts summary to say to others&quot;</span><span class="p">,</span>
-    <span class="c1"># ...</span>
-<span class="p">}</span><span class="s2">&quot;</span>
-</pre></div>
-</div>
-<p>This agent class is an example for using <cite>parse_func</cite> and <cite>fault_handler</cite>
-to parse the output from the model, and handling the fault when parsing
-fails. We take “speak” as a required field in the response, and print
-the speak field as the output response.</p>
+specify the required fields in the response via specifying the parser</p>
+<p>About parser, please refer to our
+[tutorial](<a class="reference external" href="https://modelscope.github.io/agentscope/en/tutorial/203-parser.html">https://modelscope.github.io/agentscope/en/tutorial/203-parser.html</a>)</p>
 <p>For usage example, please refer to the example of werewolf in
 <cite>examples/game_werewolf</cite></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.agents.dict_dialog_agent.DictDialogAgent.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">name:</span> <span class="pre">str,</span> <span class="pre">sys_prompt:</span> <span class="pre">str,</span> <span class="pre">model_config_name:</span> <span class="pre">str,</span> <span class="pre">use_memory:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">memory_config:</span> <span class="pre">dict</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">parse_func:</span> <span class="pre">~typing.Callable[[...],</span> <span class="pre">~typing.Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">parse_dict&gt;,</span> <span class="pre">fault_handler:</span> <span class="pre">~typing.Callable[[...],</span> <span class="pre">~typing.Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">default_response&gt;,</span> <span class="pre">max_retries:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">3,</span> <span class="pre">prompt_type:</span> <span class="pre">~agentscope.prompt.PromptType</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/agents/dict_dialog_agent.html#DictDialogAgent.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.agents.dict_dialog_agent.DictDialogAgent.__init__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sys_prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_memory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_retries</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/agents/dict_dialog_agent.html#DictDialogAgent.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.agents.dict_dialog_agent.DictDialogAgent.__init__" title="Link to this definition"></a></dt>
 <dd><p>Initialize the dict dialog agent.</p>
 <dl class="field-list simple">
 <dt class="field-odd">参数<span class="colon">:</span></dt>
@@ -147,18 +123,20 @@ or hard-coded in the agent.</p></li>
 configuration.</p></li>
 <li><p><strong>use_memory</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – Whether the agent has memory.</p></li>
 <li><p><strong>memory_config</strong> (<cite>Optional[dict]</cite>, defaults to <cite>None</cite>) – The config of memory.</p></li>
-<li><p><strong>parse_func</strong> (<cite>Optional[Callable[…, Any]]</cite>, defaults to <cite>parse_dict</cite>) – The function used to parse the model output,
-e.g. <cite>json.loads</cite>, which is used to extract json from the
-output.</p></li>
-<li><p><strong>fault_handler</strong> (<cite>Optional[Callable[…, Any]]</cite>, defaults to <cite>default_response</cite>) – The function used to handle the fault when parse_func fails
-to parse the model output.</p></li>
 <li><p><strong>max_retries</strong> (<cite>Optional[int]</cite>, defaults to <cite>None</cite>) – The maximum number of retries when failed to parse the model
 output.</p></li>
-<li><p><strong>prompt_type</strong> (<cite>Optional[PromptType]</cite>, defaults to <cite>PromptType.LIST</cite>) – The type of the prompt organization, chosen from
-<cite>PromptType.LIST</cite> or <cite>PromptType.STRING</cite>.</p></li>
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.agents.dict_dialog_agent.DictDialogAgent.set_parser">
+<span class="sig-name descname"><span class="pre">set_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.parsers.parser_base.html#agentscope.parsers.parser_base.ParserBase" title="agentscope.parsers.parser_base.ParserBase"><span class="pre">ParserBase</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/agents/dict_dialog_agent.html#DictDialogAgent.set_parser"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.agents.dict_dialog_agent.DictDialogAgent.set_parser" title="Link to this definition"></a></dt>
+<dd><p>Set response parser, which will provide 1) format instruction; 2)
+response parsing; 3) filtering fields when returning message, storing
+message in memory. So developers only need to change the
+parser, and the agent will work as expected.</p>
 </dd></dl>
 
 <dl class="py method">
