@@ -15,7 +15,7 @@ def create_file(file_path: str, content: str = "") -> ServiceResponse:
 
     Args:
         file_path (`str`):
-        The path where the file will be created.
+            The path where the file will be created.
         content (`str`):
             Content to write into the file.
 

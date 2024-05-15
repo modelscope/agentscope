@@ -122,6 +122,7 @@ the following libraries.
   - [Conversation with ReAct Agent](./examples/conversation_with_react_agent)
   - [Conversation in Natural Language to Query SQL](./examples/conversation_nl2sql/)
   - [Conversation with RAG Agent](./examples/conversation_with_RAG_agents)
+  - [Conversation with SWE Agnet](./examples/swe_agent/)
 
 - Game
   - [Gomoku](./examples/game_gomoku)

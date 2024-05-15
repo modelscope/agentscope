@@ -110,6 +110,7 @@ AgentScope支持使用以下库快速部署本地模型服务。
   - [与ReAct智能体对话](./examples/conversation_with_react_agent)
   - [通过对话查询SQL信息](./examples/conversation_nl2sql/)
   - [与RAG智能体对话](./examples/conversation_with_RAG_agents)
+  - [与SWE智能体对话](./examples/swe_agent/)
 
 - 游戏
   - [五子棋](./examples/game_gomoku)

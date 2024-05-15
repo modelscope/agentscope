@@ -36,8 +36,6 @@ def get_system_prompt(command_prompt: str) -> str:
 
   However, the environment does NOT support interactive session commands (e.g. vim, python), so please do not invoke them.
 
-  Your Response should always be a valid JSON string that can be parsed.
-
   {RESPONSE_FORMAT_PROMPT}
 
   """  # noqa
@@ -46,16 +44,20 @@ def get_system_prompt(command_prompt: str) -> str:
 RESPONSE_FORMAT_PROMPT = """
 ## Response Format:
 You should respond with a JSON object in the following format.
+```json
 {
     "thought": "what you thought",
     "action": {"name": "{command name}", "arguments": {"{argument1 name}": xxx, "{argument2 name}": xxx}}
 }
+```
 
 For Example:
+```json
 {
     "thought": "First I'll start by using ls to see what files are in the current directory. Then maybe we can look at some relevant files to see what they look like.",
     "action": {"name": "execute_shell_command", "arguments": {"command": "ls -a"}}
 }
+```
 OUTPUT the JSON format and ONLY OUTPUT the JSON format.
 Your Response should always be a valid JSON string that can be parsed.
 """  # noqa
@@ -99,6 +101,7 @@ def get_step_prompt(
   NOTE THAT THIS ENVIRONMENT DOES NOT SUPPORT INTERACTIVE SESSION COMMANDS, such as "vim" or "python", or "python3". So DONOT execute them by running `execute_shell_command` with `python` command or `python3` command if the code need additional inputs.
   If you want to check whether a python file is valid, you can use `exec_py_linting` to check for errors.
 
+  You should always notice your response format and respond with a JSON object in the following format.
   {RESPONSE_FORMAT_PROMPT}
 """  # noqa
 
