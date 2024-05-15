@@ -16,6 +16,14 @@ from .memory import MemoryBase
 from ..models import load_model_by_config_name
 from ..service.retrieval.retrieval_from_list import retrieve_from_list
 from ..service.retrieval.similarity import Embedding
+from ..message import (
+    deserialize,
+    serialize,
+    MessageBase,
+    Msg,
+    Tht,
+    PlaceholderMessage,
+)
 
 
 class TemporaryMemory(MemoryBase):
@@ -28,6 +36,16 @@ class TemporaryMemory(MemoryBase):
         config: Optional[dict] = None,
         embedding_model: Union[str, Callable] = None,
     ) -> None:
+        """
+        Temporary memory module for conversation.
+        Args:
+            config (dict):
+                configuration of the memory
+            embedding_model (Union[str, Callable])
+                if the temporary memory needs to be embedded,
+                then either pass the name of embedding model or
+                the embedding model itself.
+        """
         super().__init__(config)
 
         self._content = []
@@ -43,10 +61,20 @@ class TemporaryMemory(MemoryBase):
         memories: Union[Sequence[dict], dict, None],
         embed: bool = False,
     ) -> None:
+        # pylint: disable=too-many-branches
+        """
+        Adding new memory fragment, depending on how the memory are stored
+        Args:
+            memories (Union[Sequence[dict], dict, None]):
+                memories to be added. If the memory is not in MessageBase,
+                it will first be converted into a message type.
+            embed (bool):
+                whether to generate embedding for the new added memories
+        """
         if memories is None:
             return
 
-        if not isinstance(memories, list):
+        if not isinstance(memories, Sequence):
             record_memories = [memories]
         else:
             record_memories = memories
@@ -54,6 +82,27 @@ class TemporaryMemory(MemoryBase):
         # if memory doesn't have id attribute, we skip the checking
         memories_idx = set(_.id for _ in self._content if hasattr(_, "id"))
         for memory_unit in record_memories:
+            if not issubclass(type(memory_unit), MessageBase):
+                try:
+                    if (
+                        "name" in memory_unit
+                        and memory_unit["name"] == "thought"
+                    ):
+                        memory_unit = Tht(**memory_unit)
+                    else:
+                        memory_unit = Msg(**memory_unit)
+                except Exception as exc:
+                    raise ValueError(
+                        f"Cannot add {memory_unit} to memory, "
+                        f"must be with subclass of MessageBase",
+                    ) from exc
+
+            # in case this is a PlaceholderMessage, try to update
+            # the values first
+            if isinstance(memory_unit, PlaceholderMessage):
+                memory_unit.update_value()
+                memory_unit = Msg(**memory_unit)
+
             # add to memory if it's new
             if (
                 not hasattr(memory_unit, "id")
@@ -71,6 +120,13 @@ class TemporaryMemory(MemoryBase):
                 self._content.append(memory_unit)
 
     def delete(self, index: Union[Iterable, int]) -> None:
+        """
+        Delete memory fragment, depending on how the memory are stored
+        and matched
+        Args:
+            index (Union[Iterable, int]):
+                indices of the memory fragments to delete
+        """
         if self.size() == 0:
             logger.warning(
                 "The memory is empty, and the delete operation is "
@@ -101,16 +157,26 @@ class TemporaryMemory(MemoryBase):
 
     def export(
         self,
-        to_mem: bool = False,
         file_path: Optional[str] = None,
+        to_mem: bool = False,
     ) -> Optional[list]:
-        """Export memory to json file"""
+        """
+        Export memory, depending on how the memory are stored
+        Args:
+            file_path (Optional[str]):
+                file path to save the memory to. The messages will
+                be serialized and written to the file.
+            to_mem (Optional[str]):
+                if True, just return the list of messages in memory
+        Notice: this method prevents file_path is None when to_mem
+        is False.
+        """
         if to_mem:
             return self._content
 
         if to_mem is False and file_path is not None:
             with open(file_path, "w", encoding="utf-8") as f:
-                json.dump(self._content, f, indent=4)
+                f.write(serialize(self._content))
         else:
             raise NotImplementedError(
                 "file type only supports "
@@ -120,16 +186,30 @@ class TemporaryMemory(MemoryBase):
 
     def load(
         self,
-        memories: Union[str, dict, list],
+        memories: Union[str, list[MessageBase], MessageBase],
         overwrite: bool = False,
     ) -> None:
+        """
+        Load memory, depending on how the memory are passed, design to load
+        from both file or dict
+        Args:
+            memories (Union[str, list[MessageBase], MessageBase]):
+                memories to be loaded.
+                If it is in str type, it will be first checked if it is a
+                file; otherwise it will be deserialized as messages.
+                Otherwise, memories must be either in message type or list
+                 of messages.
+            overwrite (bool):
+                if True, clear the current memory before loading the new ones;
+                if False, memories will be appended to the old one at the end.
+        """
         if isinstance(memories, str):
             if os.path.isfile(memories):
                 with open(memories, "r", encoding="utf-8") as f:
-                    self.add(json.load(f))
+                    load_memories = deserialize(f.read())
             else:
                 try:
-                    load_memories = json.loads(memories)
+                    load_memories = deserialize(memories)
                     if not isinstance(load_memories, dict) and not isinstance(
                         load_memories,
                         list,

@@ -3,10 +3,11 @@
 Unit tests for memory classes and functions
 """
 
+import os
 import unittest
 from unittest.mock import patch, MagicMock
 
-from agentscope.message import Msg
+from agentscope.message import Msg, Tht
 from agentscope.memory import TemporaryMemory
 
 
@@ -17,6 +18,8 @@ class TemporaryMemoryTest(unittest.TestCase):
 
     def setUp(self) -> None:
         self.memory = TemporaryMemory()
+        self.file_name_1 = "tmp_mem_file1.txt"
+        self.file_name_2 = "tmp_mem_file2.txt"
         self.msg_1 = Msg("user", "Hello", role="user")
         self.msg_2 = Msg(
             "agent",
@@ -29,18 +32,14 @@ class TemporaryMemoryTest(unittest.TestCase):
             role="assistant",
         )
 
-        self.dict_1 = {
-            "name": "dict1",
-            "content": "dict 1",
-            "role": "assistant",
-        }
-        self.dict_2 = {
-            "name": "dict2",
-            "content": "dict 2",
-            "role": "assistant",
-        }
-
         self.invalid = {"invalid_key": "invalid_value"}
+
+    def tearDown(self) -> None:
+        """Clean up before & after tests."""
+        if os.path.exists(self.file_name_1):
+            os.remove(self.file_name_1)
+        if os.path.exists(self.file_name_2):
+            os.remove(self.file_name_2)
 
     def test_add(self) -> None:
         """Test add different types of object"""
@@ -51,18 +50,11 @@ class TemporaryMemoryTest(unittest.TestCase):
             [self.msg_1],
         )
 
-        # add dict
-        self.memory.add(self.dict_1)
-        self.assertEqual(
-            self.memory.get_memory(),
-            [self.msg_1, self.dict_1],
-        )
-
         # add list
         self.memory.add([self.msg_2, self.msg_3])
         self.assertEqual(
             self.memory.get_memory(),
-            [self.msg_1, self.dict_1, self.msg_2, self.msg_3],
+            [self.msg_1, self.msg_2, self.msg_3],
         )
 
     @patch("loguru.logger.warning")
@@ -84,17 +76,11 @@ class TemporaryMemoryTest(unittest.TestCase):
 
     def test_invalid(self) -> None:
         """Test invalid operations for memory"""
-        self.memory.add(self.invalid)
         # test invalid add
-        self.assertEqual(
-            self.memory.get_memory(),
-            [self.invalid],
-        )
-
-        # test print
-        self.assertEqual(
-            self.memory.get_memory(),
-            [{"invalid_key": "invalid_value"}],
+        with self.assertRaises(Exception) as context:
+            self.memory.add(self.invalid)
+        self.assertTrue(
+            f"Cannot add {self.invalid} to memory" in str(context.exception),
         )
 
     def test_load_export(self) -> None:
@@ -102,16 +88,54 @@ class TemporaryMemoryTest(unittest.TestCase):
         Test load and export function of TemporaryMemory
         """
         memory = TemporaryMemory()
-        user_input = {"name": "user", "content": "Hello"}
-        agent_input = {
-            "name": "agent",
-            "content": "Hello! How can I help you?",
-        }
+        user_input = Msg(name="user", content="Hello")
+        agent_input = Msg(
+            name="agent",
+            content="Hello! How can I help you?",
+        )
         memory.load([user_input, agent_input])
         retrieved_mem = memory.export(to_mem=True)
         self.assertEqual(
             retrieved_mem,
             [user_input, agent_input],
+        )
+
+        memory.export(file_path=self.file_name_1)
+        memory.clear()
+        self.assertEqual(
+            memory.get_memory(),
+            [],
+        )
+        memory.load(self.file_name_1)
+        self.assertEqual(
+            memory.get_memory(),
+            [user_input, agent_input],
+        )
+
+    def test_tht_memory(self) -> None:
+        """
+        Test temporary memory with Tht,
+        add, clear, export, loading
+        """
+        memory = TemporaryMemory()
+        thought = Tht("testing")
+        memory.add(thought)
+
+        self.assertEqual(
+            memory.get_memory(),
+            [thought],
+        )
+
+        memory.export(file_path=self.file_name_2)
+        memory.clear()
+        self.assertEqual(
+            memory.get_memory(),
+            [],
+        )
+        memory.load(self.file_name_2)
+        self.assertEqual(
+            memory.get_memory(),
+            [thought],
         )
 
 
