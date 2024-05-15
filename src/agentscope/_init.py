@@ -25,7 +25,7 @@ def init(
     save_dir: str = _DEFAULT_DIR,
     save_log: bool = True,
     save_code: bool = True,
-    save_api_invoke: bool = True,
+    save_api_invoke: bool = False,
     use_monitor: bool = True,
     logger_level: LOG_LEVEL = _DEFAULT_LOG_LEVEL,
     runtime_id: Optional[str] = None,

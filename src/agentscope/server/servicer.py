@@ -4,7 +4,6 @@ import threading
 import base64
 import json
 import traceback
-from typing import Any
 from concurrent import futures
 from loguru import logger
 
@@ -13,11 +12,17 @@ try:
     import grpc
     from grpc import ServicerContext
     from expiringdict import ExpiringDict
-except ImportError:
-    dill = None
-    grpc = None
-    ServicerContext = Any
-    ExpiringDict = None
+    from ..rpc.rpc_agent_pb2 import RpcMsg  # pylint: disable=E0611
+    from ..rpc.rpc_agent_pb2_grpc import RpcAgentServicer
+except ImportError as import_error:
+    from agentscope.utils.tools import ImportErrorReporter
+
+    dill = ImportErrorReporter(import_error, "distribute")
+    grpc = ImportErrorReporter(import_error, "distribute")
+    ServicerContext = ImportErrorReporter(import_error, "distribute")
+    ExpiringDict = ImportErrorReporter(import_error, "distribute")
+    RpcMsg = ImportErrorReporter(import_error, "distribute")
+    RpcAgentServicer = ImportErrorReporter(import_error, "distribute")
 
 from ..agents.agent import AgentBase
 from ..message import (
@@ -25,13 +30,6 @@ from ..message import (
     PlaceholderMessage,
     deserialize,
 )
-
-try:
-    from ..rpc.rpc_agent_pb2 import RpcMsg  # pylint: disable=E0611
-    from ..rpc.rpc_agent_pb2_grpc import RpcAgentServicer
-except ModuleNotFoundError:
-    RpcMsg = Any  # type: ignore[misc]
-    RpcAgentServicer = Any
 
 
 class AgentServerServicer(RpcAgentServicer):

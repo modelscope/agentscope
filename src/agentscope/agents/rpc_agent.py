@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """ Base class for Rpc Agent """
 from typing import Type, Optional, Union, Sequence
-from loguru import logger
 
 from agentscope.agents.agent import AgentBase
 from agentscope.message import (
@@ -10,24 +9,6 @@ from agentscope.message import (
 )
 from agentscope.rpc import RpcAgentClient
 from agentscope.server.launcher import RpcAgentServerLauncher
-
-
-def rpc_servicer_method(  # type: ignore[no-untyped-def]
-    func,
-):
-    """A decorator used to identify that the specific method is an rpc agent
-    servicer method, which can only be run in the rpc server process.
-    """
-
-    def inner(rpc_agent, msg):  # type: ignore[no-untyped-def]
-        if not rpc_agent.is_servicer:
-            error_msg = f"Detect main process try to use rpc servicer method \
-                 [{func.__name__}]"
-            logger.error(error_msg)
-            raise RuntimeError(error_msg)
-        return func(rpc_agent, msg)
-
-    return inner
 
 
 class RpcAgent(AgentBase):

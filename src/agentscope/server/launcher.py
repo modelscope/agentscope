@@ -7,26 +7,28 @@ import socket
 import asyncio
 import signal
 import argparse
-from typing import Any, Type, Optional
+from typing import Type, Optional
 from concurrent import futures
 from loguru import logger
 
 try:
     import grpc
-except ImportError:
-    grpc = None
+    from agentscope.rpc.rpc_agent_pb2_grpc import (
+        add_RpcAgentServicer_to_server,
+    )
+except ImportError as import_error:
+    from agentscope.utils.tools import ImportErrorReporter
+
+    grpc = ImportErrorReporter(import_error, "distribute")
+    add_RpcAgentServicer_to_server = ImportErrorReporter(
+        import_error,
+        "distribute",
+    )
 
 import agentscope
 from agentscope.server.servicer import AgentServerServicer
 from agentscope.agents.agent import AgentBase
 from agentscope.utils.tools import _get_timestamp
-
-try:
-    from agentscope.rpc.rpc_agent_pb2_grpc import (
-        add_RpcAgentServicer_to_server,
-    )
-except ModuleNotFoundError:
-    add_RpcAgentServicer_to_server = Any
 
 
 def setup_agent_server(
