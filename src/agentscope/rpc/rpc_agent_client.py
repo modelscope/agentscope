@@ -3,24 +3,23 @@
 
 import threading
 import base64
-from typing import Any, Optional
+from typing import Optional
 from loguru import logger
 
 try:
     import dill
     import grpc
     from grpc import RpcError
-except ImportError:
-    dill = None
-    grpc = None
-    RpcError = None
-
-try:
     from agentscope.rpc.rpc_agent_pb2 import RpcMsg  # pylint: disable=E0611
     from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentStub
-except ModuleNotFoundError:
-    RpcMsg = Any  # type: ignore[misc]
-    RpcAgentStub = Any
+except ImportError as import_error:
+    from agentscope.utils.tools import ImportErrorReporter
+
+    dill = ImportErrorReporter(import_error, "distribute")
+    grpc = ImportErrorReporter(import_error, "distribute")
+    RpcMsg = ImportErrorReporter(import_error, "distribute")
+    RpcAgentStub = ImportErrorReporter(import_error, "distribute")
+    RpcError = ImportError
 
 
 class RpcAgentClient:

@@ -9,7 +9,7 @@ import json
 import base64
 import traceback
 import asyncio
-from typing import Any, Type, Optional, Union, Sequence
+from typing import Type, Optional, Union, Sequence
 from concurrent import futures
 from loguru import logger
 
@@ -18,11 +18,13 @@ try:
     import grpc
     from grpc import ServicerContext
     from expiringdict import ExpiringDict
-except ImportError:
-    dill = None
-    grpc = None
-    ServicerContext = Any
-    ExpiringDict = None
+except ImportError as import_error:
+    from agentscope.utils.tools import ImportErrorReporter
+
+    dill = ImportErrorReporter(import_error, "distribute")
+    grpc = ImportErrorReporter(import_error, "distribute")
+    ServicerContext = ImportErrorReporter(import_error, "distribute")
+    ExpiringDict = ImportErrorReporter(import_error, "distribute")
 
 from agentscope._init import init_process, _INIT_SETTINGS
 from agentscope.agents.agent import AgentBase

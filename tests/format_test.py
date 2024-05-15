@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Unit test for prompt engineering strategies in format function."""
 import unittest
+from unittest import mock
 from unittest.mock import MagicMock, patch
 
 from agentscope.message import Msg
@@ -31,6 +32,27 @@ class ExampleTest(unittest.TestCase):
             ],
         ]
 
+        self.inputs_vision = [
+            Msg("system", "You are a helpful assistant", role="system"),
+            [
+                Msg(
+                    "user",
+                    "Describe the images",
+                    role="user",
+                    url="https://fakeweb/test.jpg",
+                ),
+                Msg(
+                    "user",
+                    "And this images",
+                    "user",
+                    url=[
+                        "/Users/xxx/abc.png",
+                        "/Users/xxx/def.mp3",
+                    ],
+                ),
+            ],
+        ]
+
         self.wrong_inputs = [
             Msg("system", "You are a helpful assistant", role="system"),
             [
@@ -38,6 +60,118 @@ class ExampleTest(unittest.TestCase):
                 Msg("assistant", "It is sunny today", role="assistant"),
             ],
         ]
+
+    @patch("builtins.open", mock.mock_open(read_data=b"abcdef"))
+    @patch("os.path.isfile")
+    @patch("os.path.exists")
+    @patch("openai.OpenAI")
+    def test_openai_chat_vision_with_wrong_model(
+        self,
+        mock_client: MagicMock,
+        mock_exists: MagicMock,
+        mock_isfile: MagicMock,
+    ) -> None:
+        """Unit test for the format function in openai chat api wrapper with
+        vision models"""
+        mock_exists.side_effect = lambda url: url == "/Users/xxx/abc.png"
+        mock_isfile.side_effect = lambda url: url == "/Users/xxx/abc.png"
+
+        # Prepare the mock client
+        mock_client.return_value = "client_dummy"
+
+        model = OpenAIChatWrapper(
+            config_name="",
+            model_name="gpt-4",
+        )
+
+        # correct format
+        ground_truth = [
+            {
+                "role": "system",
+                "content": "You are a helpful assistant",
+                "name": "system",
+            },
+            {
+                "role": "user",
+                "name": "user",
+                "content": "Describe the images",
+            },
+            {
+                "role": "user",
+                "name": "user",
+                "content": "And this images",
+            },
+        ]
+
+        prompt = model.format(*self.inputs_vision)
+        self.assertListEqual(prompt, ground_truth)
+
+    @patch("builtins.open", mock.mock_open(read_data=b"abcdef"))
+    @patch("os.path.isfile")
+    @patch("os.path.exists")
+    @patch("openai.OpenAI")
+    def test_openai_chat_vision(
+        self,
+        mock_client: MagicMock,
+        mock_exists: MagicMock,
+        mock_isfile: MagicMock,
+    ) -> None:
+        """Unit test for the format function in openai chat api wrapper with
+        vision models"""
+        mock_exists.side_effect = lambda url: url == "/Users/xxx/abc.png"
+        mock_isfile.side_effect = lambda url: url == "/Users/xxx/abc.png"
+
+        # Prepare the mock client
+        mock_client.return_value = "client_dummy"
+
+        model = OpenAIChatWrapper(
+            config_name="",
+            model_name="gpt-4o",
+        )
+
+        # correct format
+        ground_truth = [
+            {
+                "role": "system",
+                "content": "You are a helpful assistant",
+                "name": "system",
+            },
+            {
+                "role": "user",
+                "name": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Describe the images",
+                    },
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": "https://fakeweb/test.jpg",
+                        },
+                    },
+                ],
+            },
+            {
+                "role": "user",
+                "name": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "And this images",
+                    },
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": "data:image/png;base64,YWJjZGVm",
+                        },
+                    },
+                ],
+            },
+        ]
+
+        prompt = model.format(*self.inputs_vision)
+        self.assertListEqual(prompt, ground_truth)
 
     @patch("openai.OpenAI")
     def test_openai_chat(self, mock_client: MagicMock) -> None:
