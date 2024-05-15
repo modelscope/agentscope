@@ -153,9 +153,9 @@ class MarkdownJsonDictParser(MarkdownJsonObjectParser, DictFilterMixin):
         self,
         content_hint: Optional[Any] = None,
         required_keys: List[str] = None,
-        keys_to_memory: Optional[Union[str, Sequence[str]]] = None,
-        keys_to_content: Optional[Union[str, Sequence[str]]] = None,
-        keys_to_metadata: Optional[Union[str, Sequence[str]]] = None,
+        keys_to_memory: Optional[Union[str, bool, Sequence[str]]] = True,
+        keys_to_content: Optional[Union[str, bool, Sequence[str]]] = True,
+        keys_to_metadata: Optional[Union[str, bool, Sequence[str]]] = False,
     ) -> None:
         """Initialize the parser with the content hint.
 
@@ -169,22 +169,30 @@ class MarkdownJsonDictParser(MarkdownJsonObjectParser, DictFilterMixin):
                 A list of required keys in the JSON dictionary object. If the
                 response misses any of the required keys, it will raise a
                 RequiredFieldNotFoundError.
-            keys_to_memory (`Optional[Union[str, Sequence[str]]]`, defaults to
-            `None`):
-                The key or keys to be filtered during storing in memory. If a
-                single key is provided, the corresponding value will be
-                returned. Otherwise, a filtered dictionary will be returned.
-            keys_to_content (`Optional[Union[str, Sequence[str]]`, defaults to
-            `None`):
-                The key or keys that will be exposed to other agents in the
-                returned message content field. If a single key is provided,
-                the corresponding value will be returned. Otherwise, a filtered
-                dictionary will be returned.
-            keys_to_metadata (`Optional[Union[str, Sequence[str]]`, defaults to
-            `None`):
-                The key or keys that will be fed into the control field in the
-                returned message object, it will be used to control the
-                application workflow.
+            keys_to_memory (`Optional[Union[str, bool, Sequence[str]]]`,
+            defaults to `True`):
+                The key or keys to be filtered in `to_memory` method. If
+                it's
+                - `False`, `None` will be returned in the `to_memory` method
+                - `str`, the corresponding value will be returned
+                - `List[str]`, a filtered dictionary will be returned
+                - `True`, the whole dictionary will be returned
+            keys_to_content (`Optional[Union[str, bool, Sequence[str]]`,
+            defaults to `True`):
+                The key or keys to be filtered in `to_content` method. If
+                it's
+                - `False`, `None` will be returned in the `to_content` method
+                - `str`, the corresponding value will be returned
+                - `List[str]`, a filtered dictionary will be returned
+                - `True`, the whole dictionary will be returned
+            keys_to_metadata (`Optional[Union[str, bool, Sequence[str]]`,
+            defaults to `False`):
+                The key or keys to be filtered in `to_metadata` method. If
+                it's
+                - `False`, `None` will be returned in the `to_metadata` method
+                - `str`, the corresponding value will be returned
+                - `List[str]`, a filtered dictionary will be returned
+                - `True`, the whole dictionary will be returned
 
         """
         # Initialize the markdown json object parser

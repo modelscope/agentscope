@@ -10,6 +10,7 @@ from agentscope.parsers import (
     MultiTaggedContentParser,
     TaggedContent,
 )
+from agentscope.parsers.parser_base import DictFilterMixin
 
 
 class ModelResponseParserTest(unittest.TestCase):
@@ -190,6 +191,18 @@ class ModelResponseParserTest(unittest.TestCase):
             parser.to_metadata(res.parsed),
             self.gt_to_metadata,
         )
+
+    def test_DictFilterMixin_default_value(self) -> None:
+        mixin = DictFilterMixin(
+            keys_to_memory=True,
+            keys_to_content=True,
+            keys_to_metadata=False,
+        )
+
+        self.assertDictEqual(mixin.to_memory(self.gt_dict), self.gt_dict)
+        self.assertDictEqual(mixin.to_content(self.gt_dict), self.gt_dict)
+        self.assertEqual(mixin.to_metadata(self.gt_dict), None)
+
 
 
 if __name__ == "__main__":

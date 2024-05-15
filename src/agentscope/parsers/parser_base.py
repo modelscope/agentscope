@@ -82,32 +82,35 @@ class DictFilterMixin:
 
     def __init__(
         self,
-        keys_to_memory: Union[str, Sequence[str], None],
-        keys_to_content: Union[str, Sequence[str], None],
-        keys_to_metadata: Union[str, Sequence[str], None],
+        keys_to_memory: Union[str, bool, Sequence[str]],
+        keys_to_content: Union[str, bool, Sequence[str]],
+        keys_to_metadata: Union[str, bool, Sequence[str]],
     ) -> None:
         """Initialize the mixin class with the keys to be filtered during
         speaking, storing in memory, and returning in the agent reply function.
 
         Args:
-            keys_to_memory (`Union[str, Sequence[str], None]`):
-                The key or keys to be filtered during storing in memory. If
-                it's `None`, `None` will be returned in the `to_memory` method.
-                If a single key is provided, the corresponding value will be
-                returned. Otherwise, a filtered dictionary will be returned.
-            keys_to_content (`Union[str, Sequence[str], None]`):
-                The key or keys that will be exposed to other agents in the
-                returned message content field. If it's `None`, `None` will
-                be returned in the `to_content` method. If a single key is
-                provided, the corresponding value will be returned.
-                Otherwise, a filtered dictionary will be returned.
-            keys_to_metadata (`Union[str, Sequence[str], None]`):
-                The key or keys that will be fed into the metadata field in
-                the returned message object for application workflow control or
-                other purposes. If it's `None`, an empty dictionary will be
-                returned. If a single key is provided, the corresponding
-                value will be returned. Otherwise, a filtered dictionary will
-                be returned.
+            keys_to_memory (`Optional[Union[str, bool, Sequence[str]]]`):
+                The key or keys to be filtered in `to_memory` method. If
+                it's
+                - `False`, `None` will be returned in the `to_memory` method
+                - `str`, the corresponding value will be returned
+                - `List[str]`, a filtered dictionary will be returned
+                - `True`, the whole dictionary will be returned
+            keys_to_content (`Optional[Union[str, bool, Sequence[str]]`):
+                The key or keys to be filtered in `to_content` method. If
+                it's
+                - `False`, `None` will be returned in the `to_content` method
+                - `str`, the corresponding value will be returned
+                - `List[str]`, a filtered dictionary will be returned
+                - `True`, the whole dictionary will be returned
+            keys_to_metadata (`Optional[Union[str, bool, Sequence[str]]]`):
+                The key or keys to be filtered in `to_metadata` method. If
+                it's
+                - `False`, `None` will be returned in the `to_metadata` method
+                - `str`, the corresponding value will be returned
+                - `List[str]`, a filtered dictionary will be returned
+                - `True`, the whole dictionary will be returned
         """
         self.keys_to_memory = keys_to_memory
         self.keys_to_content = keys_to_content
@@ -119,19 +122,6 @@ class DictFilterMixin:
         allow_missing: bool = False,
     ) -> Union[str, dict, None]:
         """Filter the fields that will be stored in memory."""
-
-        global _FIRST_TIME_TO_REPORT_MEMORY
-
-        if self.keys_to_memory is None:
-            if _FIRST_TIME_TO_REPORT_MEMORY:
-                logger.warning(
-                    "The argument keys_to_memory is None, which means no "
-                    "valid content will be stored in agent's memory.",
-                )
-                _FIRST_TIME_TO_REPORT_MEMORY = False
-
-            return None
-
         return self._filter_content_by_names(
             parsed_response,
             self.keys_to_memory,
@@ -146,19 +136,6 @@ class DictFilterMixin:
         """Filter the fields that will be fed into the content field in the
         returned message, which will be exposed to other agents.
         """
-
-        global _FIRST_TIME_TO_REPORT_CONTENT
-
-        if self.keys_to_content is None:
-            if _FIRST_TIME_TO_REPORT_CONTENT:
-                logger.warning(
-                    "The argument keys_to_content is None, which means no "
-                    "valid content will be returned in the agent's reply.",
-                )
-            _FIRST_TIME_TO_REPORT_CONTENT = False
-
-            return None
-
         return self._filter_content_by_names(
             parsed_response,
             self.keys_to_content,
@@ -172,10 +149,6 @@ class DictFilterMixin:
     ) -> Union[str, dict, None]:
         """Filter the fields that will be fed into the returned message
         directly to control the application workflow."""
-
-        if self.keys_to_metadata is None:
-            return None
-
         return self._filter_content_by_names(
             parsed_response,
             self.keys_to_metadata,
@@ -187,7 +160,7 @@ class DictFilterMixin:
         parsed_response: dict,
         keys: Union[str, Sequence[str]],
         allow_missing: bool = False,
-    ) -> Union[str, dict]:
+    ) -> Union[str, dict, None]:
         """Filter the parsed response by keys. If only one key is provided, the
         returned content will be a single corresponding value. Otherwise,
         the returned content will be a dictionary with the filtered keys and
@@ -195,11 +168,11 @@ class DictFilterMixin:
 
         Args:
             keys (`Union[str, Sequence[str]]`):
-                The key or keys to be filtered. If a single key
-                is provided, the parsed response will be filtered by the key,
-                and the corresponding value will be returned. Otherwise, the
-                parsed response will be filtered by the keys, and the
-                corresponding values will be returned as a dictionary.
+                The key or keys to be filtered. If it's
+                - `False`, `None` will be returned in the `to_content` method
+                - `str`, the corresponding value will be returned
+                - `List[str]`, a filtered dictionary will be returned
+                - `True`, the whole dictionary will be returned
             allow_missing (`bool`, defaults to `False`):
                 Whether to allow missing keys in the response. If set to
                 `True`, the method will skip the missing keys in the response.
@@ -208,6 +181,12 @@ class DictFilterMixin:
         Returns:
             `Union[str, dict]`: The filtered content.
         """
+
+        if isinstance(keys, bool):
+            if keys:
+                return parsed_response
+            else:
+                return None
 
         if isinstance(keys, str):
             return parsed_response[keys]

@@ -85,9 +85,9 @@ class MultiTaggedContentParser(ParserBase, DictFilterMixin):
     def __init__(
         self,
         *tagged_contents: TaggedContent,
-        keys_to_memory: Optional[Union[str, Sequence[str]]] = None,
-        keys_to_content: Optional[Union[str, Sequence[str]]] = None,
-        keys_to_metadata: Optional[Union[str, Sequence[str]]] = None,
+        keys_to_memory: Optional[Union[str, bool, Sequence[str]]] = True,
+        keys_to_content: Optional[Union[str, bool, Sequence[str]]] = True,
+        keys_to_metadata: Optional[Union[str, bool, Sequence[str]]] = False,
     ) -> None:
         """Initialize the parser with tags.
 
@@ -95,22 +95,30 @@ class MultiTaggedContentParser(ParserBase, DictFilterMixin):
             tags (`dict[str, Tuple[str, str]]`):
                 A dictionary of tags, the key is the tag name, and the value is
                 a tuple of starting tag and end tag.
-            keys_to_memory (`Union[str, Sequence[str]]`, defaults to
-            `None`)
-                The name of the content that will be stored in memory. If more
-                than one name is provided, the content will be stored in
-                memory as a dictionary in the content field. Otherwise, it will
-                be stored in memory as a string.
-            keys_to_content (`Union[str, Sequence[str]]`, defaults to
-            `None`)
-                The name of the content that will be returned in the reply
-                function. If more than one name is provided, the content
-                will be returned as a dictionary in the content field of the
-                return `Msg` object. Otherwise, it will be returned as a
-                string.
-            keys_to_metadata (`Union[str, Sequence[str]]`, defaults to `None`)
-                The name of the content that will be used to control the
-                application workflow.
+            keys_to_memory (`Optional[Union[str, bool, Sequence[str]]]`,
+            defaults to `True`):
+                The key or keys to be filtered in `to_memory` method. If
+                it's
+                - `False`, `None` will be returned in the `to_memory` method
+                - `str`, the corresponding value will be returned
+                - `List[str]`, a filtered dictionary will be returned
+                - `True`, the whole dictionary will be returned
+            keys_to_content (`Optional[Union[str, bool, Sequence[str]]`,
+            defaults to `True`):
+                The key or keys to be filtered in `to_content` method. If
+                it's
+                - `False`, `None` will be returned in the `to_content` method
+                - `str`, the corresponding value will be returned
+                - `List[str]`, a filtered dictionary will be returned
+                - `True`, the whole dictionary will be returned
+            keys_to_metadata (`Optional[Union[str, bool, Sequence[str]]`,
+            defaults to `False`):
+                The key or keys to be filtered in `to_metadata` method. If
+                it's
+                - `False`, `None` will be returned in the `to_metadata` method
+                - `str`, the corresponding value will be returned
+                - `List[str]`, a filtered dictionary will be returned
+                - `True`, the whole dictionary will be returned
         """
         # Initialize the mixin class
         DictFilterMixin.__init__(
