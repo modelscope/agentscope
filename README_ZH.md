@@ -28,6 +28,8 @@
 
 ## 新闻
 
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/> **[2024-05-14]** 亲爱的AgentScope用户，我们正在进行AgentScope Workstation & Copilot用户体验的调研活动，目前需要您宝贵的意见来帮助我们改善AgentScope的拖拽式多智能体应用开发与Copilot体验。您的每一个反馈都十分宝贵，调研需要大约3~5分钟。请您点击 [链接](https://survey.aliyun.com/apps/zhiliao/vgpTppn22) 参与问卷，十分感谢您的支持与贡献！
+
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-05-14]** AgentScope 现已支持 **gpt-4o** 等 OpenAI Vision 模型! 模型配置请见[链接](./examples/model_configs_template/openai_chat_template.json)。同时，新的样例“[与gpt-4o模型对话](./examples/conversation_with_gpt-4o)”已上线!
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-04-30]** 我们现在发布了**AgentScope** v0.0.4版本！
