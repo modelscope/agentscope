@@ -189,7 +189,7 @@ class MultiTaggedContentParser(ParserBase, DictFilterMixin):
                             f"{tagged_content.tag_begin} and "
                             f"{tagged_content.tag_end} should be a JSON "
                             f'object. An error "{e}" occurred when parsing: '
-                            f'{raw_response}',
+                            f"{raw_response}",
                             raw_response=raw_response,
                         ) from None
 
@@ -202,8 +202,8 @@ class MultiTaggedContentParser(ParserBase, DictFilterMixin):
                     and tagged_content.name in self.keys_allow_missing
                 ):
                     continue
-                else:
-                    raise e from None
+
+                raise e from None
 
         response.parsed = tag_to_content
         return response
