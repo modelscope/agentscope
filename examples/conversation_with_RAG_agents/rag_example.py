@@ -67,7 +67,7 @@ def main() -> None:
 
     # the knowledge bank can be configured by loading config file
     with open(
-        "configs/detailed_rag_config_example.json",
+        "configs/knowledge_config.json",
         "r",
         encoding="utf-8",
     ) as f:
