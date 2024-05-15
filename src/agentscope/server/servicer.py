@@ -21,7 +21,10 @@ except ImportError as import_error:
     grpc = ImportErrorReporter(import_error, "distribute")
     ServicerContext = ImportErrorReporter(import_error, "distribute")
     ExpiringDict = ImportErrorReporter(import_error, "distribute")
-    RpcMsg = ImportErrorReporter(import_error, "distribute")
+    RpcMsg = ImportErrorReporter(  # type: ignore[misc]
+        import_error,
+        "distribute",
+    )
     RpcAgentServicer = ImportErrorReporter(import_error, "distribute")
 
 from ..agents.agent import AgentBase
