@@ -95,6 +95,13 @@ class ModelResponseParserTest(unittest.TestCase):
             "${your_python_code}\n"
             "```"
         )
+        self.instruction_code_with_hint = (
+            "You should generate python code in a python fenced code block as "
+            "follows: \n"
+            "```python\n"
+            "abc\n"
+            "```"
+        )
         self.gt_code = """\nprint("Hello, world!")\n"""
 
     def test_markdownjsondictparser(self) -> None:
@@ -146,6 +153,22 @@ class ModelResponseParserTest(unittest.TestCase):
         parser = MarkdownCodeBlockParser(language_name="python")
 
         self.assertEqual(parser.format_instruction, self.instruction_code)
+
+        res = parser.parse(self.res_code)
+
+        self.assertEqual(res.parsed, self.gt_code)
+
+    def test_markdowncodeblockparser_with_hint(self) -> None:
+        """Test for MarkdownCodeBlockParser"""
+        parser = MarkdownCodeBlockParser(
+            language_name="python",
+            content_hint="abc",
+        )
+
+        self.assertEqual(
+            parser.format_instruction,
+            self.instruction_code_with_hint,
+        )
 
         res = parser.parse(self.res_code)
 
