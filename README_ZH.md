@@ -28,7 +28,9 @@
 
 ## 新闻
 
-- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/> **[2024-05-14]** 亲爱的AgentScope用户，我们正在进行AgentScope Workstation & Copilot用户体验的调研活动，目前需要您宝贵的意见来帮助我们改善AgentScope的拖拽式多智能体应用开发与Copilot体验。您的每一个反馈都十分宝贵，调研需要大约3~5分钟。请您点击 [链接](https://survey.aliyun.com/apps/zhiliao/vgpTppn22) 参与问卷，十分感谢您的支持与贡献！
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-05-15]** 用于解析模型格式化输出的**解析器**模块已经上线 AgentScope！更轻松的构建多智能体应用，使用方法请参考[教程](https://modelscope.github.io/agentscope/en/tutorial/203-parser.html)。与此同时，[`DictDialogAgent`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/agents/dict_dialog_agent.py) 类和 [狼人杀游戏](https://github.com/modelscope/agentscope/tree/main/examples/game_werewolf) 样例也已经同步更新！
+
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-05-14]** 目前 AgentScope 正在进行 AgentScope Workstation & Copilot 用户体验反馈活动，需要您宝贵的意见来帮助我们改善 AgentScope 的拖拽式多智能体应用开发与 Copilot 体验。您的每一个反馈都十分宝贵，请点击 [链接](https://survey.aliyun.com/apps/zhiliao/vgpTppn22) 参与问卷，感谢您的支持！
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-05-14]** AgentScope 现已支持 **gpt-4o** 等 OpenAI Vision 模型! 模型配置请见[链接](./examples/model_configs_template/openai_chat_template.json)。同时，新的样例“[与gpt-4o模型对话](./examples/conversation_with_gpt-4o)”已上线!
 
