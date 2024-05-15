@@ -208,12 +208,12 @@
 <ol class="arabic simple">
 <li><p>提供“响应格式说明”（format instruction），即提示 LLM 应该在什么位置产生什么输出，例如</p></li>
 </ol>
-<blockquote>
-<div><p>You should generate python code in a fenced code block as follows</p>
-<p>```python</p>
-<p>{your_python_code}</p>
-<p>```</p>
-</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>You should generate python code in a fenced code block as follows
+```python
+{your_python_code}
+```
+</pre></div>
+</div>
 <ol class="arabic simple" start="2">
 <li><p>提供解析函数（parse function），直接将 LLM 产生的文本解析成目标数据格式</p></li>
 <li><p>针对字典格式的后处理功能。在将文本解析成字典后，其中不同的字段可能有不同的用处</p></li>
@@ -252,46 +252,46 @@
 </section>
 <section id="str">
 <h3>字符串（<code class="docutils literal notranslate"><span class="pre">str</span></code>）类型<a class="headerlink" href="#str" title="Link to this heading"></a></h3>
-<details>
-<summary id="markdowncodeblockparser"> MarkdownCodeBlockParser </summary>
+<section id="markdowncodeblockparser">
+<h4>MarkdownCodeBlockParser<a class="headerlink" href="#markdowncodeblockparser" title="Link to this heading"></a></h4>
 <section id="id6">
-<h4>初始化<a class="headerlink" href="#id6" title="Link to this heading"></a></h4>
+<h5>初始化<a class="headerlink" href="#id6" title="Link to this heading"></a></h5>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">MarkdownCodeBlockParser</span></code>采用 Markdown 代码块的形式，要求 LLM 将指定文本产生到指定的代码块中。可以通过<code class="docutils literal notranslate"><span class="pre">language_name</span></code>参数指定不同的语言，从而利用大模型代码能力产生对应的输出。例如要求大模型产生 Python 代码时，初始化如下：</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">MarkdownCodeBlockParser</span>
 
-<span class="n">parser</span> <span class="o">=</span> <span class="n">MarkdownCodeBlockParser</span><span class="p">(</span><span class="n">language_name</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
+<span class="n">parser</span> <span class="o">=</span> <span class="n">MarkdownCodeBlockParser</span><span class="p">(</span><span class="n">language_name</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="n">content_hint</span><span class="o">=</span><span class="s2">&quot;your python code&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </li>
 </ul>
 </section>
 <section id="id7">
-<h4>响应格式模版<a class="headerlink" href="#id7" title="Link to this heading"></a></h4>
+<h5>响应格式模版<a class="headerlink" href="#id7" title="Link to this heading"></a></h5>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">MarkdownCodeBlockParser</span></code>类提供如下的“响应格式说明”模版，在用户调用<code class="docutils literal notranslate"><span class="pre">format_instruction</span></code>属性时，会将<code class="docutils literal notranslate"><span class="pre">{language_name}</span></code>替换为初始化时输入的字符串：</p>
-<blockquote>
-<div><p>You should generate {language_name} code in a {language_name} fenced code block as follows:</p>
-<p>```{language_name}</p>
-<p>${your_{language_name}_code}</p>
-<p>```</p>
-</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>You should generate {language_name} code in a {language_name} fenced code block as follows:
+```{language_name}
+{content_hint}
+```
+</pre></div>
+</div>
 </li>
 <li><p>例如上述对<code class="docutils literal notranslate"><span class="pre">language_name</span></code>为<code class="docutils literal notranslate"><span class="pre">&quot;python&quot;</span></code>的初始化，调用<code class="docutils literal notranslate"><span class="pre">format_instruction</span></code>属性时，会返回如下字符串：</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">format_instruction</span><span class="p">)</span>
 </pre></div>
 </div>
-<blockquote>
-<div><p>You should generate python code in a python fenced code block as follows</p>
-<p>```python</p>
-<p>${your_python_code}</p>
-<p>```</p>
-</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>You should generate python code in a python fenced code block as follows
+```python
+your python code
+```
+</pre></div>
+</div>
 </li>
 </ul>
 </section>
 <section id="id8">
-<h4>解析函数<a class="headerlink" href="#id8" title="Link to this heading"></a></h4>
+<h5>解析函数<a class="headerlink" href="#id8" title="Link to this heading"></a></h5>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">MarkdownCodeBlockParser</span></code>类提供<code class="docutils literal notranslate"><span class="pre">parse</span></code>方法，用于解析LLM产生的文本，返回的是字符串。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
@@ -307,12 +307,12 @@
 <span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">parsed</span><span class="p">)</span>
 </pre></div>
 </div>
-<blockquote>
-<div><p>print(“hello world!”)</p>
-</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;hello world!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 </li>
 </ul>
-</details>
+</section>
 </section>
 </section>
 <section id="dict">
@@ -432,19 +432,19 @@
   <span class="nb">print</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">to_metadata</span><span class="p">(</span><span class="n">example_dict</span><span class="p">))</span> <span class="c1"># None</span>
 </pre></div>
 </div>
-<blockquote>
-<div><p>def</p>
-<p>{“thought”: “abc”, “speak”: “def”}</p>
-<p>None</p>
-</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span>
+<span class="p">{</span><span class="s2">&quot;thought&quot;</span><span class="p">:</span> <span class="s2">&quot;abc&quot;</span><span class="p">,</span> <span class="s2">&quot;speak&quot;</span><span class="p">:</span> <span class="s2">&quot;def&quot;</span><span class="p">}</span>
+<span class="kc">None</span>
+</pre></div>
+</div>
 </li>
 </ul>
 </div></blockquote>
 <p>下面我们具体介绍两种字典类型的解析器。</p>
-<details>
-<summary id="markdownjsondictparser"> MarkdownJsonDictParser </summary>
+<section id="markdownjsondictparser">
+<h4>MarkdownJsonDictParser<a class="headerlink" href="#markdownjsondictparser" title="Link to this heading"></a></h4>
 <section id="id9">
-<h4>初始化 &amp; 响应格式模版<a class="headerlink" href="#id9" title="Link to this heading"></a></h4>
+<h5>初始化 &amp; 响应格式模版<a class="headerlink" href="#id9" title="Link to this heading"></a></h5>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser</span></code>要求 LLM 在 ```json 和 ``` 标识的代码块中产生指定内容的字典。</p></li>
 <li><p>除了<code class="docutils literal notranslate"><span class="pre">to_content</span></code>，<code class="docutils literal notranslate"><span class="pre">to_memory</span></code>和<code class="docutils literal notranslate"><span class="pre">to_metadata</span></code>参数外，可以通过提供 <code class="docutils literal notranslate"><span class="pre">content_hint</span></code> 参数提供响应结果样例和说明，即提示LLM应该产生什么样子的字典，该参数可以是字符串，也可以是字典，在构建响应格式提示的时候将会被自动转换成字符串进行拼接。</p>
@@ -469,21 +469,21 @@
 <ul class="simple">
 <li><p>对应的<code class="docutils literal notranslate"><span class="pre">instruction_format</span></code>属性</p></li>
 </ul>
-<blockquote>
-<div><p>You should respond a json object in a json fenced code block as follows:</p>
-<p>```json</p>
-<p>{content_hint}</p>
-<p>```</p>
-</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>You should respond a json object in a json fenced code block as follows:
+```json
+{content_hint}
+```
+</pre></div>
+</div>
 </li>
 </ul>
-</details>
-<details>
-<summary id="multitaggedcontentparser"> MultiTaggedContentParser </summary>
-<p><code class="docutils literal notranslate"><span class="pre">MultiTaggedContentParser</span></code>要求 LLM 在多个指定的标签对中产生指定的内容，这些不同标签的内容将一同被解析为一个 Python 字典。使用方法与<code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser</span></code>类似，只是初始化方法不同，更适合能力较弱的LLM，或是比较复杂的返回内容。</p>
 </section>
+</section>
+<section id="multitaggedcontentparser">
+<h4>MultiTaggedContentParser<a class="headerlink" href="#multitaggedcontentparser" title="Link to this heading"></a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">MultiTaggedContentParser</span></code>要求 LLM 在多个指定的标签对中产生指定的内容，这些不同标签的内容将一同被解析为一个 Python 字典。使用方法与<code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser</span></code>类似，只是初始化方法不同，更适合能力较弱的LLM，或是比较复杂的返回内容。</p>
 <section id="id10">
-<h4>初始化 &amp; 响应格式模版<a class="headerlink" href="#id10" title="Link to this heading"></a></h4>
+<h5>初始化 &amp; 响应格式模版<a class="headerlink" href="#id10" title="Link to this heading"></a></h5>
 <p><code class="docutils literal notranslate"><span class="pre">MultiTaggedContentParser</span></code>中，每一组标签将会以<code class="docutils literal notranslate"><span class="pre">TaggedContent</span></code>对象的形式传入，其中<code class="docutils literal notranslate"><span class="pre">TaggedContent</span></code>对象包含了</p>
 <ul class="simple">
 <li><p>标签名（<code class="docutils literal notranslate"><span class="pre">name</span></code>），即返回字典中的key值</p></li>
@@ -518,15 +518,15 @@
 <span class="nb">print</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">format_instruction</span><span class="p">)</span>
 </pre></div>
 </div>
-<blockquote>
-<div><p>Respond with specific tags as outlined below, and the content between [FINISH_DISCUSSION] and [/FINISH_DISCUSSION] MUST be a JSON object:</p>
-<p>[THOUGHT]what you thought[/THOUGHT]</p>
-<p>[SPEAK]what you speak[/SPEAK]</p>
-<p>[FINISH_DISCUSSION]true/false, whether the discussion is finished[/FINISH_DISCUSSION]</p>
-</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Respond</span> <span class="k">with</span> <span class="n">specific</span> <span class="n">tags</span> <span class="k">as</span> <span class="n">outlined</span> <span class="n">below</span><span class="p">,</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">content</span> <span class="n">between</span> <span class="p">[</span><span class="n">FINISH_DISCUSSION</span><span class="p">]</span> <span class="ow">and</span> <span class="p">[</span><span class="o">/</span><span class="n">FINISH_DISCUSSION</span><span class="p">]</span> <span class="n">MUST</span> <span class="n">be</span> <span class="n">a</span> <span class="n">JSON</span> <span class="nb">object</span><span class="p">:</span>
+<span class="p">[</span><span class="n">THOUGHT</span><span class="p">]</span><span class="n">what</span> <span class="n">you</span> <span class="n">thought</span><span class="p">[</span><span class="o">/</span><span class="n">THOUGHT</span><span class="p">]</span>
+<span class="p">[</span><span class="n">SPEAK</span><span class="p">]</span><span class="n">what</span> <span class="n">you</span> <span class="n">speak</span><span class="p">[</span><span class="o">/</span><span class="n">SPEAK</span><span class="p">]</span>
+<span class="p">[</span><span class="n">FINISH_DISCUSSION</span><span class="p">]</span><span class="n">true</span><span class="o">/</span><span class="n">false</span><span class="p">,</span> <span class="n">whether</span> <span class="n">the</span> <span class="n">discussion</span> <span class="ow">is</span> <span class="n">finished</span><span class="p">[</span><span class="o">/</span><span class="n">FINISH_DISCUSSION</span><span class="p">]</span>
+</pre></div>
+</div>
 </section>
 <section id="id11">
-<h4>解析函数<a class="headerlink" href="#id11" title="Link to this heading"></a></h4>
+<h5>解析函数<a class="headerlink" href="#id11" title="Link to this heading"></a></h5>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">MultiTaggedContentParser</span></code>的解析结果为字典，其中key为<code class="docutils literal notranslate"><span class="pre">TaggedContent</span></code>对象的<code class="docutils literal notranslate"><span class="pre">name</span></code>的值，以下是狼人杀中解析 LLM 返回的样例：</p></li>
 </ul>
@@ -542,23 +542,23 @@
 <span class="nb">print</span><span class="p">(</span><span class="n">res_dict</span><span class="p">)</span>
 </pre></div>
 </div>
-<blockquote>
-<div><p>{</p>
-<p>“thought”: “The others didn’t realize I was a werewolf. I should end the discussion soon.”,</p>
-<p>“speak”: “I agree with you.”,</p>
-<p>“finish_discussion”: true</p>
-<p>}</p>
-</div></blockquote>
-</details>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;thought&quot;</span><span class="p">:</span> <span class="s2">&quot;The others didn&#39;t realize I was a werewolf. I should end the discussion soon.&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;speak&quot;</span><span class="p">:</span> <span class="s2">&quot;I agree with you.&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;finish_discussion&quot;</span><span class="p">:</span> <span class="n">true</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
 </section>
 </section>
 <section id="json-python">
 <h3>JSON / Python 对象类型<a class="headerlink" href="#json-python" title="Link to this heading"></a></h3>
-<details>
-<summary id="markdownjsonobjectparser"> MarkdownJsonObjectParser </summary>
+<section id="markdownjsonobjectparser">
+<h4>MarkdownJsonObjectParser<a class="headerlink" href="#markdownjsonobjectparser" title="Link to this heading"></a></h4>
 <p><code class="docutils literal notranslate"><span class="pre">MarkdownJsonObjectParser</span></code>同样采用 Markdown 的```json和```标识，但是不限制解析的内容的类型，可以是列表，字典，数值，字符串等可以通过<code class="docutils literal notranslate"><span class="pre">json.loads</span></code>进行解析字符串。</p>
 <section id="id12">
-<h4>初始化 &amp; 响应格式模版<a class="headerlink" href="#id12" title="Link to this heading"></a></h4>
+<h5>初始化 &amp; 响应格式模版<a class="headerlink" href="#id12" title="Link to this heading"></a></h5>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">MarkdownJsonObjectParser</span>
 
 <span class="n">parser</span> <span class="o">=</span> <span class="n">MarkdownJsonObjectParser</span><span class="p">(</span>
@@ -568,15 +568,15 @@
 <span class="nb">print</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">format_instruction</span><span class="p">)</span>
 </pre></div>
 </div>
-<blockquote>
-<div><p>You should respond a json object in a json fenced code block as follows:</p>
-<p>```json</p>
-<p>{a list of numbers}</p>
-<p>```</p>
-</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>You should respond a json object in a json fenced code block as follows:
+```json
+{a list of numbers}
+```
+</pre></div>
+</div>
 </section>
 <section id="id13">
-<h4>解析函数<a class="headerlink" href="#id13" title="Link to this heading"></a></h4>
+<h5>解析函数<a class="headerlink" href="#id13" title="Link to this heading"></a></h5>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
     <span class="n">ModelResponse</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;Yes, here is the generated list</span>
 <span class="s2">```json</span>
@@ -590,11 +590,11 @@
 <span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
 </pre></div>
 </div>
-<blockquote>
-<div><p>&lt;class ‘list’&gt;</p>
-<p>[1, 2, 3, 4, 5]</p>
-</div></blockquote>
-</details>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;class &#39;list&#39;&gt;
+[1, 2, 3, 4, 5]
+</pre></div>
+</div>
+</section>
 </section>
 </section>
 </section>
