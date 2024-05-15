@@ -31,7 +31,9 @@ Welcome to join our community on
 
 ## News
 
-- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-05-14]** AgentScope supports **gpt-4o** as well as other OpenAI vision models now! Try gpt-4o with its [model configuration](https://github.com/modelscope/agentscope/blob/main/examples/model_configs_template/openai_chat_template.json) and new example [Conversation with gpt-4o](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_gpt-4o)!
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/> **[2024-05-14]** Dear AgentScope users, we are conducting a survey on **AgentScope Workstation & Copilot** user experience. We currently need your valuable feedback to help us improve the experience of AgentScope's Drag & Drop multi-agent application development and Copilot. Your feedback is valuable and the survey will take about 3~5 minutes. Please click [URL](https://survey.aliyun.com/apps/zhiliao/vgpTppn22) to participate in questionnaire surveys. Thank you very much for your support and contribution!
+
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-05-14]** AgentScope supports **gpt-4o** as well as other OpenAI vision models now! Try gpt-4o with its [model configuration](./examples/model_configs_template/openai_chat_template.json) and new example [Conversation with gpt-4o](./examples/conversation_with_gpt-4o)!
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-04-30]** We release **AgentScope** v0.0.4 now!
 
@@ -122,14 +124,15 @@ the following libraries.
   - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Using Llama3 in AgentScope](https://github.com/modelscope/agentscope/blob/main/examples/model_llama3)
 
 - Conversation
-  - [Basic Conversation](https://github.com/modelscope/agentscope/blob/main/examples/conversation_basic)
-  - [Autonomous Conversation with Mentions](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_mentions)
-  - [Self-Organizing Conversation](https://github.com/modelscope/agentscope/blob/main/examples/conversation_self_organizing)
-  - [Basic Conversation with LangChain library](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_langchain)
-  - [Conversation with ReAct Agent](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_react_agent)
-  - [Conversation in Natural Language to Query SQL](https://github.com/modelscope/agentscope/blob/main/examples/conversation_nl2sql/)
-  - [Conversation with RAG Agent](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_RAG_agents)
-  - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Conversation with gpt-4o](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_gpt-4o)
+  - [Basic Conversation](./examples/conversation_basic)
+  - [Autonomous Conversation with Mentions](./examples/conversation_with_mentions)
+  - [Self-Organizing Conversation](./examples/conversation_self_organizing)
+  - [Basic Conversation with LangChain library](./examples/conversation_with_langchain)
+  - [Conversation with ReAct Agent](./examples/conversation_with_react_agent)
+  - [Conversation in Natural Language to Query SQL](./examples/conversation_nl2sql/)
+  - [Conversation with RAG Agent](./examples/conversation_with_RAG_agents)
+  - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Conversation with gpt-4o](./examples/conversation_with_gpt-4o)
+  - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Conversation with Software Engineering Agent](./examples/swe_agent/)
 
 - Game
   - [Gomoku](https://github.com/modelscope/agentscope/blob/main/examples/game_gomoku)
