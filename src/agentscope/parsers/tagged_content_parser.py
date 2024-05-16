@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 """The parser for tagged content in the model response."""
 import json
+from typing import Union, Sequence, Optional, List
 
-from agentscope.exception import JsonParsingError
+from agentscope.exception import JsonParsingError, TagNotFoundError
 from agentscope.models import ModelResponse
 from agentscope.parsers import ParserBase
+from agentscope.parsers.parser_base import DictFilterMixin
 
 
 class TaggedContent:
@@ -12,7 +14,8 @@ class TaggedContent:
     and tag end."""
 
     name: str
-    """The name of the tagged content."""
+    """The name of the tagged content, which will be used as the key in
+    extracted dictionary."""
 
     tag_begin: str
     """The beginning tag."""
@@ -60,7 +63,7 @@ class TaggedContent:
         return f"{self.tag_begin}{self.content_hint}{self.tag_end}"
 
 
-class MultiTaggedContentParser(ParserBase):
+class MultiTaggedContentParser(ParserBase, DictFilterMixin):
     """Parse response text by multiple tags, and return a dict of their
     content. Asking llm to generate JSON dictionary object directly maybe not a
     good idea due to involving escape characters and other issues. So we can
@@ -79,14 +82,60 @@ class MultiTaggedContentParser(ParserBase):
     equals to `True`, this instruction will be used to remind the model to
     generate JSON object."""
 
-    def __init__(self, *tagged_contents: TaggedContent) -> None:
+    def __init__(
+        self,
+        *tagged_contents: TaggedContent,
+        keys_to_memory: Optional[Union[str, bool, Sequence[str]]] = True,
+        keys_to_content: Optional[Union[str, bool, Sequence[str]]] = True,
+        keys_to_metadata: Optional[Union[str, bool, Sequence[str]]] = False,
+        keys_allow_missing: Optional[List[str]] = None,
+    ) -> None:
         """Initialize the parser with tags.
 
         Args:
-            tags (`dict[str, Tuple[str, str]]`):
-                A dictionary of tags, the key is the tag name, and the value is
-                a tuple of starting tag and end tag.
+            *tagged_contents (`dict[str, Tuple[str, str]]`):
+                Multiple TaggedContent objects, each object contains the tag
+                name, tag begin, content hint and tag end. The name will be
+                used as the key in the extracted dictionary.
+            required_keys (`Optional[List[str]]`, defaults to `None`):
+                A list of required
+            keys_to_memory (`Optional[Union[str, bool, Sequence[str]]]`,
+            defaults to `True`):
+                The key or keys to be filtered in `to_memory` method. If
+                it's
+                - `False`, `None` will be returned in the `to_memory` method
+                - `str`, the corresponding value will be returned
+                - `List[str]`, a filtered dictionary will be returned
+                - `True`, the whole dictionary will be returned
+            keys_to_content (`Optional[Union[str, bool, Sequence[str]]`,
+            defaults to `True`):
+                The key or keys to be filtered in `to_content` method. If
+                it's
+                - `False`, `None` will be returned in the `to_content` method
+                - `str`, the corresponding value will be returned
+                - `List[str]`, a filtered dictionary will be returned
+                - `True`, the whole dictionary will be returned
+            keys_to_metadata (`Optional[Union[str, bool, Sequence[str]]]`,
+            defaults to `False`):
+                The key or keys to be filtered in `to_metadata` method. If
+                it's
+                - `False`, `None` will be returned in the `to_metadata` method
+                - `str`, the corresponding value will be returned
+                - `List[str]`, a filtered dictionary will be returned
+                - `True`, the whole dictionary will be returned
+            keys_allow_missing (`Optional[List[str]]`, defaults to `None`):
+                A list of keys that are allowed to be missing in the response.
         """
+        # Initialize the mixin class
+        DictFilterMixin.__init__(
+            self,
+            keys_to_memory=keys_to_memory,
+            keys_to_content=keys_to_content,
+            keys_to_metadata=keys_to_metadata,
+        )
+
+        self.keys_allow_missing = keys_allow_missing
+
         self.tagged_contents = list(tagged_contents)
 
         # Prepare the format instruction according to the tagged contents
@@ -123,26 +172,38 @@ class MultiTaggedContentParser(ParserBase):
             tag_begin = tagged_content.tag_begin
             tag_end = tagged_content.tag_end
 
-            extract_content = self._extract_first_content_by_tag(
-                response,
-                tag_begin,
-                tag_end,
-            )
+            try:
+                extract_content = self._extract_first_content_by_tag(
+                    response,
+                    tag_begin,
+                    tag_end,
+                )
 
-            if tagged_content.parse_json:
-                try:
-                    extract_content = json.loads(extract_content)
-                except json.decoder.JSONDecodeError as e:
-                    raw_response = f"{tag_begin}{extract_content}{tag_end}"
-                    raise JsonParsingError(
-                        f"The content between {tagged_content.tag_begin} and "
-                        f"{tagged_content.tag_end} should be a JSON object."
-                        f'When parsing "{raw_response}", an error occurred: '
-                        f"{e}",
-                        raw_response=raw_response,
-                    ) from None
+                if tagged_content.parse_json:
+                    try:
+                        extract_content = json.loads(extract_content)
+                    except json.decoder.JSONDecodeError as e:
+                        raw_response = f"{tag_begin}{extract_content}{tag_end}"
+                        raise JsonParsingError(
+                            f"The content between "
+                            f"{tagged_content.tag_begin} and "
+                            f"{tagged_content.tag_end} should be a JSON "
+                            f'object. An error "{e}" occurred when parsing: '
+                            f"{raw_response}",
+                            raw_response=raw_response,
+                        ) from None
 
-            tag_to_content[tagged_content.name] = extract_content
+                tag_to_content[tagged_content.name] = extract_content
+
+            except TagNotFoundError as e:
+                # if the key is allowed to be missing, skip the error
+                if (
+                    self.keys_allow_missing is not None
+                    and tagged_content.name in self.keys_allow_missing
+                ):
+                    continue
+
+                raise e from None
 
         response.parsed = tag_to_content
         return response

@@ -826,6 +826,7 @@ NODE_NAME_MAPPING = {
     "dashscope_chat": ModelNode,
     "openai_chat": ModelNode,
     "post_api_chat": ModelNode,
+    "post_api_dall_e": ModelNode,
     "Message": MsgNode,
     "DialogAgent": DialogAgentNode,
     "UserAgent": UserAgentNode,
