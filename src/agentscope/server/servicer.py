@@ -36,7 +36,7 @@ from ..message import (
 
 
 class AgentServerServicer(RpcAgentServicer):
-    """A Servicer for agent to run on (formerly RpcServerSideWrapper)"""
+    """A Servicer for RPC Agent Server (formerly RpcServerSideWrapper)"""
 
     def __init__(
         self,

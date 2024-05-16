@@ -3,11 +3,10 @@
 import os
 from multiprocessing import Process, Event, Pipe
 from multiprocessing.synchronize import Event as EventClass
-import socket
 import asyncio
 import signal
 import argparse
-from typing import Type, Optional
+from typing import Type
 from concurrent import futures
 from loguru import logger
 
@@ -28,10 +27,13 @@ except ImportError as import_error:
 import agentscope
 from agentscope.server.servicer import AgentServerServicer
 from agentscope.agents.agent import AgentBase
-from agentscope.utils.tools import _get_timestamp
+from agentscope.utils.tools import (
+    _get_timestamp,
+    check_port,
+)
 
 
-def setup_agent_server(
+def _setup_agent_server(
     host: str,
     port: int,
     server_id: str,
@@ -73,7 +75,7 @@ def setup_agent_server(
             A list of custom agent classes that are not in `agentscope.agents`.
     """
     asyncio.run(
-        setup_agent_server_async(
+        _setup_agent_server_async(
             host=host,
             port=port,
             server_id=server_id,
@@ -89,7 +91,7 @@ def setup_agent_server(
     )
 
 
-async def setup_agent_server_async(
+async def _setup_agent_server_async(
     host: str,
     port: int,
     server_id: str,
@@ -198,42 +200,6 @@ async def setup_agent_server_async(
     )
 
 
-def find_available_port() -> int:
-    """Get an unoccupied socket port number."""
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind(("", 0))
-        return s.getsockname()[1]
-
-
-def check_port(port: Optional[int] = None) -> int:
-    """Check if the port is available.
-
-    Args:
-        port (`int`):
-            the port number being checked.
-
-    Returns:
-        `int`: the port number that passed the check. If the port is found
-        to be occupied, an available port number will be automatically
-        returned.
-    """
-    if port is None:
-        new_port = find_available_port()
-        logger.warning(
-            "agent server port is not provided, automatically select "
-            f"[{new_port}] as the port number.",
-        )
-        return new_port
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        if s.connect_ex(("localhost", port)) == 0:
-            new_port = find_available_port()
-            logger.warning(
-                f"Port [{port}] is occupied, use [{new_port}] instead",
-            )
-            return new_port
-    return port
-
-
 class RpcAgentServerLauncher:
     """The launcher of AgentServer."""
 
@@ -309,7 +275,7 @@ class RpcAgentServerLauncher:
             f"Launching agent server at [{self.host}:{self.port}]...",
         )
         asyncio.run(
-            setup_agent_server_async(
+            _setup_agent_server_async(
                 host=self.host,
                 port=self.port,
                 server_id=self.server_id,
@@ -328,7 +294,7 @@ class RpcAgentServerLauncher:
         self.parent_con, child_con = Pipe()
         start_event = Event()
         server_process = Process(
-            target=setup_agent_server,
+            target=_setup_agent_server,
             kwargs={
                 "host": self.host,
                 "port": self.port,
