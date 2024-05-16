@@ -50,6 +50,7 @@ class KnowledgeBank:
     def _init_knowledge(self) -> None:
         """initialize the knowledge bank"""
         for config in self.configs:
+            print("bank", config)
             self.add_data_as_knowledge(
                 knowledge_id=config["knowledge_id"],
                 emb_model_name=config["emb_model_config_name"],
@@ -116,10 +117,10 @@ class KnowledgeBank:
         self.stored_knowledge[knowledge_id] = LlamaIndexKnowledge(
             knowledge_id=knowledge_id,
             emb_model=load_model_by_config_name(emb_model_name),
+            knowledge_config=knowledge_config,
             model=load_model_by_config_name(model_name)
             if model_name
             else None,
-            index_config=knowledge_config,
         )
         logger.info(f"data loaded for knowledge_id = {knowledge_id}.")
 
@@ -167,5 +168,6 @@ class KnowledgeBank:
                     knowledge_id=rid,
                     duplicate=duplicate,
                 )
+                knowledge.set_retriever(agent.rag_config)
                 agent.knowledge_list.append(knowledge)
                 agent.retriever_list.append(knowledge.retriever)
