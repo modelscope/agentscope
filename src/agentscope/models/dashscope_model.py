@@ -11,7 +11,7 @@ from ..utils.tools import _convert_to_str, _guess_type_by_extension
 
 try:
     import dashscope
-except ModuleNotFoundError:
+except ImportError:
     dashscope = None
 
 from .model import ModelWrapperBase, ModelResponse

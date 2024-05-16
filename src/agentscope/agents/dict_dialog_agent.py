@@ -1,59 +1,18 @@
 # -*- coding: utf-8 -*-
-"""A dict dialog agent that using `parse_func` and `fault_handler` to
-parse the model response."""
-import json
-from typing import Any, Optional, Callable
-from loguru import logger
+"""An agent that replies in a dictionary format."""
+from typing import Optional
 
 from ..message import Msg
 from .agent import AgentBase
-from ..models import ModelResponse
-from ..prompt import PromptType
-from ..utils.tools import _convert_to_str
-
-
-def parse_dict(response: ModelResponse) -> ModelResponse:
-    """Parse function for DictDialogAgent"""
-    try:
-        if response.text is not None:
-            response_dict = json.loads(response.text)
-        else:
-            raise ValueError(
-                f"The text field of the response s None: {response}",
-            )
-    except json.decoder.JSONDecodeError:
-        # Sometimes LLM may return a response with single quotes, which is not
-        # a valid JSON format. We replace single quotes with double quotes and
-        # try to load it again.
-        # TODO: maybe using a more robust json library to handle this case
-        response_dict = json.loads(response.text.replace("'", '"'))
-
-    return ModelResponse(raw=response_dict)
-
-
-def default_response(response: ModelResponse) -> ModelResponse:
-    """The default response of fault_handler"""
-    return ModelResponse(raw={"speak": response.text})
+from ..parsers import ParserBase
 
 
 class DictDialogAgent(AgentBase):
     """An agent that generates response in a dict format, where user can
-    specify the required fields in the response via prompt, e.g.
+    specify the required fields in the response via specifying the parser
 
-    .. code-block:: python
-
-        prompt = "... Response in the following format that can be loaded by
-        python json.loads()
-        {
-            "thought": "thought",
-            "speak": "thoughts summary to say to others",
-            # ...
-        }"
-
-    This agent class is an example for using `parse_func` and `fault_handler`
-    to parse the output from the model, and handling the fault when parsing
-    fails. We take "speak" as a required field in the response, and print
-    the speak field as the output response.
+    About parser, please refer to our
+    [tutorial](https://modelscope.github.io/agentscope/en/tutorial/203-parser.html)
 
     For usage example, please refer to the example of werewolf in
     `examples/game_werewolf`"""
@@ -65,10 +24,7 @@ class DictDialogAgent(AgentBase):
         model_config_name: str,
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
-        parse_func: Optional[Callable[..., Any]] = parse_dict,
-        fault_handler: Optional[Callable[..., Any]] = default_response,
         max_retries: Optional[int] = 3,
-        prompt_type: Optional[PromptType] = None,
     ) -> None:
         """Initialize the dict dialog agent.
 
@@ -85,19 +41,9 @@ class DictDialogAgent(AgentBase):
                 Whether the agent has memory.
             memory_config (`Optional[dict]`, defaults to `None`):
                 The config of memory.
-            parse_func (`Optional[Callable[..., Any]]`, defaults to `parse_dict`):
-                The function used to parse the model output,
-                e.g. `json.loads`, which is used to extract json from the
-                output.
-            fault_handler (`Optional[Callable[..., Any]]`, defaults to `default_response`):
-                The function used to handle the fault when parse_func fails
-                to parse the model output.
             max_retries (`Optional[int]`, defaults to `None`):
                 The maximum number of retries when failed to parse the model
                 output.
-            prompt_type (`Optional[PromptType]`, defaults to `PromptType.LIST`):
-                The type of the prompt organization, chosen from
-                `PromptType.LIST` or `PromptType.STRING`.
         """  # noqa
         super().__init__(
             name=name,
@@ -107,18 +53,17 @@ class DictDialogAgent(AgentBase):
             memory_config=memory_config,
         )
 
-        # record the func and handler for parsing and handling faults
-        self.parse_func = parse_func
-        self.fault_handler = fault_handler
+        self.parser = None
         self.max_retries = max_retries
 
-        if prompt_type is not None:
-            logger.warning(
-                "The argument `prompt_type` is deprecated and "
-                "will be removed in the future.",
-            )
+    def set_parser(self, parser: ParserBase) -> None:
+        """Set response parser, which will provide 1) format instruction; 2)
+        response parsing; 3) filtering fields when returning message, storing
+        message in memory. So developers only need to change the
+        parser, and the agent will work as expected.
+        """
+        self.parser = parser
 
-    # TODO change typing from dict to MSG
     def reply(self, x: dict = None) -> dict:
         """Reply function of the agent.
         Processes the input data, generates a prompt using the current
@@ -151,42 +96,29 @@ class DictDialogAgent(AgentBase):
             self.memory
             and self.memory.get_memory()
             or x,  # type: ignore[arg-type]
+            Msg("system", self.parser.format_instruction, "system"),
         )
 
         # call llm
-        response = self.model(
+        res = self.model(
             prompt,
-            parse_func=self.parse_func,
-            fault_handler=self.fault_handler,
+            parse_func=self.parser.parse,
             max_retries=self.max_retries,
-        ).raw
+        )
 
-        # logging raw messages in debug mode
-        logger.debug(json.dumps(response, indent=4, ensure_ascii=False))
+        # Filter the parsed response by keys for storing in memory, returning
+        # in the reply function, and feeding into the metadata field in the
+        # returned message object.
+        self.memory.add(
+            Msg(self.name, self.parser.to_memory(res.parsed), "assistant"),
+        )
 
-        # In this agent, if the response is a dict, we treat "speak" as a
-        # special key, which represents the text to be spoken
-        if isinstance(response, dict) and "speak" in response:
-            msg = Msg(
-                self.name,
-                response["speak"],
-                role="assistant",
-                **response,
-            )
-        else:
-            msg = Msg(self.name, response, role="assistant")
-
-        # Print/speak the message in this agent's voice
+        msg = Msg(
+            self.name,
+            content=self.parser.to_content(res.parsed),
+            role="assistant",
+            metadata=self.parser.to_metadata(res.parsed),
+        )
         self.speak(msg)
-
-        # record to memory
-        if self.memory:
-            # Convert the response dict into a string to store in memory
-            msg_memory = Msg(
-                name=self.name,
-                content=_convert_to_str(response),
-                role="assistant",
-            )
-            self.memory.add(msg_memory)
 
         return msg

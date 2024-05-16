@@ -28,6 +28,12 @@
 
 ## 新闻
 
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-05-15]** 用于解析模型格式化输出的**解析器**模块已经上线 AgentScope！更轻松的构建多智能体应用，使用方法请参考[教程](https://modelscope.github.io/agentscope/en/tutorial/203-parser.html)。与此同时，[`DictDialogAgent`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/agents/dict_dialog_agent.py) 类和 [狼人杀游戏](https://github.com/modelscope/agentscope/tree/main/examples/game_werewolf) 样例也已经同步更新！
+
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-05-14]** 目前 AgentScope 正在进行 AgentScope Workstation & Copilot 用户体验反馈活动，需要您宝贵的意见来帮助我们改善 AgentScope 的拖拽式多智能体应用开发与 Copilot 体验。您的每一个反馈都十分宝贵，请点击 [链接](https://survey.aliyun.com/apps/zhiliao/vgpTppn22) 参与问卷，感谢您的支持！
+
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-05-14]** AgentScope 现已支持 **gpt-4o** 等 OpenAI Vision 模型! 模型配置请见[链接](./examples/model_configs_template/openai_chat_template.json)。同时，新的样例“[与gpt-4o模型对话](./examples/conversation_with_gpt-4o)”已上线!
+
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-04-30]** 我们现在发布了**AgentScope** v0.0.4版本！
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-04-27]** [AgentScope Workstation](https://agentscope.aliyun.com/)上线了！ 欢迎使用 Workstation 体验如何在*拖拉拽编程平台* 零代码搭建多智体应用，也欢迎大家通过*copilot*查询AgentScope各种小知识！
@@ -66,7 +72,7 @@ AgentScope提供了一系列`ModelWrapper`来支持本地模型服务和第三�
 
 | API                    | Task            | Model Wrapper                                                                                                                   | Configuration                                                                      | Some Supported Models                         |
 |------------------------|-----------------|---------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|-----------------------------------------------|
-| OpenAI API             | Chat            | [`OpenAIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)                 |[guidance](https://modelscope.github.io/agentscope/en/tutorial/203-model.html#openai-api)  <br> [template](https://github.com/modelscope/agentscope/blob/main/examples/model_configs_template/openai_chat_template.json)       | gpt-4, gpt-3.5-turbo, ...                     |
+| OpenAI API             | Chat            | [`OpenAIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)                 |[guidance](https://modelscope.github.io/agentscope/en/tutorial/203-model.html#openai-api)  <br> [template](https://github.com/modelscope/agentscope/blob/main/examples/model_configs_template/openai_chat_template.json)       | gpt-4o, gpt-4, gpt-3.5-turbo, ...                     |
 |                        | Embedding       | [`OpenAIEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)            | [guidance](https://modelscope.github.io/agentscope/en/tutorial/203-model.html#openai-api) <br> [template](https://github.com/modelscope/agentscope/blob/main/examples/model_configs_template/openai_embedding_template.json)       | text-embedding-ada-002, ...                   |
 |                        | DALL·E          | [`OpenAIDALLEWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)                | [guidance](https://modelscope.github.io/agentscope/en/tutorial/203-model.html#openai-api) <br> [template](https://github.com/modelscope/agentscope/blob/main/examples/model_configs_template/openai_dall_e_template.json)       | dall-e-2, dall-e-3                            |
 | DashScope API          | Chat            | [`DashScopeChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py)           | [guidance](https://modelscope.github.io/agentscope/en/tutorial/203-model.html#dashscope-api) <br> [template](https://github.com/modelscope/agentscope/blob/main/examples/model_configs_template/dashscope_chat_template.json)    | qwen-plus, qwen-max, ...                      |
@@ -115,7 +121,10 @@ AgentScope支持使用以下库快速部署本地模型服务。
   - [与ReAct智能体对话](./examples/conversation_with_react_agent)
   - [通过对话查询SQL信息](./examples/conversation_nl2sql/)
   - [与RAG智能体对话](./examples/conversation_with_RAG_agents)
-  - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[与自定义服务对话](./examples/conversation_with_customized_services/)
+  - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[与gpt-4o模型对话](./examples/conversation_with_gpt-4o)
+  - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[与SoftWare Engineering智能体对话](./examples/swe_agent/)
+  - - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[与自定义服务对话](./examples/conversation_with_customized_services/)
+
 
 - 游戏
   - [五子棋](./examples/game_gomoku)

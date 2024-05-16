@@ -136,6 +136,8 @@ class ReActAgent(AgentBase):
                 "function": service_toolkit.tools_calling_format,
             },
             required_keys=["thought", "speak", "function"],
+            # Only print the speak field when verbose is False
+            keys_to_content=True if self.verbose else "speak",
         )
 
     def reply(self, x: dict = None) -> dict:
@@ -155,9 +157,8 @@ class ReActAgent(AgentBase):
                 "system",
                 self.parser.format_instruction,
                 role="system",
+                echo=self.verbose,
             )
-            if self.verbose:
-                self.speak(hint_msg)
 
             # Prepare prompt for the model
             prompt = self.model.format(self.memory.get_memory(), hint_msg)
@@ -171,16 +172,21 @@ class ReActAgent(AgentBase):
                 )
 
                 # Record the response in memory
-                msg_response = Msg(self.name, res.text, "assistant")
-                self.memory.add(msg_response)
+                self.memory.add(
+                    Msg(
+                        self.name,
+                        self.parser.to_memory(res.parsed),
+                        "assistant",
+                    ),
+                )
 
                 # Print out the response
-                if self.verbose:
-                    self.speak(msg_response)
-                else:
-                    self.speak(
-                        Msg(self.name, res.parsed["speak"], "assistant"),
-                    )
+                msg_returned = Msg(
+                    self.name,
+                    self.parser.to_content(res.parsed),
+                    "assistant",
+                )
+                self.speak(msg_returned)
 
                 # Skip the next steps if no need to call tools
                 # The parsed field is a dictionary
@@ -192,7 +198,7 @@ class ReActAgent(AgentBase):
                     and len(arg_function) == 0
                 ):
                     # Only the speak field is exposed to users or other agents
-                    return Msg(self.name, res.parsed["speak"], "assistant")
+                    return msg_returned
 
             # Only catch the response parsing error and expose runtime
             # errors to developers for debugging
@@ -244,9 +250,8 @@ class ReActAgent(AgentBase):
             "iterations. Now generate a reply by summarizing the current "
             "situation.",
             role="system",
+            echo=self.verbose,
         )
-        if self.verbose:
-            self.speak(hint_msg)
 
         # Generate a reply by summarizing the current situation
         prompt = self.model.format(self.memory.get_memory(), hint_msg)
