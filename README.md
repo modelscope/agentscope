@@ -135,6 +135,7 @@ the following libraries.
   - [Conversation with RAG Agent](./examples/conversation_with_RAG_agents)
   - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Conversation with gpt-4o](./examples/conversation_with_gpt-4o)
   - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Conversation with Software Engineering Agent](./examples/swe_agent/)
+  - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Conversation with Customized Services](./examples/conversation_with_customized_services/)
 
 
 - Game
