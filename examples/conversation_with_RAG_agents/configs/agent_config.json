@@ -41,7 +41,7 @@
       "emb_model_config_name": "qwen_emb_config",
       "rag_config": {
           "knowledge_id": ["agentscope_api_rag"],
-          "similarity_top_k": 3,
+          "similarity_top_k": 2,
           "log_retrieval": true,
           "recent_n_mem": 1
       }
@@ -68,7 +68,6 @@
     "class": "DialogAgent",
     "args": {
       "name": "Agent-Guiding-Assistant",
-      "description": "Agent-Guiding-Assistant is an agent that decide which agent should provide the answer next. It can answer questions about specific functions and classes in AgentScope.",
       "sys_prompt": "You're an assistant guiding the user to specific agent for help. The answer is in a cheerful styled language. The output starts with appreciation for the question. Next, rephrase the question in a simple declarative Sentence for example, 'I think you are asking...'. Last, if the question is about detailed code or example in AgentScope Framework, output '@ Code-Search-Assistant you might be suitable for answering the question'; if the question is about API or function calls (Example: 'Is there function related...' or 'how can I initialize ...' ) in AgentScope, output '@ API-Assistant, I think you are more suitable for the question, please tell us more about it'; if question is about where to find some context (Example:'where can I find...'), output '@ Searching-Assistant, we need your help', otherwise, output '@ Tutorial-Assistant, I think you are more suitable for the question, can you tell us more about it?'. The answer is expected to be only one sentence",
       "model_config_name": "qwen_config",
       "use_memory": false

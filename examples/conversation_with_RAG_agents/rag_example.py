@@ -9,7 +9,7 @@ import os
 from groupchat_utils import filter_agents
 
 import agentscope
-from agentscope.agents import UserAgent, DialogAgent, LlamaIndexAgent
+from agentscope.agents import UserAgent
 from agentscope.rag import KnowledgeBank
 
 
@@ -56,14 +56,23 @@ def main() -> None:
     # for internal API
     for config in model_configs:
         if config.get("model_type", "") == "post_api_chat":
-            # for gpt4 API
             config["headers"]["Authorization"] = (
                 "Bearer " + f"{os.environ.get('HTTP_LLM_API_KEY')}"
             )
         else:
             # for dashscope
             config["api_key"] = f"{os.environ.get('DASHSCOPE_API_KEY')}"
-    agentscope.init(model_configs=model_configs)
+
+    # load config of the agents
+    with open("configs/agent_config.json", "r", encoding="utf-8") as f:
+        agent_configs = json.load(f)
+
+    agent_list = agentscope.init(
+        model_configs=model_configs,
+        agent_configs=agent_configs,
+    )
+    rag_agent_list = agent_list[:4]
+    guide_agent = agent_list[4]
 
     # the knowledge bank can be configured by loading config file
     with open(
@@ -75,7 +84,7 @@ def main() -> None:
     knowledge_bank = KnowledgeBank(configs=knowledge_configs)
 
     # alternatively, we can easily input the configs to add data to RAG
-    knowledge_bank.add_data_for_rag(
+    knowledge_bank.add_data_as_knowledge(
         knowledge_id="agentscope_tutorial_rag",
         emb_model_name="qwen_emb_config",
         data_dirs_and_types={
@@ -83,37 +92,13 @@ def main() -> None:
         },
     )
 
-    # with knowledge bank loaded with RAGs, we config the agents
-    with open("configs/agent_config.json", "r", encoding="utf-8") as f:
-        agent_configs = json.load(f)
+    # let knowledgebank to equip rag agent with a (set of) knowledge
+    for agent in rag_agent_list:
+        knowledge_bank.equip(agent)
 
-    # define RAG-based agents for tutorial, code, API and general search
-    tutorial_agent = LlamaIndexAgent(
-        knowledge_bank=knowledge_bank,
-        **agent_configs[0]["args"],
-    )
-    code_explain_agent = LlamaIndexAgent(
-        knowledge_bank=knowledge_bank,
-        **agent_configs[1]["args"],
-    )
-    api_agent = LlamaIndexAgent(
-        knowledge_bank=knowledge_bank,
-        **agent_configs[2]["args"],
-    )
-    searching_agent = LlamaIndexAgent(
-        knowledge_bank=knowledge_bank,
-        **agent_configs[3]["args"],
-    )
-
-    rag_agent_list = [
-        tutorial_agent,
-        code_explain_agent,
-        api_agent,
-        searching_agent,
-    ]
     rag_agent_names = [agent.name for agent in rag_agent_list]
 
-    # define a guide agent
+    # update guide agent system prompt with the descriptions of rag agents
     rag_agent_descriptions = [
         "agent name: "
         + agent.name
@@ -122,14 +107,13 @@ def main() -> None:
         + "\n"
         for agent in rag_agent_list
     ]
-    agent_configs[4]["args"].pop("description")
-    agent_configs[4]["args"]["sys_prompt"] = agent_configs[4]["args"][
-        "sys_prompt"
-    ] + AGENT_CHOICE_PROMPT.format(
-        "".join(rag_agent_descriptions),
-    )
 
-    guide_agent = DialogAgent(**agent_configs[4]["args"])
+    guide_agent.sys_prompt = (
+        guide_agent.sys_prompt
+        + AGENT_CHOICE_PROMPT.format(
+            "".join(rag_agent_descriptions),
+        )
+    )
 
     user_agent = UserAgent()
     while True:

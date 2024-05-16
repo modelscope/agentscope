@@ -23,24 +23,34 @@ DEFAULT_CHUNK_OVERLAP = 20
 DEFAULT_TOP_K = 5
 
 
-class RAGBase(ABC):
+class Knowledge(ABC):
     """
     Base class for RAG, CANNOT be instantiated directly
     """
 
     def __init__(
         self,
-        model: Optional[ModelWrapperBase] = None,
+        knowledge_id: str,
         emb_model: Any = None,
-        index_config: Optional[dict] = None,
-        rag_config: Optional[dict] = None,
+        knowledge_config: Optional[dict] = None,
+        model: Optional[ModelWrapperBase] = None,
         **kwargs: Any,
     ) -> None:
         # pylint: disable=unused-argument
-        self.postprocessing_model = model
+        """
+        initialize the knowledge component
+        Args:
+        knowledge_id (str):
+            The id of the knowledge unit.
+        emb_model (ModelWrapperBase):
+            The embedding model used for generate embeddings
+        knowledge_config (dict):
+            The configuration to generate or load the index.
+        """
+        self.knowledge_id = knowledge_id
         self.emb_model = emb_model
-        self.index_config = index_config or {}
-        self.rag_config = rag_config or {}
+        self.knowledge_config = knowledge_config or {}
+        self.postprocessing_model = model
 
     @abstractmethod
     def _init_rag(
@@ -68,7 +78,7 @@ class RAGBase(ABC):
         """
 
     @abstractmethod
-    def _set_retriever(self, **kwargs: Any) -> None:
+    def set_retriever(self, **kwargs: Any) -> None:
         """update retriever of RAG module"""
 
     def post_processing(

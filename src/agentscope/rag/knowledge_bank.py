@@ -6,7 +6,9 @@ import copy
 from typing import Optional
 from loguru import logger
 from agentscope.models import load_model_by_config_name
-from .llama_index_rag import LlamaIndexRAG
+from agentscope.agents import AgentBase
+from .llama_index_knowledge import LlamaIndexKnowledge
+
 
 DEFAULT_INDEX_CONFIG = {
     "knowledge_id": "",
@@ -42,26 +44,27 @@ class KnowledgeBank:
     ) -> None:
         """initialize the knowledge bank"""
         self.configs = configs
-        self.stored_knowledge: dict[str, LlamaIndexRAG] = {}
+        self.stored_knowledge: dict[str, LlamaIndexKnowledge] = {}
         self._init_knowledge()
 
     def _init_knowledge(self) -> None:
         """initialize the knowledge bank"""
         for config in self.configs:
-            self.add_data_for_rag(
+            print("bank", config)
+            self.add_data_as_knowledge(
                 knowledge_id=config["knowledge_id"],
                 emb_model_name=config["emb_model_config_name"],
-                index_config=config,
+                knowledge_config=config,
             )
         logger.info("knowledge bank initialization completed.\n ")
 
-    def add_data_for_rag(
+    def add_data_as_knowledge(
         self,
         knowledge_id: str,
         emb_model_name: str,
         data_dirs_and_types: dict[str, list[str]] = None,
         model_name: Optional[str] = None,
-        index_config: Optional[dict] = None,
+        knowledge_config: Optional[dict] = None,
     ) -> None:
         """
         Transform data in a directory to be ready to work with RAG.
@@ -76,7 +79,7 @@ class KnowledgeBank:
                 dictionary of data paths (keys) to the data types
                 (file extensions) for knowledgebase
                 (e.g., [".md", ".py", ".html"])
-            index_config (optional[dict]):
+            knowledge_config (optional[dict]):
                 complete indexing configuration, used for more advanced
                 applications. Users can customize
                 - loader,
@@ -86,7 +89,7 @@ class KnowledgeBank:
 
             a simple example of importing data to RAG:
             ''
-                knowledge_bank.add_data_for_rag(
+                knowledge_bank.add_data_as_knowledge(
                     knowledge_id="agentscope_tutorial_rag",
                     emb_model_name="qwen_emb_config",
                     data_dirs_and_types={
@@ -99,33 +102,33 @@ class KnowledgeBank:
         if knowledge_id in self.stored_knowledge:
             raise ValueError(f"knowledge_id {knowledge_id} already exists.")
 
-        assert data_dirs_and_types is not None or index_config is not None
+        assert data_dirs_and_types is not None or knowledge_config is not None
 
-        if index_config is None:
-            index_config = copy.deepcopy(DEFAULT_INDEX_CONFIG)
+        if knowledge_config is None:
+            knowledge_config = copy.deepcopy(DEFAULT_INDEX_CONFIG)
             for data_dir, types in data_dirs_and_types.items():
                 loader_config = copy.deepcopy(DEFAULT_LOADER_CONFIG)
                 loader_init = copy.deepcopy(DEFAULT_INIT_CONFIG)
                 loader_init["input_dir"] = data_dir
                 loader_init["required_exts"] = types
                 loader_config["load_data"]["loader"]["init_args"] = loader_init
-                index_config["data_processing"].append(loader_config)
+                knowledge_config["data_processing"].append(loader_config)
 
-        self.stored_knowledge[knowledge_id] = LlamaIndexRAG(
+        self.stored_knowledge[knowledge_id] = LlamaIndexKnowledge(
             knowledge_id=knowledge_id,
             emb_model=load_model_by_config_name(emb_model_name),
+            knowledge_config=knowledge_config,
             model=load_model_by_config_name(model_name)
             if model_name
             else None,
-            index_config=index_config,
         )
         logger.info(f"data loaded for knowledge_id = {knowledge_id}.")
 
-    def get_rag(
+    def get_knowledge(
         self,
         knowledge_id: str,
         duplicate: bool = False,
-    ) -> LlamaIndexRAG:
+    ) -> LlamaIndexKnowledge:
         """
         Get a RAG from the knowledge bank.
         Args:
@@ -146,3 +149,25 @@ class KnowledgeBank:
             rag = copy.deepcopy(rag)
         logger.info(f"knowledge bank loaded: {knowledge_id}.")
         return rag
+
+    def equip(self, agent: AgentBase, duplicate: bool = False) -> None:
+        """
+        Equip the agent with the knowledge it requests
+        Args:
+            agent (AgentBase): the agent to be equipped with knowledge
+                if it has "rag_config"
+            duplicate (bool): whether to deepcopy the knowledge object
+        """
+        if hasattr(agent, "rag_config") and "knowledge_id" in agent.rag_config:
+            if not hasattr(agent, "knowledge_list"):
+                agent.knowledge_list = []
+            if not hasattr(agent, "retriever_list"):
+                agent.retriever_list = []
+            for rid in agent.rag_config["knowledge_id"]:
+                knowledge = self.get_knowledge(
+                    knowledge_id=rid,
+                    duplicate=duplicate,
+                )
+                knowledge.set_retriever(agent.rag_config)
+                agent.knowledge_list.append(knowledge)
+                agent.retriever_list.append(knowledge.retriever)

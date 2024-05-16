@@ -37,13 +37,14 @@ except ImportError:
     PrivateAttr = None
     Document, TransformComponent = None, None
 
-from agentscope.rag import RAGBase
-from agentscope.rag.rag import (
+from agentscope.file_manager import file_manager
+from agentscope.models import ModelWrapperBase
+from .knowledge import (
     DEFAULT_TOP_K,
     DEFAULT_CHUNK_SIZE,
     DEFAULT_CHUNK_OVERLAP,
+    Knowledge,
 )
-from agentscope.models import ModelWrapperBase
 
 
 try:
@@ -134,7 +135,7 @@ except TypeError:
             self._emb_model_wrapper = emb_model
 
 
-class LlamaIndexRAG(RAGBase):
+class LlamaIndexKnowledge(Knowledge):
     """
     This class is a wrapper with the llama index RAG.
     """
@@ -142,16 +143,16 @@ class LlamaIndexRAG(RAGBase):
     def __init__(
         self,
         knowledge_id: str,
-        persist_root: str = "./rag_storage/",
-        model: Optional[ModelWrapperBase] = None,
         emb_model: Union[ModelWrapperBase, BaseEmbedding, None] = None,
-        index_config: dict = None,
+        knowledge_config: Optional[dict] = None,
+        model: Optional[ModelWrapperBase] = None,
+        persist_root: Optional[str] = None,
         overwrite_index: Optional[bool] = False,
         showprogress: Optional[bool] = True,
         **kwargs: Any,
     ) -> None:
         """
-        initialize the RAG component based on the
+        initialize the knowledge component based on the
         llama-index framework: https://github.com/run-llama/llama_index
 
         Notes:
@@ -168,23 +169,30 @@ class LlamaIndexRAG(RAGBase):
         Args:
             knowledge_id (str):
                 The id of the RAG knowledge unit.
-            persist_root (str):
-                The root directory for index persisting
-            model (ModelWrapperBase):
-                The language model used for final synthesis
             emb_model (ModelWrapperBase):
                 The embedding model used for generate embeddings
-            index_config (dict):
+            knowledge_config (dict):
                 The configuration for llama-index to
                 generate or load the index.
+            model (ModelWrapperBase):
+                The language model used for final synthesis
+            persist_root (str):
+                The root directory for index persisting
             overwrite_index (Optional[bool]):
                 Whether to overwrite the index while refreshing
             showprogress (Optional[bool]):
                 Whether to show the indexing progress
         """
-        super().__init__(model, emb_model, index_config, **kwargs)
-        self.knowledge_id = knowledge_id
-        self.persist_dir = persist_root + knowledge_id
+        super().__init__(
+            knowledge_id=knowledge_id,
+            emb_model=emb_model,
+            knowledge_config=knowledge_config,
+            model=model,
+            **kwargs,
+        )
+        if persist_root is None:
+            persist_root = file_manager.dir
+        self.persist_dir = os.path.join(persist_root, knowledge_id)
         self.emb_model = emb_model
         self.overwrite_index = overwrite_index
         self.showprogress = showprogress
@@ -200,9 +208,10 @@ class LlamaIndexRAG(RAGBase):
                 f"Embedding model does not support {type(self.emb_model)}.",
             )
         # then we can initialize the RAG
+        print("init", self.knowledge_config)
         self._init_rag()
 
-    def _init_rag(self) -> None:
+    def _init_rag(self, **kwargs: Any) -> None:
         """
         Initialize the RAG. This includes:
             * if the persist_dir exists, load the persisted index
@@ -222,7 +231,7 @@ class LlamaIndexRAG(RAGBase):
             # self.refresh_index()
         else:
             self._data_to_index()
-        self._set_retriever()
+        self.set_retriever()
         logger.info(
             f"RAG with knowledge ids: {self.knowledge_id} "
             f"initialization completed!\n",
@@ -253,12 +262,12 @@ class LlamaIndexRAG(RAGBase):
 
         Notes:
             As each selected file type may need to use a different loader
-            and transformations, index_config is a list of configs.
+            and transformations, knowledge_config is a list of configs.
         """
         nodes = []
         # load data to documents and set transformations
-        # using information in index_config
-        for config in self.index_config.get("data_processing"):
+        # using information in knowledge_config
+        for config in self.knowledge_config.get("data_processing"):
             documents = self._data_to_docs(config=config)
             transformations = self._set_transformations(config=config).get(
                 "transformations",
@@ -390,11 +399,11 @@ class LlamaIndexRAG(RAGBase):
         else:
             transformations = [
                 SentenceSplitter(
-                    chunk_size=self.index_config.get(
+                    chunk_size=self.knowledge_config.get(
                         "chunk_size",
                         DEFAULT_CHUNK_SIZE,
                     ),
-                    chunk_overlap=self.index_config.get(
+                    chunk_overlap=self.knowledge_config.get(
                         "chunk_overlap",
                         DEFAULT_CHUNK_OVERLAP,
                     ),
@@ -408,8 +417,9 @@ class LlamaIndexRAG(RAGBase):
         transformations = {"transformations": transformations}
         return transformations
 
-    def _set_retriever(
+    def set_retriever(
         self,
+        rag_config: Optional[dict] = None,
         retriever: Optional[BaseRetriever] = None,
         **kwargs: Any,
     ) -> None:
@@ -418,17 +428,19 @@ class LlamaIndexRAG(RAGBase):
 
         Args:
             retriever (Optional[BaseRetriever]): passing a retriever in llama
+            rag_config (dict): rag configuration, including similarity top k
             index.
         """
         # set the retriever
+        rag_config = rag_config or {}
         if retriever is None:
             logger.info(
                 f"similarity_top_k"
-                f'={self.rag_config.get("similarity_top_k", DEFAULT_TOP_K)}',
+                f'={rag_config.get("similarity_top_k", DEFAULT_TOP_K)}',
             )
             self.retriever = self.index.as_retriever(
                 embed_model=self.emb_model,
-                similarity_top_k=self.rag_config.get(
+                similarity_top_k=rag_config.get(
                     "similarity_top_k",
                     DEFAULT_TOP_K,
                 ),
@@ -466,7 +478,7 @@ class LlamaIndexRAG(RAGBase):
         """
         Refresh the index when needed.
         """
-        for config in self.index_config.get("data_processing"):
+        for config in self.knowledge_config.get("data_processing"):
             documents = self._data_to_docs(config=config)
             # store and indexing for each file type
             transformations = self._set_transformations(config=config).get(
