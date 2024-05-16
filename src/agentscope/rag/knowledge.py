@@ -23,7 +23,7 @@ DEFAULT_CHUNK_OVERLAP = 20
 DEFAULT_TOP_K = 5
 
 
-class RAGBase(ABC):
+class Knowledge(ABC):
     """
     Base class for RAG, CANNOT be instantiated directly
     """
@@ -32,14 +32,14 @@ class RAGBase(ABC):
         self,
         model: Optional[ModelWrapperBase] = None,
         emb_model: Any = None,
-        index_config: Optional[dict] = None,
+        knowledge_config: Optional[dict] = None,
         rag_config: Optional[dict] = None,
         **kwargs: Any,
     ) -> None:
         # pylint: disable=unused-argument
         self.postprocessing_model = model
         self.emb_model = emb_model
-        self.index_config = index_config or {}
+        self.knowledge_config = knowledge_config or {}
         self.rag_config = rag_config or {}
 
     @abstractmethod

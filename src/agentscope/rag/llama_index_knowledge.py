@@ -37,13 +37,14 @@ except ImportError:
     PrivateAttr = None
     Document, TransformComponent = None, None
 
-from agentscope.rag import RAGBase
-from agentscope.rag.rag import (
+from agentscope.file_manager import file_manager
+from agentscope.models import ModelWrapperBase
+from .knowledge import (
     DEFAULT_TOP_K,
     DEFAULT_CHUNK_SIZE,
     DEFAULT_CHUNK_OVERLAP,
+    Knowledge,
 )
-from agentscope.models import ModelWrapperBase
 
 
 try:
@@ -134,7 +135,7 @@ except TypeError:
             self._emb_model_wrapper = emb_model
 
 
-class LlamaIndexRAG(RAGBase):
+class LlamaIndexKnowledge(Knowledge):
     """
     This class is a wrapper with the llama index RAG.
     """
@@ -142,10 +143,10 @@ class LlamaIndexRAG(RAGBase):
     def __init__(
         self,
         knowledge_id: str,
-        persist_root: str = "./rag_storage/",
+        persist_root: Optional[str] = None,
         model: Optional[ModelWrapperBase] = None,
         emb_model: Union[ModelWrapperBase, BaseEmbedding, None] = None,
-        index_config: dict = None,
+        knowledge_config: dict = None,
         overwrite_index: Optional[bool] = False,
         showprogress: Optional[bool] = True,
         **kwargs: Any,
@@ -174,7 +175,7 @@ class LlamaIndexRAG(RAGBase):
                 The language model used for final synthesis
             emb_model (ModelWrapperBase):
                 The embedding model used for generate embeddings
-            index_config (dict):
+            knowledge_config (dict):
                 The configuration for llama-index to
                 generate or load the index.
             overwrite_index (Optional[bool]):
@@ -182,9 +183,11 @@ class LlamaIndexRAG(RAGBase):
             showprogress (Optional[bool]):
                 Whether to show the indexing progress
         """
-        super().__init__(model, emb_model, index_config, **kwargs)
+        super().__init__(model, emb_model, knowledge_config, **kwargs)
         self.knowledge_id = knowledge_id
-        self.persist_dir = persist_root + knowledge_id
+        if persist_root is None:
+            persist_root = file_manager.dir
+        self.persist_dir = os.path.join(persist_root, knowledge_id)
         self.emb_model = emb_model
         self.overwrite_index = overwrite_index
         self.showprogress = showprogress
@@ -202,7 +205,7 @@ class LlamaIndexRAG(RAGBase):
         # then we can initialize the RAG
         self._init_rag()
 
-    def _init_rag(self) -> None:
+    def _init_rag(self, **kwargs: Any) -> None:
         """
         Initialize the RAG. This includes:
             * if the persist_dir exists, load the persisted index
@@ -253,12 +256,12 @@ class LlamaIndexRAG(RAGBase):
 
         Notes:
             As each selected file type may need to use a different loader
-            and transformations, index_config is a list of configs.
+            and transformations, knowledge_config is a list of configs.
         """
         nodes = []
         # load data to documents and set transformations
-        # using information in index_config
-        for config in self.index_config.get("data_processing"):
+        # using information in knowledge_config
+        for config in self.knowledge_config.get("data_processing"):
             documents = self._data_to_docs(config=config)
             transformations = self._set_transformations(config=config).get(
                 "transformations",
@@ -390,11 +393,11 @@ class LlamaIndexRAG(RAGBase):
         else:
             transformations = [
                 SentenceSplitter(
-                    chunk_size=self.index_config.get(
+                    chunk_size=self.knowledge_config.get(
                         "chunk_size",
                         DEFAULT_CHUNK_SIZE,
                     ),
-                    chunk_overlap=self.index_config.get(
+                    chunk_overlap=self.knowledge_config.get(
                         "chunk_overlap",
                         DEFAULT_CHUNK_OVERLAP,
                     ),
@@ -466,7 +469,7 @@ class LlamaIndexRAG(RAGBase):
         """
         Refresh the index when needed.
         """
-        for config in self.index_config.get("data_processing"):
+        for config in self.knowledge_config.get("data_processing"):
             documents = self._data_to_docs(config=config)
             # store and indexing for each file type
             transformations = self._set_transformations(config=config).get(

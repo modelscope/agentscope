@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """ Import all pipeline related modules in the package. """
-from .rag import RAGBase
-from .llama_index_rag import LlamaIndexRAG
+from .knowledge import Knowledge
+from .llama_index_knowledge import LlamaIndexKnowledge
 from .knowledge_bank import KnowledgeBank
 
 __all__ = [
-    "RAGBase",
-    "LlamaIndexRAG",
+    "Knowledge",
+    "LlamaIndexKnowledge",
     "KnowledgeBank",
 ]

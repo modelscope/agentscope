@@ -8,7 +8,7 @@ from .user_agent import UserAgent
 from .text_to_image_agent import TextToImageAgent
 from .rpc_agent import RpcAgent, RpcAgentServerLauncher
 from .react_agent import ReActAgent
-from .rag_agents import RAGAgentBase, LlamaIndexAgent
+from .rag_agents import LlamaIndexAgent
 
 
 __all__ = [
@@ -21,6 +21,5 @@ __all__ = [
     "ReActAgent",
     "RpcAgent",
     "RpcAgentServerLauncher",
-    "RAGAgentBase",
     "LlamaIndexAgent",
 ]
