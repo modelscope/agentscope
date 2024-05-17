@@ -366,19 +366,17 @@
                 <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dialogue</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">dialogue_history</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dialogue</span><span class="p">)</span>
+
             <span class="n">system_content_template</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
-                <span class="p">[</span><span class="s2">&quot;## Dialogue History&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{dialogue_history}</span><span class="s2">&quot;</span><span class="p">],</span>
+                <span class="p">[</span><span class="s2">&quot;## Dialogue History&quot;</span><span class="p">,</span> <span class="n">dialogue_history</span><span class="p">],</span>
             <span class="p">)</span>
 
-        <span class="n">dialogue_history</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dialogue</span><span class="p">)</span>
-
-        <span class="n">system_content_template</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">system_content_template</span><span class="p">)</span>
+        <span class="n">system_content</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">system_content_template</span><span class="p">)</span>
 
         <span class="n">system_message</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">system_content_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">dialogue_history</span><span class="o">=</span><span class="n">dialogue_history</span><span class="p">,</span>
-            <span class="p">),</span>
+            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">system_content</span><span class="p">,</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
