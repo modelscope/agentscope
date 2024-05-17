@@ -53,12 +53,12 @@ class AgentServerServicer(RpcAgentServicer):
             port (`int`, defaults to `None`):
                 Port of the rpc agent server.
             max_pool_size (`int`, defaults to `8192`):
-                The max number of task results that the server can
-                accommodate. Note that the oldest result will be deleted
+                The max number of agent reply messages that the server can
+                accommodate. Note that the oldest message will be deleted
                 after exceeding the pool size.
             max_timeout_seconds (`int`, defaults to `1800`):
-                Timeout for task results. Note that expired results will be
-                deleted.
+                Maximum time for reply messages to be cached in the server.
+                Note that expired messages will be deleted.
         """
         self.host = host
         self.port = port
@@ -73,7 +73,8 @@ class AgentServerServicer(RpcAgentServicer):
         self.agent_pool: dict[str, AgentBase] = {}
 
     def get_task_id(self) -> int:
-        """Get the auto-increment task id."""
+        """Get the auto-increment task id.
+        Each reply call will get a unique task id."""
         with self.task_id_lock:
             self.task_id_counter += 1
             return self.task_id_counter
@@ -191,11 +192,11 @@ class AgentServerServicer(RpcAgentServicer):
         )
 
     def _get(self, request: RpcMsg) -> RpcMsg:
-        """Get function of RpcAgentService
+        """Get a reply message with specific task_id.
 
         Args:
             request (`RpcMsg`):
-                Identifier of message, with json format::
+                The task id that generated this message, with json format::
 
                 {
                     'task_id': int
@@ -215,7 +216,7 @@ class AgentServerServicer(RpcAgentServicer):
         return RpcMsg(value=result.serialize())
 
     def _observe(self, request: RpcMsg) -> RpcMsg:
-        """Observe function of RpcAgentService
+        """Observe function of the original agent.
 
         Args:
             request (`RpcMsg`):
@@ -232,7 +233,7 @@ class AgentServerServicer(RpcAgentServicer):
         return RpcMsg()
 
     def _create_agent(self, request: RpcMsg) -> RpcMsg:
-        """Create a new agent instance for the agent_id.
+        """Create a new agent instance with the given agent_id.
 
         Args:
             request (RpcMsg): request message with a `agent_id` field.
@@ -272,7 +273,7 @@ class AgentServerServicer(RpcAgentServicer):
         return RpcMsg(value=new_agent.agent_id)  # type: ignore[arg-type]
 
     def _delete_agent(self, request: RpcMsg) -> RpcMsg:
-        """Delete the agent instance of the specific sesssion_id.
+        """Delete the agent instance of the specific agent_id.
 
         Args:
             request (RpcMsg): request message with a `agent_id` field.
@@ -286,7 +287,13 @@ class AgentServerServicer(RpcAgentServicer):
         agent_id: str,
         task_msg: dict = None,
     ) -> None:
-        """Task processing."""
+        """Processing an input message and generate its reply message.
+
+        Args:
+            task_id (`int`): task id of the input message, .
+            agent_id (`str`): the id of the agent that accepted the message.
+            task_msg (`dict`): the input message.
+        """
         if isinstance(task_msg, PlaceholderMessage):
             task_msg.update_value()
         cond = self.result_pool[task_id]

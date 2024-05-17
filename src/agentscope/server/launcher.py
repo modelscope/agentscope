@@ -68,9 +68,9 @@ def _setup_agent_server(
         local_mode (`bool`, defaults to `None`):
             Only listen to local requests.
         max_pool_size (`int`, defaults to `8192`):
-            Max number of task results that the server can accommodate.
+            Max number of agent replies that the server can accommodate.
         max_timeout_seconds (`int`, defaults to `1800`):
-            Timeout for task results.
+            Timeout for agent replies.
         custom_agents (`list`, defaults to `None`):
             A list of custom agent classes that are not in `agentscope.agents`.
     """
@@ -124,11 +124,15 @@ async def _setup_agent_server_async(
         pipe (`int`, defaults to `None`):
             A pipe instance used to pass the actual port of the server.
         local_mode (`bool`, defaults to `None`):
-            Only listen to local requests.
+            If `True`, only listen to requests from "localhost", otherwise,
+            listen to requests from all hosts.
         max_pool_size (`int`, defaults to `8192`):
-            Max number of task results that the server can accommodate.
+            The max number of agent reply messages that the server can
+            accommodate. Note that the oldest message will be deleted
+            after exceeding the pool size.
         max_timeout_seconds (`int`, defaults to `1800`):
-            Timeout for task results.
+            Maximum time for reply messages to be cached in the server.
+            Note that expired messages will be deleted.
         custom_agents (`list`, defaults to `None`):
             A list of custom agent classes that are not in `agentscope.agents`.
     """
@@ -224,12 +228,15 @@ class RpcAgentServerLauncher:
             port (`int`, defaults to `None`):
                 Socket port of the agent server.
             max_pool_size (`int`, defaults to `8192`):
-                Max number of task results that the server can accommodate.
+                The max number of agent reply messages that the server can
+                accommodate. Note that the oldest message will be deleted
+                after exceeding the pool size.
             max_timeout_seconds (`int`, defaults to `1800`):
-                Timeout for task results.
+                Maximum time for reply messages to be cached in the server.
+                Note that expired messages will be deleted.
             local_mode (`bool`, defaults to `False`):
-                Whether the started server only listens to local
-                requests.
+                If `True`, only listen to requests from "localhost", otherwise,
+                listen to requests from all hosts.
             custom_agents (`list`, defaults to `None`):
                 A list of custom agent classes that are not in
                 `agentscope.agents`.
@@ -359,9 +366,11 @@ def as_server() -> None:
 
         * `--host`: the hostname of the server.
         * `--port`: the socket port of the server.
-        * `--max-pool-size`: max number of task results that the server can
-          accommodate.
-        * `--max-timeout-seconds`: max timeout seconds of a task.
+        * `--max-pool-size`: max number of agent reply messages that the server
+          can accommodate. Note that the oldest message will be deleted
+          after exceeding the pool size.
+        * `--max-timeout-seconds`: max time for reply messages to be cached
+          in the server. Note that expired messages will be deleted.
         * `--local-mode`: whether the started agent server only listens to
           local requests.
         * `--model-config-path`: the path to the model config json file
@@ -391,19 +400,29 @@ def as_server() -> None:
         "--max-pool-size",
         type=int,
         default=8192,
-        help="max number of task results that the server can accommodate",
+        help=(
+            "max number of agent reply messages that the server "
+            "can accommodate. Note that the oldest message will be deleted "
+            "after exceeding the pool size."
+        ),
     )
     parser.add_argument(
         "--max-timeout-seconds",
         type=int,
         default=1800,
-        help="max timeout for task results",
+        help=(
+            "max time for agent reply messages to be cached"
+            "in the server. Note that expired messages will be deleted."
+        ),
     )
     parser.add_argument(
         "--local-mode",
         type=bool,
         default=False,
-        help="whether the started agent server only listens to local requests",
+        help=(
+            "If `True`, only listen to requests from 'localhost', otherwise, "
+            "listen to requests from all hosts."
+        ),
     )
     parser.add_argument(
         "--model-config-path",
