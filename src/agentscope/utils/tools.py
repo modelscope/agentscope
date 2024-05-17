@@ -6,7 +6,8 @@ import json
 import os.path
 import secrets
 import string
-from typing import Any, Literal, List
+import socket
+from typing import Any, Literal, List, Optional
 
 from urllib.parse import urlparse
 
@@ -59,6 +60,42 @@ def to_dialog_str(item: dict) -> str:
         return content
     else:
         return f"{speaker}: {content}"
+
+
+def find_available_port() -> int:
+    """Get an unoccupied socket port number."""
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(("", 0))
+        return s.getsockname()[1]
+
+
+def check_port(port: Optional[int] = None) -> int:
+    """Check if the port is available.
+
+    Args:
+        port (`int`):
+            the port number being checked.
+
+    Returns:
+        `int`: the port number that passed the check. If the port is found
+        to be occupied, an available port number will be automatically
+        returned.
+    """
+    if port is None:
+        new_port = find_available_port()
+        logger.warning(
+            "agent server port is not provided, automatically select "
+            f"[{new_port}] as the port number.",
+        )
+        return new_port
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        if s.connect_ex(("localhost", port)) == 0:
+            new_port = find_available_port()
+            logger.warning(
+                f"Port [{port}] is occupied, use [{new_port}] instead",
+            )
+            return new_port
+    return port
 
 
 def _guess_type_by_extension(
