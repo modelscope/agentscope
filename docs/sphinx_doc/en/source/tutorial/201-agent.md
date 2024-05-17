@@ -16,6 +16,8 @@ Each AgentBase derivative is composed of several key characteristics:
 
 * `sys_prompt` & `engine`: The system prompt acts as predefined instructions that guide the agent in its interactions; and the `engine` is used to dynamically generate a suitable prompt. For more details about them, we defer to [Prompt Engine](206-prompt).
 
+* `to_dist`: Used to create a distributed version of the agent, to support efficient collaboration among multiple agents. Note that `to_dist` is a reserved field and will be automatically added to the initialization function of any subclass of `AgentBase`. For more details about `to_dist`, please refer to [Distribution](208-distribute).
+
 In addition to these attributes, `AgentBase` endows agents with pivotal methods such as `observe` and `reply`:
 
 * `observe()`: Through this method, an agent can take note of *message* without immediately replying, allowing it to update its memory based on the observed *message*.

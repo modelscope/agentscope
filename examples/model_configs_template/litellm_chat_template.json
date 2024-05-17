@@ -1,0 +1,11 @@
+[{
+    "config_name": "lite_llm_openai_chat_gpt-3.5-turbo",
+    "model_type": "litellm_chat",
+    "model_name": "gpt-3.5-turbo"
+},
+{
+    "config_name": "lite_llm_claude3",
+    "model_type": "litellm_chat",
+    "model_name": "claude-3-opus-20240229"
+}
+]

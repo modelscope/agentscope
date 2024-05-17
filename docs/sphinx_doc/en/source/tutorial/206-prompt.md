@@ -44,6 +44,7 @@ generation model APIs.
 - [OllamaChatWrapper](#ollamachatwrapper)
 - [OllamaGenerationWrapper](#ollamagenerationwrapper)
 - [GeminiChatWrapper](#geminichatwrapper)
+- [ZhipuAIChatWrapper](#zhipuaichatwrapper)
 
 These strategies are implemented in the `format` functions of the model
 wrapper classes.
@@ -62,6 +63,8 @@ dictionaries as input, where the dictionary must obey the following rules
 - The `role` field must be either `"system"`, `"user"`, or `"assistant"`.
 
 #### Prompt Strategy
+
+##### Non-Vision Models
 
 In OpenAI Chat API, the `name` field enables the model to distinguish
 different speakers in the conversation. Therefore, the strategy of `format`
@@ -96,6 +99,75 @@ print(prompt)
   {"role": "system", "name": "system", "content": "You are a helpful assistant"},
   {"role": "assistant", "name": "Bob", "content": "Hi."},
   {"role": "assistant", "name": "Alice", "content": "Nice to meet you!"),
+]
+```
+
+##### Vision Models
+
+For vision models (gpt-4-turbo, gpt-4o, ...), if the input message contains image urls, the generated `content` field will be a list of dicts, which contains text and image urls.
+
+Specifically, the web image urls will be pass to OpenAI Chat API directly, while the local image urls will be converted to base64 format. More details please refer to the [official guidance](https://platform.openai.com/docs/guides/vision).
+
+Note the invalid image urls (e.g. `/Users/xxx/test.mp3`) will be ignored.
+
+```python
+from agentscope.models import OpenAIChatWrapper
+from agentscope.message import Msg
+
+model = OpenAIChatWrapper(
+    config_name="", # empty since we directly initialize the model wrapper
+    model_name="gpt-4o",
+)
+
+prompt = model.format(
+   Msg("system", "You're a helpful assistant", role="system"),   # Msg object
+   [                                                             # a list of Msg objects
+      Msg(name="user", content="Describe this image", role="user", url="https://xxx.png"),
+      Msg(name="user", content="And these images", role="user", url=["/Users/xxx/test.png", "/Users/xxx/test.mp3"]),
+   ],
+)
+print(prompt)
+```
+
+```python
+[
+    {
+        "role": "system",
+        "name": "system",
+        "content": "You are a helpful assistant"
+    },
+    {
+        "role": "user",
+        "name": "user",
+        "content": [
+            {
+                "type": "text",
+                "text": "Describe this image"
+            },
+            {
+                "type": "image_url",
+                "image_url": {
+                    "url": "https://xxx.png"
+                }
+            },
+        ]
+    },
+    {
+        "role": "user",
+        "name": "user",
+        "content": [
+            {
+                "type": "text",
+                "text": "And these images"
+            },
+            {
+                "type": "image_url",
+                "image_url": {
+                    "url": "data:image/png;base64,YWJjZGVm..." # for /Users/xxx/test.png
+                }
+            },
+        ]
+    },
 ]
 ```
 
@@ -240,11 +312,11 @@ messages as input. The message must obey the following rules (updated in
 
 #### Prompt Strategy
 
-Given a list of messages, we will parse each message as follows:
-
-- `Msg`:  Fill the `role` and `content` fields directly. If it has an `url`
-  field, which refers to an image, we will add it to the message.
-- `List`: Parse each element in the list according to the above rules.
+- If the role field of the first input message is `"system"`,
+it will be treated as system prompt and the other messages will consist
+dialogue history in the system message prefixed by "## Dialogue History".
+- If the `url` attribute of messages is not `None`, we will gather all urls in
+the `"images"` field in the returned dictionary.
 
 ```python
 from agentscope.models import OllamaChatWrapper
@@ -267,9 +339,11 @@ print(prompt)
 
 ```bash
 [
-  {"role": "system", "content": "You are a helpful assistant"},
-  {"role": "assistant", "content": "Hi."},
-  {"role": "assistant", "content": "Nice to meet you!", "images": ["https://example.com/image.jpg"]},
+  {
+    "role": "system",
+    "content": "You are a helpful assistant\n\n## Dialogue History\nBob: Hi.\nAlice: Nice to meet you!",
+    "images": ["https://example.com/image.jpg"]
+  },
 ]
 ```
 
@@ -362,6 +436,47 @@ print(prompt)
       "You are a helpful assistant\n## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!"
     ]
   }
+]
+```
+
+### `ZhipuAIChatWrapper`
+
+`ZhipuAIChatWrapper` encapsulates the ZhipuAI chat API, which takes a list of messages as input. The message must obey the following rules:
+
+- Require `role` and `content` fields, and `role` must be either `"user"`
+  `"system"` or `"assistant"`.
+- There must be at least one `user` message.
+
+#### Prompt Strategy
+
+If the role field of the first message is `"system"`, it will be converted into a single message with the `role` field as `"system"` and the `content` field as the system message. The rest of the messages will be converted into a message with the `role` field as `"user"` and the `content` field as the dialogue history.
+
+An example is shown below:
+
+```python
+from agentscope.models import ZhipuAIChatWrapper
+from agentscope.message import Msg
+
+model = ZhipuAIChatWrapper(
+    config_name="", # empty since we directly initialize the model wrapper
+    model_name="glm-4",
+    api_key="your api key",
+)
+
+prompt = model.format(
+   Msg("system", "You're a helpful assistant", role="system"),   # Msg object
+   [                                                             # a list of Msg objects
+      Msg(name="Bob", content="Hi!", role="assistant"),
+      Msg(name="Alice", content="Nice to meet you!", role="assistant"),
+   ],
+)
+print(prompt)
+```
+
+```bash
+[
+  {"role": "system", "content": "You are a helpful assistant"},
+  {"role": "user", "content": "## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!"},
 ]
 ```
 

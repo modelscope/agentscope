@@ -4,7 +4,7 @@ from typing import Optional
 from typing import Any
 
 from ...service.service_response import ServiceResponse
-from ...utils.common import if_change_database
+from ...utils.common import _if_change_database
 from ...service.service_status import ServiceExecStatus
 
 try:
@@ -39,7 +39,7 @@ def query_sqlite(
     """
 
     # Check if the query is safe
-    if not allow_change_data and not if_change_database(query):
+    if not allow_change_data and not _if_change_database(query):
         raise ValueError(
             "Unsafe SQL query detected. Only SELECT statements are allowed. "
             "If you want to allow changing data in the database, "
@@ -58,7 +58,7 @@ def query_sqlite(
         results = cursor.fetchall()
 
         # commit the change if needed
-        if if_change_database(query):
+        if _if_change_database(query):
             conn.commit()
 
         cursor.close()

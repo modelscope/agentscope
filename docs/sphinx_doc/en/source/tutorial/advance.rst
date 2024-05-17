@@ -7,6 +7,7 @@ Advanced Exploration
    201-agent.md
    202-pipeline.md
    203-model.md
+   203-parser.md
    204-service.md
    205-memory.md
    206-prompt.md
