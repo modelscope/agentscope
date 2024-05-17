@@ -271,6 +271,46 @@ print(prompt)
 ]
 ```
 
+### LiteLLMChatWrapper
+
+`LiteLLMChatWrapper`封装了litellm聊天API，它接受消息列表作为输入。Litellm支持不同类型的模型，每个模型可能需要遵守不同的格式。为了简化使用，我们提供了一种与大多数模型兼容的格式。如果需要更特定的格式，您可以参考您所使用的特定模型以及[litellm](https://github.com/BerriAI/litellm)文档，来定制适合您模型的格式函数。
+- 格式化聊天历史中的所有消息，将其整合成一个以`"user"`作为`role`的单一消息
+#### 提示策略
+- 消息将包括对话历史，`user`消息由系统消息(system message)和"## Dialog History"前缀。
+
+
+```python
+from agentscope.models import LiteLLMChatWrapper
+
+model = LiteLLMChatWrapper(
+    config_name="", # empty since we directly initialize the model wrapper
+    model_name="gpt-3.5-turbo",
+)
+
+prompt = model.format(
+  Msg("system", "You are a helpful assistant", role="system"),
+  [
+      Msg("user", "What is the weather today?", role="user"),
+      Msg("assistant", "It is sunny today", role="assistant"),
+  ],
+)
+
+print(prompt)
+```
+
+```bash
+[
+    {
+        "role": "user",
+        "content": (
+            "You are a helpful assistant\n\n"
+            "## Dialogue History\nuser: What is the weather today?\n"
+            "assistant: It is sunny today"
+        ),
+    },
+]
+```
+
 ### `OllamaChatWrapper`
 
 `OllamaChatWrapper`封装了Ollama聊天API，它接受消息列表作为输入。消息必须遵守以下规则(更新于2024/03/22)：
