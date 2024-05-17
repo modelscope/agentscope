@@ -9,7 +9,7 @@ from loguru import logger
 
 import agentscope
 from agentscope.agents import AgentBase, DistConf
-from agentscope.agents.rpc_agent import RpcAgentServerLauncher
+from agentscope.server import RpcAgentServerLauncher
 from agentscope.message import Msg
 from agentscope.message import PlaceholderMessage
 from agentscope.message import deserialize

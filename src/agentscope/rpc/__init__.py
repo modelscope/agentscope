@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """Import all rpc related modules in the package."""
-from typing import Any
 from .rpc_agent_client import RpcAgentClient, ResponseStub, call_in_thread
 
 try:
