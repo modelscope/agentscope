@@ -2,7 +2,7 @@
 """The parser for JSON object in the model response."""
 import json
 from copy import deepcopy
-from typing import Optional, Any, List
+from typing import Optional, Any, List, Sequence, Union
 
 from loguru import logger
 
@@ -14,6 +14,7 @@ from agentscope.exception import (
 )
 from agentscope.models import ModelResponse
 from agentscope.parsers import ParserBase
+from agentscope.parsers.parser_base import DictFilterMixin
 from agentscope.utils.tools import _join_str_with_comma_and
 
 
@@ -121,7 +122,7 @@ class MarkdownJsonObjectParser(ParserBase):
         )
 
 
-class MarkdownJsonDictParser(MarkdownJsonObjectParser):
+class MarkdownJsonDictParser(MarkdownJsonObjectParser, DictFilterMixin):
     """A class used to parse a JSON dictionary object in a markdown fenced
     code"""
 
@@ -152,6 +153,9 @@ class MarkdownJsonDictParser(MarkdownJsonObjectParser):
         self,
         content_hint: Optional[Any] = None,
         required_keys: List[str] = None,
+        keys_to_memory: Optional[Union[str, bool, Sequence[str]]] = True,
+        keys_to_content: Optional[Union[str, bool, Sequence[str]]] = True,
+        keys_to_metadata: Optional[Union[str, bool, Sequence[str]]] = False,
     ) -> None:
         """Initialize the parser with the content hint.
 
@@ -165,8 +169,42 @@ class MarkdownJsonDictParser(MarkdownJsonObjectParser):
                 A list of required keys in the JSON dictionary object. If the
                 response misses any of the required keys, it will raise a
                 RequiredFieldNotFoundError.
+            keys_to_memory (`Optional[Union[str, bool, Sequence[str]]]`,
+            defaults to `True`):
+                The key or keys to be filtered in `to_memory` method. If
+                it's
+                - `False`, `None` will be returned in the `to_memory` method
+                - `str`, the corresponding value will be returned
+                - `List[str]`, a filtered dictionary will be returned
+                - `True`, the whole dictionary will be returned
+            keys_to_content (`Optional[Union[str, bool, Sequence[str]]`,
+            defaults to `True`):
+                The key or keys to be filtered in `to_content` method. If
+                it's
+                - `False`, `None` will be returned in the `to_content` method
+                - `str`, the corresponding value will be returned
+                - `List[str]`, a filtered dictionary will be returned
+                - `True`, the whole dictionary will be returned
+            keys_to_metadata (`Optional[Union[str, bool, Sequence[str]]`,
+            defaults to `False`):
+                The key or keys to be filtered in `to_metadata` method. If
+                it's
+                - `False`, `None` will be returned in the `to_metadata` method
+                - `str`, the corresponding value will be returned
+                - `List[str]`, a filtered dictionary will be returned
+                - `True`, the whole dictionary will be returned
+
         """
-        super().__init__(content_hint)
+        # Initialize the markdown json object parser
+        MarkdownJsonObjectParser.__init__(self, content_hint)
+
+        # Initialize the mixin class to allow filtering the parsed response
+        DictFilterMixin.__init__(
+            self,
+            keys_to_memory=keys_to_memory,
+            keys_to_content=keys_to_content,
+            keys_to_metadata=keys_to_metadata,
+        )
 
         self.required_keys = required_keys or []
 
