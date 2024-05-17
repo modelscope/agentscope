@@ -7,7 +7,7 @@ from loguru import logger
 import agentscope
 from agentscope.agents.user_agent import UserAgent
 from agentscope.agents.dialog_agent import DialogAgent
-from agentscope.agents.rpc_agent import RpcAgentServerLauncher
+from agentscope.server import RpcAgentServerLauncher
 
 
 def parse_args() -> argparse.Namespace:

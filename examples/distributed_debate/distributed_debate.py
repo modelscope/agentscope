@@ -8,7 +8,7 @@ from user_proxy_agent import UserProxyAgent
 import agentscope
 from agentscope.agents import DialogAgent
 from agentscope.msghub import msghub
-from agentscope.agents.rpc_agent import RpcAgentServerLauncher
+from agentscope.server import RpcAgentServerLauncher
 from agentscope.message import Msg
 from agentscope.utils.logging_utils import logger
 
