@@ -236,20 +236,18 @@ class LiteLLMChatWrapper(LiteLLMWrapperBase):
                 )
 
         if len(dialogue) != 0:
+            dialogue_history = "\n".join(dialogue)
+
             system_content_template.extend(
-                ["## Dialogue History", "{dialogue_history}"],
+                ["## Dialogue History", dialogue_history],
             )
 
-        dialogue_history = "\n".join(dialogue)
-
-        system_content_template = "\n".join(system_content_template)
+        system_content = "\n".join(system_content_template)
 
         messages = [
             {
                 "role": "user",
-                "content": system_content_template.format(
-                    dialogue_history=dialogue_history,
-                ),
+                "content": system_content,
             },
         ]
 

@@ -91,6 +91,28 @@ class MessageBase(dict):
 class Msg(MessageBase):
     """The Message class."""
 
+    id: str
+    """The id of the message."""
+
+    name: str
+    """The name of who send the message."""
+
+    content: Any
+    """The content of the message."""
+
+    role: Literal["system", "user", "assistant"]
+    """The role of the message sender."""
+
+    metadata: Optional[dict]
+    """Save the information for application's control flow, or other
+    purposes."""
+
+    url: Optional[Union[Sequence[str], str]]
+    """A url to file, image, video, audio or website."""
+
+    timestamp: str
+    """The timestamp of the message."""
+
     def __init__(
         self,
         name: str,
@@ -99,6 +121,7 @@ class Msg(MessageBase):
         url: Optional[Union[Sequence[str], str]] = None,
         timestamp: Optional[str] = None,
         echo: bool = False,
+        metadata: Optional[Union[dict, str]] = None,
         **kwargs: Any,
     ) -> None:
         """Initialize the message object
@@ -117,6 +140,11 @@ class Msg(MessageBase):
             timestamp (`Optional[str]`, defaults to `None`):
                 The timestamp of the message, if None, it will be set to
                 current time.
+            echo (`bool`, defaults to `False`):
+                Whether to print the message to the console.
+            metadata (`Optional[Union[dict, str]]`, defaults to `None`):
+                Save the information for application's control flow, or other
+                purposes.
             **kwargs (`Any`):
                 Other attributes of the message.
         """
@@ -134,6 +162,7 @@ class Msg(MessageBase):
             role=role or "assistant",
             url=url,
             timestamp=timestamp,
+            metadata=metadata,
             **kwargs,
         )
         if echo:
