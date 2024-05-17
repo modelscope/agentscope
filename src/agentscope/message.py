@@ -426,7 +426,7 @@ _MSGS = {
 }
 
 
-def deserialize(s: str) -> Union[MessageBase, Sequence]:
+def deserialize(s: Union[str, bytes]) -> Union[MessageBase, Sequence]:
     """Deserialize json string into MessageBase"""
     js_msg = json.loads(s)
     msg_type = js_msg.pop("__type")
