@@ -149,7 +149,48 @@ class GeminiChatWrapper(GeminiWrapperBase):
             **kwargs,
         )
 
-        # step3: record the api invocation if needed
+        # step3: Check for candidates and handle accordingly
+        if response.candidates:
+            candidate = response.candidates[0]
+            finish_reason = candidate.finish_reason
+
+            if finish_reason not in (1, 2):  # Not successful
+                logger.warning(
+                    f"Generation stopped due to "
+                    f"finish_reason: {finish_reason}",
+                )
+                if finish_reason == 3:
+                    raise ValueError(
+                        "Generation stopped because the candidate "
+                        "content was flagged for safety reasons. ",
+                    )
+                elif finish_reason == 4:
+                    raise ValueError(
+                        "Generation stopped because the candidate "
+                        "content was flagged for recitation reasons.",
+                    )
+                elif finish_reason == 5:
+                    raise ValueError(
+                        "Generation stopped due to an Unknown reason.",
+                    )
+                else:
+                    raise ValueError(f"Unknown finish reason: {finish_reason}")
+
+            if (
+                not candidate.content
+                or not candidate.content.parts
+                or not candidate.content.parts[0].text
+            ):
+                raise ValueError("No valid text parts found in the response.")
+
+            response_text = (
+                candidate.content.parts[0]
+                .text.strip("```json")
+                .strip("```")
+                .strip()
+            )
+
+        # step4: record the api invocation if needed
         self._save_model_invocation(
             arguments={
                 "contents": contents,
@@ -160,11 +201,8 @@ class GeminiChatWrapper(GeminiWrapperBase):
         )
 
         # step5: update monitor accordingly
-        # TODO: Up to 2024/03/11, the response from Gemini doesn't contain
-        #  the detailed information about cost. Here we simply count
-        #  the tokens manually.
         token_prompt = self.model.count_tokens(contents).total_tokens
-        token_response = self.model.count_tokens(response.text).total_tokens
+        token_response = self.model.count_tokens(response_text).total_tokens
         self.update_monitor(
             call_counter=1,
             completion_tokens=token_response,
@@ -174,7 +212,7 @@ class GeminiChatWrapper(GeminiWrapperBase):
 
         # step6: return response
         return ModelResponse(
-            text=response.text,
+            text=response_text,
             raw=response,
         )
 
