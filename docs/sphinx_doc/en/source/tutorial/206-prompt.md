@@ -304,12 +304,13 @@ print(prompt)
 ### LiteLLMChatWrapper
 
 `LiteLLMChatWrapper` encapsulates the litellm chat API, which takes a list of
-messages as input. The litellm support different types of models, and each model
+messages as input. The litellm supports different types of models, and each model
 might need to obey different formats. To simplify the usage, we provide a format
-that could be compatible with most models. If more specifical formats are needed,
-you can refer to the specifical model you use as weel as the
+that could be compatible with most models. If more specific formats are needed,
+you can refer to the specific model you use as well as the
 [litellm](https://github.com/BerriAI/litellm) documentation to customize your
 own format function for your model.
+
 
 - format all the messages in the chat history, into a single message with `"user"` as `role`
 
