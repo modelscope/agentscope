@@ -1,0 +1,157 @@
+# -*- coding: utf-8 -*-
+# pylint: disable=C0301
+"""Service for executing jupyter notebooks interactively
+Partially referenced the implementation of https://github.com/geekan/MetaGPT/blob/main/metagpt/actions/di/execute_nb_code.py
+"""  # noqa
+import base64
+import uuid
+import os
+import asyncio
+from nbclient import NotebookClient
+from nbclient.exceptions import CellTimeoutError, DeadKernelError
+import nbformat
+from loguru import logger
+
+from agentscope.service.service_status import ServiceExecStatus
+from agentscope.service.service_response import ServiceResponse
+
+
+class NoteBookExecutor:
+    """Class for executing jupyter notebooks block interactively"""
+
+    def __init__(
+        self,
+        notebook: nbformat.NotebookNode = nbformat.v4.new_notebook(),
+        timeout: int = 300,
+        output_dir: str = ".",
+    ):
+        self.nb = notebook
+        self.nb_client = NotebookClient(nb=self.nb)
+        self.timeout = timeout
+        self.output_dir = output_dir
+
+        asyncio.run(self._start_client())
+
+    def output_parser(self, output: dict) -> str:
+        """Parse the output of the notebook cell and return str"""
+        if output["output_type"] == "stream":
+            return output["text"]
+        elif output["output_type"] == "execute_result":
+            return output["data"]["text/plain"]
+        elif output["output_type"] == "display_data":
+            if "image/png" in output["data"]:
+                file_path = self._save_image(output["data"]["image/png"])
+                return f"Displayed image saved to {file_path}"
+            else:
+                return "Unsupported display type"
+        elif output["output_type"] == "error":
+            return output["traceback"]
+        else:
+            logger.info(f"Unsupported output encountered: {output}")
+            return "Unsupported output encountered"
+
+    async def _start_client(self) -> None:
+        """start notebook client"""
+        if self.nb_client.kc is None or not await self.nb_client.kc.is_alive():
+            self.nb_client.create_kernel_manager()
+            self.nb_client.start_new_kernel()
+            self.nb_client.start_new_kernel_client()
+
+    async def _kill_client(self) -> None:
+        """kill notebook client"""
+        if (
+            self.nb_client.km is not None
+            and await self.nb_client.km.is_alive()
+        ):
+            await self.nb_client.km.shutdown_kernel(now=True)
+            await self.nb_client.km.cleanup_resources()
+
+        self.nb_client.kc.stop_channels()
+        self.nb_client.kc = None
+        self.nb_client.km = None
+
+    async def _restart_client(self) -> None:
+        """Restart the notebook client"""
+        await self._kill_client()
+        self.nb_client = NotebookClient(self.nb, timeout=self.timeout)
+        await self._start_client()
+
+    async def _run_cell(self, cell_index: int) -> ServiceResponse:
+        """Run a cell in the notebook by its index"""
+        try:
+            self.nb_client.execute_cell(self.nb.cells[cell_index], cell_index)
+            return ServiceResponse(
+                status=ServiceExecStatus.SUCCESS,
+                content=[
+                    self.output_parser(output)
+                    for output in self.nb.cells[cell_index].outputs
+                ],
+            )
+        except DeadKernelError:
+            await self.reset()
+            return ServiceResponse(
+                status=ServiceExecStatus.ERROR,
+                content="DeadKernelError when executing cell, reset kernel",
+            )
+        except CellTimeoutError:
+            assert self.nb_client.km is not None
+            await self.nb_client.km.interrupt_kernel()
+            return ServiceResponse(
+                status=ServiceExecStatus.ERROR,
+                content=(
+                    "CellTimeoutError when executing cell"
+                    ", code execution timeout"
+                ),
+            )
+        except Exception as e:
+            return ServiceResponse(
+                status=ServiceExecStatus.ERROR,
+                content=str(e),
+            )
+
+    @property
+    def cells_length(self) -> int:
+        """return cell length"""
+        return len(self.nb.cells)
+
+    async def async_run_code_on_notebook(self, code: str) -> ServiceResponse:
+        """
+        Run the code on interactive notebook
+        """
+        self.nb.cells.append(nbformat.v4.new_code_cell(code))
+        cell_index = self.cells_length - 1
+        return await self._run_cell(cell_index)
+
+    def run_code_on_notebook(self, code: str) -> ServiceResponse:
+        """
+        Run the code on interactive jupyter notebook.
+
+        Args:
+            code (`str`):
+                The Python code to be executed in the interactive notebook.
+
+        Returns:
+            `ServiceResponse`: whether the code execution was successful,
+            and the output of the code execution.
+        """
+        return asyncio.run(self.async_run_code_on_notebook(code))
+
+    def reset_notebook(self) -> ServiceResponse:
+        """
+        Reset the notebook
+        """
+        asyncio.run(self._restart_client())
+        return ServiceResponse(
+            status=ServiceExecStatus.SUCCESS,
+            content="Reset notebook",
+        )
+
+    def _save_image(self, image_base64: str) -> str:
+        """Save image data to a file.
+        The image name is generated randomly here"""
+        image_data = base64.b64decode(image_base64)
+        filename = f"display_image_{uuid.uuid4().hex}.png"
+        path = os.path.join(self.output_dir, filename)
+        with open(path, "wb") as f:
+            f.write(image_data)
+        return os.path.abspath(path)
