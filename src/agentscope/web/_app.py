@@ -2,17 +2,145 @@
 """The main entry point of the web UI."""
 import json
 import os
+from datetime import datetime
 
-from flask import Flask, jsonify, render_template, Response
+from flask import Flask, request, jsonify, render_template, Response
 from flask_cors import CORS
-from flask_socketio import SocketIO
+from flask_sqlalchemy import SQLAlchemy
+from flask_socketio import SocketIO, emit, join_room, leave_room
+
 
 app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///agentscope.db"
+db = SQLAlchemy(app)
 socketio = SocketIO(app)
 CORS(app)  # This will enable CORS for all routes
 
 
 PATH_SAVE = ""
+
+
+class Run(db.Model):
+    """Run object."""
+
+    id = db.Column(db.String, primary_key=True)
+    project = db.Column(db.String)
+    name = db.Column(db.String)
+    script_path = db.Column(db.String)
+    run_dir = db.Column(db.String)
+    create_time = db.Column(db.DateTime, default=datetime.now)
+
+
+class Server(db.Model):
+    """Server object."""
+
+    server_id = db.Column(db.String, primary_key=True)
+    server_host = db.Column(db.String)
+    server_port = db.Column(db.Integer)
+
+
+class Message(db.Model):
+    """Message object."""
+
+    id = db.Column(db.Integer, primary_key=True)
+    run_id = db.Column(db.String, db.ForeignKey("run.id"), nullable=False)
+    name = db.Column(db.String)
+    content = db.Column(db.str)
+    url = db.Column(db.str)
+
+
+@app.route("/api/register/run", methods=["POST"])
+def register_run():
+    """
+    Registers a run of an agentscope application.
+    The running process will then be displayed as a page.
+    """
+    # Extract the input data from the request
+    data = request.json
+    run_id = data.get("run_id")
+    project = data.get("project")
+    name = data.get("name")
+    run_dir = data.get("run_dir")
+    script_path = data.get("script_path")
+    # check if the run_id is already in the database
+    if Run.query.filter_by(id=run_id).first():
+        return jsonify(status="error", msg=f"run_id {run_id} already exists.")
+    else:
+        db.session.add(
+            Run(
+                id=run_id,
+                project=project,
+                name=name,
+                run_dir=run_dir,
+                script_path=script_path,
+            )
+        )
+        db.session.commit()
+        return jsonify(status="ok", msg="")
+
+
+@app.route("/api/register/server", methods=["POST"])
+def register_server():
+    """
+    Registers an agent server.
+    """
+    data = request.json
+    server_id = data.get("server_id")
+    host = data.get("host")
+    port = data.get("port")
+    run_dir = data.get("run_dir")
+
+    if Server.query.filter_by(server_id=server_id).first():
+        return jsonify(status="error", msg="server_id already exists")
+    else:
+        db.session.add(
+            Server(
+                server_id=server_id,
+                server_host=host,
+                server_port=port,
+                run_dir=run_dir,
+            )
+        )
+        return jsonify(status="ok", msg="")
+
+
+@app.route("/api/message/put", methods=["POST"])
+def put_message():
+    """
+    Used by the application to speak a message to the Hub.
+    """
+    data = request.json
+    run_id = data["run_id"]
+    name = data["name"]
+    content = data["content"]
+    url = data["url"]
+    try:
+        new_message = Message(
+            run_id=run_id, name=name, content=content, url=url
+        )
+        db.session.add(new_message)
+        db.session.commit()
+    except Exception as e:
+        return jsonify(status="ok", msg=e)
+    socketio.emit(
+        "display_message",
+        {
+            "run_id": run_id,
+            "name": name,
+            "content": content,
+            "url": url,
+        },
+        room=run_id,
+    )
+    return jsonify(status="ok", msg="")
+
+
+@app.route("/studio/<run_id>", methods=["GET"])
+def studio_page(run_id):
+    if Run.query.filter_by(id=run_id).first() is None:
+        return jsonify(status="error", msg="run_id not exists")
+    messages = Message.query.filter_by(run_id=run_id).all()
+    return render_template("chat.html", messages=messages, run_id=run_id)
 
 
 @app.route("/getProjects", methods=["GET"])
@@ -88,6 +216,47 @@ def run_detail(run_dir: str) -> str:
     return render_template("run.html", runInfo=logging_and_dialog)
 
 
+@socketio.on("user_input")
+def user_input(data):
+    run_id = data["run_id"]
+    name = data["name"]
+    content = data["content"]
+    url = data.get("url", None)
+    new_message = Message(run_id=run_id, name=name, content=content, url=url)
+    db.session.add(new_message)
+    db.session.commit()
+    emit(
+        "display_message",
+        {
+            "run_id": run_id,
+            "name": name,
+            "content": content,
+            "url": url,
+        },
+        room=run_id,
+    )
+    emit(
+        "fetch_user_input",
+        {
+            "run_id": run_id,
+            "name": name,
+            "content": content,
+            "url": url,
+        },
+        room=run_id,
+    )
+
+
+@socketio.on("join")
+def on_join(data):
+    join_room(data["run_id"])
+
+
+@socketio.on("leave")
+def on_leave(data):
+    leave_room(data["run_id"])
+
+
 @socketio.on("connect")
 def on_connect() -> None:
     """Execute when a client is connected."""
@@ -111,7 +280,8 @@ def init(
 
     if not os.path.exists(path_save):
         raise FileNotFoundError(f"The path {path_save} does not exist.")
-
+    with app.app_context():
+        db.create_all()
     PATH_SAVE = path_save
     socketio.run(
         app,
