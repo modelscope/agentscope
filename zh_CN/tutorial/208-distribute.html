@@ -90,6 +90,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.server.html">agentscope.server</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.web.html">agentscope.web</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.prompt.html">agentscope.prompt</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.utils.html">agentscope.utils</a></li>
@@ -169,13 +170,14 @@ AgentScope 会自动帮你从主进程中启动智能体服务器进程并将智
 </section>
 <section id="id5">
 <h4>独立进程模式<a class="headerlink" href="#id5" title="Link to this heading"></a></h4>
-<p>在独立进程模式中，需要首先在目标机器上启动智能体服务器进程。
+<p>在独立进程模式中，需要首先在目标机器上启动智能体服务器进程，启动时需要提供该服务器能够使用的模型的配置信息，以及服务器的 IP 和端口号。
 例如想要将两个智能体服务进程部署在 IP 分别为 <code class="docutils literal notranslate"><span class="pre">ip_a</span></code> 和 <code class="docutils literal notranslate"><span class="pre">ip_b</span></code> 的机器上（假设这两台机器分别为<code class="docutils literal notranslate"><span class="pre">Machine1</span></code> 和 <code class="docutils literal notranslate"><span class="pre">Machine2</span></code>）。
-你可以先在 <code class="docutils literal notranslate"><span class="pre">Machine1</span></code> 上运行如下代码：</p>
+你可以在 <code class="docutils literal notranslate"><span class="pre">Machine1</span></code> 上运行如下代码。在运行之前请确保该机器能够正确访问到应用中所使用的所有模型。具体来讲，需要将用到的所有模型的配置信息放置在 <code class="docutils literal notranslate"><span class="pre">model_config_path_a</span></code> 文件中，并检查API key 等环境变量是否正确设置，模型配置文件样例可参考 <code class="docutils literal notranslate"><span class="pre">examples/model_configs_template</span></code>。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import some packages</span>
 
+<span class="c1"># register models which can be used in the server</span>
 <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
-    <span class="o">...</span>
+    <span class="n">model_configs</span><span class="o">=</span><span class="n">model_config_path_a</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="c1"># Create an agent service process</span>
 <span class="n">server</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
@@ -188,11 +190,18 @@ AgentScope 会自动帮你从主进程中启动智能体服务器进程并将智
 <span class="n">server</span><span class="o">.</span><span class="n">wait_until_terminate</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>之后在 <code class="docutils literal notranslate"><span class="pre">Machine2</span></code> 上运行如下代码：</p>
+<blockquote>
+<div><p>为了进一步简化使用，可以在命令行中输入如下指令来代替上述代码：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>as_server<span class="w"> </span>--host<span class="w"> </span>ip_a<span class="w"> </span>--port<span class="w"> </span><span class="m">12001</span><span class="w">  </span>--model-config-path<span class="w"> </span>model_config_path_a
+</pre></div>
+</div>
+</div></blockquote>
+<p>在 <code class="docutils literal notranslate"><span class="pre">Machine2</span></code> 上运行如下代码，这里同样要确保已经将模型配置文件放置在 <code class="docutils literal notranslate"><span class="pre">model_config_path_b</span></code> 位置并设置环境变量，从而确保运行在该机器上的 Agent 能够正常访问到模型。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import some packages</span>
 
+<span class="c1"># register models which can be used in the server</span>
 <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
-    <span class="o">...</span>
+    <span class="n">model_configs</span><span class="o">=</span><span class="n">model_config_path_b</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="c1"># Create an agent service process</span>
 <span class="n">server</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
@@ -205,6 +214,12 @@ AgentScope 会自动帮你从主进程中启动智能体服务器进程并将智
 <span class="n">server</span><span class="o">.</span><span class="n">wait_until_terminate</span><span class="p">()</span>
 </pre></div>
 </div>
+<blockquote>
+<div><p>这里也同样可以用如下指令来代替上面的代码。</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>as_server<span class="w"> </span>--host<span class="w"> </span>ip_b<span class="w"> </span>--port<span class="w"> </span><span class="m">12002</span><span class="w"> </span>--model-config-path<span class="w"> </span>model_config_path_b
+</pre></div>
+</div>
+</div></blockquote>
 <p>接下来，就可以使用如下代码从主进程中连接这两个智能体服务器进程。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">AgentA</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;A&quot;</span><span class="p">,</span>
@@ -349,8 +364,9 @@ Placeholder 内部包含了该消息产生方的联络方法，可以通过网�
 </section>
 <section id="agent-server">
 <h4>Agent Server<a class="headerlink" href="#agent-server" title="Link to this heading"></a></h4>
-<p>Agent Server 也就是智能体服务器。在 AgentScope 中，Agent Server 提供了一个让不同 Agent 实例运行的平台。多个不同类型的 Agent 可以运行在同一个 Agent Server 中并保持独立的记忆以及其他本地状态信息，但是他们将共享同一份计算资源。
-只要没有对代码进行修改，一个已经启动的 Agent Server 可以为多个主流程提供服务。
+<p>Agent Server 也就是智能体服务器。在 AgentScope 中，Agent Server 提供了一个让不同 Agent 实例运行的平台。多个不同类型的 Agent 可以运行在同一个 Agent Server 中并保持独立的记忆以及其他本地状态信息，但是他们将共享同一份计算资源。</p>
+<p>在安装 AgentScope 的分布式版本后就可以通过 <code class="docutils literal notranslate"><span class="pre">as_server</span></code> 命令来启动 Agent Server，具体的启动参数在 <a class="reference internal" href="../agentscope.server.launcher.html#agentscope.server.launcher.as_server" title="agentscope.server.launcher.as_server"><code class="xref py py-func docutils literal notranslate"><span class="pre">as_server</span></code></a> 函数文档中可以找到。</p>
+<p>只要没有对代码进行修改，一个已经启动的 Agent Server 可以为多个主流程提供服务。
 这意味着在运行多个应用时，只需要在第一次运行前启动 Agent Server，后续这些 Agent Server 进程就可以持续复用。</p>
 <p><a class="reference internal" href="#distribute-zh">[回到顶部]</a></p>
 </section>

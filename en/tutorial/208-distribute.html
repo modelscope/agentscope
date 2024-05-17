@@ -81,6 +81,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.server.html">agentscope.server</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.web.html">agentscope.web</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.prompt.html">agentscope.prompt</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.utils.html">agentscope.utils</a></li>
@@ -163,12 +164,14 @@ But note that your agent must inherit from the <a class="reference internal" hre
 <section id="independent-process-mode">
 <h4>Independent Process Mode<a class="headerlink" href="#independent-process-mode" title="Link to this heading"></a></h4>
 <p>In the Independent Process Mode, we need to start the agent server process on the target machine first.
+When starting the agent server process, you need to specify a model config file, which contains the models which can be used in the agent server, the IP address and port of the agent server process
 For example, start two agent server processes on the two different machines with IP <code class="docutils literal notranslate"><span class="pre">ip_a</span></code> and <code class="docutils literal notranslate"><span class="pre">ip_b</span></code>(called <code class="docutils literal notranslate"><span class="pre">Machine1</span></code> and <code class="docutils literal notranslate"><span class="pre">Machine2</span></code> accrodingly).
-You can run the following code on <code class="docutils literal notranslate"><span class="pre">Machine1</span></code>:</p>
+You can run the following code on <code class="docutils literal notranslate"><span class="pre">Machine1</span></code>.Before running, make sure that the machine has access to all models that used in your application, specifically, you need to put your model config file in <code class="docutils literal notranslate"><span class="pre">model_config_path_a</span></code> and set environment variables such as your model API key correctly in <code class="docutils literal notranslate"><span class="pre">Machine1</span></code>. The example model config file instances are located under <code class="docutils literal notranslate"><span class="pre">examples/model_configs_template</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import some packages</span>
 
+<span class="c1"># register models which can be used in the server</span>
 <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
-    <span class="o">...</span>
+    <span class="n">model_configs</span><span class="o">=</span><span class="n">model_config_path_a</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="c1"># Create an agent service process</span>
 <span class="n">server</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
@@ -181,11 +184,18 @@ You can run the following code on <code class="docutils literal notranslate"><sp
 <span class="n">server</span><span class="o">.</span><span class="n">wait_until_terminate</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>And run the following code on <code class="docutils literal notranslate"><span class="pre">Machine2</span></code>:</p>
+<blockquote>
+<div><p>For similarity, you can run the following command in your terminal rather than the above code:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>as_server<span class="w"> </span>--host<span class="w"> </span>ip_a<span class="w"> </span>--port<span class="w"> </span><span class="m">12001</span><span class="w"> </span>--model-config-path<span class="w"> </span>model_config_path_a
+</pre></div>
+</div>
+</div></blockquote>
+<p>Then put your model config file accordingly in <code class="docutils literal notranslate"><span class="pre">model_config_path_b</span></code>, set environment variables, and run the following code on <code class="docutils literal notranslate"><span class="pre">Machine2</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import some packages</span>
 
+<span class="c1"># register models which can be used in the server</span>
 <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
-    <span class="o">...</span>
+    <span class="n">model_configs</span><span class="o">=</span><span class="n">model_config_path_b</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="c1"># Create an agent service process</span>
 <span class="n">server</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
@@ -198,6 +208,12 @@ You can run the following code on <code class="docutils literal notranslate"><sp
 <span class="n">server</span><span class="o">.</span><span class="n">wait_until_terminate</span><span class="p">()</span>
 </pre></div>
 </div>
+<blockquote>
+<div><p>Similarly, you can run the following command in your terminal to setup the agent server:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>as_server<span class="w"> </span>--host<span class="w"> </span>ip_b<span class="w"> </span>--port<span class="w"> </span><span class="m">12002</span><span class="w"> </span>--model-config-path<span class="w"> </span>model_config_path_b
+</pre></div>
+</div>
+</div></blockquote>
 <p>Then, you can connect to the agent servers from the main process with the following code.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">AgentA</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;A&quot;</span><span class="p">,</span>
@@ -344,8 +360,9 @@ A placeholder itself is also a message, and it can be sent to other agents, and 
 <section id="agent-server">
 <h4>Agent Server<a class="headerlink" href="#agent-server" title="Link to this heading"></a></h4>
 <p>In agentscope, the agent server provides a running platform for various types of agents.
-Multiple agents can run in the same agent server and hold independent memory and other local states but they will share the same computation resources.
-As long as the code is not modified, an agent server can provide services for multiple main processes.
+Multiple agents can run in the same agent server and hold independent memory and other local states but they will share the same computation resources.</p>
+<p>After installing the distributed version of AgentScope, you can use the <code class="docutils literal notranslate"><span class="pre">as_server</span></code> command to start the agent server, and the detailed startup arguments can be found in the documentation of the <a class="reference internal" href="../agentscope.server.launcher.html#agentscope.server.launcher.as_server" title="agentscope.server.launcher.as_server"><code class="xref py py-func docutils literal notranslate"><span class="pre">as_server</span></code></a> function.</p>
+<p>As long as the code is not modified, an agent server can provide services for multiple main processes.
 This means that when running mutliple applications, you only need to start the agent server for the first time, and it can be reused subsequently.</p>
 <p><a class="reference internal" href="#distribute-en">[Back to the top]</a></p>
 </section>

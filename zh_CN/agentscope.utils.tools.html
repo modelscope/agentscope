@@ -67,6 +67,7 @@
 <li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.server.html">agentscope.server</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils</a></li>
@@ -109,6 +110,31 @@
 <dt class="sig sig-object py" id="agentscope.utils.tools.to_dialog_str">
 <span class="sig-prename descclassname"><span class="pre">agentscope.utils.tools.</span></span><span class="sig-name descname"><span class="pre">to_dialog_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/utils/tools.html#to_dialog_str"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.utils.tools.to_dialog_str" title="Link to this definition"></a></dt>
 <dd><p>Convert a dict into string prompt style.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.utils.tools.find_available_port">
+<span class="sig-prename descclassname"><span class="pre">agentscope.utils.tools.</span></span><span class="sig-name descname"><span class="pre">find_available_port</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/agentscope/utils/tools.html#find_available_port"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.utils.tools.find_available_port" title="Link to this definition"></a></dt>
+<dd><p>Get an unoccupied socket port number.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.utils.tools.check_port">
+<span class="sig-prename descclassname"><span class="pre">agentscope.utils.tools.</span></span><span class="sig-name descname"><span class="pre">check_port</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/agentscope/utils/tools.html#check_port"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.utils.tools.check_port" title="Link to this definition"></a></dt>
+<dd><p>Check if the port is available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>port</strong> (<cite>int</cite>) – the port number being checked.</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>the port number that passed the check. If the port is found
+to be occupied, an available port number will be automatically
+returned.</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>int</cite></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">

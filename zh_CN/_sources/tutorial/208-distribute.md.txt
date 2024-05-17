@@ -57,15 +57,16 @@ b = AgentB(
 
 #### 独立进程模式
 
-在独立进程模式中，需要首先在目标机器上启动智能体服务器进程。
+在独立进程模式中，需要首先在目标机器上启动智能体服务器进程，启动时需要提供该服务器能够使用的模型的配置信息，以及服务器的 IP 和端口号。
 例如想要将两个智能体服务进程部署在 IP 分别为 `ip_a` 和 `ip_b` 的机器上（假设这两台机器分别为`Machine1` 和 `Machine2`）。
-你可以先在 `Machine1` 上运行如下代码：
+你可以在 `Machine1` 上运行如下代码。在运行之前请确保该机器能够正确访问到应用中所使用的所有模型。具体来讲，需要将用到的所有模型的配置信息放置在 `model_config_path_a` 文件中，并检查API key 等环境变量是否正确设置，模型配置文件样例可参考 `examples/model_configs_template`。
 
 ```python
 # import some packages
 
+# register models which can be used in the server
 agentscope.init(
-    ...
+    model_configs=model_config_path_a,
 )
 # Create an agent service process
 server = RpcAgentServerLauncher(
@@ -78,13 +79,20 @@ server.launch()
 server.wait_until_terminate()
 ```
 
-之后在 `Machine2` 上运行如下代码：
+> 为了进一步简化使用，可以在命令行中输入如下指令来代替上述代码：
+>
+> ```shell
+> as_server --host ip_a --port 12001  --model-config-path model_config_path_a
+> ```
+
+在 `Machine2` 上运行如下代码，这里同样要确保已经将模型配置文件放置在 `model_config_path_b` 位置并设置环境变量，从而确保运行在该机器上的 Agent 能够正常访问到模型。
 
 ```python
 # import some packages
 
+# register models which can be used in the server
 agentscope.init(
-    ...
+    model_configs=model_config_path_b,
 )
 # Create an agent service process
 server = RpcAgentServerLauncher(
@@ -96,6 +104,12 @@ server = RpcAgentServerLauncher(
 server.launch()
 server.wait_until_terminate()
 ```
+
+> 这里也同样可以用如下指令来代替上面的代码。
+>
+> ```shell
+> as_server --host ip_b --port 12002 --model-config-path model_config_path_b
+> ```
 
 接下来，就可以使用如下代码从主进程中连接这两个智能体服务器进程。
 
@@ -251,6 +265,9 @@ Placeholder 内部包含了该消息产生方的联络方法，可以通过网�
 #### Agent Server
 
 Agent Server 也就是智能体服务器。在 AgentScope 中，Agent Server 提供了一个让不同 Agent 实例运行的平台。多个不同类型的 Agent 可以运行在同一个 Agent Server 中并保持独立的记忆以及其他本地状态信息，但是他们将共享同一份计算资源。
+
+在安装 AgentScope 的分布式版本后就可以通过 `as_server` 命令来启动 Agent Server，具体的启动参数在 {func}`as_server<agentscope.server.launcher.as_server>` 函数文档中可以找到。
+
 只要没有对代码进行修改，一个已经启动的 Agent Server 可以为多个主流程提供服务。
 这意味着在运行多个应用时，只需要在第一次运行前启动 Agent Server，后续这些 Agent Server 进程就可以持续复用。
 

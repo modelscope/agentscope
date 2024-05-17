@@ -67,6 +67,7 @@
 <li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.server.html">agentscope.server</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils</a></li>
@@ -323,11 +324,19 @@ agent generates a response message.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>host</strong> (<cite>str</cite>, defaults to <cite>“localhost”</cite>) – Hostname of the rpc agent server.</p></li>
 <li><p><strong>port</strong> (<cite>int</cite>, defaults to <cite>None</cite>) – Port of the rpc agent server.</p></li>
-<li><p><strong>max_pool_size</strong> (<cite>int</cite>, defaults to <cite>8192</cite>) – Max number of task results that the server can accommodate.</p></li>
-<li><p><strong>max_timeout_seconds</strong> (<cite>int</cite>, defaults to <cite>1800</cite>) – Timeout for task results.</p></li>
-<li><p><strong>local_mode</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – Whether the started rpc server only listens to local
+<li><p><strong>max_pool_size</strong> (<cite>int</cite>, defaults to <cite>8192</cite>) – Only takes effect when <cite>host</cite> and <cite>port</cite> are not filled in.
+The max number of agent reply messages that the started agent
+server can accommodate. Note that the oldest message will be
+deleted after exceeding the pool size.</p></li>
+<li><p><strong>max_timeout_seconds</strong> (<cite>int</cite>, defaults to <cite>1800</cite>) – Only takes effect when <cite>host</cite> and <cite>port</cite> are not filled in.
+Maximum time for reply messages to be cached in the launched
+agent server. Note that expired messages will be deleted.</p></li>
+<li><p><strong>local_mode</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – Only takes effect when <cite>host</cite> and <cite>port</cite> are not filled in.
+Whether the started agent server only listens to local
 requests.</p></li>
-<li><p><strong>lazy_launch</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – Only launch the server when the agent is called.</p></li>
+<li><p><strong>lazy_launch</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – Only takes effect when <cite>host</cite> and <cite>port</cite> are not filled in.
+If <cite>True</cite>, launch the agent server when the agent is called,
+otherwise, launch the agent server immediately.</p></li>
 <li><p><strong>launch_server</strong> (<cite>bool</cite>, defaults to <cite>None</cite>) – This field has been deprecated and will be removed in
 future releases.</p></li>
 </ul>

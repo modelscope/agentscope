@@ -1,0 +1,600 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.server.launcher &mdash; AgentScope  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../../../en/_modules/agentscope/server/launcher.html">English</a></li> |
+    <a href="../../../../zh_CN/_modules/agentscope/server/launcher.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/quick_start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/advance.html">Advanced Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/contribute.html">Get Involved</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.exception.html">agentscope.exception</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.server.html">agentscope.server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">agentscope.server.launcher</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for agentscope.server.launcher</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot; Server of distributed agent&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span><span class="p">,</span> <span class="n">Event</span><span class="p">,</span> <span class="n">Pipe</span>
+<span class="kn">from</span> <span class="nn">multiprocessing.synchronize</span> <span class="kn">import</span> <span class="n">Event</span> <span class="k">as</span> <span class="n">EventClass</span>
+<span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">signal</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span>
+<span class="kn">from</span> <span class="nn">concurrent</span> <span class="kn">import</span> <span class="n">futures</span>
+<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">grpc</span>
+    <span class="kn">from</span> <span class="nn">agentscope.rpc.rpc_agent_pb2_grpc</span> <span class="kn">import</span> <span class="p">(</span>
+        <span class="n">add_RpcAgentServicer_to_server</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">import_error</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">agentscope.utils.tools</span> <span class="kn">import</span> <span class="n">ImportErrorReporter</span>
+
+    <span class="n">grpc</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;distribute&quot;</span><span class="p">)</span>
+    <span class="n">add_RpcAgentServicer_to_server</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span>
+        <span class="n">import_error</span><span class="p">,</span>
+        <span class="s2">&quot;distribute&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">agentscope</span>
+<span class="kn">from</span> <span class="nn">agentscope.server.servicer</span> <span class="kn">import</span> <span class="n">AgentServerServicer</span>
+<span class="kn">from</span> <span class="nn">agentscope.agents.agent</span> <span class="kn">import</span> <span class="n">AgentBase</span>
+<span class="kn">from</span> <span class="nn">agentscope.utils.tools</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_get_timestamp</span><span class="p">,</span>
+    <span class="n">check_port</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_setup_agent_server</span><span class="p">(</span>
+    <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">server_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">init_settings</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">start_event</span><span class="p">:</span> <span class="n">EventClass</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">stop_event</span><span class="p">:</span> <span class="n">EventClass</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">pipe</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">local_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">max_pool_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8192</span><span class="p">,</span>
+    <span class="n">max_timeout_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1800</span><span class="p">,</span>
+    <span class="n">custom_agents</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup agent server.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        host (`str`, defaults to `&quot;localhost&quot;`):</span>
+<span class="sd">            Hostname of the agent server.</span>
+<span class="sd">        port (`int`):</span>
+<span class="sd">            The socket port monitored by the agent server.</span>
+<span class="sd">        server_id (`str`):</span>
+<span class="sd">            The id of the server.</span>
+<span class="sd">        init_settings (`dict`, defaults to `None`):</span>
+<span class="sd">            Init settings for agentscope.init.</span>
+<span class="sd">        start_event (`EventClass`, defaults to `None`):</span>
+<span class="sd">            An Event instance used to determine whether the child process</span>
+<span class="sd">            has been started.</span>
+<span class="sd">        stop_event (`EventClass`, defaults to `None`):</span>
+<span class="sd">            The stop Event instance used to determine whether the child</span>
+<span class="sd">            process has been stopped.</span>
+<span class="sd">        pipe (`int`, defaults to `None`):</span>
+<span class="sd">            A pipe instance used to pass the actual port of the server.</span>
+<span class="sd">        local_mode (`bool`, defaults to `None`):</span>
+<span class="sd">            Only listen to local requests.</span>
+<span class="sd">        max_pool_size (`int`, defaults to `8192`):</span>
+<span class="sd">            Max number of agent replies that the server can accommodate.</span>
+<span class="sd">        max_timeout_seconds (`int`, defaults to `1800`):</span>
+<span class="sd">            Timeout for agent replies.</span>
+<span class="sd">        custom_agents (`list`, defaults to `None`):</span>
+<span class="sd">            A list of custom agent classes that are not in `agentscope.agents`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="n">_setup_agent_server_async</span><span class="p">(</span>
+            <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span>
+            <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
+            <span class="n">server_id</span><span class="o">=</span><span class="n">server_id</span><span class="p">,</span>
+            <span class="n">init_settings</span><span class="o">=</span><span class="n">init_settings</span><span class="p">,</span>
+            <span class="n">start_event</span><span class="o">=</span><span class="n">start_event</span><span class="p">,</span>
+            <span class="n">stop_event</span><span class="o">=</span><span class="n">stop_event</span><span class="p">,</span>
+            <span class="n">pipe</span><span class="o">=</span><span class="n">pipe</span><span class="p">,</span>
+            <span class="n">local_mode</span><span class="o">=</span><span class="n">local_mode</span><span class="p">,</span>
+            <span class="n">max_pool_size</span><span class="o">=</span><span class="n">max_pool_size</span><span class="p">,</span>
+            <span class="n">max_timeout_seconds</span><span class="o">=</span><span class="n">max_timeout_seconds</span><span class="p">,</span>
+            <span class="n">custom_agents</span><span class="o">=</span><span class="n">custom_agents</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">_setup_agent_server_async</span><span class="p">(</span>
+    <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">server_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">init_settings</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">start_event</span><span class="p">:</span> <span class="n">EventClass</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">stop_event</span><span class="p">:</span> <span class="n">EventClass</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">pipe</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">local_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">max_pool_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8192</span><span class="p">,</span>
+    <span class="n">max_timeout_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1800</span><span class="p">,</span>
+    <span class="n">custom_agents</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup agent server in an async way.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        host (`str`, defaults to `&quot;localhost&quot;`):</span>
+<span class="sd">            Hostname of the agent server.</span>
+<span class="sd">        port (`int`):</span>
+<span class="sd">            The socket port monitored by the agent server.</span>
+<span class="sd">        server_id (`str`):</span>
+<span class="sd">            The id of the server.</span>
+<span class="sd">        init_settings (`dict`, defaults to `None`):</span>
+<span class="sd">            Init settings for agentscope.init.</span>
+<span class="sd">        start_event (`EventClass`, defaults to `None`):</span>
+<span class="sd">            An Event instance used to determine whether the child process</span>
+<span class="sd">            has been started.</span>
+<span class="sd">        stop_event (`EventClass`, defaults to `None`):</span>
+<span class="sd">            The stop Event instance used to determine whether the child</span>
+<span class="sd">            process has been stopped.</span>
+<span class="sd">        pipe (`int`, defaults to `None`):</span>
+<span class="sd">            A pipe instance used to pass the actual port of the server.</span>
+<span class="sd">        local_mode (`bool`, defaults to `None`):</span>
+<span class="sd">            If `True`, only listen to requests from &quot;localhost&quot;, otherwise,</span>
+<span class="sd">            listen to requests from all hosts.</span>
+<span class="sd">        max_pool_size (`int`, defaults to `8192`):</span>
+<span class="sd">            The max number of agent reply messages that the server can</span>
+<span class="sd">            accommodate. Note that the oldest message will be deleted</span>
+<span class="sd">            after exceeding the pool size.</span>
+<span class="sd">        max_timeout_seconds (`int`, defaults to `1800`):</span>
+<span class="sd">            Maximum time for reply messages to be cached in the server.</span>
+<span class="sd">            Note that expired messages will be deleted.</span>
+<span class="sd">        custom_agents (`list`, defaults to `None`):</span>
+<span class="sd">            A list of custom agent classes that are not in `agentscope.agents`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">agentscope._init</span> <span class="kn">import</span> <span class="n">init_process</span>
+
+    <span class="k">if</span> <span class="n">init_settings</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">init_process</span><span class="p">(</span><span class="o">**</span><span class="n">init_settings</span><span class="p">)</span>
+    <span class="n">servicer</span> <span class="o">=</span> <span class="n">AgentServerServicer</span><span class="p">(</span>
+        <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span>
+        <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
+        <span class="n">max_pool_size</span><span class="o">=</span><span class="n">max_pool_size</span><span class="p">,</span>
+        <span class="n">max_timeout_seconds</span><span class="o">=</span><span class="n">max_timeout_seconds</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># update agent registry</span>
+    <span class="k">if</span> <span class="n">custom_agents</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">agent_class</span> <span class="ow">in</span> <span class="n">custom_agents</span><span class="p">:</span>
+            <span class="n">AgentBase</span><span class="o">.</span><span class="n">register_agent_class</span><span class="p">(</span><span class="n">agent_class</span><span class="o">=</span><span class="n">agent_class</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">shutdown_signal_handler</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Received shutdown signal. Gracefully stopping the server at &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">].&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">await</span> <span class="n">server</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="n">grace</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+    <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_running_loop</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">&quot;nt&quot;</span><span class="p">:</span>
+        <span class="c1"># windows does not support add_signal_handler</span>
+        <span class="k">for</span> <span class="n">sig</span> <span class="ow">in</span> <span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGTERM</span><span class="p">):</span>
+            <span class="n">loop</span><span class="o">.</span><span class="n">add_signal_handler</span><span class="p">(</span>
+                <span class="n">sig</span><span class="p">,</span>
+                <span class="k">lambda</span><span class="p">:</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">shutdown_signal_handler</span><span class="p">()),</span>
+            <span class="p">)</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">port</span> <span class="o">=</span> <span class="n">check_port</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
+            <span class="n">servicer</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span>
+            <span class="n">server</span> <span class="o">=</span> <span class="n">grpc</span><span class="o">.</span><span class="n">aio</span><span class="o">.</span><span class="n">server</span><span class="p">(</span>
+                <span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">add_RpcAgentServicer_to_server</span><span class="p">(</span><span class="n">servicer</span><span class="p">,</span> <span class="n">server</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">local_mode</span><span class="p">:</span>
+                <span class="n">server</span><span class="o">.</span><span class="n">add_insecure_port</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;localhost:</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">server</span><span class="o">.</span><span class="n">add_insecure_port</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;0.0.0.0:</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">await</span> <span class="n">server</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+            <span class="k">break</span>
+        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Failed to start agent server at port [</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">]&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;try another port&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;agent server [</span><span class="si">{</span><span class="n">server_id</span><span class="si">}</span><span class="s2">] at </span><span class="si">{</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2"> started successfully&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">start_event</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
+        <span class="n">start_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">stop_event</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
+            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Stopping agent server at [</span><span class="si">{</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">await</span> <span class="n">server</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="n">grace</span><span class="o">=</span><span class="mf">10.0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">server</span><span class="o">.</span><span class="n">wait_for_termination</span><span class="p">()</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;agent server [</span><span class="si">{</span><span class="n">server_id</span><span class="si">}</span><span class="s2">] at </span><span class="si">{</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2"> stopped successfully&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="RpcAgentServerLauncher">
+<a class="viewcode-back" href="../../../agentscope.server.launcher.html#agentscope.server.RpcAgentServerLauncher">[docs]</a>
+<span class="k">class</span> <span class="nc">RpcAgentServerLauncher</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The launcher of AgentServer.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RpcAgentServerLauncher.__init__">
+<a class="viewcode-back" href="../../../agentscope.server.launcher.html#agentscope.server.RpcAgentServerLauncher.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+        <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_pool_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8192</span><span class="p">,</span>
+        <span class="n">max_timeout_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1800</span><span class="p">,</span>
+        <span class="n">local_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">custom_agents</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">server_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">agent_class</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">AgentBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">agent_args</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">(),</span>
+        <span class="n">agent_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Init a launcher of agent server.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            host (`str`, defaults to `&quot;localhost&quot;`):</span>
+<span class="sd">                Hostname of the agent server.</span>
+<span class="sd">            port (`int`, defaults to `None`):</span>
+<span class="sd">                Socket port of the agent server.</span>
+<span class="sd">            max_pool_size (`int`, defaults to `8192`):</span>
+<span class="sd">                The max number of agent reply messages that the server can</span>
+<span class="sd">                accommodate. Note that the oldest message will be deleted</span>
+<span class="sd">                after exceeding the pool size.</span>
+<span class="sd">            max_timeout_seconds (`int`, defaults to `1800`):</span>
+<span class="sd">                Maximum time for reply messages to be cached in the server.</span>
+<span class="sd">                Note that expired messages will be deleted.</span>
+<span class="sd">            local_mode (`bool`, defaults to `False`):</span>
+<span class="sd">                If `True`, only listen to requests from &quot;localhost&quot;, otherwise,</span>
+<span class="sd">                listen to requests from all hosts.</span>
+<span class="sd">            custom_agents (`list`, defaults to `None`):</span>
+<span class="sd">                A list of custom agent classes that are not in</span>
+<span class="sd">                `agentscope.agents`.</span>
+<span class="sd">            server_id (`str`, defaults to `None`):</span>
+<span class="sd">                The id of the agent server. If not specified, a random id</span>
+<span class="sd">                will be generated.</span>
+<span class="sd">            agent_class (`Type[AgentBase]`, deprecated):</span>
+<span class="sd">                The AgentBase subclass encapsulated by this wrapper.</span>
+<span class="sd">            agent_args (`tuple`, deprecated): The args tuple used to</span>
+<span class="sd">                initialize the agent_class.</span>
+<span class="sd">            agent_kwargs (`dict`, deprecated): The args dict used to</span>
+<span class="sd">                initialize the agent_class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">check_port</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_pool_size</span> <span class="o">=</span> <span class="n">max_pool_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_timeout_seconds</span> <span class="o">=</span> <span class="n">max_timeout_seconds</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">local_mode</span> <span class="o">=</span> <span class="n">local_mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent_con</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">custom_agents</span> <span class="o">=</span> <span class="n">custom_agents</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">server_id</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generate_server_id</span><span class="p">()</span> <span class="k">if</span> <span class="n">server_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">server_id</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">agent_class</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">agent_args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="ow">or</span> <span class="n">agent_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;`agent_class`, `agent_args` and `agent_kwargs` is deprecated&quot;</span>
+                <span class="s2">&quot; in `RpcAgentServerLauncher`&quot;</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RpcAgentServerLauncher.generate_server_id">
+<a class="viewcode-back" href="../../../agentscope.server.launcher.html#agentscope.server.RpcAgentServerLauncher.generate_server_id">[docs]</a>
+    <span class="k">def</span> <span class="nf">generate_server_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate server id&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">_get_timestamp</span><span class="p">(</span><span class="s1">&#39;%y%m</span><span class="si">%d</span><span class="s1">-%H:%M:%S&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_launch_in_main</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Launch agent server in main-process&quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Launching agent server at [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">]...&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="n">_setup_agent_server_async</span><span class="p">(</span>
+                <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
+                <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
+                <span class="n">server_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">server_id</span><span class="p">,</span>
+                <span class="n">max_pool_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_pool_size</span><span class="p">,</span>
+                <span class="n">max_timeout_seconds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_timeout_seconds</span><span class="p">,</span>
+                <span class="n">local_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">local_mode</span><span class="p">,</span>
+                <span class="n">custom_agents</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">custom_agents</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_launch_in_sub</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Launch an agent server in sub-process.&quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">agentscope._init</span> <span class="kn">import</span> <span class="n">_INIT_SETTINGS</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent_con</span><span class="p">,</span> <span class="n">child_con</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">()</span>
+        <span class="n">start_event</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>
+        <span class="n">server_process</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span>
+            <span class="n">target</span><span class="o">=</span><span class="n">_setup_agent_server</span><span class="p">,</span>
+            <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;host&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
+                <span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
+                <span class="s2">&quot;server_id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">server_id</span><span class="p">,</span>
+                <span class="s2">&quot;init_settings&quot;</span><span class="p">:</span> <span class="n">_INIT_SETTINGS</span><span class="p">,</span>
+                <span class="s2">&quot;start_event&quot;</span><span class="p">:</span> <span class="n">start_event</span><span class="p">,</span>
+                <span class="s2">&quot;stop_event&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span><span class="p">,</span>
+                <span class="s2">&quot;pipe&quot;</span><span class="p">:</span> <span class="n">child_con</span><span class="p">,</span>
+                <span class="s2">&quot;max_pool_size&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_pool_size</span><span class="p">,</span>
+                <span class="s2">&quot;max_timeout_seconds&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_timeout_seconds</span><span class="p">,</span>
+                <span class="s2">&quot;local_mode&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_mode</span><span class="p">,</span>
+                <span class="s2">&quot;custom_agents&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom_agents</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+        <span class="n">server_process</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_con</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+        <span class="n">start_event</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="n">server_process</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Launch agent server at [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">] success&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="RpcAgentServerLauncher.launch">
+<a class="viewcode-back" href="../../../agentscope.server.launcher.html#agentscope.server.RpcAgentServerLauncher.launch">[docs]</a>
+    <span class="k">def</span> <span class="nf">launch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_subprocess</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;launch an agent server.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            in_subprocess (bool, optional): launch the server in subprocess.</span>
+<span class="sd">                Defaults to True. For agents that need to obtain command line</span>
+<span class="sd">                input, such as UserAgent, please set this value to False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">in_subprocess</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_launch_in_sub</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_launch_in_main</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="RpcAgentServerLauncher.wait_until_terminate">
+<a class="viewcode-back" href="../../../agentscope.server.launcher.html#agentscope.server.RpcAgentServerLauncher.wait_until_terminate">[docs]</a>
+    <span class="k">def</span> <span class="nf">wait_until_terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wait for server process&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">join</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="RpcAgentServerLauncher.shutdown">
+<a class="viewcode-back" href="../../../agentscope.server.launcher.html#agentscope.server.RpcAgentServerLauncher.shutdown">[docs]</a>
+    <span class="k">def</span> <span class="nf">shutdown</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Shutdown the agent server.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Agent server at port [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">] is killed.&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="kc">None</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="as_server">
+<a class="viewcode-back" href="../../../agentscope.server.launcher.html#agentscope.server.as_server">[docs]</a>
+<span class="k">def</span> <span class="nf">as_server</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Launch an agent server with terminal command.</span>
+
+<span class="sd">    Note:</span>
+
+<span class="sd">        The arguments of `as_server` are listed as follows:</span>
+
+<span class="sd">        * `--host`: the hostname of the server.</span>
+<span class="sd">        * `--port`: the socket port of the server.</span>
+<span class="sd">        * `--max-pool-size`: max number of agent reply messages that the server</span>
+<span class="sd">          can accommodate. Note that the oldest message will be deleted</span>
+<span class="sd">          after exceeding the pool size.</span>
+<span class="sd">        * `--max-timeout-seconds`: max time for reply messages to be cached</span>
+<span class="sd">          in the server. Note that expired messages will be deleted.</span>
+<span class="sd">        * `--local-mode`: whether the started agent server only listens to</span>
+<span class="sd">          local requests.</span>
+<span class="sd">        * `--model-config-path`: the path to the model config json file</span>
+
+<span class="sd">        In most cases, you only need to specify the `--host`, `--port` and</span>
+<span class="sd">        `--model-config-path`.</span>
+
+<span class="sd">        .. code-block:: shell</span>
+
+<span class="sd">            as_server --host localhost --port 12345 --model-config-path config.json</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--host&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;hostname of the server&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--port&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">12310</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;socket port of the server&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--max-pool-size&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">8192</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;max number of agent reply messages that the server &quot;</span>
+            <span class="s2">&quot;can accommodate. Note that the oldest message will be deleted &quot;</span>
+            <span class="s2">&quot;after exceeding the pool size.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--max-timeout-seconds&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">1800</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;max time for agent reply messages to be cached&quot;</span>
+            <span class="s2">&quot;in the server. Note that expired messages will be deleted.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--local-mode&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;If `True`, only listen to requests from &#39;localhost&#39;, otherwise, &quot;</span>
+            <span class="s2">&quot;listen to requests from all hosts.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--model-config-path&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to the model config json file&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+        <span class="n">project</span><span class="o">=</span><span class="s2">&quot;agent_server&quot;</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;server_</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">runtime_id</span><span class="o">=</span><span class="n">_get_timestamp</span><span class="p">(</span>
+            <span class="s2">&quot;server_</span><span class="si">{}</span><span class="s2">_</span><span class="si">{}</span><span class="s2">_%y%m</span><span class="si">%d</span><span class="s2">-%H%M%S&quot;</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">port</span><span class="p">),</span>
+        <span class="n">model_configs</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">model_config_path</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">launcher</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
+        <span class="n">host</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
+        <span class="n">port</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
+        <span class="n">max_pool_size</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">max_pool_size</span><span class="p">,</span>
+        <span class="n">max_timeout_seconds</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">max_timeout_seconds</span><span class="p">,</span>
+        <span class="n">local_mode</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">local_mode</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">launcher</span><span class="o">.</span><span class="n">launch</span><span class="p">(</span><span class="n">in_subprocess</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">launcher</span><span class="o">.</span><span class="n">wait_until_terminate</span><span class="p">()</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Alibaba Tongyi Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

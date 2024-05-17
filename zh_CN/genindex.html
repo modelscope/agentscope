@@ -68,6 +68,7 @@
 <li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.server.html">agentscope.server</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils</a></li>
@@ -148,15 +149,9 @@
 </li>
       <li><a href="agentscope.agents.html#agentscope.agents.ReActAgent.__init__">__init__() （agentscope.agents.ReActAgent 方法）</a>
 </li>
-      <li><a href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.AgentPlatform.__init__">__init__() （agentscope.agents.rpc_agent.AgentPlatform 方法）</a>
-</li>
       <li><a href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.RpcAgent.__init__">__init__() （agentscope.agents.rpc_agent.RpcAgent 方法）</a>
 </li>
-      <li><a href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.RpcAgentServerLauncher.__init__">__init__() （agentscope.agents.rpc_agent.RpcAgentServerLauncher 方法）</a>
-</li>
       <li><a href="agentscope.agents.html#agentscope.agents.RpcAgent.__init__">__init__() （agentscope.agents.RpcAgent 方法）</a>
-</li>
-      <li><a href="agentscope.agents.html#agentscope.agents.RpcAgentServerLauncher.__init__">__init__() （agentscope.agents.RpcAgentServerLauncher 方法）</a>
 </li>
       <li><a href="agentscope.agents.text_to_image_agent.html#agentscope.agents.text_to_image_agent.TextToImageAgent.__init__">__init__() （agentscope.agents.text_to_image_agent.TextToImageAgent 方法）</a>
 </li>
@@ -234,8 +229,6 @@
 </li>
       <li><a href="agentscope.parsers.html#agentscope.parsers.MultiTaggedContentParser.__init__">__init__() （agentscope.parsers.MultiTaggedContentParser 方法）</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.parsers.parser_base.html#agentscope.parsers.parser_base.DictFilterMixin.__init__">__init__() （agentscope.parsers.parser_base.DictFilterMixin 方法）</a>
 </li>
       <li><a href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.MultiTaggedContentParser.__init__">__init__() （agentscope.parsers.tagged_content_parser.MultiTaggedContentParser 方法）</a>
@@ -244,6 +237,8 @@
 </li>
       <li><a href="agentscope.parsers.html#agentscope.parsers.TaggedContent.__init__">__init__() （agentscope.parsers.TaggedContent 方法）</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.pipelines.html#agentscope.pipelines.ForLoopPipeline.__init__">__init__() （agentscope.pipelines.ForLoopPipeline 方法）</a>
 </li>
       <li><a href="agentscope.pipelines.html#agentscope.pipelines.IfElsePipeline.__init__">__init__() （agentscope.pipelines.IfElsePipeline 方法）</a>
@@ -281,6 +276,14 @@
       <li><a href="agentscope.rpc.html#agentscope.rpc.RpcAgentClient.__init__">__init__() （agentscope.rpc.RpcAgentClient 方法）</a>
 </li>
       <li><a href="agentscope.rpc.html#agentscope.rpc.RpcAgentStub.__init__">__init__() （agentscope.rpc.RpcAgentStub 方法）</a>
+</li>
+      <li><a href="agentscope.server.html#agentscope.server.AgentServerServicer.__init__">__init__() （agentscope.server.AgentServerServicer 方法）</a>
+</li>
+      <li><a href="agentscope.server.launcher.html#agentscope.server.launcher.RpcAgentServerLauncher.__init__">__init__() （agentscope.server.launcher.RpcAgentServerLauncher 方法）</a>
+</li>
+      <li><a href="agentscope.server.html#agentscope.server.RpcAgentServerLauncher.__init__">__init__() （agentscope.server.RpcAgentServerLauncher 方法）</a>
+</li>
+      <li><a href="agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.__init__">__init__() （agentscope.server.servicer.AgentServerServicer 方法）</a>
 </li>
       <li><a href="agentscope.service.service_response.html#agentscope.service.service_response.ServiceResponse.__init__">__init__() （agentscope.service.service_response.ServiceResponse 方法）</a>
 </li>
@@ -378,7 +381,9 @@
 </li>
       <li><a href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.add_RpcAgentServicer_to_server">add_RpcAgentServicer_to_server()（在 agentscope.rpc.rpc_agent_pb2_grpc 模块中）</a>
 </li>
-      <li><a href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.AgentPlatform.agent_exists">agent_exists() （agentscope.agents.rpc_agent.AgentPlatform 方法）</a>
+      <li><a href="agentscope.server.html#agentscope.server.AgentServerServicer.agent_exists">agent_exists() （agentscope.server.AgentServerServicer 方法）</a>
+</li>
+      <li><a href="agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.agent_exists">agent_exists() （agentscope.server.servicer.AgentServerServicer 方法）</a>
 </li>
       <li><a href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.agent_id">agent_id（agentscope.agents.agent.AgentBase 属性）</a>
 </li>
@@ -387,8 +392,6 @@
       <li><a href="agentscope.agents.html#agentscope.agents.AgentBase">AgentBase（agentscope.agents 中的类）</a>
 </li>
       <li><a href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase">AgentBase（agentscope.agents.agent 中的类）</a>
-</li>
-      <li><a href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.AgentPlatform">AgentPlatform（agentscope.agents.rpc_agent 中的类）</a>
 </li>
       <li>
     agentscope
@@ -663,8 +666,6 @@
         <li><a href="agentscope.rpc.html#module-agentscope.rpc">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     agentscope.rpc.rpc_agent_client
 
@@ -679,11 +680,34 @@
         <li><a href="agentscope.rpc.rpc_agent_pb2.html#module-agentscope.rpc.rpc_agent_pb2">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     agentscope.rpc.rpc_agent_pb2_grpc
 
       <ul>
         <li><a href="agentscope.rpc.rpc_agent_pb2_grpc.html#module-agentscope.rpc.rpc_agent_pb2_grpc">module</a>
+</li>
+      </ul></li>
+      <li>
+    agentscope.server
+
+      <ul>
+        <li><a href="agentscope.server.html#module-agentscope.server">module</a>
+</li>
+      </ul></li>
+      <li>
+    agentscope.server.launcher
+
+      <ul>
+        <li><a href="agentscope.server.launcher.html#module-agentscope.server.launcher">module</a>
+</li>
+      </ul></li>
+      <li>
+    agentscope.server.servicer
+
+      <ul>
+        <li><a href="agentscope.server.servicer.html#module-agentscope.server.servicer">module</a>
 </li>
       </ul></li>
       <li>
@@ -980,6 +1004,10 @@
         <li><a href="agentscope.web.workstation.workflow_utils.html#module-agentscope.web.workstation.workflow_utils">module</a>
 </li>
       </ul></li>
+      <li><a href="agentscope.server.html#agentscope.server.AgentServerServicer">AgentServerServicer（agentscope.server 中的类）</a>
+</li>
+      <li><a href="agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer">AgentServerServicer（agentscope.server.servicer 中的类）</a>
+</li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WorkflowNodeType.AGENT">AGENT（agentscope.web.workstation.workflow_node.WorkflowNodeType 属性）</a>
 </li>
       <li><a href="agentscope.exception.html#agentscope.exception.ArgumentNotFoundError">ArgumentNotFoundError</a>
@@ -989,6 +1017,10 @@
       <li><a href="agentscope.service.html#agentscope.service.arxiv_search">arxiv_search()（在 agentscope.service 模块中）</a>
 </li>
       <li><a href="agentscope.service.web.arxiv.html#agentscope.service.web.arxiv.arxiv_search">arxiv_search()（在 agentscope.service.web.arxiv 模块中）</a>
+</li>
+      <li><a href="agentscope.server.html#agentscope.server.as_server">as_server()（在 agentscope.server 模块中）</a>
+</li>
+      <li><a href="agentscope.server.launcher.html#agentscope.server.launcher.as_server">as_server()（在 agentscope.server.launcher 模块中）</a>
 </li>
       <li><a href="agentscope.web.workstation.workflow_dag.html#agentscope.web.workstation.workflow_dag.ASDiGraph">ASDiGraph（agentscope.web.workstation.workflow_dag 中的类）</a>
 </li>
@@ -1018,8 +1050,6 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.AgentPlatform.call_func">call_func() （agentscope.agents.rpc_agent.AgentPlatform 方法）</a>
-</li>
       <li><a href="agentscope.rpc.rpc_agent_client.html#agentscope.rpc.rpc_agent_client.RpcAgentClient.call_func">call_func() （agentscope.rpc.rpc_agent_client.RpcAgentClient 方法）</a>
 </li>
       <li><a href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.call_func">call_func() （agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer 方法）</a>
@@ -1027,6 +1057,10 @@
       <li><a href="agentscope.rpc.html#agentscope.rpc.RpcAgentClient.call_func">call_func() （agentscope.rpc.RpcAgentClient 方法）</a>
 </li>
       <li><a href="agentscope.rpc.html#agentscope.rpc.RpcAgentServicer.call_func">call_func() （agentscope.rpc.RpcAgentServicer 方法）</a>
+</li>
+      <li><a href="agentscope.server.html#agentscope.server.AgentServerServicer.call_func">call_func() （agentscope.server.AgentServerServicer 方法）</a>
+</li>
+      <li><a href="agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.call_func">call_func() （agentscope.server.servicer.AgentServerServicer 方法）</a>
 </li>
       <li><a href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.call_func">call_func()（agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent 静态方法）</a>
 </li>
@@ -1036,11 +1070,15 @@
 </li>
       <li><a href="agentscope.utils.common.html#agentscope.utils.common.chdir">chdir()（在 agentscope.utils.common 模块中）</a>
 </li>
-      <li><a href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.AgentPlatform.check_and_delete_agent">check_and_delete_agent() （agentscope.agents.rpc_agent.AgentPlatform 方法）</a>
+      <li><a href="agentscope.server.html#agentscope.server.AgentServerServicer.check_and_delete_agent">check_and_delete_agent() （agentscope.server.AgentServerServicer 方法）</a>
 </li>
-      <li><a href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.AgentPlatform.check_and_generate_agent">check_and_generate_agent() （agentscope.agents.rpc_agent.AgentPlatform 方法）</a>
+      <li><a href="agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.check_and_delete_agent">check_and_delete_agent() （agentscope.server.servicer.AgentServerServicer 方法）</a>
 </li>
-      <li><a href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.check_port">check_port()（在 agentscope.agents.rpc_agent 模块中）</a>
+      <li><a href="agentscope.server.html#agentscope.server.AgentServerServicer.check_and_generate_agent">check_and_generate_agent() （agentscope.server.AgentServerServicer 方法）</a>
+</li>
+      <li><a href="agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.check_and_generate_agent">check_and_generate_agent() （agentscope.server.servicer.AgentServerServicer 方法）</a>
+</li>
+      <li><a href="agentscope.utils.tools.html#agentscope.utils.tools.check_port">check_port()（在 agentscope.utils.tools 模块中）</a>
 </li>
       <li><a href="agentscope.web.studio.utils.html#agentscope.web.studio.utils.check_uuid">check_uuid()（在 agentscope.web.studio.utils 模块中）</a>
 </li>
@@ -1104,12 +1142,12 @@
 </li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.SwitchPipelineNode.compile">compile() （agentscope.web.workstation.workflow_node.SwitchPipelineNode 方法）</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.TextToImageAgentNode.compile">compile() （agentscope.web.workstation.workflow_node.TextToImageAgentNode 方法）</a>
 </li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.UserAgentNode.compile">compile() （agentscope.web.workstation.workflow_node.UserAgentNode 方法）</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WhileLoopPipelineNode.compile">compile() （agentscope.web.workstation.workflow_node.WhileLoopPipelineNode 方法）</a>
 </li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WorkflowNode.compile">compile() （agentscope.web.workstation.workflow_node.WorkflowNode 方法）</a>
@@ -1358,7 +1396,7 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.find_available_port">find_available_port()（在 agentscope.agents.rpc_agent 模块中）</a>
+      <li><a href="agentscope.utils.tools.html#agentscope.utils.tools.find_available_port">find_available_port()（在 agentscope.utils.tools 模块中）</a>
 </li>
       <li><a href="agentscope.utils.monitor.html#agentscope.utils.monitor.MonitorFactory.flush">flush()（agentscope.utils.monitor.MonitorFactory 类方法）</a>
 </li>
@@ -1474,6 +1512,10 @@
 </li>
       <li><a href="agentscope.web.studio.utils.html#agentscope.web.studio.utils.generate_image_from_name">generate_image_from_name()（在 agentscope.web.studio.utils 模块中）</a>
 </li>
+      <li><a href="agentscope.server.launcher.html#agentscope.server.launcher.RpcAgentServerLauncher.generate_server_id">generate_server_id() （agentscope.server.launcher.RpcAgentServerLauncher 方法）</a>
+</li>
+      <li><a href="agentscope.server.html#agentscope.server.RpcAgentServerLauncher.generate_server_id">generate_server_id() （agentscope.server.RpcAgentServerLauncher 方法）</a>
+</li>
       <li><a href="agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiChatWrapper.generation_method">generation_method（agentscope.models.gemini_model.GeminiChatWrapper 属性）</a>
 </li>
       <li><a href="agentscope.models.html#agentscope.models.GeminiChatWrapper.generation_method">generation_method（agentscope.models.GeminiChatWrapper 属性）</a>
@@ -1518,10 +1560,10 @@
 </li>
       <li><a href="agentscope.utils.monitor.html#agentscope.utils.monitor.DummyMonitor.get_metric">get_metric() （agentscope.utils.monitor.DummyMonitor 方法）</a>
 </li>
-      <li><a href="agentscope.utils.monitor.html#agentscope.utils.monitor.MonitorBase.get_metric">get_metric() （agentscope.utils.monitor.MonitorBase 方法）</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.utils.monitor.html#agentscope.utils.monitor.MonitorBase.get_metric">get_metric() （agentscope.utils.monitor.MonitorBase 方法）</a>
+</li>
       <li><a href="agentscope.utils.monitor.html#agentscope.utils.monitor.SqliteMonitor.get_metric">get_metric() （agentscope.utils.monitor.SqliteMonitor 方法）</a>
 </li>
       <li><a href="agentscope.utils.html#agentscope.utils.MonitorBase.get_metric">get_metric() （agentscope.utils.MonitorBase 方法）</a>
@@ -1556,7 +1598,9 @@
 </li>
       <li><a href="agentscope.rpc.rpc_agent_client.html#agentscope.rpc.rpc_agent_client.ResponseStub.get_response">get_response() （agentscope.rpc.rpc_agent_client.ResponseStub 方法）</a>
 </li>
-      <li><a href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.AgentPlatform.get_task_id">get_task_id() （agentscope.agents.rpc_agent.AgentPlatform 方法）</a>
+      <li><a href="agentscope.server.html#agentscope.server.AgentServerServicer.get_task_id">get_task_id() （agentscope.server.AgentServerServicer 方法）</a>
+</li>
+      <li><a href="agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.get_task_id">get_task_id() （agentscope.server.servicer.AgentServerServicer 方法）</a>
 </li>
       <li><a href="agentscope.utils.monitor.html#agentscope.utils.monitor.DummyMonitor.get_unit">get_unit() （agentscope.utils.monitor.DummyMonitor 方法）</a>
 </li>
@@ -1678,9 +1722,9 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.RpcAgentServerLauncher.launch">launch() （agentscope.agents.rpc_agent.RpcAgentServerLauncher 方法）</a>
+      <li><a href="agentscope.server.launcher.html#agentscope.server.launcher.RpcAgentServerLauncher.launch">launch() （agentscope.server.launcher.RpcAgentServerLauncher 方法）</a>
 </li>
-      <li><a href="agentscope.agents.html#agentscope.agents.RpcAgentServerLauncher.launch">launch() （agentscope.agents.RpcAgentServerLauncher 方法）</a>
+      <li><a href="agentscope.server.html#agentscope.server.RpcAgentServerLauncher.launch">launch() （agentscope.server.RpcAgentServerLauncher 方法）</a>
 </li>
       <li><a href="agentscope.service.html#agentscope.service.list_directory_content">list_directory_content()（在 agentscope.service 模块中）</a>
 </li>
@@ -1975,6 +2019,12 @@
         <li><a href="agentscope.rpc.rpc_agent_pb2.html#module-agentscope.rpc.rpc_agent_pb2">agentscope.rpc.rpc_agent_pb2</a>
 </li>
         <li><a href="agentscope.rpc.rpc_agent_pb2_grpc.html#module-agentscope.rpc.rpc_agent_pb2_grpc">agentscope.rpc.rpc_agent_pb2_grpc</a>
+</li>
+        <li><a href="agentscope.server.html#module-agentscope.server">agentscope.server</a>
+</li>
+        <li><a href="agentscope.server.launcher.html#module-agentscope.server.launcher">agentscope.server.launcher</a>
+</li>
+        <li><a href="agentscope.server.servicer.html#module-agentscope.server.servicer">agentscope.server.servicer</a>
 </li>
         <li><a href="agentscope.service.html#module-agentscope.service">agentscope.service</a>
 </li>
@@ -2273,10 +2323,10 @@
 </li>
       <li><a href="agentscope.models.response.html#agentscope.models.response.ModelResponse.parsed">parsed（agentscope.models.response.ModelResponse 属性）</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.parsers.html#agentscope.parsers.ParserBase">ParserBase（agentscope.parsers 中的类）</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.parsers.parser_base.html#agentscope.parsers.parser_base.ParserBase">ParserBase（agentscope.parsers.parser_base 中的类）</a>
 </li>
       <li><a href="agentscope.pipelines.html#agentscope.pipelines.PipelineBase">PipelineBase（agentscope.pipelines 中的类）</a>
@@ -2303,7 +2353,9 @@
 </li>
       <li><a href="agentscope.models.post_model.html#agentscope.models.post_model.PostAPIModelWrapperBase">PostAPIModelWrapperBase（agentscope.models.post_model 中的类）</a>
 </li>
-      <li><a href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.AgentPlatform.process_messages">process_messages() （agentscope.agents.rpc_agent.AgentPlatform 方法）</a>
+      <li><a href="agentscope.server.html#agentscope.server.AgentServerServicer.process_messages">process_messages() （agentscope.server.AgentServerServicer 方法）</a>
+</li>
+      <li><a href="agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.process_messages">process_messages() （agentscope.server.servicer.AgentServerServicer 方法）</a>
 </li>
       <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceFunction.processed_func">processed_func（agentscope.service.service_toolkit.ServiceFunction 属性）</a>
 </li>
@@ -2467,15 +2519,13 @@
 </li>
       <li><a href="agentscope.message.html#agentscope.message.Msg.role">role（agentscope.message.Msg 属性）</a>
 </li>
-      <li><a href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.rpc_servicer_method">rpc_servicer_method()（在 agentscope.agents.rpc_agent 模块中）</a>
-</li>
       <li><a href="agentscope.rpc.html#agentscope.rpc.RpcAgentClient">RpcAgentClient（agentscope.rpc 中的类）</a>
 </li>
       <li><a href="agentscope.rpc.rpc_agent_client.html#agentscope.rpc.rpc_agent_client.RpcAgentClient">RpcAgentClient（agentscope.rpc.rpc_agent_client 中的类）</a>
 </li>
-      <li><a href="agentscope.agents.html#agentscope.agents.RpcAgentServerLauncher">RpcAgentServerLauncher（agentscope.agents 中的类）</a>
+      <li><a href="agentscope.server.html#agentscope.server.RpcAgentServerLauncher">RpcAgentServerLauncher（agentscope.server 中的类）</a>
 </li>
-      <li><a href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.RpcAgentServerLauncher">RpcAgentServerLauncher（agentscope.agents.rpc_agent 中的类）</a>
+      <li><a href="agentscope.server.launcher.html#agentscope.server.launcher.RpcAgentServerLauncher">RpcAgentServerLauncher（agentscope.server.launcher 中的类）</a>
 </li>
       <li><a href="agentscope.rpc.html#agentscope.rpc.RpcAgentServicer">RpcAgentServicer（agentscope.rpc 中的类）</a>
 </li>
@@ -2573,25 +2623,21 @@
 </li>
       <li><a href="agentscope.utils.html#agentscope.utils.MonitorBase.set_quota">set_quota() （agentscope.utils.MonitorBase 方法）</a>
 </li>
-      <li><a href="agentscope.rpc.html#agentscope.rpc.ResponseStub.set_response">set_response() （agentscope.rpc.ResponseStub 方法）</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.rpc.html#agentscope.rpc.ResponseStub.set_response">set_response() （agentscope.rpc.ResponseStub 方法）</a>
+</li>
       <li><a href="agentscope.rpc.rpc_agent_client.html#agentscope.rpc.rpc_agent_client.ResponseStub.set_response">set_response() （agentscope.rpc.rpc_agent_client.ResponseStub 方法）</a>
 </li>
       <li><a href="agentscope.utils.html#agentscope.utils.setup_logger">setup_logger()（在 agentscope.utils 模块中）</a>
 </li>
       <li><a href="agentscope.utils.logging_utils.html#agentscope.utils.logging_utils.setup_logger">setup_logger()（在 agentscope.utils.logging_utils 模块中）</a>
 </li>
-      <li><a href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.setup_rpc_agent_server">setup_rpc_agent_server()（在 agentscope.agents.rpc_agent 模块中）</a>
-</li>
-      <li><a href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.setup_rpc_agent_server_async">setup_rpc_agent_server_async()（在 agentscope.agents.rpc_agent 模块中）</a>
-</li>
       <li><a href="agentscope.constants.html#agentscope.constants.ShrinkPolicy">ShrinkPolicy（agentscope.constants 中的类）</a>
 </li>
-      <li><a href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.RpcAgentServerLauncher.shutdown">shutdown() （agentscope.agents.rpc_agent.RpcAgentServerLauncher 方法）</a>
+      <li><a href="agentscope.server.launcher.html#agentscope.server.launcher.RpcAgentServerLauncher.shutdown">shutdown() （agentscope.server.launcher.RpcAgentServerLauncher 方法）</a>
 </li>
-      <li><a href="agentscope.agents.html#agentscope.agents.RpcAgentServerLauncher.shutdown">shutdown() （agentscope.agents.RpcAgentServerLauncher 方法）</a>
+      <li><a href="agentscope.server.html#agentscope.server.RpcAgentServerLauncher.shutdown">shutdown() （agentscope.server.RpcAgentServerLauncher 方法）</a>
 </li>
       <li><a href="agentscope.memory.memory.html#agentscope.memory.memory.MemoryBase.size">size() （agentscope.memory.memory.MemoryBase 方法）</a>
 </li>
@@ -2789,9 +2835,9 @@
 <h2 id="W">W</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.RpcAgentServerLauncher.wait_until_terminate">wait_until_terminate() （agentscope.agents.rpc_agent.RpcAgentServerLauncher 方法）</a>
+      <li><a href="agentscope.server.launcher.html#agentscope.server.launcher.RpcAgentServerLauncher.wait_until_terminate">wait_until_terminate() （agentscope.server.launcher.RpcAgentServerLauncher 方法）</a>
 </li>
-      <li><a href="agentscope.agents.html#agentscope.agents.RpcAgentServerLauncher.wait_until_terminate">wait_until_terminate() （agentscope.agents.RpcAgentServerLauncher 方法）</a>
+      <li><a href="agentscope.server.html#agentscope.server.RpcAgentServerLauncher.wait_until_terminate">wait_until_terminate() （agentscope.server.RpcAgentServerLauncher 方法）</a>
 </li>
       <li><a href="agentscope.pipelines.html#agentscope.pipelines.whilelooppipeline">whilelooppipeline()（在 agentscope.pipelines 模块中）</a>
 </li>

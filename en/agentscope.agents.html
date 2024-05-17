@@ -71,7 +71,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.agents.ReActAgent"><code class="docutils literal notranslate"><span class="pre">ReActAgent</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.agents.DistConf"><code class="docutils literal notranslate"><span class="pre">DistConf</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.agents.RpcAgent"><code class="docutils literal notranslate"><span class="pre">RpcAgent</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.agents.RpcAgentServerLauncher"><code class="docutils literal notranslate"><span class="pre">RpcAgentServerLauncher</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory</a></li>
@@ -80,6 +79,7 @@
 <li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.server.html">agentscope.server</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils</a></li>
@@ -310,11 +310,19 @@ agent generates a response message.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>host</strong> (<cite>str</cite>, defaults to <cite>“localhost”</cite>) – Hostname of the rpc agent server.</p></li>
 <li><p><strong>port</strong> (<cite>int</cite>, defaults to <cite>None</cite>) – Port of the rpc agent server.</p></li>
-<li><p><strong>max_pool_size</strong> (<cite>int</cite>, defaults to <cite>8192</cite>) – Max number of task results that the server can accommodate.</p></li>
-<li><p><strong>max_timeout_seconds</strong> (<cite>int</cite>, defaults to <cite>1800</cite>) – Timeout for task results.</p></li>
-<li><p><strong>local_mode</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – Whether the started rpc server only listens to local
+<li><p><strong>max_pool_size</strong> (<cite>int</cite>, defaults to <cite>8192</cite>) – Only takes effect when <cite>host</cite> and <cite>port</cite> are not filled in.
+The max number of agent reply messages that the started agent
+server can accommodate. Note that the oldest message will be
+deleted after exceeding the pool size.</p></li>
+<li><p><strong>max_timeout_seconds</strong> (<cite>int</cite>, defaults to <cite>1800</cite>) – Only takes effect when <cite>host</cite> and <cite>port</cite> are not filled in.
+Maximum time for reply messages to be cached in the launched
+agent server. Note that expired messages will be deleted.</p></li>
+<li><p><strong>local_mode</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – Only takes effect when <cite>host</cite> and <cite>port</cite> are not filled in.
+Whether the started agent server only listens to local
 requests.</p></li>
-<li><p><strong>lazy_launch</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – Only launch the server when the agent is called.</p></li>
+<li><p><strong>lazy_launch</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – Only takes effect when <cite>host</cite> and <cite>port</cite> are not filled in.
+If <cite>True</cite>, launch the agent server when the agent is called,
+otherwise, launch the agent server immediately.</p></li>
 <li><p><strong>launch_server</strong> (<cite>bool</cite>, defaults to <cite>None</cite>) – This field has been deprecated and will be removed in
 future releases.</p></li>
 </ul>
@@ -721,63 +729,6 @@ return them as a list.</p>
 <dt class="sig sig-object py" id="agentscope.agents.RpcAgent.stop">
 <span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/agents/rpc_agent.html#RpcAgent.stop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.RpcAgent.stop" title="Link to this definition"></a></dt>
 <dd><p>Stop the RpcAgent and the rpc server.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="agentscope.agents.RpcAgentServerLauncher">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.agents.</span></span><span class="sig-name descname"><span class="pre">RpcAgentServerLauncher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'localhost'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_pool_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8192</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_timeout_seconds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1800</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_agents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agent_class</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase" title="agentscope.agents.agent.AgentBase"><span class="pre">AgentBase</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agent_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agent_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/agents/rpc_agent.html#RpcAgentServerLauncher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.RpcAgentServerLauncher" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>The launcher of AgentPlatform (formerly RpcAgentServer).</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.agents.RpcAgentServerLauncher.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'localhost'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_pool_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8192</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_timeout_seconds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1800</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_agents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agent_class</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase" title="agentscope.agents.agent.AgentBase"><span class="pre">AgentBase</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agent_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agent_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/agents/rpc_agent.html#RpcAgentServerLauncher.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.RpcAgentServerLauncher.__init__" title="Link to this definition"></a></dt>
-<dd><p>Init a rpc agent server launcher.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>host</strong> (<cite>str</cite>, defaults to <cite>“localhost”</cite>) – Hostname of the rpc agent server.</p></li>
-<li><p><strong>port</strong> (<cite>int</cite>, defaults to <cite>None</cite>) – Port of the rpc agent server.</p></li>
-<li><p><strong>max_pool_size</strong> (<cite>int</cite>, defaults to <cite>8192</cite>) – Max number of task results that the server can accommodate.</p></li>
-<li><p><strong>max_timeout_seconds</strong> (<cite>int</cite>, defaults to <cite>1800</cite>) – Timeout for task results.</p></li>
-<li><p><strong>local_mode</strong> (<cite>bool</cite>, defaults to <cite>False</cite>) – Whether the started rpc server only listens to local
-requests.</p></li>
-<li><p><strong>custom_agents</strong> (<cite>list</cite>, defaults to <cite>None</cite>) – A list of custom agent classes that are not in
-<cite>agentscope.agents</cite>.</p></li>
-<li><p><strong>agent_class</strong> (<cite>Type[AgentBase]</cite>, deprecated) – The AgentBase subclass encapsulated by this wrapper.</p></li>
-<li><p><strong>agent_args</strong> (<cite>tuple</cite>, deprecated) – The args tuple used to
-initialize the agent_class.</p></li>
-<li><p><strong>agent_kwargs</strong> (<cite>dict</cite>, deprecated) – The args dict used to
-initialize the agent_class.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.agents.RpcAgentServerLauncher.launch">
-<span class="sig-name descname"><span class="pre">launch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_subprocess</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/agents/rpc_agent.html#RpcAgentServerLauncher.launch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.RpcAgentServerLauncher.launch" title="Link to this definition"></a></dt>
-<dd><p>launch a rpc agent server.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>in_subprocess</strong> (<em>bool</em><em>, </em><em>optional</em>) – launch the server in subprocess.
-Defaults to True. For agents that need to obtain command line
-input, such as UserAgent, please set this value to False.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.agents.RpcAgentServerLauncher.wait_until_terminate">
-<span class="sig-name descname"><span class="pre">wait_until_terminate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/agents/rpc_agent.html#RpcAgentServerLauncher.wait_until_terminate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.RpcAgentServerLauncher.wait_until_terminate" title="Link to this definition"></a></dt>
-<dd><p>Wait for server process</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.agents.RpcAgentServerLauncher.shutdown">
-<span class="sig-name descname"><span class="pre">shutdown</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/agents/rpc_agent.html#RpcAgentServerLauncher.shutdown"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.RpcAgentServerLauncher.shutdown" title="Link to this definition"></a></dt>
-<dd><p>Shutdown the rpc agent server.</p>
 </dd></dl>
 
 </dd></dl>

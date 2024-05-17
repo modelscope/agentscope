@@ -1,0 +1,467 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.server.servicer &mdash; AgentScope  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../../../en/_modules/agentscope/server/servicer.html">English</a></li> |
+    <a href="../../../../zh_CN/_modules/agentscope/server/servicer.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/quick_start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/advance.html">Advanced Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/contribute.html">Get Involved</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.exception.html">agentscope.exception</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.server.html">agentscope.server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">agentscope.server.servicer</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for agentscope.server.servicer</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot; Server of distributed agent&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">base64</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">from</span> <span class="nn">concurrent</span> <span class="kn">import</span> <span class="n">futures</span>
+<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">dill</span>
+    <span class="kn">import</span> <span class="nn">grpc</span>
+    <span class="kn">from</span> <span class="nn">grpc</span> <span class="kn">import</span> <span class="n">ServicerContext</span>
+    <span class="kn">from</span> <span class="nn">expiringdict</span> <span class="kn">import</span> <span class="n">ExpiringDict</span>
+    <span class="kn">from</span> <span class="nn">..rpc.rpc_agent_pb2</span> <span class="kn">import</span> <span class="n">RpcMsg</span>  <span class="c1"># pylint: disable=E0611</span>
+    <span class="kn">from</span> <span class="nn">..rpc.rpc_agent_pb2_grpc</span> <span class="kn">import</span> <span class="n">RpcAgentServicer</span>
+<span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">import_error</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">agentscope.utils.tools</span> <span class="kn">import</span> <span class="n">ImportErrorReporter</span>
+
+    <span class="n">dill</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;distribute&quot;</span><span class="p">)</span>
+    <span class="n">grpc</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;distribute&quot;</span><span class="p">)</span>
+    <span class="n">ServicerContext</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;distribute&quot;</span><span class="p">)</span>
+    <span class="n">ExpiringDict</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;distribute&quot;</span><span class="p">)</span>
+    <span class="n">RpcMsg</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span>  <span class="c1"># type: ignore[misc]</span>
+        <span class="n">import_error</span><span class="p">,</span>
+        <span class="s2">&quot;distribute&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">RpcAgentServicer</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;distribute&quot;</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">..agents.agent</span> <span class="kn">import</span> <span class="n">AgentBase</span>
+<span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Msg</span><span class="p">,</span>
+    <span class="n">PlaceholderMessage</span><span class="p">,</span>
+    <span class="n">deserialize</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="AgentServerServicer">
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer">[docs]</a>
+<span class="k">class</span> <span class="nc">AgentServerServicer</span><span class="p">(</span><span class="n">RpcAgentServicer</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A Servicer for RPC Agent Server (formerly RpcServerSideWrapper)&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AgentServerServicer.__init__">
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+        <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_pool_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8192</span><span class="p">,</span>
+        <span class="n">max_timeout_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1800</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Init the AgentServerServicer.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            host (`str`, defaults to &quot;localhost&quot;):</span>
+<span class="sd">                Hostname of the rpc agent server.</span>
+<span class="sd">            port (`int`, defaults to `None`):</span>
+<span class="sd">                Port of the rpc agent server.</span>
+<span class="sd">            max_pool_size (`int`, defaults to `8192`):</span>
+<span class="sd">                The max number of agent reply messages that the server can</span>
+<span class="sd">                accommodate. Note that the oldest message will be deleted</span>
+<span class="sd">                after exceeding the pool size.</span>
+<span class="sd">            max_timeout_seconds (`int`, defaults to `1800`):</span>
+<span class="sd">                Maximum time for reply messages to be cached in the server.</span>
+<span class="sd">                Note that expired messages will be deleted.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result_pool</span> <span class="o">=</span> <span class="n">ExpiringDict</span><span class="p">(</span>
+            <span class="n">max_len</span><span class="o">=</span><span class="n">max_pool_size</span><span class="p">,</span>
+            <span class="n">max_age_seconds</span><span class="o">=</span><span class="n">max_timeout_seconds</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">executor</span> <span class="o">=</span> <span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task_id_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent_id_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task_id_counter</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AgentBase</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span></div>
+
+
+<div class="viewcode-block" id="AgentServerServicer.get_task_id">
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.get_task_id">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_task_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the auto-increment task id.</span>
+<span class="sd">        Each reply call will get a unique task id.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_id_lock</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">task_id_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_id_counter</span></div>
+
+
+<div class="viewcode-block" id="AgentServerServicer.agent_exists">
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.agent_exists">[docs]</a>
+    <span class="k">def</span> <span class="nf">agent_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check whether the agent exists.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            agent_id (`str`): the agent id.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: whether the agent exists.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">agent_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span></div>
+
+
+<div class="viewcode-block" id="AgentServerServicer.check_and_generate_agent">
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.check_and_generate_agent">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_and_generate_agent</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">agent_configs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check whether the agent exists, and create new agent instance</span>
+<span class="sd">        for new agent.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            agent_id (`str`): the agent id.</span>
+<span class="sd">            agent_configs (`dict`): configuration used to initialize the agent,</span>
+<span class="sd">                with three fields (generated in `_AgentMeta`):</span>
+
+<span class="sd">                .. code-block:: python</span>
+
+<span class="sd">                    {</span>
+<span class="sd">                        &quot;class_name&quot;: {name of the agent}</span>
+<span class="sd">                        &quot;args&quot;: {args in tuple type to init the agent}</span>
+<span class="sd">                        &quot;kwargs&quot;: {args in dict type to init the agent}</span>
+<span class="sd">                    }</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_id_lock</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">agent_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">:</span>
+                <span class="n">agent_class_name</span> <span class="o">=</span> <span class="n">agent_configs</span><span class="p">[</span><span class="s2">&quot;class_name&quot;</span><span class="p">]</span>
+                <span class="n">agent_instance</span> <span class="o">=</span> <span class="n">AgentBase</span><span class="o">.</span><span class="n">get_agent_class</span><span class="p">(</span><span class="n">agent_class_name</span><span class="p">)(</span>
+                    <span class="o">*</span><span class="n">agent_configs</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">],</span>
+                    <span class="o">**</span><span class="n">agent_configs</span><span class="p">[</span><span class="s2">&quot;kwargs&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
+                <span class="n">agent_instance</span><span class="o">.</span><span class="n">_agent_id</span> <span class="o">=</span> <span class="n">agent_id</span>  <span class="c1"># pylint: disable=W0212</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">[</span><span class="n">agent_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">agent_instance</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;create agent instance [</span><span class="si">{</span><span class="n">agent_id</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentServerServicer.check_and_delete_agent">
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.check_and_delete_agent">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_and_delete_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check whether the agent exists, and delete the agent instance</span>
+<span class="sd">        for the agent_id.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            agent_id (`str`): the agent id.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_id_lock</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">agent_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">agent_id</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;delete agent instance [</span><span class="si">{</span><span class="n">agent_id</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentServerServicer.call_func">
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.call_func">[docs]</a>
+    <span class="k">def</span> <span class="nf">call_func</span><span class="p">(</span>  <span class="c1"># pylint: disable=W0236</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">request</span><span class="p">:</span> <span class="n">RpcMsg</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">ServicerContext</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RpcMsg</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Call the specific servicer function.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">target_func</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">target_func</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;_create_agent&quot;</span><span class="p">,</span> <span class="s2">&quot;_get&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_exists</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">agent_id</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="n">context</span><span class="o">.</span><span class="n">abort</span><span class="p">(</span>
+                        <span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">INVALID_ARGUMENT</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s2">&quot;Agent [</span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">agent_id</span><span class="si">}</span><span class="s2">] not exists.&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">target_func</span><span class="p">)(</span><span class="n">request</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># TODO: support other user defined method</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported method </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">target_func</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">context</span><span class="o">.</span><span class="n">abort</span><span class="p">(</span>
+                <span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">INVALID_ARGUMENT</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;Unsupported method </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">target_func</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">RpcMsg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RpcMsg</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Call function of RpcAgentService</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            request (`RpcMsg`):</span>
+<span class="sd">                Message containing input parameters or input parameter</span>
+<span class="sd">                placeholders.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `RpcMsg`: A serialized Msg instance with attributes name, host,</span>
+<span class="sd">            port and task_id</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">deserialize</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">task_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_task_id</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result_pool</span><span class="p">[</span><span class="n">task_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Condition</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process_messages</span><span class="p">,</span>
+            <span class="n">task_id</span><span class="p">,</span>
+            <span class="n">request</span><span class="o">.</span><span class="n">agent_id</span><span class="p">,</span>
+            <span class="n">msg</span><span class="p">,</span>  <span class="c1"># type: ignore[arg-type]</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">RpcMsg</span><span class="p">(</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">Msg</span><span class="p">(</span>  <span class="c1"># type: ignore[arg-type]</span>
+                <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">[</span><span class="n">request</span><span class="o">.</span><span class="n">agent_id</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">content</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">task_id</span><span class="o">=</span><span class="n">task_id</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">serialize</span><span class="p">(),</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">RpcMsg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RpcMsg</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a reply message with specific task_id.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            request (`RpcMsg`):</span>
+<span class="sd">                The task id that generated this message, with json format::</span>
+
+<span class="sd">                {</span>
+<span class="sd">                    &#39;task_id&#39;: int</span>
+<span class="sd">                }</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `RpcMsg`: Concrete values of the specific message (or part of it).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_pool</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="s2">&quot;task_id&quot;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">threading</span><span class="o">.</span><span class="n">Condition</span><span class="p">):</span>
+                <span class="k">with</span> <span class="n">result</span><span class="p">:</span>
+                    <span class="n">result</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">RpcMsg</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">_observe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">RpcMsg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RpcMsg</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Observe function of the original agent.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            request (`RpcMsg`):</span>
+<span class="sd">                The serialized input to be observed.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `RpcMsg`: Empty RpcMsg.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">msgs</span> <span class="o">=</span> <span class="n">deserialize</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">msgs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">PlaceholderMessage</span><span class="p">):</span>
+                <span class="n">msg</span><span class="o">.</span><span class="n">update_value</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">[</span><span class="n">request</span><span class="o">.</span><span class="n">agent_id</span><span class="p">]</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">msgs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">RpcMsg</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_create_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">RpcMsg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RpcMsg</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new agent instance with the given agent_id.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            request (RpcMsg): request message with a `agent_id` field.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_and_generate_agent</span><span class="p">(</span>
+            <span class="n">request</span><span class="o">.</span><span class="n">agent_id</span><span class="p">,</span>
+            <span class="n">agent_configs</span><span class="o">=</span><span class="p">(</span>
+                <span class="n">dill</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">value</span>
+                <span class="k">else</span> <span class="kc">None</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">RpcMsg</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_clone_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">RpcMsg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RpcMsg</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clone a new agent instance from the origin instance.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            request (RpcMsg): The `agent_id` field is the agent_id of the</span>
+<span class="sd">            agent to be cloned.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `RpcMsg`: The `value` field contains the agent_id of generated</span>
+<span class="sd">            agent.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">agent_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">agent_id</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_id_lock</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">agent_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Agent [</span><span class="si">{</span><span class="n">agent_id</span><span class="si">}</span><span class="s2">] not exists&quot;</span><span class="p">)</span>
+            <span class="n">ori_agent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">[</span><span class="n">agent_id</span><span class="p">]</span>
+        <span class="n">new_agent</span> <span class="o">=</span> <span class="n">ori_agent</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span>
+            <span class="o">*</span><span class="n">ori_agent</span><span class="o">.</span><span class="n">_init_settings</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">],</span>  <span class="c1"># pylint: disable=W0212</span>
+            <span class="o">**</span><span class="n">ori_agent</span><span class="o">.</span><span class="n">_init_settings</span><span class="p">[</span><span class="s2">&quot;kwargs&quot;</span><span class="p">],</span>  <span class="c1"># pylint: disable=W0212</span>
+        <span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_id_lock</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">[</span><span class="n">new_agent</span><span class="o">.</span><span class="n">agent_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_agent</span>
+        <span class="k">return</span> <span class="n">RpcMsg</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">new_agent</span><span class="o">.</span><span class="n">agent_id</span><span class="p">)</span>  <span class="c1"># type: ignore[arg-type]</span>
+
+    <span class="k">def</span> <span class="nf">_delete_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">RpcMsg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RpcMsg</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete the agent instance of the specific agent_id.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            request (RpcMsg): request message with a `agent_id` field.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_and_delete_agent</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">agent_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">RpcMsg</span><span class="p">()</span>
+
+<div class="viewcode-block" id="AgentServerServicer.process_messages">
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.process_messages">[docs]</a>
+    <span class="k">def</span> <span class="nf">process_messages</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">task_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">task_msg</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Processing an input message and generate its reply message.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task_id (`int`): task id of the input message, .</span>
+<span class="sd">            agent_id (`str`): the id of the agent that accepted the message.</span>
+<span class="sd">            task_msg (`dict`): the input message.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">task_msg</span><span class="p">,</span> <span class="n">PlaceholderMessage</span><span class="p">):</span>
+            <span class="n">task_msg</span><span class="o">.</span><span class="n">update_value</span><span class="p">()</span>
+        <span class="n">cond</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_pool</span><span class="p">[</span><span class="n">task_id</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">[</span><span class="n">agent_id</span><span class="p">]</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="n">task_msg</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">result_pool</span><span class="p">[</span><span class="n">task_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error in agent [</span><span class="si">{</span><span class="n">agent_id</span><span class="si">}</span><span class="s2">]:</span><span class="se">\n</span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">result_pool</span><span class="p">[</span><span class="n">task_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ERROR&quot;</span><span class="p">,</span>
+                <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
+                <span class="n">__status</span><span class="o">=</span><span class="s2">&quot;ERROR&quot;</span><span class="p">,</span>
+                <span class="n">content</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error in agent [</span><span class="si">{</span><span class="n">agent_id</span><span class="si">}</span><span class="s2">]:</span><span class="se">\n</span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">with</span> <span class="n">cond</span><span class="p">:</span>
+            <span class="n">cond</span><span class="o">.</span><span class="n">notify_all</span><span class="p">()</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Alibaba Tongyi Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

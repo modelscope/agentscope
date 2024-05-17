@@ -67,6 +67,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.server.html">agentscope.server</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.web.html">agentscope.web</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.prompt.html">agentscope.prompt</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.utils.html">agentscope.utils</a></li>
@@ -578,7 +579,7 @@
 
 <div class="viewcode-block" id="deserialize">
 <a class="viewcode-back" href="../../agentscope.message.html#agentscope.message.deserialize">[docs]</a>
-<span class="k">def</span> <span class="nf">deserialize</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">]:</span>
+<span class="k">def</span> <span class="nf">deserialize</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Deserialize json string into MessageBase&quot;&quot;&quot;</span>
     <span class="n">js_msg</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
     <span class="n">msg_type</span> <span class="o">=</span> <span class="n">js_msg</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;__type&quot;</span><span class="p">)</span>

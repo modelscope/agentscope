@@ -1,0 +1,361 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.server &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=7d86a446"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/translations.js?v=beaddf03"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="agentscope.web" href="agentscope.web.html" />
+    <link rel="prev" title="agentscope.rpc" href="agentscope.rpc.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../en/agentscope.server.html">English</a></li> |
+    <a href="../zh_CN/agentscope.server.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/quick_start.html">快速上手</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/advance.html">进阶使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">agentscope.server</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.server.RpcAgentServerLauncher"><code class="docutils literal notranslate"><span class="pre">RpcAgentServerLauncher</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.server.RpcAgentServerLauncher.__init__"><code class="docutils literal notranslate"><span class="pre">RpcAgentServerLauncher.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.server.RpcAgentServerLauncher.generate_server_id"><code class="docutils literal notranslate"><span class="pre">RpcAgentServerLauncher.generate_server_id()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.server.RpcAgentServerLauncher.launch"><code class="docutils literal notranslate"><span class="pre">RpcAgentServerLauncher.launch()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.server.RpcAgentServerLauncher.wait_until_terminate"><code class="docutils literal notranslate"><span class="pre">RpcAgentServerLauncher.wait_until_terminate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.server.RpcAgentServerLauncher.shutdown"><code class="docutils literal notranslate"><span class="pre">RpcAgentServerLauncher.shutdown()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.server.AgentServerServicer"><code class="docutils literal notranslate"><span class="pre">AgentServerServicer</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.server.AgentServerServicer.__init__"><code class="docutils literal notranslate"><span class="pre">AgentServerServicer.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.server.AgentServerServicer.get_task_id"><code class="docutils literal notranslate"><span class="pre">AgentServerServicer.get_task_id()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.server.AgentServerServicer.agent_exists"><code class="docutils literal notranslate"><span class="pre">AgentServerServicer.agent_exists()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.server.AgentServerServicer.check_and_generate_agent"><code class="docutils literal notranslate"><span class="pre">AgentServerServicer.check_and_generate_agent()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.server.AgentServerServicer.check_and_delete_agent"><code class="docutils literal notranslate"><span class="pre">AgentServerServicer.check_and_delete_agent()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.server.AgentServerServicer.call_func"><code class="docutils literal notranslate"><span class="pre">AgentServerServicer.call_func()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.server.AgentServerServicer.process_messages"><code class="docutils literal notranslate"><span class="pre">AgentServerServicer.process_messages()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.server.as_server"><code class="docutils literal notranslate"><span class="pre">as_server()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">agentscope.server</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/agentscope.server.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-agentscope.server">
+<span id="agentscope-server"></span><h1>agentscope.server<a class="headerlink" href="#module-agentscope.server" title="Link to this heading"></a></h1>
+<p>Import all server related modules in the package.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.server.RpcAgentServerLauncher">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.server.</span></span><span class="sig-name descname"><span class="pre">RpcAgentServerLauncher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'localhost'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_pool_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8192</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_timeout_seconds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1800</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_agents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">server_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agent_class</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase" title="agentscope.agents.agent.AgentBase"><span class="pre">AgentBase</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agent_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agent_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/server/launcher.html#RpcAgentServerLauncher"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.server.RpcAgentServerLauncher" title="Link to this definition"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The launcher of AgentServer.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.server.RpcAgentServerLauncher.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'localhost'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_pool_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8192</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_timeout_seconds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1800</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_agents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">server_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agent_class</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase" title="agentscope.agents.agent.AgentBase"><span class="pre">AgentBase</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agent_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agent_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/server/launcher.html#RpcAgentServerLauncher.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.server.RpcAgentServerLauncher.__init__" title="Link to this definition"></a></dt>
+<dd><p>Init a launcher of agent server.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>host</strong> (<cite>str</cite>, defaults to <cite>“localhost”</cite>) – Hostname of the agent server.</p></li>
+<li><p><strong>port</strong> (<cite>int</cite>, defaults to <cite>None</cite>) – Socket port of the agent server.</p></li>
+<li><p><strong>max_pool_size</strong> (<cite>int</cite>, defaults to <cite>8192</cite>) – The max number of agent reply messages that the server can
+accommodate. Note that the oldest message will be deleted
+after exceeding the pool size.</p></li>
+<li><p><strong>max_timeout_seconds</strong> (<cite>int</cite>, defaults to <cite>1800</cite>) – Maximum time for reply messages to be cached in the server.
+Note that expired messages will be deleted.</p></li>
+<li><p><strong>local_mode</strong> (<cite>bool</cite>, defaults to <cite>False</cite>) – If <cite>True</cite>, only listen to requests from “localhost”, otherwise,
+listen to requests from all hosts.</p></li>
+<li><p><strong>custom_agents</strong> (<cite>list</cite>, defaults to <cite>None</cite>) – A list of custom agent classes that are not in
+<cite>agentscope.agents</cite>.</p></li>
+<li><p><strong>server_id</strong> (<cite>str</cite>, defaults to <cite>None</cite>) – The id of the agent server. If not specified, a random id
+will be generated.</p></li>
+<li><p><strong>agent_class</strong> (<cite>Type[AgentBase]</cite>, deprecated) – The AgentBase subclass encapsulated by this wrapper.</p></li>
+<li><p><strong>agent_args</strong> (<cite>tuple</cite>, deprecated) – The args tuple used to
+initialize the agent_class.</p></li>
+<li><p><strong>agent_kwargs</strong> (<cite>dict</cite>, deprecated) – The args dict used to
+initialize the agent_class.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.server.RpcAgentServerLauncher.generate_server_id">
+<span class="sig-name descname"><span class="pre">generate_server_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/server/launcher.html#RpcAgentServerLauncher.generate_server_id"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.server.RpcAgentServerLauncher.generate_server_id" title="Link to this definition"></a></dt>
+<dd><p>Generate server id</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.server.RpcAgentServerLauncher.launch">
+<span class="sig-name descname"><span class="pre">launch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_subprocess</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/server/launcher.html#RpcAgentServerLauncher.launch"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.server.RpcAgentServerLauncher.launch" title="Link to this definition"></a></dt>
+<dd><p>launch an agent server.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>in_subprocess</strong> (<em>bool</em><em>, </em><em>optional</em>) – launch the server in subprocess.
+Defaults to True. For agents that need to obtain command line
+input, such as UserAgent, please set this value to False.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.server.RpcAgentServerLauncher.wait_until_terminate">
+<span class="sig-name descname"><span class="pre">wait_until_terminate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/server/launcher.html#RpcAgentServerLauncher.wait_until_terminate"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.server.RpcAgentServerLauncher.wait_until_terminate" title="Link to this definition"></a></dt>
+<dd><p>Wait for server process</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.server.RpcAgentServerLauncher.shutdown">
+<span class="sig-name descname"><span class="pre">shutdown</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/server/launcher.html#RpcAgentServerLauncher.shutdown"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.server.RpcAgentServerLauncher.shutdown" title="Link to this definition"></a></dt>
+<dd><p>Shutdown the agent server.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.server.AgentServerServicer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.server.</span></span><span class="sig-name descname"><span class="pre">AgentServerServicer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'localhost'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_pool_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8192</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_timeout_seconds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1800</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/server/servicer.html#AgentServerServicer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.server.AgentServerServicer" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer" title="agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer"><code class="xref py py-class docutils literal notranslate"><span class="pre">RpcAgentServicer</span></code></a></p>
+<p>A Servicer for RPC Agent Server (formerly RpcServerSideWrapper)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.server.AgentServerServicer.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'localhost'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_pool_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8192</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_timeout_seconds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1800</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/server/servicer.html#AgentServerServicer.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.server.AgentServerServicer.__init__" title="Link to this definition"></a></dt>
+<dd><p>Init the AgentServerServicer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>host</strong> (<cite>str</cite>, defaults to “localhost”) – Hostname of the rpc agent server.</p></li>
+<li><p><strong>port</strong> (<cite>int</cite>, defaults to <cite>None</cite>) – Port of the rpc agent server.</p></li>
+<li><p><strong>max_pool_size</strong> (<cite>int</cite>, defaults to <cite>8192</cite>) – The max number of agent reply messages that the server can
+accommodate. Note that the oldest message will be deleted
+after exceeding the pool size.</p></li>
+<li><p><strong>max_timeout_seconds</strong> (<cite>int</cite>, defaults to <cite>1800</cite>) – Maximum time for reply messages to be cached in the server.
+Note that expired messages will be deleted.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.server.AgentServerServicer.get_task_id">
+<span class="sig-name descname"><span class="pre">get_task_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/agentscope/server/servicer.html#AgentServerServicer.get_task_id"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.server.AgentServerServicer.get_task_id" title="Link to this definition"></a></dt>
+<dd><p>Get the auto-increment task id.
+Each reply call will get a unique task id.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.server.AgentServerServicer.agent_exists">
+<span class="sig-name descname"><span class="pre">agent_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">agent_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/agentscope/server/servicer.html#AgentServerServicer.agent_exists"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.server.AgentServerServicer.agent_exists" title="Link to this definition"></a></dt>
+<dd><p>Check whether the agent exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>agent_id</strong> (<cite>str</cite>) – the agent id.</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>whether the agent exists.</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.server.AgentServerServicer.check_and_generate_agent">
+<span class="sig-name descname"><span class="pre">check_and_generate_agent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">agent_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agent_configs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/server/servicer.html#AgentServerServicer.check_and_generate_agent"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.server.AgentServerServicer.check_and_generate_agent" title="Link to this definition"></a></dt>
+<dd><p>Check whether the agent exists, and create new agent instance
+for new agent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>agent_id</strong> (<cite>str</cite>) – the agent id.</p></li>
+<li><p><strong>agent_configs</strong> (<cite>dict</cite>) – <p>configuration used to initialize the agent,
+with three fields (generated in <cite>_AgentMeta</cite>):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;class_name&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">name</span> <span class="n">of</span> <span class="n">the</span> <span class="n">agent</span><span class="p">}</span>
+    <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">args</span> <span class="ow">in</span> <span class="nb">tuple</span> <span class="nb">type</span> <span class="n">to</span> <span class="n">init</span> <span class="n">the</span> <span class="n">agent</span><span class="p">}</span>
+    <span class="s2">&quot;kwargs&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">args</span> <span class="ow">in</span> <span class="nb">dict</span> <span class="nb">type</span> <span class="n">to</span> <span class="n">init</span> <span class="n">the</span> <span class="n">agent</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.server.AgentServerServicer.check_and_delete_agent">
+<span class="sig-name descname"><span class="pre">check_and_delete_agent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">agent_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/server/servicer.html#AgentServerServicer.check_and_delete_agent"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.server.AgentServerServicer.check_and_delete_agent" title="Link to this definition"></a></dt>
+<dd><p>Check whether the agent exists, and delete the agent instance
+for the agent_id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>agent_id</strong> (<cite>str</cite>) – the agent id.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.server.AgentServerServicer.call_func">
+<span class="sig-name descname"><span class="pre">call_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.rpc.html#agentscope.rpc.RpcMsg" title="rpc_agent_pb2.RpcMsg"><span class="pre">RpcMsg</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ServicerContext</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.rpc.html#agentscope.rpc.RpcMsg" title="rpc_agent_pb2.RpcMsg"><span class="pre">RpcMsg</span></a></span></span><a class="reference internal" href="_modules/agentscope/server/servicer.html#AgentServerServicer.call_func"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.server.AgentServerServicer.call_func" title="Link to this definition"></a></dt>
+<dd><p>Call the specific servicer function.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.server.AgentServerServicer.process_messages">
+<span class="sig-name descname"><span class="pre">process_messages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agent_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/server/servicer.html#AgentServerServicer.process_messages"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.server.AgentServerServicer.process_messages" title="Link to this definition"></a></dt>
+<dd><p>Processing an input message and generate its reply message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task_id</strong> (<cite>int</cite>) – task id of the input message, .</p></li>
+<li><p><strong>agent_id</strong> (<cite>str</cite>) – the id of the agent that accepted the message.</p></li>
+<li><p><strong>task_msg</strong> (<cite>dict</cite>) – the input message.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.server.as_server">
+<span class="sig-prename descclassname"><span class="pre">agentscope.server.</span></span><span class="sig-name descname"><span class="pre">as_server</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/server/launcher.html#as_server"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.server.as_server" title="Link to this definition"></a></dt>
+<dd><p>Launch an agent server with terminal command.</p>
+<div class="admonition note">
+<p class="admonition-title">备注</p>
+<p>The arguments of <cite>as_server</cite> are listed as follows:</p>
+<ul class="simple">
+<li><p><cite>–host</cite>: the hostname of the server.</p></li>
+<li><p><cite>–port</cite>: the socket port of the server.</p></li>
+<li><p><cite>–max-pool-size</cite>: max number of agent reply messages that the server
+can accommodate. Note that the oldest message will be deleted
+after exceeding the pool size.</p></li>
+<li><p><cite>–max-timeout-seconds</cite>: max time for reply messages to be cached
+in the server. Note that expired messages will be deleted.</p></li>
+<li><p><cite>–local-mode</cite>: whether the started agent server only listens to
+local requests.</p></li>
+<li><p><cite>–model-config-path</cite>: the path to the model config json file</p></li>
+</ul>
+<p>In most cases, you only need to specify the <cite>–host</cite>, <cite>–port</cite> and
+<cite>–model-config-path</cite>.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>as_server<span class="w"> </span>--host<span class="w"> </span>localhost<span class="w"> </span>--port<span class="w"> </span><span class="m">12345</span><span class="w"> </span>--model-config-path<span class="w"> </span>config.json
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="agentscope.rpc.html" class="btn btn-neutral float-left" title="agentscope.rpc" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="agentscope.web.html" class="btn btn-neutral float-right" title="agentscope.web" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

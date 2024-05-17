@@ -68,6 +68,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.server.html">agentscope.server</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">agentscope.web</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.prompt.html">agentscope.prompt</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils</a></li>
@@ -124,7 +125,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">bases</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">attrs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;registry&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;_registry&quot;</span><span class="p">):</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">_registry</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_registry</span><span class="p">:</span>
@@ -364,7 +365,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">agent_class_name</span> <span class="o">=</span> <span class="n">agent_class</span><span class="o">.</span><span class="vm">__name__</span>
         <span class="k">if</span> <span class="n">agent_class_name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_registry</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Agent class with name [</span><span class="si">{</span><span class="n">agent_class_name</span><span class="si">}</span><span class="s2">] already exists.&quot;</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -533,14 +534,22 @@
 <span class="sd">            port (`int`, defaults to `None`):</span>
 <span class="sd">                Port of the rpc agent server.</span>
 <span class="sd">            max_pool_size (`int`, defaults to `8192`):</span>
-<span class="sd">                Max number of task results that the server can accommodate.</span>
+<span class="sd">                Only takes effect when `host` and `port` are not filled in.</span>
+<span class="sd">                The max number of agent reply messages that the started agent</span>
+<span class="sd">                server can accommodate. Note that the oldest message will be</span>
+<span class="sd">                deleted after exceeding the pool size.</span>
 <span class="sd">            max_timeout_seconds (`int`, defaults to `1800`):</span>
-<span class="sd">                Timeout for task results.</span>
+<span class="sd">                Only takes effect when `host` and `port` are not filled in.</span>
+<span class="sd">                Maximum time for reply messages to be cached in the launched</span>
+<span class="sd">                agent server. Note that expired messages will be deleted.</span>
 <span class="sd">            local_mode (`bool`, defaults to `True`):</span>
-<span class="sd">                Whether the started rpc server only listens to local</span>
+<span class="sd">                Only takes effect when `host` and `port` are not filled in.</span>
+<span class="sd">                Whether the started agent server only listens to local</span>
 <span class="sd">                requests.</span>
 <span class="sd">            lazy_launch (`bool`, defaults to `True`):</span>
-<span class="sd">                Only launch the server when the agent is called.</span>
+<span class="sd">                Only takes effect when `host` and `port` are not filled in.</span>
+<span class="sd">                If `True`, launch the agent server when the agent is called,</span>
+<span class="sd">                otherwise, launch the agent server immediately.</span>
 <span class="sd">            launch_server(`bool`, defaults to `None`):</span>
 <span class="sd">                This field has been deprecated and will be removed in</span>
 <span class="sd">                future releases.</span>
