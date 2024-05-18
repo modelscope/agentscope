@@ -12,7 +12,7 @@ This example demonstrates how to use AgentScope to play the Werewolf game, where
 
 This example has been tested with the following models:
 - dashscope_chat (qwen-turbo)
-
+- ollama_chat (llama3_8b)
 
 ## Prerequisites
 
