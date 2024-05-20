@@ -79,11 +79,9 @@ class HuggingFaceWrapper(ModelWrapperBase):
         self.model = None
         self.max_length = max_length  # Set max_length as an attribute
         self.pretrained_model_name_or_path = pretrained_model_name_or_path
-        relative_path = os.path.join(
-            os.path.dirname(__file__),
-            "../conversation_with_agent_with_finetuned_model/.env",
-        )
-        dotenv_path = os.path.normpath(relative_path)
+        script_path = os.path.abspath(__file__)
+        script_dir = os.path.dirname(script_path)
+        dotenv_path = os.path.join(script_dir, ".env")
         _ = load_dotenv(dotenv_path)  # read local .env file
         self.huggingface_token = os.getenv("HUGGINGFACE_TOKEN")
 
