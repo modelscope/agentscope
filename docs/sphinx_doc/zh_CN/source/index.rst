@@ -38,6 +38,7 @@ AgentScope 文档
    agentscope.pipelines
    agentscope.service
    agentscope.rpc
+   agentscope.server
    agentscope.web
    agentscope.prompt
    agentscope.utils

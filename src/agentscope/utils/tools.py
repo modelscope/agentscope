@@ -3,9 +3,11 @@
 import base64
 import datetime
 import json
+import os.path
 import secrets
 import string
-from typing import Any, Literal, List
+import socket
+from typing import Any, Literal, List, Optional
 
 from urllib.parse import urlparse
 
@@ -58,6 +60,42 @@ def to_dialog_str(item: dict) -> str:
         return content
     else:
         return f"{speaker}: {content}"
+
+
+def find_available_port() -> int:
+    """Get an unoccupied socket port number."""
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(("", 0))
+        return s.getsockname()[1]
+
+
+def check_port(port: Optional[int] = None) -> int:
+    """Check if the port is available.
+
+    Args:
+        port (`int`):
+            the port number being checked.
+
+    Returns:
+        `int`: the port number that passed the check. If the port is found
+        to be occupied, an available port number will be automatically
+        returned.
+    """
+    if port is None:
+        new_port = find_available_port()
+        logger.warning(
+            "agent server port is not provided, automatically select "
+            f"[{new_port}] as the port number.",
+        )
+        return new_port
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        if s.connect_ex(("localhost", port)) == 0:
+            new_port = find_available_port()
+            logger.warning(
+                f"Port [{port}] is occupied, use [{new_port}] instead",
+            )
+            return new_port
+    return port
 
 
 def _guess_type_by_extension(
@@ -129,7 +167,7 @@ def _to_openai_image_url(url: str) -> str:
     """
     # See https://platform.openai.com/docs/guides/vision for details of
     # support image extensions.
-    image_extensions = (
+    support_image_extensions = (
         ".png",
         ".jpg",
         ".jpeg",
@@ -139,16 +177,17 @@ def _to_openai_image_url(url: str) -> str:
 
     parsed_url = urlparse(url)
 
-    # Checking for HTTP(S) image links
-    if parsed_url.scheme in ["http", "https"]:
-        lower_path = parsed_url.path.lower()
-        if lower_path.endswith(image_extensions):
+    lower_url = url.lower()
+
+    # Web url
+    if parsed_url.scheme != "":
+        if any(lower_url.endswith(_) for _ in support_image_extensions):
             return url
 
     # Check if it is a local file
-    elif parsed_url.scheme == "file" or not parsed_url.scheme:
-        if parsed_url.path.lower().endswith(image_extensions):
-            with open(parsed_url.path, "rb") as image_file:
+    elif os.path.exists(url) and os.path.isfile(url):
+        if any(lower_url.endswith(_) for _ in support_image_extensions):
+            with open(url, "rb") as image_file:
                 base64_image = base64.b64encode(image_file.read()).decode(
                     "utf-8",
                 )
@@ -156,7 +195,7 @@ def _to_openai_image_url(url: str) -> str:
             mime_type = f"image/{extension}"
             return f"data:{mime_type};base64,{base64_image}"
 
-    raise TypeError(f"{url} should be end with {image_extensions}.")
+    raise TypeError(f"{url} should be end with {support_image_extensions}.")
 
 
 def _download_file(url: str, path_file: str, max_retries: int = 3) -> bool:
@@ -294,3 +333,39 @@ def _join_str_with_comma_and(elements: List[str]) -> str:
         return " and ".join(elements)
     else:
         return ", ".join(elements[:-1]) + f", and {elements[-1]}"
+
+
+class ImportErrorReporter:
+    """Used as a placeholder for missing packages.
+    When called, an ImportError will be raised, prompting the user to install
+    the specified extras requirement.
+    """
+
+    def __init__(self, error: ImportError, extras_require: str = None) -> None:
+        """Init the ImportErrorReporter.
+
+        Args:
+            error (`ImportError`): the original ImportError.
+            extras_require (`str`): the extras requirement.
+        """
+        self.error = error
+        self.extras_require = extras_require
+
+    def __call__(self, *args: Any, **kwds: Any) -> Any:
+        return self._raise_import_error()
+
+    def __getattr__(self, name: str) -> Any:
+        return self._raise_import_error()
+
+    def __getitem__(self, __key: Any) -> Any:
+        return self._raise_import_error()
+
+    def _raise_import_error(self) -> Any:
+        """Raise the ImportError"""
+        err_msg = f"ImportError occorred: [{self.error.msg}]."
+        if self.extras_require is not None:
+            err_msg += (
+                f" Please install [{self.extras_require}] version"
+                " of agentscope."
+            )
+        raise ImportError(err_msg)

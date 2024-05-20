@@ -7,6 +7,8 @@ assignees: ''
 
 ---
 
+**<u>AgentScope is an open-source project. To involve a broader community, we recommend asking your questions in English.</u>**
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 

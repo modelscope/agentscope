@@ -1,0 +1,7 @@
+[{
+    "config_name": "zhipuai_chat-glm",
+    "model_type": "zhipuai_chat",
+    "model_name": "glm-4",
+    "api_key": "{your_api_key}"
+}
+]

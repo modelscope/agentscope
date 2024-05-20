@@ -15,7 +15,7 @@ from agentscope.rag import Knowledge
 
 
 CHECKING_PROMPT = """
-                Does the retrieved content is relevant to the query?
+                Is the retrieved content relevant to the query?
                 Retrieved content: {}
                 Query: {}
                 Only answer YES or NO.
@@ -143,7 +143,6 @@ class LlamaIndexAgent(AgentBase):
                         query,
                     ),
                 )
-                print(msg)
                 checking = self.model([msg])
                 logger.info(checking)
                 checking = checking.text.lower()

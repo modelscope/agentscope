@@ -81,7 +81,9 @@ class UserAgent(AgentBase):
         # Input url of file, image, video, audio or website
         url = None
         if self.require_url:
-            url = input("URL: ")
+            url = input("URL (or Enter to skip): ")
+            if url == "":
+                url = None
 
         # Add additional keys
         msg = Msg(

@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Knowledge bank for making RAG module easier to use
+Knowledge bank for making Knowledge objects easier to use
 """
 import copy
-from typing import Optional
+import json
+from typing import Optional, Union
 from loguru import logger
 from agentscope.models import load_model_by_config_name
 from agentscope.agents import AgentBase
@@ -34,16 +35,21 @@ DEFAULT_INIT_CONFIG = {
 class KnowledgeBank:
     """
     KnowledgeBank enables
-    1) provide an easy and fast way to initialize the RAG model;
-    2) make RAG model reusable and sharable for multiple agents.
+    1) provide an easy and fast way to initialize the Knowledge object;
+    2) make Knowledge object reusable and sharable for multiple agents.
     """
 
     def __init__(
         self,
-        configs: dict,
+        configs: Union[dict, str],
     ) -> None:
         """initialize the knowledge bank"""
-        self.configs = configs
+        if isinstance(configs, str):
+            logger.info(f"Loading configs from {configs}")
+            with open(configs, "r", encoding="utf-8") as fp:
+                self.configs = json.loads(fp.read())
+        else:
+            self.configs = configs
         self.stored_knowledge: dict[str, LlamaIndexKnowledge] = {}
         self._init_knowledge()
 
@@ -70,7 +76,7 @@ class KnowledgeBank:
         Transform data in a directory to be ready to work with RAG.
         Args:
             knowledge_id (str):
-                user-defined unique id for the knowledge with RAG
+                user-defined unique id for the knowledge
             emb_model_name (str):
                 name of the embedding model
             model_name (Optional[str]):
@@ -87,7 +93,7 @@ class KnowledgeBank:
                 - ...
                 Examples can refer to../examples/conversation_with_RAG_agents/
 
-            a simple example of importing data to RAG:
+            a simple example of importing data to Knowledge object:
             ''
                 knowledge_bank.add_data_as_knowledge(
                     knowledge_id="agentscope_tutorial_rag",
@@ -130,25 +136,25 @@ class KnowledgeBank:
         duplicate: bool = False,
     ) -> LlamaIndexKnowledge:
         """
-        Get a RAG from the knowledge bank.
+        Get a Knowledge object from the knowledge bank.
         Args:
             knowledge_id (str):
-                unique id for the RAG
+                unique id for the Knowledge object
             duplicate (bool):
-                whether return a copy of the RAG.
+                whether return a copy of the Knowledge object.
         Returns:
-            LlamaIndexRAG:
-                the RAG object defined with Llama-index
+            LlamaIndexKnowledge:
+                the Knowledge object defined with Llama-index
         """
         if knowledge_id not in self.stored_knowledge:
             raise ValueError(
-                f"{knowledge_id} does not exist in the " f"knowledge bank.",
+                f"{knowledge_id} does not exist in the knowledge bank.",
             )
-        rag = self.stored_knowledge[knowledge_id]
+        knowledge = self.stored_knowledge[knowledge_id]
         if duplicate:
-            rag = copy.deepcopy(rag)
+            knowledge = copy.deepcopy(knowledge)
         logger.info(f"knowledge bank loaded: {knowledge_id}.")
-        return rag
+        return knowledge
 
     def equip(self, agent: AgentBase, duplicate: bool = False) -> None:
         """

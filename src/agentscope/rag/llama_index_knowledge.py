@@ -208,7 +208,6 @@ class LlamaIndexKnowledge(Knowledge):
                 f"Embedding model does not support {type(self.emb_model)}.",
             )
         # then we can initialize the RAG
-        print("init", self.knowledge_config)
         self._init_rag()
 
     def _init_rag(self, **kwargs: Any) -> None:

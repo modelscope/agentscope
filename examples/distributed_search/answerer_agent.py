@@ -48,7 +48,7 @@ class AnswererAgent(AgentBase):
                 " the following web page:\n\n"
                 f"{response['html_to_text']}"
                 f"\n\nBased on the above web page,"
-                " please answer my question\n{x.query}",
+                f" please answer my question\n{x.query}",
             ),
         )
         # call llm and generate response

@@ -65,3 +65,14 @@ def n2s(agents: Sequence[Union[AgentBase, str]]) -> str:
         + " and "
         + _get_name(agents[-1])
     )
+
+
+def set_parsers(
+    agents: Union[AgentBase, list[AgentBase]],
+    parser_name: str,
+) -> None:
+    """Add parser to agents"""
+    if not isinstance(agents, list):
+        agents = [agents]
+    for agent in agents:
+        agent.set_parser(parser_name)
