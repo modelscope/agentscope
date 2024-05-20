@@ -13,6 +13,7 @@ from .utils.monitor import MonitorFactory
 from .models import read_model_configs
 from .constants import _DEFAULT_DIR
 from .constants import _DEFAULT_LOG_LEVEL
+from .web.client import HttpClient
 
 # init setting
 _INIT_SETTINGS = {}
@@ -30,6 +31,7 @@ def init(
     logger_level: LOG_LEVEL = _DEFAULT_LOG_LEVEL,
     runtime_id: Optional[str] = None,
     agent_configs: Optional[Union[str, list, dict]] = None,
+    studio_url: Optional[str] = None,
 ) -> Sequence[AgentBase]:
     """A unified entry to initialize the package, including model configs,
     runtime names, saving directories and logging settings.
@@ -65,6 +67,8 @@ def init(
             which can be loaded by json.loads(). One agent config should
             cover the required arguments to initialize a specific agent
             object, otherwise the default values will be used.
+        studio_url (`Optional[str]`, defaults to `None`):
+            The url of the studio.
     """
     init_process(
         model_configs=model_configs,
@@ -76,6 +80,7 @@ def init(
         save_log=save_log,
         use_monitor=use_monitor,
         logger_level=logger_level,
+        studio_url=studio_url,
     )
 
     # save init settings for subprocess
@@ -128,6 +133,7 @@ def init_process(
     save_log: bool = False,
     use_monitor: bool = True,
     logger_level: LOG_LEVEL = _DEFAULT_LOG_LEVEL,
+    studio_url: Optional[str] = None,
 ) -> None:
     """An entry to initialize the package in a process.
 
@@ -157,10 +163,16 @@ def init_process(
     # Init the runtime
     if project is not None:
         _runtime.project = project
+    else:
+        project = _runtime.project
     if name is not None:
         _runtime.name = name
+    else:
+        name = _runtime.name
     if runtime_id is not None:
         _runtime.runtime_id = runtime_id
+    else:
+        runtime_id = _runtime.runtime_id
 
     # Init logger
     dir_log = str(file_manager.dir_log) if save_log else None
@@ -178,3 +190,14 @@ def init_process(
         db_path=file_manager.path_db,
         impl_type="sqlite" if use_monitor else "dummy",
     )
+    if studio_url is not None:
+        client = HttpClient(
+            studio_url=studio_url,
+            run_id=_runtime.runtime_id,
+        )
+        client.register_run(
+            project=project,
+            name=name,
+            run_dir=file_manager.dir,
+        )
+        _runtime.studio_client = client

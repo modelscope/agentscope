@@ -4,10 +4,10 @@ import json
 import os
 from datetime import datetime
 
-from flask import Flask, request, jsonify, render_template, Response
+from flask import Flask, request, jsonify, render_template, Response, abort
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from flask_socketio import SocketIO, emit, join_room, leave_room
+from flask_socketio import SocketIO, join_room, leave_room
 
 
 app = Flask(__name__)
@@ -20,7 +20,7 @@ CORS(app)  # This will enable CORS for all routes
 PATH_SAVE = ""
 
 
-class Run(db.Model):
+class Run(db.Model):  # type: ignore[name-defined]
     """Run object."""
 
     id = db.Column(db.String, primary_key=True)
@@ -31,7 +31,7 @@ class Run(db.Model):
     create_time = db.Column(db.DateTime, default=datetime.now)
 
 
-class Server(db.Model):
+class Server(db.Model):  # type: ignore[name-defined]
     """Server object."""
 
     server_id = db.Column(db.String, primary_key=True)
@@ -39,18 +39,23 @@ class Server(db.Model):
     server_port = db.Column(db.Integer)
 
 
-class Message(db.Model):
+class Message(db.Model):  # type: ignore[name-defined]
     """Message object."""
 
     id = db.Column(db.Integer, primary_key=True)
     run_id = db.Column(db.String, db.ForeignKey("run.id"), nullable=False)
     name = db.Column(db.String)
-    content = db.Column(db.str)
-    url = db.Column(db.str)
+    content = db.Column(db.String)
+    url = db.Column(db.String)
+
+
+def get_history_messages(run_id: str) -> list:
+    """Interface to get history messages. (Query from database for now)"""
+    return Message.query.filter_by(run_id=run_id).all()
 
 
 @app.route("/api/register/run", methods=["POST"])
-def register_run():
+def register_run() -> Response:
     """
     Registers a run of an agentscope application.
     The running process will then be displayed as a page.
@@ -61,26 +66,25 @@ def register_run():
     project = data.get("project")
     name = data.get("name")
     run_dir = data.get("run_dir")
-    script_path = data.get("script_path")
     # check if the run_id is already in the database
     if Run.query.filter_by(id=run_id).first():
-        return jsonify(status="error", msg=f"run_id {run_id} already exists.")
-    else:
-        db.session.add(
-            Run(
-                id=run_id,
-                project=project,
-                name=name,
-                run_dir=run_dir,
-                script_path=script_path,
-            )
-        )
-        db.session.commit()
-        return jsonify(status="ok", msg="")
+        print(f"Run id {run_id} already exists.")
+        abort(400, f"RUN_ID {run_id} already exists")
+    db.session.add(
+        Run(
+            id=run_id,
+            project=project,
+            name=name,
+            run_dir=run_dir,
+        ),
+    )
+    db.session.commit()
+    print(f"Register Run id {run_id}.")
+    return jsonify(status="ok", msg="")
 
 
 @app.route("/api/register/server", methods=["POST"])
-def register_server():
+def register_server() -> Response:
     """
     Registers an agent server.
     """
@@ -99,13 +103,13 @@ def register_server():
                 server_host=host,
                 server_port=port,
                 run_dir=run_dir,
-            )
+            ),
         )
         return jsonify(status="ok", msg="")
 
 
 @app.route("/api/message/put", methods=["POST"])
-def put_message():
+def put_message() -> Response:
     """
     Used by the application to speak a message to the Hub.
     """
@@ -113,15 +117,19 @@ def put_message():
     run_id = data["run_id"]
     name = data["name"]
     content = data["content"]
-    url = data["url"]
+    url = data.get("url", None)
     try:
         new_message = Message(
-            run_id=run_id, name=name, content=content, url=url
+            run_id=run_id,
+            name=name,
+            content=content,
+            url=url,
         )
         db.session.add(new_message)
         db.session.commit()
     except Exception as e:
-        return jsonify(status="ok", msg=e)
+        print(e)
+        abort(400, "Fail to put message")
     socketio.emit(
         "display_message",
         {
@@ -136,7 +144,8 @@ def put_message():
 
 
 @app.route("/studio/<run_id>", methods=["GET"])
-def studio_page(run_id):
+def studio_page(run_id: str) -> str:
+    """Studio page."""
     if Run.query.filter_by(id=run_id).first() is None:
         return jsonify(status="error", msg="run_id not exists")
     messages = Message.query.filter_by(run_id=run_id).all()
@@ -217,44 +226,20 @@ def run_detail(run_dir: str) -> str:
 
 
 @socketio.on("user_input")
-def user_input(data):
+def user_input(data: dict) -> None:
+    """Get user input and send to the agent"""
     run_id = data["run_id"]
-    name = data["name"]
     content = data["content"]
     url = data.get("url", None)
-    new_message = Message(run_id=run_id, name=name, content=content, url=url)
-    db.session.add(new_message)
-    db.session.commit()
-    emit(
-        "display_message",
-        {
-            "run_id": run_id,
-            "name": name,
-            "content": content,
-            "url": url,
-        },
-        room=run_id,
-    )
-    emit(
+    socketio.emit(
         "fetch_user_input",
         {
             "run_id": run_id,
-            "name": name,
             "content": content,
             "url": url,
         },
         room=run_id,
     )
-
-
-@socketio.on("join")
-def on_join(data):
-    join_room(data["run_id"])
-
-
-@socketio.on("leave")
-def on_leave(data):
-    leave_room(data["run_id"])
 
 
 @socketio.on("connect")
@@ -267,6 +252,20 @@ def on_connect() -> None:
 def on_disconnect() -> None:
     """Execute when a client is disconnected."""
     print("Client disconnected")
+
+
+@socketio.on("join")
+def on_join(data: dict) -> None:
+    """Join a websocket room"""
+    run_id = data["run_id"]
+    join_room(run_id)
+
+
+@socketio.on("leave")
+def on_leave(data: dict) -> None:
+    """Leave a websocket room"""
+    run_id = data["run_id"]
+    leave_room(run_id)
 
 
 def init(

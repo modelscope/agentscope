@@ -6,6 +6,7 @@ from typing import Optional
 from loguru import logger
 
 from agentscope.agents import AgentBase
+from agentscope._runtime import _runtime
 from agentscope.message import Msg
 from agentscope.web.studio.utils import user_input
 
@@ -29,6 +30,14 @@ class UserAgent(AgentBase):
 
         self.name = name
         self.require_url = require_url
+        if _runtime.studio_client is not None:
+            self.input_client = (
+                _runtime.studio_client.generate_user_input_client(
+                    self.agent_id,
+                )
+            )
+        else:
+            self.input_client = None
 
     def reply(
         self,
@@ -67,23 +76,29 @@ class UserAgent(AgentBase):
 
         # TODO: To avoid order confusion, because `input` print much quicker
         #  than logger.chat
-        time.sleep(0.5)
-        content = user_input(timeout=timeout)
+        if self.input_client:
+            logger.info(
+                f"Waiting for input from {self.input_client.studio_url}...",
+            )
+            raw_input = self.input_client.get_user_input()
+            content = raw_input["content"]
+        else:
+            time.sleep(0.5)
+            content = user_input(timeout=timeout)
+            kwargs = {}
+            if required_keys is not None:
+                if isinstance(required_keys, str):
+                    required_keys = [required_keys]
 
-        kwargs = {}
-        if required_keys is not None:
-            if isinstance(required_keys, str):
-                required_keys = [required_keys]
+                for key in required_keys:
+                    kwargs[key] = input(f"{key}: ")
 
-            for key in required_keys:
-                kwargs[key] = input(f"{key}: ")
-
-        # Input url of file, image, video, audio or website
-        url = None
-        if self.require_url:
-            url = input("URL (or Enter to skip): ")
-            if url == "":
-                url = None
+            # Input url of file, image, video, audio or website
+            url = None
+            if self.require_url:
+                url = input("URL (or Enter to skip): ")
+                if url == "":
+                    url = None
 
         # Add additional keys
         msg = Msg(
@@ -101,10 +116,3 @@ class UserAgent(AgentBase):
             self.memory.add(msg)
 
         return msg
-
-    def speak(
-        self,
-        content: Union[str, dict],
-    ) -> None:
-        """Speak the content to the audience."""
-        logger.chat(content, disable_studio=True)
