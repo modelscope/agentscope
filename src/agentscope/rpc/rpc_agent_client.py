@@ -10,6 +10,7 @@ try:
     import dill
     import grpc
     from grpc import RpcError
+    from google.protobuf.empty_pb2 import Empty
     from agentscope.rpc.rpc_agent_pb2 import RpcMsg  # pylint: disable=E0611
     from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentStub
 except ImportError as import_error:
@@ -21,11 +22,18 @@ except ImportError as import_error:
     RpcAgentStub = ImportErrorReporter(import_error, "distribute")
     RpcError = ImportError
 
+from agentscope.exception import AgentServerNotAliveError
+
 
 class RpcAgentClient:
     """A client of Rpc agent server"""
 
-    def __init__(self, host: str, port: int, agent_id: str = "") -> None:
+    def __init__(
+        self,
+        host: str,
+        port: int,
+        agent_id: str = "",
+    ) -> None:
         """Init a rpc agent client
 
         Args:
@@ -34,6 +42,9 @@ class RpcAgentClient:
             port (`int`): the port of the rpc agent server which the client
             is connected.
             agent_id (`str`): the agent id of the agent being called.
+            check
+            abort_if_not_alive (`bool`): whether to abort the call if the
+            agent is not alive.
         """
         self.host = host
         self.port = port
@@ -54,31 +65,52 @@ class RpcAgentClient:
         Returns:
             str: serialized return data.
         """
-        with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
-            stub = RpcAgentStub(channel)
-            result_msg = stub.call_func(
-                RpcMsg(
-                    value=value,
-                    target_func=func_name,
-                    agent_id=self.agent_id,
-                ),
-                timeout=timeout,
+        try:
+            with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
+                stub = RpcAgentStub(channel)
+                result_msg = stub.call_func(
+                    RpcMsg(
+                        value=value,
+                        target_func=func_name,
+                        agent_id=self.agent_id,
+                    ),
+                    timeout=timeout,
+                )
+                return result_msg.value
+        except Exception as e:
+            if not self._is_alive():
+                raise AgentServerNotAliveError(
+                    host=self.host,
+                    port=self.port,
+                    message=str(e),
+                ) from e
+            raise e
+
+    def _is_alive(self) -> bool:
+        """Check if the agent server is alive."""
+
+        try:
+            with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
+                stub = RpcAgentStub(channel)
+                status = stub.is_alive(Empty(), timeout=5)
+                if not status.ok:
+                    raise RuntimeError(status.message)
+                return status.ok
+        except Exception as e:
+            logger.error(
+                f"Agent server [{self.host}:{self.port}] is not alive,"
+                f" please check the server status: {e}",
             )
-            return result_msg.value
+            return False
 
     def create_agent(self, agent_configs: dict) -> None:
         """Create a new agent for this client."""
-        try:
-            if self.agent_id is None or len(self.agent_id) == 0:
-                return
-            self.call_func(
-                "_create_agent",
-                base64.b64encode(dill.dumps(agent_configs)).decode("utf-8"),
-            )
-        except Exception as e:
-            logger.error(
-                f"Fail to create agent with id [{self.agent_id}]: {e}",
-            )
+        if self.agent_id is None or len(self.agent_id) == 0:
+            return
+        self.call_func(
+            "_create_agent",
+            base64.b64encode(dill.dumps(agent_configs)).decode("utf-8"),
+        )
 
     def delete_agent(self) -> None:
         """

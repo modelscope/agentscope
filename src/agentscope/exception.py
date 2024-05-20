@@ -92,3 +92,42 @@ class ArgumentNotFoundError(FunctionCallError):
 
 class ArgumentTypeError(FunctionCallError):
     """The exception class for argument type error."""
+
+
+# - Agent Server Exceptions
+
+
+class AgentServerError(Exception):
+    """The exception class for agent server related errors."""
+
+    host: str
+    """Hostname of the server."""
+    port: int
+    """Port of the server."""
+    message: str
+    """Error message"""
+
+    def __init__(
+        self,
+        host: str,
+        port: int,
+        message: str = None,
+    ) -> None:
+        """Initialize the exception with the message."""
+        self.host = host
+        self.port = port
+        self.message = message
+
+    def __str__(self) -> str:
+        return (
+            f"{self.__class__.__name__}[{self.host}:{self.port}]:"
+            f" {self.message}"
+        )
+
+
+class AgentServerNotAliveError(AgentServerError):
+    """The exception class for agent server not alive error."""
+
+
+class AgentCreationError(AgentServerError):
+    """The exception class for failing to create agent."""

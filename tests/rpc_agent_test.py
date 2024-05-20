@@ -16,6 +16,8 @@ from agentscope.message import deserialize
 from agentscope.msghub import msghub
 from agentscope.pipelines import sequentialpipeline
 from agentscope.utils import MonitorFactory, QuotaExceededError
+from agentscope.rpc.rpc_agent_client import RpcAgentClient
+from agentscope.exception import AgentServerNotAliveError
 
 
 class DemoRpcAgent(AgentBase):
@@ -228,6 +230,8 @@ class BasicRpcAgentTest(unittest.TestCase):
             custom_agents=[DemoRpcAgent],
         )
         launcher.launch()
+        client = RpcAgentClient(host=launcher.host, port=launcher.port)
+        self.assertTrue(client._is_alive())  # pylint: disable=W0212
         agent_a = DemoRpcAgent(
             name="a",
         ).to_dist(
@@ -604,3 +608,14 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertTrue(0.5 < r2.content["time"] < 2)
         launcher1.shutdown()
         launcher2.shutdown()
+
+    def test_agent_server_not_alive(self) -> None:
+        """Test agent server is not alive"""
+        not_exist_port = 12345
+        agent = DemoRpcAgent(name="not alive")
+        self.assertRaises(
+            AgentServerNotAliveError,
+            agent.to_dist,
+            host="127.0.0.1",
+            port=not_exist_port,
+        )

@@ -1,7 +1,10 @@
 syntax = "proto3";
 
+import "google/protobuf/empty.proto";
+
 // Servicer for rpc agent server
 service RpcAgent {
+    rpc is_alive (google.protobuf.Empty) returns (StatusResponse) {}
     rpc call_func (RpcMsg) returns (RpcMsg) {}
 }
 
@@ -10,4 +13,9 @@ message RpcMsg {
     string value = 1;
     string target_func = 2;
     string agent_id = 3;
+}
+
+message StatusResponse {
+    bool ok = 1;
+    string message = 2;
 }

@@ -11,7 +11,9 @@ try:
     import dill
     import grpc
     from grpc import ServicerContext
+    from google.protobuf.empty_pb2 import Empty
     from expiringdict import ExpiringDict
+    from ..rpc.rpc_agent_pb2 import StatusResponse
     from ..rpc.rpc_agent_pb2 import RpcMsg  # pylint: disable=E0611
     from ..rpc.rpc_agent_pb2_grpc import RpcAgentServicer
 except ImportError as import_error:
@@ -19,8 +21,16 @@ except ImportError as import_error:
 
     dill = ImportErrorReporter(import_error, "distribute")
     grpc = ImportErrorReporter(import_error, "distribute")
+    Empty = ImportErrorReporter(  # type: ignore[misc]
+        import_error,
+        "distribute",
+    )
     ServicerContext = ImportErrorReporter(import_error, "distribute")
     ExpiringDict = ImportErrorReporter(import_error, "distribute")
+    StatusResponse = ImportErrorReporter(  # type: ignore[misc]
+        import_error,
+        "distribute",
+    )
     RpcMsg = ImportErrorReporter(  # type: ignore[misc]
         import_error,
         "distribute",
@@ -136,6 +146,14 @@ class AgentServerServicer(RpcAgentServicer):
             if agent_id in self.agent_pool:
                 self.agent_pool.pop(agent_id)
                 logger.info(f"delete agent instance [{agent_id}]")
+
+    def is_alive(
+        self,
+        request: Empty,
+        context: ServicerContext,
+    ) -> StatusResponse:
+        """Check whether the server is alive."""
+        return StatusResponse(ok=True)
 
     def call_func(  # pylint: disable=W0236
         self,
