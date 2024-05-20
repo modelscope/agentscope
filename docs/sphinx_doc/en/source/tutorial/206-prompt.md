@@ -300,6 +300,56 @@ print(prompt)
 ]
 ```
 
+
+### LiteLLMChatWrapper
+
+`LiteLLMChatWrapper` encapsulates the litellm chat API, which takes a list of
+messages as input. The litellm supports different types of models, and each model
+might need to obey different formats. To simplify the usage, we provide a format
+that could be compatible with most models. If more specific formats are needed,
+you can refer to the specific model you use as well as the
+[litellm](https://github.com/BerriAI/litellm) documentation to customize your
+own format function for your model.
+
+
+- format all the messages in the chat history, into a single message with `"user"` as `role`
+
+#### Prompt Strategy
+
+- Messages will consist dialogue history in the `user` message prefixed by the system message and "## Dialogue History".
+
+```python
+from agentscope.models import LiteLLMChatWrapper
+
+model = LiteLLMChatWrapper(
+    config_name="", # empty since we directly initialize the model wrapper
+    model_name="gpt-3.5-turbo",
+)
+
+prompt = model.format(
+  Msg("system", "You are a helpful assistant", role="system"),
+  [
+      Msg("user", "What is the weather today?", role="user"),
+      Msg("assistant", "It is sunny today", role="assistant"),
+  ],
+)
+
+print(prompt)
+```
+
+```bash
+[
+    {
+        "role": "user",
+        "content": (
+            "You are a helpful assistant\n\n"
+            "## Dialogue History\nuser: What is the weather today?\n"
+            "assistant: It is sunny today"
+        ),
+    },
+]
+```
+
 ### OllamaChatWrapper
 
 `OllamaChatWrapper` encapsulates the Ollama chat API, which takes a list of
