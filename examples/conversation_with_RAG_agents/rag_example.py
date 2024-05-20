@@ -53,15 +53,6 @@ def main() -> None:
     # prepare models
     with open("configs/model_config.json", "r", encoding="utf-8") as f:
         model_configs = json.load(f)
-    # for internal API
-    for config in model_configs:
-        if config.get("model_type", "") == "post_api_chat":
-            config["headers"]["Authorization"] = (
-                "Bearer " + f"{os.environ.get('HTTP_LLM_API_KEY')}"
-            )
-        else:
-            # for dashscope
-            config["api_key"] = f"{os.environ.get('DASHSCOPE_API_KEY')}"
 
     # load config of the agents
     with open("configs/agent_config.json", "r", encoding="utf-8") as f:
@@ -75,13 +66,7 @@ def main() -> None:
     guide_agent = agent_list[4]
 
     # the knowledge bank can be configured by loading config file
-    with open(
-        "configs/knowledge_config.json",
-        "r",
-        encoding="utf-8",
-    ) as f:
-        knowledge_configs = json.load(f)
-    knowledge_bank = KnowledgeBank(configs=knowledge_configs)
+    knowledge_bank = KnowledgeBank(configs="configs/knowledge_config.json")
 
     # alternatively, we can easily input the configs to add data to RAG
     knowledge_bank.add_data_as_knowledge(

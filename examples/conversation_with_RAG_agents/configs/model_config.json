@@ -1,18 +1,5 @@
 [
   {
-    "model_type": "post_api_chat",
-    "config_name": "gpt_postapi_config",
-    "api_url": "http://47.88.8.18:8088/api/ask",
-    "headers": {
-        "Content-Type": "application/json",
-        "Authorization": ""
-    },
-    "messages_key": "messages",
-    "json_args": {
-        "model": "gpt-4"
-    }
-  },
-  {
     "model_type": "dashscope_text_embedding",
     "config_name": "qwen_emb_config",
     "model_name": "text-embedding-v2",
