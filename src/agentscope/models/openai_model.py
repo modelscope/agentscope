@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for OpenAI models"""
 from abc import ABC
-from typing import Union, Any, List, Sequence
+from typing import Union, Any, List, Sequence, Dict
 
 from loguru import logger
 
 from .model import ModelWrapperBase, ModelResponse
 from ..file_manager import file_manager
 from ..message import MessageBase
-from ..utils.tools import _convert_to_str
+from ..utils.tools import _convert_to_str, _to_openai_image_url
 
 try:
     import openai
@@ -106,6 +106,9 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
     model_type: str = "openai_chat"
 
     deprecated_model_type: str = "openai"
+
+    substrings_in_vision_models_names = ["gpt-4-turbo", "vision", "gpt-4o"]
+    """The substrings in the model names of vision models."""
 
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
@@ -212,6 +215,77 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
             raw=response.model_dump(),
         )
 
+    def _format_msg_with_url(
+        self,
+        msg: MessageBase,
+    ) -> Dict:
+        """Format a message with image urls into openai chat format.
+        This format method is used for gpt-4o, gpt-4-turbo, gpt-4-vision and
+        other vision models.
+        """
+        # Check if the model is a vision model
+        if not any(
+            _ in self.model_name
+            for _ in self.substrings_in_vision_models_names
+        ):
+            logger.warning(
+                f"The model {self.model_name} is not a vision model. "
+                f"Skip the url in the message.",
+            )
+            return {
+                "role": msg.role,
+                "name": msg.name,
+                "content": _convert_to_str(msg.content),
+            }
+
+        # Put all urls into a list
+        urls = [msg.url] if isinstance(msg.url, str) else msg.url
+
+        # Check if the url refers to an image
+        checked_urls = []
+        for url in urls:
+            try:
+                checked_urls.append(_to_openai_image_url(url))
+            except TypeError:
+                logger.warning(
+                    f"The url {url} is not a valid image url for "
+                    f"OpenAI Chat API, skipped.",
+                )
+
+        if len(checked_urls) == 0:
+            # If no valid image url is provided, return the normal message dict
+            return {
+                "role": msg.role,
+                "name": msg.name,
+                "content": _convert_to_str(msg.content),
+            }
+        else:
+            # otherwise, use the vision format message
+            returned_msg = {
+                "role": msg.role,
+                "name": msg.name,
+                "content": [
+                    {
+                        "type": "text",
+                        "text": _convert_to_str(msg.content),
+                    },
+                ],
+            }
+
+            image_dicts = [
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": _,
+                    },
+                }
+                for _ in checked_urls
+            ]
+
+            returned_msg["content"].extend(image_dicts)
+
+            return returned_msg
+
     def format(
         self,
         *args: Union[MessageBase, Sequence[MessageBase]],
@@ -230,19 +304,22 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
                 The formatted messages in the format that OpenAI Chat API
                 required.
         """
-
         messages = []
         for arg in args:
             if arg is None:
                 continue
             if isinstance(arg, MessageBase):
-                messages.append(
-                    {
-                        "role": arg.role,
-                        "name": arg.name,
-                        "content": _convert_to_str(arg.content),
-                    },
-                )
+                if arg.url is not None:
+                    messages.append(self._format_msg_with_url(arg))
+                else:
+                    messages.append(
+                        {
+                            "role": arg.role,
+                            "name": arg.name,
+                            "content": _convert_to_str(arg.content),
+                        },
+                    )
+
             elif isinstance(arg, list):
                 messages.extend(self.format(*arg))
             else:

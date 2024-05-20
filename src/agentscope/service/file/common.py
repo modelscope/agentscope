@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=C0301
 """ Common operators for file and directory. """
 import os
 import shutil
 from typing import List
 
-from agentscope.utils.common import write_file
 from agentscope.service.service_response import ServiceResponse
 from agentscope.service.service_status import ServiceExecStatus
 
@@ -29,7 +29,19 @@ def create_file(file_path: str, content: str = "") -> ServiceResponse:
             status=ServiceExecStatus.ERROR,
             content="FileExistsError: The file already exists.",
         )
-    return write_file(content, file_path)
+    try:
+        with open(file_path, "w", encoding="utf-8") as file:
+            file.write(content)
+        return ServiceResponse(
+            status=ServiceExecStatus.SUCCESS,
+            content="Success",
+        )
+    except Exception as e:
+        error_message = f"{e.__class__.__name__}: {e}"
+        return ServiceResponse(
+            status=ServiceExecStatus.ERROR,
+            content=error_message,
+        )
 
 
 def delete_file(file_path: str) -> ServiceResponse:

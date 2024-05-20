@@ -1,20 +1,22 @@
 # -*- coding: utf-8 -*-
 """Import all rpc related modules in the package."""
-from typing import Any
 from .rpc_agent_client import RpcAgentClient, ResponseStub, call_in_thread
 
 try:
     from .rpc_agent_pb2 import RpcMsg  # pylint: disable=E0611
-except ModuleNotFoundError:
-    RpcMsg = Any  # type: ignore[misc]
-try:
     from .rpc_agent_pb2_grpc import RpcAgentServicer
     from .rpc_agent_pb2_grpc import RpcAgentStub
     from .rpc_agent_pb2_grpc import add_RpcAgentServicer_to_server
-except ImportError:
-    RpcAgentServicer = object
-    RpcAgentStub = Any
-    add_RpcAgentServicer_to_server = Any
+except ImportError as import_error:
+    from agentscope.utils.tools import ImportErrorReporter
+
+    RpcMsg = ImportErrorReporter(import_error, "distribute")  # type: ignore[misc]
+    RpcAgentServicer = ImportErrorReporter(import_error, "distribute")
+    RpcAgentStub = ImportErrorReporter(import_error, "distribute")
+    add_RpcAgentServicer_to_server = ImportErrorReporter(
+        import_error,
+        "distribute",
+    )
 
 
 __all__ = [
