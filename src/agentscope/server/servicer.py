@@ -6,10 +6,10 @@ import traceback
 import json
 from concurrent import futures
 from loguru import logger
-import psutil
 
 try:
     import dill
+    import psutil
     import grpc
     from grpc import ServicerContext
     from google.protobuf.empty_pb2 import Empty
@@ -20,6 +20,7 @@ except ImportError as import_error:
     from agentscope.utils.tools import ImportErrorReporter
 
     dill = ImportErrorReporter(import_error, "distribute")
+    psutil = ImportErrorReporter(import_error, "distribute")
     grpc = ImportErrorReporter(import_error, "distribute")
     Empty = ImportErrorReporter(  # type: ignore[misc]
         import_error,
