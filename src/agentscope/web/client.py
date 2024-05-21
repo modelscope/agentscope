@@ -104,7 +104,7 @@ class HttpClient:
             },
             timeout=10,  # todo: configurable timeout
         )
-        if resp == 200:
+        if resp.status_code == 200:
             return True
         else:
             logger.warning(f"Fail to register to studio: {resp}")
@@ -113,7 +113,10 @@ class HttpClient:
     def send_message(
         self,
         name: str,
+        role: str,
         content: str,
+        timestamp: str = None,
+        metadata: dict = None,
         url: str = None,
     ) -> bool:
         """Send a message to the studio."""
@@ -123,8 +126,11 @@ class HttpClient:
             json={
                 "run_id": self.run_id,
                 "name": name,
+                "role": role,
                 "content": content,
-                "url": None,
+                "timestamp": timestamp,
+                "metadata": metadata,
+                "url": url,
             },
             timeout=10,
         )

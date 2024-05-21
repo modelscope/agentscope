@@ -82,6 +82,8 @@ class UserAgent(AgentBase):
             )
             raw_input = self.input_client.get_user_input()
             content = raw_input["content"]
+            url = None
+            kwargs = {}
         else:
             time.sleep(0.5)
             content = user_input(timeout=timeout)

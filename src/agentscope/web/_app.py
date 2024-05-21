@@ -45,8 +45,11 @@ class Message(db.Model):  # type: ignore[name-defined]
     id = db.Column(db.Integer, primary_key=True)
     run_id = db.Column(db.String, db.ForeignKey("run.id"), nullable=False)
     name = db.Column(db.String)
+    role = db.Column(db.String)
     content = db.Column(db.String)
     url = db.Column(db.String)
+    meta = db.Column(db.String)
+    timestamp = db.Column(db.String)
 
 
 def get_history_messages(run_id: str) -> list:
@@ -55,8 +58,11 @@ def get_history_messages(run_id: str) -> list:
     return [
         {
             "name": message.name,
+            "role": message.role,
             "content": message.content,
             "url": message.url,
+            "metadata": json.loads(message.meta),
+            "timestamp": message.timestamp,
         }
         for message in messages
     ]
@@ -140,14 +146,20 @@ def put_message() -> Response:
     data = request.json
     run_id = data["run_id"]
     name = data["name"]
+    role = data["role"]
     content = data["content"]
+    metadata = json.dumps(data["metadata"])
+    timestamp = data["timestamp"]
     url = data.get("url", None)
     try:
         new_message = Message(
             run_id=run_id,
             name=name,
+            role=role,
             content=content,
+            meta=metadata,
             url=url,
+            timestamp=timestamp,
         )
         db.session.add(new_message)
         db.session.commit()

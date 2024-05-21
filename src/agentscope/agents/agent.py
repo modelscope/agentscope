@@ -310,14 +310,20 @@ class AgentBase(Operator, metaclass=_AgentMeta):
             if isinstance(content, dict):
                 _runtime.studio_client.send_message(
                     name=content.get("name", ""),
+                    role=content.get("role", "assistant"),
                     content=content.get("content", ""),
-                    url=content.get("url", ""),
+                    metadata=content.get("metadata", {}),
+                    url=content.get("url", None),
+                    timestamp=content.get("timestamp", None),
                 )
             else:
                 _runtime.studio_client.send_message(
                     name="",
+                    role="assistant",
                     content=str(content),
-                    url="",
+                    metadata={},
+                    url=None,
+                    timestamp=None,
                 )
 
     def observe(self, x: Union[dict, Sequence[dict]]) -> None:
