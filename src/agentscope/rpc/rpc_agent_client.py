@@ -226,7 +226,7 @@ class RpcAgentClient:
             )
             return result_msg.value
 
-    def get_agent_id_list(self, agent_id: str) -> Sequence[str]:
+    def get_agent_id_list(self) -> Sequence[str]:
         """
         Get id of all agents on the server as a list.
 
@@ -235,9 +235,7 @@ class RpcAgentClient:
         """
         with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
             stub = RpcAgentStub(channel)
-            resp = stub.get_agent_id_list(
-                agent_pb2.AgentIds(agent_ids=[agent_id]),
-            )
+            resp = stub.get_agent_id_list(Empty())
             return resp.agent_ids
 
     def get_agent_info(self, agent_id: str = None) -> dict:

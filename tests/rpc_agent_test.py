@@ -648,3 +648,36 @@ class BasicRpcAgentTest(unittest.TestCase):
             upload_source_code=True,
         )
         launcher.shutdown()
+
+    def test_agent_server_management_funcs(self) -> None:
+        """Test agent server management functions"""
+        launcher = RpcAgentServerLauncher(
+            host="localhost",
+            port=12010,
+            local_mode=False,
+        )
+        launcher.launch()
+        client = RpcAgentClient(host="localhost", port=launcher.port)
+        agent_ids = client.get_agent_id_list()
+        self.assertEqual(len(agent_ids), 0)
+        agent = DemoRpcAgent(
+            name="demo",
+            to_dist={
+                "host": "localhost",
+                "port": launcher.port,
+                "upload_source_code": True,
+            },
+        )
+        agent_ids = client.get_agent_id_list()
+        self.assertEqual(len(agent_ids), 1)
+        self.assertEqual(agent_ids[0], agent.agent_id)
+        agent_info = client.get_agent_info(agent_id=agent.agent_id)
+        logger.info(agent_info)
+        self.assertTrue(agent.agent_id in agent_info)
+        server_info = client.get_server_info()
+        logger.info(server_info)
+        self.assertTrue("pid" in server_info)
+        self.assertTrue("CPU Times" in server_info)
+        self.assertTrue("CPU Percent" in server_info)
+        self.assertTrue("Memory Usage" in server_info)
+        launcher.shutdown()

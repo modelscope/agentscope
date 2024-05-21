@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 """ Server of distributed agent"""
+import os
 import threading
 import traceback
+import json
 from concurrent import futures
 from loguru import logger
+import psutil
 
 try:
     import dill
@@ -71,6 +74,7 @@ class AgentServerServicer(RpcAgentServicer):
         self.agent_id_lock = threading.Lock()
         self.task_id_counter = 0
         self.agent_pool: dict[str, AgentBase] = {}
+        self.pid = os.getpid()
 
     def get_task_id(self) -> int:
         """Get the auto-increment task id.
@@ -235,6 +239,50 @@ class AgentServerServicer(RpcAgentServicer):
             else:
                 break
         return agent_pb2.RpcMsg(value=result.serialize())
+
+    def get_agent_id_list(
+        self,
+        request: Empty,
+        context: ServicerContext,
+    ) -> agent_pb2.AgentIds:
+        """Get id of all agents on the server as a list."""
+        with self.agent_id_lock:
+            agent_ids = self.agent_pool.keys()
+            return agent_pb2.AgentIds(agent_ids=agent_ids)
+
+    def get_agent_info(
+        self,
+        request: agent_pb2.AgentIds,
+        context: ServicerContext,
+    ) -> agent_pb2.StatusResponse:
+        """Get the agent information of the specific agent_id"""
+        result = {}
+        with self.agent_id_lock:
+            for agent_id in request.agent_ids:
+                if agent_id in self.agent_pool:
+                    result[agent_id] = str(self.agent_pool[agent_id])
+                else:
+                    logger.warning(
+                        f"Getting info of a non-existent agent [{agent_id}].",
+                    )
+            return agent_pb2.StatusResponse(
+                ok=True,
+                message=json.dumps(result),
+            )
+
+    def get_server_info(
+        self,
+        request: Empty,
+        context: ServicerContext,
+    ) -> agent_pb2.StatusResponse:
+        """Get the agent server resource usage information."""
+        status = {}
+        status["pid"] = self.pid
+        process = psutil.Process(self.pid)
+        status["CPU Times"] = process.cpu_times()
+        status["CPU Percent"] = process.cpu_percent()
+        status["Memory Usage"] = process.memory_info().rss
+        return agent_pb2.StatusResponse(ok=True, message=json.dumps(status))
 
     def _reply(self, request: agent_pb2.RpcMsg) -> agent_pb2.RpcMsg:
         """Call function of RpcAgentService
