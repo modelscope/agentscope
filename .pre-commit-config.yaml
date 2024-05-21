@@ -56,6 +56,7 @@ repos:
     rev: 6.1.0
     hooks:
       - id: flake8
+        args: ["--extend-ignore=E203"]
   - repo: https://github.com/pylint-dev/pylint
     rev: v3.0.2
     hooks:
