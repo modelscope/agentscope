@@ -126,17 +126,11 @@ class AgentServerServicer(RpcAgentServicer):
                 )
             agent_configs = dill.loads(request.agent_init_args)
             if len(request.agent_source_code) > 0:
-                exec(request.agent_source_code, globals())
-                cls_name = (
-                    request.agent_source_code.split("class ")[1]
-                    .split(":")[0]
-                    .split("(")[0]
-                    .strip()
-                )
+                cls = dill.loads(request.agent_source_code)
+                cls_name = cls.__name__
                 logger.info(
                     f"Load class [{cls_name}] from uploaded source code.",
                 )
-                cls = globals()[cls_name]
             else:
                 cls_name = agent_configs["class_name"]
                 cls = AgentBase.get_agent_class(cls_name)

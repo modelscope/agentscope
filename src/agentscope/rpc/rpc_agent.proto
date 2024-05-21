@@ -41,7 +41,7 @@ message StatusResponse {
 message CreateAgentRequest {
     string agent_id = 1;
     bytes agent_init_args = 2;
-    string agent_source_code = 3;
+    bytes agent_source_code = 3;
 }
 
 message AgentIds {

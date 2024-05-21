@@ -607,3 +607,44 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertTrue(0.5 < r2.content["time"] < 2)
         launcher1.shutdown()
         launcher2.shutdown()
+
+    def test_customized_agent(self) -> None:
+        """Test customized agent"""
+        launcher = RpcAgentServerLauncher(
+            host="localhost",
+            port=12010,
+            local_mode=False,
+        )
+        # launch without customized agent
+        launcher.launch()
+
+        class CustomizedAgent(AgentBase):
+            """A customized agent that not supported by agent server."""
+
+            def __init__(  # type: ignore[no-untyped-def]
+                self,
+                **kwargs,
+            ) -> None:
+                super().__init__(**kwargs)
+                self.id = 0
+
+            def reply(self, x: dict = None) -> dict:
+                return Msg(
+                    name=self.name,
+                    role="assistant",
+                    content="Customized",
+                )
+
+        agent = CustomizedAgent(name="customized")
+        self.assertRaises(
+            Exception,
+            agent.to_dist,
+            host=launcher.host,
+            port=launcher.port,
+        )
+        agent = agent.to_dist(
+            host=launcher.host,
+            port=launcher.port,
+            upload_source_code=True,
+        )
+        launcher.shutdown()

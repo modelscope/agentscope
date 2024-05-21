@@ -2,6 +2,7 @@
 """ Client of rpc agent server """
 
 import threading
+import json
 from typing import Optional, Sequence, Union
 from loguru import logger
 
@@ -133,13 +134,12 @@ class RpcAgentClient:
             with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
                 stub = RpcAgentStub(channel)
                 if upload_source_code:
-                    import inspect
                     from agentscope.agents import AgentBase
 
                     agent_class = AgentBase.get_agent_class(
                         agent_configs["class_name"],
                     )
-                    source_code = inspect.getsource(agent_class)
+                    source_code = dill.dumps(agent_class)
                 else:
                     source_code = None
                 status = stub.create_agent(
@@ -211,7 +211,14 @@ class RpcAgentClient:
                 return resp.agent_ids[0]
 
     def update_placeholder(self, task_id: int) -> str:
-        """Update the placeholder value."""
+        """Update the placeholder value.
+
+        Args:
+            task_id (`int`): task_id of the PlaceholderMessage.
+
+        Returns:
+            str: serialized message value.
+        """
         with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
             stub = RpcAgentStub(channel)
             result_msg = stub.update_placeholder(
@@ -219,22 +226,50 @@ class RpcAgentClient:
             )
             return result_msg.value
 
-    # def get_agent_id_list(self) -> Sequence[str]:
-    #     """
-    #     Get id of all agents on the server as a list.
-    #     """
-    #     pass
+    def get_agent_id_list(self, agent_id: str) -> Sequence[str]:
+        """
+        Get id of all agents on the server as a list.
 
-    # def get_agent_info(self, agent_id: str = None) -> dict:
-    #     """Get the agent information of the specific agent_id
+        Returns:
+            Sequence[str]: list of agent_id
+        """
+        with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
+            stub = RpcAgentStub(channel)
+            resp = stub.get_agent_id_list(
+                agent_pb2.AgentIds(agent_ids=[agent_id]),
+            )
+            return resp.agent_ids
 
-    #     Args:
-    #         agent_id (`str`, optional): the id of the agent. Defaults to None.
+    def get_agent_info(self, agent_id: str = None) -> dict:
+        """Get the agent information of the specific agent_id
 
-    #     Returns:
-    #         `dict`: the information of the agent as a `dict`
-    #     """
-    #     pass
+        Args:
+            agent_id (`str`, optional): the id of the agent. Defaults to None.
+
+        Returns:
+            `dict`: the information of the agent as a `dict`
+        """
+        with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
+            stub = RpcAgentStub(channel)
+            resp = stub.get_agent_info(
+                agent_pb2.AgentIds(agent_ids=[agent_id]),
+            )
+            if not resp.ok:
+                logger.error(
+                    f"Error in get_agent_info({agent_id}): {resp.message}",
+                )
+                return {}
+            return json.loads(resp.message)
+
+    def get_server_info(self) -> dict:
+        """Get the agent server resource usage information."""
+        with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
+            stub = RpcAgentStub(channel)
+            resp = stub.get_server_info(Empty())
+            if not resp.ok:
+                logger.error(f"Error in get_server_info: {resp.message}")
+                return {}
+            return json.loads(resp.message)
 
 
 class ResponseStub:
