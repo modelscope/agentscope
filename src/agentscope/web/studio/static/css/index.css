@@ -1,0 +1,193 @@
+:root {
+    --navigation-bar-background-color: #ffffff;
+    --logo-font-color: #000000;
+    --tab-font-color: #000000;
+    --navigation-bar-border-color: #e1e1e1;
+
+    --navigation-bar-width: 250px;
+    --content-width: calc(100% - var(--navigation-bar-width));
+}
+
+html {
+    height: 100%; /* Fill the entire screen height */
+    width: 100%; /* Fill the entire screen width */
+    margin: 0; /* Eliminate default html margin */
+    padding: 0;
+}
+
+body {
+    display: flex; /* Allows body to be a flex container */
+    height: 100%; /* Fill the entire screen height */
+    width: 100%; /* Fill the entire screen width */
+    margin: 0; /* Eliminate default body margin */
+    flex-direction: row;
+    padding: 0;
+    background: var(--body-bg);
+    font-family: oswald, sans-serif;
+    box-sizing: border-box;
+}
+
+#navigation-bar {
+    display: flex;
+    flex-direction: column;
+    width: var(--navigation-bar-width);
+    height: 100%;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0;
+
+    background-color: var(--navigation-bar-background-color);
+    border-right: 1px solid var(--navigation-bar-border-color);
+
+    /*Animation*/
+    transition: width 0.5s;
+}
+
+#navigation-bar.collapsed {
+    width: 65px;
+}
+
+.navigation-bar-item-label {
+    display: flex;
+    white-space: nowrap;
+}
+
+#navigation-bar.collapsed .navigation-bar-item-label {
+    display: none;
+}
+
+#content {
+    display: flex;
+    box-sizing: border-box;
+    width: var(--content-width);
+    height: 100%;
+    flex-grow: 1;
+}
+
+#guide {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 50px
+}
+
+.guide-block {
+    display: flex;
+    flex-direction: column;
+    height: 150px;
+    width: 500px;
+    min-width: 200px;
+    background-color: #1c6cc2;
+    border-radius: 10px;
+    justify-content: flex-end;
+    padding: 25px;
+    color: #ffffff;
+}
+
+/*when guide-block and right are all in class*/
+.guide-block.left {
+    margin-right: 10px;
+}
+
+.guide-block.right {
+    margin-left: 10px;
+}
+
+.guide-entry {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+    height: fit-content;
+    margin: 25px 0;
+}
+
+.empty.guide-block {
+    background-color: #ffffff;
+}
+
+.guide-block-title {
+    display: flex;
+    height: fit-content;
+    width: 100%;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 25px;
+    font-weight: bold;
+}
+.guide-block-detail {
+    display: flex;
+    height: fit-content;
+    width: 100%;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 15px;
+}
+
+#navigation-bar-logo {
+    font-family: 'krypton', sans-serif;
+    font-size: 20px;
+    color: var(--logo-font-color);
+    margin-top: 50px;
+    white-space: nowrap;
+}
+
+#navigation-bar.collapsed .navigation-bar-logo-text {
+    display: none;
+}
+
+.navigation-bar-items {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1; /* 使得 .navigation-bar-items 占据可用空间 */
+    width: 100%;
+    flex-direction: column;
+
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.navigation-bar-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: var(--navigation-bar-background-color);
+    width: 100%;
+    height: 45px;
+    border-radius: 10px;
+    color: var(--tab-font-color);
+    box-sizing: border-box;
+    margin: 5px 0;
+}
+
+.navigation-bar-item:hover {
+    background-color: blue;
+}
+
+.navigation-bar-item:active {
+    background-color: #4d4d4d;
+}
+
+.navigation-bar-item.selected {
+    background-color: #8c8c8c;
+}
+
+.navigation-bar-item-icon {
+    display: flex;
+    width: 25px;
+    height: 25px;
+    fill: #000000;
+    margin: 0 10px;
+    min-height: 25px;
+    min-width: 25px;
+}
+
+.navigation-bar-hr {
+    display: flex;
+    height: 1px;
+    background-color: #e1e1e1; /* 设置分隔线的颜色 */
+    border: none; /* 移除默认的边框 */
+    margin: 10px 0;
+}

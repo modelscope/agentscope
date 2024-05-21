@@ -1,0 +1,244 @@
+:root {
+    --chat-bubble-border-radius: 5px;
+
+    --chat-icon-width: 50px;
+    --chat-icon-height: 50px;
+    --chat-icon-horizontal-margin: 10px;
+    /*TODO: not used here*/
+    --chat-icon-total-width: calc(var(--chat-icon-width) + var(--chat-icon-horizontal-margin) * 2);
+
+    --chat-detail-width: 350px;
+    --chat-panel-width: calc(100% - var(--chat-detail-width));
+}
+
+#chat-body {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+}
+
+#chat-panel {
+    display: flex;
+    flex-direction: column;
+    width: var(--chat-panel-width);
+    height: 100%;
+    padding: 50px 50px;
+    box-sizing: border-box;
+}
+
+#chat-detail {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-height: 100%;
+    width: var(--chat-detail-width);
+    box-sizing: border-box;
+    border-left: 1px solid #e1e1e1;
+    padding: 50px 20px;
+}
+
+#dialogue-detail-content {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    flex-direction: column;
+    max-height: 100%;
+}
+
+.dialogue-info-title {
+    display: flex;
+}
+
+.dialogue-info-key {
+    display: flex;
+    width: 100%;
+    height: 30px;
+    align-items: center;
+}
+
+.dialogue-info-value {
+    display: flex;
+    background-color: #e1e1e1;
+    height: fit-content;
+    width: 100%;
+    align-items: center;
+    padding: 0 5px;
+    border-radius: 2px;
+    min-height: 30px;
+    max-height: 150px;
+    word-wrap: break-word; /* 允许长单词在任意位置换行 */
+    overflow-wrap: break-word; /* 同上，为word-wrap的标准别名 */
+}
+
+.dialogue-info-row {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: fit-content;
+    margin: 5px 0;
+}
+
+#chat-box {
+    display: flex;
+    box-sizing: border-box;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    margin-bottom: 50px;
+    padding: 5px;
+    max-height: 100%;
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+}
+
+#chat-box-content {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    max-height: 100%;
+}
+
+.chat-row {
+    display: flex;
+    flex-direction: row;
+    box-sizing: border-box;
+    width: 100%;
+    height: fit-content;
+    margin: 10px 0;
+}
+
+.user.chat-row {
+    justify-content: flex-end;
+}
+
+.text-right-align {
+    text-align: right;
+}
+
+.chat-icon {
+    display: flex;
+    justify-content: center;
+    box-sizing: border-box;
+    width: var(--chat-icon-width);
+    height: var(--chat-icon-height);
+    border-radius: 25px;
+    margin: 0 var(--chat-icon-horizontal-margin);
+    padding: 5px;
+    background-color: #1c6cc2;
+    fill: #ffffff;
+
+}
+
+.chat-content {
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 140px);
+    /*TODO: for test*/
+    box-sizing: border-box;
+}
+
+.user.chat-content {
+    align-items: flex-end;
+}
+
+.chat-name {
+    display: flex;
+    margin-bottom: 5px;
+}
+
+.chat-bubble {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e1e1e1;
+    flex-grow: 1;
+    box-sizing: border-box;
+    padding: 10px;
+    width: fit-content;
+    max-width: 100%;
+    min-width: 100px;
+    word-wrap: break-word; /* 允许长单词在任意位置换行 */
+    overflow-wrap: break-word; /* 同上，为word-wrap的标准别名 */
+}
+
+.user.chat-bubble {
+    border-radius: var(--chat-bubble-border-radius) 0 var(--chat-bubble-border-radius) var(--chat-bubble-border-radius);
+}
+
+.other.chat-bubble {
+    border-radius: 0 var(--chat-bubble-border-radius) var(--chat-bubble-border-radius) var(--chat-bubble-border-radius);
+}
+
+.chat-bubble-multimodal-item {
+    display: flex;
+    max-height: 200px;
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    min-height: 50px;
+    min-width: 50px;
+    margin-top: 5px;
+}
+
+#chat-input {
+    display: flex;
+    height: 10%;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    flex-direction: column;
+    padding: 10px;
+}
+
+#chat-input-textarea {
+    display: flex;
+    background-color: transparent;
+    width: 100%;
+    height: 90%;
+    resize: none;
+
+    /*remove border*/
+    border-color: transparent;
+    border-width: 0;
+    outline: none;
+}
+
+#chat-input-control-panel {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 55px;
+}
+
+#chat-input-name {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+}
+
+#chat-input-send-btn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.chat-input-control-item {
+    height: 100%;
+    width: fit-content;
+    border-radius: 5px;
+    padding: 0 15px;
+    border: none;
+    font-size: 15px;
+}
+
+.chat-input-send-enter-svg {
+    display: flex;
+    width: 20px;
+    height: 25px;
+    margin-left: 5px;
+}

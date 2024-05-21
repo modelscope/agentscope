@@ -1,0 +1,45 @@
+:root {
+    --dashboard-titlebar-height: 60px;
+    --dashboard-content-height: calc(100% - var(--dashboard-titlebar-height));
+}
+
+#dashboard-panel {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    flex-direction: column;
+}
+
+#dashboard-titlebar {
+    display: flex;
+    width: 100%;
+    height: var(--dashboard-titlebar-height);
+    flex-direction: row;
+    align-items: center;
+    border-bottom: 1px solid #e1e1e1;
+    box-sizing: border-box;
+    padding: 0 20px;
+}
+
+.dashboard-titlebar-span {
+    display: flex;
+    height: 50px;
+    width: fit-content;
+    align-items: center;
+}
+
+.dashboard-titlebar-svg {
+    display: flex;
+    width: 15px;
+    height: 15px;
+    align-items: center;
+    justify-content: center;
+    margin: 0 10px;
+}
+
+#dashboard-content {
+    display: flex;
+    height: var(--dashboard-content-height);
+    width: 100%;
+    flex-direction: row;
+}

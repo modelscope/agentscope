@@ -1,0 +1,33 @@
+:root {
+    --code-list-width: 200px;
+    --code-content-width: calc(100% - var(--code-list-width));
+}
+
+#code-body {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+    padding: 50px;
+    box-sizing: border-box;
+
+}
+
+#code-list {
+    display: flex;
+    height: 100%;
+    width: var(--code-list-width);
+    flex-direction: column;
+    border: 1px solid #e1e1e1;
+    box-sizing: border-box;
+    margin-right: 50px;
+}
+
+#code-content {
+    display: flex;
+    flex-direction: column;
+    width: var(--code-content-width);
+    height: 100%;
+    box-sizing: border-box;
+    border: 1px solid #e1e1e1;
+}

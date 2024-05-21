@@ -1,0 +1,34 @@
+{
+  "en": {
+    "welcome": "Welcome to AgentScope Studio!",
+    "introduction": "AgentScope Studio is a web-based platform for monitoring, managing and developing multi-agent applications in AgentScope! Feel free to explore the platform and its features.",
+    "start": "Start to explore AgentScope Studio with",
+    "intro-dashboard": "Monitor and manage your AgentScope running instances in a Web-based interface",
+    "intro-workstation": "Develop your multi-agent applications by dragging",
+    "intro-market": "Coming soon ...",
+    "intro-server": "Coming soon ...",
+    "hint-search": "Search",
+    "tab-dialogue": "Dialogue",
+    "tab-code": "Code",
+    "tab-invocation": "API Invocation",
+    "title-runtime": "About Runtime",
+    "hint-input": "Input message here ...",
+    "btn-send": "Send"
+  },
+  "zh": {
+    "welcome": "欢迎来到AgentScope Studio！",
+    "introduction": "AgentScope Studio是用于监控、管理和开发多智能体应用程序的Web平台！欢迎随意探索AgentScope Studio！",
+    "start": "开始探索AgentScope Studio",
+    "intro-dashboard": "在Web界面中监控和管理您的AgentScope应用运行实例",
+    "intro-workstation": "通过拖拽方式开发您的多智能体应用程序",
+    "intro-market": "即将推出 ...",
+    "intro-server": "即将推出 ...",
+    "hint-search": "搜索",
+    "tab-dialogue": "对话",
+    "tab-code": "代码",
+    "tab-invocation": "API调用",
+    "title-runtime": "关于运行实例",
+    "hint-input": "在此输入消息 ...",
+    "btn-send": "发送"
+  }
+}

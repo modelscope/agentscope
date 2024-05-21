@@ -1,0 +1,64 @@
+:root {
+    --runs-content-padding: 50px;
+
+    --runs-content-control-panel-height: 55px;
+    --runs-search-input-height: 35px;
+    --runs-table-height: calc(100% - var(--runs-content-control-panel-height));
+}
+
+#runs-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    padding: var(--runs-content-padding);
+    box-sizing: border-box;
+}
+
+#runs-control-panel {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: var(--runs-content-control-panel-height);
+    width: 100%;
+}
+
+#runs-table {
+    flex-grow: 1;
+    overflow-y: auto;
+    width: 100%;
+    height: var(--runs-table-height);
+    max-height: var(--runs-table-height);
+    border: 1px solid #e1e1e1;
+    background: transparent;
+}
+
+#runs-search-input {
+    display: flex;
+    height: var(--runs-search-input-height);
+    flex-grow: 1;
+    align-items: center;
+}
+
+/* Remove border from tabulator */
+.tabulator .tabulator-cell,
+.tabulator .tabulator-col,
+.tabulator .tabulator-header .tabulator-col {
+    border: none !important;
+}
+
+/* Remove the bottom border from table header */
+.tabulator .tabulator-header {
+    border-bottom: none !important;
+}
+
+/*!* Set the same color for all rows *!*/
+/*.tabulator .tabulator-row {*/
+/*    background-color: #FFF !important; !* Replace by your color *!*/
+/*}*/
+
+/*!* or, you just want to remove the alternative background color and keep the basic background *!*/
+/*.tabulator .tabulator-row:nth-child(even) {*/
+/*    background-color: inherit !important; !* Causes even row background colors to inherit the default or specified row background colors *!*/
+/*}*/
