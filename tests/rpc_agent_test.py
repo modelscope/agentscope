@@ -231,7 +231,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         )
         launcher.launch()
         client = RpcAgentClient(host=launcher.host, port=launcher.port)
-        self.assertTrue(client._is_alive())  # pylint: disable=W0212
+        self.assertTrue(client.is_alive())  # pylint: disable=W0212
         agent_a = DemoRpcAgent(
             name="a",
         ).to_dist(

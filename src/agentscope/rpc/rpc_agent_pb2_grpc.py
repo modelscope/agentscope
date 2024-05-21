@@ -29,8 +29,33 @@ class RpcAgentStub(object):
             request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             response_deserializer=rpc__agent__pb2.StatusResponse.FromString,
         )
-        self.call_func = channel.unary_unary(
-            "/RpcAgent/call_func",
+        self.create_agent = channel.unary_unary(
+            "/RpcAgent/create_agent",
+            request_serializer=rpc__agent__pb2.CreateAgentRequest.SerializeToString,
+            response_deserializer=rpc__agent__pb2.StatusResponse.FromString,
+        )
+        self.delete_agent = channel.unary_unary(
+            "/RpcAgent/delete_agent",
+            request_serializer=rpc__agent__pb2.AgentIds.SerializeToString,
+            response_deserializer=rpc__agent__pb2.StatusResponse.FromString,
+        )
+        self.get_agent_id_list = channel.unary_unary(
+            "/RpcAgent/get_agent_id_list",
+            request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            response_deserializer=rpc__agent__pb2.AgentIds.FromString,
+        )
+        self.get_agent_info = channel.unary_unary(
+            "/RpcAgent/get_agent_info",
+            request_serializer=rpc__agent__pb2.AgentIds.SerializeToString,
+            response_deserializer=rpc__agent__pb2.StatusResponse.FromString,
+        )
+        self.get_server_info = channel.unary_unary(
+            "/RpcAgent/get_server_info",
+            request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            response_deserializer=rpc__agent__pb2.StatusResponse.FromString,
+        )
+        self.call_agent_func = channel.unary_unary(
+            "/RpcAgent/call_agent_func",
             request_serializer=rpc__agent__pb2.RpcMsg.SerializeToString,
             response_deserializer=rpc__agent__pb2.RpcMsg.FromString,
         )
@@ -40,13 +65,43 @@ class RpcAgentServicer(object):
     """Servicer for rpc agent server"""
 
     def is_alive(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """check server is alive"""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details("Method not implemented!")
         raise NotImplementedError("Method not implemented!")
 
-    def call_func(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+    def create_agent(self, request, context):
+        """create a new agent on the server"""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
+
+    def delete_agent(self, request, context):
+        """delete agents from the server"""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
+
+    def get_agent_id_list(self, request, context):
+        """get id of all agents on the server as a list"""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
+
+    def get_agent_info(self, request, context):
+        """get the agent information of the specific agent_id"""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
+
+    def get_server_info(self, request, context):
+        """get the resource utilization information of the server"""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
+
+    def call_agent_func(self, request, context):
+        """call funcs of agent running on the server"""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details("Method not implemented!")
         raise NotImplementedError("Method not implemented!")
@@ -59,8 +114,33 @@ def add_RpcAgentServicer_to_server(servicer, server):
             request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
             response_serializer=rpc__agent__pb2.StatusResponse.SerializeToString,
         ),
-        "call_func": grpc.unary_unary_rpc_method_handler(
-            servicer.call_func,
+        "create_agent": grpc.unary_unary_rpc_method_handler(
+            servicer.create_agent,
+            request_deserializer=rpc__agent__pb2.CreateAgentRequest.FromString,
+            response_serializer=rpc__agent__pb2.StatusResponse.SerializeToString,
+        ),
+        "delete_agent": grpc.unary_unary_rpc_method_handler(
+            servicer.delete_agent,
+            request_deserializer=rpc__agent__pb2.AgentIds.FromString,
+            response_serializer=rpc__agent__pb2.StatusResponse.SerializeToString,
+        ),
+        "get_agent_id_list": grpc.unary_unary_rpc_method_handler(
+            servicer.get_agent_id_list,
+            request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            response_serializer=rpc__agent__pb2.AgentIds.SerializeToString,
+        ),
+        "get_agent_info": grpc.unary_unary_rpc_method_handler(
+            servicer.get_agent_info,
+            request_deserializer=rpc__agent__pb2.AgentIds.FromString,
+            response_serializer=rpc__agent__pb2.StatusResponse.SerializeToString,
+        ),
+        "get_server_info": grpc.unary_unary_rpc_method_handler(
+            servicer.get_server_info,
+            request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            response_serializer=rpc__agent__pb2.StatusResponse.SerializeToString,
+        ),
+        "call_agent_func": grpc.unary_unary_rpc_method_handler(
+            servicer.call_agent_func,
             request_deserializer=rpc__agent__pb2.RpcMsg.FromString,
             response_serializer=rpc__agent__pb2.RpcMsg.SerializeToString,
         ),
@@ -106,7 +186,7 @@ class RpcAgent(object):
         )
 
     @staticmethod
-    def call_func(
+    def create_agent(
         request,
         target,
         options=(),
@@ -121,7 +201,152 @@ class RpcAgent(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/RpcAgent/call_func",
+            "/RpcAgent/create_agent",
+            rpc__agent__pb2.CreateAgentRequest.SerializeToString,
+            rpc__agent__pb2.StatusResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
+
+    @staticmethod
+    def delete_agent(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            "/RpcAgent/delete_agent",
+            rpc__agent__pb2.AgentIds.SerializeToString,
+            rpc__agent__pb2.StatusResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
+
+    @staticmethod
+    def get_agent_id_list(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            "/RpcAgent/get_agent_id_list",
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            rpc__agent__pb2.AgentIds.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
+
+    @staticmethod
+    def get_agent_info(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            "/RpcAgent/get_agent_info",
+            rpc__agent__pb2.AgentIds.SerializeToString,
+            rpc__agent__pb2.StatusResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
+
+    @staticmethod
+    def get_server_info(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            "/RpcAgent/get_server_info",
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            rpc__agent__pb2.StatusResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
+
+    @staticmethod
+    def call_agent_func(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            "/RpcAgent/call_agent_func",
             rpc__agent__pb2.RpcMsg.SerializeToString,
             rpc__agent__pb2.RpcMsg.FromString,
             options,

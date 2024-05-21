@@ -119,10 +119,10 @@ class AgentServerError(Exception):
         self.message = message
 
     def __str__(self) -> str:
-        return (
-            f"{self.__class__.__name__}[{self.host}:{self.port}]:"
-            f" {self.message}"
-        )
+        err_msg = f"{self.__class__.__name__}[{self.host}:{self.port}]"
+        if self.message is not None:
+            err_msg += f": {self.message}"
+        return err_msg
 
 
 class AgentServerNotAliveError(AgentServerError):

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """ Server of distributed agent"""
 import threading
-import base64
 import json
 import traceback
 from concurrent import futures
@@ -13,9 +12,8 @@ try:
     from grpc import ServicerContext
     from google.protobuf.empty_pb2 import Empty
     from expiringdict import ExpiringDict
-    from ..rpc.rpc_agent_pb2 import StatusResponse
-    from ..rpc.rpc_agent_pb2 import RpcMsg  # pylint: disable=E0611
-    from ..rpc.rpc_agent_pb2_grpc import RpcAgentServicer
+    import agentscope.rpc.rpc_agent_pb2 as agent_pb2
+    from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentServicer
 except ImportError as import_error:
     from agentscope.utils.tools import ImportErrorReporter
 
@@ -27,14 +25,7 @@ except ImportError as import_error:
     )
     ServicerContext = ImportErrorReporter(import_error, "distribute")
     ExpiringDict = ImportErrorReporter(import_error, "distribute")
-    StatusResponse = ImportErrorReporter(  # type: ignore[misc]
-        import_error,
-        "distribute",
-    )
-    RpcMsg = ImportErrorReporter(  # type: ignore[misc]
-        import_error,
-        "distribute",
-    )
+    # agent_pb2 = ImportErrorReporter(import_error, "distribute")
     RpcAgentServicer = ImportErrorReporter(import_error, "distribute")
 
 from ..agents.agent import AgentBase
@@ -151,15 +142,109 @@ class AgentServerServicer(RpcAgentServicer):
         self,
         request: Empty,
         context: ServicerContext,
-    ) -> StatusResponse:
+    ) -> agent_pb2.StatusResponse:
         """Check whether the server is alive."""
-        return StatusResponse(ok=True)
+        return agent_pb2.StatusResponse(ok=True)
+
+    def create_agent(
+        self,
+        request: agent_pb2.CreateAgentRequest,
+        context: ServicerContext,
+    ) -> agent_pb2.StatusResponse:
+        """Create a new agent on the server."""
+        agent_id = request.agent_id
+        with self.agent_id_lock:
+            if agent_id in self.agent_pool:
+                return agent_pb2.StatusResponse(
+                    ok=False,
+                    message=f"Agent with agent_id [{agent_id}] already exists",
+                )
+            agent_configs = dill.loads(request.agent_init_args)
+            if request.agent_source_code is not None:
+                exec(request.agent_source_code, globals())
+                cls_name = (
+                    request.agent_source_code.split("class ")[1]
+                    .split(":")[0]
+                    .split("(")[0]
+                    .strip()
+                )
+                logger.info(
+                    f"Load class [{cls_name}] from uploaded source code.",
+                )
+                cls = globals()[cls_name]
+            else:
+                cls_name = agent_configs["class_name"]
+                cls = AgentBase.get_agent_class(cls_name)
+            agent_instance = cls(
+                *agent_configs["args"],
+                **agent_configs["kwargs"],
+            )
+            agent_instance._agent_id = agent_id  # pylint: disable=W0212
+            self.agent_pool[agent_id] = agent_instance
+            logger.info(f"create agent instance <{cls_name}>[{agent_id}]")
+            return agent_pb2.StatusResponse(ok=True)
+
+    def delete_agent(
+        self,
+        request: agent_pb2.AgentIds,
+        context: ServicerContext,
+    ) -> agent_pb2.StatusResponse:
+        """Delete agents from the server.
+
+        Args:
+            request (`AgentIds`): The `agent_ids` field is the agent_id of the
+            agents to be deleted.
+        """
+        agent_ids = request.agent_ids
+        with self.agent_id_lock:
+            for aid in agent_ids:
+                if aid in self.agent_pool:
+                    agent = self.agent_pool.pop(aid)
+                    logger.info(
+                        f"delete agent instance <{agent.__class__.__name__}>"
+                        f"[{aid}]",
+                    )
+                else:
+                    logger.warning(
+                        f"try to delete a non-existent agent [{aid}].",
+                    )
+            return agent_pb2.StatusResponse(ok=True)
+
+    def clone_agent(
+        self,
+        request: agent_pb2.AgentIds,
+        context: ServicerContext,
+    ) -> agent_pb2.AgentIds:
+        """Clone a new agent instance from the origin instance.
+
+        Args:
+            request (`AgentIds`): The `agent_ids` field is the agent_id of the
+            agent to be cloned.
+
+        Returns:
+            `AgentIds`: The agent_id of generated agent. Empty if clone failed.
+        """
+        agent_id = request.agent_ids[0]
+        with self.agent_id_lock:
+            if agent_id not in self.agent_pool:
+                logger.error(
+                    f"try to clone a non-existent agent [{agent_id}].",
+                )
+                return agent_pb2.AgentIds()
+            ori_agent = self.agent_pool[agent_id]
+        new_agent = ori_agent.__class__(
+            *ori_agent._init_settings["args"],  # pylint: disable=W0212
+            **ori_agent._init_settings["kwargs"],  # pylint: disable=W0212
+        )
+        with self.agent_id_lock:
+            self.agent_pool[new_agent.agent_id] = new_agent
+        return agent_pb2.AgentIds(agent_ids=[new_agent.agent_id])
 
     def call_func(  # pylint: disable=W0236
         self,
-        request: RpcMsg,
+        request: agent_pb2.RpcMsg,
         context: ServicerContext,
-    ) -> RpcMsg:
+    ) -> agent_pb2.RpcMsg:
         """Call the specific servicer function."""
         if hasattr(self, request.target_func):
             if request.target_func not in ["_create_agent", "_get"]:
@@ -177,7 +262,7 @@ class AgentServerServicer(RpcAgentServicer):
                 f"Unsupported method {request.target_func}",
             )
 
-    def _reply(self, request: RpcMsg) -> RpcMsg:
+    def _reply(self, request: agent_pb2.RpcMsg) -> agent_pb2.RpcMsg:
         """Call function of RpcAgentService
 
         Args:
@@ -201,7 +286,7 @@ class AgentServerServicer(RpcAgentServicer):
             request.agent_id,
             msg,  # type: ignore[arg-type]
         )
-        return RpcMsg(
+        return agent_pb2.RpcMsg(
             value=Msg(  # type: ignore[arg-type]
                 name=self.agent_pool[request.agent_id].name,
                 content=None,
@@ -209,7 +294,7 @@ class AgentServerServicer(RpcAgentServicer):
             ).serialize(),
         )
 
-    def _get(self, request: RpcMsg) -> RpcMsg:
+    def _get(self, request: agent_pb2.RpcMsg) -> agent_pb2.RpcMsg:
         """Get a reply message with specific task_id.
 
         Args:
@@ -231,9 +316,9 @@ class AgentServerServicer(RpcAgentServicer):
                     result.wait(timeout=1)
             else:
                 break
-        return RpcMsg(value=result.serialize())
+        return agent_pb2.RpcMsg(value=result.serialize())
 
-    def _observe(self, request: RpcMsg) -> RpcMsg:
+    def _observe(self, request: agent_pb2.RpcMsg) -> agent_pb2.RpcMsg:
         """Observe function of the original agent.
 
         Args:
@@ -248,56 +333,7 @@ class AgentServerServicer(RpcAgentServicer):
             if isinstance(msg, PlaceholderMessage):
                 msg.update_value()
         self.agent_pool[request.agent_id].observe(msgs)
-        return RpcMsg()
-
-    def _create_agent(self, request: RpcMsg) -> RpcMsg:
-        """Create a new agent instance with the given agent_id.
-
-        Args:
-            request (RpcMsg): request message with a `agent_id` field.
-        """
-        self.check_and_generate_agent(
-            request.agent_id,
-            agent_configs=(
-                dill.loads(base64.b64decode(request.value))
-                if request.value
-                else None
-            ),
-        )
-        return RpcMsg()
-
-    def _clone_agent(self, request: RpcMsg) -> RpcMsg:
-        """Clone a new agent instance from the origin instance.
-
-        Args:
-            request (RpcMsg): The `agent_id` field is the agent_id of the
-            agent to be cloned.
-
-        Returns:
-            `RpcMsg`: The `value` field contains the agent_id of generated
-            agent.
-        """
-        agent_id = request.agent_id
-        with self.agent_id_lock:
-            if agent_id not in self.agent_pool:
-                raise ValueError(f"Agent [{agent_id}] not exists")
-            ori_agent = self.agent_pool[agent_id]
-        new_agent = ori_agent.__class__(
-            *ori_agent._init_settings["args"],  # pylint: disable=W0212
-            **ori_agent._init_settings["kwargs"],  # pylint: disable=W0212
-        )
-        with self.agent_id_lock:
-            self.agent_pool[new_agent.agent_id] = new_agent
-        return RpcMsg(value=new_agent.agent_id)  # type: ignore[arg-type]
-
-    def _delete_agent(self, request: RpcMsg) -> RpcMsg:
-        """Delete the agent instance of the specific agent_id.
-
-        Args:
-            request (RpcMsg): request message with a `agent_id` field.
-        """
-        self.check_and_delete_agent(request.agent_id)
-        return RpcMsg()
+        return agent_pb2.RpcMsg()
 
     def process_messages(
         self,

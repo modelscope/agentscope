@@ -4,18 +4,55 @@ import "google/protobuf/empty.proto";
 
 // Servicer for rpc agent server
 service RpcAgent {
+    // check server is alive
     rpc is_alive (google.protobuf.Empty) returns (StatusResponse) {}
-    rpc call_func (RpcMsg) returns (RpcMsg) {}
+
+    // create a new agent on the server
+    rpc create_agent (CreateAgentRequest) returns (StatusResponse) {}
+
+    // delete agents from the server
+    rpc delete_agent (AgentIds) returns (StatusResponse) {}
+
+    // clone an agent with specific agent_id
+    rpc clone_agent (AgentIds) returns (AgentIds) {}
+
+    // get id of all agents on the server as a list
+    rpc get_agent_id_list (google.protobuf.Empty) returns (AgentIds) {}
+
+    // get the agent information of the specific agent_id
+    rpc get_agent_info (AgentIds) returns (StatusResponse) {}
+
+    // get the resource utilization information of the server
+    rpc get_server_info(google.protobuf.Empty) returns (StatusResponse) {}
+
+    // call funcs of agent running on the server
+    rpc call_agent_func(RpcMsg) returns (RpcMsg) {}
 }
 
-// Message class for rpc communication
+// Message classes for agent server management
+message StatusResponse {
+    bool ok = 1;
+    string message = 2;
+}
+
+message CreateAgentRequest {
+    string agent_id = 1;
+    bytes agent_init_args = 2;
+    string agent_source_code = 3;
+}
+
+message AgentIds {
+    repeated string agent_ids = 1;
+}
+
+message AgentStatus {
+    string agent_id = 1;
+    string status = 2;
+}
+
+// Message class for agent function call
 message RpcMsg {
     string value = 1;
     string target_func = 2;
     string agent_id = 3;
-}
-
-message StatusResponse {
-    bool ok = 1;
-    string message = 2;
 }
