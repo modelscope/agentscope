@@ -123,7 +123,7 @@ class RpcAgent(AgentBase):
     def observe(self, x: Union[dict, Sequence[dict]]) -> None:
         if self.client is None:
             self._launch_server()
-        self.client.call_func(
+        self.client.call_agent_func(
             func_name="_observe",
             value=serialize(x),  # type: ignore[arg-type]
         )
@@ -161,7 +161,7 @@ class RpcAgent(AgentBase):
 
         # clone instances without agent server
         for _ in range(generated_instance_number):
-            new_agent_id = self.client.call_func("_clone_agent")
+            new_agent_id = self.client.clone_agent(self.agent_id)
             generated_instances.append(
                 RpcAgent(
                     name=self.name,

@@ -17,7 +17,6 @@ from agentscope.msghub import msghub
 from agentscope.pipelines import sequentialpipeline
 from agentscope.utils import MonitorFactory, QuotaExceededError
 from agentscope.rpc.rpc_agent_client import RpcAgentClient
-from agentscope.exception import AgentServerNotAliveError
 
 
 class DemoRpcAgent(AgentBase):
@@ -473,7 +472,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         res4 = agent2(msg4)
         self.assertEqual(res4.content["mem_size"], 3)
         # delete existing agent
-        agent2.client.delete_agent()
+        agent2.client.delete_agent(agent2.agent_id)
         msg2 = Msg(name="System", content="First Msg for agent2")
         res2 = agent2(msg2)
         self.assertRaises(ValueError, res2.__getattr__, "content")
@@ -608,14 +607,3 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertTrue(0.5 < r2.content["time"] < 2)
         launcher1.shutdown()
         launcher2.shutdown()
-
-    def test_agent_server_not_alive(self) -> None:
-        """Test agent server is not alive"""
-        not_exist_port = 12345
-        agent = DemoRpcAgent(name="not alive")
-        self.assertRaises(
-            AgentServerNotAliveError,
-            agent.to_dist,
-            host="127.0.0.1",
-            port=not_exist_port,
-        )

@@ -39,6 +39,11 @@ class RpcAgentStub(object):
             request_serializer=rpc__agent__pb2.AgentIds.SerializeToString,
             response_deserializer=rpc__agent__pb2.StatusResponse.FromString,
         )
+        self.clone_agent = channel.unary_unary(
+            "/RpcAgent/clone_agent",
+            request_serializer=rpc__agent__pb2.AgentIds.SerializeToString,
+            response_deserializer=rpc__agent__pb2.AgentIds.FromString,
+        )
         self.get_agent_id_list = channel.unary_unary(
             "/RpcAgent/get_agent_id_list",
             request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
@@ -57,6 +62,11 @@ class RpcAgentStub(object):
         self.call_agent_func = channel.unary_unary(
             "/RpcAgent/call_agent_func",
             request_serializer=rpc__agent__pb2.RpcMsg.SerializeToString,
+            response_deserializer=rpc__agent__pb2.RpcMsg.FromString,
+        )
+        self.update_placeholder = channel.unary_unary(
+            "/RpcAgent/update_placeholder",
+            request_serializer=rpc__agent__pb2.UpdatePlaceholderRequest.SerializeToString,
             response_deserializer=rpc__agent__pb2.RpcMsg.FromString,
         )
 
@@ -78,6 +88,12 @@ class RpcAgentServicer(object):
 
     def delete_agent(self, request, context):
         """delete agents from the server"""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
+
+    def clone_agent(self, request, context):
+        """clone an agent with specific agent_id"""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details("Method not implemented!")
         raise NotImplementedError("Method not implemented!")
@@ -106,6 +122,12 @@ class RpcAgentServicer(object):
         context.set_details("Method not implemented!")
         raise NotImplementedError("Method not implemented!")
 
+    def update_placeholder(self, request, context):
+        """update value of PlaceholderMessage"""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
+
 
 def add_RpcAgentServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -123,6 +145,11 @@ def add_RpcAgentServicer_to_server(servicer, server):
             servicer.delete_agent,
             request_deserializer=rpc__agent__pb2.AgentIds.FromString,
             response_serializer=rpc__agent__pb2.StatusResponse.SerializeToString,
+        ),
+        "clone_agent": grpc.unary_unary_rpc_method_handler(
+            servicer.clone_agent,
+            request_deserializer=rpc__agent__pb2.AgentIds.FromString,
+            response_serializer=rpc__agent__pb2.AgentIds.SerializeToString,
         ),
         "get_agent_id_list": grpc.unary_unary_rpc_method_handler(
             servicer.get_agent_id_list,
@@ -142,6 +169,11 @@ def add_RpcAgentServicer_to_server(servicer, server):
         "call_agent_func": grpc.unary_unary_rpc_method_handler(
             servicer.call_agent_func,
             request_deserializer=rpc__agent__pb2.RpcMsg.FromString,
+            response_serializer=rpc__agent__pb2.RpcMsg.SerializeToString,
+        ),
+        "update_placeholder": grpc.unary_unary_rpc_method_handler(
+            servicer.update_placeholder,
+            request_deserializer=rpc__agent__pb2.UpdatePlaceholderRequest.FromString,
             response_serializer=rpc__agent__pb2.RpcMsg.SerializeToString,
         ),
     }
@@ -233,6 +265,35 @@ class RpcAgent(object):
             "/RpcAgent/delete_agent",
             rpc__agent__pb2.AgentIds.SerializeToString,
             rpc__agent__pb2.StatusResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
+
+    @staticmethod
+    def clone_agent(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            "/RpcAgent/clone_agent",
+            rpc__agent__pb2.AgentIds.SerializeToString,
+            rpc__agent__pb2.AgentIds.FromString,
             options,
             channel_credentials,
             insecure,
@@ -348,6 +409,35 @@ class RpcAgent(object):
             target,
             "/RpcAgent/call_agent_func",
             rpc__agent__pb2.RpcMsg.SerializeToString,
+            rpc__agent__pb2.RpcMsg.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
+
+    @staticmethod
+    def update_placeholder(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            "/RpcAgent/update_placeholder",
+            rpc__agent__pb2.UpdatePlaceholderRequest.SerializeToString,
             rpc__agent__pb2.RpcMsg.FromString,
             options,
             channel_credentials,

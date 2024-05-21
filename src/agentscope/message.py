@@ -368,10 +368,7 @@ class PlaceholderMessage(MessageBase):
             # retrieve real message from rpc agent server
             self.__update_task_id()
             client = RpcAgentClient(self._host, self._port)
-            result = client.call_func(
-                func_name="_get",
-                value=json.dumps({"task_id": self._task_id}),
-            )
+            result = client.update_placeholder(task_id=self._task_id)
             msg = deserialize(result)
             status = msg.pop("__status", "OK")
             if status == "ERROR":

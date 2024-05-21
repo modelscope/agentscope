@@ -27,6 +27,9 @@ service RpcAgent {
 
     // call funcs of agent running on the server
     rpc call_agent_func(RpcMsg) returns (RpcMsg) {}
+
+    // update value of PlaceholderMessage
+    rpc update_placeholder(UpdatePlaceholderRequest) returns (RpcMsg) {}
 }
 
 // Message classes for agent server management
@@ -48,6 +51,10 @@ message AgentIds {
 message AgentStatus {
     string agent_id = 1;
     string status = 2;
+}
+
+message UpdatePlaceholderRequest {
+    int64 task_id = 1;
 }
 
 // Message class for agent function call

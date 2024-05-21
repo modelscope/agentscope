@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """ Server of distributed agent"""
 import threading
-import json
 import traceback
 from concurrent import futures
 from loguru import logger
@@ -91,40 +90,6 @@ class AgentServerServicer(RpcAgentServicer):
         """
         return agent_id in self.agent_pool
 
-    def check_and_generate_agent(
-        self,
-        agent_id: str,
-        agent_configs: dict,
-    ) -> None:
-        """
-        Check whether the agent exists, and create new agent instance
-        for new agent.
-
-        Args:
-            agent_id (`str`): the agent id.
-            agent_configs (`dict`): configuration used to initialize the agent,
-                with three fields (generated in `_AgentMeta`):
-
-                .. code-block:: python
-
-                    {
-                        "class_name": {name of the agent}
-                        "args": {args in tuple type to init the agent}
-                        "kwargs": {args in dict type to init the agent}
-                    }
-
-        """
-        with self.agent_id_lock:
-            if agent_id not in self.agent_pool:
-                agent_class_name = agent_configs["class_name"]
-                agent_instance = AgentBase.get_agent_class(agent_class_name)(
-                    *agent_configs["args"],
-                    **agent_configs["kwargs"],
-                )
-                agent_instance._agent_id = agent_id  # pylint: disable=W0212
-                self.agent_pool[agent_id] = agent_instance
-                logger.info(f"create agent instance [{agent_id}]")
-
     def check_and_delete_agent(self, agent_id: str) -> None:
         """
         Check whether the agent exists, and delete the agent instance
@@ -141,7 +106,7 @@ class AgentServerServicer(RpcAgentServicer):
     def is_alive(
         self,
         request: Empty,
-        context: ServicerContext,
+        _: ServicerContext,
     ) -> agent_pb2.StatusResponse:
         """Check whether the server is alive."""
         return agent_pb2.StatusResponse(ok=True)
@@ -149,7 +114,7 @@ class AgentServerServicer(RpcAgentServicer):
     def create_agent(
         self,
         request: agent_pb2.CreateAgentRequest,
-        context: ServicerContext,
+        _: ServicerContext,
     ) -> agent_pb2.StatusResponse:
         """Create a new agent on the server."""
         agent_id = request.agent_id
@@ -160,7 +125,7 @@ class AgentServerServicer(RpcAgentServicer):
                     message=f"Agent with agent_id [{agent_id}] already exists",
                 )
             agent_configs = dill.loads(request.agent_init_args)
-            if request.agent_source_code is not None:
+            if len(request.agent_source_code) > 0:
                 exec(request.agent_source_code, globals())
                 cls_name = (
                     request.agent_source_code.split("class ")[1]
@@ -187,7 +152,7 @@ class AgentServerServicer(RpcAgentServicer):
     def delete_agent(
         self,
         request: agent_pb2.AgentIds,
-        context: ServicerContext,
+        _: ServicerContext,
     ) -> agent_pb2.StatusResponse:
         """Delete agents from the server.
 
@@ -213,7 +178,7 @@ class AgentServerServicer(RpcAgentServicer):
     def clone_agent(
         self,
         request: agent_pb2.AgentIds,
-        context: ServicerContext,
+        _: ServicerContext,
     ) -> agent_pb2.AgentIds:
         """Clone a new agent instance from the origin instance.
 
@@ -240,19 +205,18 @@ class AgentServerServicer(RpcAgentServicer):
             self.agent_pool[new_agent.agent_id] = new_agent
         return agent_pb2.AgentIds(agent_ids=[new_agent.agent_id])
 
-    def call_func(  # pylint: disable=W0236
+    def call_agent_func(  # pylint: disable=W0236
         self,
         request: agent_pb2.RpcMsg,
         context: ServicerContext,
     ) -> agent_pb2.RpcMsg:
         """Call the specific servicer function."""
+        if not self.agent_exists(request.agent_id):
+            return context.abort(
+                grpc.StatusCode.INVALID_ARGUMENT,
+                f"Agent [{request.agent_id}] not exists.",
+            )
         if hasattr(self, request.target_func):
-            if request.target_func not in ["_create_agent", "_get"]:
-                if not self.agent_exists(request.agent_id):
-                    return context.abort(
-                        grpc.StatusCode.INVALID_ARGUMENT,
-                        f"Agent [{request.agent_id}] not exists.",
-                    )
             return getattr(self, request.target_func)(request)
         else:
             # TODO: support other user defined method
@@ -261,6 +225,22 @@ class AgentServerServicer(RpcAgentServicer):
                 grpc.StatusCode.INVALID_ARGUMENT,
                 f"Unsupported method {request.target_func}",
             )
+
+    def update_placeholder(
+        self,
+        request: agent_pb2.UpdatePlaceholderRequest,
+        context: ServicerContext,
+    ) -> agent_pb2.RpcMsg:
+        """Update the value of a placeholder."""
+        task_id = request.task_id
+        while True:
+            result = self.result_pool.get(task_id)
+            if isinstance(result, threading.Condition):
+                with result:
+                    result.wait(timeout=1)
+            else:
+                break
+        return agent_pb2.RpcMsg(value=result.serialize())
 
     def _reply(self, request: agent_pb2.RpcMsg) -> agent_pb2.RpcMsg:
         """Call function of RpcAgentService
@@ -293,30 +273,6 @@ class AgentServerServicer(RpcAgentServicer):
                 task_id=task_id,
             ).serialize(),
         )
-
-    def _get(self, request: agent_pb2.RpcMsg) -> agent_pb2.RpcMsg:
-        """Get a reply message with specific task_id.
-
-        Args:
-            request (`RpcMsg`):
-                The task id that generated this message, with json format::
-
-                {
-                    'task_id': int
-                }
-
-        Returns:
-            `RpcMsg`: Concrete values of the specific message (or part of it).
-        """
-        msg = json.loads(request.value)
-        while True:
-            result = self.result_pool.get(msg["task_id"])
-            if isinstance(result, threading.Condition):
-                with result:
-                    result.wait(timeout=1)
-            else:
-                break
-        return agent_pb2.RpcMsg(value=result.serialize())
 
     def _observe(self, request: agent_pb2.RpcMsg) -> agent_pb2.RpcMsg:
         """Observe function of the original agent.
