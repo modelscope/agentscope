@@ -54,6 +54,11 @@ def get_history_messages(run_id: str) -> list:
     return Message.query.filter_by(run_id=run_id).all()
 
 
+def get_runs() -> list:
+    """Interface to get all runs. (Query from database for now)"""
+    return Run.all()
+
+
 @app.route("/api/register/run", methods=["POST"])
 def register_run() -> Response:
     """
@@ -141,6 +146,18 @@ def put_message() -> Response:
         room=run_id,
     )
     return jsonify(status="ok", msg="")
+
+
+@app.route("/api/messages/<run_id>", methods=["GET"])
+def get_messages(run_id: str) -> list:
+    """Get the history messages of specific run_id."""
+    return get_history_messages(run_id=run_id)
+
+
+@app.route("/api/runs", methods=["GET"])
+def get_all_runs() -> list:
+    """Get all runs."""
+    return get_runs()
 
 
 @app.route("/studio/<run_id>", methods=["GET"])
