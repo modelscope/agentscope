@@ -51,12 +51,31 @@ class Message(db.Model):  # type: ignore[name-defined]
 
 def get_history_messages(run_id: str) -> list:
     """Interface to get history messages. (Query from database for now)"""
-    return Message.query.filter_by(run_id=run_id).all()
+    messages = Message.query.filter_by(run_id=run_id).all()
+    return [
+        {
+            "name": message.name,
+            "content": message.content,
+            "url": message.url,
+        }
+        for message in messages
+    ]
 
 
 def get_runs() -> list:
     """Interface to get all runs. (Query from database for now)"""
-    return Run.all()
+    runs = Run.query.all()
+    return [
+        {
+            "id": run.id,
+            "project": run.project,
+            "name": run.name,
+            "script_path": run.script_path,
+            "run_dir": run.run_dir,
+            "create_time": run.create_time.isoformat(),
+        }
+        for run in runs
+    ]
 
 
 @app.route("/api/register/run", methods=["POST"])
