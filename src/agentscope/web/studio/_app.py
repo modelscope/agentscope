@@ -4,8 +4,15 @@ import json
 import os
 from datetime import datetime
 
-from flask import Flask, request, jsonify, render_template, Response, abort, \
-    send_file
+from flask import (
+    Flask,
+    request,
+    jsonify,
+    render_template,
+    Response,
+    abort,
+    send_file,
+)
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, join_room, leave_room
@@ -193,7 +200,8 @@ def get_all_runs() -> list:
 
 
 @app.route("/file")
-def get_local_file():
+def get_local_file() -> Response:
+    """Get the local file via the url."""
     file_path = request.args.get("url")
     try:
         file = send_file(file_path)
