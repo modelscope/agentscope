@@ -82,7 +82,7 @@ class UserAgent(AgentBase):
             )
             raw_input = self.input_client.get_user_input()
             content = raw_input["content"]
-            url = None
+            url = raw_input.get("url", None)
             kwargs = {}
         else:
             time.sleep(0.5)

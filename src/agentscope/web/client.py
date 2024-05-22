@@ -51,7 +51,13 @@ class WebSocketClient:
             input is received.
         """
         self.input_event.clear()
-        self.sio.emit("request_user_input")
+        self.sio.emit(
+            "request_user_input",
+            {
+                "run_id": self.run_id,
+                "agent_id": self.agent_id,
+            },
+        )
         self.input_event.wait()
         return self.user_input
 
