@@ -1,27 +1,32 @@
+
 # Werewolf Game in AgentScope
 
-This is a demo of how to use AgentScope to play the Werewolf game, where
-six agents play against as werewolves and villagers.
-In this example, you can learn the following features in AgentScope.
+This example demonstrates how to use AgentScope to play the Werewolf game, where six agents play against each other as werewolves and villagers. You will learn the following features in AgentScope:
 
-- **_Quick Setup_**: How to initialize agents via agent config files
-- **_Syntactic Sugar_**: How to use msghub and pipeline to construct a complex
-  workflow with less than 100 lines of code.
-- **_Prompt to Variable_**: How to obtain variables from agent with prompt.
+- **Quick Setup**: How to initialize agents via agent config files
+- **Syntactic Sugar**: How to use msghub and pipeline to construct a complex workflow with less than 100 lines of code
+- **Prompt to Variable**: How to obtain variables from agents using prompts
 
-**See [werewolf.py](werewolf.py) for the complete code and play in person.**
 
-```bash
-# Note: Set your api_key in ./configs/model_configs.json first
-python werewolf.py
-```
+## Tested Models
+
+This example has been tested with the following models:
+- dashscope_chat (qwen-turbo)
+- ollama_chat (llama3_8b)
+
+## Prerequisites
+
+To run this example, you need to:
+- Set your API key in `./configs/model_configs.json`
+
+[Optional] To play the game in person, see [werewolf.py](werewolf.py) for the complete code.
+
 
 ## Code Snippets
 
 ### Quick Setup
 
-The following code read both model and agent configs, and initialize agents
-automatically.
+The following code reads both model and agent configs, and initializes agents automatically:
 
 ```python
 # read model and agent configs, and initialize agents automatically
@@ -31,9 +36,7 @@ survivors = agentscope.init(
 )
 ```
 
-In agent config, you only need to specify the agent class under `agentscope.
-agents` and the required arguments. Taking Player1 as example, its config
-is as follows
+In the agent config, you only need to specify the agent class under `agentscope.agents` and the required arguments. Taking Player1 as an example, its config is as follows:
 
 ```json
 {
@@ -49,8 +52,7 @@ is as follows
 
 ### Syntactic Sugar
 
-The following code is the implementation of daytime discussion in werewolf.
-With msghub and pipeline, it's very easy to program a discussion among agents.
+The following code is the implementation of daytime discussion in Werewolf. With msghub and pipeline, it's very easy to program a discussion among agents.
 
 ```python
     # ...
@@ -62,12 +64,9 @@ With msghub and pipeline, it's very easy to program a discussion among agents.
 
 ### Prompt to Variable
 
-Sometimes, we need extract required variables from agent response. Taking a
-discussion as example, we want the agent to determine if they reach an
-agreement during discussion.
+Sometimes, we need to extract required variables from agent responses. Taking a discussion as an example, we want the agent to determine if they reach an agreement during the discussion.
 
-The following prompt requires the agent to response with a "agreement"
-field to indicate whether they reach an agreement or not.
+The following prompt requires the agent to respond with an "agreement" field to indicate whether they reach an agreement or not.
 
 ```text
 ... Response in the following format which can be loaded by
@@ -79,13 +78,9 @@ json.loads() in python
 }}
 ```
 
-With the arguments `parse_func`, `fault_handler` and `max_retries` in
-[`DictDialogAgent`](../../src/agentscope/agents/dict_dialog_agent.py), we
-can directly use variable `x.agreement` to know it the discussion reach an
-agreement.
+With the arguments `parse_func`, `fault_handler`, and `max_retries` in [`DictDialogAgent`](../../src/agentscope/agents/dict_dialog_agent.py), we can directly use the variable `x.agreement` to know if the discussion reached an agreement.
 
-More details please refer to the code of [`DictDialogAgent`](../..
-/src/agentscope/agents/dict_dialog_agent.py) and our documents.
+More details please refer to the code of [`DictDialogAgent`](../../src/agentscope/agents/dict_dialog_agent.py) and our documents.
 
 ```python
     # ...
