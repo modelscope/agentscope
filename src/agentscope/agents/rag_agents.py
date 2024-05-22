@@ -13,13 +13,35 @@ from agentscope.agents.agent import AgentBase
 from agentscope.message import Msg
 from agentscope.rag import Knowledge
 
-
 CHECKING_PROMPT = """
                 Is the retrieved content relevant to the query?
                 Retrieved content: {}
                 Query: {}
                 Only answer YES or NO.
                 """
+
+
+class RAGConfig(dict):
+    """a class to regulate the RAG configuration."""
+
+    def __init__(self, knowledge_id: list[str], **kwargs: Any):
+        """
+        RAG configuration must have knowledge_id as a list of strings.
+        Args:
+            knowledge_id (list[str]): the list of knowledge ids
+        """
+        super().__init__()
+        self.knowledge_id = knowledge_id
+        self.update(kwargs)
+
+    def __getattr__(self, key: Any) -> Any:
+        try:
+            return self[key]
+        except KeyError as e:
+            raise AttributeError(f"no attribute '{key}'") from e
+
+    def __setattr__(self, key: Any, value: Any) -> None:
+        self[key] = value
 
 
 class LlamaIndexAgent(AgentBase):
@@ -34,7 +56,7 @@ class LlamaIndexAgent(AgentBase):
         model_config_name: str,
         knowledge_list: list[Knowledge] = None,
         memory_config: Optional[dict] = None,
-        rag_config: Optional[dict] = None,
+        rag_config: Optional[RAGConfig] = None,
         **kwargs: Any,
     ) -> None:
         """
@@ -70,7 +92,7 @@ class LlamaIndexAgent(AgentBase):
         self.knowledge_list = knowledge_list or []
         self.retriever_list = []
         self.description = kwargs.get("description", "")
-        self.rag_config = rag_config or {}
+        self.rag_config = rag_config or RAGConfig([])
 
     def reply(self, x: dict = None) -> dict:
         """
@@ -143,7 +165,8 @@ class LlamaIndexAgent(AgentBase):
                         query,
                     ),
                 )
-                checking = self.model([msg])
+                msg = self.model.format(msg)
+                checking = self.model(msg)
                 logger.info(checking)
                 checking = checking.text.lower()
                 if "no" in checking:

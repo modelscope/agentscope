@@ -163,6 +163,7 @@ class KnowledgeBank:
             agent (AgentBase): the agent to be equipped with knowledge
                 if it has "rag_config"
             duplicate (bool): whether to deepcopy the knowledge object
+        TODO: to accommodate with distributed setting
         """
         if hasattr(agent, "rag_config") and "knowledge_id" in agent.rag_config:
             if not hasattr(agent, "knowledge_list"):
