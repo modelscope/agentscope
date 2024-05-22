@@ -38,6 +38,7 @@ AgentScope Documentation
    agentscope.pipelines
    agentscope.service
    agentscope.rpc
+   agentscope.server
    agentscope.web
    agentscope.prompt
    agentscope.utils

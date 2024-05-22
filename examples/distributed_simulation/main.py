@@ -11,7 +11,7 @@ from participant import Moderator, RandomParticipant, LLMParticipant
 
 import agentscope
 from agentscope.agents import AgentBase
-from agentscope.agents.rpc_agent import RpcAgentServerLauncher
+from agentscope.server import RpcAgentServerLauncher
 from agentscope.message import Msg
 
 

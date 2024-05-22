@@ -90,7 +90,9 @@ In the current AgentScope, the supported `model_type` types, the corresponding
 |                        | Generation      | [`OllamaGenerationWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)           | `"ollama_generate"`           | llama2, ...                                      |
 | LiteLLM API | Chat               | [`LiteLLMChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py)             | `"litellm_chat"`                  | -                                                |
 | Post Request based API | -               | [`PostAPIModelWrapperBase`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)             | `"post_api"`                  | -                                                |
-|  | Chat | [`PostAPIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py) | `"post_api_chat"` | meta-llama/Meta-Llama-3-8B-Instruct, ... |
+|                        | Chat            | [`PostAPIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)                  | `"post_api_chat"`             | meta-llama/Meta-Llama-3-8B-Instruct, ...         |
+|                        | Image Synthesis | [`PostAPIDALLEWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)                 | `post_api_dall_e`             | -                                                |                                                  |
+|                        | Embedding       | [`PostAPIEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)             | `post_api_embedding`          | -                                                |
 
 #### Detailed Parameters
 
@@ -417,32 +419,6 @@ Here we provide example configurations for different model wrappers.
 
 <br/>
 
-#### Post Request API
-
-<details>
-<summary>Post request API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIModelWrapperBase</a></code>)</summary>
-
-```python
-{
-    "config_name": "my_postapiwrapper_config",
-    "model_type": "post_api",
-
-    # Required parameters
-    "api_url": "https://xxx.xxx",
-    "headers": {
-        # e.g. "Authorization": "Bearer xxx",
-    },
-
-    # Optional parameters
-    "messages_key": "messages",
-}
-```
-
-</details>
-
-<br/>
-
-
 #### LiteLLM Chat API
 
 <details>
@@ -461,12 +437,10 @@ com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py">agen
 
 <br/>
 
-
-#### Post Request Chat API
+#### Post Request API
 
 <details>
-<summary>Post request Chat API (<code><a href="https://github.
-com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIChatModelWrapper</a></code>)</summary>
+<summary>Post Request Chat API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIChatWrapper</a></code>)</summary>
 
 ```python
 {
@@ -483,8 +457,87 @@ com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentsc
     "messages_key": "messages",
 }
 ```
+> ⚠️ The Post Request Chat model wrapper (`PostAPIChatWrapper`) has the following properties:
+> 1) The `.format()` function makes sure the input messages become a list of dicts.
+> 2) The `._parse_response()` function assumes the generated text will be in `response["data"]["response"]["choices"][0]["message"]["content"]`
 
 </details>
+
+
+
+<details>
+<summary>Post Request Image Synthesis API  (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIDALLEWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_postapiwrapper_config",
+    "model_type": "post_api_dall_e",
+
+    # Required parameters
+    "api_url": "https://xxx.xxx",
+    "headers": {
+        # e.g. "Authorization": "Bearer xxx",
+    },
+
+    # Optional parameters
+    "messages_key": "messages",
+}
+```
+> ⚠️ The Post Request Image Synthesis model wrapper (`PostAPIDALLEWrapper`) has the following properties:
+> 1) The `._parse_response()` function assumes the generated image will be presented as urls in `response["data"]["response"]["data"][i]["url"]`
+
+</details>
+
+
+<details>
+<summary>Post Request Embedding API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIEmbeddingWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_postapiwrapper_config",
+    "model_type": "post_api_embedding",
+
+    # Required parameters
+    "api_url": "https://xxx.xxx",
+    "headers": {
+        # e.g. "Authorization": "Bearer xxx",
+    },
+
+    # Optional parameters
+    "messages_key": "messages",
+}
+```
+> ⚠️ The Post Request Embedding model wrapper (`PostAPIEmbeddingWrapper`) has the following properties:
+> 1) The `._parse_response()` function assumes the generated embeddings will be in `response["data"]["response"]["data"][i]["embedding"]`
+
+</details>
+
+
+<details>
+<summary>Post Request API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIModelWrapperBase</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_postapiwrapper_config",
+    "model_type": "post_api",
+
+    # Required parameters
+    "api_url": "https://xxx.xxx",
+    "headers": {
+        # e.g. "Authorization": "Bearer xxx",
+    },
+
+    # Optional parameters
+    "messages_key": "messages",
+}
+```
+> ⚠️ Post Request model wrapper (`PostAPIModelWrapperBase`) returns raw HTTP responses from the API in ModelResponse, and the `.format()` is not implemented. It is recommended to use `Post Request Chat API` when running examples with chats.
+> `PostAPIModelWrapperBase` can be used when
+> 1) only the raw HTTP response is wanted and `.format()` is not called;
+> 2) Or, the developers want to overwrite the `.format()` and/or `._parse_response()` functions.
+
+</details>
+
 
 <br/>
 
