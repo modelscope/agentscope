@@ -285,6 +285,18 @@ It corresponds to the <code class="docutils literal notranslate"><span class="pr
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;post_api_chat&quot;</span></code></p></td>
 <td><p>meta-llama/Meta-Llama-3-8B-Instruct, …</p></td>
 </tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p>Image Synthesis</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py"><code class="docutils literal notranslate"><span class="pre">PostAPIDALLEWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">post_api_dall_e</span></code></p></td>
+<td><p>-</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p>Embedding</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py"><code class="docutils literal notranslate"><span class="pre">PostAPIEmbeddingWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">post_api_embedding</span></code></p></td>
+<td><p>-</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -569,28 +581,6 @@ Here we provide example configurations for different model wrappers.</p>
 </details>
 <br/>
 </section>
-<section id="post-request-api">
-<h4>Post Request API<a class="headerlink" href="#post-request-api" title="Link to this heading"></a></h4>
-<details>
-<summary>Post request API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIModelWrapperBase</a></code>)</summary>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_postapiwrapper_config&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;post_api&quot;</span><span class="p">,</span>
-
-    <span class="c1"># Required parameters</span>
-    <span class="s2">&quot;api_url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://xxx.xxx&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;headers&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="c1"># e.g. &quot;Authorization&quot;: &quot;Bearer xxx&quot;,</span>
-    <span class="p">},</span>
-
-    <span class="c1"># Optional parameters</span>
-    <span class="s2">&quot;messages_key&quot;</span><span class="p">:</span> <span class="s2">&quot;messages&quot;</span><span class="p">,</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</details>
-<br/>
-</section>
 <section id="litellm-chat-api">
 <h4>LiteLLM Chat API<a class="headerlink" href="#litellm-chat-api" title="Link to this heading"></a></h4>
 <details>
@@ -606,11 +596,10 @@ com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py">agen
 </details>
 <br/>
 </section>
-<section id="post-request-chat-api">
-<h4>Post Request Chat API<a class="headerlink" href="#post-request-chat-api" title="Link to this heading"></a></h4>
+<section id="post-request-api">
+<h4>Post Request API<a class="headerlink" href="#post-request-api" title="Link to this heading"></a></h4>
 <details>
-<summary>Post request Chat API (<code><a href="https://github.
-com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIChatModelWrapper</a></code>)</summary>
+<summary>Post Request Chat API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIChatWrapper</a></code>)</summary>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_postapichatwrapper_config&quot;</span><span class="p">,</span>
     <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;post_api_chat&quot;</span><span class="p">,</span>
@@ -626,6 +615,87 @@ com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentsc
 <span class="p">}</span>
 </pre></div>
 </div>
+<blockquote>
+<div><p>⚠️ The Post Request Chat model wrapper (<code class="docutils literal notranslate"><span class="pre">PostAPIChatWrapper</span></code>) has the following properties:</p>
+<ol class="arabic simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">.format()</span></code> function makes sure the input messages become a list of dicts.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">._parse_response()</span></code> function assumes the generated text will be in <code class="docutils literal notranslate"><span class="pre">response[&quot;data&quot;][&quot;response&quot;][&quot;choices&quot;][0][&quot;message&quot;][&quot;content&quot;]</span></code></p></li>
+</ol>
+</div></blockquote>
+</details>
+<details>
+<summary>Post Request Image Synthesis API  (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIDALLEWrapper</a></code>)</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_postapiwrapper_config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;post_api_dall_e&quot;</span><span class="p">,</span>
+
+    <span class="c1"># Required parameters</span>
+    <span class="s2">&quot;api_url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://xxx.xxx&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;headers&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="c1"># e.g. &quot;Authorization&quot;: &quot;Bearer xxx&quot;,</span>
+    <span class="p">},</span>
+
+    <span class="c1"># Optional parameters</span>
+    <span class="s2">&quot;messages_key&quot;</span><span class="p">:</span> <span class="s2">&quot;messages&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>⚠️ The Post Request Image Synthesis model wrapper (<code class="docutils literal notranslate"><span class="pre">PostAPIDALLEWrapper</span></code>) has the following properties:</p>
+<ol class="arabic simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">._parse_response()</span></code> function assumes the generated image will be presented as urls in <code class="docutils literal notranslate"><span class="pre">response[&quot;data&quot;][&quot;response&quot;][&quot;data&quot;][i][&quot;url&quot;]</span></code></p></li>
+</ol>
+</div></blockquote>
+</details>
+<details>
+<summary>Post Request Embedding API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIEmbeddingWrapper</a></code>)</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_postapiwrapper_config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;post_api_embedding&quot;</span><span class="p">,</span>
+
+    <span class="c1"># Required parameters</span>
+    <span class="s2">&quot;api_url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://xxx.xxx&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;headers&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="c1"># e.g. &quot;Authorization&quot;: &quot;Bearer xxx&quot;,</span>
+    <span class="p">},</span>
+
+    <span class="c1"># Optional parameters</span>
+    <span class="s2">&quot;messages_key&quot;</span><span class="p">:</span> <span class="s2">&quot;messages&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>⚠️ The Post Request Embedding model wrapper (<code class="docutils literal notranslate"><span class="pre">PostAPIEmbeddingWrapper</span></code>) has the following properties:</p>
+<ol class="arabic simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">._parse_response()</span></code> function assumes the generated embeddings will be in <code class="docutils literal notranslate"><span class="pre">response[&quot;data&quot;][&quot;response&quot;][&quot;data&quot;][i][&quot;embedding&quot;]</span></code></p></li>
+</ol>
+</div></blockquote>
+</details>
+<details>
+<summary>Post Request API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIModelWrapperBase</a></code>)</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_postapiwrapper_config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;post_api&quot;</span><span class="p">,</span>
+
+    <span class="c1"># Required parameters</span>
+    <span class="s2">&quot;api_url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://xxx.xxx&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;headers&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="c1"># e.g. &quot;Authorization&quot;: &quot;Bearer xxx&quot;,</span>
+    <span class="p">},</span>
+
+    <span class="c1"># Optional parameters</span>
+    <span class="s2">&quot;messages_key&quot;</span><span class="p">:</span> <span class="s2">&quot;messages&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>⚠️ Post Request model wrapper (<code class="docutils literal notranslate"><span class="pre">PostAPIModelWrapperBase</span></code>) returns raw HTTP responses from the API in ModelResponse, and the <code class="docutils literal notranslate"><span class="pre">.format()</span></code> is not implemented. It is recommended to use <code class="docutils literal notranslate"><span class="pre">Post</span> <span class="pre">Request</span> <span class="pre">Chat</span> <span class="pre">API</span></code> when running examples with chats.
+<code class="docutils literal notranslate"><span class="pre">PostAPIModelWrapperBase</span></code> can be used when</p>
+<ol class="arabic simple">
+<li><p>only the raw HTTP response is wanted and <code class="docutils literal notranslate"><span class="pre">.format()</span></code> is not called;</p></li>
+<li><p>Or, the developers want to overwrite the <code class="docutils literal notranslate"><span class="pre">.format()</span></code> and/or <code class="docutils literal notranslate"><span class="pre">._parse_response()</span></code> functions.</p></li>
+</ol>
+</div></blockquote>
 </details>
 <br/>
 </section>

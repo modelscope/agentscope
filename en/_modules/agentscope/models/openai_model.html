@@ -643,16 +643,10 @@
 
         <span class="c1"># step5: return response</span>
         <span class="n">response_json</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">response_json</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
-                <span class="n">embedding</span><span class="o">=</span><span class="n">response_json</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;embedding&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-                <span class="n">raw</span><span class="o">=</span><span class="n">response_json</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
-                <span class="n">embedding</span><span class="o">=</span><span class="p">[</span><span class="n">_</span><span class="p">[</span><span class="s2">&quot;embedding&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">response_json</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]],</span>
-                <span class="n">raw</span><span class="o">=</span><span class="n">response_json</span><span class="p">,</span>
-            <span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
+            <span class="n">embedding</span><span class="o">=</span><span class="p">[</span><span class="n">_</span><span class="p">[</span><span class="s2">&quot;embedding&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">response_json</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]],</span>
+            <span class="n">raw</span><span class="o">=</span><span class="n">response_json</span><span class="p">,</span>
+        <span class="p">)</span></div>
 
 </pre></div>
 

@@ -309,9 +309,21 @@ API如下：</p>
 </tr>
 <tr class="row-even"><td><p></p></td>
 <td><p>Chat</p></td>
-<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py"><code class="docutils literal notranslate"><span class="pre">PostAPIChatModelWrapper</span></code></a></p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py"><code class="docutils literal notranslate"><span class="pre">PostAPIChatWrapper</span></code></a></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;post_api_chat&quot;</span></code></p></td>
 <td><p>meta-llama/Meta-Llama-3-8B-Instruct, …</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p>Image Synthesis</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py"><code class="docutils literal notranslate"><span class="pre">PostAPIDALLEWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">post_api_dall_e</span></code></p></td>
+<td><p>-</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p>Embedding</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py"><code class="docutils literal notranslate"><span class="pre">PostAPIEmbeddingWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">post_api_embedding</span></code></p></td>
+<td><p>-</p></td>
 </tr>
 </tbody>
 </table>
@@ -615,7 +627,80 @@ com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py">agen
 <section id="post-request-api">
 <h4>Post Request API<a class="headerlink" href="#post-request-api" title="Link to this heading"></a></h4>
 <details>
-<summary>Post request API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIModelWrapperBase</a></code>)</summary>
+<summary>Post Request Chat API  (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIChatWrapper</a></code>)</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_postapiwrapper_config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;post_api_chat&quot;</span><span class="p">,</span>
+
+    <span class="c1"># Required parameters</span>
+    <span class="s2">&quot;api_url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://xxx.xxx&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;headers&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="c1"># e.g. &quot;Authorization&quot;: &quot;Bearer xxx&quot;,</span>
+    <span class="p">},</span>
+
+    <span class="c1"># Optional parameters</span>
+    <span class="s2">&quot;messages_key&quot;</span><span class="p">:</span> <span class="s2">&quot;messages&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>⚠️ Post Request Chat model wrapper (<code class="docutils literal notranslate"><span class="pre">PostAPIChatWrapper</span></code>) 有以下特性：</p>
+<ol class="arabic simple">
+<li><p>它的 <code class="docutils literal notranslate"><span class="pre">.format()</span></code> 方法会确保输入的信息（messages）会被转换成字典列表（a list of dict）.</p></li>
+<li><p>它的 <code class="docutils literal notranslate"><span class="pre">._parse_response()</span></code> 方法假设了生成的文字内容会在 <code class="docutils literal notranslate"><span class="pre">response[&quot;data&quot;][&quot;response&quot;][&quot;choices&quot;][0][&quot;message&quot;][&quot;content&quot;]</span></code></p></li>
+</ol>
+</div></blockquote>
+</details>
+<details>
+<summary>Post Request Image Synthesis API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIDALLEWrapper</a></code>)</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_postapiwrapper_config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;post_api_dall_e&quot;</span><span class="p">,</span>
+
+    <span class="c1"># Required parameters</span>
+    <span class="s2">&quot;api_url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://xxx.xxx&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;headers&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="c1"># e.g. &quot;Authorization&quot;: &quot;Bearer xxx&quot;,</span>
+    <span class="p">},</span>
+
+    <span class="c1"># Optional parameters</span>
+    <span class="s2">&quot;messages_key&quot;</span><span class="p">:</span> <span class="s2">&quot;messages&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>⚠️  Post Request Image Synthesis model wrapper (<code class="docutils literal notranslate"><span class="pre">PostAPIDALLEWrapper</span></code>) 有以下特性:</p>
+<ol class="arabic simple">
+<li><p>它的 <code class="docutils literal notranslate"><span class="pre">._parse_response()</span></code> 方法假设生成的图片都以url的形式表示在<code class="docutils literal notranslate"><span class="pre">response[&quot;data&quot;][&quot;response&quot;][&quot;data&quot;][i][&quot;url&quot;]</span></code></p></li>
+</ol>
+</div></blockquote>
+</details>
+<details>
+<summary>Post Request Embedding API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIEmbeddingWrapper</a></code>)</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_postapiwrapper_config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;post_api_embedding&quot;</span><span class="p">,</span>
+
+    <span class="c1"># Required parameters</span>
+    <span class="s2">&quot;api_url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://xxx.xxx&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;headers&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="c1"># e.g. &quot;Authorization&quot;: &quot;Bearer xxx&quot;,</span>
+    <span class="p">},</span>
+
+    <span class="c1"># Optional parameters</span>
+    <span class="s2">&quot;messages_key&quot;</span><span class="p">:</span> <span class="s2">&quot;messages&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>⚠️ Post Request Embedding model wrapper (<code class="docutils literal notranslate"><span class="pre">PostAPIEmbeddingWrapper</span></code>) 有以下特性:</p>
+<ol class="arabic simple">
+<li><p>它的 <code class="docutils literal notranslate"><span class="pre">._parse_response()</span></code>方法假设生成的特征向量会存放在 <code class="docutils literal notranslate"><span class="pre">response[&quot;data&quot;][&quot;response&quot;][&quot;data&quot;][i][&quot;embedding&quot;]</span></code></p></li>
+</ol>
+</div></blockquote>
+</details>
+<details>
+<summary>Post Request API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIModelWrapperBase</a></code>)</summary>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_postapiwrapper_config&quot;</span><span class="p">,</span>
     <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;post_api&quot;</span><span class="p">,</span>
@@ -631,29 +716,14 @@ com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py">agen
 <span class="p">}</span>
 </pre></div>
 </div>
-</details>
-<br/>
-</section>
-<section id="post-request-chat-api">
-<h4>Post Request Chat API<a class="headerlink" href="#post-request-chat-api" title="Link to this heading"></a></h4>
-<details>
-<summary>Post request Chat API (<code><a href="https://github.
-com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIChatModelWrapper</a></code>)</summary>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_postapichatwrapper_config&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;post_api_chat&quot;</span><span class="p">,</span>
-
-    <span class="c1"># 必要参数</span>
-    <span class="s2">&quot;api_url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://xxx.xxx&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;headers&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="c1"># 例如：&quot;Authorization&quot;: &quot;Bearer xxx&quot;,</span>
-    <span class="p">},</span>
-
-    <span class="c1"># 可选参数</span>
-    <span class="s2">&quot;messages_key&quot;</span><span class="p">:</span> <span class="s2">&quot;messages&quot;</span><span class="p">,</span>
-<span class="p">}</span>
-</pre></div>
-</div>
+<blockquote>
+<div><p>⚠️ Post request model wrapper (<code class="docutils literal notranslate"><span class="pre">PostAPIModelWrapperBase</span></code>) 返回原生的 HTTP 响应值， 且没有实现 <code class="docutils literal notranslate"><span class="pre">.format()</span></code>. 当运行样例时，推荐使用 <code class="docutils literal notranslate"><span class="pre">Post</span> <span class="pre">Request</span> <span class="pre">Chat</span> <span class="pre">API</span></code>.
+使用<code class="docutils literal notranslate"><span class="pre">PostAPIModelWrapperBase</span></code>时，需要注意</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">.format()</span></code> 方法不能被调用；</p></li>
+<li><p>或开发者希望实现自己的<code class="docutils literal notranslate"><span class="pre">.format()</span></code>和/或<code class="docutils literal notranslate"><span class="pre">._parse_response()</span></code></p></li>
+</ol>
+</div></blockquote>
 </details>
 <br/>
 </section>
