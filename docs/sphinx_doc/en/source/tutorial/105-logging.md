@@ -75,7 +75,7 @@ You can run the WebUI in the following python code:
 import agentscope
 
 agentscope.web.init(
-    path_save="YOUR_output_dir"
+    path_save="YOUR_SAVE_PATH"
 )
 ```
 
