@@ -2,3 +2,8 @@
     font-family: 'krypton';
     src: url('/static/fonts/KRYPTON.ttf') format('truetype');
 }
+
+@font-face {
+    font-family: 'source-sans';
+    src: url('/static/fonts/SourceSans3-Regular.ttf') format('truetype');
+}

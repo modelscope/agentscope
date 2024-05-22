@@ -86,7 +86,6 @@
     width: 100%;
     height: 100%;
     margin-bottom: 50px;
-    padding: 5px;
     max-height: 100%;
     border: 1px solid var(--border-color);
     border-radius: 8px;
@@ -106,11 +105,11 @@
     box-sizing: border-box;
     width: 100%;
     height: fit-content;
-    margin: 10px 0;
+    padding: 10px 0;
 }
 
 .chat-row:hover {
-    background-color: var(--main-color-light);
+    background-color: var(--main-color-very-light);
 }
 
 .user.chat-row {
@@ -127,12 +126,11 @@
     box-sizing: border-box;
     width: var(--chat-icon-width);
     height: var(--chat-icon-height);
-    border-radius: 25px;
+    border-radius: 5px;
     margin: 0 var(--chat-icon-horizontal-margin);
-    padding: 5px;
-    background-color: #1c6cc2;
+    padding: 10px;
+    background-color: var(--main-color);
     fill: #ffffff;
-
 }
 
 .chat-content {
@@ -155,7 +153,8 @@
 .chat-bubble {
     display: flex;
     flex-direction: column;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--main-color-light);
+    background-color: #ffffff;
     flex-grow: 1;
     box-sizing: border-box;
     padding: 10px;
