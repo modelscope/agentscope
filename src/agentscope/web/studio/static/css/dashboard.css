@@ -16,7 +16,7 @@
     height: var(--dashboard-titlebar-height);
     flex-direction: row;
     align-items: center;
-    border-bottom: 1px solid #e1e1e1;
+    border-bottom: 1px solid var(--border-color);
     box-sizing: border-box;
     padding: 0 20px;
 }

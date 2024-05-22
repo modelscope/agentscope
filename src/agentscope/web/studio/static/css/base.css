@@ -1,7 +1,23 @@
+:root {
+    --tab-btn-icon-length: 20px;
+
+    --main-color: #59AC80;
+    /*--main-color-light: #7DC3A2;*/
+    --main-color-light: #A0D9C4;
+    --main-color-dark: #3D7D5A;
+    --base-color: #F3F9F1;
+
+    --border-color: #EBEBF0;
+}
+
 /*Text cannot be selected*/
 .unselectable-text {
     -webkit-user-select: none; /* Safari */
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* IE10+/Edge */
     user-select: none; /* Standard */
+}
+
+a {
+  text-decoration: none;
 }

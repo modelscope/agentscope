@@ -2,10 +2,16 @@
     --navigation-bar-background-color: #ffffff;
     --logo-font-color: #000000;
     --tab-font-color: #000000;
-    --navigation-bar-border-color: #e1e1e1;
 
-    --navigation-bar-width: 250px;
+    --navigation-bar-width: 240px;
     --content-width: calc(100% - var(--navigation-bar-width));
+
+    /*To ensure the collapsed navigation bar fit the icon*/
+    --navigation-bar-item-icon-length: var(--tab-btn-icon-length);
+    --navigation-bar-item-icon-margin: 10px;
+    --navigation-bar-item-padding: 10px;
+    --navigation-bar-width-collapsed: calc(var(--navigation-bar-item-icon-length) + 2 * var(--navigation-bar-item-icon-margin) + 2 * var(--navigation-bar-item-padding));
+    --navigation-bar-item-height: calc(var(--navigation-bar-item-icon-length) + 2 * var(--navigation-bar-item-icon-margin))
 }
 
 html {
@@ -23,7 +29,7 @@ body {
     flex-direction: row;
     padding: 0;
     background: var(--body-bg);
-    font-family: oswald, sans-serif;
+    font-family: sans-serif;
     box-sizing: border-box;
 }
 
@@ -34,17 +40,17 @@ body {
     height: 100%;
     justify-content: space-between;
     align-items: center;
-    padding: 0;
-
+    padding: 50px 0 50px 0;
+    box-sizing: border-box;
     background-color: var(--navigation-bar-background-color);
-    border-right: 1px solid var(--navigation-bar-border-color);
+    border-right: 1px solid var(--border-color);
 
     /*Animation*/
     transition: width 0.5s;
 }
 
 #navigation-bar.collapsed {
-    width: 65px;
+    width: var(--navigation-bar-width-collapsed);
 }
 
 .navigation-bar-item-label {
@@ -79,7 +85,7 @@ body {
     height: 150px;
     width: 500px;
     min-width: 200px;
-    background-color: #1c6cc2;
+    background-color: var(--main-color);
     border-radius: 10px;
     justify-content: flex-end;
     padding: 25px;
@@ -117,6 +123,7 @@ body {
     font-size: 25px;
     font-weight: bold;
 }
+
 .guide-block-detail {
     display: flex;
     height: fit-content;
@@ -130,7 +137,6 @@ body {
     font-family: 'krypton', sans-serif;
     font-size: 20px;
     color: var(--logo-font-color);
-    margin-top: 50px;
     white-space: nowrap;
 }
 
@@ -145,7 +151,7 @@ body {
     width: 100%;
     flex-direction: column;
 
-    padding: 10px;
+    padding: var(--navigation-bar-item-padding);
     box-sizing: border-box;
 }
 
@@ -155,7 +161,7 @@ body {
     align-items: center;
     background-color: var(--navigation-bar-background-color);
     width: 100%;
-    height: 45px;
+    height: var(--navigation-bar-item-height);
     border-radius: 10px;
     color: var(--tab-font-color);
     box-sizing: border-box;
@@ -163,31 +169,36 @@ body {
 }
 
 .navigation-bar-item:hover {
-    background-color: blue;
+    background-color: var(--main-color-light);
+    fill: var(--base-color);
+    color: var(--base-color);
 }
 
 .navigation-bar-item:active {
-    background-color: #4d4d4d;
+    background-color: var(--main-color-dark);
+    fill: var(--base-color);
+    color: var(--base-color);
 }
 
 .navigation-bar-item.selected {
-    background-color: #8c8c8c;
+    background-color: var(--main-color);
+    fill: var(--base-color);
+    color: var(--base-color);
 }
 
 .navigation-bar-item-icon {
     display: flex;
-    width: 25px;
-    height: 25px;
-    fill: #000000;
-    margin: 0 10px;
-    min-height: 25px;
-    min-width: 25px;
+    width: var(--navigation-bar-item-icon-length);
+    height: var(--navigation-bar-item-icon-length);
+    margin: 0 var(--navigation-bar-item-icon-margin);
+    min-height: var(--navigation-bar-item-icon-length);
+    min-width: var(--navigation-bar-item-icon-length);
 }
 
 .navigation-bar-hr {
     display: flex;
     height: 1px;
-    background-color: #e1e1e1; /* 设置分隔线的颜色 */
-    border: none; /* 移除默认的边框 */
+    background-color: var(--border-color);
+    border: none;
     margin: 10px 0;
 }

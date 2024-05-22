@@ -30,7 +30,7 @@
     width: 100%;
     height: var(--runs-table-height);
     max-height: var(--runs-table-height);
-    border: 1px solid #e1e1e1;
+    border: 1px solid var(--border-color);
     background: transparent;
 }
 
@@ -39,6 +39,7 @@
     height: var(--runs-search-input-height);
     flex-grow: 1;
     align-items: center;
+    border: 1px solid var(--border-color);
 }
 
 /* Remove border from tabulator */
