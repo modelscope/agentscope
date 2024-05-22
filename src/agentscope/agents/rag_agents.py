@@ -143,7 +143,8 @@ class LlamaIndexAgent(AgentBase):
                         query,
                     ),
                 )
-                checking = self.model([msg])
+                msg = self.model.format(msg)
+                checking = self.model(msg)
                 logger.info(checking)
                 checking = checking.text.lower()
                 if "no" in checking:

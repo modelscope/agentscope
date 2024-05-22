@@ -27,24 +27,29 @@ try:
         Document,
         TransformComponent,
     )
-except ImportError:
-    BaseRetriever = None
-    BaseEmbedding, Embedding = None, None
-    IngestionPipeline = None
-    SentenceSplitter = None
-    VectorStoreIndex, StorageContext = None, None
-    load_index_from_storage = None
-    PrivateAttr = None
-    Document, TransformComponent = None, None
+except ImportError as import_error:
+    from agentscope.utils.tools import ImportErrorReporter
+
+    BaseRetriever = ImportErrorReporter(import_error, "llama-index")
+    BaseEmbedding = ImportErrorReporter(import_error, "llama-index")
+    Embedding = ImportErrorReporter(import_error, "llama-index")
+    IngestionPipeline = ImportErrorReporter(import_error, "llama-index")
+    SentenceSplitter = ImportErrorReporter(import_error, "llama-index")
+    VectorStoreIndex = ImportErrorReporter(import_error, "llama-index")
+    StorageContext = ImportErrorReporter(import_error, "llama-index")
+    load_index_from_storage = ImportErrorReporter(import_error, "llama-index")
+    PrivateAttr = ImportErrorReporter(import_error, "llama-index")
+    Document = ImportErrorReporter(import_error, "llama-index")
+    TransformComponent = ImportErrorReporter(import_error, "llama-index")
 
 from agentscope.file_manager import file_manager
 from agentscope.models import ModelWrapperBase
-from .knowledge import (
+from agentscope.constants import (
     DEFAULT_TOP_K,
     DEFAULT_CHUNK_SIZE,
     DEFAULT_CHUNK_OVERLAP,
-    Knowledge,
 )
+from agentscope.rag.knowledge import Knowledge
 
 
 try:
@@ -426,7 +431,8 @@ class LlamaIndexKnowledge(Knowledge):
         Set the retriever as needed, or just use the default setting.
 
         Args:
-            retriever (Optional[BaseRetriever]): passing a retriever in llama
+            retriever (Optional[BaseRetriever]): passing a retriever in
+             LlamaIndexKnowledge
             rag_config (dict): rag configuration, including similarity top k
             index.
         """
