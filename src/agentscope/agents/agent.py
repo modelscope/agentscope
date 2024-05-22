@@ -24,7 +24,7 @@ class _AgentMeta(ABCMeta):
     """
 
     def __init__(cls, name: Any, bases: Any, attrs: Any) -> None:
-        if not hasattr(cls, "registry"):
+        if not hasattr(cls, "_registry"):
             cls._registry = {}
         else:
             if name in cls._registry:
@@ -245,7 +245,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
         """
         agent_class_name = agent_class.__name__
         if agent_class_name in cls._registry:
-            logger.warning(
+            logger.info(
                 f"Agent class with name [{agent_class_name}] already exists.",
             )
         else:
@@ -384,14 +384,22 @@ class AgentBase(Operator, metaclass=_AgentMeta):
             port (`int`, defaults to `None`):
                 Port of the rpc agent server.
             max_pool_size (`int`, defaults to `8192`):
-                Max number of task results that the server can accommodate.
+                Only takes effect when `host` and `port` are not filled in.
+                The max number of agent reply messages that the started agent
+                server can accommodate. Note that the oldest message will be
+                deleted after exceeding the pool size.
             max_timeout_seconds (`int`, defaults to `1800`):
-                Timeout for task results.
+                Only takes effect when `host` and `port` are not filled in.
+                Maximum time for reply messages to be cached in the launched
+                agent server. Note that expired messages will be deleted.
             local_mode (`bool`, defaults to `True`):
-                Whether the started rpc server only listens to local
+                Only takes effect when `host` and `port` are not filled in.
+                Whether the started agent server only listens to local
                 requests.
             lazy_launch (`bool`, defaults to `True`):
-                Only launch the server when the agent is called.
+                Only takes effect when `host` and `port` are not filled in.
+                If `True`, launch the agent server when the agent is called,
+                otherwise, launch the agent server immediately.
             launch_server(`bool`, defaults to `None`):
                 This field has been deprecated and will be removed in
                 future releases.
