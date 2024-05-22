@@ -1,6 +1,6 @@
 function initializeDashboardRunsPage() {
     //TODO: fetch runs data from server
-    fetch('/api/runs')
+    fetch('/api/runs/all')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Failed to fetch runs data');

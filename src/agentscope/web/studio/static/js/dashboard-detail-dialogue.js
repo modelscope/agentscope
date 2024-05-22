@@ -129,7 +129,7 @@ async function initializeDashboardDetailDialoguePage(pRuntimeInfo) {
     await loadChatTemplate();
 
     // Fetch the chat history from backend
-    fetch("/api/messages/" + pRuntimeInfo.id)
+    fetch("/api/messages/run/" + pRuntimeInfo.id)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Failed to fetch messages data');

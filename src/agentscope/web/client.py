@@ -120,7 +120,7 @@ class HttpClient:
         url: str = None,
     ) -> bool:
         """Send a message to the studio."""
-        url = f"{self.studio_url}/api/message/put"
+        url = f"{self.studio_url}/api/messages/put"
         resp = requests.post(
             url,
             json={
