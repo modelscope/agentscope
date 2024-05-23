@@ -114,7 +114,7 @@ class HttpClient:
             timeout=10,  # todo: configurable timeout
         )
         if resp.status_code != 200:
-            logger.warning(f"Fail to register to studio: {resp.text}")
+            logger.error(f"Fail to register to studio: {resp.text}")
             raise RuntimeError(f"Fail to register to studio: {resp.text}")
 
         def finish_run() -> None:
@@ -154,5 +154,5 @@ class HttpClient:
         if resp.status_code == 200:
             return True
         else:
-            logger.warning(f"Fail to send message to studio: {resp}")
+            logger.error(f"Fail to send message to studio: {resp.text}")
             return False
