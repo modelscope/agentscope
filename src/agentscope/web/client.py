@@ -113,6 +113,10 @@ class HttpClient:
             },
             timeout=10,  # todo: configurable timeout
         )
+        logger.info(
+            "Successfully registered to AgentScope Studio.\nView your "
+            f"application at:\n\n    * {self.get_run_detail_page_url()}\n",
+        )
         if resp.status_code != 200:
             logger.error(f"Fail to register to studio: {resp.text}")
             raise RuntimeError(f"Fail to register to studio: {resp.text}")
@@ -156,3 +160,7 @@ class HttpClient:
         else:
             logger.error(f"Fail to send message to studio: {resp.text}")
             return False
+
+    def get_run_detail_page_url(self) -> str:
+        """Get the URL of the run detail page."""
+        return f"{self.studio_url}/?run_id={self.run_id}"

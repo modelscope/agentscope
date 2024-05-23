@@ -234,15 +234,6 @@ def get_local_file() -> Response:
         return jsonify({"error": "File not found."})
 
 
-@app.route("/studio/<run_id>", methods=["GET"])
-def studio_page(run_id: str) -> str:
-    """Studio page."""
-    if Run.query.filter_by(id=run_id).first() is None:
-        return jsonify(status="error", msg="run_id not exists")
-    messages = Message.query.filter_by(run_id=run_id).all()
-    return render_template("chat.html", messages=messages, run_id=run_id)
-
-
 @app.route("/getProjects", methods=["GET"])
 def get_projects() -> Response:
     """Get all the projects in the runs directory."""

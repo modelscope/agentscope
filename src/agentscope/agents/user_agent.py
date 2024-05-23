@@ -79,7 +79,8 @@ class UserAgent(AgentBase):
         #  than logger.chat
         if self.input_client:
             logger.info(
-                f"Waiting for input from {self.input_client.studio_url}...",
+                f"Waiting for input from:\n\n"
+                f"    * {_runtime.studio_client.get_run_detail_page_url()}\n",
             )
             raw_input = self.input_client.get_user_input()
             content = raw_input["content"]

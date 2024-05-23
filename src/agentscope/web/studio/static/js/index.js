@@ -131,6 +131,13 @@ function loadTabPage(pageUrl, javascriptUrl) {
 
 loadTabPage("static/html/index-guide.html", null);
 
+document.addEventListener("DOMContentLoaded", function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has("run_id")) {
+        loadTabPage("static/html/dashboard.html", "static/js/dashboard.js");
+    }
+});
+
 navigationBar.addEventListener("mouseenter", function () {
     if (activeExpanded) {
         navigationBar.classList.remove("collapsed");

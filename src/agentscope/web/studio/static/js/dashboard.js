@@ -29,6 +29,21 @@ function loadRunsPageInDashboardContent(pageUrl, javascriptUrl) {
             let titleBar = document.getElementById("dashboard-titlebar");
             titleBar.innerHTML =
                 "<span class='dashboard-titlebar-span unselectable-text'>Dashboard</span>";
+            // Jump to specific run if url contains run_id
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has("run_id")) {
+                var loc = window.location;
+                var baseUrl = loc.protocol + "//" + loc.host;
+                const run_id = urlParams.get("run_id");
+                history.replaceState(null, null, baseUrl);
+                loadDetailPageInDashboardContent(
+                    "static/html/dashboard-detail.html",
+                    "static/js/dashboard-detail.js",
+                    {
+                        id: run_id,
+                    }
+                );
+            }
         })
         .catch((error) => {
             console.error("Error encountered while loading page: ", error);
