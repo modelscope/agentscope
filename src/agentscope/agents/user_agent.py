@@ -33,6 +33,7 @@ class UserAgent(AgentBase):
         if _runtime.studio_client is not None:
             self.input_client = (
                 _runtime.studio_client.generate_user_input_client(
+                    self.name,
                     self.agent_id,
                 )
             )

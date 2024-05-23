@@ -109,8 +109,8 @@ def register_run() -> Response:
     run_dir = data.get("run_dir")
     # check if the run_id is already in the database
     if Run.query.filter_by(id=run_id).first():
-        print(f"Run id {run_id} already exists.")
-        abort(400, f"RUN_ID {run_id} already exists")
+        print(f"run id {run_id} already exists.")
+        abort(400, f"run_id [{run_id}] already exists")
     db.session.add(
         Run(
             id=run_id,
@@ -212,6 +212,15 @@ def get_available_run_id() -> Response:
     return jsonify({"run_id": uuid.uuid4().hex})
 
 
+@app.route("/api/runs/finish", methods=["POST"])
+def finish_run() -> Response:
+    """Finish a run."""
+    run_id = request.json["run_id"]
+    db.session.query(Run).filter_by(id=run_id).update({"status": "finished"})
+    db.session.commit()
+    return jsonify(status="ok")
+
+
 @app.route("/file")
 def get_local_file() -> Response:
     """Get the local file via the url."""
@@ -310,6 +319,7 @@ def request_user_input(data: dict) -> None:
     """Request user input"""
     print("request user input")
     run_id = data["run_id"]
+    name = data["name"]
     agent_id = data["agent_id"]
     db.session.query(Run).filter_by(id=run_id).update({"status": "waiting"})
     db.session.commit()
@@ -317,6 +327,7 @@ def request_user_input(data: dict) -> None:
         "enable_user_input",
         {
             "run_id": run_id,
+            "name": name,
             "agent_id": agent_id,
         },
         room=run_id,

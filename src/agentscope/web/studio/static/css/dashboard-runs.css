@@ -104,6 +104,12 @@
     fill: var(--main-color-dark);
 }
 
+.waiting.runs-table-status-tag {
+    background-color: #f8efba;
+    color: #f6b93b;
+    fill: #f6b93b;
+}
+
 .unknown.runs-table-status-tag {
     background-color: #e1e1e1;
     color: #3d4047;

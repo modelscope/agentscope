@@ -1,6 +1,9 @@
 //TODO: move the following to chat js
 
-let chatRowOtherTemplate, chatRowUserTemplate, chatRowSystemTemplate, infoRowTemplate;
+let chatRowOtherTemplate,
+    chatRowUserTemplate,
+    chatRowSystemTemplate,
+    infoRowTemplate;
 
 let agentIcons = [
     '<svg class="chat-icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M21.344 448h85.344v234.656H21.344V448zM554.656 192h64V106.656h-213.344V192h64v42.656h-320V896h725.344V234.656h-320V192z m234.688 128v490.656H234.688V320h554.656zM917.344 448h85.344v234.656h-85.344V448z"></path><path d="M341.344 512H448v106.656h-106.656V512zM576 512h106.656v106.656H576V512z"></path></svg>',
@@ -9,216 +12,227 @@ let agentIcons = [
     '<svg class="chat-icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M745.216 896H278.784a117.888 117.888 0 0 1-108.117-125.653V509.696a117.888 117.888 0 0 1 108.117-125.653h466.432a117.888 117.888 0 0 1 108.117 125.653v260.65A117.888 117.888 0 0 1 745.216 896z m-446.55-426.667A45.824 45.824 0 0 0 256 512v256a45.824 45.824 0 0 0 42.667 42.667h426.666c21.334-1.707 44.16-14.251 42.667-35.755V512a45.824 45.824 0 0 0-42.667-42.667z"></path><path d="M384 554.667q42.667 0 42.667 42.666v85.334q0 42.666-42.667 42.666t-42.667-42.666v-85.334q0-42.666 42.667-42.666zM640 554.667q42.667 0 42.667 42.666v85.334q0 42.666-42.667 42.666t-42.667-42.666v-85.334q0-42.666 42.667-42.666zM511.787 298.027l-42.667 128h85.333z"></path><path d="M598.485 164.864l-24.917 24.917a148.821 148.821 0 0 0-83.03-132.864s-8.533 91.35-49.834 124.544-124.587 132.864 41.515 207.574a98.133 98.133 0 0 1-28.203-85.334 98.133 98.133 0 0 1 53.12-72.533 69.419 69.419 0 0 0 33.28 66.432c41.6 33.152 0 91.35 0 91.35s199.253-49.707 58.07-224.086zM84.267 512H86.4q41.6 0 41.6 41.6v172.8q0 41.6-41.6 41.6h-2.133q-41.6 0-41.6-41.6V553.6q0-41.6 41.6-41.6zM937.6 512h2.133q41.6 0 41.6 41.6v172.8q0 41.6-41.6 41.6H937.6q-41.6 0-41.6-41.6V553.6q0-41.6 41.6-41.6z"></path></svg>',
     '<svg class="chat-icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M512 32c-35.36 0-64 28.64-64 64 0 23.616 12.864 43.872 32 55.008V224h-160c-88 0-160 72-160 160v64H64v256h96v160h704v-160h96v-256h-96v-64c0-88-72-160-160-160h-160V151.008c19.136-11.136 32-31.36 32-55.008 0-35.36-28.64-64-64-64z m-192 256h384c53.376 0 96 42.624 96 96v416h-64v-160H288v160H224V384c0-53.376 42.624-96 96-96z m64 128a63.968 63.968 0 1 0 0 128 63.968 63.968 0 1 0 0-128z m256 0a63.968 63.968 0 1 0 0 128 63.968 63.968 0 1 0 0-128zM128 512h32v128H128z m736 0h32v128h-32z m-512 192h64v96h-64z m128 0h64v96h-64z m128 0h64v96h-64z"></path></svg>',
     '<svg class="chat-icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M699.733333 89.6c21.333333 8.533333 29.866667 34.133333 21.333334 51.2v4.266667L665.6 256H725.333333c89.6 0 166.4 72.533333 170.666667 162.133333v8.533334h42.666667c46.933333 0 85.333333 38.4 85.333333 85.333333v170.666667c0 46.933333-38.4 85.333333-85.333333 85.333333h-42.666667c0 93.866667-76.8 170.666667-170.666667 170.666667H298.666667c-93.866667 0-170.666667-76.8-170.666667-170.666667H85.333333c-46.933333 0-85.333333-38.4-85.333333-85.333333v-170.666667c0-46.933333 38.4-85.333333 85.333333-85.333333h42.666667c0-93.866667 76.8-170.666667 170.666667-170.666667h59.733333L302.933333 145.066667c-8.533333-17.066667 0-42.666667 21.333334-55.466667 17.066667-8.533333 42.666667-4.266667 51.2 17.066667l4.266666 4.266666L452.266667 256h119.466666l72.533334-145.066667 4.266666-4.266666c8.533333-21.333333 34.133333-25.6 51.2-17.066667zM725.333333 341.333333H298.666667c-46.933333 0-81.066667 34.133333-85.333334 81.066667V768c0 46.933333 34.133333 81.066667 81.066667 85.333333H725.333333c46.933333 0 81.066667-34.133333 85.333334-81.066666V426.666667c0-46.933333-34.133333-81.066667-81.066667-85.333334H725.333333zM128 512H85.333333v170.666667h42.666667v-170.666667z m810.666667 0h-42.666667v170.666667h42.666667v-170.666667zM384 512c25.6 0 42.666667 17.066667 42.666667 42.666667v85.333333c0 25.6-17.066667 42.666667-42.666667 42.666667s-42.666667-17.066667-42.666667-42.666667v-85.333333c0-25.6 17.066667-42.666667 42.666667-42.666667z m256 0c25.6 0 42.666667 17.066667 42.666667 42.666667v85.333333c0 25.6-17.066667 42.666667-42.666667 42.666667s-42.666667-17.066667-42.666667-42.666667v-85.333333c0-25.6 17.066667-42.666667 42.666667-42.666667z"></path></svg>',
-]
+];
 
-let name2Color = {}
+let name2Color = {};
 
 async function loadChatTemplate() {
-  const response = await fetch('static/html/template.html');
-  const htmlText = await response.text();
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(htmlText, "text/html");
+    const response = await fetch("static/html/template.html");
+    const htmlText = await response.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlText, "text/html");
 
-  // save
-  chatRowOtherTemplate = doc.querySelector('#chat-row-other-template').content;
-  chatRowUserTemplate = doc.querySelector('#chat-row-user-template').content;
-  chatRowSystemTemplate = doc.querySelector('#chat-row-system-template').content;
-  infoRowTemplate = doc.querySelector("#dialogue-info-row-template").content;
+    // save
+    chatRowOtherTemplate = doc.querySelector(
+        "#chat-row-other-template"
+    ).content;
+    chatRowUserTemplate = doc.querySelector("#chat-row-user-template").content;
+    chatRowSystemTemplate = doc.querySelector(
+        "#chat-row-system-template"
+    ).content;
+    infoRowTemplate = doc.querySelector("#dialogue-info-row-template").content;
 }
 
 // Add a chat row according to the role field in the message
 function addChatRow(index, pMsg) {
-  switch (pMsg.role.toLowerCase()) {
-    case "user":
-      return _addUserChatRow(index, pMsg);
-    case "assistant":
-      return _addAssistantChatRow(index, pMsg);
-    case "system":
-      return _addSystemChatRow(index, pMsg);
-  }
+    switch (pMsg.role.toLowerCase()) {
+        case "user":
+            return _addUserChatRow(index, pMsg);
+        case "assistant":
+            return _addAssistantChatRow(index, pMsg);
+        case "system":
+            return _addSystemChatRow(index, pMsg);
+    }
 }
 
 function _determineFileType(url) {
-  // Image
-  let img_suffix = [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg", ".webp"];
-  // Video
-  let video_suffix = [
-    ".mp4",
-    ".webm",
-    ".avi",
-    ".mov",
-    ".wmv",
-    ".flv",
-    ".f4v",
-    ".m4v",
-    ".rmvb",
-    ".rm",
-    ".3gp",
-    ".dat",
-    ".ts",
-    ".mts",
-    ".vob",
-  ];
-  // Audio
-  let audio_suffix = [".mp3", ".wav", ".wma", ".ogg", ".aac", ".flac"];
+    // Image
+    let img_suffix = [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg", ".webp"];
+    // Video
+    let video_suffix = [
+        ".mp4",
+        ".webm",
+        ".avi",
+        ".mov",
+        ".wmv",
+        ".flv",
+        ".f4v",
+        ".m4v",
+        ".rmvb",
+        ".rm",
+        ".3gp",
+        ".dat",
+        ".ts",
+        ".mts",
+        ".vob",
+    ];
+    // Audio
+    let audio_suffix = [".mp3", ".wav", ".wma", ".ogg", ".aac", ".flac"];
 
-  if (img_suffix.some((suffix) => url.endsWith(suffix))) {
-    return "image";
-  } else if (video_suffix.some((suffix) => url.endsWith(suffix))) {
-    return "video";
-  } else if (audio_suffix.some((suffix) => url.endsWith(suffix))) {
-    return "audio";
-  }
-  return "file";
+    if (img_suffix.some((suffix) => url.endsWith(suffix))) {
+        return "image";
+    } else if (video_suffix.some((suffix) => url.endsWith(suffix))) {
+        return "video";
+    } else if (audio_suffix.some((suffix) => url.endsWith(suffix))) {
+        return "audio";
+    }
+    return "file";
 }
 
 function _renderMultiModalData(url) {
-  if (!url || url === "") {
-    return "";
-  }
-  // Determine the type of the file
-  let urlType = _determineFileType(url);
+    if (!url || url === "") {
+        return "";
+    }
+    // Determine the type of the file
+    let urlType = _determineFileType(url);
 
-  // If we need to fetch the url from the backend
-  let src = null;
-  if (url.startsWith("http://") || url.startsWith("https://")) {
-    // Obtain the url from the backend
-    src = url;
-  } else {
-    src = "/file?url=" + url;
-  }
+    // If we need to fetch the url from the backend
+    let src = null;
+    if (url.startsWith("http://") || url.startsWith("https://")) {
+        // Obtain the url from the backend
+        src = url;
+    } else {
+        src = "/file?url=" + url;
+    }
 
-  switch (urlType) {
-    case "image":
-      return `<img src=${src} alt="Image" class="chat-bubble-multimodal-item">`;
-    case "audio":
-      return `<audio src=${src} controls="controls" class="chat-bubble-multimodal-item"></audio>`;
-    case "video":
-      return `<video src=${src} controls="controls" class="chat-bubble-multimodal-item"></video>`;
-    default:
-      return `<a href=${src} class="chat-bubble-multimodal-item">${url}</a>`;
-  }
+    switch (urlType) {
+        case "image":
+            return `<img src=${src} alt="Image" class="chat-bubble-multimodal-item">`;
+        case "audio":
+            return `<audio src=${src} controls="controls" class="chat-bubble-multimodal-item"></audio>`;
+        case "video":
+            return `<video src=${src} controls="controls" class="chat-bubble-multimodal-item"></video>`;
+        default:
+            return `<a href=${src} class="chat-bubble-multimodal-item">${url}</a>`;
+    }
 }
 
 function _addUserChatRow(index, pMsg) {
-  const template = chatRowUserTemplate.cloneNode(true);
-  // template.querySelector('.chat-icon').
-  template.querySelector(".chat-name").textContent = pMsg.name;
-  let chatBubble = template.querySelector(".chat-bubble");
-  chatBubble.textContent = pMsg.content;
-  chatBubble.innerHTML += _renderMultiModalData(pMsg.url);
-  template.querySelector(".chat-row").setAttribute("data-index", index);
-  return template.firstElementChild.outerHTML;
+    const template = chatRowUserTemplate.cloneNode(true);
+    // template.querySelector('.chat-icon').
+    template.querySelector(".chat-name").textContent = pMsg.name;
+    let chatBubble = template.querySelector(".chat-bubble");
+    chatBubble.textContent = pMsg.content;
+    chatBubble.innerHTML += _renderMultiModalData(pMsg.url);
+    template.querySelector(".chat-row").setAttribute("data-index", index);
+    return template.firstElementChild.outerHTML;
 }
 
 function _addAssistantChatRow(index, pMsg) {
-  const template = chatRowOtherTemplate.cloneNode(true);
-  // TODO: avator
+    const template = chatRowOtherTemplate.cloneNode(true);
+    // TODO: avator
 
-  template.querySelector('.chat-name').textContent = pMsg.name;
-  let chatBubble = template.querySelector('.chat-bubble');
-  chatBubble.textContent = pMsg.content;
-  chatBubble.innerHTML += _renderMultiModalData(pMsg.url);
-  template.querySelector('.chat-row').setAttribute('data-index', index);
-  return template.firstElementChild.outerHTML;
+    template.querySelector(".chat-name").textContent = pMsg.name;
+    let chatBubble = template.querySelector(".chat-bubble");
+    chatBubble.textContent = pMsg.content;
+    chatBubble.innerHTML += _renderMultiModalData(pMsg.url);
+    template.querySelector(".chat-row").setAttribute("data-index", index);
+    return template.firstElementChild.outerHTML;
 }
 
 function _addSystemChatRow(index, pMsg) {
-  const template = chatRowSystemTemplate.cloneNode(true);
-  template.querySelector('.chat-name').textContent = pMsg.name;
-  let chatBubble = template.querySelector('.chat-bubble');
-  chatBubble.textContent = pMsg.content;
-  chatBubble.innerHTML += _renderMultiModalData(pMsg.url);
-  template.querySelector('.chat-row').setAttribute('data-index', index);
-  return template.firstElementChild.outerHTML;
+    const template = chatRowSystemTemplate.cloneNode(true);
+    template.querySelector(".chat-name").textContent = pMsg.name;
+    let chatBubble = template.querySelector(".chat-bubble");
+    chatBubble.textContent = pMsg.content;
+    chatBubble.innerHTML += _renderMultiModalData(pMsg.url);
+    template.querySelector(".chat-row").setAttribute("data-index", index);
+    return template.firstElementChild.outerHTML;
 }
 
 function _addKeyValueInfoRow(pKey, pValue) {
-  const template = infoRowTemplate.cloneNode(true);
-  template.querySelector(".dialogue-info-key").textContent = pKey.toUpperCase();
-  template.querySelector(".dialogue-info-value").textContent = pValue;
-  return template.firstElementChild.outerHTML;
+    const template = infoRowTemplate.cloneNode(true);
+    template.querySelector(".dialogue-info-key").textContent =
+        pKey.toUpperCase();
+    template.querySelector(".dialogue-info-value").textContent = pValue;
+    return template.firstElementChild.outerHTML;
 }
 
 function _showInfoInDialogueDetailContent(data) {
-  let infoRows = Object.keys(data).map((key) =>
-    _addKeyValueInfoRow(key, data[key])
-  );
-  let infoClusterize = new Clusterize({
-    rows: infoRows,
-    scrollId: "chat-detail",
-    contentId: "dialogue-detail-content",
-  });
+    let infoRows = Object.keys(data).map((key) =>
+        _addKeyValueInfoRow(key, data[key])
+    );
+    let infoClusterize = new Clusterize({
+        rows: infoRows,
+        scrollId: "chat-detail",
+        contentId: "dialogue-detail-content",
+    });
 }
 
 async function initializeDashboardDetailDialoguePage(pRuntimeInfo) {
-  // Load the chat template
-  await loadChatTemplate();
+    // Load the chat template
+    await loadChatTemplate();
 
-  // Fetch the chat history from backend
-  fetch("/api/messages/run/" + pRuntimeInfo.id)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Failed to fetch messages data");
-      }
-      return response.json();
-    })
-    .then((data) => {
-      let send_btn = document.getElementById("chat-input-send-btn");
-      send_btn.disabled = true;
-      // Load the chat history
-      let chatRows = data.map((msg, index) => addChatRow(index, msg));
-      var clusterize = new Clusterize({
-        rows: chatRows,
-        scrollId: "chat-box",
-        contentId: "chat-box-content",
-      });
+    // Fetch the chat history from backend
+    fetch("/api/messages/run/" + pRuntimeInfo.id)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Failed to fetch messages data");
+            }
+            return response.json();
+        })
+        .then((data) => {
+            let send_btn = document.getElementById("chat-input-send-btn");
+            send_btn.disabled = true;
+            // Load the chat history
+            let chatRows = data.map((msg, index) => addChatRow(index, msg));
+            var clusterize = new Clusterize({
+                rows: chatRows,
+                scrollId: "chat-box",
+                contentId: "chat-box-content",
+            });
 
-      document.getElementById("chat-box-content");
-      addEventListener("click", function (event) {
-        let target = event.target;
+            document.getElementById("chat-box-content");
+            addEventListener("click", function (event) {
+                let target = event.target;
 
-        while (target && target !== this) {
-          if (target.matches(".chat-row")) {
-            let rowIndex = target.getAttribute("data-index");
-            console.log("The " + rowIndex + " message is clicked.");
-            _showInfoInDialogueDetailContent(data[rowIndex]);
-            break;
-          }
-          target = target.parentNode;
-        }
-      });
-      // Load the detail content in the right panel
-      // traverse all the keys in pRuntimeInfo and create a key-value row
-      _showInfoInDialogueDetailContent(pRuntimeInfo);
+                while (target && target !== this) {
+                    if (target.matches(".chat-row")) {
+                        let rowIndex = target.getAttribute("data-index");
+                        console.log("The " + rowIndex + " message is clicked.");
+                        _showInfoInDialogueDetailContent(data[rowIndex]);
+                        break;
+                    }
+                    target = target.parentNode;
+                }
+            });
+            // Load the detail content in the right panel
+            // traverse all the keys in pRuntimeInfo and create a key-value row
+            _showInfoInDialogueDetailContent(pRuntimeInfo);
 
-      var socket = io();
-      socket.on("connect", () => {
-        socket.emit("join", { run_id: pRuntimeInfo.id });
-        send_btn.onclick = () => {
-          var message = document.getElementById("chat-input-textarea").value;
-          socket.emit("user_input_ready", {
-            content: message,
-            run_id: pRuntimeInfo.id,
-          });
-          document.getElementById("chat-input-textarea").value = "";
-          document.getElementById("chat-input-send-btn").disabled = true;
-        };
-      });
-      socket.on("display_message", (data) => {
-        if (data.run_id == pRuntimeInfo.id) {
-          let row = addChatRow(clusterize.getRowsAmount(), data);
-          clusterize.append([row]);
-          clusterize.refresh();
-        }
-      });
-      socket.on("enable_user_input", (data) => {
-        if (data.run_id == pRuntimeInfo.id) {
-          send_btn.disabled = false;
-        }
-      });
-    })
-    .catch((error) => {
-      console.error("Failed to fetch messages data:", error);
-    });
+            var socket = io();
+            socket.on("connect", () => {
+                socket.emit("join", { run_id: pRuntimeInfo.id });
+                send_btn.onclick = () => {
+                    var message = document.getElementById(
+                        "chat-input-textarea"
+                    ).value;
+                    socket.emit("user_input_ready", {
+                        content: message,
+                        run_id: pRuntimeInfo.id,
+                    });
+                    document.getElementById("chat-input-textarea").value = "";
+                    document.getElementById(
+                        "chat-input-send-btn"
+                    ).disabled = true;
+                };
+            });
+            socket.on("display_message", (data) => {
+                if (data.run_id == pRuntimeInfo.id) {
+                    let row = addChatRow(clusterize.getRowsAmount(), data);
+                    clusterize.append([row]);
+                    clusterize.refresh();
+                }
+            });
+            socket.on("enable_user_input", (data) => {
+                if (data.run_id == pRuntimeInfo.id) {
+                    send_btn.disabled = false;
+                    document.getElementById("chat-input-name").textContent =
+                        data.name;
+                }
+            });
+        })
+        .catch((error) => {
+            console.error("Failed to fetch messages data:", error);
+        });
 }

@@ -2,6 +2,7 @@
 """The client for agentscope platform."""
 from threading import Event
 from typing import Optional
+import atexit
 import requests
 
 import socketio
@@ -16,10 +17,12 @@ class WebSocketClient:
         self,
         studio_url: str,
         run_id: str,
+        name: str,
         agent_id: str,
     ) -> None:
         self.studio_url = studio_url
         self.run_id = run_id
+        self.name = name
         self.agent_id = agent_id
         self.user_input = None
         self.sio = socketio.Client()
@@ -55,6 +58,7 @@ class WebSocketClient:
             "request_user_input",
             {
                 "run_id": self.run_id,
+                "name": self.name,
                 "agent_id": self.agent_id,
             },
         )
@@ -78,9 +82,18 @@ class HttpClient:
         self.studio_url = studio_url
         self.run_id = run_id
 
-    def generate_user_input_client(self, agent_id: str) -> WebSocketClient:
+    def generate_user_input_client(
+        self,
+        name: str,
+        agent_id: str,
+    ) -> WebSocketClient:
         """Generate a websocket client for a specifc user agent."""
-        return WebSocketClient(self.studio_url, self.run_id, agent_id=agent_id)
+        return WebSocketClient(
+            self.studio_url,
+            self.run_id,
+            name=name,
+            agent_id=agent_id,
+        )
 
     def register_run(
         self,
@@ -100,11 +113,19 @@ class HttpClient:
             },
             timeout=10,  # todo: configurable timeout
         )
-        if resp.status_code == 200:
-            return True
-        else:
-            logger.warning(f"Fail to register to studio: {resp}")
-            raise RuntimeError(f"Fail to register to studio: {resp}")
+        if resp.status_code != 200:
+            logger.warning(f"Fail to register to studio: {resp.text}")
+            raise RuntimeError(f"Fail to register to studio: {resp.text}")
+
+        def finish_run() -> None:
+            requests.post(
+                f"{self.studio_url}/api/runs/finish",
+                json={"run_id": self.run_id},
+                timeout=5,
+            )
+
+        atexit.register(finish_run)
+        return True
 
     def send_message(
         self,
