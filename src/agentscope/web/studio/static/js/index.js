@@ -54,8 +54,6 @@ function initializeTabPageByUrl(pageUrl) {
 
 // Loading different pages in index.html
 function loadTabPage(pageUrl, javascriptUrl) {
-    console.log("current tab page " + currentPageUrl);
-    console.log("load tab page " + pageUrl);
     fetch(pageUrl)
         .then((response) => {
             if (!response.ok) {
