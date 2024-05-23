@@ -51,7 +51,13 @@ class WebSocketClient:
             input is received.
         """
         self.input_event.clear()
-        self.sio.emit("request_user_input")
+        self.sio.emit(
+            "request_user_input",
+            {
+                "run_id": self.run_id,
+                "agent_id": self.agent_id,
+            },
+        )
         self.input_event.wait()
         return self.user_input
 
@@ -82,17 +88,7 @@ class HttpClient:
         name: str,
         run_dir: str,
     ) -> bool:
-        """Register a run to the AgentScope Studio.
-
-        Args:
-            run_id (str): _description_
-            project (str): _description_
-            name (str): _description_
-            run_dir (str): _description_
-
-        Returns:
-            bool: _description_
-        """
+        """Register a run to the AgentScope Studio."""
         url = f"{self.studio_url}/api/register/run"
         resp = requests.post(
             url,
@@ -120,9 +116,9 @@ class HttpClient:
         url: str = None,
     ) -> bool:
         """Send a message to the studio."""
-        url = f"{self.studio_url}/api/message/put"
+        send_url = f"{self.studio_url}/api/messages/put"
         resp = requests.post(
-            url,
+            send_url,
             json={
                 "run_id": self.run_id,
                 "name": name,

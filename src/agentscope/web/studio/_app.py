@@ -38,6 +38,7 @@ class Run(db.Model):  # type: ignore[name-defined]
     script_path = db.Column(db.String)
     run_dir = db.Column(db.String)
     create_time = db.Column(db.DateTime, default=datetime.now)
+    status = db.Column(db.String, default="finished")
 
 
 class Server(db.Model):  # type: ignore[name-defined]
@@ -88,6 +89,7 @@ def get_runs() -> list:
             "script_path": run.script_path,
             "run_dir": run.run_dir,
             "create_time": run.create_time.isoformat(),
+            "status": run.status,
         }
         for run in runs
     ]
@@ -115,6 +117,7 @@ def register_run() -> Response:
             project=project,
             name=name,
             run_dir=run_dir,
+            status="running",
         ),
     )
     db.session.commit()
@@ -180,8 +183,11 @@ def put_message() -> Response:
         {
             "run_id": run_id,
             "name": name,
+            "role": role,
             "content": content,
             "url": url,
+            "metadata": metadata,
+            "timestamp": timestamp,
         },
         room=run_id,
     )
@@ -299,12 +305,33 @@ def run_detail(run_dir: str) -> str:
     return render_template("run.html", runInfo=logging_and_dialog)
 
 
-@socketio.on("user_input")
-def user_input(data: dict) -> None:
+@socketio.on("request_user_input")
+def request_user_input(data: dict) -> None:
+    """Request user input"""
+    print("request user input")
+    run_id = data["run_id"]
+    agent_id = data["agent_id"]
+    db.session.query(Run).filter_by(id=run_id).update({"status": "waiting"})
+    db.session.commit()
+    socketio.emit(
+        "enable_user_input",
+        {
+            "run_id": run_id,
+            "agent_id": agent_id,
+        },
+        room=run_id,
+    )
+
+
+@socketio.on("user_input_ready")
+def user_input_ready(data: dict) -> None:
     """Get user input and send to the agent"""
+    print("user input ready")
     run_id = data["run_id"]
     content = data["content"]
     url = data.get("url", None)
+    db.session.query(Run).filter_by(id=run_id).update({"status": "running"})
+    db.session.commit()
     socketio.emit(
         "fetch_user_input",
         {
@@ -333,6 +360,15 @@ def on_join(data: dict) -> None:
     """Join a websocket room"""
     run_id = data["run_id"]
     join_room(run_id)
+    run = Run.query.filter_by(id=run_id).first()
+    if run and run.status == "waiting":
+        socketio.emit(
+            "enable_user_input",
+            {
+                "run_id": run_id,
+            },
+            room=run_id,
+        )
 
 
 @socketio.on("leave")
