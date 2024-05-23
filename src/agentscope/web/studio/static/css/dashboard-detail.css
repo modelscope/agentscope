@@ -29,8 +29,8 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: fit-content;
-    padding: 50px 10px;
+    height: 100%;
+    padding: 45px 10px;
     box-sizing: border-box;
 }
 

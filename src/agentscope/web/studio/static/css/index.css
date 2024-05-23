@@ -29,7 +29,7 @@ body {
     flex-direction: row;
     padding: 0;
     background: var(--body-bg);
-    font-family: sans-serif;
+    font-family: source-sans, sans-serif;
     box-sizing: border-box;
 }
 
