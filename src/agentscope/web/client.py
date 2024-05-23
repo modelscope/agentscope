@@ -102,7 +102,7 @@ class HttpClient:
         run_dir: str,
     ) -> bool:
         """Register a run to the AgentScope Studio."""
-        url = f"{self.studio_url}/api/register/run"
+        url = f"{self.studio_url}/api/runs/register"
         resp = requests.post(
             url,
             json={

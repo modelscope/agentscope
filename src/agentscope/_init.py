@@ -68,7 +68,7 @@ def init(
             cover the required arguments to initialize a specific agent
             object, otherwise the default values will be used.
         studio_url (`Optional[str]`, defaults to `None`):
-            The url of the studio.
+            The url of the agentscope studio.
     """
     init_process(
         model_configs=model_configs,
@@ -85,13 +85,14 @@ def init(
 
     # save init settings for subprocess
     _INIT_SETTINGS["model_configs"] = model_configs
-    _INIT_SETTINGS["project"] = project
-    _INIT_SETTINGS["name"] = name
+    _INIT_SETTINGS["project"] = _runtime.project
+    _INIT_SETTINGS["name"] = _runtime.name
     _INIT_SETTINGS["runtime_id"] = _runtime.runtime_id
     _INIT_SETTINGS["save_dir"] = save_dir
     _INIT_SETTINGS["save_api_invoke"] = save_api_invoke
     _INIT_SETTINGS["save_log"] = save_log
     _INIT_SETTINGS["logger_level"] = logger_level
+    _INIT_SETTINGS["use_monitor"] = use_monitor
 
     # Save code if needed
     if save_code:

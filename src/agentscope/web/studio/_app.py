@@ -44,9 +44,10 @@ class Run(db.Model):  # type: ignore[name-defined]
 class Server(db.Model):  # type: ignore[name-defined]
     """Server object."""
 
-    server_id = db.Column(db.String, primary_key=True)
-    server_host = db.Column(db.String)
-    server_port = db.Column(db.Integer)
+    id = db.Column(db.String, primary_key=True)
+    host = db.Column(db.String)
+    port = db.Column(db.Integer)
+    create_time = db.Column(db.DateTime, default=datetime.now)
 
 
 class Message(db.Model):  # type: ignore[name-defined]
@@ -95,7 +96,7 @@ def get_runs() -> list:
     ]
 
 
-@app.route("/api/register/run", methods=["POST"])
+@app.route("/api/runs/register", methods=["POST"])
 def register_run() -> Response:
     """
     Registers a run of an agentscope application.
@@ -125,7 +126,7 @@ def register_run() -> Response:
     return jsonify(status="ok", msg="")
 
 
-@app.route("/api/register/server", methods=["POST"])
+@app.route("/api/servers/register", methods=["POST"])
 def register_server() -> Response:
     """
     Registers an agent server.
@@ -134,20 +135,20 @@ def register_server() -> Response:
     server_id = data.get("server_id")
     host = data.get("host")
     port = data.get("port")
-    run_dir = data.get("run_dir")
 
-    if Server.query.filter_by(server_id=server_id).first():
-        return jsonify(status="error", msg="server_id already exists")
-    else:
-        db.session.add(
-            Server(
-                server_id=server_id,
-                server_host=host,
-                server_port=port,
-                run_dir=run_dir,
-            ),
-        )
-        return jsonify(status="ok", msg="")
+    if Server.query.filter_by(id=server_id).first():
+        print(f"server id {server_id} already exists.")
+        abort(400, f"run_id [{server_id}] already exists")
+    db.session.add(
+        Server(
+            id=server_id,
+            host=host,
+            port=port,
+        ),
+    )
+    db.session.commit()
+    print(f"Register server id {server_id}")
+    return jsonify(status="ok", msg="")
 
 
 @app.route("/api/messages/put", methods=["POST"])
