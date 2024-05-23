@@ -58,6 +58,7 @@ class Message(db.Model):  # type: ignore[name-defined]
     name = db.Column(db.String)
     role = db.Column(db.String)
     content = db.Column(db.String)
+    # todo: support list of url in future versions
     url = db.Column(db.String)
     meta = db.Column(db.String)
     timestamp = db.Column(db.String)

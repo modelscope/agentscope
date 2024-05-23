@@ -68,7 +68,6 @@ class SearcherAgent(AgentBase):
             ),
         )
         query = self.model(prompt).text
-        self.speak(query)
         results = self.search(
             question=query,
             num_results=self.result_num,
@@ -84,5 +83,13 @@ class SearcherAgent(AgentBase):
                 )
                 for result in results
             ],
+        )
+        self.speak(
+            Msg(
+                name=self.name,
+                role="assistant",
+                content="Search results:\n"
+                f"{[result['link'] for result in results]}",
+            ),
         )
         return msg
