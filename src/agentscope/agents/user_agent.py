@@ -119,3 +119,19 @@ class UserAgent(AgentBase):
             self.memory.add(msg)
 
         return msg
+
+    def speak(
+        self,
+        content: Union[str, dict],
+    ) -> None:
+        """Speak the content to the audience."""
+        logger.chat(content, disable_studio=True)
+        if _runtime.studio_client is not None:
+            _runtime.studio_client.send_message(
+                name=content.get("name", ""),
+                role=content.get("role", "user"),
+                content=content.get("content", ""),
+                metadata=content.get("metadata", {}),
+                url=content.get("url", None),
+                timestamp=content.get("timestamp", None),
+            )
