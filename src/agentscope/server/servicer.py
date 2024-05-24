@@ -5,6 +5,7 @@ import threading
 import traceback
 import json
 from concurrent import futures
+from typing import Any
 from loguru import logger
 
 try:
@@ -26,7 +27,6 @@ except ImportError as import_error:
         "distribute",
     )
     ExpiringDict = ImportErrorReporter(import_error, "distribute")
-    # agent_pb2 = ImportErrorReporter(import_error, "distribute")
 
 import agentscope.rpc.rpc_agent_pb2 as agent_pb2
 from agentscope.agents.agent import AgentBase
@@ -283,6 +283,26 @@ class AgentServerServicer(RpcAgentServicer):
         status["CPU Percent"] = process.cpu_percent()
         status["Memory Usage"] = process.memory_info().rss
         return agent_pb2.StatusResponse(ok=True, message=json.dumps(status))
+
+    def download_file(
+        self,
+        request: agent_pb2.FileRequest,
+        context: ServicerContext,
+    ) -> Any:
+        """Download file from local path."""
+        filepath = request.path
+        if not os.path.exists(filepath):
+            context.abort(
+                grpc.StatusCode.NOT_FOUND,
+                f"File {filepath} not found",
+            )
+
+        with open(filepath, "rb") as f:
+            while True:
+                piece = f.read(1024 * 1024)  # send 1MB each time
+                if not piece:
+                    break
+                yield agent_pb2.FileResponse(data=piece)
 
     def _reply(self, request: agent_pb2.RpcMsg) -> agent_pb2.RpcMsg:
         """Call function of RpcAgentService

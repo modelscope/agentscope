@@ -59,6 +59,16 @@ class RpcAgentStub(object):
             request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             response_deserializer=rpc__agent__pb2.StatusResponse.FromString,
         )
+        self.set_model_configs = channel.unary_unary(
+            "/RpcAgent/set_model_configs",
+            request_serializer=rpc__agent__pb2.JsonMsg.SerializeToString,
+            response_deserializer=rpc__agent__pb2.StatusResponse.FromString,
+        )
+        self.get_agent_memory = channel.unary_unary(
+            "/RpcAgent/get_agent_memory",
+            request_serializer=rpc__agent__pb2.AgentIds.SerializeToString,
+            response_deserializer=rpc__agent__pb2.JsonMsg.FromString,
+        )
         self.call_agent_func = channel.unary_unary(
             "/RpcAgent/call_agent_func",
             request_serializer=rpc__agent__pb2.RpcMsg.SerializeToString,
@@ -68,6 +78,11 @@ class RpcAgentStub(object):
             "/RpcAgent/update_placeholder",
             request_serializer=rpc__agent__pb2.UpdatePlaceholderRequest.SerializeToString,
             response_deserializer=rpc__agent__pb2.RpcMsg.FromString,
+        )
+        self.download_file = channel.unary_stream(
+            "/RpcAgent/download_file",
+            request_serializer=rpc__agent__pb2.FileRequest.SerializeToString,
+            response_deserializer=rpc__agent__pb2.FileResponse.FromString,
         )
 
 
@@ -116,6 +131,18 @@ class RpcAgentServicer(object):
         context.set_details("Method not implemented!")
         raise NotImplementedError("Method not implemented!")
 
+    def set_model_configs(self, request, context):
+        """update the model configs in the server"""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
+
+    def get_agent_memory(self, request, context):
+        """get memory of specific agent"""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
+
     def call_agent_func(self, request, context):
         """call funcs of agent running on the server"""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -124,6 +151,12 @@ class RpcAgentServicer(object):
 
     def update_placeholder(self, request, context):
         """update value of PlaceholderMessage"""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
+
+    def download_file(self, request, context):
+        """file transfer"""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details("Method not implemented!")
         raise NotImplementedError("Method not implemented!")
@@ -166,6 +199,16 @@ def add_RpcAgentServicer_to_server(servicer, server):
             request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
             response_serializer=rpc__agent__pb2.StatusResponse.SerializeToString,
         ),
+        "set_model_configs": grpc.unary_unary_rpc_method_handler(
+            servicer.set_model_configs,
+            request_deserializer=rpc__agent__pb2.JsonMsg.FromString,
+            response_serializer=rpc__agent__pb2.StatusResponse.SerializeToString,
+        ),
+        "get_agent_memory": grpc.unary_unary_rpc_method_handler(
+            servicer.get_agent_memory,
+            request_deserializer=rpc__agent__pb2.AgentIds.FromString,
+            response_serializer=rpc__agent__pb2.JsonMsg.SerializeToString,
+        ),
         "call_agent_func": grpc.unary_unary_rpc_method_handler(
             servicer.call_agent_func,
             request_deserializer=rpc__agent__pb2.RpcMsg.FromString,
@@ -175,6 +218,11 @@ def add_RpcAgentServicer_to_server(servicer, server):
             servicer.update_placeholder,
             request_deserializer=rpc__agent__pb2.UpdatePlaceholderRequest.FromString,
             response_serializer=rpc__agent__pb2.RpcMsg.SerializeToString,
+        ),
+        "download_file": grpc.unary_stream_rpc_method_handler(
+            servicer.download_file,
+            request_deserializer=rpc__agent__pb2.FileRequest.FromString,
+            response_serializer=rpc__agent__pb2.FileResponse.SerializeToString,
         ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -392,6 +440,64 @@ class RpcAgent(object):
         )
 
     @staticmethod
+    def set_model_configs(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            "/RpcAgent/set_model_configs",
+            rpc__agent__pb2.JsonMsg.SerializeToString,
+            rpc__agent__pb2.StatusResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
+
+    @staticmethod
+    def get_agent_memory(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            "/RpcAgent/get_agent_memory",
+            rpc__agent__pb2.AgentIds.SerializeToString,
+            rpc__agent__pb2.JsonMsg.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
+
+    @staticmethod
     def call_agent_func(
         request,
         target,
@@ -439,6 +545,35 @@ class RpcAgent(object):
             "/RpcAgent/update_placeholder",
             rpc__agent__pb2.UpdatePlaceholderRequest.SerializeToString,
             rpc__agent__pb2.RpcMsg.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
+
+    @staticmethod
+    def download_file(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_stream(
+            request,
+            target,
+            "/RpcAgent/download_file",
+            rpc__agent__pb2.FileRequest.SerializeToString,
+            rpc__agent__pb2.FileResponse.FromString,
             options,
             channel_credentials,
             insecure,

@@ -7,6 +7,8 @@ import os.path
 import secrets
 import string
 import socket
+import hashlib
+import random
 from typing import Any, Literal, List, Optional
 
 from urllib.parse import urlparse
@@ -239,6 +241,24 @@ def _generate_random_code(
     if digits:
         characters += string.digits
     return "".join(secrets.choice(characters) for i in range(length))
+
+
+def generate_id_from_seed(seed: str, length: int = 8) -> str:
+    """Generate random id from seed str.
+    Args:
+        seed (`str`): seed string.
+        length (`int`): generated id length.
+    """
+    hasher = hashlib.sha256()
+    hasher.update(seed.encode("utf-8"))
+    hash_digest = hasher.hexdigest()
+
+    random.seed(hash_digest)
+    id_chars = [
+        random.choice(string.ascii_letters + string.digits)
+        for _ in range(length)
+    ]
+    return "".join(id_chars)
 
 
 def _is_json_serializable(obj: Any) -> bool:

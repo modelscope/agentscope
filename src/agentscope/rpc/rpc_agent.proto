@@ -25,11 +25,20 @@ service RpcAgent {
     // get the resource utilization information of the server
     rpc get_server_info(google.protobuf.Empty) returns (StatusResponse) {}
 
+    // update the model configs in the server
+    rpc set_model_configs(JsonMsg) returns (StatusResponse) {}
+
+    // get memory of specific agent
+    rpc get_agent_memory (AgentIds) returns (JsonMsg) {}
+
     // call funcs of agent running on the server
     rpc call_agent_func(RpcMsg) returns (RpcMsg) {}
 
     // update value of PlaceholderMessage
     rpc update_placeholder(UpdatePlaceholderRequest) returns (RpcMsg) {}
+
+    // file transfer
+    rpc download_file(FileRequest) returns (stream FileResponse) {}
 }
 
 // Message classes for agent server management
@@ -55,6 +64,18 @@ message AgentStatus {
 
 message UpdatePlaceholderRequest {
     int64 task_id = 1;
+}
+
+message JsonMsg {
+    string value = 1;
+}
+
+message FileRequest {
+    string path = 1;
+}
+
+message FileResponse {
+    bytes data = 1;
 }
 
 // Message class for agent function call

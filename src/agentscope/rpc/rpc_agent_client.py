@@ -3,6 +3,7 @@
 
 import threading
 import json
+import os
 from typing import Optional, Sequence, Union
 from loguru import logger
 
@@ -22,6 +23,8 @@ except ImportError as import_error:
     RpcAgentStub = ImportErrorReporter(import_error, "distribute")
     RpcError = ImportError
 
+from agentscope.file_manager import file_manager
+from agentscope.utils.tools import generate_id_from_seed
 from agentscope.exception import AgentServerNotAliveError
 
 
@@ -268,6 +271,21 @@ class RpcAgentClient:
                 logger.error(f"Error in get_server_info: {resp.message}")
                 return {}
             return json.loads(resp.message)
+
+    def download_file(self, path: str) -> str:
+        """Download a file from a remote server."""
+        with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
+            stub = RpcAgentStub(channel)
+            local_file_name = (
+                f"{generate_id_from_seed(path, 5)}_{os.path.basename(path)}"
+            )
+            local_path = os.path.join(file_manager.dir_file, local_file_name)
+            with open(local_path, "wb") as f:
+                for resp in stub.download_file(
+                    agent_pb2.FileRequest(path=path),
+                ):
+                    f.write(resp.data)
+            return local_path
 
 
 class ResponseStub:
