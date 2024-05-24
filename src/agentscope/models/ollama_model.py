@@ -3,8 +3,6 @@
 from abc import ABC
 from typing import Sequence, Any, Optional, List, Union
 
-from loguru import logger
-
 from agentscope.message import MessageBase
 from agentscope.models import ModelWrapperBase, ModelResponse
 from agentscope.utils.tools import _convert_to_str
@@ -170,10 +168,43 @@ class OllamaChatWrapper(OllamaWrapperBase):
         self,
         *args: Union[MessageBase, Sequence[MessageBase]],
     ) -> List[dict]:
-        """A basic strategy to format the input into the required format of
-        Ollama Chat API.
+        """Format the messages for ollama Chat API.
 
-        Note for ollama chat api, the content field shouldn't be empty string.
+        All messages will be formatted into a single system message with
+        system prompt and dialogue history.
+
+        Note:
+        1. This strategy maybe not suitable for all scenarios,
+        and developers are encouraged to implement their own prompt
+        engineering strategies.
+        2. For ollama chat api, the content field shouldn't be empty string.
+
+        Example:
+
+        .. code-block:: python
+
+            prompt = model.format(
+                Msg("system", "You're a helpful assistant", role="system"),
+                Msg("Bob", "Hi, how can I help you?", role="assistant"),
+                Msg("user", "What's the date today?", role="user")
+            )
+
+        The prompt will be as follows:
+
+        .. code-block:: python
+
+            [
+                {
+                    "role": "user",
+                    "content": (
+                        "You're a helpful assistant\\n\\n"
+                        "## Dialogue History\\n"
+                        "Bob: Hi, how can I help you?\\n"
+                        "user: What's the date today?"
+                    )
+                }
+            ]
+
 
         Args:
             args (`Union[MessageBase, Sequence[MessageBase]]`):
@@ -185,39 +216,63 @@ class OllamaChatWrapper(OllamaWrapperBase):
             `List[dict]`:
                 The formatted messages.
         """
-        ollama_msgs = []
-        for msg in args:
-            if msg is None:
+
+        # Parse all information into a list of messages
+        input_msgs = []
+        for _ in args:
+            if _ is None:
                 continue
-            if isinstance(msg, MessageBase):
-                # content shouldn't be empty string
-                if msg.content == "":
-                    logger.warning(
-                        "In ollama chat API, the content field cannot be "
-                        "empty string. To avoid error, the empty string is "
-                        "replaced by a blank space automatically, but the "
-                        "model may not work as expected.",
-                    )
-                    msg.content = " "
-
-                ollama_msg = {
-                    "role": msg.role,
-                    "content": _convert_to_str(msg.content),
-                }
-
-                # image url
-                if msg.url is not None:
-                    ollama_msg["images"] = [msg.url]
-
-                ollama_msgs.append(ollama_msg)
-            elif isinstance(msg, list):
-                ollama_msgs.extend(self.format(*msg))
+            if isinstance(_, MessageBase):
+                input_msgs.append(_)
+            elif isinstance(_, list) and all(
+                isinstance(__, MessageBase) for __ in _
+            ):
+                input_msgs.extend(_)
             else:
                 raise TypeError(
-                    f"Invalid message type: {type(msg)}, `Msg` is expected.",
+                    f"The input should be a Msg object or a list "
+                    f"of Msg objects, got {type(_)}.",
                 )
 
-        return ollama_msgs
+        # record dialog history as a list of strings
+        system_content_template = []
+        dialogue = []
+        # TODO: here we default the url links to images
+        images = []
+        for i, unit in enumerate(input_msgs):
+            if i == 0 and unit.role == "system":
+                # system prompt
+                system_prompt = _convert_to_str(unit.content)
+                if not system_prompt.endswith("\n"):
+                    system_prompt += "\n"
+                system_content_template.append(system_prompt)
+            else:
+                # Merge all messages into a dialogue history prompt
+                dialogue.append(
+                    f"{unit.name}: {_convert_to_str(unit.content)}",
+                )
+
+            if unit.url is not None:
+                images.append(unit.url)
+
+        if len(dialogue) != 0:
+            dialogue_history = "\n".join(dialogue)
+
+            system_content_template.extend(
+                ["## Dialogue History", dialogue_history],
+            )
+
+        system_content = "\n".join(system_content_template)
+
+        system_message = {
+            "role": "system",
+            "content": system_content,
+        }
+
+        if len(images) != 0:
+            system_message["images"] = images
+
+        return [system_message]
 
 
 class OllamaEmbeddingWrapper(OllamaWrapperBase):
@@ -286,7 +341,7 @@ class OllamaEmbeddingWrapper(OllamaWrapperBase):
 
         # step5: return response
         return ModelResponse(
-            embedding=response["embedding"],
+            embedding=[response["embedding"]],
             raw=response,
         )
 

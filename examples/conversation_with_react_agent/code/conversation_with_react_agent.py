@@ -9,7 +9,7 @@ from agentscope.service import (
     bing_search,  # or google_search,
     read_text_file,
     write_text_file,
-    ServiceFactory,
+    ServiceToolkit,
     ServiceResponse,
     ServiceExecStatus,
 )
@@ -60,12 +60,12 @@ def execute_python_code(code: str) -> ServiceResponse:  # pylint: disable=C0301
 
 
 # Prepare the tools for the agent
-tools = [
-    ServiceFactory.get(bing_search, api_key=BING_API_KEY, num_results=3),
-    ServiceFactory.get(execute_python_code),
-    ServiceFactory.get(read_text_file),
-    ServiceFactory.get(write_text_file),
-]
+service_toolkit = ServiceToolkit()
+
+service_toolkit.add(bing_search, api_key=BING_API_KEY, num_results=3)
+service_toolkit.add(execute_python_code)
+service_toolkit.add(read_text_file)
+service_toolkit.add(write_text_file)
 
 agentscope.init(model_configs=YOUR_MODEL_CONFIGURATION)
 
@@ -74,7 +74,7 @@ agent = ReActAgent(
     name="assistant",
     model_config_name=YOUR_MODEL_CONFIGURATION_NAME,
     verbose=True,
-    tools=tools,
+    service_toolkit=service_toolkit,
 )
 user = UserAgent(name="User")
 

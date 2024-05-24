@@ -17,6 +17,8 @@
 
 * `sys_prompt`（系统提示）和`engine`（引擎）：系统提示作为预定义的指令，指导agent在其互动中的行为；而engine用于动态生成合适的提示。关于它们的更多细节，我们会在[提示引擎部分](206-prompt)讨论。
 
+* `to_dist`（分布式）：用于创建 agent 的分布式版本，以支持多 agent 的高效协作。请注意`to_dist`是一个保留字段，将自动添加到`AgentBase`所有子类的初始化函数中。关于 `to_dist` 的更多细节，请见[分布式部分](208-distribute)。
+
 除了这些属性，`AgentBase` 还为agent提供了一些关键方法，如 `observe` 和 `reply`：
 
 * `observe()`：通过这个方法，一个agent可以注意到消息而不立即回复，允许它根据观察到的消息更新它的记忆。

@@ -14,7 +14,9 @@ Currently, AgentScope supports the following model service APIs:
 - OpenAI API, including chat, image generation (DALL-E), and Embedding.
 - DashScope API, including chat, image sythesis and text embedding.
 - Gemini API, including chat and embedding.
+- ZhipuAI API, including chat and embedding.
 - Ollama API, including chat, embedding and generation.
+- LiteLLM API, including chat, with various model APIs.
 - Post Request API, model inference services based on Post
   requests, including Huggingface/ModelScope Inference API and various
   post request based model APIs.
@@ -81,10 +83,16 @@ In the current AgentScope, the supported `model_type` types, the corresponding
 |                        | Multimodal      | [`DashScopeMultiModalWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py)     | `"dashscope_multimodal"`      | qwen-vl-plus, qwen-vl-max, qwen-audio-turbo, ... |
 | Gemini API             | Chat            | [`GeminiChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py)                 | `"gemini_chat"`               | gemini-pro, ...                                  |
 |                        | Embedding       | [`GeminiEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py)            | `"gemini_embedding"`          | models/embedding-001, ...                        |
+| ZhipuAI API             | Chat            | [`ZhipuAIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/zhipu_model.py)                 | `"zhipuai_chat"`               | glm4, ...                                  |
+|                        | Embedding       | [`ZhipuAIEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/zhipu_model.py)            | `"zhipuai_embedding"`          | embedding-2, ...                        |
 | ollama                 | Chat            | [`OllamaChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)                 | `"ollama_chat"`               | llama2, ...                                      |
 |                        | Embedding       | [`OllamaEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)            | `"ollama_embedding"`          | llama2, ...                                      |
 |                        | Generation      | [`OllamaGenerationWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)           | `"ollama_generate"`           | llama2, ...                                      |
+| LiteLLM API | Chat               | [`LiteLLMChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py)             | `"litellm_chat"`                  | -                                                |
 | Post Request based API | -               | [`PostAPIModelWrapperBase`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)             | `"post_api"`                  | -                                                |
+|                        | Chat            | [`PostAPIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)                  | `"post_api_chat"`             | meta-llama/Meta-Llama-3-8B-Instruct, ...         |
+|                        | Image Synthesis | [`PostAPIDALLEWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)                 | `post_api_dall_e`             | -                                                |                                                  |
+|                        | Embedding       | [`PostAPIEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)             | `post_api_embedding`          | -                                                |
 
 #### Detailed Parameters
 
@@ -302,6 +310,48 @@ Here we provide example configurations for different model wrappers.
 
 <br/>
 
+
+#### ZhipuAI API
+
+<details>
+<summary>ZhipuAI Chat API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/zhipu_model.py">agentscope.models.ZhipuAIChatWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_zhipuai_chat_config",
+    "model_type": "zhipuai_chat",
+
+    # Required parameters
+    "model_name": "{model_name}",               # The model name in ZhipuAI API, e.g. glm-4
+
+    # Optional parameters
+    "api_key": "{your_api_key}"
+}
+```
+
+</details>
+
+<details>
+<summary>ZhipuAI Embedding API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/zhipu_model.py">agentscope.models.ZhipuAIEmbeddingWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_zhipuai_embedding_config",
+    "model_type": "zhipuai_embedding",
+
+    # Required parameters
+    "model_name": "{model_name}",               # The model name in ZhipuAI API, e.g. embedding-2
+
+    # Optional parameters
+    "api_key": "{your_api_key}",
+}
+```
+
+</details>
+
+<br/>
+
+
 #### Ollama API
 
 <details>
@@ -369,10 +419,102 @@ Here we provide example configurations for different model wrappers.
 
 <br/>
 
+#### LiteLLM Chat API
+
+<details>
+<summary>LiteLLM Chat API (<code><a href="https://github.
+com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py">agentscope.models.LiteLLMChatModelWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "lite_llm_openai_chat_gpt-3.5-turbo",
+    "model_type": "litellm_chat",
+    "model_name": "gpt-3.5-turbo" # You should note that for different models, you should set the corresponding environment variables, such as OPENAI_API_KEY, etc. You may refer to https://docs.litellm.ai/docs/ for this.
+},
+```
+
+</details>
+
+<br/>
+
 #### Post Request API
 
 <details>
-<summary>Post request API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIModelWrapperBase</a></code>)</summary>
+<summary>Post Request Chat API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIChatWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_postapichatwrapper_config",
+    "model_type": "post_api_chat",
+
+    # Required parameters
+    "api_url": "https://xxx.xxx",
+    "headers": {
+        # e.g. "Authorization": "Bearer xxx",
+    },
+
+    # Optional parameters
+    "messages_key": "messages",
+}
+```
+> ⚠️ The Post Request Chat model wrapper (`PostAPIChatWrapper`) has the following properties:
+> 1) The `.format()` function makes sure the input messages become a list of dicts.
+> 2) The `._parse_response()` function assumes the generated text will be in `response["data"]["response"]["choices"][0]["message"]["content"]`
+
+</details>
+
+
+
+<details>
+<summary>Post Request Image Synthesis API  (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIDALLEWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_postapiwrapper_config",
+    "model_type": "post_api_dall_e",
+
+    # Required parameters
+    "api_url": "https://xxx.xxx",
+    "headers": {
+        # e.g. "Authorization": "Bearer xxx",
+    },
+
+    # Optional parameters
+    "messages_key": "messages",
+}
+```
+> ⚠️ The Post Request Image Synthesis model wrapper (`PostAPIDALLEWrapper`) has the following properties:
+> 1) The `._parse_response()` function assumes the generated image will be presented as urls in `response["data"]["response"]["data"][i]["url"]`
+
+</details>
+
+
+<details>
+<summary>Post Request Embedding API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIEmbeddingWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_postapiwrapper_config",
+    "model_type": "post_api_embedding",
+
+    # Required parameters
+    "api_url": "https://xxx.xxx",
+    "headers": {
+        # e.g. "Authorization": "Bearer xxx",
+    },
+
+    # Optional parameters
+    "messages_key": "messages",
+}
+```
+> ⚠️ The Post Request Embedding model wrapper (`PostAPIEmbeddingWrapper`) has the following properties:
+> 1) The `._parse_response()` function assumes the generated embeddings will be in `response["data"]["response"]["data"][i]["embedding"]`
+
+</details>
+
+
+<details>
+<summary>Post Request API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIModelWrapperBase</a></code>)</summary>
 
 ```python
 {
@@ -389,8 +531,13 @@ Here we provide example configurations for different model wrappers.
     "messages_key": "messages",
 }
 ```
+> ⚠️ Post Request model wrapper (`PostAPIModelWrapperBase`) returns raw HTTP responses from the API in ModelResponse, and the `.format()` is not implemented. It is recommended to use `Post Request Chat API` when running examples with chats.
+> `PostAPIModelWrapperBase` can be used when
+> 1) only the raw HTTP response is wanted and `.format()` is not called;
+> 2) Or, the developers want to overwrite the `.format()` and/or `._parse_response()` functions.
 
 </details>
+
 
 <br/>
 

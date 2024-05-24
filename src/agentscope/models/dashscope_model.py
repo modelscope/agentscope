@@ -11,7 +11,7 @@ from ..utils.tools import _convert_to_str, _guess_type_by_extension
 
 try:
     import dashscope
-except ModuleNotFoundError:
+except ImportError:
     dashscope = None
 
 from .model import ModelWrapperBase, ModelResponse
@@ -505,18 +505,10 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapperBase):
         )
 
         # step5: return response
-        if len(response.output["embeddings"]) == 0:
-            return ModelResponse(
-                embedding=response.output["embedding"][0],
-                raw=response,
-            )
-        else:
-            return ModelResponse(
-                embedding=[
-                    _["embedding"] for _ in response.output["embeddings"]
-                ],
-                raw=response,
-            )
+        return ModelResponse(
+            embedding=[_["embedding"] for _ in response.output["embeddings"]],
+            raw=response,
+        )
 
 
 class DashScopeMultiModalWrapper(DashScopeWrapperBase):

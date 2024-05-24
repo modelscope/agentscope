@@ -1,6 +1,6 @@
 [{
-    "config_name": "post_api-flask_llama2-7b-chat-hf",
-    "model_type": "post_api",
+    "config_name": "post_api_chat-flask_llama2-7b-chat-hf",
+    "model_type": "post_api_chat",
     "api_url": "http://127.0.0.1:8000/llm/",
     "json_args": {
         "max_length": 4096,
@@ -8,8 +8,8 @@
     }
 },
 {
-    "config_name": "post_api-flask_llama2-7b-chat-ms",
-    "model_type": "post_api",
+    "config_name": "post_api_chat-flask_llama2-7b-chat-ms",
+    "model_type": "post_api_chat",
     "api_url": "http://127.0.0.1:8000/llm/",
     "json_args": {
         "max_length": 4096,
@@ -39,11 +39,43 @@
     }
 },
 {
-    "config_name": "post_api-model-inference-api-gpt2",
-    "model_type": "post_api",
+    "config_name": "post_api_chat-model-inference-api-gpt2",
+    "model_type": "post_api_chat",
     "headers": {
         "Authorization": "Bearer {YOUR_API_TOKEN}"
     },
     "api_url": "https://api-inference.huggingface.co/models/gpt2"
+},
+{
+    "config_name": "post_api_img_syn_config",
+    "model_type": "post_api_dall_e",
+    "api_url": "http://xxx.xxx.xxx.xxx:xxxx/xxx",
+    "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer {YOUR_API_TOKEN}"
+    },
+    "messages_key": "prompt",
+    "json_args": {
+        "model": "{YOUR_MODEL}",
+        "n":1,
+        "quality":"standard",
+        "response_format":"url",
+        "size":"512x512",
+        "style":"natural"
+    }
+},
+{
+    "config_name": "post_api_embedding_config",
+    "model_type": "post_api_embedding",
+    "api_url": "http://xxx.xxx.xxx.xxx:xxxx/xxx",
+    "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer {YOUR_API_TOKEN}"
+    },
+    "messages_key": "input",
+    "json_args": {
+        "model": "{YOUR_MODEL}",
+        "encoding_format": "float"
+    }
 }
 ]

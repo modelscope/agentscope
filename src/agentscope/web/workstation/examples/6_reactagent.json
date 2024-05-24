@@ -1,0 +1,105 @@
+{
+  "2": {
+    "name": "dashscope_chat",
+    "data": {
+      "args": {
+        "config_name": "qwen",
+        "model_name": "qwen-max",
+        "api_key": "************",
+        "temperature": 0.1,
+        "seed": 1,
+        "model_type": "dashscope_chat",
+        "messages_key": "input"
+      }
+    },
+    "inputs": {},
+    "outputs": {}
+  },
+  "3": {
+    "name": "ReActAgent",
+    "data": {
+      "elements": [
+        "7",
+        "5",
+        "6",
+        "8"
+      ],
+      "args": {
+        "name": "Alice",
+        "sys_prompt": "You are Alice",
+        "model_config_name": "qwen",
+        "max_iters": 10,
+        "verbose": "True"
+      }
+    },
+    "inputs": {
+      "input_1": {
+        "connections": [
+          {
+            "node": "4",
+            "input": "output_1"
+          }
+        ]
+      }
+    },
+    "outputs": {
+      "output_1": {
+        "connections": []
+      }
+    }
+  },
+  "4": {
+    "name": "Message",
+    "data": {
+      "args": {
+        "name": "Host",
+        "content": "Hello",
+        "url": ""
+      }
+    },
+    "inputs": {
+      "input_1": {
+        "connections": []
+      }
+    },
+    "outputs": {
+      "output_1": {
+        "connections": [
+          {
+            "node": "3",
+            "output": "input_1"
+          }
+        ]
+      }
+    }
+  },
+  "5": {
+    "name": "BingSearchService",
+    "data": {
+      "args": {
+        "api_key": "************",
+        "num_results": 3
+      }
+    },
+    "inputs": {},
+    "outputs": {}
+  },
+  "6": {
+    "name": "PythonService",
+    "data": {},
+    "inputs": {},
+    "outputs": {}
+  },
+  "7": {
+    "name": "ReadTextService",
+    "data": {},
+    "inputs": {},
+    "outputs": {}
+  },
+  "8": {
+    "name": "WriteTextService",
+    "data": {},
+    "inputs": {},
+    "outputs": {}
+  }
+}

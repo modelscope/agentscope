@@ -11,7 +11,9 @@ AgentScope中，模型的部署和调用是通过`ModelWrapper`来解耦开的�
 - OpenAI API，包括对话（Chat），图片生成（DALL-E)和文本嵌入（Embedding）。
 - DashScope API，包括对话（Chat）和图片生成（Image Sythesis)和文本嵌入（Text Embedding)。
 - Gemini API，包括对话（Chat）和嵌入（Embedding）。
+- ZhipuAi API，包括对话（Chat）和嵌入（Embedding）。
 - Ollama API，包括对话（Chat），嵌入（Embedding）和生成（Generation）。
+- LiteLLM API, 包括对话（Chat）, 支持各种模型的API.
 - Post请求API，基于Post请求实现的模型推理服务，包括Huggingface/ModelScope
   Inference API和各种符合Post请求格式的API。
 
@@ -92,7 +94,7 @@ API如下：
 
 | API                    | Task            | Model Wrapper                                                                                                                   | `model_type`                  | Some Supported Models                            |
 |------------------------|-----------------|---------------------------------------------------------------------------------------------------------------------------------|-------------------------------|--------------------------------------------------|
-| OpenAI API             | Chat            | [`OpenAIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)                 | `"openai_chat"`                    | gpt-4, gpt-3.5-turbo, ...                        |
+| OpenAI API             | Chat            | [`OpenAIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)                 | `"openai_chat"`               | gpt-4, gpt-3.5-turbo, ...                        |
 |                        | Embedding       | [`OpenAIEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)            | `"openai_embedding"`          | text-embedding-ada-002, ...                      |
 |                        | DALL·E          | [`OpenAIDALLEWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py)                | `"openai_dall_e"`             | dall-e-2, dall-e-3                               |
 | DashScope API          | Chat            | [`DashScopeChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py)           | `"dashscope_chat"`            | qwen-plus, qwen-max, ...                         |
@@ -101,10 +103,16 @@ API如下：
 |                        | Multimodal      | [`DashScopeMultiModalWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py)     | `"dashscope_multimodal"`      | qwen-vl-plus, qwen-vl-max, qwen-audio-turbo, ... |
 | Gemini API             | Chat            | [`GeminiChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py)                 | `"gemini_chat"`               | gemini-pro, ...                                  |
 |                        | Embedding       | [`GeminiEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py)            | `"gemini_embedding"`          | models/embedding-001, ...                        |
+| ZhipuAI API            | Chat            | [`ZhipuAIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/zhipu_model.py)                 | `"zhipuai_chat"`              | glm-4, ...                                       |
+|                        | Embedding       | [`ZhipuAIEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/zhipu_model.py)            | `"zhipuai_embedding"`         | embedding-2, ...                                 |
 | ollama                 | Chat            | [`OllamaChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)                 | `"ollama_chat"`               | llama2, ...                                      |
 |                        | Embedding       | [`OllamaEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)            | `"ollama_embedding"`          | llama2, ...                                      |
 |                        | Generation      | [`OllamaGenerationWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)           | `"ollama_generate"`           | llama2, ...                                      |
+| LiteLLM API | Chat               | [`LiteLLMChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py)             | `"litellm_chat"`                  | -                                                |
 | Post Request based API | -               | [`PostAPIModelWrapperBase`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)             | `"post_api"`                  | -                                                |
+|                        | Chat            | [`PostAPIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)                  | `"post_api_chat"`             | meta-llama/Meta-Llama-3-8B-Instruct, ...         |
+|                        | Image Synthesis | [`PostAPIDALLEWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)                 | `post_api_dall_e`             | -                                                |                                                  |
+|                        | Embedding       | [`PostAPIEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)             | `post_api_embedding`          | -                                                |
 
 #### 详细参数
 
@@ -322,6 +330,48 @@ API如下：
 
 <br/>
 
+
+#### ZhipuAI API
+
+<details>
+<summary>ZhipuAI Chat API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/zhipu_model.py">agentscope.models.ZhipuAIChatWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_zhipuai_chat_config",
+    "model_type": "zhipuai_chat",
+
+    # Required parameters
+    "model_name": "{model_name}",               # The model name in ZhipuAI API, e.g. glm-4
+
+    # Optional parameters
+    "api_key": "{your_api_key}"
+}
+```
+
+</details>
+
+<details>
+<summary>ZhipuAI Embedding API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/zhipu_model.py">agentscope.models.ZhipuAIEmbeddingWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_zhipuai_embedding_config",
+    "model_type": "zhipuai_embedding",
+
+    # Required parameters
+    "model_name": "{model_name}",               # The model name in ZhipuAI API, e.g. embedding-2
+
+    # Optional parameters
+    "api_key": "{your_api_key}",
+}
+```
+
+</details>
+
+<br/>
+
+
 #### Ollama API
 
 <details>
@@ -389,10 +439,103 @@ API如下：
 
 <br/>
 
+
+#### LiteLLM Chat API
+
+<details>
+<summary>LiteLLM Chat API (<code><a href="https://github.
+com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py">agentscope.models.LiteLLMChatModelWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "lite_llm_openai_chat_gpt-3.5-turbo",
+    "model_type": "litellm_chat",
+    "model_name": "gpt-3.5-turbo" # You should note that for different models, you should set the corresponding environment variables, such as OPENAI_API_KEY, etc. You may refer to https://docs.litellm.ai/docs/ for this.
+},
+```
+
+</details>
+
+<br/>
+
+
 #### Post Request API
 
 <details>
-<summary>Post request API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIModelWrapperBase</a></code>)</summary>
+<summary>Post Request Chat API  (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIChatWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_postapiwrapper_config",
+    "model_type": "post_api_chat",
+
+    # Required parameters
+    "api_url": "https://xxx.xxx",
+    "headers": {
+        # e.g. "Authorization": "Bearer xxx",
+    },
+
+    # Optional parameters
+    "messages_key": "messages",
+}
+```
+> ⚠️ Post Request Chat model wrapper (`PostAPIChatWrapper`) 有以下特性：
+> 1) 它的 `.format()` 方法会确保输入的信息（messages）会被转换成字典列表（a list of dict）.
+> 2) 它的 `._parse_response()` 方法假设了生成的文字内容会在 `response["data"]["response"]["choices"][0]["message"]["content"]`
+
+</details>
+
+
+<details>
+<summary>Post Request Image Synthesis API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIDALLEWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_postapiwrapper_config",
+    "model_type": "post_api_dall_e",
+
+    # Required parameters
+    "api_url": "https://xxx.xxx",
+    "headers": {
+        # e.g. "Authorization": "Bearer xxx",
+    },
+
+    # Optional parameters
+    "messages_key": "messages",
+}
+```
+> ⚠️  Post Request Image Synthesis model wrapper (`PostAPIDALLEWrapper`) 有以下特性:
+> 1) 它的 `._parse_response()` 方法假设生成的图片都以url的形式表示在`response["data"]["response"]["data"][i]["url"]`
+
+
+</details>
+
+<details>
+<summary>Post Request Embedding API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIEmbeddingWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "my_postapiwrapper_config",
+    "model_type": "post_api_embedding",
+
+    # Required parameters
+    "api_url": "https://xxx.xxx",
+    "headers": {
+        # e.g. "Authorization": "Bearer xxx",
+    },
+
+    # Optional parameters
+    "messages_key": "messages",
+}
+```
+
+> ⚠️ Post Request Embedding model wrapper (`PostAPIEmbeddingWrapper`) 有以下特性:
+> 1) 它的 `._parse_response()`方法假设生成的特征向量会存放在 `response["data"]["response"]["data"][i]["embedding"]`
+
+</details>
+
+<details>
+<summary>Post Request API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIModelWrapperBase</a></code>)</summary>
 
 ```python
 {
@@ -409,8 +552,16 @@ API如下：
     "messages_key": "messages",
 }
 ```
+> ⚠️ Post request model wrapper (`PostAPIModelWrapperBase`) 返回原生的 HTTP 响应值， 且没有实现 `.format()`. 当运行样例时，推荐使用 `Post Request Chat API`.
+> 使用`PostAPIModelWrapperBase`时，需要注意
+> 1) `.format()` 方法不能被调用；
+> 2) 或开发者希望实现自己的`.format()`和/或`._parse_response()`
 
 </details>
+
+
+
+
 
 <br/>
 
