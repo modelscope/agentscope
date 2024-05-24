@@ -22,6 +22,15 @@ More details please refer to our tutorial:
 - [Parser](https://modelscope.github.io/agentscope/en/tutorial/203-parser.html)
 - [Pipeline and msghub](https://modelscope.github.io/agentscope/en/tutorial/202-pipeline.html)
 
+
+
+
+https://github.com/DavdGao/AgentScope/assets/102287034/86951418-e1cc-486b-a3dc-b237a0108994
+
+
+
+
+
 ## Tested Models
 
 This example has been tested with the following models:
