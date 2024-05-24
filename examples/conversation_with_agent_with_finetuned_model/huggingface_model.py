@@ -385,42 +385,6 @@ class HuggingFaceWrapper(ModelWrapperBase):
             )
             raise
 
-    def filer_sequence_lengths(
-        self,
-        max_input_seq_length: int,
-        dataset_obj: List[Dict[str, List[str]]],
-    ) -> List[int]:
-        """
-        Identifies and returns the indices of conversation
-          entries that exceed max_input_seq_length characters in length.
-
-        Args:
-            dataset_obj (List[Dict[str, List[str]]]): A list where
-                each dictionary contains 'conversations',
-                a list of two strings (question and answer).
-
-        Returns:
-            List[int]: Indices of conversations where the combined
-            length of the question and answer exceeds
-            max_input_seq_length characters.
-        """
-        # Initialize a list to store the sequence lengths
-        sequence_lengths = []
-
-        # list of indices that are too long
-        too_long = []
-
-        # Loop over the dataset and get the lengths of text sequences
-        for idx, example in enumerate(dataset_obj):
-            sequence_length = len(
-                example["conversations"][0] + example["conversations"][1],
-            )
-            sequence_lengths.append(sequence_length)
-            if sequence_length > max_input_seq_length:
-                too_long.append(idx)
-
-        return too_long
-
     def formatting_prompts_func(
         self,
         example: Dict[str, List[List[str]]],
@@ -495,10 +459,10 @@ class HuggingFaceWrapper(ModelWrapperBase):
 
         dataset = load_dataset(data_path, split="train", token=token)
 
-        indexes_to_drop = self.filer_sequence_lengths(300, dataset)
-
-        dataset_reduced = dataset.select(
-            i for i in range(len(dataset)) if i not in set(indexes_to_drop)
+        # filter out input sequences that are longer than certain threshold
+        dataset_reduced = dataset.filter(
+            lambda x: len(x["conversations"][0] + x["conversations"][1])
+            <= 1000,
         )
 
         formatted_dataset = dataset_reduced.train_test_split(test_size=0.1)
