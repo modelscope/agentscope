@@ -164,17 +164,17 @@ class GeminiChatWrapper(GeminiWrapperBase):
                         "Generation stopped because the candidate "
                         "content was flagged for safety reasons. ",
                     )
-                elif finish_reason == 4:
+                if finish_reason == 4:
                     raise ValueError(
                         "Generation stopped because the candidate "
                         "content was flagged for recitation reasons.",
                     )
-                elif finish_reason == 5:
+                if finish_reason == 5:
                     raise ValueError(
                         "Generation stopped due to an Unknown reason.",
                     )
-                else:
-                    raise ValueError(f"Unknown finish reason: {finish_reason}")
+
+                raise ValueError(f"Unknown finish reason: {finish_reason}")
 
             if (
                 not candidate.content
