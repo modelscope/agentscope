@@ -114,8 +114,12 @@
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">google.generativeai</span> <span class="k">as</span> <span class="nn">genai</span>
+
+    <span class="c1"># This package will be installed when the google-generativeai is installed</span>
+    <span class="kn">import</span> <span class="nn">google.ai.generativelanguage</span> <span class="k">as</span> <span class="nn">glm</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">genai</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">glm</span> <span class="o">=</span> <span class="kc">None</span>
 
 
 <div class="viewcode-block" id="GeminiWrapperBase">
@@ -146,6 +150,13 @@
 <span class="sd">                loaded from environment variable.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_name</span><span class="o">=</span><span class="n">config_name</span><span class="p">)</span>
+
+        <span class="c1"># Test if the required package is installed</span>
+        <span class="k">if</span> <span class="n">genai</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="s2">&quot;The google-generativeai package is not installed, &quot;</span>
+                <span class="s2">&quot;please install it first.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="c1"># Load the api_key from argument or environment variable</span>
         <span class="n">api_key</span> <span class="o">=</span> <span class="n">api_key</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;GOOGLE_API_KEY&quot;</span><span class="p">)</span>
@@ -264,7 +275,50 @@
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="c1"># step3: record the api invocation if needed</span>
+        <span class="c1"># step3: Check for candidates and handle accordingly</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="n">response</span><span class="o">.</span><span class="n">candidates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">content</span>
+            <span class="ow">or</span> <span class="ow">not</span> <span class="n">response</span><span class="o">.</span><span class="n">candidates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">parts</span>
+            <span class="ow">or</span> <span class="ow">not</span> <span class="n">response</span><span class="o">.</span><span class="n">candidates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span>
+        <span class="p">):</span>
+            <span class="c1"># If we cannot get the response text from the model</span>
+            <span class="n">finish_reason</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">candidates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">finish_reason</span>
+            <span class="n">reasons</span> <span class="o">=</span> <span class="n">glm</span><span class="o">.</span><span class="n">Candidate</span><span class="o">.</span><span class="n">FinishReason</span>
+
+            <span class="k">if</span> <span class="n">finish_reason</span> <span class="o">==</span> <span class="n">reasons</span><span class="o">.</span><span class="n">STOP</span><span class="p">:</span>
+                <span class="n">error_info</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s2">&quot;Natural stop point of the model or provided stop &quot;</span>
+                    <span class="s2">&quot;sequence.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">finish_reason</span> <span class="o">==</span> <span class="n">reasons</span><span class="o">.</span><span class="n">MAX_TOKENS</span><span class="p">:</span>
+                <span class="n">error_info</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s2">&quot;The maximum number of tokens as specified in the request &quot;</span>
+                    <span class="s2">&quot;was reached.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">finish_reason</span> <span class="o">==</span> <span class="n">reasons</span><span class="o">.</span><span class="n">SAFETY</span><span class="p">:</span>
+                <span class="n">error_info</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s2">&quot;The candidate content was flagged for safety reasons.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">finish_reason</span> <span class="o">==</span> <span class="n">reasons</span><span class="o">.</span><span class="n">RECITATION</span><span class="p">:</span>
+                <span class="n">error_info</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s2">&quot;The candidate content was flagged for recitation reasons.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">finish_reason</span> <span class="ow">in</span> <span class="p">[</span>
+                <span class="n">reasons</span><span class="o">.</span><span class="n">FINISH_REASON_UNSPECIFIED</span><span class="p">,</span>
+                <span class="n">reasons</span><span class="o">.</span><span class="n">OTHER</span><span class="p">,</span>
+            <span class="p">]:</span>
+                <span class="n">error_info</span> <span class="o">=</span> <span class="s2">&quot;Unknown error.&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">error_info</span> <span class="o">=</span> <span class="s2">&quot;No information provided from Gemini API.&quot;</span>
+
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The Google Gemini API failed to generate text response with &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;the following finish reason: </span><span class="si">{</span><span class="n">error_info</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;YOUR INPUT: </span><span class="si">{</span><span class="n">contents</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;RAW RESPONSE FROM GEMINI API: </span><span class="si">{</span><span class="n">response</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># step4: record the api invocation if needed</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_save_model_invocation</span><span class="p">(</span>
             <span class="n">arguments</span><span class="o">=</span><span class="p">{</span>
                 <span class="s2">&quot;contents&quot;</span><span class="p">:</span> <span class="n">contents</span><span class="p">,</span>
@@ -275,9 +329,6 @@
         <span class="p">)</span>
 
         <span class="c1"># step5: update monitor accordingly</span>
-        <span class="c1"># TODO: Up to 2024/03/11, the response from Gemini doesn&#39;t contain</span>
-        <span class="c1">#  the detailed information about cost. Here we simply count</span>
-        <span class="c1">#  the tokens manually.</span>
         <span class="n">token_prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">count_tokens</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span><span class="o">.</span><span class="n">total_tokens</span>
         <span class="n">token_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">count_tokens</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">total_tokens</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_monitor</span><span class="p">(</span>
