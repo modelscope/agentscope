@@ -70,7 +70,7 @@ def main() -> None:
                     ),
                 )
                 set_parsers(witch, Prompts.witch_resurrect_parser)
-                if witch(hint).metadata.get("recurrent", False):
+                if witch(hint).metadata.get("resurrect", False):
                     healing_used_tonight = True
                     dead_player.pop()
                     healing = False
