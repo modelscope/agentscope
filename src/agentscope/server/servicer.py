@@ -14,25 +14,24 @@ try:
     from grpc import ServicerContext
     from google.protobuf.empty_pb2 import Empty
     from expiringdict import ExpiringDict
-    import agentscope.rpc.rpc_agent_pb2 as agent_pb2
-    from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentServicer
 except ImportError as import_error:
     from agentscope.utils.tools import ImportErrorReporter
 
     dill = ImportErrorReporter(import_error, "distribute")
     psutil = ImportErrorReporter(import_error, "distribute")
     grpc = ImportErrorReporter(import_error, "distribute")
+    ServicerContext = ImportErrorReporter(import_error, "distribute")
     Empty = ImportErrorReporter(  # type: ignore[misc]
         import_error,
         "distribute",
     )
-    ServicerContext = ImportErrorReporter(import_error, "distribute")
     ExpiringDict = ImportErrorReporter(import_error, "distribute")
     # agent_pb2 = ImportErrorReporter(import_error, "distribute")
-    RpcAgentServicer = ImportErrorReporter(import_error, "distribute")
 
-from ..agents.agent import AgentBase
-from ..message import (
+import agentscope.rpc.rpc_agent_pb2 as agent_pb2
+from agentscope.agents.agent import AgentBase
+from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentServicer
+from agentscope.message import (
     Msg,
     PlaceholderMessage,
     deserialize,

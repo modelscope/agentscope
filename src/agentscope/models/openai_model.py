@@ -522,13 +522,7 @@ class OpenAIEmbeddingWrapper(OpenAIWrapperBase):
 
         # step5: return response
         response_json = response.model_dump()
-        if len(response_json["data"]) == 0:
-            return ModelResponse(
-                embedding=response_json["data"]["embedding"][0],
-                raw=response_json,
-            )
-        else:
-            return ModelResponse(
-                embedding=[_["embedding"] for _ in response_json["data"]],
-                raw=response_json,
-            )
+        return ModelResponse(
+            embedding=[_["embedding"] for _ in response_json["data"]],
+            raw=response_json,
+        )
