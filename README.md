@@ -39,8 +39,6 @@ Welcome to join our community on
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-04-30]** We release **AgentScope** v0.0.4 now!
 
-- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-04-27]** [AgentScope Workstation](https://agentscope.aliyun.com/) is now online! You are welcome to try building your multi-agent application simply with our *drag-and-drop platform* and ask our *copilot* questions about AgentScope!
-
 - **[2024-04-19]** AgentScope supports Llama3 now! We provide [scripts](./examples/model_llama3) and example [model configuration](./examples/model_llama3) for quick set-up. Feel free to try llama3 in our examples!
 
 - **[2024-04-06]** We release **AgentScope** v0.0.3 now!
@@ -68,7 +66,7 @@ to build multi-agent applications with large-scale models.
 It features three high-level capabilities:
 
 - 🤝 **Easy-to-Use**: Designed for developers, with [fruitful components](https://modelscope.github.io/agentscope/en/tutorial/204-service.html#),
-[comprehensive documentation](https://modelscope.github.io/agentscope/en/index.html), and broad compatibility. Besides, [AgentScope Workstation](https://agentscope.aliyun.com/) provides a *drag-and-drop programming platform* and a *copilot* for beginners of AgentScope!
+[comprehensive documentation](https://modelscope.github.io/agentscope/en/index.html), and broad compatibility. Besides, AgentScope Workstation (open-source version coming soon) provides a *drag-and-drop programming platform* for beginners of AgentScope!
 
 - ✅ **High Robustness**: Supporting customized fault-tolerance controls and
 retry mechanisms to enhance application stability.
