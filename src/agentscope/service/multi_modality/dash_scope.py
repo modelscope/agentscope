@@ -9,7 +9,7 @@ from typing import Union, Tuple
 
 import os
 import requests
-import nest_asyncio
+
 
 import dashscope
 from dashscope.audio.tts import SpeechSynthesizer
@@ -206,9 +206,6 @@ def dashscope_text_to_audio(
         'content': {"audio_path": "AUDIO_RELATEIVE_PATH"}}
     """
     dashscope.api_key = api_key
-    # if nested_asyncio is not applied,
-    # error will occur when calling the API
-    nest_asyncio.apply()
     res = SpeechSynthesizer.call(
         model=model,
         text=text,
