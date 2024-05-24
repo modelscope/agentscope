@@ -113,7 +113,6 @@
     <span class="kn">from</span> <span class="nn">grpc</span> <span class="kn">import</span> <span class="n">ServicerContext</span>
     <span class="kn">from</span> <span class="nn">expiringdict</span> <span class="kn">import</span> <span class="n">ExpiringDict</span>
     <span class="kn">from</span> <span class="nn">..rpc.rpc_agent_pb2</span> <span class="kn">import</span> <span class="n">RpcMsg</span>  <span class="c1"># pylint: disable=E0611</span>
-    <span class="kn">from</span> <span class="nn">..rpc.rpc_agent_pb2_grpc</span> <span class="kn">import</span> <span class="n">RpcAgentServicer</span>
 <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">import_error</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">agentscope.utils.tools</span> <span class="kn">import</span> <span class="n">ImportErrorReporter</span>
 
@@ -125,9 +124,9 @@
         <span class="n">import_error</span><span class="p">,</span>
         <span class="s2">&quot;distribute&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">RpcAgentServicer</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;distribute&quot;</span><span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">..agents.agent</span> <span class="kn">import</span> <span class="n">AgentBase</span>
+<span class="kn">from</span> <span class="nn">..rpc.rpc_agent_pb2_grpc</span> <span class="kn">import</span> <span class="n">RpcAgentServicer</span>
 <span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Msg</span><span class="p">,</span>
     <span class="n">PlaceholderMessage</span><span class="p">,</span>
