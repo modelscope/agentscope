@@ -58,7 +58,10 @@ class Prompts:
         keys_to_metadata=["resurrect"],
     )
 
-    to_witch_poison = "Would you like to eliminate one player?"
+    to_witch_poison = (
+        "Would you like to eliminate one player? If yes, "
+        "specify the player_name."
+    )
 
     witch_poison_parser = MarkdownJsonDictParser(
         content_hint={
