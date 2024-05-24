@@ -78,7 +78,7 @@ json.loads() in python
 }}
 ```
 
-With the arguments `parse_func`, `fault_handler`, and `max_retries` in [`DictDialogAgent`](../../src/agentscope/agents/dict_dialog_agent.py), we can directly use the variable `x.agreement` to know if the discussion reached an agreement.
+With the `parser` parameter in [`DictDialogAgent`](../../src/agentscope/agents/dict_dialog_agent.py), we can directly use the variable `x.metadata.get("finish_discussion", False)` to know if the discussion reached an agreement.
 
 More details please refer to the code of [`DictDialogAgent`](../../src/agentscope/agents/dict_dialog_agent.py) and our documents.
 
@@ -87,7 +87,27 @@ More details please refer to the code of [`DictDialogAgent`](../../src/agentscop
     with msghub(wolves, announcement=hint) as hub:
         for _ in range(MAX_WEREWOLF_DISCUSSION_ROUND):
             x = sequentialpipeline(wolves)
-            if x.get("agreement", False):
+            if x.metadata.get("finish_discussion", False):
                 break
     # ...
 ```
+
+### Parser
+
+The parser is used to specify the required fields in the agent's response and how to handle them. Here's an example of a parser configuration:
+
+```python
+to_wolves_vote = "Which player do you vote to kill?"
+
+wolves_vote_parser = MarkdownJsonDictParser(
+    content_hint={
+        "thought": "what you thought",
+        "speak": "player_name",
+    },
+    required_keys=["thought", "speak"],
+    keys_to_memory="speak",
+    keys_to_content="speak",
+)
+```
+
+In this example, the `MarkdownJsonDictParser` is used to parse the agent's response. The `content_hint` parameter specifies the expected fields and their descriptions. The `required_keys` parameter indicates the mandatory fields in the response. The `keys_to_memory` and `keys_to_content` parameters determine which fields should be stored in memory and included in the content of the returned message, respectively.
