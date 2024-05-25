@@ -2,7 +2,7 @@
 """
 This script sets up a conversational agent using
 AgentScope with a Hugging Face model.
-It includes initializing a Finetune_DialogAgent,
+It includes initializing a FinetuneDialogAgent,
 loading and fine-tuning a pre-trained model,
 and conducting a dialogue via a sequential pipeline.
 The conversation continues until the user exits.
@@ -11,7 +11,7 @@ and fine-tuning on the lima dataset with adjustable parameters.
 """
 # pylint: disable=unused-import
 from huggingface_model import HuggingFaceWrapper
-from finetune_dialogagent import Finetune_DialogAgent
+from FinetuneDialogAgent import FinetuneDialogAgent
 import agentscope
 from agentscope.agents.user_agent import UserAgent
 from agentscope.pipelines.functional import sequentialpipeline
@@ -66,7 +66,7 @@ def main() -> None:
     # )
 
     # Init agents with the custom model
-    dialog_agent = Finetune_DialogAgent(
+    dialog_agent = FinetuneDialogAgent(
         name="Assistant",
         sys_prompt=(
             "Explain in simple terms how the attention mechanism of "

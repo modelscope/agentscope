@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-This module provides the Finetune_DialogAgent class,
+This module provides the FinetuneDialogAgent class,
 which extends DialogAgent to enhance fine-tuning
 capabilities with custom hyperparameters.
 """
@@ -11,7 +11,7 @@ from loguru import logger
 from agentscope.agents import DialogAgent
 
 
-class Finetune_DialogAgent(DialogAgent):
+class FinetuneDialogAgent(DialogAgent):
     """
     A dialog agent capable of fine-tuning its
     underlying model based on provided data.
@@ -29,7 +29,7 @@ class Finetune_DialogAgent(DialogAgent):
         memory_config: Optional[dict] = None,
     ):
         """
-        Initializes a new Finetune_DialogAgent with specified configuration.
+        Initializes a new FinetuneDialogAgent with specified configuration.
 
         Arguments:
             name (str): Name of the agent.

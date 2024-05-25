@@ -9,7 +9,7 @@ Compared to basic conversation setup, this example introduces model loading and 
 - Initialize an agent or use `dialog_agent.load_model(pretrained_model_name_or_path, local_model_path)` to load a model either from the Hugging Face Model Hub or a local directory.
 - Initalize an agent or apply `dialog_agent.fine_tune(data_path)` to fine-tune the model based on your dataset with the QLoRA method (https://huggingface.co/blog/4bit-transformers-bitsandbytes).
 
-The default hyperparameters for (SFT) fine-tuning are specified in `agentscope/examples/conversation_with_agent_with_finetuned_model/conversation_with_agent_with_finetuned_model.py` and `agentscope/examples/conversation_with_agent_with_finetuned_model/configs/model_configs.json`. For customized hyperparameters, specify them in `model_configs` if the model needs to be fine-tuned at initialization, or specify through `fine_tune_config` in `Finetune_DialogAgent`'s `fine_tune` method after initialization, as shown in the example script `conversation_with_agent_with_finetuned_model.py`.
+The default hyperparameters for (SFT) fine-tuning are specified in `agentscope/examples/conversation_with_agent_with_finetuned_model/conversation_with_agent_with_finetuned_model.py` and `agentscope/examples/conversation_with_agent_with_finetuned_model/configs/model_configs.json`. For customized hyperparameters, specify them in `model_configs` if the model needs to be fine-tuned at initialization, or specify through `fine_tune_config` in `FinetuneDialogAgent`'s `fine_tune` method after initialization, as shown in the example script `conversation_with_agent_with_finetuned_model.py`.
 
 ## Agent Initialization
 
