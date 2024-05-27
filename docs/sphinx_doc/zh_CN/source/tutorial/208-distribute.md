@@ -249,8 +249,17 @@ b = AgentB(
 - `get_agent_info`: 该方法能够获取指定 `agent_id` 对应的 Agent 的信息，具体展示的信息内容取决于该 Agent 类的 `__str__` 方法的实现。
 
     ```python
+        agent_id = my_agent.agent_id
         agent_info = client.get_agent_info(agent_id)
         print(agent_info)  # { agent_id: "Agent Informations..." }
+    ```
+
+- `get_agent_memory`: 该方法能够获取指定 `agent_id` 对应 Agent 实例的 memory 内容。
+
+    ```python
+        agent_id = my_agent.agent_id
+        agent_memory = client.get_agent_memory(agent_id)
+        print(agent_memory) # [msg1, msg2, ...]
     ```
 
 - `get_server_info`：该方法能够获取该 Agent Server 进程的资源占用情况，包括 CPU 利用率、内存占用以及总运行时长。
@@ -258,6 +267,30 @@ b = AgentB(
     ```python
         server_info = client.get_server_info()
         print(server_info)  # { "CPU Percentage": xxx, "Memory Usage": xxx, "CPU Times": xxx }
+    ```
+
+- `set_model_configs`: 该方法可以将指定的模型配置信息设置到 Agent Server 进程中，新创建的 Agent 实例可以直接使用这些模型配置信息。
+
+    ```python
+        agent = MyAgent(  # 因为找不到 [my_openai] 模型而失败
+            # ...
+            model_config_name="my_openai",
+            to_dist={
+                # ...
+            }
+        )
+        client.set_model_configs([{
+            "config_name": "my_openai",
+            "model_type": "openai_chat",
+            # ...
+        }])
+        agent = MyAgent(  # 成功创建 Agent 实例
+            # ...
+            model_config_name="my_openai",
+            to_dist={
+                # ...
+            }
+        )
     ```
 
 ## 实现原理

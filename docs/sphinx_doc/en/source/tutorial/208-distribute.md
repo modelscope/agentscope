@@ -252,8 +252,17 @@ When running large-scale multi-agent applications, it's common to have multiple 
 - `get_agent_info`: With this method, you can fetch information about an agent specified by its `agent_id`. The details returned depend on how the `__str__` method is implemented in the respective Agent class.
 
     ```python
+        agent_id = my_agent.agent_id
         agent_info = client.get_agent_info(agent_id)
         print(agent_info)  # { agent_id: "Agent Informations..." }
+    ```
+
+- `get_agent_memory`: With this method, you can fetch the memory content of an agent specified by its `agent_id`.
+
+    ```python
+        agent_id = my_agent.agent_id
+        agent_memory = client.get_agent_memory(agent_id)
+        print(agent_memory) # [msg1, msg2, ...]
     ```
 
 - `get_server_info`：This method provides information about the resource utilization of the Agent Server process, including CPU usage, memory consumption, and total runtime.
@@ -261,6 +270,30 @@ When running large-scale multi-agent applications, it's common to have multiple 
     ```python
         server_info = client.get_server_info()
         print(server_info)  # { "CPU Percentage": xxx, "Memory Usage": xxx, "CPU Times": xxx }
+    ```
+
+- `set_model_configs`: This method set the specific model configs into the agent server, the agent created later can directly use these model configs.
+
+    ```python
+        agent = MyAgent(  # failed because the model config [my_openai] is not found
+            # ...
+            model_config_name="my_openai",
+            to_dist={
+                # ...
+            }
+        )
+        client.set_model_configs([{  # set the model config [my_openai]
+            "config_name": "my_openai",
+            "model_type": "openai_chat",
+            # ...
+        }])
+        agent = MyAgent(  # success
+            # ...
+            model_config_name="my_openai",
+            to_dist={
+                # ...
+            }
+        )
     ```
 
 ## Implementation
