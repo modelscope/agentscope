@@ -279,7 +279,7 @@ b = AgentB(
                 # ...
             }
         )
-        client.set_model_configs([{
+        client.set_model_configs([{  # 新增 [my_openai] 模型配置信息
             "config_name": "my_openai",
             "model_type": "openai_chat",
             # ...
