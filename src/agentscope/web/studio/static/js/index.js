@@ -40,7 +40,7 @@ function isScriptLoaded(src) {
 }
 
 // After loading different pages, we need to call the initialization function of this page
-function initializeTabPageByUrl(pageUrl, firstTime) {
+function initializeTabPageByUrl(pageUrl) {
     switch (pageUrl) {
         case 'static/html/dashboard.html':
             initializeDashboardPage();
@@ -84,13 +84,13 @@ function loadTabPage(pageUrl, javascriptUrl) {
                 script.src = javascriptUrl;
                 script.onload = function () {
                     // The first time we must initialize the page within the onload function to ensure the script is loaded
-                    initializeTabPageByUrl(pageUrl, true);
+                    initializeTabPageByUrl(pageUrl);
                 }
                 document.head.appendChild(script);
             } else {
                 console.log("Script already loaded for " + javascriptUrl);
                 // If is not the first time, we can directly call the initialization function
-                initializeTabPageByUrl(pageUrl, false);
+                initializeTabPageByUrl(pageUrl);
             }
 
             // Load the page content
