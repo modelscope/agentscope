@@ -13,7 +13,6 @@ try:
     from grpc import ServicerContext
     from expiringdict import ExpiringDict
     from ..rpc.rpc_agent_pb2 import RpcMsg  # pylint: disable=E0611
-    from ..rpc.rpc_agent_pb2_grpc import RpcAgentServicer
 except ImportError as import_error:
     from agentscope.utils.tools import ImportErrorReporter
 
@@ -25,9 +24,9 @@ except ImportError as import_error:
         import_error,
         "distribute",
     )
-    RpcAgentServicer = ImportErrorReporter(import_error, "distribute")
 
 from ..agents.agent import AgentBase
+from ..rpc.rpc_agent_pb2_grpc import RpcAgentServicer
 from ..message import (
     Msg,
     PlaceholderMessage,
