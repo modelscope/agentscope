@@ -1,24 +1,8 @@
-:root {
-    --dashboard-titlebar-height: 60px;
-    --dashboard-content-height: calc(100% - var(--dashboard-titlebar-height));
-}
-
 #dashboard-panel {
     display: flex;
     height: 100%;
     width: 100%;
     flex-direction: column;
-}
-
-#dashboard-titlebar {
-    display: flex;
-    width: 100%;
-    height: var(--dashboard-titlebar-height);
-    flex-direction: row;
-    align-items: center;
-    border-bottom: 1px solid var(--border-color);
-    box-sizing: border-box;
-    padding: 0 20px;
 }
 
 .dashboard-titlebar-span {
@@ -39,7 +23,7 @@
 
 #dashboard-content {
     display: flex;
-    height: var(--dashboard-content-height);
+    height: var(--page-content-height);
     width: 100%;
     flex-direction: row;
 }

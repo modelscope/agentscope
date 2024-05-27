@@ -2,12 +2,20 @@
     --tab-btn-icon-length: 20px;
 
     --main-color: #59AC80;
-    /*--main-color-light: #7DC3A2;*/
     --main-color-light: #A0D9C4;
+    --main-color-light-light: #D1E9DC;
+    --main-color-very-light: #F3F9F1;
     --main-color-dark: #3D7D5A;
     --base-color: #F3F9F1;
 
     --border-color: #EBEBF0;
+
+    /*Titlebar for each page*/
+    --page-titlebar-height: 60px;
+    --page-content-height: calc(100% - var(--page-titlebar-height));
+
+    /*Navigation bar*/
+    --page-sidebar-width: 250px;
 }
 
 /*Text cannot be selected*/
@@ -20,4 +28,15 @@
 
 a {
   text-decoration: none;
+}
+
+.page-titlebar {
+    display: flex;
+    width: 100%;
+    height: var(--page-titlebar-height);
+    flex-direction: row;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    box-sizing: border-box;
+    padding: 0 20px;
 }

@@ -14,10 +14,10 @@
     <link rel="stylesheet" type="text/css"
           href="{{ url_for('static', filename='css/dashboard.css') }}">
     <link rel="stylesheet" type="text/css"
-          href="{{ url_for('static', filename='css/tabulator.min.css') }}">
+          href="{{ url_for('static', filename='css_third_party/tabulator.min.css') }}">
 
-    <script src="{{ url_for('static', filename='js/tabulator.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/socket.io.js') }}"></script>
+    <script src="{{ url_for('static', filename='js_third_party/tabulator.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js_third_party/socket.io.js') }}"></script>
     <link rel="stylesheet" type="text/css"
           href="{{ url_for('static', filename='css/dashboard-runs.css') }}">
     <link rel="stylesheet" type="text/css"
@@ -27,8 +27,33 @@
     <link rel="stylesheet" type="text/css"
           href="{{ url_for('static', filename='css/dashboard-detail-code.css') }}">
     <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/clusterize.css') }}">
-    <script src="{{ url_for('static', filename='js/clusterize.min.js') }}"></script>
+          href="{{ url_for('static', filename='css_third_party/clusterize.css') }}">
+    <script src="{{ url_for('static', filename='js_third_party/clusterize.min.js') }}"></script>
+
+
+
+{#    For workstation#}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css_third_party/drawflow.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css_third_party/prism.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css_third_party/prism-line-numbers.min.css') }}">
+
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static', filename='css/workstation.css') }}">
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static', filename='css/workstation-drag-components.css') }}">
+
+    <script src="{{ url_for('static', filename='js_third_party/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js_third_party/prism.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js_third_party/prism-python.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js_third_party/prism-line-numbers.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js_third_party/drawflow.min.js') }}"></script>
+
+{#    TODO: remove#}
+    <script crossorigin="anonymous" integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs=" src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"></script>
+
+    <script src="{{ url_for('static', filename='js_third_party/sweetalert2@9') }}"></script>
+    <script src="{{ url_for('static', filename='js_third_party/micromodal.min.js') }}"></script>
+
 </head>
 <body>
 
@@ -50,7 +75,7 @@
         </div>
         <div id="workstation-tab-btn"
              class="navigation-bar-item unselectable-text"
-             onclick="loadTabPage('static/html/workstation.html', null);return false;">
+             onclick="loadTabPage('static/html/workstation.html', 'static/js/workstation.js');return false;">
             <svg class="navigation-bar-item-icon" viewBox="0 0 1024 1024"
                  xmlns="http://www.w3.org/2000/svg">
                 <path d="M981.333333 810.666667H554.666667v170.666666h256v42.666667H213.333333v-42.666667h256v-170.666666H42.666667c-35.328 0-42.666667-7.338667-42.666667-42.666667V42.666667c0-35.328 7.338667-42.666667 42.666667-42.666667h938.666666c35.328 0 42.666667 7.338667 42.666667 42.666667v725.333333c0 35.328-7.338667 42.666667-42.666667 42.666667z m0-725.333334c0-35.328-7.338667-42.666667-42.666666-42.666666H85.333333c-35.370667 0-42.666667 7.338667-42.666666 42.666666v597.333334c0 35.370667 7.296 42.666667 42.666666 42.666666h853.333334c35.328 0 42.666667-7.296 42.666666-42.666666V85.333333z m-341.333333 384V341.333333h85.333333v213.333334h-85.333333v-85.333334z m-170.666667 0V128h85.333334v426.666667h-85.333334v-85.333334z m-170.666666 0V298.666667h85.333333v256H298.666667v-85.333334z"></path>

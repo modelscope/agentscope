@@ -40,10 +40,13 @@ function isScriptLoaded(src) {
 }
 
 // After loading different pages, we need to call the initialization function of this page
-function initializeTabPageByUrl(pageUrl) {
+function initializeTabPageByUrl(pageUrl, firstTime) {
     switch (pageUrl) {
         case 'static/html/dashboard.html':
             initializeDashboardPage();
+            break;
+        case 'static/html/workstation.html':
+            initializeWorkstationPage();
             break;
     }
 }
@@ -79,12 +82,13 @@ function loadTabPage(pageUrl, javascriptUrl) {
                 script.src = javascriptUrl;
                 script.onload = function () {
                     // The first time we must initialize the page within the onload function to ensure the script is loaded
-                    initializeTabPageByUrl(pageUrl);
+                    initializeTabPageByUrl(pageUrl, true);
                 }
                 document.head.appendChild(script);
             } else {
+                console.log("Script already loaded for " + javascriptUrl);
                 // If is not the first time, we can directly call the initialization function
-                initializeTabPageByUrl(pageUrl);
+                initializeTabPageByUrl(pageUrl, false);
             }
 
             // Load the page content
