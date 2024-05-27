@@ -30,6 +30,7 @@ except ImportError as import_error:
 
 import agentscope.rpc.rpc_agent_pb2 as agent_pb2
 from agentscope.agents.agent import AgentBase
+from agentscope.models import read_model_configs
 from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentServicer
 from agentscope.message import (
     Msg,
@@ -94,18 +95,17 @@ class AgentServerServicer(RpcAgentServicer):
         """
         return agent_id in self.agent_pool
 
-    def check_and_delete_agent(self, agent_id: str) -> None:
-        """
-        Check whether the agent exists, and delete the agent instance
-        for the agent_id.
+    def get_agent(self, agent_id: str) -> AgentBase:
+        """Get the agent by agent id.
 
         Args:
             agent_id (`str`): the agent id.
+
+        Returns:
+            AgentBase: the agent.
         """
         with self.agent_id_lock:
-            if agent_id in self.agent_pool:
-                self.agent_pool.pop(agent_id)
-                logger.info(f"delete agent instance [{agent_id}]")
+            return self.agent_pool.get(agent_id, None)
 
     def is_alive(
         self,
@@ -118,7 +118,7 @@ class AgentServerServicer(RpcAgentServicer):
     def create_agent(
         self,
         request: agent_pb2.CreateAgentRequest,
-        _: ServicerContext,
+        context: ServicerContext,
     ) -> agent_pb2.StatusResponse:
         """Create a new agent on the server."""
         agent_id = request.agent_id
@@ -137,11 +137,29 @@ class AgentServerServicer(RpcAgentServicer):
                 )
             else:
                 cls_name = agent_configs["class_name"]
-                cls = AgentBase.get_agent_class(cls_name)
-            agent_instance = cls(
-                *agent_configs["args"],
-                **agent_configs["kwargs"],
-            )
+                try:
+                    cls = AgentBase.get_agent_class(cls_name)
+                except ValueError as e:
+                    logger.error(
+                        f"Agent class [{cls_name}] not found: {str(e)}",
+                    )
+                    context.abort(
+                        grpc.StatusCode.NOT_FOUND,
+                        f"Agent class [{cls_name}] not found: {str(e)}",
+                    )
+            try:
+                agent_instance = cls(
+                    *agent_configs["args"],
+                    **agent_configs["kwargs"],
+                )
+            except Exception as e:
+                logger.error(
+                    f"Failed to create agent instance <{cls_name}>: {str(e)}",
+                )
+                context.abort(
+                    grpc.StatusCode.INTERNAL,
+                    f"Failed to create agent instance <{cls_name}>: {str(e)}",
+                )
             agent_instance._agent_id = agent_id  # pylint: disable=W0212
             self.agent_pool[agent_id] = agent_instance
             logger.info(f"create agent instance <{cls_name}>[{agent_id}]")
@@ -284,6 +302,44 @@ class AgentServerServicer(RpcAgentServicer):
         status["Memory Usage"] = process.memory_info().rss
         return agent_pb2.StatusResponse(ok=True, message=json.dumps(status))
 
+    def set_model_configs(
+        self,
+        request: agent_pb2.JsonMsg,
+        context: ServicerContext,
+    ) -> agent_pb2.StatusResponse:
+        """Set the model configs of the agent server."""
+        model_configs = json.loads(request.value)
+        try:
+            read_model_configs(model_configs)
+        except Exception as e:
+            return agent_pb2.StatusResponse(
+                ok=False,
+                message=str(e),
+            )
+        return agent_pb2.StatusResponse(ok=True)
+
+    def get_agent_memory(
+        self,
+        request: agent_pb2.AgentIds,
+        context: ServicerContext,
+    ) -> agent_pb2.JsonMsg:
+        """Get the memory of a specific agent."""
+        agent_id = request.agent_ids[0]
+        agent = self.get_agent(agent_id=agent_id)
+        if agent is None:
+            context.abort(
+                grpc.StatusCode.NOT_FOUND,
+                f"Agent [{agent_id}] not found",
+            )
+        if agent.memory is None:
+            context.abort(
+                grpc.StatusCode.NOT_FOUND,
+                f"Agent [{agent_id}] has no memory",
+            )
+        return agent_pb2.JsonMsg(
+            value=json.dumps(agent.memory.get_memory()),
+        )
+
     def download_file(
         self,
         request: agent_pb2.FileRequest,
@@ -323,14 +379,14 @@ class AgentServerServicer(RpcAgentServicer):
         task_id = self.get_task_id()
         self.result_pool[task_id] = threading.Condition()
         self.executor.submit(
-            self.process_messages,
+            self._process_messages,
             task_id,
             request.agent_id,
             msg,  # type: ignore[arg-type]
         )
         return agent_pb2.RpcMsg(
             value=Msg(  # type: ignore[arg-type]
-                name=self.agent_pool[request.agent_id].name,
+                name=self.get_agent(request.agent_id).name,
                 content=None,
                 task_id=task_id,
             ).serialize(),
@@ -353,7 +409,7 @@ class AgentServerServicer(RpcAgentServicer):
         self.agent_pool[request.agent_id].observe(msgs)
         return agent_pb2.RpcMsg()
 
-    def process_messages(
+    def _process_messages(
         self,
         task_id: int,
         agent_id: str,
@@ -369,8 +425,9 @@ class AgentServerServicer(RpcAgentServicer):
         if isinstance(task_msg, PlaceholderMessage):
             task_msg.update_value()
         cond = self.result_pool[task_id]
+        agent = self.get_agent(agent_id)
         try:
-            result = self.agent_pool[agent_id].reply(task_msg)
+            result = agent.reply(task_msg)
             self.result_pool[task_id] = result
         except Exception:
             error_msg = traceback.format_exc()

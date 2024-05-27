@@ -9,7 +9,7 @@ import shutil
 from loguru import logger
 
 import agentscope
-from agentscope.agents import AgentBase, DistConf
+from agentscope.agents import AgentBase, DistConf, DialogAgent
 from agentscope.server import RpcAgentServerLauncher
 from agentscope.message import Msg
 from agentscope.message import PlaceholderMessage
@@ -159,8 +159,10 @@ class FileAgent(AgentBase):
     def reply(self, x: dict = None) -> dict:
         image_path = os.path.abspath(
             os.path.join(
-                os.path.abspath(os.path.dirname(__file__)), "data", "image.png"
-            )
+                os.path.abspath(os.path.dirname(__file__)),
+                "data",
+                "image.png",
+            ),
         )
         return Msg(
             name=self.name,
@@ -678,7 +680,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         client = RpcAgentClient(host="localhost", port=launcher.port)
         agent_ids = client.get_agent_id_list()
         self.assertEqual(len(agent_ids), 0)
-        agent = DemoRpcAgent(
+        memory_agent = DemoRpcAgentWithMemory(
             name="demo",
             to_dist={
                 "host": "localhost",
@@ -686,12 +688,18 @@ class BasicRpcAgentTest(unittest.TestCase):
                 "upload_source_code": True,
             },
         )
+        resp = memory_agent(Msg(name="test", content="first msg", role="user"))
+        resp.update_value()
+        memory = client.get_agent_memory(memory_agent.agent_id)
+        self.assertEqual(len(memory), 2)
+        self.assertEqual(memory[0]["content"], "first msg")
+        self.assertEqual(memory[1]["content"]["mem_size"], 1)
         agent_ids = client.get_agent_id_list()
         self.assertEqual(len(agent_ids), 1)
-        self.assertEqual(agent_ids[0], agent.agent_id)
-        agent_info = client.get_agent_info(agent_id=agent.agent_id)
+        self.assertEqual(agent_ids[0], memory_agent.agent_id)
+        agent_info = client.get_agent_info(agent_id=memory_agent.agent_id)
         logger.info(agent_info)
-        self.assertTrue(agent.agent_id in agent_info)
+        self.assertTrue(memory_agent.agent_id in agent_info)
         server_info = client.get_server_info()
         logger.info(server_info)
         self.assertTrue("pid" in server_info)
@@ -715,4 +723,49 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertEqual(remote_content, local_content)
         agent_ids = client.get_agent_id_list()
         self.assertEqual(len(agent_ids), 2)
+        # model not exists error
+        self.assertRaises(
+            Exception,
+            DialogAgent,
+            name="dialogue",
+            sys_prompt="You are a helful assistant.",
+            model_config_name="my_openai",
+            to_dist={
+                "host": "localhost",
+                "port": launcher.port,
+                "upload_source_code": True,
+            },
+        )
+        # set model configs
+        client.set_model_configs(
+            [
+                {
+                    "model_type": "openai_chat",
+                    "config_name": "my_openai",
+                    "model_name": "gpt-3.5-turbo",
+                    "api_key": "xxx",
+                    "organization": "xxx",
+                    "generate_args": {
+                        "temperature": 0.5,
+                    },
+                },
+                {
+                    "model_type": "post_api_chat",
+                    "config_name": "my_postapi",
+                    "api_url": "https://xxx",
+                    "headers": {},
+                },
+            ],
+        )
+        # create agent after set model configs
+        dia_agent = DialogAgent(  # pylint: disable=E1123
+            name="dialogue",
+            sys_prompt="You are a helful assistant.",
+            model_config_name="my_openai",
+            to_dist={
+                "host": "localhost",
+                "port": launcher.port,
+            },
+        )
+        self.assertIsNotNone(dia_agent)
         launcher.shutdown()

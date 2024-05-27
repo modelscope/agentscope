@@ -272,6 +272,30 @@ class RpcAgentClient:
                 return {}
             return json.loads(resp.message)
 
+    def set_model_configs(
+        self,
+        model_configs: Union[dict, list[dict]],
+    ) -> bool:
+        """Set the model configs of the server."""
+        with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
+            stub = RpcAgentStub(channel)
+            resp = stub.set_model_configs(
+                agent_pb2.JsonMsg(value=json.dumps(model_configs)),
+            )
+            if not resp.ok:
+                logger.error(f"Error in set_model_configs: {resp.message}")
+                return False
+            return True
+
+    def get_agent_memory(self, agent_id: str) -> Union[list, dict]:
+        """Get the memory usage of the specific agent."""
+        with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
+            stub = RpcAgentStub(channel)
+            resp = stub.get_agent_memory(
+                agent_pb2.AgentIds(agent_ids=[agent_id]),
+            )
+            return json.loads(resp.value)
+
     def download_file(self, path: str) -> str:
         """Download a file from a remote server."""
         with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
