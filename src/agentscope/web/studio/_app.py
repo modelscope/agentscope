@@ -2,8 +2,13 @@
 """The main entry point of the web UI."""
 import json
 import os
+import re
+import subprocess
+import tempfile
+import traceback
 import uuid
 from datetime import datetime
+from typing import Tuple
 
 from flask import (
     Flask,
@@ -18,13 +23,11 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, join_room, leave_room
 
-
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///agentscope.db"
 db = SQLAlchemy(app)
 socketio = SocketIO(app)
 CORS(app)  # This will enable CORS for all routes
-
 
 PATH_SAVE = ""
 
@@ -97,6 +100,40 @@ def get_runs() -> list:
     ]
 
 
+def remove_file_paths(error_trace: str) -> str:
+    """
+    Remove the real traceback when exception happens.
+    """
+    path_regex = re.compile(r'File "(.*?)(?=agentscope|app\.py)')
+    cleaned_trace = re.sub(path_regex, 'File "[hidden]/', error_trace)
+
+    return cleaned_trace
+
+
+def convert_to_py(  # type: ignore[no-untyped-def]
+        content: str,
+        **kwargs,
+) -> Tuple:
+    """
+    Convert json config to python code.
+    """
+    from agentscope.web.workstation.workflow_dag import build_dag
+
+    try:
+        cfg = json.loads(content)
+        return "True", build_dag(cfg).compile(**kwargs)
+    except Exception as e:
+        return "False", remove_file_paths(
+            f"Error: {e}\n\n" f"Traceback:\n" f"{traceback.format_exc()}",
+        )
+
+
+@app.route("/workstation")
+def workstation() -> str:
+    """Render the workstation page."""
+    return render_template("workstation.html")
+
+
 @app.route("/api/runs/register", methods=["POST"])
 def register_run() -> Response:
     """
@@ -111,8 +148,8 @@ def register_run() -> Response:
     run_dir = data.get("run_dir")
     # check if the run_id is already in the database
     if Run.query.filter_by(id=run_id).first():
-        print(f"run id {run_id} already exists.")
-        abort(400, f"run_id [{run_id}] already exists")
+        print(f"Run id {run_id} already exists.")
+        abort(400, f"RUN_ID {run_id} already exists")
     db.session.add(
         Run(
             id=run_id,
@@ -256,6 +293,85 @@ def get_projects() -> Response:
             "runs": cfgs,
         },
     )
+
+
+@app.route("/convert-to-py", methods=["POST"])
+def convert_config_to_py() -> Response:
+    """
+    Convert json config to python code and send back.
+    """
+    content = request.json.get("data")
+    status, py_code = convert_to_py(content)
+    return jsonify(py_code=py_code, is_success=status)
+
+
+@app.route("/convert-to-py-and-run", methods=["POST"])
+def convert_config_to_py_and_run() -> Response:
+    """
+    Convert json config to python code and run.
+    """
+    content = request.json.get("data")
+    uid = json.loads(get_available_run_id().get_data())["run_id"]
+    studio_url = request.url_root.rstrip("/")
+    status, py_code = convert_to_py(
+        content,
+        runtime_id=uid,
+        studio_url=studio_url,
+    )
+
+    if status == "True":
+        try:
+            with tempfile.NamedTemporaryFile(
+                    delete=False,
+                    suffix=".py",
+                    mode="w+t",
+            ) as tmp:
+                tmp.write(py_code)
+                tmp.flush()
+                subprocess.Popen(
+                    ["python", tmp.name],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                )
+        except Exception as e:
+            status, py_code = "False", remove_file_paths(
+                f"Error: {e}\n\n" f"Traceback:\n" f"{traceback.format_exc()}",
+            )
+    return jsonify(py_code=py_code, is_success=status, uid=uid)
+
+
+@app.route("/read-examples", methods=["POST"])
+def read_examples() -> Response:
+    """
+    Read tutorial examples from local file.
+    """
+    # lang = request.json.get("lang")
+    lang = "en"
+    # file_index = request.json.get("data")
+    file_index = 1
+
+    if not os.path.exists(
+            os.path.join(
+                app.root_path,
+                "static",
+                "workstation_templates",
+                f"{lang}{file_index}.json",
+            ),
+    ):
+        lang = "en"
+
+    with open(
+            os.path.join(
+                app.root_path,
+                "static",
+                "workstation_templates",
+                f"{lang}{file_index}.json",
+            ),
+            "r",
+            encoding="utf-8",
+    ) as jf:
+        data = json.load(jf)
+    return jsonify(json=data)
 
 
 @app.route("/")
@@ -403,3 +519,5 @@ def init(
         debug=debug,
         allow_unsafe_werkzeug=True,
     )
+
+init("./instance", debug=True)

@@ -49,6 +49,11 @@ function initializeTabPageByUrl(pageUrl) {
         case "static/html/dashboard.html":
             initializeDashboardPage();
             break;
+        case 'static/html/workstation_iframe.html':
+            let script = document.createElement('script');
+            script.src = 'static/js/workstation_iframe.js';
+            document.head.appendChild(script);
+            break;
     }
 }
 
@@ -84,6 +89,7 @@ function loadTabPage(pageUrl, javascriptUrl) {
                 };
                 document.head.appendChild(script);
             } else {
+                console.log("Script already loaded for " + javascriptUrl);
                 // If is not the first time, we can directly call the initialization function
                 initializeTabPageByUrl(pageUrl);
             }

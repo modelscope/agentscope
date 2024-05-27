@@ -1,7 +1,6 @@
 :root {
-    --detail-sidebar-width: 250px;
     --detail-sidebar-padding-vertical: 5px;
-    --detail-content-width: calc(100% - var(--detail-sidebar-width));
+    --detail-content-width: calc(100% - var(--page-sidebar-width));
 }
 
 #detail-body {
@@ -16,7 +15,7 @@
     box-sizing: border-box;
     height: 100%;
     flex-direction: column;
-    width: var(--detail-sidebar-width);
+    width: var(--page-sidebar-width);
     background-color: #ffffff;
 
     border-right-color: var(--border-color);
