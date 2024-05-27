@@ -3,6 +3,7 @@
 Unit tests for rpc agent classes
 """
 import unittest
+import os
 import time
 import shutil
 from loguru import logger
@@ -150,6 +151,23 @@ class DemoErrorAgent(AgentBase):
 
     def reply(self, x: dict = None) -> dict:
         raise RuntimeError("Demo Error")
+
+
+class FileAgent(AgentBase):
+    """An agent returns a file"""
+
+    def reply(self, x: dict = None) -> dict:
+        image_path = os.path.abspath(
+            os.path.join(
+                os.path.abspath(os.path.dirname(__file__)), "data", "image.png"
+            )
+        )
+        return Msg(
+            name=self.name,
+            role="assistant",
+            content="Image",
+            url=image_path,
+        )
 
 
 class BasicRpcAgentTest(unittest.TestCase):
@@ -680,4 +698,21 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertTrue("CPU Times" in server_info)
         self.assertTrue("CPU Percent" in server_info)
         self.assertTrue("Memory Usage" in server_info)
+        # test download file
+        file_agent = FileAgent("File").to_dist(
+            host="localhost",
+            port=launcher.port,
+            upload_source_code=True,
+        )
+        file = file_agent()
+        remote_file_path = file.url
+        local_file_path = client.download_file(remote_file_path)
+        self.assertNotEqual(remote_file_path, local_file_path)
+        with open(remote_file_path, "rb") as rf:
+            remote_content = rf.read()
+        with open(local_file_path, "rb") as lf:
+            local_content = lf.read()
+        self.assertEqual(remote_content, local_content)
+        agent_ids = client.get_agent_id_list()
+        self.assertEqual(len(agent_ids), 2)
         launcher.shutdown()
