@@ -13,6 +13,25 @@
     --workstation-sidebar-subitem-font-size: 15px;
 }
 
+html {
+    height: 100%; /* Fill the entire screen height */
+    width: 100%; /* Fill the entire screen width */
+    margin: 0; /* Eliminate default html margin */
+    padding: 0;
+}
+
+body {
+    display: flex; /* Allows body to be a flex container */
+    height: 100%; /* Fill the entire screen height */
+    width: 100%; /* Fill the entire screen width */
+    margin: 0; /* Eliminate default body margin */
+    flex-direction: row;
+    padding: 0;
+    background: var(--body-bg);
+    font-family: sans-serif;
+    box-sizing: border-box;
+}
+
 #workstation-panel {
     display: flex;
     height: 100%;

@@ -45,8 +45,10 @@ function initializeTabPageByUrl(pageUrl, firstTime) {
         case 'static/html/dashboard.html':
             initializeDashboardPage();
             break;
-        case 'static/html/workstation.html':
-            initializeWorkstationPage();
+        case 'static/html/workstation_iframe.html':
+            let script = document.createElement('script');
+            script.src = 'static/js/workstation_iframe.js';
+            document.head.appendChild(script);
             break;
     }
 }

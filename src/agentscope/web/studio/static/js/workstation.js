@@ -36,8 +36,7 @@ async function fetchHtml(fileName) {
 }
 
 async function initializeWorkstationPage() {
-    currentZIndex = 0;
-
+    console.log("Initialize Workstation Page")
     // Initialize the Drawflow editor
     let id = document.getElementById("drawflow");
     editor = new Drawflow(id);

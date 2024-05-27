@@ -33,6 +33,12 @@ body {
     box-sizing: border-box;
 }
 
+#workstation-iframe {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
 #navigation-bar {
     display: flex;
     flex-direction: column;
