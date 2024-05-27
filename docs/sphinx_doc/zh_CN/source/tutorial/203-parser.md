@@ -15,6 +15,7 @@
   - [字典类型](#字典dict类型)
     - [MarkdownJsonDictParser](#markdownjsondictparser)
       - [初始化 & 响应格式模版](#初始化--响应格式模版)
+      - [类型校验](#类型校验)
     - [MultiTaggedContentParser](#multitaggedcontentparser)
       - [初始化 & 响应格式模版](#初始化--响应格式模版-1)
       - [解析函数](#解析函数-1)
@@ -296,6 +297,50 @@ AgentScope中，我们通过调用`to_content`，`to_memory`和`to_metadata`方�
   {content_hint}
   ```
   ````
+
+##### 类型校验
+
+`MarkdownJsonDictParser`中的`content_hint`参数还支持基于Pydantic的类型校验。初始化时，可以将`content_hint`设置为一个Pydantic的模型类，AgentScope将根据这个类来修改`instruction_format`属性，并且利用Pydantic在解析时对LLM返回的字典进行类型校验。
+该功能需要LLM能够理解JSON schema格式的提示，因此适用于能力较强的大模型。
+
+一个简单的例子如下，`"..."`处可以填写具体的类型校验规则，可以参考Pydantic文档。
+
+  ```python
+  from pydantic import BaseModel, Field
+  from agentscope.parsers import MarkdownJsonDictParser
+
+  class Schema(BaseModel):
+      thought: str = Field(..., description="what you thought")
+      speak: str = Field(..., description="what you speak")
+      end_discussion: bool = Field(..., description="whether the discussion is finished")
+
+  parser = MarkdownJsonDictParser(content_hint=Schema)
+  ```
+
+- 对应的`format_instruction`属性
+
+````
+Respond a JSON dictionary in a markdown's fenced code block as follows:
+```json
+{a_JSON_dictionary}
+```
+The generated JSON dictionary MUST follow this schema:
+{'properties': {'speak': {'description': 'what you speak', 'title': 'Speak', 'type': 'string'}, 'thought': {'description': 'what you thought', 'title': 'Thought', 'type': 'string'}, 'end_discussion': {'description': 'whether the discussion reached an agreement or not', 'title': 'End Discussion', 'type': 'boolean'}}, 'required': ['speak', 'thought', 'end_discussion'], 'title': 'Schema', 'type': 'object'}
+````
+
+- 同时在解析的过程中，也将使用Pydantic进行类型校验，校验错误将抛出异常。同时，Pydantic也将提供一定的容错处理能力，例如将字符串`"true"`转换成Python的`True`：
+
+````
+parser.parser("""
+```json
+{
+  "thought": "The others didn't realize I was a werewolf. I should end the discussion soon.",
+  "speak": "I agree with you.",
+  "end_discussion": "true"
+}
+```
+""")
+````
 
 #### MultiTaggedContentParser
 

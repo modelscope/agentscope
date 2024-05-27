@@ -24,6 +24,10 @@ class JsonParsingError(ResponseParsingError):
     """The exception class for JSON parsing error."""
 
 
+class JsonDictValidationError(ResponseParsingError):
+    """The exception class for JSON dict validation error."""
+
+
 class JsonTypeError(ResponseParsingError):
     """The exception class for JSON type error."""
 
