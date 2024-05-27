@@ -125,9 +125,7 @@ class ModelResponseParserTest(unittest.TestCase):
     def test_markdownjsondictparser_with_schema(self) -> None:
         """Test for MarkdownJsonDictParser with schema"""
 
-        class Schema(BaseModel):
-            """Used for test"""
-
+        class Schema(BaseModel):  # pylint: disable=missing-class-docstring
             speak: str = Field(description="what you speak")
             thought: str = Field(description="what you thought")
             end_discussion: bool = Field(
