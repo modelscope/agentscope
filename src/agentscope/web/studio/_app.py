@@ -515,3 +515,5 @@ def init(
         debug=debug,
         allow_unsafe_werkzeug=True,
     )
+
+init("./instance", debug=True)
