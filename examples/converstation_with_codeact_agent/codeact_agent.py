@@ -37,7 +37,11 @@ The above code is already available in your interactive Python (Jupyter Notebook
 
 class CodeActAgent(AgentBase):
     """
-    The implementation of CodeAct-agent
+    The implementation of CodeAct-agent.
+    The agent can execute code interactively as actions.
+    More details can be found at the paper of codeact agent
+    https://arxiv.org/abs/2402.01030
+    and the original repo of codeact https://github.com/xingyaoww/code-act
     """
 
     def __init__(

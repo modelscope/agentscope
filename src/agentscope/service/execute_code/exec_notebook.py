@@ -7,13 +7,24 @@ import base64
 import uuid
 import os
 import asyncio
-from nbclient import NotebookClient
-from nbclient.exceptions import CellTimeoutError, DeadKernelError
-import nbformat
+from typing import Union
 from loguru import logger
+
+
+try:
+    from nbclient import NotebookClient
+    from nbclient.exceptions import CellTimeoutError, DeadKernelError
+    import nbformat
+except ImportError as import_error:
+    from agentscope.utils.tools import ImportErrorReporter
+
+    nbclient = ImportErrorReporter(import_error)
+    nbformat = ImportErrorReporter(import_error)
+    NotebookClient = ImportErrorReporter(import_error)
 
 from agentscope.service.service_status import ServiceExecStatus
 from agentscope.service.service_response import ServiceResponse
+from agentscope.file_manager import file_manager
 
 
 class NoteBookExecutor:
@@ -23,11 +34,13 @@ class NoteBookExecutor:
         self,
         notebook: nbformat.NotebookNode = nbformat.v4.new_notebook(),
         timeout: int = 300,
-        output_dir: str = ".",
+        output_dir: Union[str, None] = None,
     ):
         self.nb = notebook
         self.nb_client = NotebookClient(nb=self.nb)
         self.timeout = timeout
+        if output_dir is None:
+            self.output_dir = file_manager.dir_file
         self.output_dir = output_dir
 
         asyncio.run(self._start_client())
