@@ -19,7 +19,7 @@ except ImportError as import_error:
     grpc = ImportErrorReporter(import_error, "distribute")
     RpcMsg = ImportErrorReporter(import_error, "distribute")
     RpcAgentStub = ImportErrorReporter(import_error, "distribute")
-    RpcError = ImportError
+    RpcError = ImportErrorReporter(import_error, "distribute")
 
 
 class RpcAgentClient:
