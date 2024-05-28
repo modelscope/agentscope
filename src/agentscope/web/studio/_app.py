@@ -328,7 +328,7 @@ def convert_config_to_py_and_run() -> Response:
             ) as tmp:
                 tmp.write(py_code)
                 tmp.flush()
-                subprocess.Popen(
+                subprocess.Popen(  # pylint: disable=R1732
                     ["python", tmp.name],
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
