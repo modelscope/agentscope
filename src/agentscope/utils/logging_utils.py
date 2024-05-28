@@ -28,13 +28,14 @@ LEVEL_CHAT_LOG = "CHAT_LOG"
 LEVEL_CHAT_SAVE = "CHAT_SAVE"
 
 _SPEAKER_COLORS = [
-    ("<blue>", "</blue>"),
-    ("<cyan>", "</cyan>"),
-    ("<green>", "</green>"),
-    ("<magenta>", "</magenta>"),
-    ("<red>", "</red>"),
-    ("<white>", "</white>"),
-    ("<yellow>", "</yellow>"),
+    ("\033[90m", "\033[0m"),
+    ("\033[91m", "\033[0m"),
+    ("\033[92m", "\033[0m"),
+    ("\033[93m", "\033[0m"),
+    ("\033[94m", "\033[0m"),
+    ("\033[95m", "\033[0m"),
+    ("\033[96m", "\033[0m"),
+    ("\033[97m", "\033[0m"),
 ]
 
 _SPEAKER_TO_COLORS = {}
@@ -89,7 +90,7 @@ def _chat(
         *args,
         **kwargs,
     )
-
+    
     # Print message in terminal with specific format
     if isinstance(message, dict):
         contain_name_or_role = "name" in message or "role" in message
@@ -104,23 +105,21 @@ def _chat(
             print_str = []
             if contain_content:
                 print_str.append(
-                    f"{m1}<b>{speaker}</b>{m2}: {message['content']}",
+                    f"{m1}\033[1m{speaker}\033[0m{m2}: {message['content']}",
                 )
 
             if contain_url:
-                print_str.append(f"{m1}<b>{speaker}</b>{m2}: {message['url']}")
+                print_str.append(f"{m1}\033[1m{speaker}\033[0m{m2}: {message['url']}")
 
             if len(print_str) > 0:
-                print_str = (
-                    "\n".join(print_str).replace("{", "{{").replace("}", "}}")
-                )
+                print_str = "\n".join(print_str)
+
                 logger.log(LEVEL_CHAT_LOG, print_str, *args, **kwargs)
 
                 if hasattr(thread_local_data, "uid") and not disable_studio:
                     log_studio(message, thread_local_data.uid, **kwargs)
                 return
 
-    message = str(message).replace("{", "{{").replace("}", "}}")
     logger.log(LEVEL_CHAT_LOG, message, *args, **kwargs)
 
 
@@ -183,7 +182,8 @@ def log_studio(message: dict, uid: str, **kwargs: Any) -> None:
 def _level_format(record: dict) -> str:
     """Format the log record."""
     if record["level"].name == LEVEL_CHAT_LOG:
-        return record["message"] + "\n"
+        # return "<green>{message}</green>"
+        return "{message}\n"
     else:
         return (
             "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{"
@@ -211,6 +211,8 @@ def setup_logger(
     if not hasattr(logger, "chat"):
         # add chat function for logger
         logger.level(LEVEL_CHAT_LOG, no=21)
+
+        # save chat message into file
         logger.level(LEVEL_CHAT_SAVE, no=0)
         logger.chat = _chat
 
