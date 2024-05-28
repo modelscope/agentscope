@@ -251,14 +251,15 @@ class ExamplePromptOptMethod(PromptOptMethodBase):
             )
         else:
             self.embd_model = self.embd_model = SentencePieceEmbeddingModel()
-        
+
         if self.example_selection_method == "similarity":
             try:
                 self.sample_embeddings = np.load(self.example_embd_path)
             except FileNotFoundError:
-                logger.debug(f"Embeddings file path {self.example_embd_path} not found. Generating embeddings...")
+                logger.debug(
+                    f"Embeddings file path {self.example_embd_path} not found. Generating embeddings..."
+                )
                 self.sample_embeddings = self.generate_embeddings()
-
 
     def select_example(self, human_query: str) -> dict:
         logger.debug(f"selecting example for query{human_query}")

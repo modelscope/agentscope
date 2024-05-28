@@ -8,10 +8,11 @@ from agentscope.models import load_model_by_config_name
 from agentscope.message import Msg
 from agentscope.web.studio.utils import user_input
 
+
 class PromptAbTestModule:
     def __init__(
         self,
-        model_config_name:str,
+        model_config_name: str,
         user_prompt: str,
         opt_methods_or_prompts: List[Union[PromptOptMethodBase, str]],
         save_dir: str = None,
@@ -41,11 +42,12 @@ class PromptAbTestModule:
             logger.chat("===" * 10 + "\n")  # 打印一个空行以增加可读性
 
     def infer_with_system_prompt(self, user_query, system_prompt):
-
-        prompt = self.model.format([
-            Msg(name="system", content=system_prompt, role="system"),
-            Msg(name="user", content=user_query, role="user"),
-        ])
+        prompt = self.model.format(
+            [
+                Msg(name="system", content=system_prompt, role="system"),
+                Msg(name="user", content=user_query, role="user"),
+            ]
+        )
         response = self.model(prompt).text
 
         return response
