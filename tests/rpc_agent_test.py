@@ -5,7 +5,6 @@ Unit tests for rpc agent classes
 import unittest
 import os
 import time
-import os
 import shutil
 from loguru import logger
 
