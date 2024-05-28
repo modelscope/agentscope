@@ -265,6 +265,9 @@
     <span class="k">if</span> <span class="n">runtime_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">_runtime</span><span class="o">.</span><span class="n">runtime_id</span> <span class="o">=</span> <span class="n">runtime_id</span>
 
+    <span class="c1"># Init file manager and save configs by default</span>
+    <span class="n">file_manager</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">save_api_invoke</span><span class="p">)</span>
+
     <span class="c1"># Init logger</span>
     <span class="n">dir_log</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">file_manager</span><span class="o">.</span><span class="n">dir_log</span><span class="p">)</span> <span class="k">if</span> <span class="n">save_log</span> <span class="k">else</span> <span class="kc">None</span>
     <span class="n">setup_logger</span><span class="p">(</span><span class="n">dir_log</span><span class="p">,</span> <span class="n">logger_level</span><span class="p">)</span>
@@ -272,9 +275,6 @@
     <span class="c1"># Load model configs if needed</span>
     <span class="k">if</span> <span class="n">model_configs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">read_model_configs</span><span class="p">(</span><span class="n">model_configs</span><span class="p">)</span>
-
-    <span class="c1"># Init file manager and save configs by default</span>
-    <span class="n">file_manager</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">save_api_invoke</span><span class="p">)</span>
 
     <span class="c1"># Init monitor</span>
     <span class="n">_</span> <span class="o">=</span> <span class="n">MonitorFactory</span><span class="o">.</span><span class="n">get_monitor</span><span class="p">(</span>
