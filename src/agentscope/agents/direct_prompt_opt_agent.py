@@ -252,7 +252,7 @@ class DirectPromptOptimizationAgent(AgentBase):
         logger.debug("start loading embd model")
 
         if embed_model_config_name is not None:
-            self.embd_model = load_model_by_config_name(model_config_name)
+            self.embd_model = load_model_by_config_name(embed_model_config_name)
         elif self.use_example:
             self.embd_model = SentencePieceEmbeddingModel()
 
@@ -306,8 +306,6 @@ class DirectPromptOptimizationAgent(AgentBase):
     def generate_embeddings(self) -> dict:
         """Generate embeddings for the example samples."""
         
-        self.SELECT_MODEL = "sentence-transformers/all-mpnet-base-v2"
-
         sample_embeddings = []
         for sample in self.example_list:
             sample_embeddings.append(
