@@ -1,4 +1,4 @@
-# Multi-Agent Conversation with Custom Model Loading and Fine-Tuning in AgentScope
+# Small LLMs Are Weak Tool Learners: A Multi-LLM Agent with AgentScope
 
 This example demonstrates how to use the functionalities introduced in the example `conversation_with_agent_with_finetuned_model` in an attempt to reproduce the result from the paper Small LLMs Are Weak Tool Learners: A Multi-LLM Agent (https://arxiv.org/pdf/2401.07324). The complete code is provided in `agentscope/examples/small_llms`.
 
