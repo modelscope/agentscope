@@ -20,10 +20,30 @@ def flush() -> None:
     MonitorFactory.flush()
 
 
+class DummyPart:
+    """Dummy part for testing."""
+
+    text = "Hello! How can I help you?"
+
+
+class DummyContent:
+    """Dummy content for testing."""
+
+    parts = [DummyPart()]
+
+
+class DummyCandidate:
+    """Dummy candidate for testing."""
+
+    content = DummyContent()
+
+
 class DummyResponse:
     """Dummy response for testing."""
 
     text = "Hello! How can I help you?"
+
+    candidates = [DummyCandidate]
 
     def __str__(self) -> str:
         """Return string representation."""
