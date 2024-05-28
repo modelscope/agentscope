@@ -303,7 +303,7 @@ AgentScope中，我们通过调用`to_content`，`to_memory`和`to_metadata`方�
 `MarkdownJsonDictParser`中的`content_hint`参数还支持基于Pydantic的类型校验。初始化时，可以将`content_hint`设置为一个Pydantic的模型类，AgentScope将根据这个类来修改`instruction_format`属性，并且利用Pydantic在解析时对LLM返回的字典进行类型校验。
 该功能需要LLM能够理解JSON schema格式的提示，因此适用于能力较强的大模型。
 
-一个简单的例子如下，`"..."`处可以填写具体的类型校验规则，可以参考Pydantic文档。
+一个简单的例子如下，`"..."`处可以填写具体的类型校验规则，可以参考[Pydantic](https://docs.pydantic.dev/latest/)文档。
 
   ```python
   from pydantic import BaseModel, Field

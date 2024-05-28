@@ -305,7 +305,7 @@ This parameter can be a string or a dictionary. For dictionary, it will be autom
 
 The `content_hint` parameter in `MarkdownJsonDictParser` also supports type validation based on Pydantic. When initializing, you can set `content_hint` to a Pydantic model class, and AgentScope will modify the `instruction_format` attribute based on this class. Besides, Pydantic will be used to validate the dictionary returned by LLM during parsing.
 
-A simple example is as follows, where `"..."` can be filled with specific type validation rules, which can be referred to the Pydantic documentation.
+A simple example is as follows, where `"..."` can be filled with specific type validation rules, which can be referred to the [Pydantic](https://docs.pydantic.dev/latest/) documentation.
 
   ```python
   from pydantic import BaseModel, Field
