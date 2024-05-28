@@ -61,7 +61,7 @@ class RpcAgentClient:
 
         Args:
             func_name (`str`): the name of the function being called.
-            valuer (`str`, optional): the seralized function input value.
+            valuer (`str`, optional): the serialized function input value.
             Defaults to None.
             timeout (`int`, optional): the timeout for the RPC call in seconds.
             Defaults to 300.
