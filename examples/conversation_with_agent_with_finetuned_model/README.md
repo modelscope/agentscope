@@ -1,6 +1,6 @@
-# Multi-Agent Conversation with Custom Model Loading and Fine-Tuning in AgentScope
+# User-Agent Conversation with Custom Model Loading and Fine-Tuning in AgentScope
 
-This example demonstrates how to load and optionally fine-tune a Hugging Face model within a multi-agent conversation setup using AgentScope. The complete code is provided in `agentscope/examples/conversation_with_agent_with_finetuned_model`.
+This example demonstrates how to load and optionally fine-tune a Hugging Face model within a user-agent conversation setup using AgentScope. The complete code is provided in `agentscope/examples/conversation_with_agent_with_finetuned_model`.
 
 ## Functionality Overview
 
