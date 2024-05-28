@@ -112,7 +112,7 @@ function _addUserChatRow(index, pMsg) {
     // template.querySelector('.chat-icon').
     template.querySelector(".chat-name").textContent = pMsg.name;
     let chatBubble = template.querySelector(".chat-bubble");
-    chatBubble.textContent = pMsg.content;
+    chatBubble.innerHTML += marked.parse(pMsg.content);
     chatBubble.innerHTML += _renderMultiModalData(pMsg.url);
     template.querySelector(".chat-row").setAttribute("data-index", index);
     return template.firstElementChild.outerHTML;
@@ -124,7 +124,7 @@ function _addAssistantChatRow(index, pMsg) {
 
     template.querySelector(".chat-name").textContent = pMsg.name;
     let chatBubble = template.querySelector(".chat-bubble");
-    chatBubble.textContent = pMsg.content;
+    chatBubble.innerHTML += marked.parse(pMsg.content);
     chatBubble.innerHTML += _renderMultiModalData(pMsg.url);
     template.querySelector(".chat-row").setAttribute("data-index", index);
     return template.firstElementChild.outerHTML;
@@ -134,7 +134,7 @@ function _addSystemChatRow(index, pMsg) {
     const template = chatRowSystemTemplate.cloneNode(true);
     template.querySelector(".chat-name").textContent = pMsg.name;
     let chatBubble = template.querySelector(".chat-bubble");
-    chatBubble.textContent = pMsg.content;
+    chatBubble.innerHTML += marked.parse(pMsg.content);
     chatBubble.innerHTML += _renderMultiModalData(pMsg.url);
     template.querySelector(".chat-row").setAttribute("data-index", index);
     return template.firstElementChild.outerHTML;

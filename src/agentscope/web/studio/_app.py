@@ -111,8 +111,8 @@ def remove_file_paths(error_trace: str) -> str:
 
 
 def convert_to_py(  # type: ignore[no-untyped-def]
-        content: str,
-        **kwargs,
+    content: str,
+    **kwargs,
 ) -> Tuple:
     """
     Convert json config to python code.
@@ -322,9 +322,9 @@ def convert_config_to_py_and_run() -> Response:
     if status == "True":
         try:
             with tempfile.NamedTemporaryFile(
-                    delete=False,
-                    suffix=".py",
-                    mode="w+t",
+                delete=False,
+                suffix=".py",
+                mode="w+t",
             ) as tmp:
                 tmp.write(py_code)
                 tmp.flush()
@@ -351,24 +351,24 @@ def read_examples() -> Response:
     file_index = 1
 
     if not os.path.exists(
-            os.path.join(
-                app.root_path,
-                "static",
-                "workstation_templates",
-                f"{lang}{file_index}.json",
-            ),
+        os.path.join(
+            app.root_path,
+            "static",
+            "workstation_templates",
+            f"{lang}{file_index}.json",
+        ),
     ):
         lang = "en"
 
     with open(
-            os.path.join(
-                app.root_path,
-                "static",
-                "workstation_templates",
-                f"{lang}{file_index}.json",
-            ),
-            "r",
-            encoding="utf-8",
+        os.path.join(
+            app.root_path,
+            "static",
+            "workstation_templates",
+            f"{lang}{file_index}.json",
+        ),
+        "r",
+        encoding="utf-8",
     ) as jf:
         data = json.load(jf)
     return jsonify(json=data)
@@ -520,4 +520,6 @@ def init(
         allow_unsafe_werkzeug=True,
     )
 
-init("./instance", debug=True)
+
+if __name__ == "__main__":
+    init("./instance", debug=True)
