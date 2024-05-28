@@ -72,7 +72,8 @@ def _setup_agent_server(
         max_timeout_seconds (`int`, defaults to `1800`):
             Timeout for agent replies.
         custom_agents (`list`, defaults to `None`):
-            A list of custom agent classes that are not in `agentscope.agents`.
+            A list of customized agent classes that are not in
+            `agentscope.agents`.
     """
     asyncio.run(
         _setup_agent_server_async(
@@ -134,7 +135,8 @@ async def _setup_agent_server_async(
             Maximum time for reply messages to be cached in the server.
             Note that expired messages will be deleted.
         custom_agents (`list`, defaults to `None`):
-            A list of custom agent classes that are not in `agentscope.agents`.
+            A list of customized agent classes that are not in
+            `agentscope.agents`.
     """
     from agentscope._init import init_process
 
@@ -238,7 +240,7 @@ class RpcAgentServerLauncher:
                 If `True`, only listen to requests from "localhost", otherwise,
                 listen to requests from all hosts.
             custom_agents (`list`, defaults to `None`):
-                A list of custom agent classes that are not in
+                A list of customized agent classes that are not in
                 `agentscope.agents`.
             server_id (`str`, defaults to `None`):
                 The id of the agent server. If not specified, a random id
