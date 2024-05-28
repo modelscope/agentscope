@@ -28,7 +28,31 @@ from agentscope.file_manager import file_manager
 
 
 class NoteBookExecutor:
-    """Class for executing jupyter notebooks block interactively"""
+    """
+    Class for executing jupyter notebooks block interactively
+    
+    Example Use Case:
+
+        ```ipython
+        from agentscope.service.service_toolkit import *
+        from agentscope.service.execute_code.exec_notebook import *
+        nbe = NoteBookExecutor()
+        code = "print('helloworld')"
+        nbe.run_code_on_notebook(code)
+
+        >>> Executing function run_code_on_notebook with arguments:
+        >>>     code: print('helloworld')
+        >>> END 
+
+        service_toolkit = ServiceToolkit()
+        service_toolkit.add(nbe.run_code_on_notebook)
+        input_obs = [{"name": "run_code_on_notebook", "arguments":{"code": code}}]
+        res_of_string_input = service_toolkit.parse_and_call_func(input_obs)
+
+        "1. Execute function run_code_on_notebook\n   [ARGUMENTS]:\n       code: print('helloworld')\n   [STATUS]: SUCCESS\n   [RESULT]: ['helloworld\\n']\n"
+
+        ```
+    """ # noqa
 
     def __init__(
         self,
