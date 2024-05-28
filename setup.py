@@ -125,6 +125,7 @@ setuptools.setup(
         "console_scripts": [
             "as_studio=agentscope.web.studio.studio:run_app",
             "as_workflow=agentscope.web.workstation.workflow:main",
+            "as_server=agentscope.server.launcher:as_server",
         ],
     },
 )

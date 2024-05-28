@@ -4,12 +4,13 @@ Unit tests for rpc agent classes
 """
 import unittest
 import time
+import os
 import shutil
 from loguru import logger
 
 import agentscope
 from agentscope.agents import AgentBase, DistConf
-from agentscope.agents.rpc_agent import RpcAgentServerLauncher
+from agentscope.server import RpcAgentServerLauncher
 from agentscope.message import Msg
 from agentscope.message import PlaceholderMessage
 from agentscope.message import deserialize
@@ -159,14 +160,15 @@ class BasicRpcAgentTest(unittest.TestCase):
         agentscope.init(
             project="test",
             name="rpc_agent",
-            save_dir="./test_runs",
+            save_dir="./.unittest_runs",
             save_log=True,
         )
+        self.assertTrue(os.path.exists("./.unittest_runs"))
 
     def tearDown(self) -> None:
         MonitorFactory._instance = None  # pylint: disable=W0212
         logger.remove()
-        shutil.rmtree("./test_runs")
+        shutil.rmtree("./.unittest_runs")
 
     def test_single_rpc_agent_server(self) -> None:
         """test setup a single rpc agent"""

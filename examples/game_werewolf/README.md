@@ -1,56 +1,55 @@
+
 # Werewolf Game in AgentScope
 
-This is a demo of how to use AgentScope to play the Werewolf game, where
-six agents play against as werewolves and villagers.
-In this example, you can learn the following features in AgentScope.
+This example demonstrates how to use AgentScope to play the Werewolf game, where six agents play against each other as werewolves and villagers.
+You will learn the following features in AgentScope:
 
-- **_Quick Setup_**: How to initialize agents via agent config files
-- **_Syntactic Sugar_**: How to use msghub and pipeline to construct a complex
-  workflow with less than 100 lines of code.
-- **_Prompt to Variable_**: How to obtain variables from agent with prompt.
+- How to make an agent respond with **different specified fields** in **different situations** in AgentScope (Like a finite state machine!)
+- How to use **msghub** and **pipeline** in AgentScope to construct a game with **COMPLEX SOP**
 
-**See [werewolf.py](werewolf.py) for the complete code and play in person.**
+## Background
 
-```bash
-# Note: Set your api_key in ./configs/model_configs.json first
-python werewolf.py
-```
+The werewolf game involves a complex SOP with multiple roles and different phases. In these phases, players with different roles should take different actions, e.g. discussion, voting, checking roles (seer), using potions (witch), and so on.
+
+Therefore, for an agent in werewolf game, it should be able to switch its status according to the game phase and its role, and respond accordingly.
+Of course, we can hard code the SOP (or finite state machine) within the agent, but we expect the agent to be more **flexible**, **intelligent**, and **adaptive**, which means **the agent shouldn't be designed for a specific game only**. It should be able to adapt to different tasks and SOPs!
+
+To achieve this goal, in AgentScope, we use a built-in [DictDialogAgent](https://github.com/modelscope/agentscope/blob/main/src/agentscope/agents/dict_dialog_agent.py) class, together with a [parser](https://modelscope.github.io/agentscope/en/tutorial/203-parser.html) module to construct the werewolf game.
+
+Moreover, the [pipeline and msghub](https://modelscope.github.io/agentscope/en/tutorial/202-pipeline.html) in AgentScope enable us to easily construct a complex SOP with multiple agents. We hope the implementation is concise, clear and readable!
+
+More details please refer to our tutorial:
+- [Parser](https://modelscope.github.io/agentscope/en/tutorial/203-parser.html)
+- [Pipeline and msghub](https://modelscope.github.io/agentscope/en/tutorial/202-pipeline.html)
+
+
+
+
+https://github.com/DavdGao/AgentScope/assets/102287034/86951418-e1cc-486b-a3dc-b237a0108994
+
+
+
+
+
+## Tested Models
+
+This example has been tested with the following models:
+- dashscope_chat (qwen-turbo)
+- ollama_chat (llama3_8b)
+
+## Prerequisites
+
+To run this example, you need to:
+- Set your API key in `./configs/model_configs.json`
+
+[Optional] To play the game in person, see [werewolf.py](werewolf.py) for the complete code.
+
 
 ## Code Snippets
 
-### Quick Setup
+### About Pipeline and MsgHub
 
-The following code read both model and agent configs, and initialize agents
-automatically.
-
-```python
-# read model and agent configs, and initialize agents automatically
-survivors = agentscope.init(
-    model_configs="./configs/model_configs.json",
-    agent_configs="./configs/agent_configs.json",
-)
-```
-
-In agent config, you only need to specify the agent class under `agentscope.
-agents` and the required arguments. Taking Player1 as example, its config
-is as follows
-
-```json
-{
-    "class": "DictDialogAgent",
-    "args": {
-        "name": "Player1",
-        "sys_prompt": "Act as a player in a werewolf game. You are Player1 and\nthere are totally 6 players, named Player1, Player2, Player3, Player4, Player5 and Player6.\n\nPLAYER ROLES:\nIn werewolf game, players are divided into two werewolves, two villagers, one seer and one witch. Note only werewolves know who are their teammates.\nWerewolves: They know their teammates' identities and attempt to eliminate a villager each night while trying to remain undetected.\nVillagers: They do not know who the werewolves are and must work together during the day to deduce who the werewolves might be and vote to eliminate them.\nSeer: A villager with the ability to learn the true identity of one player each night. This role is crucial for the villagers to gain information.\nWitch: A character who has a one-time ability to save a player from being eliminated at night (sometimes this is a potion of life) and a one-time ability to eliminate a player at night (a potion of death).\n\nGAME RULE:\nThe game is consisted of two phases: night phase and day phase. The two phases are repeated until werewolf or villager win the game.\n1. Night Phase: During the night, the werewolves discuss and vote for a player to eliminate. Special roles also perform their actions at this time (e.g., the Seer chooses a player to learn their role, the witch chooses a decide if save the player).\n2. Day Phase: During the day, all surviving players discuss who they suspect might be a werewolf. No one reveals their role unless it serves a strategic purpose. After the discussion, a vote is taken, and the player with the most votes is \"lynched\" or eliminated from the game.\n\nVICTORY CONDITION:\nFor werewolves, they win the game if the number of werewolves is equal to or greater than the number of remaining villagers.\nFor villagers, they win if they identify and eliminate all of the werewolves in the group.\n\nCONSTRAINTS:\n1. Your response should be in the first person.\n2. This is a conversational game. You should response only based on the conversation history and your strategy.\n\nYou are playing werewolf in this game.\n",
-        "model_config_name": "gpt-3.5-turbo",
-        "use_memory": true
-    }
-}
-```
-
-### Syntactic Sugar
-
-The following code is the implementation of daytime discussion in werewolf.
-With msghub and pipeline, it's very easy to program a discussion among agents.
+The following code is the implementation of daytime discussion in Werewolf. With msghub and pipeline, it's very easy to program a discussion among agents.
 
 ```python
     # ...
@@ -60,39 +59,22 @@ With msghub and pipeline, it's very easy to program a discussion among agents.
     # ...
 ```
 
-### Prompt to Variable
+### About Parser
 
-Sometimes, we need extract required variables from agent response. Taking a
-discussion as example, we want the agent to determine if they reach an
-agreement during discussion.
-
-The following prompt requires the agent to response with a "agreement"
-field to indicate whether they reach an agreement or not.
-
-```text
-... Response in the following format which can be loaded by
-json.loads() in python
-{{
-    "thought": "thought",
-    "speak": "thoughts summary to say to others",
-    "agreement": "whether the discussion reached an agreement or not (true/false)"
-}}
-```
-
-With the arguments `parse_func`, `fault_handler` and `max_retries` in
-[`DictDialogAgent`](../../src/agentscope/agents/dict_dialog_agent.py), we
-can directly use variable `x.agreement` to know it the discussion reach an
-agreement.
-
-More details please refer to the code of [`DictDialogAgent`](../..
-/src/agentscope/agents/dict_dialog_agent.py) and our documents.
+The parser is used to specify the required fields in the agent's response and how to handle them. Here's an example of a parser configuration:
 
 ```python
-    # ...
-    with msghub(wolves, announcement=hint) as hub:
-        for _ in range(MAX_WEREWOLF_DISCUSSION_ROUND):
-            x = sequentialpipeline(wolves)
-            if x.get("agreement", False):
-                break
-    # ...
+to_wolves_vote = "Which player do you vote to kill?"
+
+wolves_vote_parser = MarkdownJsonDictParser(
+    content_hint={
+        "thought": "what you thought",
+        "speak": "player_name",
+    },
+    required_keys=["thought", "speak"],
+    keys_to_memory="speak",
+    keys_to_content="speak",
+)
 ```
+
+In this example, the `MarkdownJsonDictParser` is used to parse the agent's response. The `content_hint` parameter specifies the expected fields and their descriptions. The `required_keys` parameter indicates the mandatory fields in the response. The `keys_to_memory` and `keys_to_content` parameters determine which fields should be stored in memory and included in the content of the returned message, respectively.

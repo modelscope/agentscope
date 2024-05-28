@@ -59,14 +59,16 @@ b = AgentB(
 #### Independent Process Mode
 
 In the Independent Process Mode, we need to start the agent server process on the target machine first.
+When starting the agent server process, you need to specify a model config file, which contains the models which can be used in the agent server, the IP address and port of the agent server process
 For example, start two agent server processes on the two different machines with IP `ip_a` and `ip_b`(called `Machine1` and `Machine2` accrodingly).
-You can run the following code on `Machine1`:
+You can run the following code on `Machine1`.Before running, make sure that the machine has access to all models that used in your application, specifically, you need to put your model config file in `model_config_path_a` and set environment variables such as your model API key correctly in `Machine1`. The example model config file instances are located under `examples/model_configs_template`.
 
 ```python
 # import some packages
 
+# register models which can be used in the server
 agentscope.init(
-    ...
+    model_configs=model_config_path_a,
 )
 # Create an agent service process
 server = RpcAgentServerLauncher(
@@ -79,13 +81,20 @@ server.launch()
 server.wait_until_terminate()
 ```
 
-And run the following code on `Machine2`:
+> For similarity, you can run the following command in your terminal rather than the above code:
+>
+> ```shell
+> as_server --host ip_a --port 12001 --model-config-path model_config_path_a
+> ```
+
+Then put your model config file accordingly in `model_config_path_b`, set environment variables, and run the following code on `Machine2`.
 
 ```python
 # import some packages
 
+# register models which can be used in the server
 agentscope.init(
-    ...
+    model_configs=model_config_path_b,
 )
 # Create an agent service process
 server = RpcAgentServerLauncher(
@@ -97,6 +106,12 @@ server = RpcAgentServerLauncher(
 server.launch()
 server.wait_until_terminate()
 ```
+
+> Similarly, you can run the following command in your terminal to setup the agent server:
+>
+> ```shell
+> as_server --host ip_b --port 12002 --model-config-path model_config_path_b
+> ```
 
 Then, you can connect to the agent servers from the main process with the following code.
 
@@ -254,6 +269,9 @@ About more detailed technical implementation solutions, please refer to our [pap
 
 In agentscope, the agent server provides a running platform for various types of agents.
 Multiple agents can run in the same agent server and hold independent memory and other local states but they will share the same computation resources.
+
+After installing the distributed version of AgentScope, you can use the `as_server` command to start the agent server, and the detailed startup arguments can be found in the documentation of the {func}`as_server<agentscope.server.launcher.as_server>` function.
+
 As long as the code is not modified, an agent server can provide services for multiple main processes.
 This means that when running mutliple applications, you only need to start the agent server for the first time, and it can be reused subsequently.
 
