@@ -125,17 +125,19 @@
     <span class="s2">&quot;CRITICAL&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
-<span class="n">LEVEL_CHAT_LOG</span> <span class="o">=</span> <span class="s2">&quot;CHAT_LOG&quot;</span>
-<span class="n">LEVEL_CHAT_SAVE</span> <span class="o">=</span> <span class="s2">&quot;CHAT_SAVE&quot;</span>
+<span class="n">LEVEL_SAVE_LOG</span> <span class="o">=</span> <span class="s2">&quot;SAVE_LOG&quot;</span>
+<span class="n">LEVEL_SAVE_MSG</span> <span class="o">=</span> <span class="s2">&quot;SAVE_MSG&quot;</span>
+<span class="n">LEVEL_DISPLAY_MSG</span> <span class="o">=</span> <span class="s2">&quot;DISPLAY_MSG&quot;</span>
 
 <span class="n">_SPEAKER_COLORS</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">(</span><span class="s2">&quot;&lt;blue&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;/blue&gt;&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;&lt;cyan&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;/cyan&gt;&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;&lt;green&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;/green&gt;&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;&lt;magenta&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;/magenta&gt;&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;&lt;red&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;/red&gt;&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;&lt;white&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;/white&gt;&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;&lt;yellow&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;/yellow&gt;&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[90m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[91m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[92m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[93m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[94m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[95m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[96m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[97m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
 <span class="p">]</span>
 
 <span class="n">_SPEAKER_TO_COLORS</span> <span class="o">=</span> <span class="p">{}</span>
@@ -183,9 +185,10 @@
 <span class="sd">            &quot;content&quot; keys, and the message will be logged as &quot;&lt;name/role&gt;:</span>
 <span class="sd">            &lt;content&gt;&quot;.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Save message into file, add default to ignore not serializable objects</span>
+    <span class="c1"># Save message into chat file, add default to ignore not serializable</span>
+    <span class="c1"># objects</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
-        <span class="n">LEVEL_CHAT_SAVE</span><span class="p">,</span>
+        <span class="n">LEVEL_SAVE_MSG</span><span class="p">,</span>
         <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="kc">None</span><span class="p">),</span>
         <span class="o">*</span><span class="n">args</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
@@ -203,26 +206,43 @@
             <span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">)</span> <span class="o">=</span> <span class="n">_get_speaker_color</span><span class="p">(</span><span class="n">speaker</span><span class="p">)</span>
 
             <span class="n">print_str</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">print_str_without_markers</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">if</span> <span class="n">contain_content</span><span class="p">:</span>
                 <span class="n">print_str</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">m1</span><span class="si">}</span><span class="s2">&lt;b&gt;</span><span class="si">{</span><span class="n">speaker</span><span class="si">}</span><span class="s2">&lt;/b&gt;</span><span class="si">{</span><span class="n">m2</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">message</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">m1</span><span class="si">}</span><span class="se">\033</span><span class="s2">[1m</span><span class="si">{</span><span class="n">speaker</span><span class="si">}</span><span class="se">\033</span><span class="s2">[0m</span><span class="si">{</span><span class="n">m2</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">message</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">print_str_without_markers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">speaker</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">message</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
 
             <span class="k">if</span> <span class="n">contain_url</span><span class="p">:</span>
-                <span class="n">print_str</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">m1</span><span class="si">}</span><span class="s2">&lt;b&gt;</span><span class="si">{</span><span class="n">speaker</span><span class="si">}</span><span class="s2">&lt;/b&gt;</span><span class="si">{</span><span class="n">m2</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">message</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">print_str</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">m1</span><span class="si">}</span><span class="se">\033</span><span class="s2">[1m</span><span class="si">{</span><span class="n">speaker</span><span class="si">}</span><span class="se">\033</span><span class="s2">[0m</span><span class="si">{</span><span class="n">m2</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">message</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">print_str_without_markers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">speaker</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">message</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
 
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">print_str</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">print_str</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">print_str</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="s2">&quot;{{&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;}}&quot;</span><span class="p">)</span>
+                <span class="n">print_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">print_str</span><span class="p">)</span>
+                <span class="n">print_str_without_markers</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="n">print_str_without_markers</span><span class="p">,</span>
                 <span class="p">)</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">LEVEL_CHAT_LOG</span><span class="p">,</span> <span class="n">print_str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+                <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">LEVEL_DISPLAY_MSG</span><span class="p">,</span> <span class="n">print_str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+                    <span class="n">LEVEL_SAVE_LOG</span><span class="p">,</span>
+                    <span class="n">print_str_without_markers</span><span class="p">,</span>
+                    <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+                <span class="p">)</span>
 
                 <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">thread_local_data</span><span class="p">,</span> <span class="s2">&quot;uid&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">disable_studio</span><span class="p">:</span>
                     <span class="n">log_studio</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">thread_local_data</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
                 <span class="k">return</span>
 
-    <span class="n">message</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">message</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="s2">&quot;{{&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;}}&quot;</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">LEVEL_CHAT_LOG</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">LEVEL_DISPLAY_MSG</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">LEVEL_SAVE_LOG</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="log_studio">
@@ -286,8 +306,9 @@
 
 <span class="k">def</span> <span class="nf">_level_format</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Format the log record.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;level&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">LEVEL_CHAT_LOG</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="c1"># Display the chat message</span>
+    <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;level&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="n">LEVEL_DISPLAY_MSG</span><span class="p">,</span> <span class="n">LEVEL_SAVE_LOG</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{message}</span><span class="se">\n</span><span class="s2">&quot;</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="s2">&quot;&lt;green&gt;{time:YYYY-MM-DD HH:mm:ss.SSS}&lt;/green&gt; | &lt;level&gt;{&quot;</span>
@@ -316,8 +337,11 @@
     <span class="c1"># avoid reinit in subprocess</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="s2">&quot;chat&quot;</span><span class="p">):</span>
         <span class="c1"># add chat function for logger</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">level</span><span class="p">(</span><span class="n">LEVEL_CHAT_LOG</span><span class="p">,</span> <span class="n">no</span><span class="o">=</span><span class="mi">21</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">level</span><span class="p">(</span><span class="n">LEVEL_CHAT_SAVE</span><span class="p">,</span> <span class="n">no</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">level</span><span class="p">(</span><span class="n">LEVEL_SAVE_LOG</span><span class="p">,</span> <span class="n">no</span><span class="o">=</span><span class="mi">51</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">level</span><span class="p">(</span><span class="n">LEVEL_DISPLAY_MSG</span><span class="p">,</span> <span class="n">no</span><span class="o">=</span><span class="mi">52</span><span class="p">)</span>
+
+        <span class="c1"># save chat message into file</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">level</span><span class="p">(</span><span class="n">LEVEL_SAVE_MSG</span><span class="p">,</span> <span class="n">no</span><span class="o">=</span><span class="mi">53</span><span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">chat</span> <span class="o">=</span> <span class="n">_chat</span>
 
         <span class="c1"># set logging level</span>
@@ -325,7 +349,8 @@
         <span class="c1"># standard output for all logging except chat</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span>
-            <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">record</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;level&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="n">LEVEL_CHAT_SAVE</span><span class="p">,</span>
+            <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">record</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;level&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+            <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">LEVEL_SAVE_LOG</span><span class="p">,</span> <span class="n">LEVEL_SAVE_MSG</span><span class="p">],</span>
             <span class="nb">format</span><span class="o">=</span><span class="n">_level_format</span><span class="p">,</span>
             <span class="n">enqueue</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span>
@@ -342,7 +367,8 @@
         <span class="c1"># save all logging into file</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
             <span class="n">path_log_file</span><span class="p">,</span>
-            <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">record</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;level&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="n">LEVEL_CHAT_SAVE</span><span class="p">,</span>
+            <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">record</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;level&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+            <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">LEVEL_SAVE_MSG</span><span class="p">,</span> <span class="n">LEVEL_DISPLAY_MSG</span><span class="p">],</span>
             <span class="nb">format</span><span class="o">=</span><span class="n">_level_format</span><span class="p">,</span>
             <span class="n">enqueue</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span>
@@ -350,10 +376,9 @@
 
         <span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
             <span class="n">path_chat_file</span><span class="p">,</span>
-            <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">record</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;level&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">LEVEL_CHAT_SAVE</span><span class="p">,</span>
             <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{message}</span><span class="s2">&quot;</span><span class="p">,</span>
             <span class="n">enqueue</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">level</span><span class="o">=</span><span class="n">LEVEL_CHAT_SAVE</span><span class="p">,</span>
+            <span class="n">level</span><span class="o">=</span><span class="n">LEVEL_SAVE_MSG</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 </pre></div>
