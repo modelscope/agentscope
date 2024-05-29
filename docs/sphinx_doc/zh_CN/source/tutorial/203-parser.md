@@ -76,6 +76,8 @@ AgentScope提供了多种不同解析器，开发者可以根据自己的需求�
 
 > **NOTE**: 相比`MarkdownJsonDictParser`，`MultiTaggedContentParser`更适合于模型能力不强，以及需要 LLM 返回内容过于复杂的情况。例如 LLM 返回 Python 代码，如果直接在字典中返回代码，那么 LLM 需要注意特殊字符的转义（\t,\n,...），`json.loads`读取时对双引号和单引号的区分等问题。而`MultiTaggedContentParser`实际是让大模型在每个单独的标签中返回各个键值，然后再将它们组成字典，从而降低了LLM返回的难度。
 
+> **NOTE**：AgentScope 内置的响应格式说明并不一定是最优的选择。在 AgentScope 中，开发者可以完全控制提示构建的过程，因此，选择不使用parser中内置的相应格式说明，而是自定义新的相应格式说明，或是实现新的parser类都是可行的技术方案。
+
 下面我们将根据不同的目标格式，介绍这些解析器的用法。
 
 ### 字符串（`str`）类型

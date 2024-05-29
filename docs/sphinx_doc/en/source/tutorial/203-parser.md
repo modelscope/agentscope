@@ -78,6 +78,8 @@ AgentScope provides multiple built-in parsers, and developers can choose accordi
 > In contrast, `MultiTaggedContentParser` guides LLM to generate each key-value pair separately in individual tags and then combines them into a dictionary, thus reducing the difficulty.
 
 
+>**NOTE**: The built-in strategies to construct format instruction just provide some examples. In AgentScope, developer has complete control over prompt construction. So they can choose not to use the format instruction provided by parsers, customizing their format instruction by hand or implementing new parser class are all feasible.
+
 In the following sections, we will introduce the usage of these parsers based on different target formats.
 
 ### String Type
