@@ -1498,68 +1498,69 @@ function showExportConfigPopup() {
 }
 
 function showExportPyPopup() {
-    const rawData = editor.export();
+    if (checkConditions()) {
+        const rawData = editor.export();
 
-    const hasError = sortElementsByPosition(rawData);
-    if (hasError) {
-        return;
-    }
-
-    const filteredData = reorganizeAndFilterConfigForAgentScope(rawData);
-
-    Swal.fire({
-        title: 'Processing...',
-        text: 'Please wait.',
-        allowOutsideClick: false,
-        onBeforeOpen: () => {
-            Swal.showLoading()
+        const hasError = sortElementsByPosition(rawData);
+        if (hasError) {
+            return;
         }
-    });
 
-    fetch('/convert-to-py', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            data: JSON.stringify(filteredData, null, 4),
+        const filteredData = reorganizeAndFilterConfigForAgentScope(rawData);
+
+        Swal.fire({
+            title: 'Processing...',
+            text: 'Please wait.',
+            allowOutsideClick: false,
+            onBeforeOpen: () => {
+                Swal.showLoading()
+            }
+        });
+
+        fetch('/convert-to-py', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                data: JSON.stringify(filteredData, null, 4),
+            })
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Network error.');
+            }
+            return response.json();
         })
-    }).then(response => {
-        if (!response.ok) {
-            throw new Error('Network error.');
-        }
-        return response.json();
-    })
-        .then(data => {
-            Swal.close();
-            if (data.is_success === 'True') {
-                Swal.fire({
-                    title: '<b>Workflow Python Code</b>',
-                    html:
-                        '<p>Save as main.py<br>' +
-                        'Then run the following command in your terminal:<br>' +
-                        '<div class="code-snippet">python main.py</div><br>' +
-                        'or <div class="code-snippet">as_studio main.py</div></p>' +
-                        '<pre class="line-numbers"><code class="language-py" id="export-data">' +
-                        data.py_code +
-                        '</code></pre>',
-                    showCloseButton: true,
-                    showCancelButton: true,
-                    confirmButtonText: 'Copy',
-                    cancelButtonText: 'Close',
-                    onBeforeOpen: (element) => {
-                        const codeElement = element.querySelector('code');
-                        Prism.highlightElement(codeElement);
-                        const copyButton = Swal.getConfirmButton();
-                        copyButton.addEventListener('click', () => {
-                            copyToClipboard(codeElement.textContent);
-                        });
-                    }
-                });
-            } else {
-                const errorMessage = `
-            <p>An error occurred during the Python code generation process. Please check the following error:</p>
-            <pre class="line-numbers"><code class="language-py">${data.py_code}</code></pre>
+            .then(data => {
+                Swal.close();
+                if (data.is_success === 'True') {
+                    Swal.fire({
+                        title: '<b>Workflow Python Code</b>',
+                        html:
+                            '<p>Save as main.py<br>' +
+                            'Then run the following command in your terminal:<br>' +
+                            '<div class="code-snippet">python main.py</div><br>' +
+                            'or <div class="code-snippet">as_studio main.py</div></p>' +
+                            '<pre class="line-numbers"><code class="language-py" id="export-data">' +
+                            data.py_code +
+                            '</code></pre>',
+                        showCloseButton: true,
+                        showCancelButton: true,
+                        confirmButtonText: 'Copy',
+                        cancelButtonText: 'Close',
+                        onBeforeOpen: (element) => {
+                            const codeElement = element.querySelector('code');
+                            Prism.highlightElement(codeElement);
+                            const copyButton = Swal.getConfirmButton();
+                            copyButton.addEventListener('click', () => {
+                                copyToClipboard(codeElement.textContent);
+                            });
+                        }
+                    });
+                } else {
+                    const errorMessage = `
+                <p>An error occurred during the Python code generation process. Please check the following error:</p>
+                <pre class="line-numbers"><code class="language-py">${data.py_code}</code></pre>
         `;
                 Swal.fire({
                     title: 'Error!',
@@ -1582,67 +1583,69 @@ function showExportPyPopup() {
                 'There was an error generating your code.',
                 'error');
         });
+    }
 }
 
 function showExportRunPopup() {
-    const rawData = editor.export();
-    const hasError = sortElementsByPosition(rawData);
-    if (hasError) {
-        return;
-    }
-    const filteredData = reorganizeAndFilterConfigForAgentScope(rawData);
-
-    Swal.fire({
-        title: 'Processing...',
-        text: 'Please wait.',
-        allowOutsideClick: false,
-        onBeforeOpen: () => {
-            Swal.showLoading()
+    if (checkConditions()) {
+        const rawData = editor.export();
+        const hasError = sortElementsByPosition(rawData);
+        if (hasError) {
+            return;
         }
-    });
+        const filteredData = reorganizeAndFilterConfigForAgentScope(rawData);
 
-    fetch('/convert-to-py-and-run', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            data: JSON.stringify(filteredData, null, 4),
+        Swal.fire({
+            title: 'Processing...',
+            text: 'Please wait.',
+            allowOutsideClick: false,
+            onBeforeOpen: () => {
+                Swal.showLoading()
+            }
+        });
+
+        fetch('/convert-to-py-and-run', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                data: JSON.stringify(filteredData, null, 4),
+            })
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Network error.');
+            }
+            return response.json();
         })
-    }).then(response => {
-        if (!response.ok) {
-            throw new Error('Network error.');
-        }
-        return response.json();
-    })
-        .then(data => {
-            Swal.close();
-            if (data.is_success === 'True') {
-                Swal.fire({
-                    title: '<b>Application Running in Background</b>',
-                    html:
-                        '<p>Your application has been successfully run ' +
-                        'in background.<br>' +
-                        '<p><strong>Task UID:</strong>' +
-                        data.uid + '</p>' +
-                        '<pre class="line-numbers"><code class="language-py" id="export-data">' +
-                        data.py_code +
-                        '</code></pre>',
-                    showCloseButton: true,
-                    showCancelButton: true,
-                    confirmButtonText: 'Copy Code',
-                    cancelButtonText: 'Close',
-                    onBeforeOpen: (element) => {
-                        const codeElement = element.querySelector('code');
-                        Prism.highlightElement(codeElement);
-                        const copyButton = Swal.getConfirmButton();
-                        copyButton.addEventListener('click', () => {
-                            copyToClipboard(codeElement.textContent);
-                        });
-                    }
-                });
-            } else {
-                const errorMessage = `
+            .then(data => {
+                Swal.close();
+                if (data.is_success === 'True') {
+                    Swal.fire({
+                        title: '<b>Application Running in Background</b>',
+                        html:
+                            '<p>Your application has been successfully run ' +
+                            'in background.<br>' +
+                            '<p><strong>Task UID:</strong>' +
+                            data.uid + '</p>' +
+                            '<pre class="line-numbers"><code class="language-py" id="export-data">' +
+                            data.py_code +
+                            '</code></pre>',
+                        showCloseButton: true,
+                        showCancelButton: true,
+                        confirmButtonText: 'Copy Code',
+                        cancelButtonText: 'Close',
+                        onBeforeOpen: (element) => {
+                            const codeElement = element.querySelector('code');
+                            Prism.highlightElement(codeElement);
+                            const copyButton = Swal.getConfirmButton();
+                            copyButton.addEventListener('click', () => {
+                                copyToClipboard(codeElement.textContent);
+                            });
+                        }
+                    });
+                } else {
+                    const errorMessage = `
         <p>An error occurred during the Python code running process. Please check the following error:</p>
         <pre class="line-numbers"><code class="language-py">${data.py_code}</code></pre>
     `;
@@ -1668,6 +1671,7 @@ function showExportRunPopup() {
                 'There was an error running your workflow.',
                 'error');
         });
+    }
 }
 
 
