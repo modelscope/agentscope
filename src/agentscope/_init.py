@@ -162,6 +162,9 @@ def init_process(
     if runtime_id is not None:
         _runtime.runtime_id = runtime_id
 
+    # Init file manager and save configs by default
+    file_manager.init(save_dir, save_api_invoke)
+
     # Init logger
     dir_log = str(file_manager.dir_log) if save_log else None
     setup_logger(dir_log, logger_level)
@@ -169,9 +172,6 @@ def init_process(
     # Load model configs if needed
     if model_configs is not None:
         read_model_configs(model_configs)
-
-    # Init file manager and save configs by default
-    file_manager.init(save_dir, save_api_invoke)
 
     # Init monitor
     _ = MonitorFactory.get_monitor(
