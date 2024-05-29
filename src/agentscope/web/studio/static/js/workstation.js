@@ -100,6 +100,7 @@ async function initializeWorkstationPage() {
         setupNodeListeners(id);
         setupNodeCopyListens(id);
         addEventListenersToNumberInputs(id);
+        setupTextInputListeners(id);
     })
 
     editor.on('nodeRemoved', function (id) {
@@ -755,6 +756,21 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
             break;
 
         default:
+    }
+}
+
+function setupTextInputListeners(nodeId) {
+    const newNode = document.getElementById(`node-${nodeId}`);
+    if (newNode) {
+        const stopPropagation = function(event) {
+            event.stopPropagation();
+        };
+        newNode.addEventListener('mousedown', function(event) {
+            const target = event.target;
+            if (target.tagName === 'TEXTAREA' || target.tagName === 'INPUT') {
+                stopPropagation(event);
+            }
+        }, false);
     }
 }
 
