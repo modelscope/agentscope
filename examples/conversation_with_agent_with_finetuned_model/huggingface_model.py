@@ -240,20 +240,22 @@ class HuggingFaceWrapper(ModelWrapperBase):
         """
 
         bnb_config_default = {}
+        bnb_config = {}
 
         if fine_tune_config is not None:
             if fine_tune_config.get("bnb_config") is not None:
                 bnb_config_default.update(fine_tune_config["bnb_config"])
-
-        bnb_config = BitsAndBytesConfig(**bnb_config_default)
+        if bnb_config != bnb_config_default:
+            bnb_config = BitsAndBytesConfig(**bnb_config_default)
 
         try:
             if local_model_path is None:
                 self.model = AutoModelForCausalLM.from_pretrained(
                     pretrained_model_name_or_path,
-                    quantization_config=bnb_config,
-                    token=self.huggingface_token,
                     device_map=self.device_map,
+                    torch_dtype=torch.bfloat16,
+                    **({"quantization_config": bnb_config} if bnb_config != {} else {}),
+                    token = self.huggingface_token,
                 )
                 info_msg = (
                     f"Successfully loaded new model "
@@ -263,9 +265,10 @@ class HuggingFaceWrapper(ModelWrapperBase):
             else:
                 self.model = AutoModelForCausalLM.from_pretrained(
                     local_model_path,
-                    quantization_config=bnb_config,
-                    local_files_only=True,
                     device_map=self.device_map,
+                    torch_dtype=torch.bfloat16,
+                    **({"quantization_config": bnb_config} if bnb_config != {} else {}),
+                    local_files_only=True,
                 )
                 info_msg = (
                     f"Successfully loaded new model "
