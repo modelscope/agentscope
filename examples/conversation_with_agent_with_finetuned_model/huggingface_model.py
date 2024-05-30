@@ -95,6 +95,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
         self.load_model(
             pretrained_model_name_or_path,
             local_model_path=local_model_path,
+            fine_tune_config=fine_tune_config,
         )
         self.load_tokenizer(
             pretrained_model_name_or_path,
