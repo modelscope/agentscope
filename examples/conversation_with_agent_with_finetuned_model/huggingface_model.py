@@ -86,10 +86,12 @@ class HuggingFaceWrapper(ModelWrapperBase):
         self.huggingface_token = os.getenv("HUGGINGFACE_TOKEN")
 
         if device is None:
+            self.device_map = 'auto'
             self.device = torch.device(
                 "cuda" if torch.cuda.is_available() else "cpu",
             )
         else:
+            self.device_map = device
             self.device = device
 
         self.load_model(
@@ -251,7 +253,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
                     pretrained_model_name_or_path,
                     quantization_config=bnb_config,
                     token=self.huggingface_token,
-                    device_map="auto",
+                    device_map=self.device_map,
                 )
                 info_msg = (
                     f"Successfully loaded new model "
@@ -263,7 +265,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
                     local_model_path,
                     quantization_config=bnb_config,
                     local_files_only=True,
-                    device_map="auto",
+                    device_map=self.device_map,
                 )
                 info_msg = (
                     f"Successfully loaded new model "
