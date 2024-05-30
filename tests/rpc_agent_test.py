@@ -714,8 +714,14 @@ class BasicRpcAgentTest(unittest.TestCase):
             upload_source_code=True,
         )
         file = file_agent()
-        remote_file_path = file.url
-        local_file_path = client.download_file(remote_file_path)
+        remote_file_path = os.path.abspath(
+            os.path.join(
+                os.path.abspath(os.path.dirname(__file__)),
+                "data",
+                "image.png",
+            ),
+        )
+        local_file_path = file.url
         self.assertNotEqual(remote_file_path, local_file_path)
         with open(remote_file_path, "rb") as rf:
             remote_content = rf.read()

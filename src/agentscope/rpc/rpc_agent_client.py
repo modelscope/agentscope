@@ -297,13 +297,22 @@ class RpcAgentClient:
             return json.loads(resp.value)
 
     def download_file(self, path: str) -> str:
-        """Download a file from a remote server."""
+        """Download a file from a remote server to the local machine.
+
+        Args:
+            path (`str`): the path of the file to be downloaded. Note that
+            it is the path on the remote server.
+
+        Returns:
+            `str`: the path of the downloaded file. Note that it is the path
+            on the local machine.
+        """
+        local_file_name = (
+            f"{generate_id_from_seed(path, 5)}_{os.path.basename(path)}"
+        )
+        local_path = os.path.join(file_manager.dir_file, local_file_name)
         with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
             stub = RpcAgentStub(channel)
-            local_file_name = (
-                f"{generate_id_from_seed(path, 5)}_{os.path.basename(path)}"
-            )
-            local_path = os.path.join(file_manager.dir_file, local_file_name)
             with open(local_path, "wb") as f:
                 for resp in stub.download_file(
                     agent_pb2.FileRequest(path=path),
