@@ -86,7 +86,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
         self.huggingface_token = os.getenv("HUGGINGFACE_TOKEN")
 
         if device is None:
-            self.device_map = 'auto'
+            self.device_map = "auto"
             self.device = torch.device(
                 "cuda" if torch.cuda.is_available() else "cpu",
             )
