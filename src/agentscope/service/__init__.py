@@ -26,7 +26,7 @@ from .web.dblp import (
     dblp_search_authors,
     dblp_search_venues,
 )
-from .multi_modality.dash_scope import (
+from .multi_modality.dashscope_services import (
     dashscope_image_to_text,
     dashscope_text_to_image,
     dashscope_text_to_audio,

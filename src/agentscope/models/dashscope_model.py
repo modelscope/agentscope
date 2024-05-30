@@ -606,7 +606,9 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
             messages=messages,
             **kwargs,
         )
-
+        # Unhandle code path here
+        # response could be a generator , if stream is yes
+        # suggest add a check here
         if response.status_code != HTTPStatus.OK:
             error_msg = (
                 f" Request id: {response.request_id},"
@@ -847,3 +849,7 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
             raise TypeError(
                 f"Unsupported url type {type(url)}, " f"str or list expected.",
             )
+
+    def convert_url(self, url: Union[str, Sequence[str], None]) -> List[dict]:
+        """Public method to convert the url to the format of DashScope API."""
+        return self._convert_url(url)
