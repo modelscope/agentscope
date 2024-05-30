@@ -5,7 +5,7 @@ from loguru import logger
 
 from agentscope.models import load_model_by_config_name
 from agentscope.message import Msg
-from agentscope.web.studio.utils import user_input
+from agentscope.agents import DialogAgent, UserAgent
 from .prompt_opt_method import PromptOptMethodBase
 
 
@@ -19,6 +19,7 @@ class PromptAbTestModule:
         opt_methods_or_prompts: List[Union[PromptOptMethodBase, str]],
         save_dir: str = None,
     ) -> None:
+        self.model_config_name = model_config_name
         self.model = load_model_by_config_name(model_config_name)
         self.user_prompt = user_prompt
         assert isinstance(opt_methods_or_prompts, list)
@@ -65,7 +66,42 @@ class PromptAbTestModule:
         for index, query in enumerate(queries, start=1):
             logger.chat(f"## Query {index}:\n")
             logger.chat(query)
+            logger.chat(("\n## Using Original Prompt\n"))
+            res = self.infer_with_system_prompt(query, self.user_prompt)
+            logger.chat(res + "\n")
             for m_index, opt_prompt in enumerate(self.ab_prompt_list, start=1):
-                logger.chat(f"\n## Method {m_index}\n")
+                logger.chat(f"\n## Using Method {m_index} Prompt\n")
                 res = self.infer_with_system_prompt(query, opt_prompt)
                 logger.chat(res + "\n")
+
+    def compare_with_dialog(self) -> None:
+        """
+        Compare how different system prompt perform with dialog
+        press `exit` to finish
+        """
+        user_prompt_dialog_agent = DialogAgent(
+            "assistant",
+            sys_prompt=self.user_prompt,
+            model_config_name=self.model_config_name,
+        )
+        opt_prompt_dialog_agent_list = []
+        for opt_prompt in self.ab_prompt_list:
+            opt_prompt_dialog_agent_list.append(
+                DialogAgent(
+                    "assistatn",
+                    sys_prompt=opt_prompt,
+                    model_config_name=self.model_config_name,
+                ),
+            )
+        user_agent = UserAgent()
+        x = None
+        while x is None or x.content != "exit":
+            logger.chat(("\n## Using Original Prompt\n"))
+            user_prompt_dialog_agent(x)
+            for index, opt_dialog_agent in enumerate(
+                opt_prompt_dialog_agent_list,
+                start=1,
+            ):
+                logger.chat(f"\n## Using Method {index} Prompt\n")
+                opt_dialog_agent(x)
+            x = user_agent()
