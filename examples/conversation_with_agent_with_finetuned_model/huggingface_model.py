@@ -254,8 +254,12 @@ class HuggingFaceWrapper(ModelWrapperBase):
                     pretrained_model_name_or_path,
                     device_map=self.device_map,
                     torch_dtype=torch.bfloat16,
-                    **({"quantization_config": bnb_config} if bnb_config != {} else {}),
-                    token = self.huggingface_token,
+                    **(
+                        {"quantization_config": bnb_config}
+                        if bnb_config != {}
+                        else {}
+                    ),
+                    token=self.huggingface_token,
                 )
                 info_msg = (
                     f"Successfully loaded new model "
@@ -267,7 +271,11 @@ class HuggingFaceWrapper(ModelWrapperBase):
                     local_model_path,
                     device_map=self.device_map,
                     torch_dtype=torch.bfloat16,
-                    **({"quantization_config": bnb_config} if bnb_config != {} else {}),
+                    **(
+                        {"quantization_config": bnb_config}
+                        if bnb_config != {}
+                        else {}
+                    ),
                     local_files_only=True,
                 )
                 info_msg = (
