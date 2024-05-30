@@ -67,6 +67,7 @@ Before running this example, ensure you have installed the following packages:
 - `datasets`
 - `trl`
 - `bitsandbytes`
+- `sentencepiece`
 
 Additionally, set `HUGGINGFACE_TOKEN` in the `agentscope/examples/conversation_with_agent_with_finetuned_model/.env`.
 
