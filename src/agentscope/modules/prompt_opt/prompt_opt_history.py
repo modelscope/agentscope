@@ -30,11 +30,11 @@ OPT_PROMPT_TEMPLATE = """
 
 class PromptAgentOpt:
     """A module that optimize agent system prompt given dialog history."""
-    
+
     def __init__(
         self,
-        agent: AgentBase
-        ) -> None:
+        agent: AgentBase,
+    ) -> None:
         self.agent = agent
         self.model = agent.model
 
@@ -60,7 +60,8 @@ class PromptAgentOpt:
                 break
         return notes
 
-    def optimize(self):
+    def optimize(self) -> None:
+        """Optimize the system prompt of the agent, given its dialog history"""
         system_prompt = self.agent.sys_prompt
         dialog_history = self.model.format(self.agent.memory.get_memory())
 
