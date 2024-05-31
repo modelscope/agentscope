@@ -45,8 +45,8 @@ def majority_vote(votes: list) -> Any:
 
 def extract_name_and_id(name: str) -> tuple[str, int]:
     """extract player name and id from a string"""
-    name = re.search(r"\bPlayer\d+\b", name).group(0)
-    idx = int(re.search(r"Player(\d+)", name).group(1)) - 1
+    name = re.search(r"\b[Pp]layer\d+\b", name).group(0)
+    idx = int(re.search(r"[Pp]layer(\d+)", name).group(1)) - 1
     return name, idx
 
 

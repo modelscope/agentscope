@@ -29,11 +29,11 @@ class Prompts:
     wolves_vote_parser = MarkdownJsonDictParser(
         content_hint={
             "thought": "what you thought",
-            "speak": "player_name",
+            "vote": "player_name",
         },
-        required_keys=["thought", "speak"],
-        keys_to_memory="speak",
-        keys_to_content="speak",
+        required_keys=["thought", "vote"],
+        keys_to_memory="vote",
+        keys_to_content="vote",
     )
 
     to_wolves_res = "The player with the most votes is {}."
@@ -104,10 +104,10 @@ class Prompts:
 
     to_all_discuss = (
         "Now the alive players are {}. Given the game rules and your role, "
-        "based on the "
-        "situation and the information you gain, to vote a player eliminated "
-        "among alive players and to win the game, what do you want to say "
-        "to others? You can decide whether to reveal your role. "
+        "based on the situation and the information you gain, to vote a "
+        "player eliminated among alive players and to win the game, what do "
+        "you want to say to others? You can decide whether to reveal your "
+        "role."
     )
 
     survivors_discuss_parser = MarkdownJsonDictParser(
@@ -123,11 +123,11 @@ class Prompts:
     survivors_vote_parser = MarkdownJsonDictParser(
         content_hint={
             "thought": "what you thought",
-            "speak": "player_name",
+            "vote": "player_name",
         },
-        required_keys=["thought", "speak"],
-        keys_to_memory="speak",
-        keys_to_content="speak",
+        required_keys=["thought", "vote"],
+        keys_to_memory="vote",
+        keys_to_content="vote",
     )
 
     to_all_vote = (
