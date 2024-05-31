@@ -110,6 +110,7 @@ body {
     background-color: var(--main-color-light);
     border-radius: 10px;
     margin: 0 5px;
+    cursor: pointer;
 }
 
 .menu-btn:hover {
@@ -126,6 +127,16 @@ body {
     display: flex;
     width: 20px;
     height: 20px;
+}
+
+.menu-btn:hover .tooltip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: fit-content;
+    width: fit-content;
+    padding: 10px;
+    background-color: var(--main-color-light);
 }
 
 .btn-cover {
@@ -422,12 +433,6 @@ body {
     padding: 10px;
     height: fit-content;
     opacity: 1;
-}
-
-
-
-.hidden {
-    display: none;
 }
 
 pre[class*="language-"] {

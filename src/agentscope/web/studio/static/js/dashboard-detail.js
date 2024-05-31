@@ -2,16 +2,18 @@ const dialogueTabBtn = document.getElementById('dialogue-tab-btn');
 const codeTabBtn = document.getElementById('code-tab-btn');
 const invocationTabBtn = document.getElementById('invocation-tab-btn');
 let runtimeInfo = null;
+let currentContent = null;
 
 function initializeDashboardDetailPageByUrl(pageUrl) {
     switch (pageUrl) {
         case 'static/html/dashboard-detail-dialogue.html':
-            // TODO: pass the runtime_id
             initializeDashboardDetailDialoguePage(runtimeInfo);
             break;
         case 'static/html/dashboard-detail-code.html':
+            initializeDashboardDetailCodePage(runtimeInfo['script_path']);
             break;
         case 'static/html/dashboard-detail-invocation.html':
+            initializeDashboardDetailInvocationPage(runtimeInfo['id'])
             break;
     }
 }
@@ -21,6 +23,11 @@ function initializeDashboardDetailPageByUrl(pageUrl) {
 // 2. code tab: the code files
 // 3. invocation tab: the model invocation records
 function loadDashboardDetailContent(pageUrl, javascriptUrl) {
+    if (currentContent === pageUrl) {
+        return;
+    } else {
+        currentContent = pageUrl;
+    }
     fetch(pageUrl)
         .then(response => {
             if (!response.ok) {

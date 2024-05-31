@@ -1,0 +1,34 @@
+#invocation-body {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: flex-end;
+    height: 100%;
+    width: 100%;
+}
+
+#invocation-list {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 400px;
+    box-sizing: border-box;
+    border: 0;
+    background-color: #ffffff;
+}
+
+#invocation-content {
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 400px);
+    height: 100%;
+    box-sizing: border-box;
+    border-left: 1px solid var(--border-color);
+}
+
+#invocation-content .monaco-editor {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    flex-grow: 1;
+    min-width: 100%;
+}

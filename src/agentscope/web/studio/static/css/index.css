@@ -173,6 +173,7 @@ body {
     color: var(--tab-font-color);
     box-sizing: border-box;
     margin: 5px 0;
+    cursor: pointer;
 }
 
 .navigation-bar-item:hover {

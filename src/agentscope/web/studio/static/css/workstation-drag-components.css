@@ -69,6 +69,11 @@
     flex-direction: column;
     font-size: 14px;
     margin-top: 10px;
+    height: fit-content;
+}
+
+.box.hidden {
+    display: none;
 }
 
 .box input, .box select, .box textarea {
@@ -79,6 +84,7 @@
     box-sizing: border-box;
     width: 100%;
     height: 40px;
+    min-height: 40px;
     padding: 0 10px;
     border: 1px solid var(--border-color);
     border-radius: 5px;

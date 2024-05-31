@@ -10,6 +10,36 @@ let currentImportIndex;
 let accumulatedImportData;
 let descriptionStep;
 
+
+let nameToHtmlFile = {
+    'welcome': 'welcome.html',
+    'dashscope_chat': 'model-dashscope-chat.html',
+    'openai_chat': 'model-openai-chat.html',
+    'post_api_chat': 'model-post-api-chat.html',
+    'post_api_dall_e': 'model-post-api-dall-e.html',
+    'Message': 'message-msg.html',
+    'DialogAgent': 'agent-dialogagent.html',
+    'UserAgent': 'agent-useragent.html',
+    'TextToImageAgent': 'agent-texttoimageagent.html',
+    'DictDialogAgent': 'agent-dictdialogagent.html',
+    'ReActAgent': 'agent-reactagent.html',
+    'Placeholder': 'pipeline-placeholder.html',
+    'MsgHub': 'pipeline-msghub.html',
+    'SequentialPipeline': 'pipeline-sequentialpipeline.html',
+    'ForLoopPipeline': 'pipeline-forlooppipeline.html',
+    'WhileLoopPipeline': 'pipeline-whilelooppipeline.html',
+    'IfElsePipeline': 'pipeline-ifelsepipeline.html',
+    'SwitchPipeline': 'pipeline-switchpipeline.html',
+    'BingSearchService': 'service-bing-search.html',
+    'GoogleSearchService': 'service-google-search.html',
+    'PythonService': 'service-execute-python.html',
+    'ReadTextService': 'service-read-text.html',
+    'WriteTextService': 'service-write-text.html',
+}
+
+// Cache the loaded html files
+let htmlCache = {};
+
 // When clicking the sidebar item, it will expand/collapse the next content
 function onClickSidebarSubItem(element) {
     element.classList.toggle("active");
@@ -21,19 +51,21 @@ function onClickSidebarSubItem(element) {
     }
 }
 
+
 // Load html source code dynamically
 async function fetchHtml(fileName) {
     try {
-        const response = await fetch('static/html-drag-components/' + fileName);
+        let filePath = 'static/html-drag-components/' + fileName;
+        const response = await fetch(filePath);
         if (!response.ok) {
-            throw new Error('Connection error, cannot load the web page.');
+            throw new Error('Fail to load ' + filePath);
         }
-        const html = await response.text();
-        return html;
+        return await response.text();
     } catch (error) {
         return error;
     }
 }
+
 
 async function initializeWorkstationPage() {
     console.log("Initialize Workstation Page")
@@ -435,10 +467,11 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
     pos_x = pos_x * (editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom)) - (editor.precanvas.getBoundingClientRect().x * (editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom)));
     pos_y = pos_y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)) - (editor.precanvas.getBoundingClientRect().y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)));
 
+    var htmlSourceCode = await fetchHtmlSourceCodeByName(name);
+
     switch (name) {
         // Workflow-Model
         case 'dashscope_chat':
-            var dashscope_chat = await fetchHtml('model-dashscope-chat.html');
             const dashscope_chatId = editor.addNode('dashscope_chat', 0, 0, pos_x,
                 pos_y,
                 'dashscope_chat', {
@@ -453,12 +486,11 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                             "messages_key": 'input'
                         }
                 },
-                dashscope_chat);
+                htmlSourceCode);
             addEventListenersToNumberInputs(dashscope_chatId);
             break;
 
         case 'openai_chat':
-            var openai_chat = await fetchHtml("model-openai-chat.html");
             const openai_chatId = editor.addNode('openai_chat', 0, 0, pos_x,
                 pos_y,
                 'openai_chat', {
@@ -473,12 +505,11 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                             "messages_key": 'messages'
                         }
                 },
-                openai_chat);
+                htmlSourceCode);
             addEventListenersToNumberInputs(openai_chatId);
             break;
 
         case 'post_api_chat':
-            var post_api_chat = await fetchHtml("model-post-api-chat.html")
             const post_api_chatId = editor.addNode('post_api_chat', 0, 0, pos_x, pos_y,
                 'post_api_chat', {
                     "args":
@@ -498,12 +529,11 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                             "messages_key": 'messages'
                         }
                 },
-                post_api_chat);
+                htmlSourceCode);
             addEventListenersToNumberInputs(post_api_chatId);
             break;
 
         case 'post_api_dall_e':
-            var post_api_dall_e = await fetchHtml("model-post-api-dall-e.html")
             const post_api_dall_eId = editor.addNode('post_api_dall_e', 0,
                 0,
                 pos_x, pos_y,
@@ -527,14 +557,13 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                             "messages_key": 'prompt'
                         }
                 },
-                post_api_dall_e);
+                htmlSourceCode);
             addEventListenersToNumberInputs(post_api_dall_eId);
             break;
 
         // Message
         case 'Message':
-            var Message = await fetchHtml("message-msg.html");
-            const MessageID = editor.addNode('Message', 1, 1, pos_x,
+            editor.addNode('Message', 1, 1, pos_x,
                 pos_y, 'Message', {
                     "args":
                         {
@@ -542,12 +571,11 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                             "content": '',
                             "url": ''
                         }
-                }, Message);
+                }, htmlSourceCode);
             break;
 
         // Workflow-Agent
         case 'DialogAgent':
-            var DialogAgent = await fetchHtml("agent-dialogagent.html")
             const DialogAgentID = editor.addNode('DialogAgent', 1, 1,
                 pos_x,
                 pos_y,
@@ -557,7 +585,7 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                         "sys_prompt": '',
                         "model_config_name": ''
                     }
-                }, DialogAgent);
+                }, htmlSourceCode);
             var nodeElement = document.querySelector(`#node-${DialogAgentID} .node-id`);
             if (nodeElement) {
                 nodeElement.textContent = DialogAgentID;
@@ -565,11 +593,10 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
             break;
 
         case 'UserAgent':
-            var UserAgent = await fetchHtml("agent-useragent.html")
             const UserAgentID = editor.addNode('UserAgent', 1, 1, pos_x,
                 pos_y, 'UserAgent', {
                     "args": {"name": 'User'}
-                }, UserAgent);
+                }, htmlSourceCode);
             var nodeElement = document.querySelector(`#node-${UserAgentID} .node-id`);
             if (nodeElement) {
                 nodeElement.textContent = UserAgentID;
@@ -577,7 +604,6 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
             break;
 
         case 'TextToImageAgent':
-            var TextToImageAgent = await fetchHtml("agent-texttoimageagent.html")
             const TextToImageAgentID =
                 editor.addNode('TextToImageAgent', 1,
                     1, pos_x, pos_y,
@@ -586,7 +612,7 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                             "name": '',
                             "model_config_name": ''
                         }
-                    }, TextToImageAgent);
+                    }, htmlSourceCode);
             var nodeElement = document.querySelector(`#node-${TextToImageAgentID} .node-id`);
             if (nodeElement) {
                 nodeElement.textContent = TextToImageAgentID;
@@ -594,7 +620,6 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
             break;
 
         case 'DictDialogAgent':
-            var DictDialogAgent = await fetchHtml("agent-dictdialogagent.html");
             const DictDialogAgentID = editor.addNode('DictDialogAgent', 1,
                 1, pos_x, pos_y,
                 'DictDialogAgent', {
@@ -606,7 +631,7 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                         "fault_handler": '',
                         "max_retries": 3,
                     }
-                }, DictDialogAgent);
+                }, htmlSourceCode);
             var nodeElement = document.querySelector(`#node-${DictDialogAgentID} .node-id`);
             if (nodeElement) {
                 nodeElement.textContent = DictDialogAgentID;
@@ -614,7 +639,6 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
             break;
 
         case 'ReActAgent':
-            var ReActAgent = await fetchHtml("agent-reactagent.html");
             const ReActAgentID = editor.addNode('ReActAgent', 1, 1, pos_x, pos_y,
                 'GROUP', {
                     elements: [],
@@ -625,8 +649,7 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                         "max_iters": 10,
                         "verbose": '',
                     }
-                }, ReActAgent);
-
+                }, htmlSourceCode);
             var nodeElement = document.querySelector(`#node-${ReActAgentID} .node-id`);
             if (nodeElement) {
                 nodeElement.textContent = ReActAgentID;
@@ -635,13 +658,11 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
 
         // Workflow-Pipeline
         case 'Placeholder':
-            var Placeholder = await fetchHtml("pipeline-placeholder.html");
             editor.addNode('Placeholder', 1, 1,
-                pos_x, pos_y, 'Placeholder', {}, Placeholder);
+                pos_x, pos_y, 'Placeholder', {}, htmlSourceCode);
             break;
 
         case 'MsgHub':
-            var MsgHub = await fetchHtml("pipeline-msghub.html");
             editor.addNode('MsgHub', 1, 1, pos_x, pos_y,
                 'GROUP', {
                     elements: [],
@@ -651,17 +672,15 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                             "content": ''
                         }
                     }
-                }, MsgHub);
+                }, htmlSourceCode);
             break;
 
         case 'SequentialPipeline':
-            var SequentialPipeline = await fetchHtml("pipeline-sequentialpipeline.html");
             editor.addNode('SequentialPipeline', 1, 1, pos_x, pos_y,
-                'GROUP', {elements: []}, SequentialPipeline);
+                'GROUP', {elements: []}, htmlSourceCode);
             break;
 
         case 'ForLoopPipeline':
-            var ForLoopPipeline = await fetchHtml("pipeline-forlooppipeline.html")
             const ForLoopPipelineID =
                 editor.addNode('ForLoopPipeline', 1, 1, pos_x, pos_y,
                     'GROUP', {
@@ -670,39 +689,36 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                             "max_loop": 3,
                             "break_func": ''
                         }
-                    }, ForLoopPipeline);
+                    }, htmlSourceCode);
             addEventListenersToNumberInputs(ForLoopPipelineID);
             break;
 
         case 'WhileLoopPipeline':
-            var WhileLoopPipeline = await fetchHtml("pipeline-whilelooppipeline.html");
             editor.addNode('WhileLoopPipeline', 1, 1, pos_x, pos_y,
                 'GROUP', {
                     elements: [],
                     "args": {
                         "condition_func": ''
                     }
-                }, WhileLoopPipeline);
+                }, htmlSourceCode);
             break;
 
         case 'IfElsePipeline':
-            var IfElsePipeline = await fetchHtml("pipeline-ifelsepipeline.html")
             editor.addNode('IfElsePipeline', 1,
                 1, pos_x, pos_y, 'GROUP', {
                     elements: [], args: {
                         "condition_func": ''
                     }
-                }, IfElsePipeline);
+                }, htmlSourceCode);
             break;
 
         case 'SwitchPipeline':
-            var SwitchPipeline = await fetchHtml("pipeline-switchpipeline.html");
             const SwitchPipelineID = editor.addNode('SwitchPipeline', 1, 1, pos_x, pos_y, 'GROUP', {
                 elements: [], args: {
                     "condition_func": '',
                     "cases": [],
                 }
-            }, SwitchPipeline);
+            }, htmlSourceCode);
             setupSwitchPipelineListeners(SwitchPipelineID);
             const caseContainer = document.querySelector(`#node-${SwitchPipelineID} .case-container`);
             if (caseContainer) {
@@ -714,18 +730,16 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
 
         // Workflow-Service
         case 'BingSearchService':
-            var BingSearchService = await fetchHtml("service-bing-search.html");
             editor.addNode('BingSearchService', 0, 0,
                 pos_x, pos_y, 'BingSearchService', {
                     "args": {
                         "api_key": "",
                         "num_results": 3,
                     }
-                }, BingSearchService);
+                }, htmlSourceCode);
             break;
 
         case 'GoogleSearchService':
-            var GoogleSearchService = await fetchHtml("service-google-search.html");
             editor.addNode('GoogleSearchService', 0, 0,
                 pos_x, pos_y, 'GoogleSearchService', {
                     "args": {
@@ -733,30 +747,28 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                         "cse_id": "",
                         "num_results": 3,
                     }
-                }, GoogleSearchService);
+                }, htmlSourceCode);
             break;
 
         case 'PythonService':
-            var PythonService = await fetchHtml("service-execute-python.html");
             editor.addNode('PythonService', 0, 0,
-                pos_x, pos_y, 'PythonService', {}, PythonService);
+                pos_x, pos_y, 'PythonService', {}, htmlSourceCode);
             break;
 
         case 'ReadTextService':
-            var ReadTextService = await fetchHtml("service-read-text.html");
             editor.addNode('ReadTextService', 0, 0,
-                pos_x, pos_y, 'ReadTextService', {}, ReadTextService);
+                pos_x, pos_y, 'ReadTextService', {}, htmlSourceCode);
             break;
 
         case 'WriteTextService':
-            var WriteTextService = await fetchHtml("service-write-text.html");
             editor.addNode('WriteTextService', 0, 0,
-                pos_x, pos_y, 'WriteTextService', {}, WriteTextService);
+                pos_x, pos_y, 'WriteTextService', {}, htmlSourceCode);
             break;
 
         default:
     }
 }
+
 
 function toggleAdvanced() {
     var advancedBox = document.querySelector('.advanced-box');
@@ -766,6 +778,7 @@ function toggleAdvanced() {
         advancedBox.style.display = "none";
     }
 }
+
 
 function handleInputChange(event) {
     const input = event.target;
@@ -803,6 +816,7 @@ function handleInputChange(event) {
     }
 }
 
+
 function addEventListenersToNumberInputs(nodeId) {
     const nodeElement = document.getElementById(`node-${nodeId}`);
     if (nodeElement) {
@@ -812,6 +826,7 @@ function addEventListenersToNumberInputs(nodeId) {
         });
     }
 }
+
 
 function validateTemperature(input) {
     const value = input.valueAsNumber;
@@ -823,6 +838,7 @@ function validateTemperature(input) {
     input.reportValidity();
 }
 
+
 function validateSeed(input) {
     const value = parseInt(input.value, 10); // Parse the value as an integer.
     if (isNaN(value) || value < 0 || !Number.isInteger(parseFloat(input.value))) {
@@ -832,6 +848,7 @@ function validateSeed(input) {
     }
     input.reportValidity();
 }
+
 
 document.addEventListener('input', function (event) {
     const input = event.target;
@@ -849,22 +866,6 @@ document.addEventListener('input', function (event) {
 
 var transform = '';
 
-function showpopup(e) {
-    e.target.closest(".drawflow-node").style.zIndex = "9999";
-    e.target.children[0].style.display = "block";
-    //document.getElementById("modalfix").style.display = "block";
-
-    //e.target.children[0].style.transform = 'translate('+translate.x+'px, '+translate.y+'px)';
-    transform = editor.precanvas.style.transform;
-    editor.precanvas.style.transform = '';
-    editor.precanvas.style.left = editor.canvas_x + 'px';
-    editor.precanvas.style.top = editor.canvas_y + 'px';
-    console.log(transform);
-
-    //e.target.children[0].style.top  =  -editor.canvas_y - editor.container.offsetTop +'px';
-    //e.target.children[0].style.left  =  -editor.canvas_x  - editor.container.offsetLeft +'px';
-    editor.editor_mode = "fixed";
-}
 
 function updateReadmeAndTrimExtrasInHTML(htmlString, nodeId) {
     const parser = new DOMParser();
@@ -981,10 +982,6 @@ function setupNodeListeners(nodeId) {
 
         if (toggleArrow && contentBox && titleBox) {
             toggleArrow.addEventListener('click', function () {
-                console.log("Arrow clicked");
-                console.log("toggleArrow", toggleArrow);
-                console.log("contentBox", contentBox);
-                console.log("contentBox.classList", contentBox.classList);
                 contentBox.classList.toggle('hidden');
 
                 if (contentBox.classList.contains('hidden')) {
@@ -1012,11 +1009,15 @@ function setupNodeListeners(nodeId) {
 
             function doDragSE(e) {
                 newNode.style.width = 'auto';
-                const newWidth = (startWidth + e.clientX - startX) + 'px';
-                contentBox.style.width = newWidth;
-                titleBox.style.width = newWidth;
-                const newHeight = (startHeight + e.clientY - startY) + 'px';
-                contentBox.style.height = newHeight;
+
+                const newWidth = (startWidth + e.clientX - startX) ;
+                if (newWidth > 200) {
+                    contentBox.style.width = newWidth + 'px';
+                    titleBox.style.width = newWidth + 'px';
+                }
+
+                const newHeight = (startHeight + e.clientY - startY);
+                contentBox.style.height = newHeight + 'px';
 
                 editor.updateConnectionNodes('node-' + nodeId);
             }
@@ -1107,15 +1108,16 @@ function addDefaultCase(caseContainer) {
     caseContainer.appendChild(defaultCaseElement);
 }
 
+
 function closemodal(e) {
     e.target.closest(".drawflow-node").style.zIndex = "2";
     e.target.parentElement.parentElement.style.display = "none";
-    //document.getElementById("modalfix").style.display = "none";
     editor.precanvas.style.transform = transform;
     editor.precanvas.style.left = '0px';
     editor.precanvas.style.top = '0px';
     editor.editor_mode = "edit";
 }
+
 
 function changeModule(event) {
     var all = document.querySelectorAll(".menu ul li");
@@ -1124,6 +1126,7 @@ function changeModule(event) {
     }
     event.target.classList.add('selected');
 }
+
 
 function changeLockMode(option) {
     let lockSvg = document.getElementById('lock-svg');
@@ -1139,6 +1142,7 @@ function changeLockMode(option) {
     }
 }
 
+
 function toggleDraggable(element) {
     var content = element.nextElementSibling;
     if (content.classList.contains('visible')) {
@@ -1147,6 +1151,7 @@ function toggleDraggable(element) {
         content.classList.add('visible');
     }
 }
+
 
 function filterEmptyValues(obj) {
     return Object.entries(obj).reduce((acc, [key, value]) => {
@@ -1161,6 +1166,7 @@ function filterEmptyValues(obj) {
         return acc;
     }, {});
 }
+
 
 // This function is the most important to AgentScope config.
 function reorganizeAndFilterConfigForAgentScope(inputData) {
@@ -1239,6 +1245,7 @@ function sortElementsByPosition(inputData) {
     });
     return hasError;
 }
+
 
 function checkConditions() {
     let hasModelTypeError = true;
@@ -1422,6 +1429,7 @@ function checkConditions() {
     }
 }
 
+
 function showCheckPopup() {
     var btnCovers = document.querySelectorAll('.btn-cover');
     if (checkConditions()) {
@@ -1441,6 +1449,7 @@ function showCheckPopup() {
     }
 }
 
+
 function disableButtons() {
     var btnCovers = document.querySelectorAll('.btn-cover');
 
@@ -1454,48 +1463,6 @@ function disableButtons() {
     });
 }
 
-
-function showExportConfigPopup() {
-    const rawData = editor.export();
-
-    const hasError = sortElementsByPosition(rawData);
-    if (hasError) {
-        return;
-    }
-
-    const filteredData = reorganizeAndFilterConfigForAgentScope(rawData);
-    const exportData = JSON.stringify(filteredData, null, 4);
-
-    Swal.fire({
-        title: '<b>Workflow Configuration</b>',
-        html:
-            '<p>Save as config.json <br>' +
-            'Then run the following command in your terminal:<br>' +
-            '<div class="code-snippet">as_workflow config.json</div><br>' +
-            ' or <div class="code-snippet">as_studio config.json</div></p>' +
-            '<pre class="line-numbers"><code class="language-javascript" id="export-data">'
-            + exportData +
-            '</code></pre>',
-        showCloseButton: true,
-        showCancelButton: true,
-        confirmButtonText: 'Copy',
-        cancelButtonText: 'Close',
-        onBeforeOpen: (element) => {
-            // Find the code element inside the Swal content
-            const codeElement = element.querySelector('code');
-
-            // Now highlight the code element with Prism
-            Prism.highlightElement(codeElement);
-
-            // Copy to clipboard logic
-            const content = codeElement.textContent;
-            const copyButton = Swal.getConfirmButton();
-            copyButton.addEventListener('click', () => {
-                copyToClipboard(content);
-            });
-        }
-    });
-}
 
 function showExportPyPopup() {
     if (checkConditions()) {
@@ -1562,29 +1529,30 @@ function showExportPyPopup() {
                 <p>An error occurred during the Python code generation process. Please check the following error:</p>
                 <pre class="line-numbers"><code class="language-py">${data.py_code}</code></pre>
         `;
-                Swal.fire({
-                    title: 'Error!',
-                    html: errorMessage,
-                    icon: 'error',
-                    customClass: {
-                        popup: 'error-popup'
-                    },
-                    confirmButtonText: 'Close',
-                    onBeforeOpen: (element) => {
-                        const codeElement = element.querySelector('code');
-                        Prism.highlightElement(codeElement);
-                    }
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            Swal.fire('Failed!',
-                'There was an error generating your code.',
-                'error');
-        });
+                    Swal.fire({
+                        title: 'Error!',
+                        html: errorMessage,
+                        icon: 'error',
+                        customClass: {
+                            popup: 'error-popup'
+                        },
+                        confirmButtonText: 'Close',
+                        onBeforeOpen: (element) => {
+                            const codeElement = element.querySelector('code');
+                            Prism.highlightElement(codeElement);
+                        }
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire('Failed!',
+                    'There was an error generating your code.',
+                    'error');
+            });
     }
 }
+
 
 function showExportRunPopup() {
     if (checkConditions()) {
@@ -1649,28 +1617,28 @@ function showExportRunPopup() {
         <p>An error occurred during the Python code running process. Please check the following error:</p>
         <pre class="line-numbers"><code class="language-py">${data.py_code}</code></pre>
     `;
-                Swal.fire({
-                    title: 'Error!',
-                    html: errorMessage,
-                    icon: 'error',
-                    customClass: {
-                        popup: 'error-popup'
-                    },
-                    confirmButtonText: 'Close',
-                    onBeforeOpen: (element) => {
-                        const codeElement = element.querySelector('code');
-                        Prism.highlightElement(codeElement);
-                    }
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            Swal.close();
-            Swal.fire('Failed!',
-                'There was an error running your workflow.',
-                'error');
-        });
+                    Swal.fire({
+                        title: 'Error!',
+                        html: errorMessage,
+                        icon: 'error',
+                        customClass: {
+                            popup: 'error-popup'
+                        },
+                        confirmButtonText: 'Close',
+                        onBeforeOpen: (element) => {
+                            const codeElement = element.querySelector('code');
+                            Prism.highlightElement(codeElement);
+                        }
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.close();
+                Swal.fire('Failed!',
+                    'There was an error running your workflow.',
+                    'error');
+            });
     }
 }
 
@@ -1678,11 +1646,8 @@ function showExportRunPopup() {
 function showExportHTMLPopup() {
     const rawData = editor.export();
 
-    Object.keys(rawData.drawflow.Home.data).forEach((nodeId) => {
-        const node = rawData.drawflow.Home.data[nodeId];
-        const idPlaceholderRegex = /ID_PLACEHOLDER/g;
-        node.html = node.html.replace(idPlaceholderRegex, nodeId);
-    });
+    // Remove the html attribute from the nodes to avoid inconsistencies in html
+    removeHtmlFromUsers(rawData);
 
     const exportData = JSON.stringify(rawData, null, 4);
 
@@ -1735,9 +1700,7 @@ function isValidDataStructure(data) {
                 !node.hasOwnProperty('name') ||
                 typeof node.name !== 'string' ||
                 !node.hasOwnProperty('class') ||
-                typeof node.class !== 'string' ||
-                !node.hasOwnProperty('html') ||
-                typeof node.html !== 'string'
+                typeof node.class !== 'string'
             ) {
                 return false;
             }
@@ -1785,16 +1748,60 @@ function showImportHTMLPopup() {
         preConfirm: (data) => {
             try {
                 const parsedData = JSON.parse(data);
-                editor.clear();
-                editor.import(parsedData);
-                importSetupNodes(parsedData);
-                Swal.fire('Imported!', '', 'success');
+
+                // Add html source code to the nodes data
+                addHtmlAndReplacePlaceHolderBeforeImport(parsedData)
+                    .then(() => {
+                        editor.clear();
+                        editor.import(parsedData);
+                        importSetupNodes(parsedData);
+                        Swal.fire('Imported!', '', 'success');
+                    });
+
             } catch (error) {
                 Swal.showValidationMessage(`Import error: ${error}`);
             }
         }
     });
 }
+
+
+function removeHtmlFromUsers(data) {
+    Object.keys(data.drawflow.Home.data).forEach((nodeId) => {
+        const node = data.drawflow.Home.data[nodeId];
+        // Remove the html attribute from the node
+        delete node.html;
+    });
+}
+
+
+async function fetchHtmlSourceCodeByName(name) {
+    // Fetch the HTML source code from the cache if it exists
+    if (name in htmlCache) {
+        return htmlCache[name];
+    }
+
+    // Load the HTML source code
+    let htmlSourceCode = await fetchHtml(nameToHtmlFile[name]);
+    htmlCache[name] = htmlSourceCode;
+    return htmlSourceCode;
+}
+
+
+async function addHtmlAndReplacePlaceHolderBeforeImport(data) {
+    const idPlaceholderRegex = /ID_PLACEHOLDER/g;
+    for (const nodeId of Object.keys(data.drawflow.Home.data)) {
+        const node = data.drawflow.Home.data[nodeId];
+        console.log("!!!", node.name, node.html);
+        if (!node.html) {
+            const sourceCode = await fetchHtmlSourceCodeByName(node.name);
+
+            // Add new html attribute to the node
+            node.html = sourceCode.replace(idPlaceholderRegex, nodeId);
+        }
+    }
+}
+
 
 function importSetupNodes(dataToImport) {
     Object.keys(dataToImport.drawflow.Home.data).forEach((nodeId) => {
@@ -1809,6 +1816,7 @@ function importSetupNodes(dataToImport) {
         }
     });
 }
+
 
 function copyToClipboard(contentToCopy) {
     var tempTextarea = document.createElement("textarea");
@@ -1830,6 +1838,7 @@ function copyToClipboard(contentToCopy) {
     document.body.removeChild(tempTextarea);
 }
 
+
 function fetchExample(index, processData) {
     fetch('/read-examples', {
         method: 'POST',
@@ -1849,23 +1858,29 @@ function fetchExample(index, processData) {
         .then(processData);
 }
 
+
 function importExample(index) {
     fetchExample(index, data => {
         const dataToImport = data.json;
-        clearModuleSelected();
-        editor.import(dataToImport);
-        Object.keys(dataToImport.drawflow.Home.data).forEach((nodeId) => {
-            setupNodeListeners(nodeId);
-            const nodeElement = document.getElementById(`node-${nodeId}`);
-            if (nodeElement) {
-                const copyButton = nodeElement.querySelector('.button.copy-button');
-                if (copyButton) {
-                    setupNodeCopyListens(nodeId);
-                }
-            }
-        });
+
+        addHtmlAndReplacePlaceHolderBeforeImport(dataToImport)
+            .then(() => {
+                clearModuleSelected();
+                editor.import(dataToImport);
+                Object.keys(dataToImport.drawflow.Home.data).forEach((nodeId) => {
+                    setupNodeListeners(nodeId);
+                    const nodeElement = document.getElementById(`node-${nodeId}`);
+                    if (nodeElement) {
+                        const copyButton = nodeElement.querySelector('.button.copy-button');
+                        if (copyButton) {
+                            setupNodeCopyListens(nodeId);
+                        }
+                    }
+                });
+            });
     })
 }
+
 
 function importExample_step(index) {
     fetchExample(index, data => {
@@ -1877,12 +1892,14 @@ function importExample_step(index) {
     })
 }
 
+
 function updateImportButtons() {
     document.getElementById('import-prev').disabled = currentImportIndex
         <= 1;
     document.getElementById('import-next').disabled = currentImportIndex >= importQueue.length;
     document.getElementById('import-skip').disabled = currentImportIndex >= importQueue.length;
 }
+
 
 function createElement(tag, id, html = '', parent = document.body) {
     let element = document.getElementById(id) || document.createElement(tag);
@@ -1893,6 +1910,7 @@ function createElement(tag, id, html = '', parent = document.body) {
     }
     return element;
 }
+
 
 function initializeImport(data) {
     ['buttons-container', 'buttons-container-html'].forEach(cls => {
@@ -1935,6 +1953,7 @@ function initializeImport(data) {
     updateImportButtons();
 }
 
+
 function importPreviousComponent() {
     if (currentImportIndex > 0) {
         currentImportIndex--;
@@ -1945,6 +1964,7 @@ function importPreviousComponent() {
     updateImportButtons();
 }
 
+
 function importNextComponent() {
     const nodeId = importQueue[currentImportIndex];
     accumulatedImportData[nodeId] = dataToImportStep.drawflow.Home.data[nodeId];
@@ -1954,6 +1974,7 @@ function importNextComponent() {
     updateImportButtons();
 }
 
+
 function importSkipComponent() {
     accumulatedImportData = Object.assign({}, ...importQueue.map(k => ({[k]: dataToImportStep.drawflow.Home.data[k]})));
     editor.import({drawflow: {Home: {data: accumulatedImportData}}});
@@ -1962,6 +1983,7 @@ function importSkipComponent() {
     updateStepInfo();
 }
 
+
 function importQuitComponent() {
     clearModuleSelected();
     ['buttons-container', 'buttons-container-html'].forEach(cls => {
@@ -1969,6 +1991,7 @@ function importQuitComponent() {
         Array.from(containers).forEach(container => container.style.display = '');
     });
 }
+
 
 function updateStepInfo() {
     let stepInfoDiv = document.getElementById('step-info');
@@ -1979,6 +2002,7 @@ function updateStepInfo() {
         stepInfoDiv.innerHTML = 'No steps to display.';
     }
 }
+
 
 function clearModuleSelected() {
     editor.clearModuleSelected();
@@ -1999,6 +2023,7 @@ function clearModuleSelected() {
     }
 }
 
+
 function getCookie(name) {
     var matches = document.cookie.match(new RegExp(
         "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
@@ -2006,9 +2031,11 @@ function getCookie(name) {
     return matches ? decodeURIComponent(matches[1]) : undefined;
 }
 
+
 function showSurveyModal() {
     document.getElementById("surveyModal").style.display = "block";
 }
+
 
 function hideSurveyModal() {
     document.getElementById("surveyModal").style.display = "none";
