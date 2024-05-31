@@ -1269,7 +1269,6 @@ function checkConditions() {
         console.log("node", node);
         console.log("node.inputs", node.inputs);
 
-
         if (node.inputs) {
             for (let inputKey in node.inputs) {
                 if (node.inputs[inputKey].connections &&
@@ -1278,22 +1277,6 @@ function checkConditions() {
                         title: 'Invalid Connections',
                         text:
                             `${node.name} has more than one connection in inputs.`,
-                        icon: 'error',
-                        confirmButtonText: 'Ok'
-                    });
-                    return false;
-                }
-            }
-        }
-
-        if (node.outputs) {
-            for (let outputKey in node.outputs) {
-                if (node.outputs[outputKey].connections &&
-                    node.outputs[outputKey].connections.length > 1) {
-                    Swal.fire({
-                        title: 'Invalid Connections',
-                        text:
-                            `${node.name} has more than one connection in outputs.`,
                         icon: 'error',
                         confirmButtonText: 'Ok'
                     });
