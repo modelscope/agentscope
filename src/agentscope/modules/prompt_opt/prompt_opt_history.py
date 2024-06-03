@@ -4,8 +4,35 @@
 from agentscope.message import Msg
 from agentscope.agents.agent import AgentBase
 
-
 OPT_PROMPT_TEMPLATE = """
+You are an excellent Prompt Engineer. Your task is to optimize an Agent's system prompt by adding notes.
+
+The original system prompt provided by the user is:
+```
+{system_prompt}
+```
+
+The dialog history of user interaction with the agent is:
+```
+{dialog_history}
+```
+
+Now, you need to:
+1. Determine if the user-agent interaction in the dialog history contains any explicit errors (such as function call errors, failure to adhere to input-output formats), misunderstandings of user intentions, etc.
+2. Conduct a detailed analysis of the reasons for the errors and find solutions corresponding to the errors.
+3. Based on the causes of the errors and user intentions, write one or several notes that can be added after the user’s system prompt in the form of attention notes or example notes to prevent the same mistakes from happening again in the future.
+
+If the notes to be added include examples, be extremely cautious. If unsure whether the example to add is correct, you may refrain from adding.
+
+The language of the notes you add should be consistent with the original system prompt provided by the user. For example, if the original system prompt provided by the user is written in Chinese, the notes you add should also be in Chinese; if the original system prompt provided by the user is written in English, the notes you add should also be in English.
+
+The notes you add should be included within the tag [prompt_note], for example:
+[prompt_note] Please note that the output should only include JSON format [/prompt_note].
+
+If there are no obvious issues in the dialog history, then no notes need to be added.
+"""  # noqa
+
+OPT_PROMPT_TEMPLATE_ZH = """
 你是一个优秀的Prompt Engineer，现在你要通过添加note的方式对一个Agent的system prompt进行优化。
 
 用户提供的原始system prompt是：
