@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """Manage the id for each runtime"""
+import os
 from datetime import datetime
 from typing import Any
 
 from agentscope.utils.tools import _get_timestamp
 from agentscope.utils.tools import _generate_random_code
-from agentscope.web.client import HttpClient
 
 _RUNTIME_ID_FORMAT = "run_%Y%m%d-%H%M%S_{}"
 _RUNTIME_TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S"
@@ -25,8 +25,8 @@ class _Runtime:
     """The id for runtime, which is used to identify the this runtime and
         name the saving directory."""
 
-    studio_client: HttpClient = None
-    """The client of AgentScope Studio."""
+    pid: int = os.getpid()
+    """The process id of the runtime."""
 
     _timestamp: datetime = datetime.now()
     """The timestamp of when the runtime is initialized."""

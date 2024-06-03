@@ -10,10 +10,10 @@ function initializeDashboardDetailPageByUrl(pageUrl) {
             initializeDashboardDetailDialoguePage(runtimeInfo);
             break;
         case 'static/html/dashboard-detail-code.html':
-            initializeDashboardDetailCodePage(runtimeInfo['script_path']);
+            initializeDashboardDetailCodePage(runtimeInfo['run_dir']);
             break;
         case 'static/html/dashboard-detail-invocation.html':
-            initializeDashboardDetailInvocationPage(runtimeInfo['id'])
+            initializeDashboardDetailInvocationPage(runtimeInfo['run_dir'])
             break;
     }
 }
@@ -28,7 +28,27 @@ function loadDashboardDetailContent(pageUrl, javascriptUrl) {
     } else {
         currentContent = pageUrl;
     }
-    fetch(pageUrl)
+
+    // switch selected status
+    switch (pageUrl) {
+        case 'static/html/dashboard-detail-dialogue.html':
+            dialogueTabBtn.classList.add('selected');
+            codeTabBtn.classList.remove('selected');
+            invocationTabBtn.classList.remove('selected');
+            break;
+        case 'static/html/dashboard-detail-code.html':
+            dialogueTabBtn.classList.remove('selected');
+            codeTabBtn.classList.add('selected');
+            invocationTabBtn.classList.remove('selected');
+            break;
+        case 'static/html/dashboard-detail-invocation.html':
+            dialogueTabBtn.classList.remove('selected');
+            codeTabBtn.classList.remove('selected');
+            invocationTabBtn.classList.add('selected');
+            break;
+    }
+
+    fetch(pageUrl, {cache: "no-store"})
         .then(response => {
             if (!response.ok) {
                 throw new Error('Connection error, cannot load the web page.');
@@ -42,31 +62,12 @@ function loadDashboardDetailContent(pageUrl, javascriptUrl) {
             if (!isScriptLoaded(javascriptUrl)) {
                 let script = document.createElement('script');
                 script.src = javascriptUrl;
-                script.onload = function() {
+                script.onload = function () {
                     initializeDashboardDetailPageByUrl(pageUrl);
                 }
                 document.head.appendChild(script);
             } else {
                 initializeDashboardDetailPageByUrl(pageUrl);
-            }
-
-            // switch selected status
-            switch (pageUrl) {
-                case 'static/html/dashboard-detail-dialogue.html':
-                    dialogueTabBtn.classList.add('selected');
-                    codeTabBtn.classList.remove('selected');
-                    invocationTabBtn.classList.remove('selected');
-                    break;
-                case 'static/html/dashboard-detail-code.html':
-                    dialogueTabBtn.classList.remove('selected');
-                    codeTabBtn.classList.add('selected');
-                    invocationTabBtn.classList.remove('selected');
-                    break;
-                case 'static/html/dashboard-detail-invocation.html':
-                    dialogueTabBtn.classList.remove('selected');
-                    codeTabBtn.classList.remove('selected');
-                    invocationTabBtn.classList.add('selected');
-                    break;
             }
 
         })
@@ -80,7 +81,8 @@ function loadDashboardDetailContent(pageUrl, javascriptUrl) {
 // Initialize the dashboard detail page, this function is the entry point of the dashboard detail page
 function initializeDashboardDetailPage(pRuntimeInfo) {
     // The default content of the dashboard detail page
-    console.log("Initialize dashboard detail page with runtime id: " + pRuntimeInfo.id);
+    console.log("Initialize dashboard detail page with runtime id: " + pRuntimeInfo.run_id);
     runtimeInfo = pRuntimeInfo;
+    currentContent = null;
     loadDashboardDetailContent('static/html/dashboard-detail-dialogue.html', 'static/js/dashboard-detail-dialogue.js');
 }

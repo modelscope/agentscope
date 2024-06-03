@@ -2,10 +2,9 @@ let currentCode = null;
 let editorInstance = null;
 
 function initializeDashboardDetailCodePage(codeUrl) {
-    console.log("Here!")
     initializeMonacoEditor();
 
-    fetch('file?code=' + codeUrl)
+    fetch('/api/code?run_dir=' + codeUrl)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Connection error, cannot load the web page.');
@@ -27,7 +26,7 @@ function constructCodeFileList(codeUrl, code) {
 
     if (code !== null && code !== undefined) {
         if (Object.keys(code).length === 0) {
-            codeFileRows = ['<span>No code available</span>'];
+            codeFileRows = ['<div class="content-placeholder">No code available</div>'];
         } else {
             Object.keys(code)
                 .forEach(key => codeFileRows.push(`<li onclick="displayCode('${key}');return false;">${key}</li>`));
@@ -38,17 +37,19 @@ function constructCodeFileList(codeUrl, code) {
 }
 
 function initializeMonacoEditor() {
-    require.config({paths: {'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs'}});
-    require(['vs/editor/editor.main'], function () {
-        editorInstance = monaco.editor.create(document.getElementById('code-editor'), {
-            language: 'python',
-            theme: 'vs-light',
-            scrollBeyondLastLine: false,
-            readOnly: true,
+    if (editorInstance === null) {
+        require.config({paths: {'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs'}});
+        require(['vs/editor/editor.main'], function () {
+            editorInstance = monaco.editor.create(document.getElementById('code-editor'), {
+                language: 'python',
+                theme: 'vs-light',
+                scrollBeyondLastLine: false,
+                readOnly: true,
+            });
+        }, function (error) {
+            console.error('Error encountered while loading monaco editor: ', error);
         });
-    }, function (error) {
-        console.error('Error encountered while loading monaco editor: ', error);
-    });
+    }
 }
 
 function displayCode(codeFileName) {

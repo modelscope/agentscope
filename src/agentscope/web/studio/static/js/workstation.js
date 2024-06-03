@@ -1792,11 +1792,12 @@ async function addHtmlAndReplacePlaceHolderBeforeImport(data) {
     const idPlaceholderRegex = /ID_PLACEHOLDER/g;
     for (const nodeId of Object.keys(data.drawflow.Home.data)) {
         const node = data.drawflow.Home.data[nodeId];
-        console.log("!!!", node.name, node.html);
+
         if (!node.html) {
             const sourceCode = await fetchHtmlSourceCodeByName(node.name);
 
             // Add new html attribute to the node
+            console.log(sourceCode)
             node.html = sourceCode.replace(idPlaceholderRegex, nodeId);
         }
     }

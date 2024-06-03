@@ -6,7 +6,7 @@ from typing import Optional
 from loguru import logger
 
 from agentscope.agents import AgentBase
-from agentscope._runtime import _runtime
+from agentscope.web.client import _studio_client
 from agentscope.message import Msg
 from agentscope.web.gradio.utils import user_input
 
@@ -30,15 +30,7 @@ class UserAgent(AgentBase):
 
         self.name = name
         self.require_url = require_url
-        if _runtime.studio_client is not None:
-            self.input_client = (
-                _runtime.studio_client.generate_user_input_client(
-                    self.name,
-                    self.agent_id,
-                )
-            )
-        else:
-            self.input_client = None
+
 
     def reply(
         self,
@@ -75,18 +67,25 @@ class UserAgent(AgentBase):
         if self.memory:
             self.memory.add(x)
 
-        # TODO: To avoid order confusion, because `input` print much quicker
-        #  than logger.chat
-        if self.input_client:
+        if _studio_client.active:
             logger.info(
                 f"Waiting for input from:\n\n"
-                f"    * {_runtime.studio_client.get_run_detail_page_url()}\n",
+                f"    * {_studio_client.get_run_detail_page_url()}\n",
             )
-            raw_input = self.input_client.get_user_input()
+            raw_input = _studio_client.get_user_input(
+                agent_id=self.agent_id,
+                name=self.name,
+                require_url=self.require_url,
+                required_keys=required_keys,
+            )
+
+            print("Obtain input:", raw_input)
             content = raw_input["content"]
             url = raw_input.get("url", None)
             kwargs = {}
         else:
+            # TODO: To avoid order confusion, because `input` print much
+            #  quicker than logger.chat
             time.sleep(0.5)
             content = user_input(timeout=timeout)
             kwargs = {}
@@ -127,8 +126,8 @@ class UserAgent(AgentBase):
     ) -> None:
         """Speak the content to the audience."""
         logger.chat(content, disable_studio=True)
-        if _runtime.studio_client is not None:
-            _runtime.studio_client.send_message(
+        if _studio_client.active:
+            _studio_client.push_message(
                 name=content.get("name", ""),
                 role=content.get("role", "user"),
                 content=content.get("content", ""),

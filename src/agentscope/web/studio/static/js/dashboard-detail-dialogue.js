@@ -122,7 +122,7 @@ function _renderMultiModalData(url) {
         // Obtain the url from the backend
         src = url;
     } else {
-        src = "/file?url=" + url;
+        src = "/api/file?path=" + url;
     }
 
     switch (urlType) {
@@ -154,11 +154,9 @@ function _addAssistantChatRow(index, pMsg) {
     // If not record
     let svg_html, color;
     if (pMsg.name in nameToIconAndColor) {
-        console.log(pMsg.name + " in dict")
         svg_html = nameToIconAndColor[pMsg.name][0];
         color = nameToIconAndColor[pMsg.name][1];
     } else {
-        console.log(pMsg.name + " not in dict")
         // First choose a svg icon
         svg_html = randomSelectAgentIcon();
         color = randomSelectColor();
@@ -221,102 +219,107 @@ function _showInfoInDialogueDetailContent(data) {
     Object.keys(data)
         .filter(key => !priorityKeys.includes(key)) // Skip the priority keys
         .forEach(key => infoRows.push(_addKeyValueInfoRow(key, data[key])));
-    console.log(data)
+
     // Create table
     infoClusterize.update(infoRows);
 }
 
-async function initializeDashboardDetailDialoguePage(pRuntimeInfo) {
+function initializeDashboardDetailDialoguePage(pRuntimeInfo) {
+    console.log("Initialize with runtime id: " + pRuntimeInfo.run_id);
     // empty the record dictionary
     nameToIconAndColor = {};
 
     // Load the chat template
-    await loadChatTemplate();
-
-    // Initialize the detail objects
-    currentRuntimeInfo = pRuntimeInfo;
-    currentMsgInfo = null;
-    currentAgentInfo = null;
-
-    infoClusterize = new Clusterize({
-        scrollId: "chat-detail",
-        contentId: "dialogue-detail-content",
-    });
-
-    // Fetch the chat history from backend
-    fetch("/api/messages/run/" + pRuntimeInfo.id)
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("Failed to fetch messages data");
-            }
-            return response.json();
-        })
-        .then((data) => {
-            let send_btn = document.getElementById("chat-input-send-btn");
-            send_btn.disabled = true;
-            // Load the chat history
-            let chatRows = data.map((msg, index) => addChatRow(index, msg));
-            var clusterize = new Clusterize({
-                rows: chatRows,
-                scrollId: "chat-box",
-                contentId: "chat-box-content",
-            });
-
-            document.getElementById("chat-box-content");
-            addEventListener("click", function (event) {
-                let target = event.target;
-
-                while (target && target !== this && target instanceof Element) {
-                    if (target.matches(".chat-row")) {
-                        let rowIndex = target.getAttribute("data-index");
-                        // Record the current message
-                        currentMsgInfo = data[rowIndex];
-                        // Update web ui
-                        showInDetail("Message");
-                        break;
-                    }
-                    target = target.parentNode;
-                }
-            });
-            // Load the detail content in the right panel
-            // traverse all the keys in pRuntimeInfo and create a key-value row
+    loadChatTemplate()
+        .then(() => {
+            // Initialize the detail objects
             currentRuntimeInfo = pRuntimeInfo;
-            showInDetail("Runtime")
+            currentMsgInfo = null;
+            currentAgentInfo = null;
 
-            var socket = io();
-            socket.on("connect", () => {
-                socket.emit("join", {run_id: pRuntimeInfo.id});
-                send_btn.onclick = () => {
-                    var message = document.getElementById(
-                        "chat-input-textarea"
-                    ).value;
-                    socket.emit("user_input_ready", {
-                        content: message,
-                        run_id: pRuntimeInfo.id,
+            infoClusterize = new Clusterize({
+                scrollId: "chat-detail",
+                contentId: "dialogue-detail-content",
+            });
+
+            // Fetch the chat history from backend
+            fetch("/api/messages/run/" + pRuntimeInfo.run_id + "?run_dir=" + pRuntimeInfo.run_dir)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch messages data");
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    let send_btn = document.getElementById("chat-input-send-btn");
+                    send_btn.disabled = true;
+                    // Load the chat history
+                    let chatRows = data.map((msg, index) => addChatRow(index, msg));
+                    var clusterize = new Clusterize({
+                        rows: chatRows,
+                        scrollId: "chat-box",
+                        contentId: "chat-box-content",
                     });
-                    document.getElementById("chat-input-textarea").value = "";
-                    document.getElementById(
-                        "chat-input-send-btn"
-                    ).disabled = true;
-                };
-            });
-            socket.on("display_message", (data) => {
-                if (data.run_id === pRuntimeInfo.id) {
-                    let row = addChatRow(clusterize.getRowsAmount(), data);
-                    clusterize.append([row]);
-                    clusterize.refresh();
-                }
-            });
-            socket.on("enable_user_input", (data) => {
-                if (data.run_id === pRuntimeInfo.id) {
-                    send_btn.disabled = false;
-                    document.getElementById("chat-input-name").textContent =
-                        data.name;
-                }
-            });
+
+                    document.getElementById("chat-box-content");
+                    addEventListener("click", function (event) {
+                        let target = event.target;
+
+                        while (target && target !== this && target instanceof Element) {
+                            if (target.matches(".chat-row")) {
+                                let rowIndex = target.getAttribute("data-index");
+                                // Record the current message
+                                currentMsgInfo = data[rowIndex];
+                                // Update web ui
+                                showInDetail("Message");
+                                break;
+                            }
+                            target = target.parentNode;
+                        }
+                    });
+                    // Load the detail content in the right panel
+                    // traverse all the keys in pRuntimeInfo and create a key-value row
+                    currentRuntimeInfo = pRuntimeInfo;
+                    showInDetail("Runtime")
+
+                    var socket = io();
+                    socket.on("connect", () => {
+                        socket.emit("join", {run_id: pRuntimeInfo.run_id});
+                        send_btn.onclick = () => {
+                            var message = document.getElementById(
+                                "chat-input-textarea"
+                            ).value;
+                            socket.emit("user_input_ready", {
+                                content: message,
+                                run_id: pRuntimeInfo.run_id,
+                            });
+                            document.getElementById("chat-input-textarea").value = "";
+                            document.getElementById(
+                                "chat-input-send-btn"
+                            ).disabled = true;
+                        };
+                    });
+                    socket.on("display_message", (data) => {
+                        if (data.run_id === pRuntimeInfo.run_id) {
+                            let row = addChatRow(clusterize.getRowsAmount(), data);
+                            clusterize.append([row]);
+                            clusterize.refresh();
+                        }
+                    });
+                    socket.on("enable_user_input", (data) => {
+                        if (data.run_id === pRuntimeInfo.run_id) {
+                            send_btn.disabled = false;
+                            document.getElementById("chat-input-name").textContent =
+                                data.name;
+                        }
+                    });
+                })
+                .catch((error) => {
+                    console.error("Failed to fetch messages data:", error);
+                });
         })
         .catch((error) => {
-            console.error("Failed to fetch messages data:", error);
+            console.error("Failed to load chat template:", error);
         });
 }
 

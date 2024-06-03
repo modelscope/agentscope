@@ -27,7 +27,7 @@ except ImportError as import_error:
     )
 
 from .._runtime import _runtime
-from ..web.client import HttpClient
+from ..web.client import _studio_client
 from ..agents.agent import AgentBase
 from ..exception import StudioRegisterError
 from ..rpc.rpc_agent_pb2_grpc import RpcAgentServicer
@@ -98,10 +98,8 @@ class AgentServerServicer(RpcAgentServicer):
                 host=host,
                 port=port,
             )
-            _runtime.studio_client = HttpClient(
-                studio_url=studio_url,
-                run_id=_runtime.runtime_id,
-            )
+            _studio_client.initialize(_runtime.runtime_id, studio_url)
+
         self.result_pool = ExpiringDict(
             max_len=max_pool_size,
             max_age_seconds=max_timeout_seconds,

@@ -21,7 +21,6 @@ function allColumnFilter(data) {
 
 function renderIconInRunsTable(cell, formatterParams, onRendered) {
     let value = cell.getValue();
-    console.log(value);
     switch (value) {
         case "running":
             return '<div class="runs-table-status-tag running"><svg class="runs-table-status-svg" viewBox="0 0 1027 1024" xmlns="http://www.w3.org/2000/svg"><path d="M770.879148 64.221893h159.70676a31.99895 31.99895 0 0 0 0-63.9979h-319.989501v320.629479a31.99895 31.99895 0 1 0 63.9979 0V93.052947A458.864943 458.864943 0 0 1 963.704821 510.863237 447.9853 447.9853 0 1 1 450.601657 64.221893h31.99895a31.99895 31.99895 0 0 0 0-63.9979h-31.99895A513.83914 513.83914 0 1 0 1027.702721 510.863237a534.382466 534.382466 0 0 0-256.823573-446.641344z"></path></svg>running</div>';
@@ -59,7 +58,7 @@ function initializeDashboardRunsPage() {
                     },
                     {
                         title: "ID",
-                        field: "id",
+                        field: "run_id",
                         editor: false,
                         vertAlign: "middle",
                     },
@@ -76,13 +75,14 @@ function initializeDashboardRunsPage() {
                         vertAlign: "middle",
                     },
                     {
-                        title: "Create time",
-                        field: "create_time",
+                        title: "Timestamp",
+                        field: "timestamp",
                         editor: false,
                         vertAlign: "middle",
                     },
                 ],
                 layout: "fitColumns",
+                initialSort: [{ column: "timestamp", dir: "desc" }],
             });
 
             // Search logic

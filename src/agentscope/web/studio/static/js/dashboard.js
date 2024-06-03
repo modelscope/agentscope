@@ -30,6 +30,7 @@ function loadRunsPageInDashboardContent(pageUrl, javascriptUrl) {
             titleBar.innerHTML =
                 "<span class='dashboard-titlebar-span unselectable-text'>Dashboard</span>";
             // Jump to specific run if url contains run_id
+            // TODO: cannot access this url
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has("run_id")) {
                 var loc = window.location;
@@ -83,7 +84,7 @@ function loadDetailPageInDashboardContent(pageUrl, javascriptUrl, runtimeInfo) {
                 "<span class='dashboard-titlebar-span unselectable-text' >Dashboard</span>" +
                 '<svg class="dashboard-titlebar-svg" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M718.16751787 491.2381952a38.36258987 38.36258987 0 0 0-4.898816-5.99763627L365.71163307 137.68349013c-14.9291008-14.9291008-39.1348224-14.9291008-54.0639232 0s-14.9291008 39.1348224 0 54.0639232l320.52456106 320.52565334-320.52565333 320.52456106c-14.9291008 14.9291008-14.9291008 39.1348224 0 54.0639232s39.1348224 14.9291008 54.0639232 0l347.5570688-347.5570688a38.08733867 38.08733867 0 0 0 11.1968256-27.03250773 38.141952 38.141952 0 0 0-6.29691733-21.0337792z"></path></svg>' +
                 "<span class='dashboard-titlebar-span unselectable-text'>Runtime ID: " +
-                runtimeInfo.id +
+                runtimeInfo.run_id +
                 "</span>";
         })
         .catch((error) => {

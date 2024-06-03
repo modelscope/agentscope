@@ -32,3 +32,13 @@
     flex-grow: 1;
     min-width: 100%;
 }
+
+.content-placeholder {
+    display: flex;
+    color: var(--main-color-light-light);
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}

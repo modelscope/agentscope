@@ -13,7 +13,7 @@ from .utils.monitor import MonitorFactory
 from .models import read_model_configs
 from .constants import _DEFAULT_DIR
 from .constants import _DEFAULT_LOG_LEVEL
-from .web.client import HttpClient
+from .web.client import _studio_client
 
 # init setting
 _INIT_SETTINGS = {}
@@ -160,20 +160,18 @@ def init_process(
             Whether to activate the monitor.
         logger_level (`LOG_LEVEL`, defaults to `"INFO"`):
             The logging level of logger.
+        studio_url (`Optional[str]`, defaults to `None`):
+            The url of the agentscope studio.
     """
     # Init the runtime
     if project is not None:
         _runtime.project = project
-    else:
-        project = _runtime.project
+
     if name is not None:
         _runtime.name = name
-    else:
-        name = _runtime.name
+
     if runtime_id is not None:
         _runtime.runtime_id = runtime_id
-    else:
-        runtime_id = _runtime.runtime_id
 
     # Init file manager and save configs by default
     file_manager.init(save_dir, save_api_invoke)
@@ -191,14 +189,17 @@ def init_process(
         db_path=file_manager.path_db,
         impl_type="sqlite" if use_monitor else "dummy",
     )
+
+    # Init studio client, which will push messages to web ui and fetch user
+    # inputs from web ui
     if studio_url is not None:
-        client = HttpClient(
-            studio_url=studio_url,
-            run_id=_runtime.runtime_id,
+        _studio_client.initialize(_runtime.runtime_id, studio_url)
+
+        # Register in AgentScope Studio
+        _studio_client.register_running_instance(
+            project=_runtime.project,
+            name=_runtime.name,
+            timestamp=_runtime.timestamp,
+            run_dir=file_manager.dir_root,
+            pid=os.getpid(),
         )
-        client.register_run(
-            project=project,
-            name=name,
-            run_dir=file_manager.dir,
-        )
-        _runtime.studio_client = client
