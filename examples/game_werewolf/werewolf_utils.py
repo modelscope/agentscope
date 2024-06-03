@@ -39,8 +39,8 @@ def update_alive_players(
 
 def majority_vote(votes: list) -> Any:
     """majority_vote function"""
-    votes_valid = [item for item in votes if item != 'Abstain']
-    """Count the votes excluding abstentions."""
+    votes_valid = [item for item in votes if item != "Abstain"]
+    # Count the votes excluding abstentions.
     unit, counts = np.unique(votes_valid, return_counts=True)
     return unit[np.argmax(counts)]
 
@@ -51,9 +51,9 @@ def extract_name_and_id(name: str) -> tuple[str, int]:
         name = re.search(r"\b[Pp]layer\d+\b", name).group(0)
         idx = int(re.search(r"[Pp]layer(\d+)", name).group(1)) - 1
     except AttributeError:
-        """In case Player remains silent or speaks to abstain."""
+        # In case Player remains silent or speaks to abstain.
         logger.warning(f"vote: invalid name {name}, set to Abstain")
-        name='Abstain'
+        name = "Abstain"
         idx = -1
     return name, idx
 
