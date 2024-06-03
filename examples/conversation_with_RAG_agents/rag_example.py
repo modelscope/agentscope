@@ -78,11 +78,27 @@ def main() -> None:
     )
 
     # let knowledgebank to equip rag agent with a (set of) knowledge
+    # corresponding to its knowledge_id_list
     for agent in rag_agent_list:
-        knowledge_bank.equip(agent)
+        knowledge_bank.equip(agent, agent.knowledge_id_list)
+
+    # an alternative way is to provide knowledge list to agents
+    # when initializing them one by one, e.g.
+    #
+    # ```
+    # knowledge = knowledge_bank.get_knowledge(knowledge_id)
+    # agent = LlamaIndexAgent(
+    #   name="rag_worker",
+    #   sys_prompt="{your_prompt}",
+    #   model_config_name="{your_model}",
+    #   knowledge_list=[knowledge], # provide knowledge object directly
+    #   similarity_top_k=3,
+    #   log_retrieval=False,
+    #   recent_n_mem_for_retrieve=1,
+    # )
+    # ```
 
     rag_agent_names = [agent.name for agent in rag_agent_list]
-
     # update guide agent system prompt with the descriptions of rag agents
     rag_agent_descriptions = [
         "agent name: "

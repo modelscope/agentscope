@@ -61,21 +61,24 @@ class Knowledge(ABC):
     def retrieve(
         self,
         query: Any,
+        similarity_top_k: int = None,
         to_list_strs: bool = False,
+        **kwargs: Any,
     ) -> list[Any]:
         """
         retrieve list of content from database (vector stored index) to memory
         Args:
-            query (Any): query to retrieve
-            to_list_strs (bool): whether return a list of str
+            query (Any):
+                query for retrieval
+            similarity_top_k (int):
+                the number of most similar data returned by the
+                retriever.
+            to_list_strs (bool):
+                whether return a list of str
 
         Returns:
             return a list with retrieved documents (in strings)
         """
-
-    @abstractmethod
-    def set_retriever(self, **kwargs: Any) -> None:
-        """update retriever of RAG module"""
 
     def post_processing(
         self,

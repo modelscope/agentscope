@@ -156,25 +156,31 @@ class KnowledgeBank:
         logger.info(f"knowledge bank loaded: {knowledge_id}.")
         return knowledge
 
-    def equip(self, agent: AgentBase, duplicate: bool = False) -> None:
+    def equip(
+        self,
+        agent: AgentBase,
+        knowledge_id_list: list[str] = None,
+        duplicate: bool = False,
+    ) -> None:
         """
-        Equip the agent with the knowledge it requests
+        Equip the agent with the knowledge by knowledge ids.
+
         Args:
-            agent (AgentBase): the agent to be equipped with knowledge
-                if it has "rag_config"
+            agent (AgentBase):
+                the agent to be equipped with knowledge
+            knowledge_id_list:
+                the list of knowledge ids to be equipped with the agent
             duplicate (bool): whether to deepcopy the knowledge object
         TODO: to accommodate with distributed setting
         """
-        if hasattr(agent, "rag_config") and "knowledge_id" in agent.rag_config:
-            if not hasattr(agent, "knowledge_list"):
-                agent.knowledge_list = []
-            if not hasattr(agent, "retriever_list"):
-                agent.retriever_list = []
-            for rid in agent.rag_config["knowledge_id"]:
-                knowledge = self.get_knowledge(
-                    knowledge_id=rid,
-                    duplicate=duplicate,
-                )
-                knowledge.set_retriever(agent.rag_config)
-                agent.knowledge_list.append(knowledge)
-                agent.retriever_list.append(knowledge.retriever)
+        logger.info(f"Equipping {agent.name} knowledge {knowledge_id_list}")
+        knowledge_id_list = knowledge_id_list or []
+
+        if not hasattr(agent, "knowledge_list"):
+            agent.knowledge_list = []
+        for kid in knowledge_id_list:
+            knowledge = self.get_knowledge(
+                knowledge_id=kid,
+                duplicate=duplicate,
+            )
+            agent.knowledge_list.append(knowledge)

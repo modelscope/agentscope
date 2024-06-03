@@ -201,7 +201,6 @@ class LlamaIndexKnowledge(Knowledge):
         self.emb_model = emb_model
         self.overwrite_index = overwrite_index
         self.showprogress = showprogress
-        self.retriever = None
         self.index = None
         # ensure the emb_model is compatible with LlamaIndex
         if isinstance(emb_model, ModelWrapperBase):
@@ -235,7 +234,7 @@ class LlamaIndexKnowledge(Knowledge):
             # self.refresh_index()
         else:
             self._data_to_index()
-        self.set_retriever()
+        self._get_retriever()
         logger.info(
             f"RAG with knowledge ids: {self.knowledge_id} "
             f"initialization completed!\n",
@@ -421,12 +420,11 @@ class LlamaIndexKnowledge(Knowledge):
         transformations = {"transformations": transformations}
         return transformations
 
-    def set_retriever(
+    def _get_retriever(
         self,
-        rag_config: Optional[dict] = None,
-        retriever: Optional[BaseRetriever] = None,
+        similarity_top_k: int = None,
         **kwargs: Any,
-    ) -> None:
+    ) -> BaseRetriever:
         """
         Set the retriever as needed, or just use the default setting.
 
@@ -437,41 +435,49 @@ class LlamaIndexKnowledge(Knowledge):
             index.
         """
         # set the retriever
-        rag_config = rag_config or {}
-        if retriever is None:
-            logger.info(
-                f"similarity_top_k"
-                f'={rag_config.get("similarity_top_k", DEFAULT_TOP_K)}',
-            )
-            self.retriever = self.index.as_retriever(
-                embed_model=self.emb_model,
-                similarity_top_k=rag_config.get(
-                    "similarity_top_k",
-                    DEFAULT_TOP_K,
-                ),
-                **kwargs,
-            )
-        else:
-            self.retriever = retriever
+        logger.info(
+            f"similarity_top_k" f"={similarity_top_k or DEFAULT_TOP_K}",
+        )
+        retriever = self.index.as_retriever(
+            embed_model=self.emb_model,
+            similarity_top_k=similarity_top_k or DEFAULT_TOP_K,
+            **kwargs,
+        )
         logger.info("retriever is ready.")
+        return retriever
 
-    def retrieve(self, query: str, to_list_strs: bool = False) -> list[Any]:
+    def retrieve(
+        self,
+        query: str,
+        similarity_top_k: int = None,
+        to_list_strs: bool = False,
+        retriever: Optional[BaseRetriever] = None,
+        **kwargs: Any,
+    ) -> list[Any]:
         """
-        This is a basic retrieve function for RAG agent.
-
+        This is a basic retrieve function for knowledge.
+        It will build a retriever on the fly and return the
+        result of the query.
         Args:
             query (str):
                 query is expected to be a question in string
-            to_list_strs (book):
+            similarity_top_k (int):
+                the number of most similar data returned by the
+                retriever.
+            to_list_strs (bool):
                 whether returns the list of strings;
                 if False, return NodeWithScore
+            retriever (BaseRetriever):
+                for advanced usage, user can pass their own retriever.
         Return:
             list[Any]: list of str or NodeWithScore
 
         More advanced query processing can refer to
         https://docs.llamaindex.ai/en/stable/examples/query_transformations/query_transform_cookbook.html
         """
-        retrieved = self.retriever.retrieve(str(query))
+        if retriever is None:
+            retriever = self._get_retriever(similarity_top_k)
+        retrieved = retriever.retrieve(str(query))
         if to_list_strs:
             results = []
             for node in retrieved:

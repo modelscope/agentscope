@@ -1,4 +1,4 @@
-# AgentScope Consultants: a Multi-Agent RAG Application
+# AgentScope Copilot: a Multi-Agent RAG Application
 
 * **What is this example about?**
 With the provided implementation and configuration,
@@ -22,8 +22,8 @@ capability can be used to build easily.
 **Note:** This example has been tested with `dashscope_chat` and `dashscope_text_embedding` model wrapper, with `qwen-max` and `text-embedding-v2` models.
 However, you are welcome to replace the Dashscope language and embedding model wrappers or models with other models you like to test.
 
-## Start AgentScope Copilots
-* **Terminal:** The most simple way to execute the AgentScope Consultants is running in terminal.
+## Start AgentScope Copilot
+* **Terminal:** The most simple way to execute the AgentScope Copilot is running in terminal.
   ```bash
   python ./rag_example.py
   ```
@@ -35,7 +35,6 @@ However, you are welcome to replace the Dashscope language and embedding model w
   ```
 
 ### Agents in the example
-Customize AgentScope Consultants to other consultants
 After you run the example, you may notice that this example consists of three RAG agents:
 * `Tutorial-Assistant`: responsible for answering questions based on AgentScope tutorials (markdown files).
 * `Code-Search-Assistant`: responsible for answering questions based on AgentScope code base (python files).

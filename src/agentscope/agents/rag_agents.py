@@ -21,29 +21,6 @@ CHECKING_PROMPT = """
                 """
 
 
-class RAGConfig(dict):
-    """a class to regulate the RAG configuration."""
-
-    def __init__(self, knowledge_id: list[str], **kwargs: Any):
-        """
-        RAG configuration must have knowledge_id as a list of strings.
-        Args:
-            knowledge_id (list[str]): the list of knowledge ids
-        """
-        super().__init__()
-        self.knowledge_id = knowledge_id
-        self.update(kwargs)
-
-    def __getattr__(self, key: Any) -> Any:
-        try:
-            return self[key]
-        except KeyError as e:
-            raise AttributeError(f"no attribute '{key}'") from e
-
-    def __setattr__(self, key: Any, value: Any) -> None:
-        self[key] = value
-
-
 class LlamaIndexAgent(AgentBase):
     """
     A LlamaIndex agent build on LlamaIndex.
@@ -54,9 +31,12 @@ class LlamaIndexAgent(AgentBase):
         name: str,
         sys_prompt: str,
         model_config_name: str,
-        knowledge_list: list[Knowledge] = None,
         memory_config: Optional[dict] = None,
-        rag_config: Optional[RAGConfig] = None,
+        knowledge_list: list[Knowledge] = None,
+        knowledge_id_list: list[str] = None,
+        similarity_top_k: int = None,
+        log_retrieval: bool = True,
+        recent_n_mem_for_retrieve: int = 1,
         **kwargs: Any,
     ) -> None:
         """
@@ -70,18 +50,28 @@ class LlamaIndexAgent(AgentBase):
                 language model for the agent
             memory_config (dict):
                 memory configuration
-            rag_config (dict):
-                config for RAG module. It contains at least
-                the following parameters:
-                "knowledge_id" (str):
-                    identifier of the knowledge in KnowledgeBank,
-                "similarity_top_k" (int):
-                    how many nodes/document to retrieved,
-                "log_retrieval" (bool):
-                    whether log the retrieved content,
-                "recent_n_mem" (int):
-                    how many memory used to query (default is 1,
-                    using only the current input to reply)
+            knowledge_list (list[Knowledge]):
+                a list of knowledge.
+                User can choose to pass a list knowledge object
+                directly when initializing the RAG agent. Another
+                choice can be passing a list of knowledge ids and
+                obtain the knowledge with the `equip` function of a
+                knowledge bank.
+            knowledge_id_list (list[Knowledge]):
+                a list of id of the knowledge.
+                This is designed for easy setting up multiple RAG
+                agents with a config file. To obtain the knowledge
+                objects, users can pass this agent to the `equip`
+                function in a knowledge bank to add corresponding
+                knowledge to agent's self.knowledge_list.
+            similarity_top_k (int):
+                the number of most similar data blocks retrieved
+                from each of the knowledge
+            log_retrieval (bool):
+                whether to print the retrieved content
+            recent_n_mem_for_retrieve (int):
+                the number of pieces of memory used as part of
+                retrival query
         """
         super().__init__(
             name=name,
@@ -90,9 +80,11 @@ class LlamaIndexAgent(AgentBase):
             memory_config=memory_config,
         )
         self.knowledge_list = knowledge_list or []
-        self.retriever_list = []
+        self.knowledge_id_list = knowledge_id_list or []
+        self.similarity_top_k = similarity_top_k
+        self.log_retrieval = log_retrieval
+        self.recent_n_mem_for_retrieve = recent_n_mem_for_retrieve
         self.description = kwargs.get("description", "")
-        self.rag_config = rag_config or RAGConfig([])
 
     def reply(self, x: dict = None) -> dict:
         """
@@ -120,7 +112,7 @@ class LlamaIndexAgent(AgentBase):
             # in case no input is provided (e.g., in msghub),
             # use the memory as query
             history = self.memory.get_memory(
-                recent_n=self.rag_config.get("recent_n_mem", 1),
+                recent_n=self.recent_n_mem_for_retrieve,
             )
             query = (
                 "/n".join(
@@ -137,8 +129,11 @@ class LlamaIndexAgent(AgentBase):
         if len(query) > 0:
             # when content has information, do retrieval
             scores = []
-            for retriever in self.retriever_list:
-                retrieved_nodes = retriever.retrieve(str(query))
+            for knowledge in self.knowledge_list:
+                retrieved_nodes = knowledge.retrieve(
+                    str(query),
+                    self.similarity_top_k,
+                )
                 for node in retrieved_nodes:
                     scores.append(node.score)
                     retrieved_docs_to_string += (
@@ -150,7 +145,7 @@ class LlamaIndexAgent(AgentBase):
                         + node.get_content()
                     )
 
-            if self.rag_config["log_retrieval"]:
+            if self.log_retrieval:
                 self.speak("[retrieved]:" + retrieved_docs_to_string)
 
             if max(scores) < 0.4:
@@ -181,7 +176,7 @@ class LlamaIndexAgent(AgentBase):
             ),
             # {"role": "system", "content": retrieved_docs_to_string},
             self.memory.get_memory(
-                recent_n=self.rag_config.get("recent_n_mem", 1),
+                recent_n=self.recent_n_mem_for_retrieve,
             ),
             Msg(
                 name="user",
