@@ -4,6 +4,7 @@
 from .prompt_base import PromptOptMethodBase
 from .prompt_abtest_module import PromptAbTestModule
 from .prompt_opt_method import DirectPromptOptMethod, ExamplePromptOptMethod
+from .prompt_opt_history import PromptAgentOpt
 
 
 __all__ = [
@@ -11,4 +12,5 @@ __all__ = [
     "PromptAbTestModule",
     "DirectPromptOptMethod",
     "ExamplePromptOptMethod",
+    "PromptAgentOpt",
 ]
