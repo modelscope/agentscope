@@ -138,6 +138,7 @@
     box-sizing: border-box;
     word-break: break-word;
     overflow-wrap: break-word; /* 同上，为word-wrap的标准别名 */
+    white-space: pre-wrap;
 }
 
 .dialogue-info-row {

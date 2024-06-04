@@ -13,6 +13,7 @@ from typing import Any, Literal, List, Optional
 
 from urllib.parse import urlparse
 
+import psutil
 import requests
 from loguru import logger
 
@@ -390,3 +391,67 @@ class ImportErrorReporter:
                 " of agentscope."
             )
         raise ImportError(err_msg)
+
+
+def _get_process_creation_time() -> datetime.datetime:
+    """Get the creation time of the process."""
+    pid = os.getpid()
+    # Find the process by pid
+    current_process = psutil.Process(pid)
+    # Obtain the process creation time
+    create_time = current_process.create_time()
+    # Change the timestamp to a readable format
+    return datetime.datetime.fromtimestamp(create_time)
+
+
+def _is_process_alive(
+    pid: int,
+    create_time_str: str,
+    create_time_format: str = "%Y-%m-%d %H:%M:%S",
+    tolerance_seconds: int = 10,
+) -> bool:
+    """Check if the process is alive by comparing the actual creation time of
+    the process with the given creation time.
+
+    Args:
+        pid (`int`):
+            The process id.
+        create_time_str (`str`):
+            The given creation time string.
+        create_time_format (`str`, defaults to `"%Y-%m-%d %H:%M:%S"`):
+            The format of the given creation time string.
+        tolerance_seconds (`int`, defaults to `10`):
+            The tolerance seconds for comparing the actual creation time with
+            the given creation time.
+
+    Returns:
+        `bool`: True if the process is alive, False otherwise.
+    """
+    try:
+        # Try to create a process object by pid
+        proc = psutil.Process(pid)
+        # Obtain the actual creation time of the process
+        actual_create_time_timestamp = proc.create_time()
+
+        # Convert the given creation time string to a datetime object
+        given_create_time_datetime = datetime.datetime.strptime(
+            create_time_str,
+            create_time_format,
+        )
+
+        # Calculate the time difference between the actual creation time and
+        time_difference = abs(
+            actual_create_time_timestamp
+            - given_create_time_datetime.timestamp(),
+        )
+
+        # Compare the actual creation time with the given creation time
+        if time_difference <= tolerance_seconds:
+            return True
+
+    except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+        # If the process is not found, access is denied, or the process is a
+        # zombie process, return False
+        return False
+
+    return False

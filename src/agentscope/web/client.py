@@ -7,7 +7,7 @@ import requests
 import socketio
 from loguru import logger
 
-from agentscope.message import MessageBase
+from agentscope.message import Msg
 
 
 class _WebSocketClient:
@@ -47,7 +47,11 @@ class _WebSocketClient:
 
         self.sio.connect(f"{self.studio_url}")
 
-    def get_user_input(self, require_url: bool, required_keys: list[str]) -> Optional[dict]:
+    def get_user_input(
+        self,
+        require_url: bool,
+        required_keys: list[str],
+    ) -> Optional[dict]:
         """Get user input from studio in real-time.
 
         Note:
@@ -102,7 +106,7 @@ class StudioClient:
         timestamp: str,
         run_dir: str,
         pid: int,
-    ):
+    ) -> None:
         """Register a running instance to the AgentScope Studio."""
         url = f"{self.studio_url}/api/runs/register"
         response = requests.post(
@@ -123,15 +127,21 @@ class StudioClient:
                 "Successfully registered to AgentScope Studio.\n"
                 "View your application at:\n"
                 "\n"
-                f"    * {self.get_run_detail_page_url()}\n"
+                f"    * {self.get_run_detail_page_url()}\n",
             )
         else:
             raise RuntimeError(f"Fail to register to studio: {response.text}")
 
     def push_message(
         self,
-        message: MessageBase,
-    ):
+        message: Msg,
+    ) -> None:
+        """Push the message to the flask server (studio) for display.
+
+        Args:
+            message (`Msg`):
+                The message to be pushed.
+        """
         send_url = f"{self.studio_url}/api/messages/push"
         response = requests.post(
             send_url,
@@ -167,7 +177,8 @@ class StudioClient:
                 The name of the agent.
             require_url (`bool`):
                 Whether the input requires a URL.
-            required_keys (`Optional[Union[list[str], str]]`, defaults to `None`):
+            required_keys (`Optional[Union[list[str], str]]`, defaults to
+            `None`):
                 The required keys for the input, which will be combined into a
                 dict in the content field.
 
@@ -183,7 +194,10 @@ class StudioClient:
                 agent_id,
             )
 
-        return self.websocket_mapping[agent_id].get_user_input(require_url=require_url, required_keys=required_keys)
+        return self.websocket_mapping[agent_id].get_user_input(
+            require_url=require_url,
+            required_keys=required_keys,
+        )
 
     def get_run_detail_page_url(self) -> str:
         """Get the URL of the run detail page."""

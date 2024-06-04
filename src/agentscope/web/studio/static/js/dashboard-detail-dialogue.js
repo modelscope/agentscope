@@ -293,6 +293,7 @@ function initializeDashboardDetailDialoguePage(pRuntimeInfo) {
                                 content: message,
                                 run_id: pRuntimeInfo.run_id,
                             });
+                            console.log("Web: send user_input_ready")
                             document.getElementById("chat-input-textarea").value = "";
                             document.getElementById(
                                 "chat-input-send-btn"
@@ -301,6 +302,7 @@ function initializeDashboardDetailDialoguePage(pRuntimeInfo) {
                     });
                     socket.on("display_message", (data) => {
                         if (data.run_id === pRuntimeInfo.run_id) {
+                            console.log("Web: receive display_message")
                             let row = addChatRow(clusterize.getRowsAmount(), data);
                             clusterize.append([row]);
                             clusterize.refresh();
@@ -308,6 +310,7 @@ function initializeDashboardDetailDialoguePage(pRuntimeInfo) {
                     });
                     socket.on("enable_user_input", (data) => {
                         if (data.run_id === pRuntimeInfo.run_id) {
+                            console.log("Web: receive enable_user_input")
                             send_btn.disabled = false;
                             document.getElementById("chat-input-name").textContent =
                                 data.name;

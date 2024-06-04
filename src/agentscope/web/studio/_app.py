@@ -8,7 +8,7 @@ import tempfile
 import traceback
 import uuid
 from datetime import datetime
-from typing import Tuple, Union
+from typing import Tuple, Union, Any, Optional
 
 from flask import (
     Flask,
@@ -24,6 +24,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, join_room, leave_room
 
 from agentscope.constants import _DEFAULT_SUBDIR_CODE, _DEFAULT_SUBDIR_INVOKE
+from agentscope.utils.tools import _is_process_alive
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///agentscope.db"
@@ -35,7 +36,7 @@ CORS(app)  # This will enable CORS for all routes
 _RUNS_DIRS = []
 
 
-class Run(db.Model):  # type: ignore[name-defined]
+class Run(db.Model):
     """Run object."""
 
     run_id = db.Column(db.String, primary_key=True)
@@ -43,7 +44,7 @@ class Run(db.Model):  # type: ignore[name-defined]
     name = db.Column(db.String)
     timestamp = db.Column(db.String)
     run_dir = db.Column(db.String)
-    pid = db.Column(db.String)
+    pid = db.Column(db.Integer)
     status = db.Column(db.String, default="finished")
 
 
@@ -79,11 +80,18 @@ def _get_all_runs_from_dir() -> dict:
             path_runtime = os.path.join(runs_dir, runtime_dir)
             path_config = os.path.join(path_runtime, ".config")
             if os.path.exists(path_config):
-                with open(path_config, "r") as file:
+                with open(path_config, "r", encoding="utf-8") as file:
                     runtime_config = json.load(file)
 
-                    # TODO: judge if the runtime ends
-                    runtime_config["status"] = "finished"
+                    # Default status is finished
+                    # Note: this is only for local runtime instances
+                    if "pid" in runtime_config and _is_process_alive(
+                        runtime_config["pid"],
+                        runtime_config["timestamp"],
+                    ):
+                        runtime_config["status"] = "running"
+                    else:
+                        runtime_config["status"] = "finished"
 
                     if "run_dir" not in runtime_config:
                         runtime_config["run_dir"] = path_runtime
@@ -124,6 +132,7 @@ def convert_to_py(  # type: ignore[no-untyped-def]
         return "False", remove_file_paths(
             f"Error: {e}\n\n" f"Traceback:\n" f"{traceback.format_exc()}",
         )
+
 
 @app.route("/workstation")
 def workstation() -> str:
@@ -192,6 +201,7 @@ def register_server() -> Response:
 def _push_message() -> Response:
     """Receive a message from the agentscope application, and display it on
     the web UI."""
+    print("Flask: receive push_message")
     data = request.json
 
     run_id = data["run_id"]
@@ -231,6 +241,7 @@ def _push_message() -> Response:
         },
         room=run_id,
     )
+    print("Flask: send display_message")
     return jsonify(status="ok")
 
 
@@ -262,7 +273,7 @@ def get_messages(run_id: str) -> Response:
     # Search the run_dir from the registered runtime instances if not provided
     if run_dir is None:
         runtime_configs_from_dir = _get_all_runs_from_dir()
-        if run_id in runtime_configs_from_dir.keys():
+        if run_id in runtime_configs_from_dir:
             run_dir = runtime_configs_from_dir[run_id]["run_dir"]
 
     # Load the messages from the local file
@@ -270,7 +281,7 @@ def get_messages(run_id: str) -> Response:
     if run_dir is None or not os.path.exists(path_messages):
         return jsonify([])
     else:
-        with open(path_messages, "r") as file:
+        with open(path_messages, "r", encoding="utf-8") as file:
             msgs = [json.loads(_) for _ in file.readlines()]
             return jsonify(msgs)
 
@@ -278,22 +289,37 @@ def get_messages(run_id: str) -> Response:
 @app.route("/api/runs/all", methods=["GET"])
 def _get_all_runs() -> Response:
     """Get all runs."""
+    # Update the status of the registered runtimes
+    # Note: this is only for the applications running on the local machine
+    for run in Run.query.filter_by(status="running" or "waiting").all():
+        if not _is_process_alive(run.pid, run.timestamp):
+            Run.query.filter_by(run_id=run.run_id).update(
+                {"status": "finished"},
+            )
+            db.session.commit()
+
+    # From web connection
+    runtime_configs_from_register = {
+        _.run_id: {
+            "run_id": _.run_id,
+            "project": _.project,
+            "name": _.name,
+            "timestamp": _.timestamp,
+            "run_dir": _.run_dir,
+            "pid": _.pid,
+            "status": _.status,
+        }
+        for _ in Run.query.all()
+    }
+
     # From directory
     runtime_configs_from_dir = _get_all_runs_from_dir()
 
-    # From web connection
-    runtime_configs_from_register = {_.run_id: {
-        "run_id": _.run_id,
-        "project": _.project,
-        "name": _.name,
-        "timestamp": _.timestamp,
-        "run_dir": _.run_dir,
-        "pid": _.pid,
-        "status": _.status,
-    } for _ in Run.query.all()}
-
     # Remove duplicates between two sources
-    clean_runtimes = {**runtime_configs_from_dir, **runtime_configs_from_register}
+    clean_runtimes = {
+        **runtime_configs_from_dir,
+        **runtime_configs_from_register,
+    }
 
     runs = list(clean_runtimes.values())
 
@@ -318,7 +344,11 @@ def get_invocations() -> Response:
     invocations = []
     if os.path.exists(path_invocations):
         for filename in os.listdir(path_invocations):
-            with open(os.path.join(path_invocations, filename), "r") as file:
+            with open(
+                os.path.join(path_invocations, filename),
+                "r",
+                encoding="utf-8",
+            ) as file:
                 invocations.append(json.load(file))
     return jsonify(invocations)
 
@@ -333,13 +363,17 @@ def get_code() -> Response:
     codes = {}
     if os.path.exists(dir_code):
         for filename in os.listdir(dir_code):
-            with open(os.path.join(dir_code, filename), "r") as file:
+            with open(
+                os.path.join(dir_code, filename),
+                "r",
+                encoding="utf-8",
+            ) as file:
                 codes[filename] = "".join(file.readlines())
     return jsonify(codes)
 
 
 @app.route("/api/file", methods=["GET"])
-def get_file() -> Response:
+def get_file() -> Any:
     """Get the local file via the url."""
     file_path = request.args.get("path", None)
 
@@ -437,14 +471,16 @@ def home() -> str:
 @socketio.on("request_user_input")
 def request_user_input(data: dict) -> None:
     """Request user input"""
-    print("request user input")
+    print("Flask: receive request_user_input")
     run_id = data["run_id"]
     name = data["name"]
     agent_id = data["agent_id"]
     require_url = data["require_url"]
     required_keys = data["required_keys"]
 
-    db.session.query(Run).filter_by(run_id=run_id).update({"status": "waiting"})
+    db.session.query(Run).filter_by(run_id=run_id).update(
+        {"status": "waiting"},
+    )
     db.session.commit()
 
     print(Run.query.filter_by(run_id=run_id).all())
@@ -461,15 +497,19 @@ def request_user_input(data: dict) -> None:
         room=run_id,
     )
 
+    print("Flask: send enable_user_input")
+
 
 @socketio.on("user_input_ready")
 def user_input_ready(data: dict) -> None:
     """Get user input and send to the agent"""
-    print("user input ready")
+    print("Flask: receive user_input_ready")
     run_id = data["run_id"]
     content = data["content"]
     url = data.get("url", None)
-    db.session.query(Run).filter_by(run_id=run_id).update({"status": "running"})
+    db.session.query(Run).filter_by(run_id=run_id).update(
+        {"status": "running"},
+    )
     db.session.commit()
     socketio.emit(
         "fetch_user_input",
@@ -480,6 +520,7 @@ def user_input_ready(data: dict) -> None:
         },
         room=run_id,
     )
+    print("Flask: send fetch_user_input")
 
 
 @socketio.on("connect")
@@ -523,13 +564,26 @@ def on_leave(data: dict) -> None:
 
 
 def init(
-    run_dirs: Union[str, list[str]] = [],
-    cache_dir: str = "",
     host: str = "127.0.0.1",
     port: int = 5000,
+    run_dirs: Optional[Union[str, list[str]]] = None,
     debug: bool = False,
+    cache_dir: Optional[str] = None,
 ) -> None:
-    """Start the web UI."""
+    """Start the AgentScope Studio web UI with the given configurations.
+
+    Args:
+        host (str, optional):
+            The host of the web UI. Defaults to "127.0.0.1"
+        port (int, optional):
+            The port of the web UI. Defaults to 5000.
+        run_dirs (`Optional[Union[str, list[str]]]`, defaults to `None`):
+            The directories to search for the history of runtime instances.
+        debug (`bool`, optional):
+            Whether to enable the debug mode. Defaults to False.
+        cache_dir (`Optional[str]`, defaults to `None`):
+            The directory to save the cache files.
+    """
 
     if isinstance(run_dirs, str):
         run_dirs = [run_dirs]
@@ -551,4 +605,7 @@ def init(
 
 
 if __name__ == "__main__":
-    init("/Users/david/Downloads/agentscope/examples/game_werewolf/runs", debug=True)
+    init(
+        "/Users/david/Downloads/agentscope/examples/game_werewolf/runs",
+        debug=True,
+    )
