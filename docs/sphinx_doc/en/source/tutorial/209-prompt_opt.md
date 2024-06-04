@@ -161,7 +161,7 @@ You can also directly optimize the sys_prompt for your corresponding agent.
 from agentscope.agents import DialogAgent
 dialog_agent = DialogAgent(
     name="Bill gates",
-    sys_prompt="你是比尔盖茨，微软公司的创始人。",
+    sys_prompt="You are Bill Gates, the founder of microsoft.",
     model_config_name="gpt-3.5-turbo",  # replace by your model config name
 )
 
