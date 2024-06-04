@@ -6,8 +6,6 @@ AgentScope实现了对智能体System Prompt进行优化的模块。
 
 ## 背景
 
-## 背景
-
 在智能体系统中，System Prompt的设计对于产生高质量的智能体响应至关重要。System Prompt向智能体提供了执行任务的环境、角色、能力和约束等背景描述。然而，优化System Prompt的过程通常充满挑战，这主要是由于以下几点：
 
 1. **针对性**：一个良好的System Prompt应该针对性强，能够清晰地引导智能体在特定任务中更好地表现其能力和限制。
@@ -167,14 +165,15 @@ dialog_agent = DialogAgent(
 dialog_agent.sys_prompt = prompt_opt_method.optimize(dialog_agent.sys_prompt)
 ```
 
-## System Prompt优化调试
+## System Prompt迭代优化调试
 
 你可以使用我们的Prompt优化模块对System Prompt优化调试，也可以根据对应System Prompt在实际对话Agent中的表现来进行迭代修改，不断完善你Agent的System Prompt。
 通过根据实际使用的反馈改进System Prompt，你可以持续的优化Agent的性能。
 
-为了方便大家调试优化System Prompt，我们提供了`PromptAbTestModule`模块，具体使用如下例子。
 
-### 初始化
+### AbTest模块
+
+为了方便大家调试优化System Prompt，我们提供了`PromptAbTestModule`模块，具体使用如下例子。
 
 ```python
 from agentscope.modules.prompt_opt import PromptAbTestModule
@@ -198,6 +197,31 @@ abtest.compare_query_results(queries=["你能讲一讲你创业成功的经历�
 ```
 abtest.compare_with_dialog()
 ```
+
+### PromptAgentOpt模块
+
+除了`PromptAbTestModule`模块，我们还提供了`PromptAgentOpt`模块，可以自行根据用户与Agent的对话历史去总结需要补充的System Prompts。
+
+```python
+
+dialog_agent = DialogAgent(
+    name="xxx",
+    sys_prompt="xxx",
+    model_config_name="gpt-3.5-turbo",  # replace by your model config name
+)
+user_agent = UserAgent()
+
+prompt_agent_opt = PromptAgentOpt(agent=dialog_agent)
+
+# 与Dialog Agent对话
+x = None
+while x is None or x.content != "exit":
+    x = sequentialpipeline([dialog_agent, user_agent], x)
+
+prompt_agent_opt.optimize()
+
+```
+
 
 希望我们的Prompt优化模块能为大家带来使用便利！
 
