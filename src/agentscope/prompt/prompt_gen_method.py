@@ -15,30 +15,23 @@ from agentscope.message import Msg
 from .prompt_base import (
     OPT_SYSTEM_PROMPT,
     OPT_PROMPT_TEMPLATE,
-    PromptOptMethodBase,
+    PromptGeneratorBase,
     SYS_OPT_EXAMPLES,
 )
 
 
-class DirectPromptOptMethod(PromptOptMethodBase):
+class DirectPromptGenMethod(PromptGeneratorBase):
     """Directly optimize the user prompt."""
 
     def __init__(
         self,
-        model_config_name: str = None,
-        meta_prompt: Union[str, None] = None,
+        model_config_name: str,
+        meta_prompt: str = OPT_SYSTEM_PROMPT,
     ) -> None:
         super().__init__()
 
-        if model_config_name is not None:
-            self.model = load_model_by_config_name(model_config_name)
-        else:
-            raise ValueError("model_config_name must be provided.")
-
-        if meta_prompt is not None:
-            self.meta_prompt = meta_prompt
-        else:
-            self.meta_prompt = OPT_SYSTEM_PROMPT
+        self.model = load_model_by_config_name(model_config_name)
+        self.meta_prompt = meta_prompt
 
     def optimize(self, user_prompt: str) -> str:
         formatted_prompt = self.meta_prompt + OPT_PROMPT_TEMPLATE.format(
@@ -121,7 +114,7 @@ def find_top_k_embeddings(
     )
 
 
-class ExamplePromptOptMethod(PromptOptMethodBase):
+class ExamplePromptGenMethod(PromptGeneratorBase):
     """Optimize the user prompt."""
 
     def __init__(

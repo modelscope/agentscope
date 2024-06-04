@@ -6,28 +6,44 @@ from loguru import logger
 from agentscope.models import load_model_by_config_name
 from agentscope.message import Msg
 from agentscope.agents import DialogAgent, UserAgent
-from .prompt_opt_method import PromptOptMethodBase
+from .prompt_opt_method import PromptGeneratorBase
 
 
 class PromptAbTestModule:
-    """The Abtest module to show how different system prompt performs"""
+    """The Abtest module to show how different system prompts perform"""
 
     def __init__(
         self,
         model_config_name: str,
         user_prompt: str,
-        opt_methods_or_prompts: List[Union[PromptOptMethodBase, str]],
-        save_dir: str = None,
+        opt_methods_or_prompts: List[Union[PromptGeneratorBase, str]],
     ) -> None:
+        """
+        Init the Abtest module, the model config name, user prompt,
+        and a list of prompt optimization methods or prompts are required.
+
+        Args:
+            model_config_name (`str`):
+                The model config for the model to be used to generate
+                and compare prompts.
+            user_prompt (`str`):
+                The origial user prompt to be compared with.
+            opt_methods_or_prompts (`List[Union[PromptOptMethodBase, str]]`):
+                A list of prompt optimization methods or prompts. If the prompt
+                optimization method is provided, the method will be called
+                to get the optimized prompt during the init.
+
+        """
         self.model_config_name = model_config_name
         self.model = load_model_by_config_name(model_config_name)
         self.user_prompt = user_prompt
         assert isinstance(opt_methods_or_prompts, list)
         self.ab_prompt_list = []
-        for item in opt_methods_or_prompts:
+        for index, item in enumerate(opt_methods_or_prompts, start=1):
             if isinstance(item, str):
                 self.ab_prompt_list.append(item)
-            elif isinstance(item, PromptOptMethodBase):
+            elif isinstance(item, PromptGeneratorBase):
+                logger.chat(f"Calling the optimize method {index}")
                 self.ab_prompt_list.append(item.optimize(user_prompt))
             else:
                 raise ValueError(
@@ -36,7 +52,10 @@ class PromptAbTestModule:
                     "or a prompt optimization method "
                     "that inherit `PromptOptMethodBase`",
                 )
-        self.save_dir = save_dir
+            logger.chat(
+                f"The system prompt for method {index} is: "
+                f"{self.ab_prompt_list[-1]}",
+            )
 
     def show_optimized_prompts(self) -> None:
         """Show all the optimzed prompts"""

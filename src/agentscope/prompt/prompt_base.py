@@ -55,7 +55,7 @@ Now, please output your optimized system prompt
 """
 
 
-class PromptOptMethodBase(ABC):
+class PromptGeneratorBase(ABC):
     """base class for prompt optmization methods"""
 
     @abstractmethod
