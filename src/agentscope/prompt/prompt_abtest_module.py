@@ -6,7 +6,7 @@ from loguru import logger
 from agentscope.models import load_model_by_config_name
 from agentscope.message import Msg
 from agentscope.agents import DialogAgent, UserAgent
-from .prompt_opt_method import PromptGeneratorBase
+from .prompt_gen_method import PromptGeneratorBase
 
 
 class PromptAbTestModule:
