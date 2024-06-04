@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=C0301
 """A module that optimize agent system prompt given dialog history."""
+from typing import Union, List
 from agentscope.message import Msg
-from agentscope.agents.agent import AgentBase
+from agentscope.models import ModelWrapperBase
 
 OPT_PROMPT_TEMPLATE = """
 You are an excellent Prompt Engineer. Your task is to optimize an Agent's system prompt by adding notes.
@@ -55,17 +56,16 @@ OPT_PROMPT_TEMPLATE_ZH = """
 """  # noqa
 
 
-class PromptAgentOpt:
+class PromptOptWithHist:
     """A module that optimize agent system prompt given dialog history."""
 
     def __init__(
         self,
-        agent: AgentBase,
+        model: ModelWrapperBase,
     ) -> None:
-        self.agent = agent
-        self.model = agent.model
+        self.model = model
 
-    def get_all_tagged_notes(self, response_text: str) -> list:
+    def get_all_tagged_notes(self, response_text: str) -> List:
         """Get all the notes in the response text."""
         notes = []
         start_tag = "[prompt_note]"
@@ -87,10 +87,14 @@ class PromptAgentOpt:
                 break
         return notes
 
-    def optimize(self) -> None:
+    def optimize(self, system_prompt: str, history: Union[str, List]) -> List:
         """Optimize the system prompt of the agent, given its dialog history"""
-        system_prompt = self.agent.sys_prompt
-        dialog_history = self.model.format(self.agent.memory.get_memory())
+        if isinstance(history, str):
+            dialog_history = history
+        elif isinstance(history, list):
+            dialog_history = self.model.format(history)
+        else:
+            raise ValueError("history must be str or list of messages")
 
         prompt = self.model.format(
             Msg(
@@ -106,5 +110,4 @@ class PromptAgentOpt:
 
         added_notes = self.get_all_tagged_notes(response)
 
-        for note in added_notes:
-            self.agent.sys_prompt += note
+        return added_notes

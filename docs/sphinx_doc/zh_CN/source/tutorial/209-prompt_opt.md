@@ -19,29 +19,29 @@ AgentScope实现了对智能体System Prompt进行优化的模块。
 
 ## 使用方法
 
-AgentScope中，目前实现的Prompt优化模块包括基础版本的直接优化模块`DirectPromptOptMethod`，和可以通过相似样例进行In Context Learning的Prompt优化模块`ExamplePromptOptMethod`。当然你也可以自行实现自己的Prompt优化模块。下面给出使用对应模块的样例。
+AgentScope中，目前实现的Prompt优化模块包括基础版本的直接优化模块`DirectPromptGenMethod`，和可以通过相似样例进行In Context Learning的Prompt优化模块`ExamplePromptGenMethod`。你可以使用这两个模块去帮助你生成更详细的System Prompt。当然你也可以自行实现自己的Prompt优化模块。下面给出使用对应模块的样例。
 
 ### 步骤一：初始化你的PromptOpt模块
 
-#### 使用DirectPromptOptMethod
+#### 使用DirectPromptGenMethod
 
-你可以简单直接的使用`DirectPromptOptMethod模块`对你原有的System Prompt进行优化。
+你可以简单直接的使用`DirectPromptGenMethod模块`对你原有的System Prompt进行优化。
 
-**初始化DirectPromptOptMethod模块**
+**初始化DirectPromptGenMethod模块**
 
 ```python
 import agentscope
 agentscope.init(model_configs="YOUR_MODEL_CONFIGS")
 
-from agentscope.modules.prompt_opt import DirectPromptOptMethod
+from agentscope.prompt import DirectPromptGenMethod
 
-prompt_opt_method = DirectPromptOptMethod(model_config_name="gpt-4")
+prompt_gen_method = DirectPromptGenMethod(model_config_name="gpt-4")
 ```
 
 这个时候，用于优化的meta prompt为默认的OPT_SYSTEM_PROMPT。
 
 ```python
-from agentscope.modules.prompt_opt.prompt_base import OPT_SYSTEM_PROMPT
+from agentscope.prompt.prompt_base import OPT_SYSTEM_PROMPT
 ```
 
 如果你对内置的用于优化的meta prompt不太满意，你也可以使用自己的meta prompt。
@@ -51,22 +51,22 @@ meta_prompt = """
 你是一个擅长写和优化system prompt的prompt  engineer专家。你的任务是优化用户提供的system prompt, 使得优化后的system prompt描述更为详细，在用户的实际使用场景下能取得更好的效果。
 """
 
-prompt_opt_method = DirectPromptOptMethod(model_config_name="gpt-3.5-turbo", meta_prompt=meta_prompt)
+prompt_gen_method = DirectPromptGenMethod(model_config_name="gpt-3.5-turbo", meta_prompt=meta_prompt)
 ```
 
 欢迎用户自由的尝试不同的优化方式。
 
 
-#### 使用ExamplePromptOptMethod
+#### 使用ExamplePromptGenMethod
 
-你也可以使用In Context Learning(ICL)模块`ExamplePromptOptMethod`。当你提供的对应的example足够好时，这一优化模块能够达成很好的效果。
+你也可以使用In Context Learning(ICL)模块`ExamplePromptGenMethod`。当你提供的对应的example足够好时，这一优化模块能够达成很好的效果。
 
-**初始化ExamplePromptOptMethod模块**
+**初始化ExamplePromptGenMethod模块**
 
 ```python
-from agent_scope.modules.prompt_opt import ExamplePromptOptMethod
+from agent_scope.prompt import ExamplePromptGenMethod
 
-prompt_opt_method = ExamplePromptOptMethod(
+prompt_gen_method = ExamplePromptGenMethod(
     model_config_name="gpt-4", # the model you use
     meta_prompt=None, # the default meta prompt
     example_list=example_list, # the example list you use, you can use your own example list
@@ -80,7 +80,7 @@ prompt_opt_method = ExamplePromptOptMethod(
 我们内置了两个类别的example list，你可以使用它们。
 
 ```python
-from agentscope.modules.prompt_opt.prompt_base import SYS_OPT_EXAMPLES, ROLE_OPT_EXAMPLES # list
+from agentscope.prompt.prompt_base import SYS_OPT_EXAMPLES, ROLE_OPT_EXAMPLES # list
 
 print(SYSTEM_OPT_EXAMPLES[0]) # dict
 
@@ -105,9 +105,9 @@ print(ROLE_OPT_EXAMPLES[0]) # dict
 
 ```python
 
-from agentscope.modules.prompt_opt.prompt_base import SYS_OPT_EXAMPLES, ROLE_OPT_EXAMPLES
+from agentscope.prompt.prompt_base import SYS_OPT_EXAMPLES, ROLE_OPT_EXAMPLES
 
-prompt_opt_method = ExamplePromptOptMethod(model_config_name="gpt-4", example_selection_method='similarity', example_list=ROLE_OPT_EXAMPLES,
+prompt_gen_method = ExamplePromptGenMethod(model_config_name="gpt-4", example_selection_method='similarity', example_list=ROLE_OPT_EXAMPLES,
     example_embd_path="./cache/role_example_embd.npy")
 ```
 
@@ -124,7 +124,7 @@ prompt_opt_method = ExamplePromptOptMethod(model_config_name="gpt-4", example_se
 
 original_prompt = "你是比尔盖茨，微软公司的创始人。"
 
-optimized_prompt = prompt_opt_method.optimize(original_prompt)
+optimized_prompt = prompt_gen_method.optimize(original_prompt)
 
 print(optimized_prompt)
 
@@ -162,7 +162,7 @@ dialog_agent = DialogAgent(
     model_config_name="gpt-3.5-turbo",  # replace by your model config name
 )
 
-dialog_agent.sys_prompt = prompt_opt_method.optimize(dialog_agent.sys_prompt)
+dialog_agent.sys_prompt = prompt_gen_method.optimize(dialog_agent.sys_prompt)
 ```
 
 ## System Prompt迭代优化调试
@@ -176,8 +176,8 @@ dialog_agent.sys_prompt = prompt_opt_method.optimize(dialog_agent.sys_prompt)
 为了方便大家调试优化System Prompt，我们提供了`PromptAbTestModule`模块，具体使用如下例子。
 
 ```python
-from agentscope.modules.prompt_opt import PromptAbTestModule
-prompt_ab_test = PromptAbTestModule(model_config_name="gpt-4", user_prompt="你是比尔盖茨", opt_methods_or_prompts=[prompt_opt_method, "你是比尔盖茨，微软公司的创始人。"])
+from agentscope.prompt import PromptAbTestModule
+prompt_ab_test = PromptAbTestModule(model_config_name="gpt-4", user_prompt="你是比尔盖茨", opt_methods_or_prompts=[prompt_gen_method, "你是比尔盖茨，微软公司的创始人。"])
 ```
 
 你可以展示各个方法优化后的System Prompt。
@@ -211,14 +211,18 @@ dialog_agent = DialogAgent(
 )
 user_agent = UserAgent()
 
-prompt_agent_opt = PromptAgentOpt(agent=dialog_agent)
+prompt_agent_opt = PromptAgentOpt(model=xxx)
 
-# 与Dialog Agent对话
+# 与Dialog Agent对话产生history
 x = None
 while x is None or x.content != "exit":
     x = sequentialpipeline([dialog_agent, user_agent], x)
 
-prompt_agent_opt.optimize()
+added_notes = prompt_agent_opt.optimize(dialog_agent.sys_prompt, dialog_agent.memory.get_memory())
+
+for note in added notes:
+    print(note)
+    dialog_agent.sys_prompt += note
 
 ```
 

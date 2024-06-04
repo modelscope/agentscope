@@ -3,8 +3,8 @@
 
 from .prompt_base import PromptGeneratorBase
 from .prompt_abtest_module import PromptAbTestModule
-from .prompt_opt_method import DirectPromptGenMethod, ExamplePromptGenMethod
-from .prompt_opt_history import PromptAgentOpt
+from .prompt_gen_method import DirectPromptGenMethod, ExamplePromptGenMethod
+from .prompt_opt_history import PromptOptWithHist
 
 
 __all__ = [
@@ -12,5 +12,5 @@ __all__ = [
     "PromptAbTestModule",
     "DirectPromptGenMethod",
     "ExamplePromptGenMethod",
-    "PromptAgentOpt",
+    "PromptOptWithHist",
 ]
