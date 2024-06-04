@@ -6,7 +6,8 @@ from loguru import logger
 
 from ..message import Msg
 from .agent import AgentBase
-from ..prompt.prompt_engine import PromptType
+
+# deprecated: from ..prompt.prompt_engine import PromptType
 
 
 class DialogAgent(AgentBase):
@@ -20,7 +21,7 @@ class DialogAgent(AgentBase):
         model_config_name: str,
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
-        prompt_type: Optional[PromptType] = None,
+        prompt_type: None = None,
     ) -> None:
         """Initialize the dialog agent.
 
