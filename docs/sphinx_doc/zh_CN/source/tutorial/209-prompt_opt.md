@@ -198,9 +198,9 @@ abtest.compare_query_results(queries=["你能讲一讲你创业成功的经历�
 abtest.compare_with_dialog()
 ```
 
-### PromptAgentOpt模块
+### PromptOptWithHist模块
 
-除了`PromptAbTestModule`模块，我们还提供了`PromptAgentOpt`模块，可以自行根据用户与Agent的对话历史去总结需要补充的System Prompts。
+除了`PromptAbTestModule`模块，我们还提供了`PromptOptWithHist`模块，可以自行根据用户与Agent的对话历史去总结需要补充的System Prompts。
 
 ```python
 
@@ -211,7 +211,7 @@ dialog_agent = DialogAgent(
 )
 user_agent = UserAgent()
 
-prompt_agent_opt = PromptAgentOpt(model=xxx)
+prompt_agent_opt = PromptOptWithHist(model=xxx)
 
 # 与Dialog Agent对话产生history
 x = None
