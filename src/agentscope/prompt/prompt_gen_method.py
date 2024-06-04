@@ -49,14 +49,18 @@ class DirectPromptGenMethod(PromptGeneratorBase):
 
 
 class SentencePieceEmbeddingModel:
-    """The embedding model using sentence piece"""
+    """
+    The embedding model using sentence piece
+
+    Note: This model require connection to hugginface to run.
+    """
 
     def __init__(self) -> None:
         self.SELECT_MODEL = "sentence-transformers/all-mpnet-base-v2"
 
         from sentence_transformers import SentenceTransformer
 
-        self.bert_model = SentenceTransformer(self.SELECT_MODEL, device="cpu")
+        self.bert_model = SentenceTransformer(self.SELECT_MODEL)
         logger.debug(f"Loaded model: {self.SELECT_MODEL}")
 
     def __call__(self, queries: Union[str, List[str]]) -> Any:
@@ -148,7 +152,7 @@ class ExamplePromptGenMethod(PromptGeneratorBase):
             self.embd_model = load_model_by_config_name(
                 embed_model_config_name,
             )
-        else:
+        elif self.example_selection_method == "similarity":
             self.embd_model = self.embd_model = SentencePieceEmbeddingModel()
 
         if self.example_selection_method == "similarity":
