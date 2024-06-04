@@ -6,7 +6,7 @@ from loguru import logger
 
 from ..message import Msg
 from .agent import AgentBase
-from ..prompt import PromptType
+from ..prompt.prompt_engine import PromptType
 
 
 class DialogAgent(AgentBase):
