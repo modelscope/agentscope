@@ -834,7 +834,7 @@ pre[class*="language-"] {
     }
 }
 
-#text-input {
+.text-input {
     font-family: Arial, sans-serif;
     font-size: 16px;
     line-height: 1.2;
