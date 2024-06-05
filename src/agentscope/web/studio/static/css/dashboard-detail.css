@@ -43,6 +43,7 @@
     border-radius: 10px;
     padding-left: 20px;
     margin: 5px 0;
+    cursor: pointer;
 }
 
 .detail-sidebar-tab:hover {

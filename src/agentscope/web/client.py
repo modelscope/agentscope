@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 """The client for agentscope platform."""
 from threading import Event
-from typing import Optional
-import atexit
+from typing import Optional, Union
 import requests
 
 import socketio
 from loguru import logger
 
+from agentscope.message import Msg
 
-class WebSocketClient:
+
+class _WebSocketClient:
     """WebSocket Client of AgentScope Studio, only used to obtain
     input messages from users."""
 
@@ -24,6 +25,7 @@ class WebSocketClient:
         self.run_id = run_id
         self.name = name
         self.agent_id = agent_id
+
         self.user_input = None
         self.sio = socketio.Client()
         self.input_event = Event()
@@ -31,12 +33,18 @@ class WebSocketClient:
         @self.sio.event
         def connect() -> None:
             logger.info("Connected to Studio")
-            self.sio.emit("join", {"run_id": self.run_id})
+            self.sio.emit(
+                "join",
+                {"run_id": self.run_id, "agent_id": self.agent_id},
+            )
 
         @self.sio.event
         def disconnect() -> None:
             logger.info("Disconnected from Studio")
-            self.sio.emit("leave", {"run_id": self.run_id})
+            self.sio.emit(
+                "leave",
+                {"run_id": self.run_id, "agent_id": self.agent_id},
+            )
 
         @self.sio.on("fetch_user_input")
         def on_fetch_user_input(data: dict) -> None:
@@ -45,7 +53,11 @@ class WebSocketClient:
 
         self.sio.connect(f"{self.studio_url}")
 
-    def get_user_input(self) -> Optional[dict]:
+    def get_user_input(
+        self,
+        require_url: bool,
+        required_keys: list[str],
+    ) -> Optional[dict]:
         """Get user input from studio in real-time.
 
         Note:
@@ -60,6 +72,8 @@ class WebSocketClient:
                 "run_id": self.run_id,
                 "name": self.name,
                 "agent_id": self.agent_id,
+                "require_url": require_url,
+                "required_keys": required_keys,
             },
         )
         self.input_event.wait()
@@ -70,97 +84,130 @@ class WebSocketClient:
         self.sio.disconnect()
 
 
-class HttpClient:
-    """HTTP client for the AgentScope Studio, used to handle interactions with
-    the Studio except for the user input (which need websocket connections)."""
+class StudioClient:
+    """A client in AgentScope applications, used to register, push messages to
+    an AgentScope Studio backend, and obtain user inputs from the studio."""
 
-    def __init__(
-        self,
-        studio_url: str,
-        run_id: str,
-    ) -> None:
+    active: bool = False
+    """Whether the client is active."""
+
+    studio_url: str
+    """The URL of the AgentScope Studio."""
+
+    runtime_id: str
+
+    websocket_mapping: dict = {}
+    """A mapping of websocket clients to user agents."""
+
+    def initialize(self, runtime_id: str, studio_url: str) -> None:
+        """Initialize the client with the studio URL."""
+        self.runtime_id = runtime_id
         self.studio_url = studio_url
-        self.run_id = run_id
+        self.active = True
 
-    def generate_user_input_client(
-        self,
-        name: str,
-        agent_id: str,
-    ) -> WebSocketClient:
-        """Generate a websocket client for a specifc user agent."""
-        return WebSocketClient(
-            self.studio_url,
-            self.run_id,
-            name=name,
-            agent_id=agent_id,
-        )
-
-    def register_run(
+    def register_running_instance(
         self,
         project: str,
         name: str,
+        timestamp: str,
         run_dir: str,
-    ) -> bool:
-        """Register a run to the AgentScope Studio."""
+        pid: int,
+    ) -> None:
+        """Register a running instance to the AgentScope Studio."""
         url = f"{self.studio_url}/api/runs/register"
-        resp = requests.post(
+        response = requests.post(
             url,
             json={
-                "run_id": self.run_id,
+                "run_id": self.runtime_id,
                 "project": project,
                 "name": name,
-                "run_dir": run_dir,
-            },
-            timeout=10,  # todo: configurable timeout
-        )
-        logger.info(
-            "Successfully registered to AgentScope Studio.\nView your "
-            f"application at:\n\n    * {self.get_run_detail_page_url()}\n",
-        )
-        if resp.status_code != 200:
-            logger.error(f"Fail to register to studio: {resp.text}")
-            raise RuntimeError(f"Fail to register to studio: {resp.text}")
-
-        def finish_run() -> None:
-            requests.post(
-                f"{self.studio_url}/api/runs/finish",
-                json={"run_id": self.run_id},
-                timeout=5,
-            )
-
-        atexit.register(finish_run)
-        return True
-
-    def send_message(
-        self,
-        name: str,
-        role: str,
-        content: str,
-        timestamp: str = None,
-        metadata: dict = None,
-        url: str = None,
-    ) -> bool:
-        """Send a message to the studio."""
-        send_url = f"{self.studio_url}/api/messages/put"
-        resp = requests.post(
-            send_url,
-            json={
-                "run_id": self.run_id,
-                "name": name,
-                "role": role,
-                "content": content,
                 "timestamp": timestamp,
-                "metadata": metadata,
-                "url": url,
+                "run_dir": run_dir,
+                "pid": pid,
             },
             timeout=10,
         )
-        if resp.status_code == 200:
-            return True
+
+        if response.status_code == 200:
+            logger.info(
+                "Successfully registered to AgentScope Studio.\n"
+                "View your application at:\n"
+                "\n"
+                f"    * {self.get_run_detail_page_url()}\n",
+            )
         else:
-            logger.error(f"Fail to send message to studio: {resp.text}")
-            return False
+            raise RuntimeError(f"Fail to register to studio: {response.text}")
+
+    def push_message(
+        self,
+        message: Msg,
+    ) -> None:
+        """Push the message to the flask server (studio) for display.
+
+        Args:
+            message (`Msg`):
+                The message to be pushed.
+        """
+        send_url = f"{self.studio_url}/api/messages/push"
+        response = requests.post(
+            send_url,
+            json={
+                "run_id": self.runtime_id,
+                "msg_id": message.id,
+                "name": message.name,
+                "role": message.role,
+                "content": str(message.content),
+                "timestamp": message.timestamp,
+                "metadata": message.metadata,
+                "url": message.url,
+            },
+            timeout=10,
+        )
+
+        if response.status_code != 200:
+            logger.error(f"Fail to push message to studio: {response.text}")
+
+    def get_user_input(
+        self,
+        agent_id: str,
+        name: str,
+        require_url: bool,
+        required_keys: Optional[Union[list[str], str]] = None,
+    ) -> dict:
+        """Get user input from the studio.
+
+        Args:
+            agent_id (`str`):
+                The ID of the agent.
+            name (`str`):
+                The name of the agent.
+            require_url (`bool`):
+                Whether the input requires a URL.
+            required_keys (`Optional[Union[list[str], str]]`, defaults to
+            `None`):
+                The required keys for the input, which will be combined into a
+                dict in the content field.
+
+        Returns:
+            `dict`: A dict with the user input and an url if required.
+        """
+
+        if agent_id not in self.websocket_mapping:
+            self.websocket_mapping[agent_id] = _WebSocketClient(
+                self.studio_url,
+                self.runtime_id,
+                name,
+                agent_id,
+            )
+
+        return self.websocket_mapping[agent_id].get_user_input(
+            require_url=require_url,
+            required_keys=required_keys,
+        )
 
     def get_run_detail_page_url(self) -> str:
         """Get the URL of the run detail page."""
-        return f"{self.studio_url}/?run_id={self.run_id}"
+        return f"{self.studio_url}/?run_id={self.runtime_id}"
+
+
+_studio_client = StudioClient()

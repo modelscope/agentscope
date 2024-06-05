@@ -7,7 +7,7 @@ import unittest
 
 from loguru import logger
 
-from agentscope.utils import setup_logger
+from agentscope.logging import setup_logger
 
 
 class LoggerTest(unittest.TestCase):

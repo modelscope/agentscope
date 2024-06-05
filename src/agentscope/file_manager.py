@@ -100,8 +100,9 @@ class _FileManager:
         cfg = {
             "project": _runtime.project,
             "name": _runtime.name,
-            "id": _runtime.runtime_id,
+            "run_id": _runtime.runtime_id,
             "timestamp": _runtime.timestamp,
+            "pid": os.getpid(),
         }
         with open(
             os.path.join(self.dir_root, _DEFAULT_CFG_NAME),

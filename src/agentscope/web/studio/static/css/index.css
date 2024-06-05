@@ -97,6 +97,7 @@ body {
     justify-content: flex-end;
     padding: 25px;
     color: #ffffff;
+    cursor: pointer;
 }
 
 /*when guide-block and right are all in class*/
@@ -173,6 +174,7 @@ body {
     color: var(--tab-font-color);
     box-sizing: border-box;
     margin: 5px 0;
+    cursor: pointer;
 }
 
 .navigation-bar-item:hover {

@@ -2,16 +2,18 @@ const dialogueTabBtn = document.getElementById('dialogue-tab-btn');
 const codeTabBtn = document.getElementById('code-tab-btn');
 const invocationTabBtn = document.getElementById('invocation-tab-btn');
 let runtimeInfo = null;
+let currentContent = null;
 
 function initializeDashboardDetailPageByUrl(pageUrl) {
     switch (pageUrl) {
         case 'static/html/dashboard-detail-dialogue.html':
-            // TODO: pass the runtime_id
             initializeDashboardDetailDialoguePage(runtimeInfo);
             break;
         case 'static/html/dashboard-detail-code.html':
+            initializeDashboardDetailCodePage(runtimeInfo['run_dir']);
             break;
         case 'static/html/dashboard-detail-invocation.html':
+            initializeDashboardDetailInvocationPage(runtimeInfo['run_dir'])
             break;
     }
 }
@@ -21,7 +23,32 @@ function initializeDashboardDetailPageByUrl(pageUrl) {
 // 2. code tab: the code files
 // 3. invocation tab: the model invocation records
 function loadDashboardDetailContent(pageUrl, javascriptUrl) {
-    fetch(pageUrl)
+    if (currentContent === pageUrl) {
+        return;
+    } else {
+        currentContent = pageUrl;
+    }
+
+    // switch selected status
+    switch (pageUrl) {
+        case 'static/html/dashboard-detail-dialogue.html':
+            dialogueTabBtn.classList.add('selected');
+            codeTabBtn.classList.remove('selected');
+            invocationTabBtn.classList.remove('selected');
+            break;
+        case 'static/html/dashboard-detail-code.html':
+            dialogueTabBtn.classList.remove('selected');
+            codeTabBtn.classList.add('selected');
+            invocationTabBtn.classList.remove('selected');
+            break;
+        case 'static/html/dashboard-detail-invocation.html':
+            dialogueTabBtn.classList.remove('selected');
+            codeTabBtn.classList.remove('selected');
+            invocationTabBtn.classList.add('selected');
+            break;
+    }
+
+    fetch(pageUrl, {cache: "no-store"})
         .then(response => {
             if (!response.ok) {
                 throw new Error('Connection error, cannot load the web page.');
@@ -35,31 +62,12 @@ function loadDashboardDetailContent(pageUrl, javascriptUrl) {
             if (!isScriptLoaded(javascriptUrl)) {
                 let script = document.createElement('script');
                 script.src = javascriptUrl;
-                script.onload = function() {
+                script.onload = function () {
                     initializeDashboardDetailPageByUrl(pageUrl);
                 }
                 document.head.appendChild(script);
             } else {
                 initializeDashboardDetailPageByUrl(pageUrl);
-            }
-
-            // switch selected status
-            switch (pageUrl) {
-                case 'static/html/dashboard-detail-dialogue.html':
-                    dialogueTabBtn.classList.add('selected');
-                    codeTabBtn.classList.remove('selected');
-                    invocationTabBtn.classList.remove('selected');
-                    break;
-                case 'static/html/dashboard-detail-code.html':
-                    dialogueTabBtn.classList.remove('selected');
-                    codeTabBtn.classList.add('selected');
-                    invocationTabBtn.classList.remove('selected');
-                    break;
-                case 'static/html/dashboard-detail-invocation.html':
-                    dialogueTabBtn.classList.remove('selected');
-                    codeTabBtn.classList.remove('selected');
-                    invocationTabBtn.classList.add('selected');
-                    break;
             }
 
         })
@@ -73,7 +81,8 @@ function loadDashboardDetailContent(pageUrl, javascriptUrl) {
 // Initialize the dashboard detail page, this function is the entry point of the dashboard detail page
 function initializeDashboardDetailPage(pRuntimeInfo) {
     // The default content of the dashboard detail page
-    console.log("Initialize dashboard detail page with runtime id: " + pRuntimeInfo.id);
+    console.log("Initialize dashboard detail page with runtime id: " + pRuntimeInfo.run_id);
     runtimeInfo = pRuntimeInfo;
+    currentContent = null;
     loadDashboardDetailContent('static/html/dashboard-detail-dialogue.html', 'static/js/dashboard-detail-dialogue.js');
 }

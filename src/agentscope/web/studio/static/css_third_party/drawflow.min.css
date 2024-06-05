@@ -22,7 +22,7 @@
     background: #fff;
     width: 280px;
     min-width: 150px;
-    min-height: 150px;
+    height: fit-content;
     border-radius: 4px;
     border: 1px solid var(--border-color);
     color: #000;

@@ -10,7 +10,7 @@
     <link rel="stylesheet" type="text/css"
           href="{{ url_for('static', filename='css/base.css') }}">
 
-    {#    For workstation#}
+    {#  For workstation#}
     <link rel="stylesheet" type="text/css"
           href="{{ url_for('static', filename='css_third_party/drawflow.min.css') }}">
     <link rel="stylesheet" type="text/css"
@@ -38,7 +38,6 @@
     <script src="{{ url_for('static', filename='js_third_party/micromodal.min.js') }}"></script>
 
     <script src="{{ url_for('static', filename='js/workstation.js') }}"></script>
-
 </head>
 <body>
 <div id="workstation-panel">
@@ -222,6 +221,7 @@
         <div class="col-right">
             <div class="menu">
                 <div class="menu-btn unselectable-text"
+                     title="Home"
                      onclick="editor.changeModule('Home'); changeModule(event);">
                     <svg class="menu-btn-svg" viewBox="0 0 1024 1024"
                          xmlns="http://www.w3.org/2000/svg">
@@ -229,6 +229,7 @@
                     </svg>
                 </div>
                 <div class="menu-btn unselectable-text"
+                     title="Export workflow configuration"
                      onclick="showExportHTMLPopup()">
                     <svg class="menu-btn-svg" viewBox="0 0 1024 1024"
                          xmlns="http://www.w3.org/2000/svg">
@@ -236,6 +237,7 @@
                     </svg>
                 </div>
                 <div class="menu-btn unselectable-text"
+                     title="Import workflow configuration"
                      onclick="showImportHTMLPopup()">
                     <svg class="menu-btn-svg" viewBox="0 0 1024 1024"
                          xmlns="http://www.w3.org/2000/svg">
@@ -243,6 +245,7 @@
                     </svg>
                 </div>
                 <div class="menu-btn unselectable-text"
+                     title="Check the workflow"
                      onclick="showCheckPopup()">
                     <svg class="menu-btn-svg" viewBox="0 0 1024 1024"
                          xmlns="http://www.w3.org/2000/svg">
@@ -251,6 +254,7 @@
                     </svg>
                 </div>
                 <div class="menu-btn unselectable-text"
+                     title="Clear"
                      onclick="clearModuleSelected()">
                     <svg class="menu-btn-svg" viewBox="0 0 1024 1024"
                          xmlns="http://www.w3.org/2000/svg">
@@ -258,16 +262,16 @@
                     </svg>
                 </div>
                 <div class="menu-btn unselectable-text"
-                     onclick="showExportPyPopup()"
-                     data-title="Please click the 'Check' button first.">
+                     title="Export Python code"
+                     onclick="showExportPyPopup()">
                     <svg class="menu-btn-svg" viewBox="0 0 1024 1024"
                          xmlns="http://www.w3.org/2000/svg">
                         <path d="M896.170667 497.365333l-241.365334 241.365334-60.330666-60.373334 180.992-180.992-180.992-181.034666L654.805333 256l241.365334 241.365333z m-647.509334 0l181.034667 180.992-60.330667 60.373334L128 497.365333 369.365333 256l60.330667 60.330667-181.034667 181.034666z"></path>
                     </svg>
                 </div>
                 <div class="menu-btn unselectable-text"
-                     onclick="showExportRunPopup();"
-                     data-title="Run application">
+                     title="Run the workflow"
+                     onclick="showExportRunPopup();">
                     <svg class="menu-btn-svg" viewBox="0 0 1024 1024"
                          xmlns="http://www.w3.org/2000/svg">
                         <path d="M256 252.245333c0-6.613333 1.578667-13.098667 4.565333-18.901333 9.813333-18.773333 32-25.557333 49.621334-15.104l439.04 259.754667c5.973333 3.541333 10.88 8.789333 14.165333 15.146666 9.813333 18.773333 3.413333 42.453333-14.165333 52.864L310.186667 805.76a34.730667 34.730667 0 0 1-17.706667 4.906667C272.341333 810.666667 256 793.258667 256 771.797333V252.245333z"></path>

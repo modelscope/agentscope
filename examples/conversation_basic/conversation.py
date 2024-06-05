@@ -34,7 +34,7 @@ def main() -> None:
     dialog_agent = DialogAgent(
         name="Assistant",
         sys_prompt="You're a helpful assistant.",
-        model_config_name="gpt-3.5-turbo",  # replace by your model config name
+        model_config_name="gpt-4",  # replace by your model config name
     )
     user_agent = UserAgent()
 

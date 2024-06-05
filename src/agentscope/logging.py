@@ -3,10 +3,11 @@
 import json
 import os
 import sys
-from typing import Optional, Literal, Union, Any
+from typing import Optional, Literal, Any
 
 from loguru import logger
 
+from agentscope.web.client import _studio_client
 from agentscope.web.gradio.utils import (
     generate_image_from_name,
     send_msg,
@@ -68,20 +69,25 @@ def _get_speaker_color(speaker: str) -> tuple[str, str]:
 
 # add chat function for logger
 def _chat(
-    message: Union[str, dict],
+    message: dict,
     *args: Any,
     disable_studio: bool = False,
     **kwargs: Any,
 ) -> None:
-    """Log a chat message with the format of"<speaker>: <content>".
+    """
+    Log a chat message with the format of"<speaker>: <content>". If the
+    running instance is registered in the studio, the message will be sent
+    and display in the studio.
 
     Args:
-        message (`Union[str, dict]`):
-            The message to be logged. If it is a string, it will be logged
-            directly. If it's a dict, it should have "name"(or "role") and
-            "content" keys, and the message will be logged as "<name/role>:
-            <content>".
+        message (`dict`):
+            The message to be logged as "<name/role>: <content>", which must
+            be an object of Msg class.
     """
+    # Push message to studio if it is active
+    if _studio_client.active:
+        _studio_client.push_message(message)
+
     # Save message into file, add default to ignore not serializable objects
     logger.log(
         LEVEL_CHAT_SAVE,
