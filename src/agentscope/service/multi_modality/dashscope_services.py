@@ -110,10 +110,8 @@ def dashscope_text_to_image(
             if saved_dir:
                 if not os.path.exists(saved_dir):
                     os.makedirs(saved_dir)
-                # move images to saved_dir
-                if urls is not None:
                     new_urls = [
-                        f"{saved_dir}/{prompt}_{i}.png"
+                        f"{saved_dir}/{prompt[:10]}_{i}.png"
                         for i in range(len(urls))
                     ]
                     for i, url in enumerate(urls):
