@@ -26,8 +26,8 @@ The following table outlines the various Service functions by type. These functi
 |                             | `arxiv_search`             | Perform arXiv search                                                                                           |
 |                             | `download_from_url`        | Download file from given URL.                                                                                  |
 |                             | `load_web`                 | Load and parse the web page of the specified url (currently only supports HTML).                               |
-|                             | `digest_webpage`           | Digest the content of a already loaded web page (currently only supports HTML).                                
-|                             | `dblp_search_publications` | Search publications in the DBLP database                                                                       
+|                             | `digest_webpage`           | Digest the content of a already loaded web page (currently only supports HTML).
+|                             | `dblp_search_publications` | Search publications in the DBLP database
 |                             | `dblp_search_authors`      | Search for author information in the DBLP database                                                             |
 |                             | `dblp_search_venues`       | Search for venue information in the DBLP database                                                              |
 | File                        | `create_file`              | Create a new file at a specified path, optionally with initial content.                                        |
