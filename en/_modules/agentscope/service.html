@@ -126,6 +126,11 @@
     <span class="n">dblp_search_authors</span><span class="p">,</span>
     <span class="n">dblp_search_venues</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.multi_modality.dashscope_services</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">dashscope_image_to_text</span><span class="p">,</span>
+    <span class="n">dashscope_text_to_image</span><span class="p">,</span>
+    <span class="n">dashscope_text_to_audio</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.service_response</span> <span class="kn">import</span> <span class="n">ServiceResponse</span>
 <span class="kn">from</span> <span class="nn">.service_toolkit</span> <span class="kn">import</span> <span class="n">ServiceToolkit</span>
 <span class="kn">from</span> <span class="nn">.service_toolkit</span> <span class="kn">import</span> <span class="n">ServiceFactory</span>
@@ -181,6 +186,9 @@
     <span class="s2">&quot;dblp_search_publications&quot;</span><span class="p">,</span>
     <span class="s2">&quot;dblp_search_authors&quot;</span><span class="p">,</span>
     <span class="s2">&quot;dblp_search_venues&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;dashscope_image_to_text&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;dashscope_text_to_image&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;dashscope_text_to_audio&quot;</span><span class="p">,</span>
     <span class="c1"># to be deprecated</span>
     <span class="s2">&quot;ServiceFactory&quot;</span><span class="p">,</span>
 <span class="p">]</span>

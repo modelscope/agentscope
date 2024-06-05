@@ -13,7 +13,7 @@
 |------------|-----------------------|-----------------------------------------|
 | 代码         | `execute_python_code` | 执行一段 Python 代码，可选择在 Docker <br/>容器内部执行。 |
 | 检索         | `retrieve_from_list`  | 根据给定的标准从列表中检索特定项目。                      |
-|            | `cos_sim`             | 计算2个embedding的余弦相似度。                                 |
+|            | `cos_sim`             | 计算2个embedding的余弦相似度。                    |
 | SQL查询      | `query_mysql`         | 在 MySQL 数据库上执行 SQL 查询并返回结果。             |
 |            | `query_sqlite`        | 在 SQLite 数据库上执行 SQL 查询并返回结果。            |
 |            | `query_mongodb`       | 对 MongoDB 集合执行查询或操作。                    |
@@ -24,9 +24,9 @@
 |            | `download_from_url`   | 从指定的 URL 下载文件。                          |
 |            | `load_web`            | 爬取并解析指定的网页链接 （目前仅支持爬取 HTML 页面）          |
 |            | `digest_webpage`      | 对已经爬取好的网页生成摘要信息（目前仅支持 HTML 页面
-|            | `dblp_search_publications`      |  在dblp数据库里搜索文献。
-|            | `dblp_search_authors`      |  在dblp数据库里搜索作者。    |
-|            | `dblp_search_venues`      |  在dblp数据库里搜索期刊，会议及研讨会。     |
+|            | `dblp_search_publications`      | 在dblp数据库里搜索文献。
+|            | `dblp_search_authors`      | 在dblp数据库里搜索作者。                          |
+|            | `dblp_search_venues`      | 在dblp数据库里搜索期刊，会议及研讨会。                   |
 | 文件处理       | `create_file`         | 在指定路径创建一个新文件，并可选择添加初始内容。                |
 |            | `delete_file`         | 删除由文件路径指定的文件。                           |
 |            | `move_file`           | 将文件从一个路径移动或重命名到另一个路径。                   |
@@ -37,6 +37,9 @@
 |            | `write_text_file`     | 向指定路径的文件写入文本内容。                         |
 |            | `read_json_file`      | 读取并解析 JSON 文件的内容。                       |
 |            | `write_json_file`     | 将 Python 对象序列化为 JSON 并写入到文件。            |
+| 多模态        | `dashscope_text_to_image`  | 使用 DashScope API 将文本生成图片。               |
+|            | `dashscope_image_to_text`  | 使用 DashScope API 根据图片生成文字。              |
+|            | `dashscope_text_to_audio`  | 使用 DashScope API 根据文本生成音频。             |
 | *更多服务即将推出* |                       | 正在开发更多服务功能，并将添加到 AgentScope 以进一步增强其能力。  |
 
 关于详细的参数、预期输入格式、返回类型，请参阅[API文档](https://modelscope.github.io/agentscope/)。

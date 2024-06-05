@@ -1,0 +1,431 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.service.multi_modality.dashscope_services &mdash; AgentScope  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../../../../en/_modules/agentscope/service/multi_modality/dashscope_services.html">English</a></li> |
+    <a href="../../../../../zh_CN/_modules/agentscope/service/multi_modality/dashscope_services.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/quick_start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/advance.html">Advanced Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/contribute.html">Get Involved</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.exception.html">agentscope.exception</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.server.html">agentscope.server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.utils.html">agentscope.utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../service.html">agentscope.service</a></li>
+      <li class="breadcrumb-item active">agentscope.service.multi_modality.dashscope_services</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for agentscope.service.multi_modality.dashscope_services</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Use DashScope API to generate images,</span>
+<span class="sd">convert text to audio, and convert images to text.</span>
+<span class="sd">Please refer to the official documentation for more details:</span>
+<span class="sd">https://dashscope.aliyun.com/</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Sequence</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">dashscope</span>
+<span class="kn">from</span> <span class="nn">dashscope.audio.tts</span> <span class="kn">import</span> <span class="n">SpeechSynthesizer</span>
+
+<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DashScopeImageSynthesisWrapper</span><span class="p">,</span>
+    <span class="n">DashScopeMultiModalWrapper</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># SpeechSynthesizerWrapper is current not available</span>
+
+
+<span class="kn">from</span> <span class="nn">agentscope.service.service_response</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ServiceResponse</span><span class="p">,</span>
+    <span class="n">ServiceExecStatus</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">agentscope.utils.tools</span> <span class="kn">import</span> <span class="n">_download_file</span>
+
+
+<div class="viewcode-block" id="dashscope_text_to_image">
+<a class="viewcode-back" href="../../../../agentscope.service.html#agentscope.service.dashscope_text_to_image">[docs]</a>
+<span class="k">def</span> <span class="nf">dashscope_text_to_image</span><span class="p">(</span>
+    <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">size</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;1024*1024&quot;</span><span class="p">,</span> <span class="s2">&quot;720*1280&quot;</span><span class="p">,</span> <span class="s2">&quot;1280*720&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;1024*1024&quot;</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;wanx-v1&quot;</span><span class="p">,</span>
+    <span class="n">save_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate image(s) based on the given prompt, and return image url(s).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        prompt (`str`):</span>
+<span class="sd">            The text prompt to generate image.</span>
+<span class="sd">        api_key (`str`):</span>
+<span class="sd">            The api key for the dashscope api.</span>
+<span class="sd">        n (`int`, defaults to `1`):</span>
+<span class="sd">            The number of images to generate.</span>
+<span class="sd">        size (`Literal[&quot;1024*1024&quot;, &quot;720*1280&quot;, &quot;1280*720&quot;]`, defaults to</span>
+<span class="sd">        `&quot;1024*1024&quot;`):</span>
+<span class="sd">            Size of the image.</span>
+<span class="sd">        model (`str`, defaults to &#39;&quot;wanx-v1&quot;&#39;):</span>
+<span class="sd">            The model to use.</span>
+<span class="sd">        save_dir (`Optional[str]`, defaults to &#39;None&#39;):</span>
+<span class="sd">            The directory to save the generated images. If not specified,</span>
+<span class="sd">            will return the web urls.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ServiceResponse:</span>
+<span class="sd">        A dictionary with two variables: `status` and`content`.</span>
+<span class="sd">        If `status` is ServiceExecStatus.SUCCESS,</span>
+<span class="sd">        the `content` is a dict with key &#39;fig_paths&quot; and</span>
+<span class="sd">        value is a list of the paths to the generated images.</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            prompt = &quot;A beautiful sunset in the mountains&quot;</span>
+<span class="sd">            print(dashscope_text_to_image(prompt, &quot;{api_key}&quot;))</span>
+
+<span class="sd">    &gt; {</span>
+<span class="sd">    &gt;     &#39;status&#39;: &#39;SUCCESS&#39;,</span>
+<span class="sd">    &gt;     &#39;content&#39;: {&#39;image_urls&#39;: [&#39;IMAGE_URL1&#39;, &#39;IMAGE_URL2&#39;]}</span>
+<span class="sd">    &gt; }</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">text2img</span> <span class="o">=</span> <span class="n">DashScopeImageSynthesisWrapper</span><span class="p">(</span>
+        <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;dashscope-text-to-image-service&quot;</span><span class="p">,</span>  <span class="c1"># Just a placeholder</span>
+        <span class="n">model_name</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+        <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">text2img</span><span class="p">(</span>
+            <span class="n">prompt</span><span class="o">=</span><span class="n">prompt</span><span class="p">,</span>
+            <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
+            <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">urls</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">image_urls</span>
+
+        <span class="c1"># save images to save_dir</span>
+        <span class="k">if</span> <span class="n">urls</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">save_dir</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">urls_local</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="c1"># Obtain the image file names in the url</span>
+                <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">:</span>
+                    <span class="n">image_name</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">image_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">image_name</span><span class="p">),</span>
+                    <span class="p">)</span>
+                    <span class="c1"># Download the image</span>
+                    <span class="n">_download_file</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">image_path</span><span class="p">)</span>
+                    <span class="n">urls_local</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">image_path</span><span class="p">)</span>
+
+                <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+                    <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
+                    <span class="p">{</span><span class="s2">&quot;image_urls&quot;</span><span class="p">:</span> <span class="n">urls_local</span><span class="p">},</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Return the web urls</span>
+                <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+                    <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
+                    <span class="p">{</span><span class="s2">&quot;image_urls&quot;</span><span class="p">:</span> <span class="n">urls</span><span class="p">},</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+                <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+                <span class="s2">&quot;Error: Failed to generate images&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="dashscope_image_to_text">
+<a class="viewcode-back" href="../../../../agentscope.service.html#agentscope.service.dashscope_image_to_text">[docs]</a>
+<span class="k">def</span> <span class="nf">dashscope_image_to_text</span><span class="p">(</span>
+    <span class="n">image_urls</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Describe the image&quot;</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;qwen-vl-plus&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate text based on the given images.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        image_urls (`Union[str, Sequence[str]]`):</span>
+<span class="sd">            The url of single or multiple images.</span>
+<span class="sd">        api_key (`str`):</span>
+<span class="sd">            The api key for the dashscope api.</span>
+<span class="sd">        prompt (`str`, defaults to &#39;Describe the image&#39; ):</span>
+<span class="sd">            The text prompt.</span>
+<span class="sd">        model (`str`, defaults to &#39;qwen-vl-plus&#39;):</span>
+<span class="sd">            The model to use in DashScope MultiModal API.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `ServiceResponse`:</span>
+<span class="sd">            A dictionary with two variables: `status` and`content`.</span>
+<span class="sd">            If `status` is ServiceExecStatus.SUCCESS, the `content` is the</span>
+<span class="sd">            generated text.</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            image_url = &quot;image.jpg&quot;</span>
+<span class="sd">            prompt = &quot;Describe the image&quot;</span>
+<span class="sd">            print(image_to_text(image_url, prompt))</span>
+
+<span class="sd">    &gt; {&#39;status&#39;: &#39;SUCCESS&#39;, &#39;content&#39;: &#39;A beautiful sunset in the mountains&#39;}</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">img2text</span> <span class="o">=</span> <span class="n">DashScopeMultiModalWrapper</span><span class="p">(</span>
+        <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;dashscope-image-to-text-service&quot;</span><span class="p">,</span>  <span class="c1"># Just a placeholder</span>
+        <span class="n">model_name</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+        <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_urls</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">image_urls</span> <span class="o">=</span> <span class="p">[</span><span class="n">image_urls</span><span class="p">]</span>
+
+    <span class="c1"># Check if the local url is valid</span>
+    <span class="n">img_abs_urls</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">image_urls</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+                <span class="n">img_abs_urls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">url</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+                    <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s1">&#39;Error: The input image url &quot;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s1">&quot; is not a file.&#39;</span><span class="p">,</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Maybe a web url or an invalid url, we leave it to the API</span>
+            <span class="c1"># to handle</span>
+            <span class="n">img_abs_urls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+    <span class="c1"># Convert image paths according to the model requirements</span>
+    <span class="n">contents</span> <span class="o">=</span> <span class="n">img2text</span><span class="o">.</span><span class="n">convert_url</span><span class="p">(</span><span class="n">img_abs_urls</span><span class="p">)</span>
+    <span class="n">contents</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">})</span>
+    <span class="c1"># currently only support one round of conversation</span>
+    <span class="c1"># if multiple rounds of conversation are needed,</span>
+    <span class="c1"># it would be better to implement an Agent class</span>
+    <span class="n">sys_message</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;You are a helpful assistant.&quot;</span><span class="p">}],</span>
+    <span class="p">}</span>
+    <span class="n">user_message</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">contents</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">messages</span> <span class="o">=</span> <span class="p">[</span><span class="n">sys_message</span><span class="p">,</span> <span class="n">user_message</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">img2text</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">if</span> <span class="n">description</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+                <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
+                <span class="n">description</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+                <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+                <span class="s2">&quot;Error: Failed to generate text&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="dashscope_text_to_audio">
+<a class="viewcode-back" href="../../../../agentscope.service.html#agentscope.service.dashscope_text_to_audio">[docs]</a>
+<span class="k">def</span> <span class="nf">dashscope_text_to_audio</span><span class="p">(</span>
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;sambert-zhichu-v1&quot;</span><span class="p">,</span>
+    <span class="n">sample_rate</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">48000</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the given text to audio.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text (`str`):</span>
+<span class="sd">            The text to be converted into audio.</span>
+<span class="sd">        api_key (`str`):</span>
+<span class="sd">            The api key for the dashscope API.</span>
+<span class="sd">        save_dir (`str`):</span>
+<span class="sd">            The directory to save the generated audio.</span>
+<span class="sd">        model (`str`, defaults to &#39;sambert-zhichu-v1&#39;):</span>
+<span class="sd">            The model to use. Full model list can be found in</span>
+<span class="sd">            https://help.aliyun.com/zh/dashscope/model-list</span>
+<span class="sd">        sample_rate (`int`, defaults to 48000):</span>
+<span class="sd">            Samplerate of the audio.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `ServiceResponse`:</span>
+<span class="sd">            A dictionary with two variables: `status` and`content`. If</span>
+<span class="sd">            `status` is ServiceExecStatus.SUCCESS, the `content` contains</span>
+<span class="sd">            a dictionary with key &quot;audio_path&quot; and value is the path to</span>
+<span class="sd">            the generated audio.</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            text = &quot;How is the weather today?&quot;</span>
+<span class="sd">            print(text_to_audio(text)) gives:</span>
+
+
+<span class="sd">    &gt; {&#39;status&#39;: &#39;SUCCESS&#39;, &#39;content&#39;: {&quot;audio_path&quot;: &quot;AUDIO_PATH&quot;}}</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dashscope</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">api_key</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="n">SpeechSynthesizer</span><span class="o">.</span><span class="n">call</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+        <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span>
+        <span class="n">sample_rate</span><span class="o">=</span><span class="n">sample_rate</span><span class="p">,</span>
+        <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;wav&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">audio_data</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">get_audio_data</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">audio_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">save_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Save locally</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">15</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">15</span> <span class="k">else</span> <span class="n">text</span>
+        <span class="n">audio_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">.wav&quot;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">audio_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">audio_data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
+            <span class="p">{</span><span class="s2">&quot;audio_path&quot;</span><span class="p">:</span> <span class="n">audio_path</span><span class="p">},</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+            <span class="s2">&quot;Error: Failed to generate audio&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Alibaba Tongyi Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

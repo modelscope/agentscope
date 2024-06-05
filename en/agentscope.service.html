@@ -101,6 +101,9 @@
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.service.dblp_search_publications"><code class="docutils literal notranslate"><span class="pre">dblp_search_publications()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.service.dblp_search_authors"><code class="docutils literal notranslate"><span class="pre">dblp_search_authors()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.service.dblp_search_venues"><code class="docutils literal notranslate"><span class="pre">dblp_search_venues()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.service.dashscope_image_to_text"><code class="docutils literal notranslate"><span class="pre">dashscope_image_to_text()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.service.dashscope_text_to_image"><code class="docutils literal notranslate"><span class="pre">dashscope_text_to_image()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.service.dashscope_text_to_audio"><code class="docutils literal notranslate"><span class="pre">dashscope_text_to_audio()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.service.ServiceFactory"><code class="docutils literal notranslate"><span class="pre">ServiceFactory</span></code></a></li>
 </ul>
 </li>
@@ -1274,6 +1277,111 @@ its name, acronym, type, and URL.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.dashscope_image_to_text">
+<span class="sig-prename descclassname"><span class="pre">agentscope.service.</span></span><span class="sig-name descname"><span class="pre">dashscope_image_to_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_urls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Describe</span> <span class="pre">the</span> <span class="pre">image'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'qwen-vl-plus'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.service.service_response.html#agentscope.service.service_response.ServiceResponse" title="agentscope.service.service_response.ServiceResponse"><span class="pre">ServiceResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/service/multi_modality/dashscope_services.html#dashscope_image_to_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.service.dashscope_image_to_text" title="Link to this definition"></a></dt>
+<dd><p>Generate text based on the given images.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image_urls</strong> (<cite>Union[str, Sequence[str]]</cite>) – The url of single or multiple images.</p></li>
+<li><p><strong>api_key</strong> (<cite>str</cite>) – The api key for the dashscope api.</p></li>
+<li><p><strong>prompt</strong> (<cite>str</cite>, defaults to ‘Describe the image’) – The text prompt.</p></li>
+<li><p><strong>model</strong> (<cite>str</cite>, defaults to ‘qwen-vl-plus’) – The model to use in DashScope MultiModal API.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary with two variables: <cite>status</cite> and`content`.
+If <cite>status</cite> is ServiceExecStatus.SUCCESS, the <cite>content</cite> is the
+generated text.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">image_url</span> <span class="o">=</span> <span class="s2">&quot;image.jpg&quot;</span>
+<span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;Describe the image&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">image_to_text</span><span class="p">(</span><span class="n">image_url</span><span class="p">,</span> <span class="n">prompt</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>&gt; {‘status’: ‘SUCCESS’, ‘content’: ‘A beautiful sunset in the mountains’}</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.dashscope_text_to_image">
+<span class="sig-prename descclassname"><span class="pre">agentscope.service.</span></span><span class="sig-name descname"><span class="pre">dashscope_text_to_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'1024*1024'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'720*1280'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'1280*720'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'1024*1024'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'wanx-v1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.service.service_response.html#agentscope.service.service_response.ServiceResponse" title="agentscope.service.service_response.ServiceResponse"><span class="pre">ServiceResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/service/multi_modality/dashscope_services.html#dashscope_text_to_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.service.dashscope_text_to_image" title="Link to this definition"></a></dt>
+<dd><p>Generate image(s) based on the given prompt, and return image url(s).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prompt</strong> (<cite>str</cite>) – The text prompt to generate image.</p></li>
+<li><p><strong>api_key</strong> (<cite>str</cite>) – The api key for the dashscope api.</p></li>
+<li><p><strong>n</strong> (<cite>int</cite>, defaults to <cite>1</cite>) – The number of images to generate.</p></li>
+<li><p><strong>(</strong><strong>`Literal</strong><strong>[</strong><strong>&quot;1024*1024&quot;</strong> (<em>size</em>) – </p></li>
+<li><p><strong>&quot;720*1280&quot;</strong></p></li>
+<li><p><strong>&quot;1280*720&quot;</strong><strong>]</strong><strong>`</strong></p></li>
+<li><p><strong>to</strong> (<em>defaults</em>)</p></li>
+<li><p><strong>&quot;1024*1024&quot;</strong><strong>)</strong> – Size of the image.</p></li>
+<li><p><strong>model</strong> (<cite>str</cite>, defaults to ‘“wanx-v1”’) – The model to use.</p></li>
+<li><p><strong>save_dir</strong> (<cite>Optional[str]</cite>, defaults to ‘None’) – The directory to save the generated images. If not specified,
+will return the web urls.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary with two variables: <cite>status</cite> and`content`.
+If <cite>status</cite> is ServiceExecStatus.SUCCESS,
+the <cite>content</cite> is a dict with key ‘fig_paths” and
+value is a list of the paths to the generated images.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#agentscope.service.ServiceResponse" title="agentscope.service.ServiceResponse">ServiceResponse</a></p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;A beautiful sunset in the mountains&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dashscope_text_to_image</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{api_key}</span><span class="s2">&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>&gt; {
+&gt;     ‘status’: ‘SUCCESS’,
+&gt;     ‘content’: {‘image_urls’: [‘IMAGE_URL1’, ‘IMAGE_URL2’]}
+&gt; }</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.dashscope_text_to_audio">
+<span class="sig-prename descclassname"><span class="pre">agentscope.service.</span></span><span class="sig-name descname"><span class="pre">dashscope_text_to_audio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'sambert-zhichu-v1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">48000</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.service.service_response.html#agentscope.service.service_response.ServiceResponse" title="agentscope.service.service_response.ServiceResponse"><span class="pre">ServiceResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/service/multi_modality/dashscope_services.html#dashscope_text_to_audio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.service.dashscope_text_to_audio" title="Link to this definition"></a></dt>
+<dd><p>Convert the given text to audio.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<cite>str</cite>) – The text to be converted into audio.</p></li>
+<li><p><strong>api_key</strong> (<cite>str</cite>) – The api key for the dashscope API.</p></li>
+<li><p><strong>save_dir</strong> (<cite>str</cite>) – The directory to save the generated audio.</p></li>
+<li><p><strong>model</strong> (<cite>str</cite>, defaults to ‘sambert-zhichu-v1’) – The model to use. Full model list can be found in
+<a class="reference external" href="https://help.aliyun.com/zh/dashscope/model-list">https://help.aliyun.com/zh/dashscope/model-list</a></p></li>
+<li><p><strong>sample_rate</strong> (<cite>int</cite>, defaults to 48000) – Samplerate of the audio.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary with two variables: <cite>status</cite> and`content`. If
+<cite>status</cite> is ServiceExecStatus.SUCCESS, the <cite>content</cite> contains
+a dictionary with key “audio_path” and value is the path to
+the generated audio.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;How is the weather today?&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">text_to_audio</span><span class="p">(</span><span class="n">text</span><span class="p">))</span> <span class="n">gives</span><span class="p">:</span>
+</pre></div>
+</div>
+<p>&gt; {‘status’: ‘SUCCESS’, ‘content’: {“audio_path”: “AUDIO_PATH”}}</p>
 </dd></dl>
 
 <dl class="py class">
