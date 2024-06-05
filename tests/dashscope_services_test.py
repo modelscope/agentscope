@@ -91,10 +91,10 @@ class TestDashScopeServices(unittest.TestCase):
             status=ServiceExecStatus.SUCCESS,
             content={
                 "fig_paths": [
-                    f"{saved_dir}/{prompt}_0.png",
-                    f"{saved_dir}/{prompt}_1.png",
-                    f"{saved_dir}/{prompt}_2.png",
-                    f"{saved_dir}/{prompt}_3.png",
+                    f"{saved_dir}/{prompt[:10]}_0.png",
+                    f"{saved_dir}/{prompt[:10]}_1.png",
+                    f"{saved_dir}/{prompt[:10]}_2.png",
+                    f"{saved_dir}/{prompt[:10]}_3.png",
                 ],
             },
         )
