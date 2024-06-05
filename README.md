@@ -127,6 +127,7 @@ the following libraries.
 - Code Execution
 - File Operation
 - Text Processing
+- Multi Modality
 
 **Example Applications**
 
