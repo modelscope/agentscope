@@ -180,7 +180,7 @@ class TestDashScopeServices(unittest.TestCase):
         mock_instance.return_value = mock_response
 
         # Call the function under test
-        image_urls = "image1.jpg"
+        image_urls = ("image1.jpg", "https://example.com/image2.jpg")
         prompt = "Describe the image"
         api_key = "fake-api"
         model = "qwen-vl-plus"

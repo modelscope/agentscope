@@ -169,7 +169,10 @@ def dashscope_image_to_text(
     if not isinstance(image_urls, tuple):
         image_urls = (image_urls,)
     try:
-        img_abs_urls = [os.path.abspath(url) for url in image_urls]
+        img_abs_urls = [
+            url if url.startswith(("http", "https")) else os.path.abspath(url)
+            for url in image_urls
+        ]
     except Exception as e:
         return ServiceResponse(
             ServiceExecStatus.ERROR,
