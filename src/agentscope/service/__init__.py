@@ -26,6 +26,11 @@ from .web.dblp import (
     dblp_search_authors,
     dblp_search_venues,
 )
+from .multi_modality.dashscope_services import (
+    dashscope_image_to_text,
+    dashscope_text_to_image,
+    dashscope_text_to_audio,
+)
 from .service_response import ServiceResponse
 from .service_toolkit import ServiceToolkit
 from .service_toolkit import ServiceFactory
@@ -78,6 +83,9 @@ __all__ = [
     "dblp_search_publications",
     "dblp_search_authors",
     "dblp_search_venues",
+    "dashscope_image_to_text",
+    "dashscope_text_to_image",
+    "dashscope_text_to_audio",
     # to be deprecated
     "ServiceFactory",
 ]
