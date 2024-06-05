@@ -94,20 +94,22 @@ def dashscope_text_to_image(
                 # Obtain the image file names in the url
                 for url in urls:
                     image_name = url.split("/")[-1]
-                    image_path = os.path.join(save_dir, image_name)
+                    image_path = os.path.abspath(
+                        os.path.join(save_dir, image_name),
+                    )
                     # Download the image
                     _download_file(url, image_path)
                     urls_local.append(image_path)
 
                 return ServiceResponse(
                     ServiceExecStatus.SUCCESS,
-                    {"image_urls": urls_local}
+                    {"image_urls": urls_local},
                 )
             else:
                 # Return the web urls
                 return ServiceResponse(
                     ServiceExecStatus.SUCCESS,
-                    {"image_urls": urls}
+                    {"image_urls": urls},
                 )
         else:
             return ServiceResponse(
@@ -175,7 +177,7 @@ def dashscope_image_to_text(
             else:
                 return ServiceResponse(
                     ServiceExecStatus.ERROR,
-                    f'Error: The input image url "{url}" is not a file.'
+                    f'Error: The input image url "{url}" is not a file.',
                 )
         else:
             # Maybe a web url or an invalid url, we leave it to the API
@@ -285,5 +287,5 @@ def dashscope_text_to_audio(
     else:
         return ServiceResponse(
             ServiceExecStatus.ERROR,
-            "Error: Failed to generate audio"
+            "Error: Failed to generate audio",
         )
