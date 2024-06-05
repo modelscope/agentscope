@@ -29,6 +29,7 @@ service_requires = [
     "docker",
     "pymongo",
     "pymysql",
+    "bs4",
     "beautifulsoup4",
     "feedparser",
 ]
@@ -52,7 +53,6 @@ gradio_requires = [
 
 # released requires
 minimal_requires = [
-    "bs4",
     "docstring_parser",
     "loguru==0.6.0",
     "tiktoken",
