@@ -10,6 +10,7 @@ import uuid
 from datetime import datetime
 from typing import Tuple, Union, Any, Optional
 
+from appdirs import user_cache_dir
 from flask import (
     Flask,
     request,
@@ -27,17 +28,79 @@ from agentscope.constants import _DEFAULT_SUBDIR_CODE, _DEFAULT_SUBDIR_INVOKE
 from agentscope.utils.tools import _is_process_alive
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///agentscope.db"
+
+# Set the cache directory
+_cache_dir = user_cache_dir(appname="agentscope")
+os.makedirs(_cache_dir, exist_ok=True)
+app.config[
+    "SQLALCHEMY_DATABASE_URI"
+] = f"sqlite:////{_cache_dir}/agentscope.db"
 db = SQLAlchemy(app)
+
 socketio = SocketIO(app)
-CORS(app)  # This will enable CORS for all routes
+
+# This will enable CORS for all routes
+CORS(app)
 
 
 _RUNS_DIRS = []
 
 
+class _UserInputRequestQueue:
+    """A queue to store the user input requests."""
+
+    _requests = {}
+    """The user input requests in the queue."""
+
+    @classmethod
+    def add_request(cls, run_id: str, agent_id: str, data: dict) -> None:
+        """Add a new user input request into queue.
+
+        Args:
+            run_id (`str`):
+                The id of the runtime instance.
+            agent_id (`str`):
+                The id of the agent that requires user input.
+            data (`dict`):
+                The data of the user input request.
+        """
+        if run_id not in cls._requests:
+            cls._requests[run_id] = {agent_id: data}
+        else:
+            # We ensure that the agent_id is unique here
+            cls._requests[run_id][agent_id] = data
+
+    @classmethod
+    def fetch_a_request(cls, run_id: str) -> Optional[dict]:
+        """Fetch a user input request from the queue.
+
+        Args:
+            run_id (`str`):
+                The id of the runtime instance.
+        """
+        if run_id in cls._requests and len(cls._requests[run_id]) > 0:
+            # Fetch the oldest request
+            agent_id = list(cls._requests[run_id].keys())[0]
+            return cls._requests[run_id][agent_id]
+        else:
+            return None
+
+    @classmethod
+    def close_a_request(cls, run_id: str, agent_id: str) -> None:
+        """Close a user input request in the queue.
+
+        Args:
+            run_id (`str`):
+                The id of the runtime instance.
+            agent_id (`str`):
+                The id of the agent that requires user input.
+        """
+        if run_id in cls._requests:
+            cls._requests[run_id].pop(agent_id)
+
+
 class Run(db.Model):
-    """Run object."""
+    """Runtime object."""
 
     run_id = db.Column(db.String, primary_key=True)
     project = db.Column(db.String)
@@ -252,7 +315,7 @@ def get_messages(run_id: str) -> Response:
     print("Require messages from " + run_id)
 
     # From registered runtime instances
-    if len(Run.query.filter_by(run_id=run_id).all()) >= 0:
+    if len(Run.query.filter_by(run_id=run_id).all()) > 0:
         messages = Message.query.filter_by(run_id=run_id).all()
         msgs = [
             {
@@ -283,6 +346,7 @@ def get_messages(run_id: str) -> Response:
     else:
         with open(path_messages, "r", encoding="utf-8") as file:
             msgs = [json.loads(_) for _ in file.readlines()]
+            print(msgs)
             return jsonify(msgs)
 
 
@@ -291,7 +355,7 @@ def _get_all_runs() -> Response:
     """Get all runs."""
     # Update the status of the registered runtimes
     # Note: this is only for the applications running on the local machine
-    for run in Run.query.filter_by(status="running" or "waiting").all():
+    for run in Run.query.filter(Run.status.in_(["running", "waiting"])).all():
         if not _is_process_alive(run.pid, run.timestamp):
             Run.query.filter_by(run_id=run.run_id).update(
                 {"status": "finished"},
@@ -383,6 +447,7 @@ def get_file() -> Any:
             return file
         except FileNotFoundError:
             return jsonify({"error": "File not found."})
+    return jsonify({"error": "File not found."})
 
 
 @app.route("/convert-to-py", methods=["POST"])
@@ -473,27 +538,21 @@ def request_user_input(data: dict) -> None:
     """Request user input"""
     print("Flask: receive request_user_input")
     run_id = data["run_id"]
-    name = data["name"]
     agent_id = data["agent_id"]
-    require_url = data["require_url"]
-    required_keys = data["required_keys"]
 
+    # Change the status into waiting
     db.session.query(Run).filter_by(run_id=run_id).update(
         {"status": "waiting"},
     )
     db.session.commit()
 
-    print(Run.query.filter_by(run_id=run_id).all())
-    print("ALL", Run.query.all())
+    # Record into the queue
+    _UserInputRequestQueue.add_request(run_id, agent_id, data)
 
     # Ask for user input from the web ui
     socketio.emit(
         "enable_user_input",
-        {
-            "run_id": run_id,
-            "name": name,
-            "agent_id": agent_id,
-        },
+        data,
         room=run_id,
     )
 
@@ -504,22 +563,42 @@ def request_user_input(data: dict) -> None:
 def user_input_ready(data: dict) -> None:
     """Get user input and send to the agent"""
     print("Flask: receive user_input_ready")
+
     run_id = data["run_id"]
+    agent_id = data["agent_id"]
     content = data["content"]
-    url = data.get("url", None)
+    url = data["url"]
+
     db.session.query(Run).filter_by(run_id=run_id).update(
         {"status": "running"},
     )
     db.session.commit()
+
+    # Return to AgentScope application
     socketio.emit(
         "fetch_user_input",
         {
+            "agent_id": agent_id,
+            "name": data["name"],
             "run_id": run_id,
             "content": content,
-            "url": url,
+            "url": None if url in ["", []] else url,
         },
         room=run_id,
     )
+
+    # Close the request in the queue
+    _UserInputRequestQueue.close_a_request(run_id, agent_id)
+
+    # Fetch a new user input request for this run_id if exists
+    new_request = _UserInputRequestQueue.fetch_a_request(run_id)
+    if new_request is not None:
+        socketio.emit(
+            "enable_user_input",
+            new_request,
+            room=run_id,
+        )
+
     print("Flask: send fetch_user_input")
 
 
@@ -541,19 +620,13 @@ def on_join(data: dict) -> None:
     run_id = data["run_id"]
     join_room(run_id)
 
-    # Query if the runtime that is waiting for user input
-    runs = Run.query.filter_by(run_id=run_id).all()
-
-    if len(runs) != 0:
-        run = runs[0]
-        if run.status == "waiting":
-            socketio.emit(
-                "enable_user_input",
-                {
-                    "run_id": run_id,
-                },
-                room=run_id,
-            )
+    new_request = _UserInputRequestQueue.fetch_a_request(run_id)
+    if new_request is not None:
+        socketio.emit(
+            "enable_user_input",
+            new_request,
+            room=run_id,
+        )
 
 
 @socketio.on("leave")
@@ -568,7 +641,6 @@ def init(
     port: int = 5000,
     run_dirs: Optional[Union[str, list[str]]] = None,
     debug: bool = False,
-    cache_dir: Optional[str] = None,
 ) -> None:
     """Start the AgentScope Studio web UI with the given configurations.
 
@@ -581,17 +653,16 @@ def init(
             The directories to search for the history of runtime instances.
         debug (`bool`, optional):
             Whether to enable the debug mode. Defaults to False.
-        cache_dir (`Optional[str]`, defaults to `None`):
-            The directory to save the cache files.
     """
 
+    # Set the history directories
     if isinstance(run_dirs, str):
         run_dirs = [run_dirs]
 
     global _RUNS_DIRS
-
     _RUNS_DIRS = run_dirs
 
+    # Create the cache directory
     with app.app_context():
         db.create_all()
 
@@ -601,11 +672,4 @@ def init(
         port=port,
         debug=debug,
         allow_unsafe_werkzeug=True,
-    )
-
-
-if __name__ == "__main__":
-    init(
-        "/Users/david/Downloads/agentscope/examples/game_werewolf/runs",
-        debug=True,
     )

@@ -33,12 +33,18 @@ class _WebSocketClient:
         @self.sio.event
         def connect() -> None:
             logger.info("Connected to Studio")
-            self.sio.emit("join", {"run_id": self.run_id})
+            self.sio.emit(
+                "join",
+                {"run_id": self.run_id, "agent_id": self.agent_id},
+            )
 
         @self.sio.event
         def disconnect() -> None:
             logger.info("Disconnected from Studio")
-            self.sio.emit("leave", {"run_id": self.run_id})
+            self.sio.emit(
+                "leave",
+                {"run_id": self.run_id, "agent_id": self.agent_id},
+            )
 
         @self.sio.on("fetch_user_input")
         def on_fetch_user_input(data: dict) -> None:

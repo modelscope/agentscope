@@ -15,7 +15,6 @@ from urllib.parse import urlparse
 
 import psutil
 import requests
-from loguru import logger
 
 
 def _get_timestamp(
@@ -44,9 +43,7 @@ def to_openai_dict(item: dict) -> dict:
     if "content" in item:
         clean_dict["content"] = _convert_to_str(item["content"])
     else:
-        logger.warning(
-            f"Message {item} doesn't have `content` field for " f"OpenAI API.",
-        )
+        raise ValueError("The content of the message is missing.")
 
     return clean_dict
 
@@ -86,17 +83,10 @@ def check_port(port: Optional[int] = None) -> int:
     """
     if port is None:
         new_port = find_available_port()
-        logger.warning(
-            "agent server port is not provided, automatically select "
-            f"[{new_port}] as the port number.",
-        )
         return new_port
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         if s.connect_ex(("localhost", port)) == 0:
             new_port = find_available_port()
-            logger.warning(
-                f"Port [{port}] is occupied, use [{new_port}] instead",
-            )
             return new_port
     return port
 
@@ -220,7 +210,7 @@ def _download_file(url: str, path_file: str, max_retries: int = 3) -> bool:
                     file.write(chunk)
             return True
         else:
-            logger.warning(
+            raise RuntimeError(
                 f"Failed to download file from {url} (status code: "
                 f"{response.status_code}). Retry {n_retry}/{max_retries}.",
             )

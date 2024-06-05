@@ -5,12 +5,14 @@ import argparse
 
 from user_proxy_agent import UserProxyAgent
 
+from loguru import logger
+
 import agentscope
 from agentscope.agents import DialogAgent
 from agentscope.msghub import msghub
 from agentscope.server import RpcAgentServerLauncher
 from agentscope.message import Msg
-from agentscope.utils.logging_utils import logger
+
 
 FIRST_ROUND = """
 Welcome to the debate on whether Artificial General Intelligence (AGI) can be achieved using the GPT model framework. This debate will consist of three rounds. In each round, the affirmative side will present their argument first, followed by the negative side. After both sides have presented, the adjudicator will summarize the key points and analyze the strengths of the arguments.

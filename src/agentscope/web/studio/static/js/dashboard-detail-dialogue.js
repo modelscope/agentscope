@@ -1,5 +1,3 @@
-//TODO: move the following to chat js
-
 let chatRowOtherTemplate,
     chatRowUserTemplate,
     chatRowSystemTemplate,
@@ -8,6 +6,11 @@ let chatRowOtherTemplate,
 let currentRuntimeInfo, currentMsgInfo, currentAgentInfo;
 
 let infoClusterize;
+
+let inputFileList = document.getElementById("chat-control-file-list");
+
+let waitForUserInput = false;
+let userInputRequest = null;
 
 const agentIcons = [
     '<path d="M21.344 448h85.344v234.656H21.344V448zM554.656 192h64V106.656h-213.344V192h64v42.656h-320V896h725.344V234.656h-320V192z m234.688 128v490.656H234.688V320h554.656zM917.344 448h85.344v234.656h-85.344V448z"></path><path d="M341.344 512H448v106.656h-106.656V512zM576 512h106.656v106.656H576V512z"></path>',
@@ -145,6 +148,7 @@ function _addUserChatRow(index, pMsg) {
     chatBubble.innerHTML += marked.parse(pMsg.content);
     chatBubble.innerHTML += _renderMultiModalData(pMsg.url);
     template.querySelector(".chat-row").setAttribute("data-index", index);
+    template.querySelector(".chat-row").setAttribute("data-msg", JSON.stringify(pMsg));
     return template.firstElementChild.outerHTML;
 }
 
@@ -172,6 +176,7 @@ function _addAssistantChatRow(index, pMsg) {
     chatBubble.innerHTML += marked.parse(pMsg.content);
     chatBubble.innerHTML += _renderMultiModalData(pMsg.url);
     template.querySelector(".chat-row").setAttribute("data-index", index);
+    template.querySelector(".chat-row").setAttribute("data-msg", JSON.stringify(pMsg));
     return template.firstElementChild.outerHTML;
 }
 
@@ -182,6 +187,8 @@ function _addSystemChatRow(index, pMsg) {
     chatBubble.innerHTML += marked.parse(pMsg.content);
     chatBubble.innerHTML += _renderMultiModalData(pMsg.url);
     template.querySelector(".chat-row").setAttribute("data-index", index);
+    template.querySelector(".chat-row").setAttribute("data-msg", JSON.stringify(pMsg));
+
     return template.firstElementChild.outerHTML;
 }
 
@@ -205,6 +212,16 @@ function _addKeyValueInfoRow(pKey, pValue) {
     return template.firstElementChild.outerHTML;
 }
 
+function disableInput() {
+    document.getElementById("chat-control-url-btn").disabled = true;
+    document.getElementById("chat-control-send-btn").disabled = true;
+}
+
+function activateInput() {
+    document.getElementById("chat-control-url-btn").disabled = false;
+    document.getElementById("chat-control-send-btn").disabled = false;
+
+}
 
 function _showInfoInDialogueDetailContent(data) {
     if (data === null) {
@@ -212,7 +229,7 @@ function _showInfoInDialogueDetailContent(data) {
         return;
     }
 
-    let priorityKeys = ['id', 'project', 'timestamp', 'name', 'role', 'url', 'metadata', 'content']
+    let priorityKeys = ['run_id', 'id', 'project', 'name', 'timestamp', 'role', 'url', 'metadata', 'content']
     // Deal with the priority keys first
     let infoRows = priorityKeys.filter(key => key in data).map(key => _addKeyValueInfoRow(key, data[key]));
     // Handle the rest of the keys
@@ -224,9 +241,74 @@ function _showInfoInDialogueDetailContent(data) {
     infoClusterize.update(infoRows);
 }
 
+function _obtainAllUrlFromFileList() {
+    let urls = [];
+    for (let i = 0; i < inputFileList.children.length; i++) {
+        // obtain from the title attribute
+        urls.push(inputFileList.children[i].title);
+    }
+    return urls;
+}
+
+function addFileListItem(url) {
+    let svg;
+    switch (_determineFileType(url)) {
+        case "image":
+            svg = `<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" >
+                <path d="M160 0h512l256 256v704c0 35.3472-28.6528 64-64 64H160c-35.3472 0-64-28.6528-64-64V64c0-35.3472 28.6528-64 64-64z" fill="#F6AD00"></path>
+                <path d="M258.528 742.0672L351.8336 604.928a14.5024 14.5024 0 0 1 22.1696-2.1824l61.664 60.416 135.296-212.064a14.5024 14.5024 0 0 1 24.8064 0.5568l168.1024 291.328a14.5024 14.5024 0 0 1-12.5696 21.7664H270.528a14.5024 14.5024 0 0 1-12.0064-22.6816z" fill="#FFF7F7"></path>
+                <path d="M359.616 431.5456m-73.1456 0a73.1456 73.1456 0 1 0 146.2912 0 73.1456 73.1456 0 1 0-146.2912 0Z" fill="#FFFFFF"></path>
+                <path d="M672 0l256 256h-192c-35.3472 0-64-28.6528-64-64V0z" fill="#FBDE99"></path>
+            </svg>`
+            break;
+        case "video":
+            svg = `<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                <path d="M160 0h512l256 256v704c0 35.3472-28.6528 64-64 64H160c-35.3472 0-64-28.6528-64-64V64c0-35.3472 28.6528-64 64-64z" fill="#7C8EEE"></path>
+                <path d="M702.2976 579.2896l-298.5664 177.984c-19.9488 12.0192-45.3312-2.4128-45.3312-25.856v-355.968c0-22.848 25.3824-37.2736 45.3312-25.856l298.56 177.984c19.3408 12.032 19.3408 40.288 0 51.712z" fill="#FFFFFF"></path>
+                <path d="M672 0l256 256h-192c-35.3472 0-64-28.6528-64-64V0z" fill="#CAD1F8"></path>
+            </svg>`
+            break;
+        case "audio":
+            svg = `<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M160 0h512l256 256v704c0 35.3472-28.6528 64-64 64H160c-35.3472 0-64-28.6528-64-64V64c0-35.3472 28.6528-64 64-64z" fill="#F16C00" p-id="1463"></path><path d="M727.8016 510.9952a58.7456 58.7456 0 0 1-8.8 21.1392c-3.4944 5.312-7.04 8.8704-10.592 7.0656-3.4944 0-5.2992-22.944-6.9952-26.5024a68.5376 68.5376 0 0 1-5.2928-19.392c-1.7536-14.1184-7.0464-26.5472-15.8976-31.808-8.7936-7.0592-21.0816-12.3712-36.9728-15.936a116.0896 116.0896 0 0 1-47.5776-21.1328c-14.0864-10.624-29.9264-19.4368-38.72-30.0608-8.8512-8.8128-15.8976-10.624-19.392-8.8128-5.2992 1.7536-7.0464 7.0656-7.0464 12.3712v328.48c0 8.8704-1.7472 19.4368-5.2992 30.0608-3.4944 10.624-5.2992 21.184-14.0928 31.7568-8.7936 10.624-21.1328 17.6832-36.9728 24.7488-15.8976 7.0656-35.232 10.624-56.4224 12.3712a127.7184 127.7184 0 0 1-63.4112-12.3712 126.4384 126.4384 0 0 1-44.0256-33.568c-10.592-14.1248-15.8912-28.2496-15.8912-45.9392 0-15.872 7.104-31.7568 22.9376-45.888 14.0928-14.1248 29.9328-24.7424 47.5712-30.0544 17.5936-5.312 33.4848-8.8128 49.3248-8.8128 15.8912 0 40.5248 0 52.864 3.552 12.2944 3.5072 21.1456 5.312 28.1856 7.0656V346.688c0-10.624 3.5008-19.392 8.8-26.4512 5.2928-7.0656 14.0864-10.624 22.88-12.3712 8.8512-1.7536 15.8976 0 21.1904 5.312 5.2992 3.5008 0 10.6176 6.9952 17.6256 5.2992 7.0656 12.3456 15.936 21.1904 26.5024 8.7936 10.624 19.3344 19.4368 33.4272 28.256 12.3456 8.8128 22.9376 14.1248 31.7312 19.4368 8.8 3.5072 17.6448 7.0656 24.6912 10.624 7.04 3.5008 15.84 7.008 22.8864 12.32 7.04 5.312 15.8912 12.3712 24.6336 22.9952 8.8448 10.624 14.0928 19.3856 15.8912 30.0032 0 10.624 0 21.1904-1.7984 30.0096v0.0512z" fill="#FFFFFF" p-id="1464"></path><path d="M672 0l256 256h-192c-35.3472 0-64-28.6528-64-64V0z" fill="#F9C499" p-id="1465"></path></svg>`
+            break;
+        default:
+            svg = `<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M160 0h512l256 256v704c0 35.3472-28.6528 64-64 64H160c-35.3472 0-64-28.6528-64-64V64c0-35.3472 28.6528-64 64-64z" fill="#CCCCCC" p-id="1633"></path><path d="M672 0l256 256h-192c-35.3472 0-64-28.6528-64-64V0z" fill="#EAEAEA" p-id="1634"></path><path d="M384 499.2c0-25.6 5.12-46.08 10.24-58.88 5.12-12.8 15.36-25.6 28.16-35.84 12.8-12.8 25.6-20.48 43.52-25.6 15.36-5.12 30.72-7.68 48.64-7.68 35.84 0 64 10.24 89.6 30.72C627.2 422.4 640 448 640 481.28c0 15.36-5.12 28.16-10.24 40.96s-17.92 28.16-38.4 46.08-28.16 30.72-35.84 38.4c-7.68 7.68-10.24 17.92-15.36 28.16-5.12 10.24-2.56 17.92-2.56 43.52h-51.2c0-25.6 2.56-38.4 5.12-51.2s7.68-23.04 15.36-33.28 15.36-23.04 33.28-40.96c17.92-17.92 30.72-30.72 35.84-38.4 5.12-7.68 10.24-20.48 10.24-38.4s-7.68-30.72-20.48-43.52-30.72-20.48-53.76-20.48c-51.2 0-76.8 35.84-76.8 87.04h-51.2z m153.6 281.6h-51.2v-51.2h51.2v51.2z" fill="#FFFFFF" p-id="1635"></path></svg>`
+            break;
+    }
+    console.log("Add an item to the file list: " + url)
+    let newItem = document.createElement("div");
+    newItem.classList.add("chat-control-file-item");
+    newItem.innerHTML = svg;
+    newItem.title = url;
+
+    // Delete btn
+    const deleteBtn = document.createElement("div");
+    deleteBtn.classList.add("chat-control-file-delete");
+    // deleteBtn.innerHTML = `<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M470.4256 524.8L280.064 334.4384A38.4512 38.4512 0 0 1 334.4384 280.064l190.3616 190.3616 190.3616-190.3616a38.4512 38.4512 0 1 1 54.3744 54.3744l-190.3616 190.3616 190.3616 190.3616a38.4512 38.4512 0 0 1-54.3744 54.3744l-190.3616-190.3616-190.3616 190.3616a38.4512 38.4512 0 0 1-54.3744-54.3744l190.3616-190.3616z"></path></svg>`;
+    deleteBtn.innerHTML = `<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M643.18 513.392 993.102 176.172c34.278-33.03 34.278-86.586 0-119.616l-15.514-14.952c-34.278-33.03-89.848-33.03-124.126 0L512.124 370.552 170.784 41.604c-34.276-33.03-89.848-33.03-124.122 0l-15.518 14.952c-34.274 33.03-34.274 86.586 0 119.616L380.84 513.172 30.918 850.39c-34.274 33.03-34.274 86.586 0 119.616l15.514 14.956c34.278 33.028 89.85 33.028 124.126 0l341.338-328.946 341.34 328.946c34.276 33.028 89.848 33.028 124.122 0l15.518-14.956c34.274-33.03 34.274-86.586 0-119.616L643.18 513.392z"></path></svg>`;
+    deleteBtn.onclick = function () {
+        inputFileList.removeChild(newItem);
+    }
+    newItem.appendChild(deleteBtn);
+
+    inputFileList.appendChild(newItem);
+    inputFileList.scrollLeft = inputFileList.scrollWidth - inputFileList.clientWidth;
+}
+
+function showUrlPrompt() {
+    const userInput = prompt("Please enter a local or web URL:", "");
+
+    if (userInput !== null && userInput !== "") {
+        addFileListItem(userInput);
+    }
+}
+
 function initializeDashboardDetailDialoguePage(pRuntimeInfo) {
     console.log("Initialize with runtime id: " + pRuntimeInfo.run_id);
-    // empty the record dictionary
+    // Reset the flag
+    waitForUserInput = false;
+
+    // Empty the record dictionary
     nameToIconAndColor = {};
 
     // Load the chat template
@@ -242,6 +324,8 @@ function initializeDashboardDetailDialoguePage(pRuntimeInfo) {
                 contentId: "dialogue-detail-content",
             });
 
+            disableInput();
+
             // Fetch the chat history from backend
             fetch("/api/messages/run/" + pRuntimeInfo.run_id + "?run_dir=" + pRuntimeInfo.run_dir)
                 .then((response) => {
@@ -251,8 +335,7 @@ function initializeDashboardDetailDialoguePage(pRuntimeInfo) {
                     return response.json();
                 })
                 .then((data) => {
-                    let send_btn = document.getElementById("chat-input-send-btn");
-                    send_btn.disabled = true;
+                    let send_btn = document.getElementById("chat-control-send-btn");
                     // Load the chat history
                     let chatRows = data.map((msg, index) => addChatRow(index, msg));
                     var clusterize = new Clusterize({
@@ -267,9 +350,10 @@ function initializeDashboardDetailDialoguePage(pRuntimeInfo) {
 
                         while (target && target !== this && target instanceof Element) {
                             if (target.matches(".chat-row")) {
-                                let rowIndex = target.getAttribute("data-index");
                                 // Record the current message
-                                currentMsgInfo = data[rowIndex];
+                                currentMsgInfo = JSON.parse(target.getAttribute("data-msg"));
+
+                                console.log(currentMsgInfo);
                                 // Update web ui
                                 showInDetail("Message");
                                 break;
@@ -284,20 +368,34 @@ function initializeDashboardDetailDialoguePage(pRuntimeInfo) {
 
                     var socket = io();
                     socket.on("connect", () => {
+                        // Tell flask server the web ui is ready
                         socket.emit("join", {run_id: pRuntimeInfo.run_id});
+
                         send_btn.onclick = () => {
                             var message = document.getElementById(
                                 "chat-input-textarea"
                             ).value;
+
+                            // Send the message to the flask server according to the current request
+                            let url = "";
+                            if (userInputRequest.require_url) {
+                                url = _obtainAllUrlFromFileList()
+                            }
                             socket.emit("user_input_ready", {
+                                run_id: userInputRequest.run_id,
+                                agent_id: userInputRequest.agent_id,
+                                name: userInputRequest.name,
+                                url: url,
                                 content: message,
-                                run_id: pRuntimeInfo.run_id,
                             });
+                            // Finish a user input
+                            inputFileList.innerHTML = '';
+                            waitForUserInput = false;
+
                             console.log("Web: send user_input_ready")
+
                             document.getElementById("chat-input-textarea").value = "";
-                            document.getElementById(
-                                "chat-input-send-btn"
-                            ).disabled = true;
+                            disableInput();
                         };
                     });
                     socket.on("display_message", (data) => {
@@ -306,12 +404,22 @@ function initializeDashboardDetailDialoguePage(pRuntimeInfo) {
                             let row = addChatRow(clusterize.getRowsAmount(), data);
                             clusterize.append([row]);
                             clusterize.refresh();
+
+                            var scrollElem = document.getElementById('chat-box');
+                            scrollElem.scrollTop = scrollElem.scrollHeight;
                         }
                     });
                     socket.on("enable_user_input", (data) => {
-                        if (data.run_id === pRuntimeInfo.run_id) {
-                            console.log("Web: receive enable_user_input")
-                            send_btn.disabled = false;
+                        // Require user input in web ui
+                        console.log("Web: receive enable_user_input")
+
+                        // If already waiting for user input, just abort the request
+                        if (!waitForUserInput) {
+                            // If not waiting for user input, enable the send button
+                            waitForUserInput = true;
+                            // Record the current request
+                            userInputRequest = data;
+                            activateInput();
                             document.getElementById("chat-input-name").textContent =
                                 data.name;
                         }

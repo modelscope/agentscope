@@ -8,7 +8,7 @@ from agentscope import agents
 from .agents import AgentBase
 from ._runtime import _runtime
 from .file_manager import file_manager
-from .utils.logging_utils import LOG_LEVEL, setup_logger
+from .logging import LOG_LEVEL, setup_logger
 from .utils.monitor import MonitorFactory
 from .models import read_model_configs
 from .constants import _DEFAULT_DIR

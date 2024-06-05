@@ -7,7 +7,6 @@ from typing import Optional, Literal, Any
 
 from loguru import logger
 
-from agentscope.message import Msg
 from agentscope.web.client import _studio_client
 from agentscope.web.gradio.utils import (
     generate_image_from_name,
@@ -70,7 +69,7 @@ def _get_speaker_color(speaker: str) -> tuple[str, str]:
 
 # add chat function for logger
 def _chat(
-    message: Msg,
+    message: dict,
     *args: Any,
     disable_studio: bool = False,
     **kwargs: Any,
@@ -81,8 +80,9 @@ def _chat(
     and display in the studio.
 
     Args:
-        message (`Msg`):
-            The message to be logged as "<name/role>: <content>".
+        message (`dict`):
+            The message to be logged as "<name/role>: <content>", which must
+            be an object of Msg class.
     """
     # Push message to studio if it is active
     if _studio_client.active:

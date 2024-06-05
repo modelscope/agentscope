@@ -80,7 +80,7 @@ class UserAgent(AgentBase):
 
             print("Python: receive ", raw_input)
             content = raw_input["content"]
-            url = raw_input.get("url", None)
+            url = raw_input["url"]
             kwargs = {}
         else:
             # TODO: To avoid order confusion, because `input` print much
