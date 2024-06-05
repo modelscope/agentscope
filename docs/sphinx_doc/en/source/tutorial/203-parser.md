@@ -15,6 +15,7 @@
   - [Dictionary Type](#dictionary-type)
     - [MarkdownJsonDictParser](#markdownjsondictparser)
       - [Initialization & Format Instruction Template](#initialization--format-instruction-template)
+      - [Validation](#validation)
     - [MultiTaggedContentParser](#multitaggedcontentparser)
       - [Initialization & Format Instruction Template](#initialization--format-instruction-template-1)
       - [Parse Function](#parse-function-1)
@@ -76,6 +77,8 @@ AgentScope provides multiple built-in parsers, and developers can choose accordi
 >
 > In contrast, `MultiTaggedContentParser` guides LLM to generate each key-value pair separately in individual tags and then combines them into a dictionary, thus reducing the difficulty.
 
+
+>**NOTE**: The built-in strategies to construct format instruction just provide some examples. In AgentScope, developer has complete control over prompt construction. So they can choose not to use the format instruction provided by parsers, customizing their format instruction by hand or implementing new parser class are all feasible.
 
 In the following sections, we will introduce the usage of these parsers based on different target formats.
 
@@ -299,6 +302,49 @@ This parameter can be a string or a dictionary. For dictionary, it will be autom
   {content_hint}
   ```
   ````
+
+##### Validation
+
+The `content_hint` parameter in `MarkdownJsonDictParser` also supports type validation based on Pydantic. When initializing, you can set `content_hint` to a Pydantic model class, and AgentScope will modify the `instruction_format` attribute based on this class. Besides, Pydantic will be used to validate the dictionary returned by LLM during parsing.
+
+A simple example is as follows, where `"..."` can be filled with specific type validation rules, which can be referred to the [Pydantic](https://docs.pydantic.dev/latest/) documentation.
+
+  ```python
+  from pydantic import BaseModel, Field
+  from agentscope.parsers import MarkdownJsonDictParser
+
+  class Schema(BaseModel):
+      thought: str = Field(..., description="what you thought")
+      speak: str = Field(..., description="what you speak")
+      end_discussion: bool = Field(..., description="whether the discussion is finished")
+
+  parser = MarkdownJsonDictParser(content_hint=Schema)
+  ```
+
+- The corresponding `instruction_format` attribute
+
+````
+Respond a JSON dictionary in a markdown's fenced code block as follows:
+```json
+{a_JSON_dictionary}
+```
+The generated JSON dictionary MUST follow this schema:
+{'properties': {'speak': {'description': 'what you speak', 'title': 'Speak', 'type': 'string'}, 'thought': {'description': 'what you thought', 'title': 'Thought', 'type': 'string'}, 'end_discussion': {'description': 'whether the discussion reached an agreement or not', 'title': 'End Discussion', 'type': 'boolean'}}, 'required': ['speak', 'thought', 'end_discussion'], 'title': 'Schema', 'type': 'object'}
+````
+
+- During the parsing process, Pydantic will be used for type validation, and an exception will be thrown if the validation fails. Meanwhile, Pydantic also provides some fault tolerance capabilities, such as converting the string `"true"` to Python's `True`:
+
+````
+parser.parser("""
+```json
+{
+  "thought": "The others didn't realize I was a werewolf. I should end the discussion soon.",
+  "speak": "I agree with you.",
+  "end_discussion": "true"
+}
+```
+""")
+````
 
 #### MultiTaggedContentParser
 
