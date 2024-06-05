@@ -295,6 +295,13 @@ class TestDashScopeServices(unittest.TestCase):
         )
 
         self.assertEqual(results.status, expected_result.status)
+        self.assertIn(
+            results.content,
+            [
+                {"audio_path": f"{saved_dir}/{text}.wav"},
+                {"audio_path": f"{saved_dir}\\{text}.wav"},  # For Windows
+            ],
+        )
 
 
 if __name__ == "__main__":
