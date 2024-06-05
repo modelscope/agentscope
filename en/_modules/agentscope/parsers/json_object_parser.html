@@ -100,11 +100,13 @@
   <h1>Source code for agentscope.parsers.json_object_parser</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;The parser for JSON object in the model response.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
 
 <span class="kn">from</span> <span class="nn">agentscope.exception</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">TagNotFoundError</span><span class="p">,</span>
@@ -250,10 +252,21 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Closing end for a code block.&quot;&quot;&quot;</span>
 
     <span class="n">_format_instruction</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="s2">&quot;You should respond a json object in a json fenced code block as &quot;</span>
+        <span class="s2">&quot;Respond a JSON dictionary in a markdown&#39;s fenced code block as &quot;</span>
         <span class="s2">&quot;follows:</span><span class="se">\n</span><span class="s2">```json</span><span class="se">\n</span><span class="si">{content_hint}</span><span class="se">\n</span><span class="s2">```&quot;</span>
     <span class="p">)</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The instruction for the format of the json object.&quot;&quot;&quot;</span>
+
+    <span class="n">_format_instruction_with_schema</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;Respond a JSON dictionary in a markdown&#39;s fenced code block as &quot;</span>
+        <span class="s2">&quot;follows:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;```json</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;</span><span class="si">{content_hint}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;```</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;The generated JSON dictionary MUST follow this schema: </span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;</span><span class="si">{schema}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The schema instruction for the format of the json object.&quot;&quot;&quot;</span>
 
     <span class="n">required_keys</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A list of required keys in the JSON dictionary object. If the response</span>
@@ -277,7 +290,8 @@
 <span class="sd">                The hint used to remind LLM what should be fill between the</span>
 <span class="sd">                tags. If it is a string, it will be used as the content hint</span>
 <span class="sd">                directly. If it is a dict, it will be converted to a json</span>
-<span class="sd">                string and used as the content hint.</span>
+<span class="sd">                string and used as the content hint. If it&#39;s a Pydantic model,</span>
+<span class="sd">                the schema will be displayed in the instruction.</span>
 <span class="sd">            required_keys (`List[str]`, defaults to `[]`):</span>
 <span class="sd">                A list of required keys in the JSON dictionary object. If the</span>
 <span class="sd">                response misses any of the required keys, it will raise a</span>
@@ -290,7 +304,7 @@
 <span class="sd">                - `str`, the corresponding value will be returned</span>
 <span class="sd">                - `List[str]`, a filtered dictionary will be returned</span>
 <span class="sd">                - `True`, the whole dictionary will be returned</span>
-<span class="sd">            keys_to_content (`Optional[Union[str, bool, Sequence[str]]`,</span>
+<span class="sd">            keys_to_content (`Optional[Union[str, bool, Sequence[str]]]`,</span>
 <span class="sd">            defaults to `True`):</span>
 <span class="sd">                The key or keys to be filtered in `to_content` method. If</span>
 <span class="sd">                it&#39;s</span>
@@ -308,8 +322,23 @@
 <span class="sd">                - `True`, the whole dictionary will be returned</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Initialize the markdown json object parser</span>
-        <span class="n">MarkdownJsonObjectParser</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content_hint</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pydantic_class</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Initialize the content_hint according to the type of content_hint</span>
+        <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">content_hint</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span>
+            <span class="n">content_hint</span><span class="p">,</span>
+            <span class="n">BaseModel</span><span class="p">,</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pydantic_class</span> <span class="o">=</span> <span class="n">content_hint</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">content_hint</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{a_JSON_dictionary}</span><span class="s2">&quot;</span>
+        <span class="k">elif</span> <span class="n">content_hint</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">content_hint</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">content_hint</span> <span class="o">=</span> <span class="n">content_hint</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">content_hint</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
+                    <span class="n">content_hint</span><span class="p">,</span>
+                    <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="p">)</span>
 
         <span class="c1"># Initialize the mixin class to allow filtering the parsed response</span>
         <span class="n">DictFilterMixin</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
@@ -321,6 +350,21 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">required_keys</span> <span class="o">=</span> <span class="n">required_keys</span> <span class="ow">or</span> <span class="p">[]</span></div>
 
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">format_instruction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the format instruction for the json object, if the</span>
+<span class="sd">        format_example is provided, it will be used as the example.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pydantic_class</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_instruction</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">content_hint</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">content_hint</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_instruction_with_schema</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">content_hint</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">content_hint</span><span class="p">,</span>
+                <span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pydantic_class</span><span class="o">.</span><span class="n">model_json_schema</span><span class="p">(),</span>
+            <span class="p">)</span>
 
 <div class="viewcode-block" id="MarkdownJsonDictParser.parse">
 <a class="viewcode-back" href="../../../agentscope.parsers.json_object_parser.html#agentscope.parsers.MarkdownJsonDictParser.parse">[docs]</a>
@@ -339,6 +383,16 @@
                 <span class="sa">f</span><span class="s2">&quot;but got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">parsed</span><span class="p">)</span><span class="si">}</span><span class="s2"> instead.&quot;</span><span class="p">,</span>
                 <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
             <span class="p">)</span>
+
+        <span class="c1"># Requirement checking by Pydantic</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pydantic_class</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">response</span><span class="o">.</span><span class="n">parsed</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pydantic_class</span><span class="p">(</span><span class="o">**</span><span class="n">response</span><span class="o">.</span><span class="n">parsed</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">JsonParsingError</span><span class="p">(</span>
+                    <span class="n">message</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span>
+                    <span class="n">raw_response</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+                <span class="p">)</span> <span class="kn">from</span> <span class="kc">None</span>
 
         <span class="c1"># Check if the required keys exist</span>
         <span class="n">keys_missing</span> <span class="o">=</span> <span class="p">[]</span>

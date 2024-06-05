@@ -135,6 +135,7 @@
 <li><p><a class="reference internal" href="#markdownjsondictparser"><span class="xref myst">MarkdownJsonDictParser</span></a></p>
 <ul>
 <li><p><a class="reference internal" href="#initialization--format-instruction-template"><span class="xref myst">Initialization &amp; Format Instruction Template</span></a></p></li>
+<li><p><a class="reference internal" href="#validation"><span class="xref myst">Validation</span></a></p></li>
 </ul>
 </li>
 <li><p><a class="reference internal" href="#multitaggedcontentparser"><span class="xref myst">MultiTaggedContentParser</span></a></p>
@@ -232,6 +233,9 @@ However, due to the following reasons, this process is also a very complex proce
 <div><p><strong>NOTE</strong>: Compared to <code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser</span></code>, <code class="docutils literal notranslate"><span class="pre">MultiTaggedContentParser</span></code> is more suitable for weak LLMs and when the required format is too complex.
 For example, when LLM is required to generate Python code, if the code is returned directly within a dictionary, LLM needs to be aware of escaping characters (\t, \n, …), and the differences between double and single quotes when calling <code class="docutils literal notranslate"><span class="pre">json.loads</span></code></p>
 <p>In contrast, <code class="docutils literal notranslate"><span class="pre">MultiTaggedContentParser</span></code> guides LLM to generate each key-value pair separately in individual tags and then combines them into a dictionary, thus reducing the difficulty.</p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>NOTE</strong>: The built-in strategies to construct format instruction just provide some examples. In AgentScope, developer has complete control over prompt construction. So they can choose not to use the format instruction provided by parsers, customizing their format instruction by hand or implementing new parser class are all feasible.</p>
 </div></blockquote>
 <p>In the following sections, we will introduce the usage of these parsers based on different target formats.</p>
 </section>
@@ -463,6 +467,47 @@ This parameter can be a string or a dictionary. For dictionary, it will be autom
 </div>
 </li>
 </ul>
+</section>
+<section id="validation">
+<h5>Validation<a class="headerlink" href="#validation" title="Link to this heading"></a></h5>
+<p>The <code class="docutils literal notranslate"><span class="pre">content_hint</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser</span></code> also supports type validation based on Pydantic. When initializing, you can set <code class="docutils literal notranslate"><span class="pre">content_hint</span></code> to a Pydantic model class, and AgentScope will modify the <code class="docutils literal notranslate"><span class="pre">instruction_format</span></code> attribute based on this class. Besides, Pydantic will be used to validate the dictionary returned by LLM during parsing.</p>
+<p>A simple example is as follows, where <code class="docutils literal notranslate"><span class="pre">&quot;...&quot;</span></code> can be filled with specific type validation rules, which can be referred to the <a class="reference external" href="https://docs.pydantic.dev/latest/">Pydantic</a> documentation.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+<span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">MarkdownJsonDictParser</span>
+
+<span class="k">class</span> <span class="nc">Schema</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">thought</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;what you thought&quot;</span><span class="p">)</span>
+    <span class="n">speak</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;what you speak&quot;</span><span class="p">)</span>
+    <span class="n">end_discussion</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;whether the discussion is finished&quot;</span><span class="p">)</span>
+
+<span class="n">parser</span> <span class="o">=</span> <span class="n">MarkdownJsonDictParser</span><span class="p">(</span><span class="n">content_hint</span><span class="o">=</span><span class="n">Schema</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>The corresponding <code class="docutils literal notranslate"><span class="pre">instruction_format</span></code> attribute</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Respond a JSON dictionary in a markdown&#39;s fenced code block as follows:
+```json
+{a_JSON_dictionary}
+```
+The generated JSON dictionary MUST follow this schema:
+{&#39;properties&#39;: {&#39;speak&#39;: {&#39;description&#39;: &#39;what you speak&#39;, &#39;title&#39;: &#39;Speak&#39;, &#39;type&#39;: &#39;string&#39;}, &#39;thought&#39;: {&#39;description&#39;: &#39;what you thought&#39;, &#39;title&#39;: &#39;Thought&#39;, &#39;type&#39;: &#39;string&#39;}, &#39;end_discussion&#39;: {&#39;description&#39;: &#39;whether the discussion reached an agreement or not&#39;, &#39;title&#39;: &#39;End Discussion&#39;, &#39;type&#39;: &#39;boolean&#39;}}, &#39;required&#39;: [&#39;speak&#39;, &#39;thought&#39;, &#39;end_discussion&#39;], &#39;title&#39;: &#39;Schema&#39;, &#39;type&#39;: &#39;object&#39;}
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>During the parsing process, Pydantic will be used for type validation, and an exception will be thrown if the validation fails. Meanwhile, Pydantic also provides some fault tolerance capabilities, such as converting the string <code class="docutils literal notranslate"><span class="pre">&quot;true&quot;</span></code> to Python’s <code class="docutils literal notranslate"><span class="pre">True</span></code>:</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">parser</span><span class="o">.</span><span class="n">parser</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">```json</span>
+<span class="s2">{</span>
+<span class="s2">  &quot;thought&quot;: &quot;The others didn&#39;t realize I was a werewolf. I should end the discussion soon.&quot;,</span>
+<span class="s2">  &quot;speak&quot;: &quot;I agree with you.&quot;,</span>
+<span class="s2">  &quot;end_discussion&quot;: &quot;true&quot;</span>
+<span class="s2">}</span>
+<span class="s2">```</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 </section>
 </section>
 <section id="multitaggedcontentparser">

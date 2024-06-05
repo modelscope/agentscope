@@ -178,12 +178,6 @@ code</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="agentscope.parsers.json_object_parser.MarkdownJsonDictParser.content_hint">
-<span class="sig-name descname"><span class="pre">content_hint</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'{your_json_dictionary}'</span></em><a class="headerlink" href="#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.content_hint" title="Link to this definition"></a></dt>
-<dd><p>The hint of the content.</p>
-</dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.parsers.json_object_parser.MarkdownJsonDictParser.tag_end">
 <span class="sig-name descname"><span class="pre">tag_end</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'```'</span></em><a class="headerlink" href="#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.tag_end" title="Link to this definition"></a></dt>
 <dd><p>Closing end for a code block.</p>
@@ -199,7 +193,8 @@ code</p>
 <li><p><strong>content_hint</strong> (<cite>Optional[Any]</cite>, defaults to <cite>None</cite>) – The hint used to remind LLM what should be fill between the
 tags. If it is a string, it will be used as the content hint
 directly. If it is a dict, it will be converted to a json
-string and used as the content hint.</p></li>
+string and used as the content hint. If it’s a Pydantic model,
+the schema will be displayed in the instruction.</p></li>
 <li><p><strong>required_keys</strong> (<cite>List[str]</cite>, defaults to <cite>[]</cite>) – A list of required keys in the JSON dictionary object. If the
 response misses any of the required keys, it will raise a
 RequiredFieldNotFoundError.</p></li>
@@ -223,7 +218,7 @@ RequiredFieldNotFoundError.</p></li>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>(</strong><strong>`Optional</strong><strong>[</strong><strong>Union</strong><strong>[</strong><strong>str</strong> (<em>keys_to_content</em>) – </p></li>
 <li><p><strong>bool</strong></p></li>
-<li><p><strong>Sequence</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>]</strong><strong>`</strong></p></li>
+<li><p><strong>Sequence</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>]</strong><strong>]</strong><strong>`</strong></p></li>
 </ul>
 </dd>
 </dl>
@@ -257,11 +252,24 @@ RequiredFieldNotFoundError.</p></li>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.parsers.json_object_parser.MarkdownJsonDictParser.content_hint">
+<span class="sig-name descname"><span class="pre">content_hint</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'{your_json_dictionary}'</span></em><a class="headerlink" href="#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.content_hint" title="Link to this definition"></a></dt>
+<dd><p>The hint of the content.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.parsers.json_object_parser.MarkdownJsonDictParser.required_keys">
 <span class="sig-name descname"><span class="pre">required_keys</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.required_keys" title="Link to this definition"></a></dt>
 <dd><p>A list of required keys in the JSON dictionary object. If the response
 misses any of the required keys, it will raise a
 RequiredFieldNotFoundError.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="agentscope.parsers.json_object_parser.MarkdownJsonDictParser.format_instruction">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">format_instruction</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.format_instruction" title="Link to this definition"></a></dt>
+<dd><p>Get the format instruction for the json object, if the
+format_example is provided, it will be used as the example.</p>
 </dd></dl>
 
 <dl class="py method">
