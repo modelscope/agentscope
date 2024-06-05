@@ -138,33 +138,34 @@ def _get_all_runs_from_dir() -> dict:
     """Get all runs from the directory."""
     global _RUNS_DIRS
     runtime_configs_from_dir = {}
-    for runs_dir in set(_RUNS_DIRS):
-        for runtime_dir in os.listdir(runs_dir):
-            path_runtime = os.path.join(runs_dir, runtime_dir)
-            path_config = os.path.join(path_runtime, ".config")
-            if os.path.exists(path_config):
-                with open(path_config, "r", encoding="utf-8") as file:
-                    runtime_config = json.load(file)
+    if _RUNS_DIRS is not None:
+        for runs_dir in set(_RUNS_DIRS):
+            for runtime_dir in os.listdir(runs_dir):
+                path_runtime = os.path.join(runs_dir, runtime_dir)
+                path_config = os.path.join(path_runtime, ".config")
+                if os.path.exists(path_config):
+                    with open(path_config, "r", encoding="utf-8") as file:
+                        runtime_config = json.load(file)
 
-                    # Default status is finished
-                    # Note: this is only for local runtime instances
-                    if "pid" in runtime_config and _is_process_alive(
-                        runtime_config["pid"],
-                        runtime_config["timestamp"],
-                    ):
-                        runtime_config["status"] = "running"
-                    else:
-                        runtime_config["status"] = "finished"
+                        # Default status is finished
+                        # Note: this is only for local runtime instances
+                        if "pid" in runtime_config and _is_process_alive(
+                            runtime_config["pid"],
+                            runtime_config["timestamp"],
+                        ):
+                            runtime_config["status"] = "running"
+                        else:
+                            runtime_config["status"] = "finished"
 
-                    if "run_dir" not in runtime_config:
-                        runtime_config["run_dir"] = path_runtime
+                        if "run_dir" not in runtime_config:
+                            runtime_config["run_dir"] = path_runtime
 
-                    if "id" in runtime_config:
-                        runtime_config["run_id"] = runtime_config["id"]
-                        del runtime_config["id"]
+                        if "id" in runtime_config:
+                            runtime_config["run_id"] = runtime_config["id"]
+                            del runtime_config["id"]
 
-                    runtime_id = runtime_config.get("run_id")
-                    runtime_configs_from_dir[runtime_id] = runtime_config
+                        runtime_id = runtime_config.get("run_id")
+                        runtime_configs_from_dir[runtime_id] = runtime_config
 
     return runtime_configs_from_dir
 
