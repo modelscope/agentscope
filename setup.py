@@ -54,6 +54,7 @@ gradio_requires = [
 # released requires
 minimal_requires = [
     "docstring_parser",
+    "pydantic",
     "loguru==0.6.0",
     "tiktoken",
     "Pillow",
