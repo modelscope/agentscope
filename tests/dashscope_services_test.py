@@ -286,6 +286,7 @@ class TestDashScopeServices(unittest.TestCase):
 
         # Verify the file operations
         mock_os_makedirs.assert_called_once_with(saved_dir, exist_ok=True)
+        mock_open_func.assert_called_once()
 
         # Expected result
         expected_result = ServiceResponse(
