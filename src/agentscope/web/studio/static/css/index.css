@@ -97,6 +97,7 @@ body {
     justify-content: flex-end;
     padding: 25px;
     color: #ffffff;
+    cursor: pointer;
 }
 
 /*when guide-block and right are all in class*/
