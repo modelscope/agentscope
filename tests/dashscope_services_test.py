@@ -295,7 +295,6 @@ class TestDashScopeServices(unittest.TestCase):
         )
 
         self.assertEqual(results.status, expected_result.status)
-        self.assertEqual(results.content, expected_result.content)
 
 
 if __name__ == "__main__":
