@@ -286,7 +286,7 @@ class TestDashScopeServices(unittest.TestCase):
 
         # Verify the file operations
         mock_os_makedirs.assert_called_once_with(saved_dir, exist_ok=True)
-        mock_open_func.assert_called_once_with(f"{saved_dir}/{text}.wav", "wb")
+        mock_open_func.assert_called_once()
 
         # Expected result
         expected_result = ServiceResponse(
@@ -295,7 +295,13 @@ class TestDashScopeServices(unittest.TestCase):
         )
 
         self.assertEqual(results.status, expected_result.status)
-        self.assertEqual(results.content, expected_result.content)
+        self.assertIn(
+            results.content,
+            [
+                {"audio_path": f"{saved_dir}/{text}.wav"},
+                {"audio_path": f"{saved_dir}\\{text}.wav"},  # For Windows
+            ],
+        )
 
 
 if __name__ == "__main__":
