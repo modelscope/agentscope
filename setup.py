@@ -51,6 +51,11 @@ gradio_requires = [
     "black",
 ]
 
+studio_requires = [
+    "appdirs",
+    "flask_sqlalchemy",
+]
+
 # released requires
 minimal_requires = [
     "docstring_parser",
@@ -86,6 +91,7 @@ full_requires = (
     + doc_requires
     + test_requires
     + gradio_requires
+    + studio_requires
 )
 
 with open("README.md", "r", encoding="UTF-8") as fh:
