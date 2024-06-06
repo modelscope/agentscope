@@ -15,6 +15,7 @@
   - [字典类型](#字典dict类型)
     - [MarkdownJsonDictParser](#markdownjsondictparser)
       - [初始化 & 响应格式模版](#初始化--响应格式模版)
+      - [类型校验](#类型校验)
     - [MultiTaggedContentParser](#multitaggedcontentparser)
       - [初始化 & 响应格式模版](#初始化--响应格式模版-1)
       - [解析函数](#解析函数-1)
@@ -74,6 +75,8 @@ AgentScope提供了多种不同解析器，开发者可以根据自己的需求�
 | JSON / Python对象类型 | `MarkdownJsonObjectParser` | 要求 LLM 在 \```json 和 \``` 标识的代码块中产生指定的内容，解析结果将通过 `json.loads` 转换成 Python 对象。 |
 
 > **NOTE**: 相比`MarkdownJsonDictParser`，`MultiTaggedContentParser`更适合于模型能力不强，以及需要 LLM 返回内容过于复杂的情况。例如 LLM 返回 Python 代码，如果直接在字典中返回代码，那么 LLM 需要注意特殊字符的转义（\t,\n,...），`json.loads`读取时对双引号和单引号的区分等问题。而`MultiTaggedContentParser`实际是让大模型在每个单独的标签中返回各个键值，然后再将它们组成字典，从而降低了LLM返回的难度。
+
+> **NOTE**：AgentScope 内置的响应格式说明并不一定是最优的选择。在 AgentScope 中，开发者可以完全控制提示构建的过程，因此，选择不使用parser中内置的相应格式说明，而是自定义新的相应格式说明，或是实现新的parser类都是可行的技术方案。
 
 下面我们将根据不同的目标格式，介绍这些解析器的用法。
 
@@ -296,6 +299,50 @@ AgentScope中，我们通过调用`to_content`，`to_memory`和`to_metadata`方�
   {content_hint}
   ```
   ````
+
+##### 类型校验
+
+`MarkdownJsonDictParser`中的`content_hint`参数还支持基于Pydantic的类型校验。初始化时，可以将`content_hint`设置为一个Pydantic的模型类，AgentScope将根据这个类来修改`instruction_format`属性，并且利用Pydantic在解析时对LLM返回的字典进行类型校验。
+该功能需要LLM能够理解JSON schema格式的提示，因此适用于能力较强的大模型。
+
+一个简单的例子如下，`"..."`处可以填写具体的类型校验规则，可以参考[Pydantic](https://docs.pydantic.dev/latest/)文档。
+
+  ```python
+  from pydantic import BaseModel, Field
+  from agentscope.parsers import MarkdownJsonDictParser
+
+  class Schema(BaseModel):
+      thought: str = Field(..., description="what you thought")
+      speak: str = Field(..., description="what you speak")
+      end_discussion: bool = Field(..., description="whether the discussion is finished")
+
+  parser = MarkdownJsonDictParser(content_hint=Schema)
+  ```
+
+- 对应的`format_instruction`属性
+
+````
+Respond a JSON dictionary in a markdown's fenced code block as follows:
+```json
+{a_JSON_dictionary}
+```
+The generated JSON dictionary MUST follow this schema:
+{'properties': {'speak': {'description': 'what you speak', 'title': 'Speak', 'type': 'string'}, 'thought': {'description': 'what you thought', 'title': 'Thought', 'type': 'string'}, 'end_discussion': {'description': 'whether the discussion reached an agreement or not', 'title': 'End Discussion', 'type': 'boolean'}}, 'required': ['speak', 'thought', 'end_discussion'], 'title': 'Schema', 'type': 'object'}
+````
+
+- 同时在解析的过程中，也将使用Pydantic进行类型校验，校验错误将抛出异常。同时，Pydantic也将提供一定的容错处理能力，例如将字符串`"true"`转换成Python的`True`：
+
+````
+parser.parser("""
+```json
+{
+  "thought": "The others didn't realize I was a werewolf. I should end the discussion soon.",
+  "speak": "I agree with you.",
+  "end_discussion": "true"
+}
+```
+""")
+````
 
 #### MultiTaggedContentParser
 
