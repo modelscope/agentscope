@@ -87,11 +87,14 @@ class LiteLLMChatWrapper(LiteLLMWrapperBase):
     To use the LiteLLM wrapper, environent variables must be set.
     Different model_name could be using different environment variables.
     For example:
+
         - for model_name: "gpt-3.5-turbo", you need to set "OPENAI_API_KEY"
         ```
         os.environ["OPENAI_API_KEY"] = "your-api-key"
         ```
+
         - for model_name: "claude-2", you need to set "ANTHROPIC_API_KEY"
+
         - for Azure OpenAI, you need to set "AZURE_API_KEY",
         "AZURE_API_BASE", "AZURE_API_VERSION"
     You should refer to the docs in https://docs.litellm.ai/docs/ .

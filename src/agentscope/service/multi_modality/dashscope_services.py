@@ -67,10 +67,10 @@ def dashscope_text_to_image(
             prompt = "A beautiful sunset in the mountains"
             print(dashscope_text_to_image(prompt, "{api_key}"))
 
-    > {
-    >     'status': 'SUCCESS',
-    >     'content': {'image_urls': ['IMAGE_URL1', 'IMAGE_URL2']}
-    > }
+            > {
+            >     'status': 'SUCCESS',
+            >     'content': {'image_urls': ['IMAGE_URL1', 'IMAGE_URL2']}
+            > }
 
     """
     text2img = DashScopeImageSynthesisWrapper(
@@ -155,7 +155,7 @@ def dashscope_image_to_text(
             prompt = "Describe the image"
             print(image_to_text(image_url, prompt))
 
-    > {'status': 'SUCCESS', 'content': 'A beautiful sunset in the mountains'}
+            > {'status': 'SUCCESS', 'content': 'A beautiful sunset'}
 
     """
 
@@ -256,7 +256,7 @@ def dashscope_text_to_audio(
             print(text_to_audio(text)) gives:
 
 
-    > {'status': 'SUCCESS', 'content': {"audio_path": "AUDIO_PATH"}}
+            > {'status': 'SUCCESS', 'content': {"audio_path": "AUDIO_PATH"}}
 
     """
     dashscope.api_key = api_key

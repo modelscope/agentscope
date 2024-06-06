@@ -18,9 +18,24 @@ AgentScope Documentation
    :hidden:
    :caption: AgentScope Tutorial
 
-   tutorial/quick_start.rst
-   tutorial/advance.rst
-   tutorial/contribute.rst
+   tutorial/101-agentscope.md
+   tutorial/102-installation.md
+   tutorial/103-example.md
+   tutorial/104-usecase.md
+   tutorial/105-logging.md
+
+   tutorial/201-agent.md
+   tutorial/202-pipeline.md
+   tutorial/203-model.md
+   tutorial/203-parser.md
+   tutorial/204-service.md
+   tutorial/205-memory.md
+   tutorial/206-prompt.md
+   tutorial/207-monitor.md
+   tutorial/208-distribute.md
+
+   tutorial/301-community.md
+   tutorial/302-contribute.md
 
 
 .. toctree::

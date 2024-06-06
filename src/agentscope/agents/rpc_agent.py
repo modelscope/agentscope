@@ -129,9 +129,9 @@ class RpcAgent(AgentBase):
 
         Args:
             num_instances (`int`): The number of instances in the returned
-            list.
+                list.
             including_self (`bool`): Whether to include the instance calling
-            this method in the returned list.
+                this method in the returned list.
 
         Returns:
             `Sequence[AgentBase]`: A list of agent instances.
