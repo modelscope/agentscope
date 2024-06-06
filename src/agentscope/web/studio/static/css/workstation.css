@@ -833,3 +833,10 @@ pre[class*="language-"] {
         opacity: 1;
     }
 }
+
+.text-input {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.2;
+    resize: vertical;
+}

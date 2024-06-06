@@ -132,6 +132,7 @@ async function initializeWorkstationPage() {
         setupNodeListeners(id);
         setupNodeCopyListens(id);
         addEventListenersToNumberInputs(id);
+        setupTextInputListeners(id);
     })
 
     editor.on('nodeRemoved', function (id) {
@@ -769,6 +770,20 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
     }
 }
 
+function setupTextInputListeners(nodeId) {
+    const newNode = document.getElementById(`node-${nodeId}`);
+    if (newNode) {
+        const stopPropagation = function(event) {
+            event.stopPropagation();
+        };
+        newNode.addEventListener('mousedown', function(event) {
+            const target = event.target;
+            if (target.tagName === 'TEXTAREA' || target.tagName === 'INPUT') {
+                stopPropagation(event);
+            }
+        }, false);
+    }
+}
 
 function toggleAdvanced() {
     var advancedBox = document.querySelector('.advanced-box');
@@ -1260,7 +1275,6 @@ function checkConditions() {
         console.log("node", node);
         console.log("node.inputs", node.inputs);
 
-
         if (node.inputs) {
             for (let inputKey in node.inputs) {
                 if (node.inputs[inputKey].connections &&
@@ -1269,22 +1283,6 @@ function checkConditions() {
                         title: 'Invalid Connections',
                         text:
                             `${node.name} has more than one connection in inputs.`,
-                        icon: 'error',
-                        confirmButtonText: 'Ok'
-                    });
-                    return false;
-                }
-            }
-        }
-
-        if (node.outputs) {
-            for (let outputKey in node.outputs) {
-                if (node.outputs[outputKey].connections &&
-                    node.outputs[outputKey].connections.length > 1) {
-                    Swal.fire({
-                        title: 'Invalid Connections',
-                        text:
-                            `${node.name} has more than one connection in outputs.`,
                         icon: 'error',
                         confirmButtonText: 'Ok'
                     });

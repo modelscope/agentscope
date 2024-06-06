@@ -23,6 +23,7 @@ rpc_requires = [
     "protobuf==4.25.0",
     "expiringdict",
     "dill",
+    "psutil",
 ]
 
 service_requires = [
@@ -48,6 +49,11 @@ gradio_requires = [
     "gradio==4.19.1",
     "modelscope_studio==0.0.5",
     "black",
+]
+
+studio_requires = [
+    "appdirs",
+    "flask_sqlalchemy",
 ]
 
 # released requires
@@ -85,6 +91,7 @@ full_requires = (
     + doc_requires
     + test_requires
     + gradio_requires
+    + studio_requires
 )
 
 with open("README.md", "r", encoding="UTF-8") as fh:
