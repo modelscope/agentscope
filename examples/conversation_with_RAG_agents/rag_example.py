@@ -120,7 +120,7 @@ def main() -> None:
     while True:
         # The workflow is the following:
         # 1. user input a message,
-        # 2. if it mentions one of the agents, then the agent will be called
+        # 2. if it mentions (@) one of the agents, the agent will be called
         # 3. otherwise, the guide agent will decide which agent to call
         # 4. the called agent will respond to the user
         # 5. repeat
