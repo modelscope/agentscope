@@ -48,7 +48,7 @@ def main() -> None:
                 # the standard lora and sfttrainer fields.
                 "fine_tune_config": {
                     "lora_config": {"r": 16, "lora_alpha": 32},
-                    "training_args": {"max_steps": 200, "logging_steps": 1},
+                    "training_args": {"num_train_epochs": 5, "logging_steps": 1},
                     "bnb_config": {
                         "load_in_4bit": True,
                         "bnb_4bit_use_double_quant": True,

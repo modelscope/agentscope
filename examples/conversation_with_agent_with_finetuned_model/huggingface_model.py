@@ -239,13 +239,13 @@ class HuggingFaceWrapper(ModelWrapperBase):
                        or network issues while fetching the model.
         """
 
+        bnb_config = None
         bnb_config_default = {}
-        bnb_config = {}
 
         if fine_tune_config is not None:
             if fine_tune_config.get("bnb_config") is not None:
                 bnb_config_default.update(fine_tune_config["bnb_config"])
-        if bnb_config != bnb_config_default:
+        if bnb_config_default != {}:
             bnb_config = BitsAndBytesConfig(**bnb_config_default)
 
         try:
@@ -256,7 +256,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
                     torch_dtype=torch.bfloat16,
                     **(
                         {"quantization_config": bnb_config}
-                        if bnb_config != {}
+                        if bnb_config is not None
                         else {}
                     ),
                     token=self.huggingface_token,
@@ -273,7 +273,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
                     torch_dtype=torch.bfloat16,
                     **(
                         {"quantization_config": bnb_config}
-                        if bnb_config != {}
+                        if bnb_config is not None
                         else {}
                     ),
                     local_files_only=True,
@@ -344,6 +344,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
                     f"'{pretrained_model_name_or_path}'"
                     f" from '{local_tokenizer_path}'",
                 )
+            self.tokenizer.add_special_tokens({'pad_token': '[PAD]'})
 
         except Exception as e:
             # Handle exceptions during model loading,
@@ -483,13 +484,8 @@ class HuggingFaceWrapper(ModelWrapperBase):
 
         from peft import LoraConfig
 
-        lora_config_default = {
-            "r": 16,
-            "lora_alpha": 32,
-            "lora_dropout": 0.05,
-            "bias": "none",
-            "task_type": "CAUSAL_LM",
-        }
+        lora_config = None
+        lora_config_default = {}
 
         if fine_tune_config is not None:
             if fine_tune_config.get("lora_config") is not None:
@@ -514,8 +510,9 @@ class HuggingFaceWrapper(ModelWrapperBase):
 
         from peft import get_peft_model
 
-        lora_config = LoraConfig(**lora_config_default)
-        model = get_peft_model(model, lora_config)
+        if lora_config_default != {}:
+            lora_config = LoraConfig(**lora_config_default)
+            model = get_peft_model(model, lora_config)
 
         collator = DataCollatorForCompletionOnlyLM(
             response_template=" ### Answer:",
@@ -530,7 +527,11 @@ class HuggingFaceWrapper(ModelWrapperBase):
             data_collator=collator,
             train_dataset=formatted_dataset["train"],
             eval_dataset=formatted_dataset["test"],
-            peft_config=lora_config,
+            **(
+                {"peft_config": lora_config}
+                if lora_config is not None
+                else {}
+            ),
             args=trainer_args,
             max_seq_length=2048,
         )
