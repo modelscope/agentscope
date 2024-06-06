@@ -663,11 +663,15 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
 
             - The roles of messages must alternate between "user" and
                 "assistant".
+
             - The message with the role "system" should be the first message
                 in the list.
+
             - If the system message exists, then the second message must
                 have the role "user".
+
             - The last message in the list should have the role "user".
+
             - In each message, more than one figure is allowed.
 
         With the above requirements, we format the messages as follows:

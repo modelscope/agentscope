@@ -35,6 +35,7 @@ class MemoryBase(ABC):
     def update_config(self, config: dict) -> None:
         """
         Configure memory as specified in config
+
         Args:
             config (`dict`): Configuration of resetting this memory
         """
@@ -49,6 +50,7 @@ class MemoryBase(ABC):
         """
         Return a certain range (`recent_n` or all) of memory,
         filtered by `filter_func`
+
         Args:
             recent_n (int, optional):
                 indicate the most recent N memory pieces to be returned.
@@ -66,6 +68,7 @@ class MemoryBase(ABC):
     ) -> None:
         """
         Adding new memory fragment, depending on how the memory are stored
+
         Args:
             memories (Union[Sequence[dict], dict, None]):
                 Memories to be added. If the memory is not in MessageBase,
@@ -77,6 +80,7 @@ class MemoryBase(ABC):
         """
         Delete memory fragment, depending on how the memory are stored
         and matched
+
         Args:
             index (Union[Iterable, int]):
                 indices of the memory fragments to delete
@@ -90,14 +94,15 @@ class MemoryBase(ABC):
     ) -> None:
         """
         Load memory, depending on how the memory are passed, design to load
-        from both file or dict
+        from both file or dict.
+
         Args:
             memories (Union[str, list[MessageBase], MessageBase]):
                 memories to be loaded.
                 If it is in str type, it will be first checked if it is a
                 file; otherwise it will be deserialized as messages.
                 Otherwise, memories must be either in message type or list
-                 of messages.
+                of messages.
             overwrite (bool):
                 if True, clear the current memory before loading the new ones;
                 if False, memories will be appended to the old one at the end.
@@ -111,13 +116,15 @@ class MemoryBase(ABC):
     ) -> Optional[list]:
         """
         Export memory, depending on how the memory are stored
+
         Args:
             file_path (Optional[str]):
                 file path to save the memory to.
             to_mem (Optional[str]):
                 if True, just return the list of messages in memory
-        Notice: this method prevents file_path is None when to_mem
-        is False.
+
+        Notice:
+            this method prevents file_path is None when to_mem is False.
         """
 
     @abstractmethod

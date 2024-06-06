@@ -174,10 +174,12 @@ class OllamaChatWrapper(OllamaWrapperBase):
         system prompt and dialogue history.
 
         Note:
-        1. This strategy maybe not suitable for all scenarios,
-        and developers are encouraged to implement their own prompt
-        engineering strategies.
-        2. For ollama chat api, the content field shouldn't be empty string.
+
+            1. This strategy maybe not suitable for all scenarios,
+                and developers are encouraged to implement their own prompt
+                engineering strategies.
+
+            2. For ollama chat api, the content field can't be empty string.
 
         Example:
 

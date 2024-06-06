@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-import al memory related modules
+import all memory related modules
 """
 
 from .memory import MemoryBase
