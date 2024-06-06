@@ -15,7 +15,6 @@ from agentscope.agents.operator import Operator
 from agentscope.message import Msg
 from agentscope.models import load_model_by_config_name
 from agentscope.memory import TemporaryMemory
-from agentscope.web.client import _studio_client
 
 
 class _AgentMeta(ABCMeta):
@@ -321,7 +320,6 @@ class AgentBase(Operator, metaclass=_AgentMeta):
                 content=content,
                 role="assistant",
             )
-            _studio_client.push_message(msg)
         elif isinstance(content, Msg):
             msg = content
         else:

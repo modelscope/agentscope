@@ -240,7 +240,7 @@ class Tht(MessageBase):
         return json.dumps({"__type": "Tht", **self})
 
 
-class PlaceholderMessage(MessageBase):
+class PlaceholderMessage(Msg):
     """A placeholder for the return message of RpcAgent."""
 
     PLACEHOLDER_ATTRS = {
