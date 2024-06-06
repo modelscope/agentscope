@@ -659,82 +659,87 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
     ) -> List:
         """Format the messages for DashScope Multimodal API.
 
-        The multimodal API has the following requirements:
 
-            - The roles of messages must alternate between "user" and
-                "assistant".
+        Note:
 
-            - The message with the role "system" should be the first message
-                in the list.
+            The multimodal API has the following requirements:
 
-            - If the system message exists, then the second message must
-                have the role "user".
+            The roles of messages must alternate between "user" and
+            "assistant".
 
-            - The last message in the list should have the role "user".
+            The message with the role "system" should be the first message
+            in the list.
 
-            - In each message, more than one figure is allowed.
+            If the system message exists, then the second message must
+            have the role "user".
 
-        With the above requirements, we format the messages as follows:
+            The last message in the list should have the role "user".
 
-            - If the first message is a system message, then we will keep it as
-                system prompt.
-            - We merge all messages into a dialogue history prompt in a single
-                message with the role "user".
-            - When there are multiple figures in the given messages, we will
-                attach it to the user message by order. Note if there are
-                multiple figures, this strategy may cause misunderstanding for
-                the model. For advanced solutions, developers are encouraged to
-                implement their own prompt engineering strategies.
+            In each message, more than one figure is allowed.
 
-        The following is an example:
+            With the above requirements, we format the messages as follows:
 
-        .. code-block:: python
+            If the first message is a system message, then we will keep it as
+            system prompt.
 
-            prompt = model.format(
-                Msg(
-                    "system",
-                    "You're a helpful assistant",
-                    role="system", url="figure1"
-                ),
-                Msg(
-                    "Bob",
-                    "How about this picture?",
-                    role="assistant", url="figure2"
-                ),
-                Msg(
-                    "user",
-                    "It's wonderful! How about mine?",
-                    role="user", image="figure3"
+            We merge all messages into a dialogue history prompt in a single
+            message with the role "user".
+
+            When there are multiple figures in the given messages, we will
+            attach it to the user message by order. Note if there are
+            multiple figures, this strategy may cause misunderstanding for
+            the model. For advanced solutions, developers are encouraged to
+            implement their own prompt engineering strategies.
+
+            The following is an example:
+
+            .. code-block:: python
+
+                prompt = model.format(
+                    Msg(
+                        "system",
+                        "You're a helpful assistant",
+                        role="system", url="figure1"
+                    ),
+                    Msg(
+                        "Bob",
+                        "How about this picture?",
+                        role="assistant", url="figure2"
+                    ),
+                    Msg(
+                        "user",
+                        "It's wonderful! How about mine?",
+                        role="user", image="figure3"
+                    )
                 )
-            )
 
-        The prompt will be as follows:
+            The prompt will be as follows:
 
-        .. code-block:: python
+            .. code-block:: python
 
-            [
-                {
-                    "role": "system",
-                    "content": [
-                        {"text": "You are a helpful assistant"},
-                        {"image": "figure1"}
-                    ]
-                },
-                {
-                    "role": "user",
-                    "content": [
-                        {"image": "figure2"},
-                        {"image": "figure3"},
-                        {
-                            "text": (
-                                "## Dialogue History\\n"
-                                "Bob: How about this picture?\\n"
-                                "user: It's wonderful! How about mine?"
-                            )
-                        },
-                    ]
-                }
-            ]
+                [
+                    {
+                        "role": "system",
+                        "content": [
+                            {"text": "You are a helpful assistant"},
+                            {"image": "figure1"}
+                        ]
+                    },
+                    {
+                        "role": "user",
+                        "content": [
+                            {"image": "figure2"},
+                            {"image": "figure3"},
+                            {
+                                "text": (
+                                    "## Dialogue History\\n"
+                                    "Bob: How about this picture?\\n"
+                                    "user: It's wonderful! How about mine?"
+                                )
+                            },
+                        ]
+                    }
+                ]
 
         Note:
             In multimodal API, the url of local files should be prefixed with

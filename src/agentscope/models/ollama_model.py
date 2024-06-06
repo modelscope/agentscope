@@ -176,8 +176,8 @@ class OllamaChatWrapper(OllamaWrapperBase):
         Note:
 
             1. This strategy maybe not suitable for all scenarios,
-                and developers are encouraged to implement their own prompt
-                engineering strategies.
+            and developers are encouraged to implement their own prompt
+            engineering strategies.
 
             2. For ollama chat api, the content field can't be empty string.
 
@@ -217,7 +217,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
         Returns:
             `List[dict]`:
                 The formatted messages.
-        """
+        """  # noqa
 
         # Parse all information into a list of messages
         input_msgs = []
