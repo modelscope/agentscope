@@ -49,9 +49,9 @@ function initializeTabPageByUrl(pageUrl) {
         case "static/html/dashboard.html":
             initializeDashboardPage();
             break;
-        case 'static/html/workstation_iframe.html':
-            let script = document.createElement('script');
-            script.src = 'static/js/workstation_iframe.js';
+        case "static/html/workstation_iframe.html":
+            let script = document.createElement("script");
+            script.src = "static/js/workstation_iframe.js";
             document.head.appendChild(script);
             break;
     }
@@ -106,7 +106,7 @@ function loadTabPage(pageUrl, javascriptUrl) {
                     serverTabBtn.classList.remove("selected");
                     break;
 
-                case "static/html/workstation.html":
+                case "static/html/workstation_iframe.html":
                     dashboardTabBtn.classList.remove("selected");
                     workstationTabBtn.classList.add("selected");
                     marketTabBtn.classList.remove("selected");
