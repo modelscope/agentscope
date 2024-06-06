@@ -9,7 +9,7 @@ from agentscope.message import (
 )
 from agentscope.rpc import RpcAgentClient
 from agentscope.server.launcher import RpcAgentServerLauncher
-from agentscope._runtime import _runtime
+from agentscope.web.client import _studio_client
 
 
 class RpcAgent(AgentBase):
@@ -72,8 +72,8 @@ class RpcAgent(AgentBase):
         if launch_server:
             self.host = "localhost"
             studio_url = None
-            if _runtime.studio_client is not None:
-                studio_url = _runtime.studio_client.studio_url
+            if _studio_client.active:
+                studio_url = _studio_client.studio_url
             self.server_launcher = RpcAgentServerLauncher(
                 host=self.host,
                 port=port,
