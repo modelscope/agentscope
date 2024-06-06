@@ -15,9 +15,13 @@
           href="{{ url_for('static', filename='css/dashboard.css') }}">
     <link rel="stylesheet" type="text/css"
           href="{{ url_for('static', filename='css_third_party/tabulator.min.css') }}">
-
+    <link rel="stylesheet" href="{{ url_for('static', filename='css_third_party/highlight.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css_third_party/katex.min.css') }}">
     <script src="{{ url_for('static', filename='js_third_party/tabulator.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js_third_party/highlight.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js_third_party/katex.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js_third_party/marked.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js_third_party/marked-katex-extension.umd.js') }}"></script>
     <script src="{{ url_for('static', filename='js_third_party/socket.io.js') }}"></script>
     <link rel="stylesheet" type="text/css"
           href="{{ url_for('static', filename='css/dashboard-runs.css') }}">

@@ -253,6 +253,7 @@
 
 .user.chat-bubble {
     border-radius: var(--chat-bubble-border-radius) 0 var(--chat-bubble-border-radius) var(--chat-bubble-border-radius);
+    white-space: pre-wrap;
 }
 
 .other.chat-bubble {
