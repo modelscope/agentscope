@@ -18,6 +18,8 @@ from transformers import (
     BitsAndBytesConfig,
 )
 import transformers
+from peft import LoraConfig
+from peft import get_peft_model
 from trl import SFTTrainer, DataCollatorForCompletionOnlyLM
 from datasets import load_dataset
 from loguru import logger
@@ -245,7 +247,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
         if fine_tune_config is not None:
             if fine_tune_config.get("bnb_config") is not None:
                 bnb_config_default.update(fine_tune_config["bnb_config"])
-        if bnb_config_default != {}:
+        if bnb_config_default:
             bnb_config = BitsAndBytesConfig(**bnb_config_default)
 
         try:
@@ -344,7 +346,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
                     f"'{pretrained_model_name_or_path}'"
                     f" from '{local_tokenizer_path}'",
                 )
-            self.tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+            self.tokenizer.add_special_tokens({"pad_token": "[PAD]"})
 
         except Exception as e:
             # Handle exceptions during model loading,
@@ -482,14 +484,8 @@ class HuggingFaceWrapper(ModelWrapperBase):
 
         formatted_dataset = dataset_reduced.train_test_split(test_size=0.1)
 
-        from peft import LoraConfig
-
         lora_config = None
         lora_config_default = {}
-
-        if fine_tune_config is not None:
-            if fine_tune_config.get("lora_config") is not None:
-                lora_config_default.update(fine_tune_config["lora_config"])
 
         training_defaults = {
             "per_device_train_batch_size": 1,
@@ -502,15 +498,15 @@ class HuggingFaceWrapper(ModelWrapperBase):
         }
 
         if fine_tune_config is not None:
+            if fine_tune_config.get("lora_config") is not None:
+                lora_config_default.update(fine_tune_config["lora_config"])
             if fine_tune_config.get("training_args") is not None:
                 training_defaults.update(fine_tune_config["training_args"])
 
         if output_dir is not None:
             training_defaults["output_dir"] = output_dir
 
-        from peft import get_peft_model
-
-        if lora_config_default != {}:
+        if lora_config_default:
             lora_config = LoraConfig(**lora_config_default)
             model = get_peft_model(model, lora_config)
 
@@ -528,9 +524,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
             train_dataset=formatted_dataset["train"],
             eval_dataset=formatted_dataset["test"],
             **(
-                {"peft_config": lora_config}
-                if lora_config is not None
-                else {}
+                {"peft_config": lora_config} if lora_config is not None else {}
             ),
             args=trainer_args,
             max_seq_length=2048,
