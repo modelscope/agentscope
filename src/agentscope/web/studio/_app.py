@@ -99,7 +99,7 @@ class _UserInputRequestQueue:
             cls._requests[run_id].pop(agent_id)
 
 
-class Run(db.Model):
+class Run(db.Model):  # type: ignore[name-defined]
     """Runtime object."""
 
     run_id = db.Column(db.String, primary_key=True)
