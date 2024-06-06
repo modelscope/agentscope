@@ -153,7 +153,7 @@
     min-height: 33px;
     box-sizing: border-box;
     word-break: break-word;
-    overflow-wrap: break-word; /* 同上，为word-wrap的标准别名 */
+    overflow-wrap: break-word;
     white-space: pre-wrap;
 }
 
@@ -247,8 +247,8 @@
     width: fit-content;
     max-width: 100%;
     min-width: 100px;
-    word-wrap: break-word; /* 允许长单词在任意位置换行 */
-    overflow-wrap: break-word; /* 同上，为word-wrap的标准别名 */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .user.chat-bubble {
@@ -265,6 +265,11 @@
     flex-direction: row;
     align-items: center;
     margin: 0;
+}
+
+.chat-bubble a {
+    word-break: break-word;
+    display: contents;
 }
 
 .chat-bubble-multimodal-item {
