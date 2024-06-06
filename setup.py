@@ -30,6 +30,7 @@ service_requires = [
     "docker",
     "pymongo",
     "pymysql",
+    "bs4",
     "beautifulsoup4",
     "feedparser",
 ]
@@ -59,6 +60,7 @@ studio_requires = [
 # released requires
 minimal_requires = [
     "docstring_parser",
+    "pydantic",
     "loguru==0.6.0",
     "tiktoken",
     "Pillow",

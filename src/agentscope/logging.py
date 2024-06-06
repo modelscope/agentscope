@@ -25,17 +25,19 @@ LOG_LEVEL = Literal[
     "CRITICAL",
 ]
 
-LEVEL_CHAT_LOG = "CHAT_LOG"
-LEVEL_CHAT_SAVE = "CHAT_SAVE"
+LEVEL_SAVE_LOG = "SAVE_LOG"
+LEVEL_SAVE_MSG = "SAVE_MSG"
+LEVEL_DISPLAY_MSG = "DISPLAY_MSG"
 
 _SPEAKER_COLORS = [
-    ("<blue>", "</blue>"),
-    ("<cyan>", "</cyan>"),
-    ("<green>", "</green>"),
-    ("<magenta>", "</magenta>"),
-    ("<red>", "</red>"),
-    ("<white>", "</white>"),
-    ("<yellow>", "</yellow>"),
+    ("\033[90m", "\033[0m"),
+    ("\033[91m", "\033[0m"),
+    ("\033[92m", "\033[0m"),
+    ("\033[93m", "\033[0m"),
+    ("\033[94m", "\033[0m"),
+    ("\033[95m", "\033[0m"),
+    ("\033[96m", "\033[0m"),
+    ("\033[97m", "\033[0m"),
 ]
 
 _SPEAKER_TO_COLORS = {}
@@ -88,9 +90,10 @@ def _chat(
     if _studio_client.active:
         _studio_client.push_message(message)
 
-    # Save message into file, add default to ignore not serializable objects
+    # Save message into chat file, add default to ignore not serializable
+    # objects
     logger.log(
-        LEVEL_CHAT_SAVE,
+        LEVEL_SAVE_MSG,
         json.dumps(message, ensure_ascii=False, default=lambda _: None),
         *args,
         **kwargs,
@@ -108,26 +111,43 @@ def _chat(
             (m1, m2) = _get_speaker_color(speaker)
 
             print_str = []
+            print_str_without_markers = []
             if contain_content:
                 print_str.append(
-                    f"{m1}<b>{speaker}</b>{m2}: {message['content']}",
+                    f"{m1}\033[1m{speaker}\033[0m{m2}: {message['content']}",
+                )
+                print_str_without_markers.append(
+                    f"{speaker}: {message['content']}",
                 )
 
             if contain_url:
-                print_str.append(f"{m1}<b>{speaker}</b>{m2}: {message['url']}")
+                print_str.append(
+                    f"{m1}\033[1m{speaker}\033[0m{m2}: {message['url']}",
+                )
+                print_str_without_markers.append(
+                    f"{speaker}: {message['url']}",
+                )
 
             if len(print_str) > 0:
-                print_str = (
-                    "\n".join(print_str).replace("{", "{{").replace("}", "}}")
+                print_str = "\n".join(print_str)
+                print_str_without_markers = "\n".join(
+                    print_str_without_markers,
                 )
-                logger.log(LEVEL_CHAT_LOG, print_str, *args, **kwargs)
+
+                logger.log(LEVEL_DISPLAY_MSG, print_str, *args, **kwargs)
+                logger.log(
+                    LEVEL_SAVE_LOG,
+                    print_str_without_markers,
+                    *args,
+                    **kwargs,
+                )
 
                 if hasattr(thread_local_data, "uid") and not disable_studio:
                     log_studio(message, thread_local_data.uid, **kwargs)
                 return
 
-    message = str(message).replace("{", "{{").replace("}", "}}")
-    logger.log(LEVEL_CHAT_LOG, message, *args, **kwargs)
+    logger.log(LEVEL_DISPLAY_MSG, message, *args, **kwargs)
+    logger.log(LEVEL_SAVE_LOG, message, *args, **kwargs)
 
 
 def log_studio(message: dict, uid: str, **kwargs: Any) -> None:
@@ -188,8 +208,9 @@ def log_studio(message: dict, uid: str, **kwargs: Any) -> None:
 
 def _level_format(record: dict) -> str:
     """Format the log record."""
-    if record["level"].name == LEVEL_CHAT_LOG:
-        return record["message"] + "\n"
+    # Display the chat message
+    if record["level"].name in [LEVEL_DISPLAY_MSG, LEVEL_SAVE_LOG]:
+        return "{message}\n"
     else:
         return (
             "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{"
@@ -216,8 +237,11 @@ def setup_logger(
     # avoid reinit in subprocess
     if not hasattr(logger, "chat"):
         # add chat function for logger
-        logger.level(LEVEL_CHAT_LOG, no=21)
-        logger.level(LEVEL_CHAT_SAVE, no=0)
+        logger.level(LEVEL_SAVE_LOG, no=51)
+        logger.level(LEVEL_DISPLAY_MSG, no=52)
+
+        # save chat message into file
+        logger.level(LEVEL_SAVE_MSG, no=53)
         logger.chat = _chat
 
         # set logging level
@@ -225,7 +249,8 @@ def setup_logger(
         # standard output for all logging except chat
         logger.add(
             sys.stdout,
-            filter=lambda record: record["level"].name != LEVEL_CHAT_SAVE,
+            filter=lambda record: record["level"].name
+            not in [LEVEL_SAVE_LOG, LEVEL_SAVE_MSG],
             format=_level_format,
             enqueue=True,
             level=level,
@@ -242,7 +267,8 @@ def setup_logger(
         # save all logging into file
         logger.add(
             path_log_file,
-            filter=lambda record: record["level"].name != LEVEL_CHAT_SAVE,
+            filter=lambda record: record["level"].name
+            not in [LEVEL_SAVE_MSG, LEVEL_DISPLAY_MSG],
             format=_level_format,
             enqueue=True,
             level=level,
@@ -250,8 +276,7 @@ def setup_logger(
 
         logger.add(
             path_chat_file,
-            filter=lambda record: record["level"].name == LEVEL_CHAT_SAVE,
             format="{message}",
             enqueue=True,
-            level=LEVEL_CHAT_SAVE,
+            level=LEVEL_SAVE_MSG,
         )
