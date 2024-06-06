@@ -100,7 +100,7 @@ class MultiTaggedContentParser(ParserBase, DictFilterMixin):
             required_keys (`Optional[List[str]]`, defaults to `None`):
                 A list of required
             keys_to_memory (`Optional[Union[str, bool, Sequence[str]]]`,
-            defaults to `True`):
+                defaults to `True`):
                 The key or keys to be filtered in `to_memory` method. If
                 it's
                 - `False`, `None` will be returned in the `to_memory` method
@@ -108,7 +108,7 @@ class MultiTaggedContentParser(ParserBase, DictFilterMixin):
                 - `List[str]`, a filtered dictionary will be returned
                 - `True`, the whole dictionary will be returned
             keys_to_content (`Optional[Union[str, bool, Sequence[str]]`,
-            defaults to `True`):
+                defaults to `True`):
                 The key or keys to be filtered in `to_content` method. If
                 it's
                 - `False`, `None` will be returned in the `to_content` method
@@ -116,7 +116,7 @@ class MultiTaggedContentParser(ParserBase, DictFilterMixin):
                 - `List[str]`, a filtered dictionary will be returned
                 - `True`, the whole dictionary will be returned
             keys_to_metadata (`Optional[Union[str, bool, Sequence[str]]]`,
-            defaults to `False`):
+                defaults to `False`):
                 The key or keys to be filtered in `to_metadata` method. If
                 it's
                 - `False`, `None` will be returned in the `to_metadata` method

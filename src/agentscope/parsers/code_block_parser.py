@@ -39,7 +39,7 @@ class MarkdownCodeBlockParser(ParserBase):
         Args:
             language_name (`str`):
                The name of the language, which will be used
-               in ```{language_name}
+               in {language_name}
            content_hint (`Optional[str]`, defaults to `None`):
                The hint used to remind LLM what should be fill between the
                tags. If not provided, the default content hint

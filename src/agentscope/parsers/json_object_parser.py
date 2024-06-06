@@ -184,31 +184,31 @@ class MarkdownJsonDictParser(MarkdownJsonObjectParser, DictFilterMixin):
                 response misses any of the required keys, it will raise a
                 RequiredFieldNotFoundError.
             keys_to_memory (`Optional[Union[str, bool, Sequence[str]]]`,
-            defaults to `True`):
+                defaults to `True`):
                 The key or keys to be filtered in `to_memory` method. If
                 it's
-                - `False`, `None` will be returned in the `to_memory` method
-                - `str`, the corresponding value will be returned
-                - `List[str]`, a filtered dictionary will be returned
-                - `True`, the whole dictionary will be returned
+                    - `False`, `None` will be returned in the `to_memory` method
+                    - `str`, the corresponding value will be returned
+                    - `List[str]`, a filtered dictionary will be returned
+                    - `True`, the whole dictionary will be returned
             keys_to_content (`Optional[Union[str, bool, Sequence[str]]]`,
-            defaults to `True`):
+                defaults to `True`):
                 The key or keys to be filtered in `to_content` method. If
                 it's
-                - `False`, `None` will be returned in the `to_content` method
-                - `str`, the corresponding value will be returned
-                - `List[str]`, a filtered dictionary will be returned
-                - `True`, the whole dictionary will be returned
+                    - `False`, `None` will be returned in the `to_content` method
+                    - `str`, the corresponding value will be returned
+                    - `List[str]`, a filtered dictionary will be returned
+                    - `True`, the whole dictionary will be returned
             keys_to_metadata (`Optional[Union[str, bool, Sequence[str]]`,
-            defaults to `False`):
+                defaults to `False`):
                 The key or keys to be filtered in `to_metadata` method. If
                 it's
-                - `False`, `None` will be returned in the `to_metadata` method
-                - `str`, the corresponding value will be returned
-                - `List[str]`, a filtered dictionary will be returned
-                - `True`, the whole dictionary will be returned
+                    - `False`, `None` will be returned in the `to_metadata` method
+                    - `str`, the corresponding value will be returned
+                    - `List[str]`, a filtered dictionary will be returned
+                    - `True`, the whole dictionary will be returned
 
-        """
+        """  # noqa
         self.pydantic_class = None
 
         # Initialize the content_hint according to the type of content_hint
