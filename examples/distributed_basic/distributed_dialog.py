@@ -35,6 +35,7 @@ def setup_assistant_server(assistant_host: str, assistant_port: int) -> None:
     """Set up assistant rpc server"""
     agentscope.init(
         model_configs="configs/model_configs.json",
+        project="Distributed Conversation",
     )
     assistant_server_launcher = RpcAgentServerLauncher(
         host=assistant_host,
@@ -48,6 +49,7 @@ def run_main_process(assistant_host: str, assistant_port: int) -> None:
     """Run dialog main process"""
     agentscope.init(
         model_configs="configs/model_configs.json",
+        project="Distributed Conversation",
     )
     assistant_agent = DialogAgent(
         name="Assistant",

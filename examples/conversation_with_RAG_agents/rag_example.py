@@ -31,6 +31,7 @@ def main() -> None:
                 "api_key": f"{os.environ.get('DASHSCOPE_API_KEY')}",
             },
         ],
+        project="Conversation with RAG agents",
     )
 
     with open("./agent_config.json", "r", encoding="utf-8") as f:

@@ -1,6 +1,6 @@
 (203-parser-en)=
 
-# Model Response Parser
+# Response Parser
 
 ## Table of Contents
 

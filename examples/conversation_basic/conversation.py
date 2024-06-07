@@ -28,6 +28,7 @@ def main() -> None:
                 "headers": {},
             },
         ],
+        project="Multi-Agent Conversation",
     )
 
     # Init two agents
