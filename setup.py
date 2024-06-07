@@ -23,7 +23,6 @@ rpc_requires = [
     "protobuf==4.25.0",
     "expiringdict",
     "dill",
-    "psutil",
 ]
 
 service_requires = [
@@ -52,10 +51,7 @@ gradio_requires = [
     "black",
 ]
 
-studio_requires = [
-    "appdirs",
-    "flask_sqlalchemy",
-]
+studio_requires = []
 
 # released requires
 minimal_requires = [
@@ -72,6 +68,7 @@ minimal_requires = [
     "Flask==3.0.0",
     "Flask-Cors==4.0.0",
     "Flask-SocketIO==5.3.6",
+    "flask_sqlalchemy",
     "flake8",
     # TODO: move into other requires
     "dashscope==1.14.1",
@@ -80,6 +77,8 @@ minimal_requires = [
     "google-generativeai>=0.4.0",
     "zhipuai",
     "litellm",
+    "psutil",
+    "appdirs",
 ]
 
 distribute_requires = minimal_requires + rpc_requires

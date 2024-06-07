@@ -26,7 +26,7 @@ class _FileManager:
 
     _instance = None
 
-    dir: str = _DEFAULT_DIR
+    dir: str = os.path.abspath(_DEFAULT_DIR)
     """The directory for saving files, code and logs."""
 
     save_api_invoke: bool = False
@@ -86,7 +86,7 @@ class _FileManager:
 
     def init(self, save_dir: str, save_api_invoke: bool = False) -> None:
         """Set the directory for saving files."""
-        self.dir = save_dir
+        self.dir = os.path.abspath(save_dir)
         runtime_dir = os.path.join(save_dir, _runtime.runtime_id)
         os.makedirs(runtime_dir, exist_ok=True)
 

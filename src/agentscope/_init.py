@@ -4,6 +4,7 @@ import json
 import os
 import shutil
 from typing import Optional, Union, Sequence
+from loguru import logger
 from agentscope import agents
 from .agents import AgentBase
 from ._runtime import _runtime
@@ -194,7 +195,8 @@ def init_process(
     # inputs from web ui
     if studio_url is not None:
         _studio_client.initialize(_runtime.runtime_id, studio_url)
-
+        logger.warning(file_manager.dir)
+        logger.warning(file_manager.dir_root)
         # Register in AgentScope Studio
         _studio_client.register_running_instance(
             project=_runtime.project,

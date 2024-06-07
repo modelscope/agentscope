@@ -351,6 +351,25 @@ def get_messages(run_id: str) -> Response:
             return jsonify(msgs)
 
 
+@app.route("/api/runs/get/<run_id>", methods=["GET"])
+def get_run(run_id: str) -> Response:
+    """Get a specific run's detail."""
+    run = Run.query.filter_by(run_id=run_id).first()
+    if not run:
+        abort(400, f"run_id [{run_id}] not exists")
+    return jsonify(
+        {
+            "run_id": run.run_id,
+            "project": run.project,
+            "name": run.name,
+            "timestamp": run.timestamp,
+            "run_dir": run.run_dir,
+            "pid": run.pid,
+            "status": run.status,
+        },
+    )
+
+
 @app.route("/api/runs/all", methods=["GET"])
 def _get_all_runs() -> Response:
     """Get all runs."""

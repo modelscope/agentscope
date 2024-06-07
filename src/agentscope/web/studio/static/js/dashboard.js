@@ -37,13 +37,25 @@ function loadRunsPageInDashboardContent(pageUrl, javascriptUrl) {
                 var baseUrl = loc.protocol + "//" + loc.host;
                 const run_id = urlParams.get("run_id");
                 history.replaceState(null, null, baseUrl);
-                loadDetailPageInDashboardContent(
-                    "static/html/dashboard-detail.html",
-                    "static/js/dashboard-detail.js",
-                    {
-                        run_id: run_id,
-                    }
-                );
+                fetch("/api/runs/get/" + run_id)
+                    .then((response) => {
+                        console.log("fetch /api/runs/get/");
+
+                        if (!response.ok) {
+                            throw new Error(
+                                "Runtime id " + run_id + " not found."
+                            );
+                        }
+                        return response.json();
+                    })
+                    .then((data) => {
+                        console.log("get runs" + data);
+                        loadDetailPageInDashboardContent(
+                            "static/html/dashboard-detail.html",
+                            "static/js/dashboard-detail.js",
+                            data
+                        );
+                    });
             }
         })
         .catch((error) => {

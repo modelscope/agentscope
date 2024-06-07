@@ -12,7 +12,6 @@ import random
 from typing import Any, Literal, List, Optional
 
 from urllib.parse import urlparse
-
 import psutil
 import requests
 
