@@ -151,7 +151,7 @@ the following libraries.
   - [Werewolf](https://github.com/modelscope/agentscope/blob/main/examples/game_werewolf)
 
 - Distribution
-  - [Distributed Conversation](https://github.com/modelscope/agentscope/blob/main/examples/distributed_basic)
+  - [Distributed Conversation](https://github.com/modelscope/agentscope/blob/main/examples/distributed_conversation)
   - [Distributed Debate](https://github.com/modelscope/agentscope/blob/main/examples/distributed_debate)
   - [Distributed Parallel Search](https://github.com/modelscope/agentscope/blob/main/examples/distributed_search)
   - [Distributed Large Scale Simulation](https://github.com/modelscope/agentscope/blob/main/examples/distributed_simulation)
