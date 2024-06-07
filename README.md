@@ -192,7 +192,7 @@ pip install -e .\[distribute\]
 - Install AgentScope from pip:
 
 ```bash
-pip install agentscope
+pip install agentscope --pre
 ```
 
 ## Quick Start

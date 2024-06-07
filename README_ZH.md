@@ -173,7 +173,7 @@ pip install -e .\[distribute\]
 - 从pip安装的AgentScope
 
 ```bash
-pip install agentscope
+pip install agentscope --pre
 ```
 
 ## 快速开始
