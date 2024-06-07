@@ -1296,12 +1296,7 @@ function checkConditions() {
 
         let titleBox = nodeElement.querySelector('.title-box');
 
-        let titleText = '';
-        for (const child of titleBox.childNodes) {
-            if (child.nodeType === Node.TEXT_NODE) {
-                titleText += child.textContent.trim();
-            }
-        }
+        let titleText = titleBox.getAttribute("data-class");
 
         for (const input of requiredInputs) {
             if (input.value.trim() === '') {
