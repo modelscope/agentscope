@@ -71,7 +71,8 @@ class HuggingFaceWrapper(ModelWrapperBase):
             device (torch.device, optional): Device to run the model on.
                                              Default to GPU if available.
             local_model_path (str, optional): Local file path to a
-                                              pre-trained model and its tokenizer.
+                                              pre-trained model
+                                              and its tokenizer.
             fine_tune_config (dict, optional): Configuration for
                                                fine-tuning the model.
             **kwargs: Additional keyword arguments.
@@ -268,8 +269,10 @@ class HuggingFaceWrapper(ModelWrapperBase):
 
                 if fine_tune_config is not None:
                     if fine_tune_config.get("lora_config") is not None:
-                        lora_config_default.update(fine_tune_config["lora_config"])
-                if lora_config_default != {}:
+                        lora_config_default.update(
+                            fine_tune_config["lora_config"],
+                        )
+                if lora_config_default:
                     self.lora_config = LoraConfig(**lora_config_default)
                     self.model = get_peft_model(self.model, self.lora_config)
 
@@ -293,8 +296,10 @@ class HuggingFaceWrapper(ModelWrapperBase):
 
                 if fine_tune_config is not None:
                     if fine_tune_config.get("lora_config") is not None:
-                        lora_config_default.update(fine_tune_config["lora_config"])
-                if lora_config_default != {}:
+                        lora_config_default.update(
+                            fine_tune_config["lora_config"],
+                        )
+                if lora_config_default:
                     lora_config = LoraConfig(**lora_config_default)
                     self.model = get_peft_model(self.model, lora_config)
 
@@ -534,7 +539,9 @@ class HuggingFaceWrapper(ModelWrapperBase):
             train_dataset=formatted_dataset["train"],
             eval_dataset=formatted_dataset["test"],
             **(
-                {"peft_config": self.lora_config} if self.lora_config is not None else {}
+                {"peft_config": self.lora_config}
+                if self.lora_config is not None
+                else {}
             ),
             args=trainer_args,
             max_seq_length=2048,
