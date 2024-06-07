@@ -63,6 +63,12 @@ class _Runtime:
             self._timestamp,
         ).format(self.name)
 
+    def generate_new_runtime_id(self) -> str:
+        """Generate a new random runtime id."""
+        return _get_timestamp(_RUNTIME_ID_FORMAT).format(
+            _generate_random_code(uppercase=False),
+        )
+
     @property
     def timestamp(self) -> str:
         """Get the current timestamp in specific format."""

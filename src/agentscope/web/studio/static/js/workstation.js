@@ -1587,8 +1587,8 @@ function showExportRunPopup() {
                         html:
                             '<p>Your application has been successfully run ' +
                             'in background.<br>' +
-                            '<p><strong>Task UID:</strong>' +
-                            data.uid + '</p>' +
+                            '<p><strong>Task ID:</strong>' +
+                            data.run_id + '</p>' +
                             '<pre class="line-numbers"><code class="language-py" id="export-data">' +
                             data.py_code +
                             '</code></pre>',
