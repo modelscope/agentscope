@@ -32,7 +32,7 @@ class _WebSocketClient:
 
         @self.sio.event
         def connect() -> None:
-            logger.info("Connected to Studio")
+            logger.info("Establish a websocket connection with Studio.")
             self.sio.emit(
                 "join",
                 {"run_id": self.run_id, "agent_id": self.agent_id},
@@ -40,7 +40,7 @@ class _WebSocketClient:
 
         @self.sio.event
         def disconnect() -> None:
-            logger.info("Disconnected from Studio")
+            logger.info("Disconnected the websocket connection from Studio")
             self.sio.emit(
                 "leave",
                 {"run_id": self.run_id, "agent_id": self.agent_id},

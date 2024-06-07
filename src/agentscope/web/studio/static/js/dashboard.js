@@ -41,7 +41,7 @@ function loadRunsPageInDashboardContent(pageUrl, javascriptUrl) {
                     "static/html/dashboard-detail.html",
                     "static/js/dashboard-detail.js",
                     {
-                        id: run_id,
+                        run_id: run_id,
                     }
                 );
             }
