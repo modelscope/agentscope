@@ -66,7 +66,6 @@ function displayCode(codeFileName) {
     document.getElementById("code-filename").innerHTML = codeFileName;
 
     if (editorInstance) {
-        console.log("Monaco editor instance is available, set value");
         editorInstance.setValue(currentCode[codeFileName]);
     } else {
         console.log(
