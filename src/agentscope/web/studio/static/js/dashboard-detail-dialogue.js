@@ -97,10 +97,13 @@ function addChatRow(index, pMsg) {
     switch (pMsg.role.toLowerCase()) {
         case "user":
             return _addUserChatRow(index, pMsg);
-        case "assistant":
-            return _addAssistantChatRow(index, pMsg);
         case "system":
             return _addSystemChatRow(index, pMsg);
+        case "assistant":
+            return _addAssistantChatRow(index, pMsg);
+        default:
+            console.error("Unknown role: " + pMsg.role);
+            return _addAssistantChatRow(index, pMsg);
     }
 }
 

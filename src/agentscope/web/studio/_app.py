@@ -6,7 +6,6 @@ import re
 import subprocess
 import tempfile
 import traceback
-import uuid
 from datetime import datetime
 from typing import Tuple, Union, Any, Optional
 
@@ -25,22 +24,23 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, join_room, leave_room
 
 from agentscope.constants import _DEFAULT_SUBDIR_CODE, _DEFAULT_SUBDIR_INVOKE
+from agentscope.file_manager import file_manager
 from agentscope.utils.tools import _is_process_alive
 
-app = Flask(__name__)
+_app = Flask(__name__)
 
 # Set the cache directory
 _cache_dir = user_cache_dir(appname="agentscope")
 os.makedirs(_cache_dir, exist_ok=True)
-app.config[
+_app.config[
     "SQLALCHEMY_DATABASE_URI"
 ] = f"sqlite:////{_cache_dir}/agentscope.db"
-db = SQLAlchemy(app)
+_db = SQLAlchemy(_app)
 
-socketio = SocketIO(app)
+_socketio = SocketIO(_app)
 
 # This will enable CORS for all routes
-CORS(app)
+CORS(_app)
 
 
 _RUNS_DIRS = []
@@ -99,39 +99,43 @@ class _UserInputRequestQueue:
             cls._requests[run_id].pop(agent_id)
 
 
-class Run(db.Model):  # type: ignore[name-defined]
+class _RunTable(_db.Model):  # type: ignore[name-defined]
     """Runtime object."""
 
-    run_id = db.Column(db.String, primary_key=True)
-    project = db.Column(db.String)
-    name = db.Column(db.String)
-    timestamp = db.Column(db.String)
-    run_dir = db.Column(db.String)
-    pid = db.Column(db.Integer)
-    status = db.Column(db.String, default="finished")
+    run_id = _db.Column(_db.String, primary_key=True)
+    project = _db.Column(_db.String)
+    name = _db.Column(_db.String)
+    timestamp = _db.Column(_db.String)
+    run_dir = _db.Column(_db.String)
+    pid = _db.Column(_db.Integer)
+    status = _db.Column(_db.String, default="finished")
 
 
-class Server(db.Model):  # type: ignore[name-defined]
+class _ServerTable(_db.Model):  # type: ignore[name-defined]
     """Server object."""
 
-    id = db.Column(db.String, primary_key=True)
-    host = db.Column(db.String)
-    port = db.Column(db.Integer)
-    create_time = db.Column(db.DateTime, default=datetime.now)
+    id = _db.Column(_db.String, primary_key=True)
+    host = _db.Column(_db.String)
+    port = _db.Column(_db.Integer)
+    create_time = _db.Column(_db.DateTime, default=datetime.now)
 
 
-class Message(db.Model):  # type: ignore[name-defined]
+class _MessageTable(_db.Model):  # type: ignore[name-defined]
     """Message object."""
 
-    id = db.Column(db.Integer, primary_key=True)
-    run_id = db.Column(db.String, db.ForeignKey("run.run_id"), nullable=False)
-    name = db.Column(db.String)
-    role = db.Column(db.String)
-    content = db.Column(db.String)
+    id = _db.Column(_db.Integer, primary_key=True)
+    run_id = _db.Column(
+        _db.String,
+        _db.ForeignKey("run.run_id"),
+        nullable=False,
+    )
+    name = _db.Column(_db.String)
+    role = _db.Column(_db.String)
+    content = _db.Column(_db.String)
     # todo: support list of url in future versions
-    url = db.Column(db.String)
-    meta = db.Column(db.String)
-    timestamp = db.Column(db.String)
+    url = _db.Column(_db.String)
+    meta = _db.Column(_db.String)
+    timestamp = _db.Column(_db.String)
 
 
 def _get_all_runs_from_dir() -> dict:
@@ -170,7 +174,7 @@ def _get_all_runs_from_dir() -> dict:
     return runtime_configs_from_dir
 
 
-def remove_file_paths(error_trace: str) -> str:
+def _remove_file_paths(error_trace: str) -> str:
     """
     Remove the real traceback when exception happens.
     """
@@ -180,7 +184,7 @@ def remove_file_paths(error_trace: str) -> str:
     return cleaned_trace
 
 
-def convert_to_py(  # type: ignore[no-untyped-def]
+def _convert_to_py(  # type: ignore[no-untyped-def]
     content: str,
     **kwargs,
 ) -> Tuple:
@@ -193,19 +197,19 @@ def convert_to_py(  # type: ignore[no-untyped-def]
         cfg = json.loads(content)
         return "True", build_dag(cfg).compile(**kwargs)
     except Exception as e:
-        return "False", remove_file_paths(
+        return "False", _remove_file_paths(
             f"Error: {e}\n\n" f"Traceback:\n" f"{traceback.format_exc()}",
         )
 
 
-@app.route("/workstation")
-def workstation() -> str:
+@_app.route("/workstation")
+def _workstation() -> str:
     """Render the workstation page."""
     return render_template("workstation.html")
 
 
-@app.route("/api/runs/register", methods=["POST"])
-def register_run() -> Response:
+@_app.route("/api/runs/register", methods=["POST"])
+def _register_run() -> Response:
     """Registers a running instance of an agentscope application."""
 
     # Extract the input data from the request
@@ -213,13 +217,13 @@ def register_run() -> Response:
     run_id = data.get("run_id")
 
     # check if the run_id is already in the database
-    if Run.query.filter_by(run_id=run_id).first():
+    if _RunTable.query.filter_by(run_id=run_id).first():
         print(f"Run id {run_id} already exists.")
         abort(400, f"RUN_ID {run_id} already exists")
 
     # Add into the database
-    db.session.add(
-        Run(
+    _db.session.add(
+        _RunTable(
             run_id=run_id,
             project=data.get("project"),
             name=data.get("name"),
@@ -229,13 +233,13 @@ def register_run() -> Response:
             status="running",
         ),
     )
-    db.session.commit()
+    _db.session.commit()
 
     return jsonify(status="ok")
 
 
-@app.route("/api/servers/register", methods=["POST"])
-def register_server() -> Response:
+@_app.route("/api/servers/register", methods=["POST"])
+def _register_server() -> Response:
     """
     Registers an agent server.
     """
@@ -244,24 +248,24 @@ def register_server() -> Response:
     host = data.get("host")
     port = data.get("port")
 
-    if Server.query.filter_by(id=server_id).first():
+    if _ServerTable.query.filter_by(id=server_id).first():
         print(f"server id {server_id} already exists.")
         abort(400, f"run_id [{server_id}] already exists")
 
-    db.session.add(
-        Server(
+    _db.session.add(
+        _ServerTable(
             id=server_id,
             host=host,
             port=port,
         ),
     )
-    db.session.commit()
+    _db.session.commit()
 
     print(f"Register server id {server_id}")
     return jsonify(status="ok")
 
 
-@app.route("/api/messages/push", methods=["POST"])
+@_app.route("/api/messages/push", methods=["POST"])
 def _push_message() -> Response:
     """Receive a message from the agentscope application, and display it on
     the web UI."""
@@ -277,7 +281,7 @@ def _push_message() -> Response:
     url = json.dumps(data["url"])
 
     try:
-        new_message = Message(
+        new_message = _MessageTable(
             run_id=run_id,
             name=name,
             role=role,
@@ -286,13 +290,13 @@ def _push_message() -> Response:
             url=url,
             timestamp=timestamp,
         )
-        db.session.add(new_message)
-        db.session.commit()
+        _db.session.add(new_message)
+        _db.session.commit()
     except Exception as e:
         print(e)
         abort(400, "Fail to put message")
 
-    socketio.emit(
+    _socketio.emit(
         "display_message",
         {
             "run_id": run_id,
@@ -309,15 +313,15 @@ def _push_message() -> Response:
     return jsonify(status="ok")
 
 
-@app.route("/api/messages/run/<run_id>", methods=["GET"])
-def get_messages(run_id: str) -> Response:
+@_app.route("/api/messages/run/<run_id>", methods=["GET"])
+def _get_messages(run_id: str) -> Response:
     """Get the history messages of specific run_id."""
 
     print("Require messages from " + run_id)
 
     # From registered runtime instances
-    if len(Run.query.filter_by(run_id=run_id).all()) > 0:
-        messages = Message.query.filter_by(run_id=run_id).all()
+    if len(_RunTable.query.filter_by(run_id=run_id).all()) > 0:
+        messages = _MessageTable.query.filter_by(run_id=run_id).all()
         msgs = [
             {
                 "name": message.name,
@@ -351,10 +355,10 @@ def get_messages(run_id: str) -> Response:
             return jsonify(msgs)
 
 
-@app.route("/api/runs/get/<run_id>", methods=["GET"])
-def get_run(run_id: str) -> Response:
+@_app.route("/api/runs/get/<run_id>", methods=["GET"])
+def _get_run(run_id: str) -> Response:
     """Get a specific run's detail."""
-    run = Run.query.filter_by(run_id=run_id).first()
+    run = _RunTable.query.filter_by(run_id=run_id).first()
     if not run:
         abort(400, f"run_id [{run_id}] not exists")
     return jsonify(
@@ -370,17 +374,19 @@ def get_run(run_id: str) -> Response:
     )
 
 
-@app.route("/api/runs/all", methods=["GET"])
+@_app.route("/api/runs/all", methods=["GET"])
 def _get_all_runs() -> Response:
     """Get all runs."""
     # Update the status of the registered runtimes
     # Note: this is only for the applications running on the local machine
-    for run in Run.query.filter(Run.status.in_(["running", "waiting"])).all():
+    for run in _RunTable.query.filter(
+        _RunTable.status.in_(["running", "waiting"]),
+    ).all():
         if not _is_process_alive(run.pid, run.timestamp):
-            Run.query.filter_by(run_id=run.run_id).update(
+            _RunTable.query.filter_by(run_id=run.run_id).update(
                 {"status": "finished"},
             )
-            db.session.commit()
+            _db.session.commit()
 
     # From web connection
     runtime_configs_from_register = {
@@ -393,7 +399,7 @@ def _get_all_runs() -> Response:
             "pid": _.pid,
             "status": _.status,
         }
-        for _ in Run.query.all()
+        for _ in _RunTable.query.all()
     }
 
     # From directory
@@ -410,15 +416,8 @@ def _get_all_runs() -> Response:
     return jsonify(runs)
 
 
-# TODO: what's this for?
-@app.route("/api/runs/new", methods=["GET"])
-def get_available_run_id() -> Response:
-    """Get an available run id."""
-    return jsonify({"run_id": uuid.uuid4().hex})
-
-
-@app.route("/api/invocation", methods=["GET"])
-def get_invocations() -> Response:
+@_app.route("/api/invocation", methods=["GET"])
+def _get_invocations() -> Response:
     """Get all API invocations in a run instance."""
     run_dir = request.args.get("run_dir")
     print(run_dir)
@@ -437,8 +436,8 @@ def get_invocations() -> Response:
     return jsonify(invocations)
 
 
-@app.route("/api/code", methods=["GET"])
-def get_code() -> Response:
+@_app.route("/api/code", methods=["GET"])
+def _get_code() -> Response:
     """Get the python code from the run directory."""
     run_dir = request.args.get("run_dir")
 
@@ -456,8 +455,8 @@ def get_code() -> Response:
     return jsonify(codes)
 
 
-@app.route("/api/file", methods=["GET"])
-def get_file() -> Any:
+@_app.route("/api/file", methods=["GET"])
+def _get_file() -> Any:
     """Get the local file via the url."""
     file_path = request.args.get("path", None)
 
@@ -470,27 +469,27 @@ def get_file() -> Any:
     return jsonify({"error": "File not found."})
 
 
-@app.route("/convert-to-py", methods=["POST"])
-def convert_config_to_py() -> Response:
+@_app.route("/convert-to-py", methods=["POST"])
+def _convert_config_to_py() -> Response:
     """
     Convert json config to python code and send back.
     """
     content = request.json.get("data")
-    status, py_code = convert_to_py(content)
+    status, py_code = _convert_to_py(content)
     return jsonify(py_code=py_code, is_success=status)
 
 
-@app.route("/convert-to-py-and-run", methods=["POST"])
-def convert_config_to_py_and_run() -> Response:
+@_app.route("/convert-to-py-and-run", methods=["POST"])
+def _convert_config_to_py_and_run() -> Response:
     """
     Convert json config to python code and run.
     """
     content = request.json.get("data")
-    uid = json.loads(get_available_run_id().get_data())["run_id"]
     studio_url = request.url_root.rstrip("/")
-    status, py_code = convert_to_py(
+    run_id = file_manager.generate_new_runtime_id()
+    status, py_code = _convert_to_py(
         content,
-        runtime_id=uid,
+        runtime_id=run_id,
         studio_url=studio_url,
     )
 
@@ -505,18 +504,16 @@ def convert_config_to_py_and_run() -> Response:
                 tmp.flush()
                 subprocess.Popen(  # pylint: disable=R1732
                     ["python", tmp.name],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
                 )
         except Exception as e:
-            status, py_code = "False", remove_file_paths(
+            status, py_code = "False", _remove_file_paths(
                 f"Error: {e}\n\n" f"Traceback:\n" f"{traceback.format_exc()}",
             )
-    return jsonify(py_code=py_code, is_success=status, uid=uid)
+    return jsonify(py_code=py_code, is_success=status, run_id=run_id)
 
 
-@app.route("/read-examples", methods=["POST"])
-def read_examples() -> Response:
+@_app.route("/read-examples", methods=["POST"])
+def _read_examples() -> Response:
     """
     Read tutorial examples from local file.
     """
@@ -525,7 +522,7 @@ def read_examples() -> Response:
 
     if not os.path.exists(
         os.path.join(
-            app.root_path,
+            _app.root_path,
             "static",
             "workstation_templates",
             f"{lang}{file_index}.json",
@@ -535,7 +532,7 @@ def read_examples() -> Response:
 
     with open(
         os.path.join(
-            app.root_path,
+            _app.root_path,
             "static",
             "workstation_templates",
             f"{lang}{file_index}.json",
@@ -547,30 +544,30 @@ def read_examples() -> Response:
     return jsonify(json=data)
 
 
-@app.route("/")
-def home() -> str:
+@_app.route("/")
+def _home() -> str:
     """Render the home page."""
     return render_template("index.html")
 
 
-@socketio.on("request_user_input")
-def request_user_input(data: dict) -> None:
+@_socketio.on("request_user_input")
+def _request_user_input(data: dict) -> None:
     """Request user input"""
     print("Flask: receive request_user_input")
     run_id = data["run_id"]
     agent_id = data["agent_id"]
 
     # Change the status into waiting
-    db.session.query(Run).filter_by(run_id=run_id).update(
+    _db.session.query(_RunTable).filter_by(run_id=run_id).update(
         {"status": "waiting"},
     )
-    db.session.commit()
+    _db.session.commit()
 
     # Record into the queue
     _UserInputRequestQueue.add_request(run_id, agent_id, data)
 
     # Ask for user input from the web ui
-    socketio.emit(
+    _socketio.emit(
         "enable_user_input",
         data,
         room=run_id,
@@ -579,8 +576,8 @@ def request_user_input(data: dict) -> None:
     print("Flask: send enable_user_input")
 
 
-@socketio.on("user_input_ready")
-def user_input_ready(data: dict) -> None:
+@_socketio.on("user_input_ready")
+def _user_input_ready(data: dict) -> None:
     """Get user input and send to the agent"""
     print("Flask: receive user_input_ready")
 
@@ -589,13 +586,13 @@ def user_input_ready(data: dict) -> None:
     content = data["content"]
     url = data["url"]
 
-    db.session.query(Run).filter_by(run_id=run_id).update(
+    _db.session.query(_RunTable).filter_by(run_id=run_id).update(
         {"status": "running"},
     )
-    db.session.commit()
+    _db.session.commit()
 
     # Return to AgentScope application
-    socketio.emit(
+    _socketio.emit(
         "fetch_user_input",
         {
             "agent_id": agent_id,
@@ -613,7 +610,7 @@ def user_input_ready(data: dict) -> None:
     # Fetch a new user input request for this run_id if exists
     new_request = _UserInputRequestQueue.fetch_a_request(run_id)
     if new_request is not None:
-        socketio.emit(
+        _socketio.emit(
             "enable_user_input",
             new_request,
             room=run_id,
@@ -622,35 +619,35 @@ def user_input_ready(data: dict) -> None:
     print("Flask: send fetch_user_input")
 
 
-@socketio.on("connect")
-def on_connect() -> None:
+@_socketio.on("connect")
+def _on_connect() -> None:
     """Execute when a client is connected."""
     print("Client connected")
 
 
-@socketio.on("disconnect")
-def on_disconnect() -> None:
+@_socketio.on("disconnect")
+def _on_disconnect() -> None:
     """Execute when a client is disconnected."""
     print("Client disconnected")
 
 
-@socketio.on("join")
-def on_join(data: dict) -> None:
+@_socketio.on("join")
+def _on_join(data: dict) -> None:
     """Join a websocket room"""
     run_id = data["run_id"]
     join_room(run_id)
 
     new_request = _UserInputRequestQueue.fetch_a_request(run_id)
     if new_request is not None:
-        socketio.emit(
+        _socketio.emit(
             "enable_user_input",
             new_request,
             room=run_id,
         )
 
 
-@socketio.on("leave")
-def on_leave(data: dict) -> None:
+@_socketio.on("leave")
+def _on_leave(data: dict) -> None:
     """Leave a websocket room"""
     run_id = data["run_id"]
     leave_room(run_id)
@@ -683,11 +680,11 @@ def init(
     _RUNS_DIRS = run_dirs
 
     # Create the cache directory
-    with app.app_context():
-        db.create_all()
+    with _app.app_context():
+        _db.create_all()
 
-    socketio.run(
-        app,
+    _socketio.run(
+        _app,
         host=host,
         port=port,
         debug=debug,

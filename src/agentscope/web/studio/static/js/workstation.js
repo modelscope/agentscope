@@ -1296,12 +1296,7 @@ function checkConditions() {
 
         let titleBox = nodeElement.querySelector('.title-box');
 
-        let titleText = '';
-        for (const child of titleBox.childNodes) {
-            if (child.nodeType === Node.TEXT_NODE) {
-                titleText += child.textContent.trim();
-            }
-        }
+        let titleText = titleBox.getAttribute("data-class");
 
         for (const input of requiredInputs) {
             if (input.value.trim() === '') {
@@ -1592,8 +1587,8 @@ function showExportRunPopup() {
                         html:
                             '<p>Your application has been successfully run ' +
                             'in background.<br>' +
-                            '<p><strong>Task UID:</strong>' +
-                            data.uid + '</p>' +
+                            '<p><strong>Task ID:</strong>' +
+                            data.run_id + '</p>' +
                             '<pre class="line-numbers"><code class="language-py" id="export-data">' +
                             data.py_code +
                             '</code></pre>',
