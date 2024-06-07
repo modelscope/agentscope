@@ -274,7 +274,7 @@ def _push_message() -> Response:
     content = data["content"]
     metadata = json.dumps(data["metadata"])
     timestamp = data["timestamp"]
-    url = data["url"]
+    url = json.dumps(data["url"])
 
     try:
         new_message = Message(
@@ -323,7 +323,7 @@ def get_messages(run_id: str) -> Response:
                 "name": message.name,
                 "role": message.role,
                 "content": message.content,
-                "url": message.url,
+                "url": json.loads(message.url),
                 "metadata": json.loads(message.meta),
                 "timestamp": message.timestamp,
             }

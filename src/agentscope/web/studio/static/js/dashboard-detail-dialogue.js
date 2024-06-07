@@ -139,6 +139,7 @@ function _determineFileType(url) {
 }
 
 function _renderMultiModalData(url) {
+    // TODO: url is a list
     if (!url || url === "") {
         return "";
     }
