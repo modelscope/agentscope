@@ -261,19 +261,10 @@
 }
 
 .chat-bubble p {
-    display: contents;
+    display: inline;
     flex-direction: row;
     align-items: center;
     margin: 0;
-}
-
-.chat-bubble code {
-    display: contents;
-}
-
-.chat-bubble a {
-    word-break: break-word;
-    display: contents;
 }
 
 .chat-bubble-multimodal-item {
@@ -476,4 +467,9 @@
 
 #agentSwitchBtn {
     display: none;
+}
+
+.chat-bubble pre code {
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }

@@ -29,9 +29,6 @@ const marked_options = {
     gfm: true,
     breaks: true,
     pedantic: false,
-    sanitize: true,
-    smartLists: true,
-    smartypants: false,
 };
 
 marked.use({
@@ -49,12 +46,6 @@ marked.use({
         },
     },
 });
-
-marked.use(
-    markedKatex({
-        throwOnError: false,
-    })
-);
 
 function randomSelectAgentIcon() {
     return agentIcons[Math.floor(Math.random() * agentIcons.length)];

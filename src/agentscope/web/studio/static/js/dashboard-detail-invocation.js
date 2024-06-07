@@ -14,7 +14,7 @@ function initializeDashboardDetailInvocationPage(runDir) {
                 language: "json",
                 theme: "vs-light",
                 minimap: {
-                    enabled: false, // 禁用minimap
+                    enabled: false,
                 },
                 scrollBeyondLastLine: false,
                 readOnly: true,
