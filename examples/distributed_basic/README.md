@@ -1,7 +1,7 @@
-# Distributed Dialog System Example
+# Distributed Conversation
 
 This example will show
-- How to set up and run a distributed dialog system.
+- How to set up and run a distributed conversation.
 - How to configure and use different language models in the system.
 
 ## Background
