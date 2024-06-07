@@ -48,7 +48,6 @@ class HuggingFaceWrapper(ModelWrapperBase):
         output_dir: Optional[str] = None,
         device: Optional[torch.device] = None,
         local_model_path: Optional[str] = None,
-        local_tokenizer_path: Optional[str] = None,
         fine_tune_config: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
     ) -> None:
@@ -72,7 +71,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
             device (torch.device, optional): Device to run the model on.
                                              Default to GPU if available.
             local_model_path (str, optional): Local file path to a
-                                              pre-trained model.
+                                              pre-trained model and its tokenizer.
             fine_tune_config (dict, optional): Configuration for
                                                fine-tuning the model.
             **kwargs: Additional keyword arguments.
@@ -103,7 +102,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
         )
         self.load_tokenizer(
             pretrained_model_name_or_path,
-            local_tokenizer_path=local_tokenizer_path,
+            local_model_path=local_model_path,
         )
 
         if data_path is not None:
@@ -250,6 +249,9 @@ class HuggingFaceWrapper(ModelWrapperBase):
         if bnb_config_default:
             bnb_config = BitsAndBytesConfig(**bnb_config_default)
 
+        self.lora_config = None
+        lora_config_default = {}
+
         try:
             if local_model_path is None:
                 self.model = AutoModelForCausalLM.from_pretrained(
@@ -263,6 +265,14 @@ class HuggingFaceWrapper(ModelWrapperBase):
                     ),
                     token=self.huggingface_token,
                 )
+
+                if fine_tune_config is not None:
+                    if fine_tune_config.get("lora_config") is not None:
+                        lora_config_default.update(fine_tune_config["lora_config"])
+                if lora_config_default != {}:
+                    self.lora_config = LoraConfig(**lora_config_default)
+                    self.model = get_peft_model(self.model, self.lora_config)
+
                 info_msg = (
                     f"Successfully loaded new model "
                     f"'{pretrained_model_name_or_path}' from "
@@ -280,6 +290,14 @@ class HuggingFaceWrapper(ModelWrapperBase):
                     ),
                     local_files_only=True,
                 )
+
+                if fine_tune_config is not None:
+                    if fine_tune_config.get("lora_config") is not None:
+                        lora_config_default.update(fine_tune_config["lora_config"])
+                if lora_config_default != {}:
+                    lora_config = LoraConfig(**lora_config_default)
+                    self.model = get_peft_model(self.model, lora_config)
+
                 info_msg = (
                     f"Successfully loaded new model "
                     f"'{pretrained_model_name_or_path}' from "
@@ -304,14 +322,15 @@ class HuggingFaceWrapper(ModelWrapperBase):
     def load_tokenizer(
         self,
         pretrained_model_name_or_path: Optional[str] = None,
-        local_tokenizer_path: Optional[str] = None,
+        local_model_path: Optional[str] = None,
     ) -> None:
         """
         Load the tokenizer from a local path.
 
         Arguments:
-            local_tokenizer_path (str): The file path to the
-                                        tokenizer to be loaded.
+            local_model_path (str): The file path to the
+                                    tokenizer to be loaded
+                                    (same as `local_model_path`).
             pretrained_model_name_or_path (str): An identifier
                                                 for the model on Huggingface.
             fine_tune_config (dict, optional): Configuration options for
@@ -325,7 +344,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
         """
 
         try:
-            if local_tokenizer_path is None:
+            if local_model_path is None:
                 self.tokenizer = AutoTokenizer.from_pretrained(
                     pretrained_model_name_or_path,
                     token=self.huggingface_token,
@@ -338,13 +357,13 @@ class HuggingFaceWrapper(ModelWrapperBase):
 
             else:
                 self.tokenizer = AutoTokenizer.from_pretrained(
-                    local_tokenizer_path,
+                    local_model_path,
                 )
                 # log the successful tokenizer loading
                 logger.info(
                     f"Successfully loaded new tokenizer for model "
                     f"'{pretrained_model_name_or_path}'"
-                    f" from '{local_tokenizer_path}'",
+                    f" from '{local_model_path}'",
                 )
             self.tokenizer.add_special_tokens({"pad_token": "[PAD]"})
 
@@ -354,7 +373,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
             error_message = (
                 f"Failed to load tokenizer for model"
                 f" '{pretrained_model_name_or_path}' from "
-                f"'{local_tokenizer_path}': {e}"
+                f"'{local_model_path}': {e}"
             )
             logger.error(error_message)
 
@@ -484,9 +503,6 @@ class HuggingFaceWrapper(ModelWrapperBase):
 
         formatted_dataset = dataset_reduced.train_test_split(test_size=0.1)
 
-        lora_config = None
-        lora_config_default = {}
-
         training_defaults = {
             "per_device_train_batch_size": 1,
             "gradient_accumulation_steps": 4,
@@ -498,17 +514,11 @@ class HuggingFaceWrapper(ModelWrapperBase):
         }
 
         if fine_tune_config is not None:
-            if fine_tune_config.get("lora_config") is not None:
-                lora_config_default.update(fine_tune_config["lora_config"])
             if fine_tune_config.get("training_args") is not None:
                 training_defaults.update(fine_tune_config["training_args"])
 
         if output_dir is not None:
             training_defaults["output_dir"] = output_dir
-
-        if lora_config_default:
-            lora_config = LoraConfig(**lora_config_default)
-            model = get_peft_model(model, lora_config)
 
         collator = DataCollatorForCompletionOnlyLM(
             response_template=" ### Answer:",
@@ -524,7 +534,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
             train_dataset=formatted_dataset["train"],
             eval_dataset=formatted_dataset["test"],
             **(
-                {"peft_config": lora_config} if lora_config is not None else {}
+                {"peft_config": self.lora_config} if self.lora_config is not None else {}
             ),
             args=trainer_args,
             max_seq_length=2048,
@@ -568,20 +578,5 @@ class HuggingFaceWrapper(ModelWrapperBase):
         else:
             model_path = os.path.join(os.path.dirname(__file__), model_name)
         trainer.save_model(model_path)
-
-        # save tokenizer
-        tokenizer_name_temp = model.config.name_or_path.split("/")[-1]
-        tokenizer_name = f"sft_{tokenizer_name_temp}_tokenizer_{time_string}"
-        if output_dir is not None:
-            tokenizer_path = os.path.join(
-                output_dir,
-                tokenizer_name,
-            )
-        else:
-            tokenizer_path = os.path.join(
-                os.path.dirname(__file__),
-                tokenizer_name,
-            )
-        tokenizer.save_pretrained(tokenizer_path)
 
         return model

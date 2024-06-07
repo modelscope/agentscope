@@ -30,8 +30,8 @@ def main() -> None:
                 # Or another generative model of your choice.
                 # Needed from loading from Hugging Face.
                 "pretrained_model_name_or_path": "google/gemma-7b",
-                # "local_model_path":  # Specify your local model path
-                # "local_tokenizer_path":  # Specify your local tokenizer path
+                # "local_model_path": , # Specify your local model path
+                # "local_tokenizer_path":,  # Specify your local tokenizer path
                 "max_length": 128,
                 # Device for inference. Fine-tuning occurs on gpus.
                 "device": "cuda",
@@ -47,7 +47,13 @@ def main() -> None:
                 # `lora_config` and `training_args` follow
                 # the standard lora and sfttrainer fields.
                 "fine_tune_config": {
-                    "lora_config": {"r": 16, "lora_alpha": 32},
+                    "lora_config": {
+                        "r": 16,
+                        "lora_alpha": 32,
+                        "lora_dropout": 0.05,
+                        "bias": "none",
+                        "task_type": "CAUSAL_LM",
+                    },
                     "training_args": {
                         "num_train_epochs": 5,
                         "logging_steps": 1,
