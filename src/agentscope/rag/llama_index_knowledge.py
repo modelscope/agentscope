@@ -392,9 +392,7 @@ class LlamaIndexKnowledge(Knowledge):
         Set the transformations as needed, or just use the default setting.
 
         Args:
-            config (dict): the knowledge_config loaded from the json file,
-                           containing the store_and_index config that specifies
-                           the configs for setting the transformations details.
+            config (dict): a dictionary containing configurations.
         """
         if "store_and_index" in config:
             temp = self._prepare_args_from_config(
