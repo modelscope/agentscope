@@ -52,6 +52,12 @@ function initializeDashboardDetailInvocationPage(runDir) {
                 layout: "fitColumns",
                 placeholder:
                     "<div class='content-placeholder'>No invocation records available.</div>",
+                initialSort: [
+                    {
+                        column: "timestamp",
+                        dir: "asc",
+                    },
+                ],
             });
 
             // Set up row click event
