@@ -392,7 +392,7 @@ class LlamaIndexKnowledge(Knowledge):
         Set the transformations as needed, or just use the default setting.
 
         Args:
-            config (dict): a dictionary containing configurations
+            config (dict): a dictionary containing configurations.
         """
         if "store_and_index" in config:
             temp = self._prepare_args_from_config(

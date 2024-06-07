@@ -6,7 +6,7 @@ with LlamaIndex.
 Notice, this is a Beta version of RAG agent.
 """
 
-from typing import Optional, Any
+from typing import Any
 from loguru import logger
 
 from agentscope.agents.agent import AgentBase
@@ -31,7 +31,6 @@ class LlamaIndexAgent(AgentBase):
         name: str,
         sys_prompt: str,
         model_config_name: str,
-        memory_config: Optional[dict] = None,
         knowledge_list: list[Knowledge] = None,
         knowledge_id_list: list[str] = None,
         similarity_top_k: int = None,
@@ -48,8 +47,6 @@ class LlamaIndexAgent(AgentBase):
                 system prompt for the RAG agent
             model_config_name (str):
                 language model for the agent
-            memory_config (dict):
-                memory configuration
             knowledge_list (list[Knowledge]):
                 a list of knowledge.
                 User can choose to pass a list knowledge object
@@ -77,7 +74,6 @@ class LlamaIndexAgent(AgentBase):
             name=name,
             sys_prompt=sys_prompt,
             model_config_name=model_config_name,
-            memory_config=memory_config,
         )
         self.knowledge_list = knowledge_list or []
         self.knowledge_id_list = knowledge_id_list or []
