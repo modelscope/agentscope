@@ -13,6 +13,13 @@
     cursor: pointer;
 }
 
+.dashboard-subtitlebar-span {
+    display: flex;
+    height: 50px;
+    width: fit-content;
+    align-items: center;
+}
+
 .dashboard-titlebar-svg {
     display: flex;
     width: 15px;
