@@ -23,8 +23,8 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, join_room, leave_room
 
+from agentscope._runtime import _runtime
 from agentscope.constants import _DEFAULT_SUBDIR_CODE, _DEFAULT_SUBDIR_INVOKE
-from agentscope.file_manager import file_manager
 from agentscope.utils.tools import _is_process_alive
 
 _app = Flask(__name__)
@@ -41,7 +41,6 @@ _socketio = SocketIO(_app)
 
 # This will enable CORS for all routes
 CORS(_app)
-
 
 _RUNS_DIRS = []
 
@@ -126,13 +125,12 @@ class _MessageTable(_db.Model):  # type: ignore[name-defined]
     id = _db.Column(_db.Integer, primary_key=True)
     run_id = _db.Column(
         _db.String,
-        _db.ForeignKey("run.run_id"),
+        _db.ForeignKey("run_table.run_id"),
         nullable=False,
     )
     name = _db.Column(_db.String)
     role = _db.Column(_db.String)
     content = _db.Column(_db.String)
-    # todo: support list of url in future versions
     url = _db.Column(_db.String)
     meta = _db.Column(_db.String)
     timestamp = _db.Column(_db.String)
@@ -276,9 +274,9 @@ def _push_message() -> Response:
     name = data["name"]
     role = data["role"]
     content = data["content"]
-    metadata = json.dumps(data["metadata"])
+    metadata = data["metadata"]
     timestamp = data["timestamp"]
-    url = json.dumps(data["url"])
+    url = data["url"]
 
     try:
         new_message = _MessageTable(
@@ -286,27 +284,32 @@ def _push_message() -> Response:
             name=name,
             role=role,
             content=content,
-            meta=metadata,
-            url=url,
+            # Before storing into the database, we need to convert the url into
+            # a string
+            meta=json.dumps(metadata),
+            url=json.dumps(url),
             timestamp=timestamp,
         )
         _db.session.add(new_message)
         _db.session.commit()
     except Exception as e:
-        print(e)
-        abort(400, "Fail to put message")
+        abort(400, "Fail to put message with error: " + str(e))
+
+    data = {
+        "run_id": run_id,
+        "name": name,
+        "role": role,
+        "content": content,
+        "url": url,
+        "metadata": metadata,
+        "timestamp": timestamp,
+    }
+
+    print("display_message", data, "url's type is ", type(url))
 
     _socketio.emit(
         "display_message",
-        {
-            "run_id": run_id,
-            "name": name,
-            "role": role,
-            "content": content,
-            "url": url,
-            "metadata": metadata,
-            "timestamp": timestamp,
-        },
+        data,
         room=run_id,
     )
     print("Flask: send display_message")
@@ -486,7 +489,7 @@ def _convert_config_to_py_and_run() -> Response:
     """
     content = request.json.get("data")
     studio_url = request.url_root.rstrip("/")
-    run_id = file_manager.generate_new_runtime_id()
+    run_id = _runtime.generate_new_runtime_id()
     status, py_code = _convert_to_py(
         content,
         runtime_id=run_id,
@@ -579,7 +582,7 @@ def _request_user_input(data: dict) -> None:
 @_socketio.on("user_input_ready")
 def _user_input_ready(data: dict) -> None:
     """Get user input and send to the agent"""
-    print("Flask: receive user_input_ready")
+    print("Flask: receive user_input_ready", data)
 
     run_id = data["run_id"]
     agent_id = data["agent_id"]

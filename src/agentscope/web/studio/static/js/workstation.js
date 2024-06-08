@@ -1147,7 +1147,7 @@ function changeLockMode(option) {
     let lockSvg = document.getElementById('lock-svg');
     let unlockSvg = document.getElementById('unlock-svg');
     if (option === 'lock') {
-        editor.editor_mode = 'fixed';
+        editor.editor_mode = 'edit';
         lockSvg.style.display = 'none';
         unlockSvg.style.display = 'block';
     } else {

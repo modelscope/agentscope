@@ -1,7 +1,6 @@
 :root {
-    --code-list-width: 300px;
-    --code-list-margin-right: 50px;
-    --code-content-width: calc(100% - var(--code-list-width) - var(--code-list-margin-right));
+    --code-list-width: 350px;
+    --code-content-width: calc(100% - var(--code-list-width));
 }
 
 #code-body {
@@ -9,19 +8,15 @@
     flex-direction: row;
     height: 100%;
     width: 100%;
-    padding: 50px;
-    box-sizing: border-box;
-
 }
 
 #code-list {
     display: flex;
+    flex-direction: column;
     height: 100%;
     width: var(--code-list-width);
-    flex-direction: column;
-    border: 1px solid var(--border-color);
     box-sizing: border-box;
-    margin-right: var(--code-list-margin-right);
+    border: 0;
 }
 
 #code-list ul {

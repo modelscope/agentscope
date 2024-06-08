@@ -5,6 +5,8 @@ let chatRowOtherTemplate,
 
 let currentRuntimeInfo, currentMsgInfo, currentAgentInfo;
 
+let randomNumberGenerator;
+
 let infoClusterize;
 
 let inputFileList = document.getElementById("chat-control-file-list");
@@ -41,18 +43,18 @@ marked.use({
                 : "plaintext";
             // Use Highlight.js to highlight code blocks
             return `<pre><code class="hljs ${language}">${
-                hljs.highlight(code, { language }).value
+                hljs.highlight(code, {language}).value
             }</code></pre>`;
         },
     },
 });
 
 function randomSelectAgentIcon() {
-    return agentIcons[Math.floor(Math.random() * agentIcons.length)];
+    return agentIcons[Math.floor(randomNumberGenerator.nextFloat() * agentIcons.length)];
 }
 
 function randomIntFromInterval(min, max) {
-    return Math.floor(Math.random() * (max - min + 1) + min);
+    return Math.floor(randomNumberGenerator.nextFloat() * (max - min + 1) + min);
 }
 
 function hslToHex(h, s, l) {
@@ -108,6 +110,7 @@ function addChatRow(index, pMsg) {
 }
 
 function _determineFileType(url) {
+    console.log("The url: ", url)
     // Image
     let img_suffix = [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg", ".webp"];
     // Video
@@ -141,11 +144,7 @@ function _determineFileType(url) {
     return "file";
 }
 
-function _renderMultiModalData(url) {
-    // TODO: url is a list
-    if (!url || url === "") {
-        return "";
-    }
+function _getMultiModalComponent(url) {
     // Determine the type of the file
     let urlType = _determineFileType(url);
 
@@ -170,13 +169,35 @@ function _renderMultiModalData(url) {
     }
 }
 
+// Render multiple urls in a chat bubble
+function _renderMultiModalUrls(urls) {
+    console.log("The urls: ", urls, urls == null, typeof urls)
+    if (urls == null || urls === "") {
+        return ""
+    }
+
+    if (typeof urls === "string") {
+        urls = [urls]
+    }
+
+    if (Array.isArray(urls) && urls.length > 0) {
+        let innerHtml = "";
+        for (let i = 0; i < urls.length; i++) {
+            innerHtml += _getMultiModalComponent(urls[i]);
+        }
+        return innerHtml;
+    } else {
+        return ""
+    }
+}
+
 function _addUserChatRow(index, pMsg) {
     const template = chatRowUserTemplate.cloneNode(true);
     // template.querySelector('.chat-icon').
     template.querySelector(".chat-name").textContent = pMsg.name;
     let chatBubble = template.querySelector(".chat-bubble");
     chatBubble.textContent += pMsg.content;
-    chatBubble.innerHTML += _renderMultiModalData(pMsg.url);
+    chatBubble.innerHTML += _renderMultiModalUrls(pMsg.url);
     template.querySelector(".chat-row").setAttribute("data-index", index);
     template
         .querySelector(".chat-row")
@@ -206,7 +227,7 @@ function _addAssistantChatRow(index, pMsg) {
     template.querySelector(".chat-name").textContent = pMsg.name;
     let chatBubble = template.querySelector(".chat-bubble");
     chatBubble.innerHTML += marked.parse(pMsg.content, marked_options);
-    chatBubble.innerHTML += _renderMultiModalData(pMsg.url);
+    chatBubble.innerHTML += _renderMultiModalUrls(pMsg.url);
     template.querySelector(".chat-row").setAttribute("data-index", index);
     template
         .querySelector(".chat-row")
@@ -219,7 +240,7 @@ function _addSystemChatRow(index, pMsg) {
     template.querySelector(".chat-name").textContent = pMsg.name;
     let chatBubble = template.querySelector(".chat-bubble");
     chatBubble.innerHTML += marked.parse(pMsg.content, marked_options);
-    chatBubble.innerHTML += _renderMultiModalData(pMsg.url);
+    chatBubble.innerHTML += _renderMultiModalUrls(pMsg.url);
     template.querySelector(".chat-row").setAttribute("data-index", index);
     template
         .querySelector(".chat-row")
@@ -338,6 +359,8 @@ function addFileListItem(url) {
     };
     newItem.appendChild(deleteBtn);
 
+    console.log("innerHtml: ", newItem.innerHTML);
+    console.log("inputFileList: ", inputFileList);
     inputFileList.appendChild(newItem);
     inputFileList.scrollLeft =
         inputFileList.scrollWidth - inputFileList.clientWidth;
@@ -353,6 +376,10 @@ function showUrlPrompt() {
 
 function initializeDashboardDetailDialoguePage(pRuntimeInfo) {
     console.log("Initialize with runtime id: " + pRuntimeInfo.run_id);
+
+    // Initialize the random seed generator by run_id
+    randomNumberGenerator = new SeededRand(_hashStringToSeed(pRuntimeInfo.run_id));
+
     // Reset the flag
     waitForUserInput = false;
 
@@ -377,9 +404,9 @@ function initializeDashboardDetailDialoguePage(pRuntimeInfo) {
             // Fetch the chat history from backend
             fetch(
                 "/api/messages/run/" +
-                    pRuntimeInfo.run_id +
-                    "?run_dir=" +
-                    pRuntimeInfo.run_dir
+                pRuntimeInfo.run_id +
+                "?run_dir=" +
+                pRuntimeInfo.run_dir
             )
                 .then((response) => {
                     if (!response.ok) {
@@ -388,7 +415,7 @@ function initializeDashboardDetailDialoguePage(pRuntimeInfo) {
                     return response.json();
                 })
                 .then((data) => {
-                    let send_btn = document.getElementById(
+                    let sendBtn = document.getElementById(
                         "chat-control-send-btn"
                     );
                     // Load the chat history
@@ -432,18 +459,16 @@ function initializeDashboardDetailDialoguePage(pRuntimeInfo) {
                     var socket = io();
                     socket.on("connect", () => {
                         // Tell flask server the web ui is ready
-                        socket.emit("join", { run_id: pRuntimeInfo.run_id });
+                        socket.emit("join", {run_id: pRuntimeInfo.run_id});
 
-                        send_btn.onclick = () => {
+                        sendBtn.onclick = () => {
                             var message = document.getElementById(
                                 "chat-input-textarea"
                             ).value;
 
                             // Send the message to the flask server according to the current request
-                            let url = "";
-                            if (userInputRequest.require_url) {
-                                url = _obtainAllUrlFromFileList();
-                            }
+                            let url = _obtainAllUrlFromFileList();
+                            console.log("When sending messages, the url is: ", url)
                             socket.emit("user_input_ready", {
                                 run_id: userInputRequest.run_id,
                                 agent_id: userInputRequest.agent_id,
@@ -521,6 +546,7 @@ function showInDetail(detailType) {
             break;
         case "message":
             document.getElementById("msgSwitchBtn").classList.add("selected");
+            console.log("Show message information: ", currentMsgInfo);
             _showInfoInDialogueDetailContent(currentMsgInfo);
             break;
         case "agent":
@@ -528,4 +554,30 @@ function showInDetail(detailType) {
             _showInfoInDialogueDetailContent(currentAgentInfo);
             break;
     }
+}
+
+function _hashStringToSeed(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Turn it into a 32bit integer
+    }
+    return hash;
+}
+
+// Linear congruential generator
+class SeededRand {
+  constructor(seed) {
+    this.modulus = 2147483648; // 2**31
+    this.multiplier = 48271; // 常数
+    this.increment = 0; // 常数
+    this.seed = seed % this.modulus;
+    if(this.seed <= 0) this.seed += this.modulus - 1;
+  }
+
+  nextFloat() {
+    this.seed = (this.seed * this.multiplier + this.increment) % this.modulus;
+    return this.seed / this.modulus;
+  }
 }
