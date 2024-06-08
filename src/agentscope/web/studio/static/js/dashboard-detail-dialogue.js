@@ -366,12 +366,16 @@ function addFileListItem(url) {
         inputFileList.scrollWidth - inputFileList.clientWidth;
 }
 
-function showUrlPrompt() {
+function _showUrlPrompt() {
     const userInput = prompt("Please enter a local or web URL:", "");
 
     if (userInput !== null && userInput !== "") {
         addFileListItem(userInput);
     }
+}
+
+function _isMacOS() {
+    return navigator.platform.toUpperCase().indexOf("MAC") >= 0;
 }
 
 function initializeDashboardDetailDialoguePage(pRuntimeInfo) {
@@ -385,6 +389,42 @@ function initializeDashboardDetailDialoguePage(pRuntimeInfo) {
 
     // Empty the record dictionary
     nameToIconAndColor = {};
+
+    let sendBtn = document.getElementById(
+        "chat-control-send-btn"
+    );
+
+    let inputTextArea = document.getElementById(
+        "chat-input-textarea"
+    )
+
+    inputTextArea.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" && !e.ctrlKey) {
+            e.preventDefault();
+
+            if (sendBtn.disabled === false) {
+                sendBtn.click();
+            }
+        } else if (e.key === "Enter" && e.ctrlKey) {
+            e.preventDefault();
+
+            let cursorPosition = inputTextArea.selectionStart;
+            let textBeforeCursor = inputTextArea.value.substring(0, cursorPosition);
+            let textAfterCursor = inputTextArea.value.substring(cursorPosition);
+
+            inputTextArea.value = textBeforeCursor + "\n" + textAfterCursor;
+
+            // Update the cursor position
+            inputTextArea.selectionStart = inputTextArea.selectionEnd = cursorPosition + 1;
+        }
+    })
+
+    // Set the placeholder according to the platform
+    if (_isMacOS()) {
+        inputTextArea.placeholder = "Input message here, ⌘ + Enter for new line";
+    } else {
+        inputTextArea.placeholder = "Input message here, Ctrl + Enter for new line";
+    }
 
     // Load the chat template
     loadChatTemplate()
@@ -415,9 +455,6 @@ function initializeDashboardDetailDialoguePage(pRuntimeInfo) {
                     return response.json();
                 })
                 .then((data) => {
-                    let sendBtn = document.getElementById(
-                        "chat-control-send-btn"
-                    );
                     // Load the chat history
                     let chatRows = data.map((msg, index) =>
                         addChatRow(index, msg)
@@ -568,16 +605,16 @@ function _hashStringToSeed(str) {
 
 // Linear congruential generator
 class SeededRand {
-  constructor(seed) {
-    this.modulus = 2147483648; // 2**31
-    this.multiplier = 48271; // 常数
-    this.increment = 0; // 常数
-    this.seed = seed % this.modulus;
-    if(this.seed <= 0) this.seed += this.modulus - 1;
-  }
+    constructor(seed) {
+        this.modulus = 2147483648; // 2**31
+        this.multiplier = 48271; // 常数
+        this.increment = 0; // 常数
+        this.seed = seed % this.modulus;
+        if (this.seed <= 0) this.seed += this.modulus - 1;
+    }
 
-  nextFloat() {
-    this.seed = (this.seed * this.multiplier + this.increment) % this.modulus;
-    return this.seed / this.modulus;
-  }
+    nextFloat() {
+        this.seed = (this.seed * this.multiplier + this.increment) % this.modulus;
+        return this.seed / this.modulus;
+    }
 }

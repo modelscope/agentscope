@@ -16,7 +16,7 @@
                 </div>
                 <button id="chat-control-url-btn" class="chat-control-btn"
                      title="Add local or web URL"
-                     onclick="showUrlPrompt();return false;">
+                     onclick="_showUrlPrompt();return false;">
                     <svg viewBox="0 0 1024 1024"
                          xmlns="http://www.w3.org/2000/svg">
                         <path d="M543.76192 677.376a220.8 220.8 0 0 1-158.72-64 229.76 229.76 0 0 1-57.6-96.64 32.64 32.64 0 0 1 22.4-39.68 32 32 0 0 1 39.68 22.4c8.512 25.216 23.296 47.872 42.88 65.92a165.12 165.12 0 0 0 227.84 0l228.48-229.12a160.64 160.64 0 0 0 0-227.2 164.48 164.48 0 0 0-227.2 0l-158.08 156.16a30.72 30.72 0 0 1-44.8 0 32 32 0 0 1 0-45.44l154.88-154.88a229.76 229.76 0 0 1 320 0 225.28 225.28 0 0 1 0 320l-231.04 226.56a220.8 220.8 0 0 1-158.72 65.92z"></path>
@@ -24,8 +24,7 @@
                     </svg>
                 </button>
                 <button id="chat-control-send-btn"
-                        class="chat-control-btn unselectable-text"
-                        data-i18n="btn-send">
+                        class="chat-control-btn unselectable-text">
                     Send
                     <svg class="chat-control-send-btn-svg"
                          viewBox="0 0 1024 1024"
@@ -37,7 +36,7 @@
         </div>
     </div>
     <div id="chat-detail" class="clusterize-scroll">
-        <div id="dialogue-info-title" data-i18n="title-runtime"></div>
+        <div id="dialogue-info-title"></div>
         <div id="dialogue-detail-content" class="clusterize-content">
             <div class="clusterize-no-data"></div>
         </div>

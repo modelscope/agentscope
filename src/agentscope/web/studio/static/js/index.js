@@ -9,30 +9,6 @@ let inGuidePage = true;
 // When navigation bar collapsed, only when the mouse leaves the navigation bar, then navigation bar will be able to be expanded
 let activeExpanded = false;
 
-// The current language of AgentScope Studio
-let currentLang = "en";
-
-// TODO: add button to switch language
-loadLang(currentLang);
-
-// Load the language file
-function loadLang(lang) {
-    fetch(`static/json/language.json`)
-        .then((response) => response.json())
-        .then((data) => {
-            console.log("Begin to load language file");
-            document.querySelectorAll("[data-i18n]").forEach((el) => {
-                const key = el.getAttribute("data-i18n");
-                console.log("Replace " + key);
-                el.innerText = data[lang][key] || "Undefined";
-            });
-            console.log("Finish loading language file");
-        })
-        .catch((error) =>
-            console.error("Error loading the language file:", error)
-        );
-}
-
 // Check if the script is already loaded
 function isScriptLoaded(src) {
     return Array.from(document.scripts).some((script) => {

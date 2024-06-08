@@ -5,6 +5,7 @@ import os
 import re
 import subprocess
 import tempfile
+import threading
 import traceback
 from datetime import datetime
 from typing import Tuple, Union, Any, Optional
@@ -482,6 +483,12 @@ def _convert_config_to_py() -> Response:
     return jsonify(py_code=py_code, is_success=status)
 
 
+def _cleanup_process(proc: subprocess.Popen) -> None:
+    """Clean up the process for running application started by workstation."""
+    proc.wait()
+    _app.logger.info(f"The process with pid {proc.pid} is closed")
+
+
 @_app.route("/convert-to-py-and-run", methods=["POST"])
 def _convert_config_to_py_and_run() -> Response:
     """
@@ -505,9 +512,10 @@ def _convert_config_to_py_and_run() -> Response:
             ) as tmp:
                 tmp.write(py_code)
                 tmp.flush()
-                subprocess.Popen(  # pylint: disable=R1732
+                proc = subprocess.Popen(  # pylint: disable=R1732
                     ["python", tmp.name],
                 )
+                threading.Thread(target=_cleanup_process, args=(proc,)).start()
         except Exception as e:
             status, py_code = "False", _remove_file_paths(
                 f"Error: {e}\n\n" f"Traceback:\n" f"{traceback.format_exc()}",
