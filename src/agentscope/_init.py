@@ -14,7 +14,7 @@ from .utils.monitor import MonitorFactory
 from .models import read_model_configs
 from .constants import _DEFAULT_DIR
 from .constants import _DEFAULT_LOG_LEVEL
-from .web.client import _studio_client
+from .web.studio._client import _studio_client
 
 # init setting
 _INIT_SETTINGS = {}

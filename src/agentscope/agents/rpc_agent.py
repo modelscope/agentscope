@@ -9,7 +9,7 @@ from agentscope.message import (
 )
 from agentscope.rpc import RpcAgentClient
 from agentscope.server.launcher import RpcAgentServerLauncher
-from agentscope.web.client import _studio_client
+from agentscope.web.studio._client import _studio_client
 
 
 class RpcAgent(AgentBase):

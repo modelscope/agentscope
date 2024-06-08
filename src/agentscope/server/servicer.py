@@ -27,7 +27,7 @@ except ImportError as import_error:
     )
 
 from .._runtime import _runtime
-from ..web.client import _studio_client
+from ..web.studio._client import _studio_client
 from ..agents.agent import AgentBase
 from ..exception import StudioRegisterError
 from ..rpc.rpc_agent_pb2_grpc import RpcAgentServicer

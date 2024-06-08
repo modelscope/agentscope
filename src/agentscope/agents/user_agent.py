@@ -6,7 +6,7 @@ from typing import Optional
 from loguru import logger
 
 from agentscope.agents import AgentBase
-from agentscope.web.client import _studio_client
+from agentscope.web.studio._client import _studio_client
 from agentscope.message import Msg
 from agentscope.web.gradio.utils import user_input
 
