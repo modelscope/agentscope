@@ -34,6 +34,7 @@ if __name__ == "__main__":
     args = parse_args()
     agentscope.init(
         model_configs="configs/model_configs.json",
+        project="Parallel Optimization",
     )
 
     WORKER_NUM = 3

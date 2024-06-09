@@ -29,6 +29,7 @@ def main() -> None:
     survivors = agentscope.init(
         model_configs="./configs/model_configs.json",
         agent_configs="./configs/agent_configs.json",
+        project="Werewolf",
     )
 
     roles = ["werewolf", "werewolf", "villager", "villager", "seer", "witch"]
