@@ -8,7 +8,7 @@ from .user_agent import UserAgent
 from .text_to_image_agent import TextToImageAgent
 from .rpc_agent import RpcAgent
 from .react_agent import ReActAgent
-from .rag_agents import LlamaIndexAgent
+from .rag_agent import LlamaIndexAgent
 
 
 __all__ = [
