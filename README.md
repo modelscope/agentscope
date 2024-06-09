@@ -284,47 +284,31 @@ while True:
 
 AgentScope provides an easy-to-use runtime user interface capable of
 displaying multimodal output on the front end, including text, images,
-audio and video. To start a studio, you should install the `full` version
-of AgentScope.
+audio and video.
 
-```
-# On windows
-pip install -e .[full]
-# On mac
-pip install -e .\[full\]
-```
+Refer to our [tutorial](https://modelscope.github.io/agentscope/en/tutorial/209-gui.html) for more details.
 
-Once installed, you can just run
-
-```
-as_studio  path/to/your/script.py
-```
-
-Then the studio will be launched at `localhost:xxxx`, and you can see the UI similar to the
-following:
-![](https://gw.alicdn.com/imgextra/i3/O1CN01X673v81WaHV1oCxEN_!!6000000002804-0-tps-2992-1498.jpg)
-To be able to use the `as_studio` functionality, please implement the `main` function in your code. More detail can be found in [src/agentscope/web/README.md](https://github.com/modelscope/agentscope/blob/main/src/agentscope/web/README.md).
+<h5 align="center">
+<img src="https://img.alicdn.com/imgextra/i4/O1CN015kjnkd1xdwJoNxqLZ_!!6000000006467-0-tps-3452-1984.jpg" width="600" alt="agentscope-logo">
+</h5>
 
 ## Tutorial
 
-- [Getting Started](https://modelscope.github.io/agentscope/en/tutorial/quick_start.html)
-  - [About AgentScope](https://modelscope.github.io/agentscope/en/tutorial/101-agentscope.html)
-  - [Installation](https://modelscope.github.io/agentscope/en/tutorial/102-installation.html)
-  - [Quick Start](https://modelscope.github.io/agentscope/en/tutorial/103-example.html)
-  - [Crafting Your First Application](https://modelscope.github.io/agentscope/en/tutorial/104-usecase.html)
-  - [Logging and WebUI](https://modelscope.github.io/agentscope/en/tutorial/105-logging.html#)
-- [Advanced Exploration](https://modelscope.github.io/agentscope/en/tutorial/advance.html)
-  - [Customize Your Own Agent](https://modelscope.github.io/agentscope/en/tutorial/201-agent.html)
-  - [Pipeline and MsgHub](https://modelscope.github.io/agentscope/en/tutorial/202-pipeline.html)
-  - [Model](https://modelscope.github.io/agentscope/en/tutorial/203-model.html)
-  - [Service](https://modelscope.github.io/agentscope/en/tutorial/204-service.html)
-  - [Memory](https://modelscope.github.io/agentscope/en/tutorial/205-memory.html)
-  - [Prompt Engineering](https://modelscope.github.io/agentscope/en/tutorial/206-prompt.html)
-  - [Monitor](https://modelscope.github.io/agentscope/en/tutorial/207-monitor.html)
-  - [Distribution](https://modelscope.github.io/agentscope/en/tutorial/208-distribute.html)
-- [Get Involved](https://modelscope.github.io/agentscope/en/tutorial/contribute.html)
-  - [Join AgentScope Community](https://modelscope.github.io/agentscope/en/tutorial/301-community.html)
-  - [Contribute to AgentScope](https://modelscope.github.io/agentscope/en/tutorial/302-contribute.html)
+- [About AgentScope](https://modelscope.github.io/agentscope/zh_CN/tutorial/101-agentscope.html)
+- [Installation](https://modelscope.github.io/agentscope/zh_CN/tutorial/102-installation.html)
+- [Quick Start](https://modelscope.github.io/agentscope/zh_CN/tutorial/103-example.html)
+- [Model](https://modelscope.github.io/agentscope/zh_CN/tutorial/203-model.html)
+- [Prompt Engineering](https://modelscope.github.io/agentscope/zh_CN/tutorial/206-prompt.html)
+- [Agent](https://modelscope.github.io/agentscope/zh_CN/tutorial/201-agent.html)
+- [Memory](https://modelscope.github.io/agentscope/zh_CN/tutorial/205-memory.html)
+- [Response Parser](https://modelscope.github.io/agentscope/zh_CN/tutorial/203-parser.html)
+- [Tool](https://modelscope.github.io/agentscope/zh_CN/tutorial/204-service.html)
+- [Pipeline and MsgHub](https://modelscope.github.io/agentscope/zh_CN/tutorial/202-pipeline.html)
+- [Distribution](https://modelscope.github.io/agentscope/zh_CN/tutorial/208-distribute.html)
+- [AgentScope Studio](https://modelscope.github.io/agentscope/zh_CN/tutorial/209-gui.html)
+- [Logging](https://modelscope.github.io/agentscope/zh_CN/tutorial/105-logging.html)
+- [Monitor](https://modelscope.github.io/agentscope/zh_CN/tutorial/207-monitor.html)
+- [Example: Werewolf Game](https://modelscope.github.io/agentscope/zh_CN/tutorial/104-usecase.html)
 
 ## License
 
