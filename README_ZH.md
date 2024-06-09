@@ -30,6 +30,10 @@
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-06-09]** AgentScope v0.0.5 已经更新！在这个新版本中，我们开源了 [**AgentScope Workstation**](https://modelscope.github.io/agentscope/en/tutorial/209-gui.html)！
 
+<h5 align="center">
+<img src="https://img.alicdn.com/imgextra/i1/O1CN01RXAVVn1zUtjXVvuqS_!!6000000006718-1-tps-3116-1852.gif" width="600" alt="agentscope-logo">
+</h5>
+
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-05-24]** 我们很高兴地宣布 **AgentScope Workstation** 相关功能即将开源。我们的网站服务暂时下线。在线服务会很快升级重新上线，敬请期待...
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-05-15]** 用于解析模型格式化输出的**解析器**模块已经上线 AgentScope！更轻松的构建多智能体应用，使用方法请参考[教程](https://modelscope.github.io/agentscope/en/tutorial/203-parser.html)。与此同时，[`DictDialogAgent`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/agents/dict_dialog_agent.py) 类和 [狼人杀游戏](https://github.com/modelscope/agentscope/tree/main/examples/game_werewolf) 样例也已经同步更新！
@@ -253,46 +257,31 @@ while True:
 
 ### AgentScope前端
 
-AgentScope
-提供了一个易于使用的运行时用户界面，能够在前端显示多模态输出，包括文本、图像、音频和视频。要启动前端，需要先安装AgentScope完整版本。
+AgentScope 提供了一个易于使用的运行时用户界面，能够在前端显示多模态输出，包括文本、图像、音频和视频。
 
-```
-# On windows
-pip install -e .[full]
-# On mac
-pip install -e .\[full\]
-```
+参考我们的[教程](https://modelscope.github.io/agentscope/zh_CN/tutorial/209-gui.html)了解更多细节。
 
-然后运行
-
-```
-as_studio  path/to/your/script.py
-```
-
-前端就会在端口 `localhost:xxxx`上启动，打开后就能看到类似下图的界面：
-![](https://gw.alicdn.com/imgextra/i3/O1CN01X673v81WaHV1oCxEN_!!6000000002804-0-tps-2992-1498.jpg)
-为了能使用该前端功能，你需要在代码中实现`main`函数。更多详情请参见 [src/agentscope/web/README.md](src/agentscope/web/README.md)。
+<h5 align="center">
+<img src="https://img.alicdn.com/imgextra/i4/O1CN015kjnkd1xdwJoNxqLZ_!!6000000006467-0-tps-3452-1984.jpg" width="600" alt="agentscope-logo">
+</h5>
 
 ## 教程
 
-- [快速上手](https://modelscope.github.io/agentscope/zh_CN/tutorial/quick_start.html)
-  - [关于AgentScope](https://modelscope.github.io/agentscope/zh_CN/tutorial/101-agentscope.html)
-  - [安装](https://modelscope.github.io/agentscope/zh_CN/tutorial/102-installation.html)
-  - [快速开始](https://modelscope.github.io/agentscope/zh_CN/tutorial/103-example.html)
-  - [创建您的第一个应用](https://modelscope.github.io/agentscope/zh_CN/tutorial/104-usecase.html)
-  - [日志和WebUI](https://modelscope.github.io/agentscope/zh_CN/tutorial/105-logging.html#)
-- [进阶使用](https://modelscope.github.io/agentscope/zh_CN/tutorial/advance.html)
-  - [定制你自己的Agent](https://modelscope.github.io/agentscope/zh_CN/tutorial/201-agent.html)
-  - [Pipeline和MsgHub](https://modelscope.github.io/agentscope/zh_CN/tutorial/202-pipeline.html)
-  - [模型](https://modelscope.github.io/agentscope/zh_CN/tutorial/203-model.html)
-  - [服务函数](https://modelscope.github.io/agentscope/zh_CN/tutorial/204-service.html)
-  - [记忆](https://modelscope.github.io/agentscope/zh_CN/tutorial/205-memory.html)
-  - [提示工程](https://modelscope.github.io/agentscope/zh_CN/tutorial/206-prompt.html)
-  - [监控器](https://modelscope.github.io/agentscope/zh_CN/tutorial/207-monitor.html)
-  - [分布式](https://modelscope.github.io/agentscope/zh_CN/tutorial/208-distribute.html)
-- [参与贡献](https://modelscope.github.io/agentscope/zh_CN/tutorial/contribute.html)
-  - [加入AgentScope社区](https://modelscope.github.io/agentscope/zh_CN/tutorial/301-community.html)
-  - [贡献到AgentScope](https://modelscope.github.io/agentscope/zh_CN/tutorial/302-contribute.html)
+- [关于AgentScope](https://modelscope.github.io/agentscope/zh_CN/tutorial/101-agentscope.html)
+- [安装](https://modelscope.github.io/agentscope/zh_CN/tutorial/102-installation.html)
+- [快速开始](https://modelscope.github.io/agentscope/zh_CN/tutorial/103-example.html)
+- [模型](https://modelscope.github.io/agentscope/zh_CN/tutorial/203-model.html)
+- [提示工程](https://modelscope.github.io/agentscope/zh_CN/tutorial/206-prompt.html)
+- [Agent](https://modelscope.github.io/agentscope/zh_CN/tutorial/201-agent.html)
+- [记忆](https://modelscope.github.io/agentscope/zh_CN/tutorial/205-memory.html)
+- [结果解析](https://modelscope.github.io/agentscope/zh_CN/tutorial/203-parser.html)
+- [工具](https://modelscope.github.io/agentscope/zh_CN/tutorial/204-service.html)
+- [Pipeline和MsgHub](https://modelscope.github.io/agentscope/zh_CN/tutorial/202-pipeline.html)
+- [分布式](https://modelscope.github.io/agentscope/zh_CN/tutorial/208-distribute.html)
+- [AgentScope Studio](https://modelscope.github.io/agentscope/zh_CN/tutorial/209-gui.html)
+- [日志](https://modelscope.github.io/agentscope/zh_CN/tutorial/105-logging.html)
+- [监控器](https://modelscope.github.io/agentscope/zh_CN/tutorial/207-monitor.html)
+- [样例：狼人杀游戏](https://modelscope.github.io/agentscope/zh_CN/tutorial/104-usecase.html)
 
 ## License
 
