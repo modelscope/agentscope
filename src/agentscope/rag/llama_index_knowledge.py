@@ -30,17 +30,17 @@ try:
 except ImportError as import_error:
     from agentscope.utils.tools import ImportErrorReporter
 
-    BaseRetriever = ImportErrorReporter(import_error, "llama-index")
-    BaseEmbedding = ImportErrorReporter(import_error, "llama-index")
-    Embedding = ImportErrorReporter(import_error, "llama-index")
-    IngestionPipeline = ImportErrorReporter(import_error, "llama-index")
-    SentenceSplitter = ImportErrorReporter(import_error, "llama-index")
-    VectorStoreIndex = ImportErrorReporter(import_error, "llama-index")
-    StorageContext = ImportErrorReporter(import_error, "llama-index")
-    load_index_from_storage = ImportErrorReporter(import_error, "llama-index")
-    PrivateAttr = ImportErrorReporter(import_error, "llama-index")
-    Document = ImportErrorReporter(import_error, "llama-index")
-    TransformComponent = ImportErrorReporter(import_error, "llama-index")
+    BaseRetriever = ImportErrorReporter(import_error, "full")
+    BaseEmbedding = ImportErrorReporter(import_error, "full")
+    Embedding = ImportErrorReporter(import_error, "full")
+    IngestionPipeline = ImportErrorReporter(import_error, "full")
+    SentenceSplitter = ImportErrorReporter(import_error, "full")
+    VectorStoreIndex = ImportErrorReporter(import_error, "full")
+    StorageContext = ImportErrorReporter(import_error, "full")
+    load_index_from_storage = ImportErrorReporter(import_error, "full")
+    PrivateAttr = ImportErrorReporter(import_error, "full")
+    Document = ImportErrorReporter(import_error, "full")
+    TransformComponent = ImportErrorReporter(import_error, "full")
 
 from agentscope.file_manager import file_manager
 from agentscope.models import ModelWrapperBase
@@ -128,7 +128,7 @@ try:
             """Asynchronously get text embeddings."""
             return self._get_text_embeddings(texts)
 
-except TypeError:
+except Exception:
 
     class _EmbeddingModel:  # type: ignore[no-redef]
         """
@@ -328,7 +328,7 @@ class LlamaIndexKnowledge(Knowledge):
     def _docs_to_nodes(
         self,
         documents: List[Document],
-        transformations: Optional[list[TransformComponent]] = None,
+        transformations: Optional[list[Optional[TransformComponent]]] = None,
     ) -> Any:
         """
         Convert the loaded documents to nodes using transformations.
