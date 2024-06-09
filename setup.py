@@ -45,10 +45,8 @@ doc_requires = [
 test_requires = ["pytest", "pytest-cov", "pre-commit"]
 
 gradio_requires = [
-    "networkx",
     "gradio==4.19.1",
     "modelscope_studio==0.0.5",
-    "black",
 ]
 
 rag_requires = [
@@ -59,6 +57,8 @@ studio_requires = []
 
 # released requires
 minimal_requires = [
+    "networkx",
+    "black",
     "docstring_parser",
     "pydantic",
     "loguru==0.6.0",
@@ -115,7 +115,7 @@ setuptools.setup(
     keywords=["deep-learning", "multi agents", "agents"],
     package_dir={"": "src"},
     packages=setuptools.find_packages("src"),
-    package_data={"agentscope.web": ["static/**/*"]},
+    package_data={"agentscope.studio": ["static/**/*", "templates/**/*"]},
     install_requires=minimal_requires,
     extras_require={
         "distribute": distribute_requires,

@@ -444,3 +444,8 @@ def _is_process_alive(
         return False
 
     return False
+
+
+def _is_windows() -> bool:
+    """Check if the system is Windows."""
+    return os.name == "nt"

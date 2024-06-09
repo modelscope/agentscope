@@ -41,9 +41,9 @@ If you prefer to install AgentScope from Pypi, you can do so easily using `pip`:
 
 ```bash
 # For centralized multi-agent applications
-pip install agentscope
+pip install agentscope --pre
 # For distributed multi-agent applications
-pip install agentscope[distribute]  # On Mac use `pip install agentscope\[distribute\]`
+pip install agentscope[distribute] --pre # On Mac use `pip install agentscope\[distribute\] --pre`
 ```
 
 ### Install from Source
