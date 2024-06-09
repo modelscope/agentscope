@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""The main entry point of the web UI."""
+"""The Web Server of the AgentScope Studio."""
 import json
 import os
 import re

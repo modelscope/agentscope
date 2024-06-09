@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""The client for agentscope platform."""
+"""The client for AgentScope Studio."""
 from threading import Event
 from typing import Optional, Union
 import requests
@@ -103,7 +103,6 @@ class StudioClient:
         """Initialize the client with the studio URL."""
         self.runtime_id = runtime_id
         self.studio_url = studio_url
-        self.active = True
 
     def register_running_instance(
         self,
@@ -129,6 +128,7 @@ class StudioClient:
         )
 
         if response.status_code == 200:
+            self.active = True
             logger.info(
                 "Successfully registered to AgentScope Studio.\n"
                 "View your application at:\n"
