@@ -24,8 +24,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
-    <link rel="next" title="提示工程" href="206-prompt.html" />
-    <link rel="prev" title="服务函数" href="204-service.html" /> 
+    <link rel="next" title="结果解析" href="203-parser.html" />
+    <link rel="prev" title="Agent" href="201-agent.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -53,31 +53,33 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
               <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="quick_start.html">快速上手</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="advance.html">进阶使用</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="201-agent.html">定制你自己的Agent</a></li>
-<li class="toctree-l2"><a class="reference internal" href="202-pipeline.html">Pipeline 和 MsgHub</a></li>
-<li class="toctree-l2"><a class="reference internal" href="203-model.html">模型</a></li>
-<li class="toctree-l2"><a class="reference internal" href="203-parser.html">模型结果解析</a></li>
-<li class="toctree-l2"><a class="reference internal" href="204-service.html">服务函数</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">记忆</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#message">关于消息（Message）</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#messagebase">消息基类（<code class="docutils literal notranslate"><span class="pre">MessageBase</span></code>）</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#msg">消息类（<code class="docutils literal notranslate"><span class="pre">Msg</span></code>）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="101-agentscope.html">关于AgentScope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="102-installation.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="103-example.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="203-model.html">模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="206-prompt.html">提示工程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="201-agent.html">Agent</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">记忆</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#message">关于消息（Message）</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#messagebase">消息基类（<code class="docutils literal notranslate"><span class="pre">MessageBase</span></code>）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#msg">消息类（<code class="docutils literal notranslate"><span class="pre">Msg</span></code>）</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#memory">关于记忆（Memory）</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#memorybase">关于记忆基类（<code class="docutils literal notranslate"><span class="pre">MemoryBase</span></code>）</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#temporarymemory">关于<code class="docutils literal notranslate"><span class="pre">TemporaryMemory</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#memory">关于记忆（Memory）</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#memorybase">关于记忆基类（<code class="docutils literal notranslate"><span class="pre">MemoryBase</span></code>）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#temporarymemory">关于<code class="docutils literal notranslate"><span class="pre">TemporaryMemory</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="206-prompt.html">提示工程</a></li>
-<li class="toctree-l2"><a class="reference internal" href="207-monitor.html">监控器</a></li>
-<li class="toctree-l2"><a class="reference internal" href="208-distribute.html">分布式</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="203-parser.html">结果解析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="204-service.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="202-pipeline.html">Pipeline和MsgHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="208-distribute.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="209-gui.html">AgentScope Studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="105-logging.html">日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="207-monitor.html">监控器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="104-usecase.html">样例：狼人杀游戏</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contribute.html">参与贡献</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
@@ -112,7 +114,6 @@
           <div role="navigation" aria-label="页面导航">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="advance.html">进阶使用</a></li>
       <li class="breadcrumb-item active">记忆</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/tutorial/205-memory.md.txt" rel="nofollow"> 查看页面源码</a>
@@ -338,8 +339,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
-        <a href="204-service.html" class="btn btn-neutral float-left" title="服务函数" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
-        <a href="206-prompt.html" class="btn btn-neutral float-right" title="提示工程" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="201-agent.html" class="btn btn-neutral float-left" title="Agent" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="203-parser.html" class="btn btn-neutral float-right" title="结果解析" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

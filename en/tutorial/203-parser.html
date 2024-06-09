@@ -5,7 +5,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Model Response Parser &mdash; AgentScope  documentation</title>
+  <title>Response Parser &mdash; AgentScope  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
@@ -23,8 +23,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Service" href="204-service.html" />
-    <link rel="prev" title="Model" href="203-model.html" /> 
+    <link rel="next" title="Tool" href="204-service.html" />
+    <link rel="prev" title="Memory" href="205-memory.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -52,19 +52,28 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Getting Started</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="advance.html">Advanced Exploration</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="201-agent.html">Customizing Your Own Agent</a></li>
-<li class="toctree-l2"><a class="reference internal" href="202-pipeline.html">Pipeline and MsgHub</a></li>
-<li class="toctree-l2"><a class="reference internal" href="203-model.html">Model</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Model Response Parser</a></li>
-<li class="toctree-l2"><a class="reference internal" href="204-service.html">Service</a></li>
-<li class="toctree-l2"><a class="reference internal" href="205-memory.html">Memory</a></li>
-<li class="toctree-l2"><a class="reference internal" href="206-prompt.html">Prompt Engineering</a></li>
-<li class="toctree-l2"><a class="reference internal" href="207-monitor.html">Monitor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="208-distribute.html">Distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="101-agentscope.html">About AgentScope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="102-installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="103-example.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="203-model.html">Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="206-prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="201-agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="205-memory.html">Memory</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Response Parser</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#table-of-contents">Table of Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#background">Background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parser-module">Parser Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#typical-use-cases">Typical Use Cases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#customized-parser">Customized Parser</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="204-service.html">Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="202-pipeline.html">Pipeline and MsgHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="208-distribute.html">Distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="209-gui.html">AgentScope Studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="105-logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="207-monitor.html">Monitor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="104-usecase.html">Example: Werewolf Game</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contribute.html">Get Involved</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
@@ -99,8 +108,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="advance.html">Advanced Exploration</a></li>
-      <li class="breadcrumb-item active">Model Response Parser</li>
+      <li class="breadcrumb-item active">Response Parser</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/tutorial/203-parser.md.txt" rel="nofollow"> View page source</a>
       </li>
@@ -110,8 +118,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="model-response-parser">
-<span id="parser-en"></span><h1>Model Response Parser<a class="headerlink" href="#model-response-parser" title="Link to this heading"></a></h1>
+  <section id="response-parser">
+<span id="parser-en"></span><h1>Response Parser<a class="headerlink" href="#response-parser" title="Link to this heading"></a></h1>
 <section id="table-of-contents">
 <h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading"></a></h2>
 <ul class="simple">
@@ -673,8 +681,8 @@ More details can be found in the werewolf game <a class="reference external" hre
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="203-model.html" class="btn btn-neutral float-left" title="Model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="204-service.html" class="btn btn-neutral float-right" title="Service" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="205-memory.html" class="btn btn-neutral float-left" title="Memory" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="204-service.html" class="btn btn-neutral float-right" title="Tool" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

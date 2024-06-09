@@ -1,0 +1,306 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgentScope Studio &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=7d86a446"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/translations.js?v=beaddf03"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="日志" href="105-logging.html" />
+    <link rel="prev" title="分布式" href="208-distribute.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../en/tutorial/209-gui.html">English</a></li> |
+    <a href="../../zh_CN/tutorial/209-gui.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="101-agentscope.html">关于AgentScope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="102-installation.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="103-example.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="203-model.html">模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="206-prompt.html">提示工程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="201-agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="205-memory.html">记忆</a></li>
+<li class="toctree-l1"><a class="reference internal" href="203-parser.html">结果解析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="204-service.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="202-pipeline.html">Pipeline和MsgHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="208-distribute.html">分布式</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">AgentScope Studio</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">启动 AgentScope Studio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dashboard">Dashboard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">注意</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">注册应用程序</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">引入运行历史</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#about-workstation">About Workstation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id5">快速使用</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id6">内置样例</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">构建应用程序</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">运行应用程序</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9">导入/导出应用程序</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id10">检查应用程序</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="105-logging.html">日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="207-monitor.html">监控器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="104-usecase.html">样例：狼人杀游戏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.exception.html">agentscope.exception</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.server.html">agentscope.server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.utils.html">agentscope.utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">AgentScope Studio</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorial/209-gui.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="agentscope-studio">
+<span id="gui-zh"></span><h1>AgentScope Studio<a class="headerlink" href="#agentscope-studio" title="Link to this heading"></a></h1>
+<p>AgentScope Studio 是一个开源的 Web UI 工具包，用于构建和监控多智能体应用程序。它提供以下功能：</p>
+<ul class="simple">
+<li><p><strong>Dashboard</strong>：一个用户友好的界面，可以在其中监视正在运行的应用程序，并查看运行历史。</p></li>
+<li><p><strong>Workstation</strong>：一个强大的界面，可通过<strong>拖拽</strong>的方式构建多智能体应用程序。</p></li>
+<li><p><strong>Gallery</strong>：即将推出！</p></li>
+<li><p><strong>Server Management</strong>：即将推出！</p></li>
+</ul>
+<section id="id1">
+<h2>启动 AgentScope Studio<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<p>要启动 Studio，请首先确保已安装了最新版本的 AgentScope。然后，可以通过运行以下 Python 代码：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">agentscope</span>
+
+<span class="n">agentscope</span><span class="o">.</span><span class="n">studio</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>之后，可以在 <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:5000</span></code> 访问 AgentScope Studio。</p>
+<p>当然，AgentScope Studio的 IP 地址和端口都可以更改，并且可以通过以下方式引入应用的运行记录：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">agentscope</span>
+
+<span class="n">agentscope</span><span class="o">.</span><span class="n">studio</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span>                   <span class="c1"># AgentScope Studio 的 IP 地址</span>
+    <span class="n">port</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span>                          <span class="c1"># AgentScope Studio 的端口号</span>
+    <span class="n">run_dirs</span> <span class="o">=</span> <span class="p">[</span>                        <span class="c1"># 您的运行历史目录</span>
+        <span class="s2">&quot;xxx/xxx/runs&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;xxx/xxx/runs&quot;</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="dashboard">
+<h2>Dashboard<a class="headerlink" href="#dashboard" title="Link to this heading"></a></h2>
+<p>Dashboard 是一个 Web 界面，用于监视正在运行的应用程序，并查看运行历史。</p>
+</section>
+<section id="id2">
+<h2>注意<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<p>目前，Dashboard 存在以下限制，我们正在努力改进。欢迎任何反馈、贡献或建议！</p>
+<ul>
+<li><p>运行的应用程序和 AgentScope Studio 必须在同一台机器上运行，以保持 URL 和路径的一致性。如果需要在其它机器上访问 AgentScope Studio，可以尝试通过在远程机器上运行以下命令将端口转发到远程机器：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 假设 AgentScope 在 {as_host}:{as_port} 上运行，远程机器的端口为 {remote_machine_port}</span>
+ssh<span class="w"> </span>-L<span class="w"> </span><span class="o">{</span>remote_machine_port<span class="o">}</span>:<span class="o">{</span>as_host<span class="o">}</span>:<span class="o">{</span>as_port<span class="o">}</span><span class="w"> </span><span class="o">[{</span>user_name<span class="o">}</span>@<span class="o">]{</span>as_host<span class="o">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>对于分布式应用程序，支持单机多进程模式，但尚不支持多机多进程模式。</p></li>
+</ul>
+<section id="id3">
+<h3>注册应用程序<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<p>启动 AgentScope Studio 后，可以通过指定 <code class="docutils literal notranslate"><span class="pre">agentscope.init()</span></code> 函数中的 <code class="docutils literal notranslate"><span class="pre">studio_url</span></code> 参数来注册应用程序：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">agentscope</span>
+
+<span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="c1"># ...</span>
+    <span class="n">project</span><span class="o">=</span><span class="s2">&quot;xxx&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;xxx&quot;</span><span class="p">,</span>
+    <span class="n">studio_url</span><span class="o">=</span><span class="s2">&quot;http://127.0.0.1：5000&quot;</span>          <span class="c1"># AgentScope Studio 的 URL</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>注册后，可以在 Dashboard 中查看正在运行的应用程序。为了区分不同的应用程序，可以指定应用程序的 <code class="docutils literal notranslate"><span class="pre">project</span></code> 和 <code class="docutils literal notranslate"><span class="pre">name</span></code>。</p>
+<blockquote>
+<div><p>注意：一旦注册了应用程序，<code class="docutils literal notranslate"><span class="pre">agentscope.agents.UserAgent</span></code> 中的用户输入就会转移到 AgentScope Studio 的 Dashboard 中，您可以在 Dashboard 中输入。</p>
+</div></blockquote>
+</section>
+<section id="id4">
+<h3>引入运行历史<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<p>在 AgentScope 中，运行历史默认会保存在 <code class="docutils literal notranslate"><span class="pre">./runs</span></code> 目录下。为了引入运行历史，可以在 <code class="docutils literal notranslate"><span class="pre">agentscope.studio.init()</span></code> 函数中指定 <code class="docutils literal notranslate"><span class="pre">run_dirs</span></code> 参数：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">agentscope</span>
+
+<span class="n">agentscope</span><span class="o">.</span><span class="n">studio</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="n">run_dirs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;xxx/runs&quot;</span><span class="p">,]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="about-workstation">
+<h2>About Workstation<a class="headerlink" href="#about-workstation" title="Link to this heading"></a></h2>
+<p>Workstation 是为零代码用户设计的，可以通过<strong>拖拽</strong>的方式构建多智能体应用程序。</p>
+<blockquote>
+<div><p>注意：Workstation 仍处于快速迭代阶段，界面和功能可能会有所变化。欢迎任何反馈、贡献或建议！</p>
+</div></blockquote>
+<section id="id5">
+<h3>快速使用<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<p>AgentScope Studio中，拖过点击 workstation 图标进入 Workstation 界面。
+它由侧边栏、工作区和顶部工具栏组成。</p>
+<ul class="simple">
+<li><p><strong>侧边栏</strong>：提供预构建的示例，帮助开发者熟悉工作站，并提供可拖动的组件来构建应用程序。</p></li>
+<li><p><strong>工作区</strong>：主要工作区，可以在其中拖放组件来构建应用程序。</p></li>
+<li><p><strong>顶部工具栏</strong>：包含导出、加载、检查和运行等功能。</p></li>
+</ul>
+<h1 align="center">
+<img src="https://img.alicdn.com/imgextra/i1/O1CN01RXAVVn1zUtjXVvuqS_!!6000000006718-1-tps-3116-1852.gif" width="600" alt="agentscope-logo">
+</h1>
+<section id="id6">
+<h4>内置样例<a class="headerlink" href="#id6" title="Link to this heading"></a></h4>
+<p>对于初学者，建议从预构建的示例开始，可以直接点击示例以将其导入到中央工作区。或者，为了获得更有结构化的学习体验，您可以选择跟随每个示例链接的教程。这些教程将逐步引导您如何在 AgentScope Workstation 上构建每个多智能体应用程序。</p>
+</section>
+<section id="id7">
+<h4>构建应用程序<a class="headerlink" href="#id7" title="Link to this heading"></a></h4>
+<p>要构建应用程序，请按照以下步骤操作：</p>
+<ul class="simple">
+<li><p><strong>选择和拖动组件</strong>：从侧边栏中选择您想要的组件，然后将其拖放到中央工作区。</p></li>
+<li><p><strong>连接节点</strong>：大多数节点都有输入和输出点。单击一个组件的输出点，然后将其拖动到另一个组件的输入点，以创建消息流管道。这个过程允许不同的节点传递消息。</p></li>
+<li><p><strong>配置节点</strong>：将节点拖放到工作区后，单击任何节点以填写其配置设置。可以自定义提示、参数和其他属性。</p></li>
+</ul>
+</section>
+<section id="id8">
+<h4>运行应用程序<a class="headerlink" href="#id8" title="Link to this heading"></a></h4>
+<p>构建应用程序后，单击“运行”按钮。
+在运行之前，Workstation 将检查您的应用程序是否存在任何错误。如果有任何错误，您将被提示在继续之前纠正它们。
+之后，应用程序将在与 AgentScope Studio 相同的 Python 环境中执行，并且可以在 Dashboard 中找到它。</p>
+</section>
+<section id="id9">
+<h4>导入/导出应用程序<a class="headerlink" href="#id9" title="Link to this heading"></a></h4>
+<p>AgentScope Workstation 支持导入和导出应用程序。
+单击“导出 HTML”或“导出 Python”按钮，以生成可以分发给社区或本地保存的代码。
+如果要将导出的代码转换为 Python，请按以下步骤将 JSON 配置编译为 Python 代码：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>as_workflow<span class="w"> </span>config.json<span class="w"> </span>--compile<span class="w"> </span><span class="si">${</span><span class="nv">YOUR_PYTHON_SCRIPT_NAME</span><span class="si">}</span>.py
+</pre></div>
+</div>
+<p>需要进一步编辑应用程序，只需单击“导入 HTML”按钮，将之前导出的 HTML 代码上传回 AgentScope Workstation。</p>
+</section>
+<section id="id10">
+<h4>检查应用程序<a class="headerlink" href="#id10" title="Link to this heading"></a></h4>
+<p>构建应用程序后，可以单击“检查”按钮来验证应用程序结构的正确性。将执行以下检查规则，不用担心这些规则过于复杂，Workstation 将会自动执行检查并给出提示。</p>
+<ul class="simple">
+<li><p>Model 和 Agent 的存在：每个应用程序必须包含至少一个 model 节点和一个 agent 节点。</p></li>
+<li><p>单连接策略：每个组件的输入不应该有多个连接。</p></li>
+<li><p>必填字段验证：所有必填字段必须填充，以确保每个节点具有正确运行所需的参数。</p></li>
+<li><p>一致的配置命名：Agent 节点使用的“Model config name”必须对应于 Model 节点中定义的“Config Name”。</p></li>
+<li><p>节点嵌套正确：ReActAgent 等节点应仅包含工具节点。类似地，IfElsePipeline 等 Pipeline 节点应包含正确数量的元素（不超过 2 个），而 ForLoopPipeline、WhileLoopPipeline 和 MsgHub 应遵循一个元素的规则（必须是 SequentialPipeline 作为子节点）。</p></li>
+</ul>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="208-distribute.html" class="btn btn-neutral float-left" title="分布式" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="105-logging.html" class="btn btn-neutral float-right" title="日志" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

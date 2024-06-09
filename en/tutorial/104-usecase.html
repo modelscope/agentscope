@@ -5,7 +5,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Crafting Your First Application &mdash; AgentScope  documentation</title>
+  <title>Example: Werewolf Game &mdash; AgentScope  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
@@ -23,8 +23,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Logging and WebUI" href="105-logging.html" />
-    <link rel="prev" title="Quick Start" href="103-example.html" /> 
+    <link rel="next" title="Get Involved" href="contribute.html" />
+    <link rel="prev" title="Monitor" href="207-monitor.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -52,15 +52,25 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="quick_start.html">Getting Started</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="101-agentscope.html">About AgentScope</a></li>
-<li class="toctree-l2"><a class="reference internal" href="102-installation.html">Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="103-example.html">Quick Start</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Crafting Your First Application</a></li>
-<li class="toctree-l2"><a class="reference internal" href="105-logging.html">Logging and WebUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="101-agentscope.html">About AgentScope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="102-installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="103-example.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="203-model.html">Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="206-prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="201-agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="205-memory.html">Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="203-parser.html">Response Parser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="204-service.html">Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="202-pipeline.html">Pipeline and MsgHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="208-distribute.html">Distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="209-gui.html">AgentScope Studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="105-logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="207-monitor.html">Monitor</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Example: Werewolf Game</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#next-step">Next step</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="advance.html">Advanced Exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contribute.html">Get Involved</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
@@ -95,8 +105,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="quick_start.html">Getting Started</a></li>
-      <li class="breadcrumb-item active">Crafting Your First Application</li>
+      <li class="breadcrumb-item active">Example: Werewolf Game</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/tutorial/104-usecase.md.txt" rel="nofollow"> View page source</a>
       </li>
@@ -106,10 +115,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="crafting-your-first-application">
-<span id="usecase-en"></span><h1>Crafting Your First Application<a class="headerlink" href="#crafting-your-first-application" title="Link to this heading"></a></h1>
+  <section id="example-werewolf-game">
+<span id="usecase-en"></span><h1>Example: Werewolf Game<a class="headerlink" href="#example-werewolf-game" title="Link to this heading"></a></h1>
 <img src="https://img.alicdn.com/imgextra/i3/O1CN01dFpOh82643mygUh2Z_!!6000000007607-2-tps-1024-1024.png" alt="img" style="zoom:25%;" />
-<p>Before diving into the advanced topics of AgentScope, in this tutorial, we will give you a glance at building a Werewolf application with out-of-the-box components of AgentScope.</p>
 <p><strong>Werewolf</strong> is a well-known social-deduction game, that involves an imaginary village where a few villagers are secretly werewolves, and the objective is to identify who they are before they eliminate all other players. It’s a good use case to demonstrate the interaction between multiple autonomous agents, each with its own objectives and the need for communication.</p>
 <p>Let the adventure begin to unlock the potential of multi-agent applications with AgentScope!</p>
 <section id="getting-started">
@@ -394,8 +402,8 @@ Moderator:<span class="w"> </span>The<span class="w"> </span>day<span class="w">
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="103-example.html" class="btn btn-neutral float-left" title="Quick Start" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="105-logging.html" class="btn btn-neutral float-right" title="Logging and WebUI" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="207-monitor.html" class="btn btn-neutral float-left" title="Monitor" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="contribute.html" class="btn btn-neutral float-right" title="Get Involved" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

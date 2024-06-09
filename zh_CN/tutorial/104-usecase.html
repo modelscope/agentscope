@@ -5,7 +5,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>创造您的第一个应用 &mdash; AgentScope  文档</title>
+  <title>样例：狼人杀游戏 &mdash; AgentScope  文档</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
@@ -24,8 +24,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
-    <link rel="next" title="日志和WebUI" href="105-logging.html" />
-    <link rel="prev" title="快速开始" href="103-example.html" /> 
+    <link rel="next" title="参与贡献" href="contribute.html" />
+    <link rel="prev" title="监控器" href="207-monitor.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -53,26 +53,36 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
               <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="quick_start.html">快速上手</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="101-agentscope.html">关于AgentScope</a></li>
-<li class="toctree-l2"><a class="reference internal" href="102-installation.html">安装</a></li>
-<li class="toctree-l2"><a class="reference internal" href="103-example.html">快速开始</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">创造您的第一个应用</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id2">开始</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#api">第一步: 准备模型API和设定模型配置</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#agent">第二步：定义每个智能体（Agent）的角色</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#agentscopeagents">第三步：初始化AgentScope和Agents</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id3">第四步：构建游戏逻辑</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id5">第五步：运行应用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="101-agentscope.html">关于AgentScope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="102-installation.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="103-example.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="203-model.html">模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="206-prompt.html">提示工程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="201-agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="205-memory.html">记忆</a></li>
+<li class="toctree-l1"><a class="reference internal" href="203-parser.html">结果解析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="204-service.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="202-pipeline.html">Pipeline和MsgHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="208-distribute.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="209-gui.html">AgentScope Studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="105-logging.html">日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="207-monitor.html">监控器</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">样例：狼人杀游戏</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">开始</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#api">第一步: 准备模型API和设定模型配置</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agent">第二步：定义每个智能体（Agent）的角色</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscopeagents">第三步：初始化AgentScope和Agents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">第四步：构建游戏逻辑</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pipeline-msghub">使用 Pipeline 和 MsgHub</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">实现狼人杀的游戏流程</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#id6">下一步</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">第五步：运行应用</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="105-logging.html">日志和WebUI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">下一步</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="advance.html">进阶使用</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contribute.html">参与贡献</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
@@ -107,8 +117,7 @@
           <div role="navigation" aria-label="页面导航">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="quick_start.html">快速上手</a></li>
-      <li class="breadcrumb-item active">创造您的第一个应用</li>
+      <li class="breadcrumb-item active">样例：狼人杀游戏</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/tutorial/104-usecase.md.txt" rel="nofollow"> 查看页面源码</a>
       </li>
@@ -119,11 +128,11 @@
            <div itemprop="articleBody">
              
   <section id="usecase-zh">
-<span id="id1"></span><h1>创造您的第一个应用<a class="headerlink" href="#usecase-zh" title="Link to this heading"></a></h1>
+<span id="id1"></span><h1>样例：狼人杀游戏<a class="headerlink" href="#usecase-zh" title="Link to this heading"></a></h1>
 <img src="https://img.alicdn.com/imgextra/i3/O1CN01dFpOh82643mygUh2Z_!!6000000007607-2-tps-1024-1024.png" alt="img" style="zoom:25%;" />
-<p>在介绍更多AgentScope的高阶内容前，我们先会给您展示如何利用AgentScope内置的功能，快速搭建一个狼人杀游戏模拟应用。</p>
-<p><strong>狼人杀</strong>是一个广为人知的桌面游戏。游戏设定在一个虚拟世界的村庄里。村庄里有真正的村民、也有伪装成村民的狼人；每个参与者都在游戏中都有自己的角色。对于村民方而言，他们的胜利条件是在全灭之前找出并杀死所有的狼人；对于狼人方而言，胜利条件就是杀死所有的村民。狼人杀这样的游戏是一个很好的可以自动展示多个有不同目标的智能体之间如何互动。</p>
-<p>话不多说，让我们开始通过狼人杀这个游戏，解锁AgentScope多智体的应用吧！</p>
+<p><strong>狼人杀</strong>是非常具有代表性的，具有复杂SOP流程的游戏。游戏中，玩家分别扮演狼人和村民的角色进行对抗，其中一些村民（例如预言家和女巫）还有特殊的技能。当狼人被全部杀死后村民取得胜利；而当狼人的数量等于村民的数量时即狼人获得胜利。
+我们将利用 AgentScope 构建一个狼人杀游戏，用 Agent 来扮演不同的角色进行互动，并推动游戏的进行。</p>
+<p>完整的样例代码可以在GitHub仓库的<a class="reference external" href="https://github.com/modelscope/agentscope/tree/main/examples/game_werewolf">examples/game_werewolf</a>找到，这里我们将介绍构建狼人杀游戏中的几个关键步骤。</p>
 <section id="id2">
 <h2>开始<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
 <p>首先，确保您已经正确安装和配置好AgentScope。除此之外，本节内容会涉及到<code class="docutils literal notranslate"><span class="pre">Model</span> <span class="pre">API</span></code>,  <code class="docutils literal notranslate"><span class="pre">Agent</span></code>, <code class="docutils literal notranslate"><span class="pre">Msg</span></code>和 <code class="docutils literal notranslate"><span class="pre">Pipeline</span></code>这几个概念（详情可以参考<a class="reference internal" href="101-agentscope.html"><span class="doc std std-doc">关于AgentScope</span></a>）。以下是本节教程内容概览。</p>
@@ -407,8 +416,8 @@ Moderator:<span class="w"> </span>The<span class="w"> </span>day<span class="w">
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
-        <a href="103-example.html" class="btn btn-neutral float-left" title="快速开始" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
-        <a href="105-logging.html" class="btn btn-neutral float-right" title="日志和WebUI" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="207-monitor.html" class="btn btn-neutral float-left" title="监控器" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="contribute.html" class="btn btn-neutral float-right" title="参与贡献" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -5,7 +5,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>日志和WebUI &mdash; AgentScope  文档</title>
+  <title>日志 &mdash; AgentScope  文档</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
@@ -24,8 +24,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
-    <link rel="next" title="进阶使用" href="advance.html" />
-    <link rel="prev" title="创造您的第一个应用" href="104-usecase.html" /> 
+    <link rel="next" title="监控器" href="207-monitor.html" />
+    <link rel="prev" title="AgentScope Studio" href="209-gui.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -53,29 +53,35 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
               <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="quick_start.html">快速上手</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="101-agentscope.html">关于AgentScope</a></li>
-<li class="toctree-l2"><a class="reference internal" href="102-installation.html">安装</a></li>
-<li class="toctree-l2"><a class="reference internal" href="103-example.html">快速开始</a></li>
-<li class="toctree-l2"><a class="reference internal" href="104-usecase.html">创造您的第一个应用</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">日志和WebUI</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#logging">Logging</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#logger">设置日志记录（Logger）</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#logging-a-chat-message">Logging a Chat Message</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id1">记录对话消息</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id2">记录系统信息</a></li>
+<li class="toctree-l1"><a class="reference internal" href="101-agentscope.html">关于AgentScope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="102-installation.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="103-example.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="203-model.html">模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="206-prompt.html">提示工程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="201-agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="205-memory.html">记忆</a></li>
+<li class="toctree-l1"><a class="reference internal" href="203-parser.html">结果解析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="204-service.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="202-pipeline.html">Pipeline和MsgHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="208-distribute.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="209-gui.html">AgentScope Studio</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">日志</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#logging">Logging</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#logger">设置日志记录（Logger）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#logging-a-chat-message">Logging a Chat Message</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">记录对话消息</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">记录系统信息</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#id3">将日志与WebUI集成</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id4">快速运行</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id5">注意</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#webui">将日志与WebUI集成</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">快速运行</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">注意</a></li>
 </ul>
 </li>
 </ul>
 </li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="advance.html">进阶使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="207-monitor.html">监控器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="104-usecase.html">样例：狼人杀游戏</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contribute.html">参与贡献</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
@@ -110,8 +116,7 @@
           <div role="navigation" aria-label="页面导航">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="quick_start.html">快速上手</a></li>
-      <li class="breadcrumb-item active">日志和WebUI</li>
+      <li class="breadcrumb-item active">日志</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/tutorial/105-logging.md.txt" rel="nofollow"> 查看页面源码</a>
       </li>
@@ -121,8 +126,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="webui">
-<span id="logging-zh"></span><h1>日志和WebUI<a class="headerlink" href="#webui" title="Link to this heading"></a></h1>
+  <section id="logging-zh">
+<span id="id1"></span><h1>日志<a class="headerlink" href="#logging-zh" title="Link to this heading"></a></h1>
 <p>本节教程主要是关于AgentScope的日志记录（logging）功能。我们会介绍如何能美观地将这些日志可视化。这个模块会帮助您更方便、清晰、有组织地跟踪智能体之间的互动和各种系统消息。</p>
 <section id="logging">
 <h2>Logging<a class="headerlink" href="#logging" title="Link to this heading"></a></h2>
@@ -156,8 +161,8 @@
 <section id="logging-a-chat-message">
 <h3>Logging a Chat Message<a class="headerlink" href="#logging-a-chat-message" title="Link to this heading"></a></h3>
 </section>
-<section id="id1">
-<h3>记录对话消息<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<section id="id2">
+<h3>记录对话消息<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
 <p>开发者可以通过记录<code class="docutils literal notranslate"><span class="pre">message</span></code>来追踪智能体之间的对话。下面是一些简单的如何记录<code class="docutils literal notranslate"><span class="pre">message</span></code>的例子例子:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Log a simple string message.</span>
 <span class="n">logger</span><span class="o">.</span><span class="n">chat</span><span class="p">(</span><span class="s2">&quot;Hello World!&quot;</span><span class="p">)</span>
@@ -168,8 +173,8 @@
 </pre></div>
 </div>
 </section>
-<section id="id2">
-<h3>记录系统信息<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<section id="id3">
+<h3>记录系统信息<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
 <p>系统日志对于跟踪应用程序的状态和识别问题至关重要。以下是记录不同级别系统信息的方法：</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Log general information useful for understanding the flow of the application.</span>
 <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;The dialogue agent has started successfully.&quot;</span><span class="p">)</span>
@@ -183,8 +188,8 @@
 </div>
 </section>
 </section>
-<section id="id3">
-<h2>将日志与WebUI集成<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<section id="webui">
+<h2>将日志与WebUI集成<a class="headerlink" href="#webui" title="Link to this heading"></a></h2>
 <p>为了可视化这些日志和运行细节，AgentScope提供了一个简单的网络界面。</p>
 <section id="id4">
 <h3>快速运行<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
@@ -213,8 +218,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
-        <a href="104-usecase.html" class="btn btn-neutral float-left" title="创造您的第一个应用" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
-        <a href="advance.html" class="btn btn-neutral float-right" title="进阶使用" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="209-gui.html" class="btn btn-neutral float-left" title="AgentScope Studio" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="207-monitor.html" class="btn btn-neutral float-right" title="监控器" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

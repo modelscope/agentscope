@@ -1,0 +1,295 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgentScope Studio &mdash; AgentScope  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Logging" href="105-logging.html" />
+    <link rel="prev" title="Distribution" href="208-distribute.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../en/tutorial/209-gui.html">English</a></li> |
+    <a href="../../zh_CN/tutorial/209-gui.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="101-agentscope.html">About AgentScope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="102-installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="103-example.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="203-model.html">Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="206-prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="201-agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="205-memory.html">Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="203-parser.html">Response Parser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="204-service.html">Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="202-pipeline.html">Pipeline and MsgHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="208-distribute.html">Distribution</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">AgentScope Studio</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#start-agentscope-studio">Start AgentScope Studio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#about-dashboard">About Dashboard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#about-workstation">About Workstation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="105-logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="207-monitor.html">Monitor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="104-usecase.html">Example: Werewolf Game</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">Get Involved</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.exception.html">agentscope.exception</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.server.html">agentscope.server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.utils.html">agentscope.utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">AgentScope Studio</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorial/209-gui.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="agentscope-studio">
+<span id="gui-en"></span><h1>AgentScope Studio<a class="headerlink" href="#agentscope-studio" title="Link to this heading"></a></h1>
+<p>AgentScope Studio is an open sourced Web UI toolkit for building and monitoring multi-agent applications.
+It provides the following features:</p>
+<ul class="simple">
+<li><p><strong>Dashboard</strong>: A user-friendly interface, where you can monitor your running applications, and look through the running histories.</p></li>
+<li><p><strong>Workstation</strong>: A powerful interface to build your multi-agent applications with <strong>Dragging &amp; Dropping</strong>.</p></li>
+<li><p><strong>Gallery</strong>: Coming soon!</p></li>
+<li><p><strong>Server Management</strong>: Coming soon!</p></li>
+</ul>
+<section id="start-agentscope-studio">
+<h2>Start AgentScope Studio<a class="headerlink" href="#start-agentscope-studio" title="Link to this heading"></a></h2>
+<p>To start a studio, first ensure you have installed the latest version of AgentScope.
+Then, you can simply run the following Python code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">agentscope</span>
+
+<span class="n">agentscope</span><span class="o">.</span><span class="n">studio</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>After that, you can visit AgentScope studio at <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:5000</span></code>.</p>
+<p>Of course, you can change the host and port, and link to your application running histories by providing the following arguments:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">agentscope</span>
+
+<span class="n">agentscope</span><span class="o">.</span><span class="n">studio</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span>                   <span class="c1"># The IP address of AgentScope studio</span>
+    <span class="n">port</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span>                          <span class="c1"># The port number of AgentScope studio</span>
+    <span class="n">run_dirs</span> <span class="o">=</span> <span class="p">[</span>                        <span class="c1"># The directories of your running histories</span>
+        <span class="s2">&quot;xxx/xxx/runs&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;xxx/xxx/runs&quot;</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="about-dashboard">
+<h2>About Dashboard<a class="headerlink" href="#about-dashboard" title="Link to this heading"></a></h2>
+<p>Dashboard is a web interface to monitor your running applications and look through the running histories.</p>
+<section id="note">
+<h3>Note<a class="headerlink" href="#note" title="Link to this heading"></a></h3>
+<p>Currently, Dashboard has the following limitations, and we are working on improving it. Any feedback, contribution, or suggestion are welcome!</p>
+<ul>
+<li><p>The running application and AgentScope Studio must be running on the same machine for URL/path consistency. If you want to visit AgentScope in the other machine, you can try to forward the port to the remote machine by running the following command in the remote machine:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Supposing AgentScope is running on {as_host}:{as_port}, and the port</span>
+<span class="c1"># of the remote machine is {remote_machine_port}</span>
+ssh<span class="w"> </span>-L<span class="w"> </span><span class="o">{</span>remote_machine_port<span class="o">}</span>:<span class="o">{</span>as_host<span class="o">}</span>:<span class="o">{</span>as_port<span class="o">}</span><span class="w"> </span><span class="o">[{</span>user_name<span class="o">}</span>@<span class="o">]{</span>as_host<span class="o">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>For distributed applications, the single-machine &amp; multi-process mode is supported, but the multi-machine multi-process mode is not supported yet.</p></li>
+</ul>
+</section>
+<section id="register-running-application">
+<h3>Register Running Application<a class="headerlink" href="#register-running-application" title="Link to this heading"></a></h3>
+<p>After starting the AgentScope Studio, you can register your running applications by specifying <code class="docutils literal notranslate"><span class="pre">studio_url</span></code> in <code class="docutils literal notranslate"><span class="pre">agentscope.init()</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">agentscope</span>
+
+<span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="c1"># ...</span>
+    <span class="n">project</span><span class="o">=</span><span class="s2">&quot;xxx&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;xxx&quot;</span><span class="p">,</span>
+    <span class="n">studio_url</span><span class="o">=</span><span class="s2">&quot;http://127.0.0.1:5000&quot;</span>          <span class="c1"># The URL of AgentScope Studio</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>After registering, you can view the running application in the Dashboard. To distinguish different applications, you can specify the <code class="docutils literal notranslate"><span class="pre">project</span></code> and <code class="docutils literal notranslate"><span class="pre">name</span></code> of the application.</p>
+<blockquote>
+<div><p>Note: Once you register the running application, the input operation within the <code class="docutils literal notranslate"><span class="pre">agentscope.agents.UserAgent</span></code> class will be transferred to the Dashboard in AgentScope Studio, and you can enter the input in the Dashboard.</p>
+</div></blockquote>
+</section>
+<section id="import-running-histories">
+<h3>Import Running Histories<a class="headerlink" href="#import-running-histories" title="Link to this heading"></a></h3>
+<p>In AgentScope, the running histories are saved in the <code class="docutils literal notranslate"><span class="pre">./runs</span></code> directory by default. If you want to watch these running histories in the Dashboard, you can specify the <code class="docutils literal notranslate"><span class="pre">run_dirs</span></code> in <code class="docutils literal notranslate"><span class="pre">agentscope.studio.init()</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">agentscope</span>
+
+<span class="n">agentscope</span><span class="o">.</span><span class="n">studio</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="n">run_dirs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;xxx/runs&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="about-workstation">
+<h2>About Workstation<a class="headerlink" href="#about-workstation" title="Link to this heading"></a></h2>
+<p>The workstation is designed to empower zero-code users. It facilitates the creation of complex applications through a user-friendly, drag-and-drop interface.</p>
+<blockquote>
+<div><p>Note: We are actively developing the workstation, and the interface may continue to change. Any feedback, contribution, or suggestion are welcome!</p>
+</div></blockquote>
+<section id="quick-start">
+<h3>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading"></a></h3>
+<p>In AgentScope Studio, click the workstation icon in the sidebar or welcome page to enter the workstation.
+The workstation is consisted of a sidebar, a central workspace and a top toolbox. Their functionalities are as follows:</p>
+<ul class="simple">
+<li><p><strong>Sidebar</strong>: Providing pre-built examples to help you become acquainted with the workstation, and draggable components for building applications.</p></li>
+<li><p><strong>Central workspace</strong>: The main area where you can drag and drop components to build your application.</p></li>
+<li><p><strong>Top toolbox</strong>: To import, export, check, and run your application.</p></li>
+</ul>
+<h1 align="center">
+<img src="https://img.alicdn.com/imgextra/i1/O1CN01RXAVVn1zUtjXVvuqS_!!6000000006718-1-tps-3116-1852.gif" width="600" alt="agentscope-logo">
+</h1>
+<section id="explore-built-in-examples">
+<h4>Explore Built-in Examples<a class="headerlink" href="#explore-built-in-examples" title="Link to this heading"></a></h4>
+<p>For beginners, we highly recommend starting with the pre-built examples to get started.
+You have the option to directly click on an example to import it into your central workspace. Alternatively, for a more structured learning experience, you can opt to follow along with the tutorials linked to each example. These tutorials will walk you through how each multi-agent application is built on AgentScope Workstation step-by-step.</p>
+</section>
+<section id="build-your-application">
+<h4>Build Your Application<a class="headerlink" href="#build-your-application" title="Link to this heading"></a></h4>
+<p>To build an application, following these steps:</p>
+<ul class="simple">
+<li><p><strong>Choose &amp; drag component</strong>: Click and drag your chosen component from sidebar into the central workspace area.</p></li>
+<li><p><strong>Connect nodes</strong>: Most nodes come with input and output points. Click on an output point of one component and drag it to an input point of another to create a message flow pipeline. This process allows different nodes to pass messages.</p></li>
+<li><p><strong>Configure nodes</strong>: After dropping your nodes into the workspace, click on any of them to fill in their configuration settings. You can customize the prompts, parameters, and other properties.</p></li>
+</ul>
+</section>
+<section id="run-your-application">
+<h4>Run Your Application<a class="headerlink" href="#run-your-application" title="Link to this heading"></a></h4>
+<p>Once the application is built, click on the “Run” button.
+Before running, the workstation will check your application for any errors. If there are any, you will be prompted to correct them before proceeding.
+After that, your application will be executed in the same Python environment as the AgentScope Studio, and you can find it in the Dashboard.</p>
+</section>
+<section id="import-or-export-your-application">
+<h4>Import or Export Your Application<a class="headerlink" href="#import-or-export-your-application" title="Link to this heading"></a></h4>
+<p>Workstation supports to import and export your application.
+Click the “Export HTML” or “Export Python” button to generate code that you can distribute to the community or save locally.
+If you want to convert the exported code to Python, you can compile the JSON configuration to Python code as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compile</span>
+as_workflow<span class="w"> </span>config.json<span class="w"> </span>--compile<span class="w"> </span><span class="si">${</span><span class="nv">YOUR_PYTHON_SCRIPT_NAME</span><span class="si">}</span>.py
+</pre></div>
+</div>
+<p>Want to edit your application further? Simply click the “Import HTML” button to upload your previously exported HTML code back into the AgentScope Workstation.</p>
+</section>
+<section id="check-your-application">
+<h4>Check Your Application<a class="headerlink" href="#check-your-application" title="Link to this heading"></a></h4>
+<p>After building your application, you can click the “Check” button to verify the correctness of your application structure. The following checking rules will be performed:</p>
+<ul class="simple">
+<li><p>Presence of Model and Agent: Every application must include at least one model node and one agent node.</p></li>
+<li><p>Single Connection Policy: A component should not have more than one connection for each input.</p></li>
+<li><p>Mandatory Fields Validation: All required input fields must be populated to ensure that each node has the necessary args to operate correctly.</p></li>
+<li><p>Consistent Configuration Naming: The ‘Model config name’ used by Agent nodes must correspond to a ‘Config Name’ defined in a Model node.</p></li>
+<li><p>Proper Node Nesting: Nodes like ReActAgent should only contain the tool nodes. Similarly, Pipeline nodes like IfElsePipeline should contain the correct number of elements (no more than 2), and ForLoopPipeline, WhileLoopPipeline, and MsgHub should follow the one-element-only rule (must be a SequentialPipeline� as a child node).</p></li>
+</ul>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="208-distribute.html" class="btn btn-neutral float-left" title="Distribution" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="105-logging.html" class="btn btn-neutral float-right" title="Logging" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Alibaba Tongyi Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

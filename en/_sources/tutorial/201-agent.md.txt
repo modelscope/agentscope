@@ -1,6 +1,6 @@
 (201-agent-en)=
 
-# Customizing Your Own Agent
+# Agent
 
 This tutorial helps you to understand the `Agent` in more depth and navigate through the process of crafting your own custom agent with AgentScope. We start by introducing the fundamental abstraction called `AgentBase`, which serves as the base class to maintain the general behaviors of all agents. Then, we will go through the *AgentPool*, an ensemble of pre-built, specialized agents, each designed with a specific purpose in mind. Finally, we will demonstrate how to customize your own agent, ensuring it fits the needs of your project.
 

@@ -53,27 +53,33 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
               <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="quick_start.html">快速上手</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="101-agentscope.html">关于AgentScope</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">安装</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id2">创建虚拟环境</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#conda">使用Conda</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#virtualenv">使用Virtualenv</a></li>
+<li class="toctree-l1"><a class="reference internal" href="101-agentscope.html">关于AgentScope</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">安装</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">创建虚拟环境</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#conda">使用Conda</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#virtualenv">使用Virtualenv</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope">安装AgentScope</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id3">从源码安装</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#pip">使用Pip安装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope">安装AgentScope</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">从源码安装</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pip">使用Pip安装</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="103-example.html">快速开始</a></li>
-<li class="toctree-l2"><a class="reference internal" href="104-usecase.html">创造您的第一个应用</a></li>
-<li class="toctree-l2"><a class="reference internal" href="105-logging.html">日志和WebUI</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="advance.html">进阶使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="103-example.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="203-model.html">模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="206-prompt.html">提示工程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="201-agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="205-memory.html">记忆</a></li>
+<li class="toctree-l1"><a class="reference internal" href="203-parser.html">结果解析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="204-service.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="202-pipeline.html">Pipeline和MsgHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="208-distribute.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="209-gui.html">AgentScope Studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="105-logging.html">日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="207-monitor.html">监控器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="104-usecase.html">样例：狼人杀游戏</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contribute.html">参与贡献</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
@@ -108,7 +114,6 @@
           <div role="navigation" aria-label="页面导航">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="quick_start.html">快速上手</a></li>
       <li class="breadcrumb-item active">安装</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/tutorial/102-installation.md.txt" rel="nofollow"> 查看页面源码</a>
@@ -172,10 +177,10 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 <h3>使用Pip安装<a class="headerlink" href="#pip" title="Link to this heading"></a></h3>
 <p>如果您选择从Pypi安装AgentScope，可以使用<code class="docutils literal notranslate"><span class="pre">pip</span></code>轻松地完成：</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 针对本地化的multi-agent应用</span>
-pip<span class="w"> </span>install<span class="w"> </span>agentscope
+pip<span class="w"> </span>install<span class="w"> </span>agentscope<span class="w"> </span>--pre
 
 <span class="c1"># 为分布式multi-agent应用</span>
-pip<span class="w"> </span>install<span class="w"> </span>agentscope<span class="o">[</span>distribute<span class="o">]</span><span class="w">  </span><span class="c1"># 在Mac上使用`pip install agentscope\[distribute\]`</span>
+pip<span class="w"> </span>install<span class="w"> </span>agentscope<span class="o">[</span>distribute<span class="o">]</span><span class="w"> </span>--pre<span class="w">  </span><span class="c1"># 在Mac上使用`pip install agentscope\[distribute\] --pre`</span>
 </pre></div>
 </div>
 <p><a class="reference internal" href="#installation-zh">[返回顶端]</a></p>
