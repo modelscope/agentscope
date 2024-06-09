@@ -1,6 +1,6 @@
 (204-service-en)=
 
-# Service
+# Tool
 
 Service function is a set of multi-functional utility tools that can be
 used to enhance the capabilities of agents, such as executing Python code,

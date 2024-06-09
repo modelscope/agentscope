@@ -67,7 +67,9 @@ class LangChainAgent(AgentBase):
 # Build a conversation between user and assistant agent
 
 # init AgentScope
-agentscope.init()
+agentscope.init(
+    project="Conversation with LangChain",
+)
 
 # Create an instance of the langchain agent
 agent = LangChainAgent(name="Assistant")
