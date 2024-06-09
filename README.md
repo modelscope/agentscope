@@ -33,6 +33,10 @@ Welcome to join our community on
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-06-09]** We release **AgentScope** v0.0.5 now! In this new version, [**AgentScope Workstation**](https://modelscope.github.io/agentscope/en/tutorial/209-gui.html) is open-sourced with the refactored [**AgentScope Studio**](https://modelscope.github.io/agentscope/en/tutorial/209-gui.html)!
 
+<h5 align="center">
+<img src="https://img.alicdn.com/imgextra/i1/O1CN01RXAVVn1zUtjXVvuqS_!!6000000006718-1-tps-3116-1852.gif" width="600" alt="agentscope-logo">
+</h5>
+
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-05-24]** We are pleased to announce that features related to the **AgentScope Workstation** will soon be open-sourced! The online website services are temporarily offline. The online website service will be upgraded and back online shortly. Stay tuned...
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-05-15]** A new **Parser Module** for **formatted response** is added in AgentScope! Refer to our [tutorial](https://modelscope.github.io/agentscope/en/tutorial/203-parser.html) for more details. The [`DictDialogAgent`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/agents/dict_dialog_agent.py) and [werewolf game](https://github.com/modelscope/agentscope/tree/main/examples/game_werewolf) example are updated simultaneously.
