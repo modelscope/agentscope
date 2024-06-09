@@ -140,16 +140,20 @@
 
 <span class="kn">from</span> <span class="nn">agentscope._runtime</span> <span class="kn">import</span> <span class="n">_runtime</span>
 <span class="kn">from</span> <span class="nn">agentscope.constants</span> <span class="kn">import</span> <span class="n">_DEFAULT_SUBDIR_CODE</span><span class="p">,</span> <span class="n">_DEFAULT_SUBDIR_INVOKE</span>
-<span class="kn">from</span> <span class="nn">agentscope.utils.tools</span> <span class="kn">import</span> <span class="n">_is_process_alive</span>
+<span class="kn">from</span> <span class="nn">agentscope.utils.tools</span> <span class="kn">import</span> <span class="n">_is_process_alive</span><span class="p">,</span> <span class="n">_is_windows</span>
 
 <span class="n">_app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="c1"># Set the cache directory</span>
-<span class="n">_cache_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;.cache&quot;</span> <span class="o">/</span> <span class="s2">&quot;agentscope-studio&quot;</span><span class="p">)</span>
-<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">_cache_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">_app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span>
-    <span class="s2">&quot;SQLALCHEMY_DATABASE_URI&quot;</span>
-<span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;sqlite:////</span><span class="si">{</span><span class="n">_cache_dir</span><span class="si">}</span><span class="s2">/agentscope.db&quot;</span>
+<span class="n">_cache_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;.cache&quot;</span> <span class="o">/</span> <span class="s2">&quot;agentscope-studio&quot;</span>
+<span class="n">_cache_db</span> <span class="o">=</span> <span class="n">_cache_dir</span> <span class="o">/</span> <span class="s2">&quot;agentscope.db&quot;</span>
+<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">_cache_dir</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">_is_windows</span><span class="p">():</span>
+    <span class="n">_app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;SQLALCHEMY_DATABASE_URI&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;sqlite:///</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">_cache_db</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">_app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;SQLALCHEMY_DATABASE_URI&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;sqlite:////</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">_cache_db</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+
 <span class="n">_db</span> <span class="o">=</span> <span class="n">SQLAlchemy</span><span class="p">(</span><span class="n">_app</span><span class="p">)</span>
 
 <span class="n">_socketio</span> <span class="o">=</span> <span class="n">SocketIO</span><span class="p">(</span><span class="n">_app</span><span class="p">)</span>
