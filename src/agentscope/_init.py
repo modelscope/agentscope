@@ -4,7 +4,6 @@ import json
 import os
 import shutil
 from typing import Optional, Union, Sequence
-from loguru import logger
 from agentscope import agents
 from .agents import AgentBase
 from ._runtime import _runtime
