@@ -1,0 +1,129 @@
+{
+  "drawflow": {
+    "Home": {
+      "data": {
+        "2": {
+          "id": 2,
+          "name": "dashscope_chat",
+          "data": {
+            "args": {
+              "config_name": "qwen",
+              "model_name": "qwen-max",
+              "api_key": "",
+              "temperature": 0,
+              "seed": 0,
+              "model_type": "dashscope_chat",
+              "messages_key": "input"
+            }
+          },
+          "class": "dashscope_chat",
+          "typenode": false,
+          "inputs": {},
+          "outputs": {},
+          "pos_x": 339,
+          "pos_y": 23
+        },
+        "4": {
+          "id": 4,
+          "name": "UserAgent",
+          "data": {
+            "args": {
+              "name": "User"
+            }
+          },
+          "class": "UserAgent",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 797,
+          "pos_y": 181
+        },
+        "6": {
+          "id": 6,
+          "name": "PythonService",
+          "data": {},
+          "class": "PythonService",
+          "typenode": false,
+          "inputs": {},
+          "outputs": {},
+          "pos_x": 824,
+          "pos_y": 620
+        },
+        "3": {
+          "id": 3,
+          "name": "SequentialPipeline",
+          "data": {
+            "elements": [
+              "4",
+              "5"
+            ]
+          },
+          "class": "GROUP",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 643,
+          "pos_y": 55
+        },
+        "5": {
+          "id": 5,
+          "name": "ReActAgent",
+          "data": {
+            "elements": [
+              "6"
+            ],
+            "args": {
+              "name": "Assistant",
+              "sys_prompt": "You are an assistant. ",
+              "model_config_name": "qwen",
+              "max_iters": 10,
+              "verbose": "True"
+            }
+          },
+          "class": "GROUP",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 713,
+          "pos_y": 241
+        },
+        "1": {
+          "id": 1,
+          "name": "readme",
+          "data": {},
+          "class": "welcome",
+          "html": "<div class=\"title-box\"><i class=\"fa fa-book\"></i> README <span class=\"toggle-arrow\">▲</span> </div>\n        <div class=\"box-highlight\">\n      📖 This example demonstrates a one-round user-ReactAgent (with PythonService) conversation with Sequential Pipeline by AgentScope. <br><br> <div class=\"modules-info\"><h4>Modules Used:</h4><ul><li><span class=\"highlight-module\" onclick=\"editor.selectNode(2);\">DashScope Chat:</span><br> - Each application must contain a model configured.</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(3);\">SequentialPipeline:</span><br> - Make the message passes in a predefined, sequential order among agents.</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(4);\">UserAgent:</span><br> - Represents a user in a application.</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(5);\">ReActAgent:</span><br> - An agent class that implements the ReAct algorithm.</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(6);\">PythonService:</span><br> - Execute a piece of python code.</li></ur></div> </div>\n      </div>\n      ",
+          "typenode": false,
+          "inputs": {},
+          "outputs": {},
+          "pos_x": 68,
+          "pos_y": 67
+        }
+      }
+    }
+  }
+}
