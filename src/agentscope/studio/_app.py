@@ -26,16 +26,20 @@ from flask_socketio import SocketIO, join_room, leave_room
 
 from agentscope._runtime import _runtime
 from agentscope.constants import _DEFAULT_SUBDIR_CODE, _DEFAULT_SUBDIR_INVOKE
-from agentscope.utils.tools import _is_process_alive
+from agentscope.utils.tools import _is_process_alive, _is_windows
 
 _app = Flask(__name__)
 
 # Set the cache directory
-_cache_dir = str(Path.home() / ".cache" / "agentscope-studio")
-os.makedirs(_cache_dir, exist_ok=True)
-_app.config[
-    "SQLALCHEMY_DATABASE_URI"
-] = f"sqlite:////{_cache_dir}/agentscope.db"
+_cache_dir = Path.home() / ".cache" / "agentscope-studio"
+_cache_db = _cache_dir / "agentscope.db"
+os.makedirs(str(_cache_dir), exist_ok=True)
+
+if _is_windows():
+    _app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{str(_cache_db)}"
+else:
+    _app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:////{str(_cache_db)}"
+
 _db = SQLAlchemy(_app)
 
 _socketio = SocketIO(_app)
