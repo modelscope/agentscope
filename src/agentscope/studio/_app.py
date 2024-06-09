@@ -9,8 +9,8 @@ import threading
 import traceback
 from datetime import datetime
 from typing import Tuple, Union, Any, Optional
+from pathlib import Path
 
-from appdirs import user_cache_dir
 from flask import (
     Flask,
     request,
@@ -31,7 +31,7 @@ from agentscope.utils.tools import _is_process_alive
 _app = Flask(__name__)
 
 # Set the cache directory
-_cache_dir = user_cache_dir(appname="agentscope")
+_cache_dir = str(Path.home() / ".cache" / "agentscope-studio")
 os.makedirs(_cache_dir, exist_ok=True)
 _app.config[
     "SQLALCHEMY_DATABASE_URI"

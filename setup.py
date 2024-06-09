@@ -78,7 +78,6 @@ minimal_requires = [
     "zhipuai",
     "litellm",
     "psutil",
-    "appdirs",
 ]
 
 distribute_requires = minimal_requires + rpc_requires
