@@ -45,16 +45,16 @@ doc_requires = [
 test_requires = ["pytest", "pytest-cov", "pre-commit"]
 
 gradio_requires = [
-    "networkx",
     "gradio==4.19.1",
     "modelscope_studio==0.0.5",
-    "black",
 ]
 
 studio_requires = []
 
 # released requires
 minimal_requires = [
+    "networkx",
+    "black",
     "docstring_parser",
     "pydantic",
     "loguru==0.6.0",
