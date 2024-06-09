@@ -22,6 +22,7 @@ AgentScope是一款全新的Multi-Agent框架，专为应用开发者打造，�
 - [Pipeline和MsgHub](202-pipeline.md)
 - [分布式](208-distribute.md)
 - [AgentScope Studio](209-gui.md)
+- [检索增强生成（RAG）](210-rag.md)
 - [日志](105-logging.md)
 - [监控器](207-monitor.md)
 - [样例：狼人杀游戏](104-usecase.md)
