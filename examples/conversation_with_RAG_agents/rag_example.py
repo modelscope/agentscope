@@ -61,6 +61,7 @@ def main() -> None:
     agent_list = agentscope.init(
         model_configs=model_configs,
         agent_configs=agent_configs,
+        project="Conversation with RAG agents",
     )
     rag_agent_list = agent_list[:4]
     guide_agent = agent_list[4]
