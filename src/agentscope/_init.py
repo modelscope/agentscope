@@ -14,7 +14,7 @@ from .utils.monitor import MonitorFactory
 from .models import read_model_configs
 from .constants import _DEFAULT_DIR
 from .constants import _DEFAULT_LOG_LEVEL
-from .web.studio._client import _studio_client
+from .studio._client import _studio_client
 
 # init setting
 _INIT_SETTINGS = {}
@@ -195,8 +195,6 @@ def init_process(
     # inputs from web ui
     if studio_url is not None:
         _studio_client.initialize(_runtime.runtime_id, studio_url)
-        logger.warning(file_manager.dir)
-        logger.warning(file_manager.dir_root)
         # Register in AgentScope Studio
         _studio_client.register_running_instance(
             project=_runtime.project,

@@ -110,7 +110,6 @@ function addChatRow(index, pMsg) {
 }
 
 function _determineFileType(url) {
-    console.log("The url: ", url)
     // Image
     let img_suffix = [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg", ".webp"];
     // Video
@@ -171,7 +170,6 @@ function _getMultiModalComponent(url) {
 
 // Render multiple urls in a chat bubble
 function _renderMultiModalUrls(urls) {
-    console.log("The urls: ", urls, urls == null, typeof urls)
     if (urls == null || urls === "") {
         return ""
     }
@@ -343,7 +341,7 @@ function addFileListItem(url) {
             svg = `<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M160 0h512l256 256v704c0 35.3472-28.6528 64-64 64H160c-35.3472 0-64-28.6528-64-64V64c0-35.3472 28.6528-64 64-64z" fill="#CCCCCC" p-id="1633"></path><path d="M672 0l256 256h-192c-35.3472 0-64-28.6528-64-64V0z" fill="#EAEAEA" p-id="1634"></path><path d="M384 499.2c0-25.6 5.12-46.08 10.24-58.88 5.12-12.8 15.36-25.6 28.16-35.84 12.8-12.8 25.6-20.48 43.52-25.6 15.36-5.12 30.72-7.68 48.64-7.68 35.84 0 64 10.24 89.6 30.72C627.2 422.4 640 448 640 481.28c0 15.36-5.12 28.16-10.24 40.96s-17.92 28.16-38.4 46.08-28.16 30.72-35.84 38.4c-7.68 7.68-10.24 17.92-15.36 28.16-5.12 10.24-2.56 17.92-2.56 43.52h-51.2c0-25.6 2.56-38.4 5.12-51.2s7.68-23.04 15.36-33.28 15.36-23.04 33.28-40.96c17.92-17.92 30.72-30.72 35.84-38.4 5.12-7.68 10.24-20.48 10.24-38.4s-7.68-30.72-20.48-43.52-30.72-20.48-53.76-20.48c-51.2 0-76.8 35.84-76.8 87.04h-51.2z m153.6 281.6h-51.2v-51.2h51.2v51.2z" fill="#FFFFFF" p-id="1635"></path></svg>`;
             break;
     }
-    console.log("Add an item to the file list: " + url);
+
     let newItem = document.createElement("div");
     newItem.classList.add("chat-control-file-item");
     newItem.innerHTML = svg;
@@ -359,8 +357,6 @@ function addFileListItem(url) {
     };
     newItem.appendChild(deleteBtn);
 
-    console.log("innerHtml: ", newItem.innerHTML);
-    console.log("inputFileList: ", inputFileList);
     inputFileList.appendChild(newItem);
     inputFileList.scrollLeft =
         inputFileList.scrollWidth - inputFileList.clientWidth;
@@ -399,13 +395,13 @@ function initializeDashboardDetailDialoguePage(pRuntimeInfo) {
     )
 
     inputTextArea.addEventListener("keydown", function (e) {
-        if (e.key === "Enter" && !e.ctrlKey) {
+        if (e.key === "Enter" && !e.ctrlKey && !e.metaKey) {
             e.preventDefault();
 
             if (sendBtn.disabled === false) {
                 sendBtn.click();
             }
-        } else if (e.key === "Enter" && e.ctrlKey) {
+        } else if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
             e.preventDefault();
 
             let cursorPosition = inputTextArea.selectionStart;
@@ -480,7 +476,6 @@ function initializeDashboardDetailDialoguePage(pRuntimeInfo) {
                                     target.getAttribute("data-msg")
                                 );
 
-                                console.log(currentMsgInfo);
                                 // Update web ui
                                 showInDetail("Message");
                                 break;
@@ -503,9 +498,13 @@ function initializeDashboardDetailDialoguePage(pRuntimeInfo) {
                                 "chat-input-textarea"
                             ).value;
 
+                            if (message === "") {
+                                alert("Please input a message!");
+                                return;
+                            }
+
                             // Send the message to the flask server according to the current request
                             let url = _obtainAllUrlFromFileList();
-                            console.log("When sending messages, the url is: ", url)
                             socket.emit("user_input_ready", {
                                 run_id: userInputRequest.run_id,
                                 agent_id: userInputRequest.agent_id,
@@ -514,10 +513,13 @@ function initializeDashboardDetailDialoguePage(pRuntimeInfo) {
                                 content: message,
                             });
                             // Finish a user input
-                            inputFileList.innerHTML = "";
+                            while (inputFileList.firstChild) {
+                                inputFileList.removeChild(inputFileList.firstChild);
+                            }
+
                             waitForUserInput = false;
 
-                            console.log("Web: send user_input_ready");
+                            console.log("Studio: send user_input_ready");
 
                             document.getElementById(
                                 "chat-input-textarea"
@@ -527,7 +529,7 @@ function initializeDashboardDetailDialoguePage(pRuntimeInfo) {
                     });
                     socket.on("display_message", (data) => {
                         if (data.run_id === pRuntimeInfo.run_id) {
-                            console.log("Web: receive display_message");
+                            console.log("Studio: receive display_message");
                             let row = addChatRow(
                                 clusterize.getRowsAmount(),
                                 data
@@ -542,7 +544,7 @@ function initializeDashboardDetailDialoguePage(pRuntimeInfo) {
                     });
                     socket.on("enable_user_input", (data) => {
                         // Require user input in web ui
-                        console.log("Web: receive enable_user_input");
+                        console.log("Studio: receive enable_user_input");
 
                         // If already waiting for user input, just abort the request
                         if (!waitForUserInput) {
@@ -583,7 +585,6 @@ function showInDetail(detailType) {
             break;
         case "message":
             document.getElementById("msgSwitchBtn").classList.add("selected");
-            console.log("Show message information: ", currentMsgInfo);
             _showInfoInDialogueDetailContent(currentMsgInfo);
             break;
         case "agent":

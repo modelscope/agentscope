@@ -217,7 +217,6 @@ def _register_run() -> Response:
 
     # check if the run_id is already in the database
     if _RunTable.query.filter_by(run_id=run_id).first():
-        print(f"Run id {run_id} already exists.")
         abort(400, f"RUN_ID {run_id} already exists")
 
     # Add into the database
@@ -248,7 +247,7 @@ def _register_server() -> Response:
     port = data.get("port")
 
     if _ServerTable.query.filter_by(id=server_id).first():
-        print(f"server id {server_id} already exists.")
+        _app.logger.error(f"Server id {server_id} already exists.")
         abort(400, f"run_id [{server_id}] already exists")
 
     _db.session.add(
@@ -260,7 +259,7 @@ def _register_server() -> Response:
     )
     _db.session.commit()
 
-    print(f"Register server id {server_id}")
+    _app.logger.info(f"Register server id {server_id}")
     return jsonify(status="ok")
 
 
@@ -268,7 +267,7 @@ def _register_server() -> Response:
 def _push_message() -> Response:
     """Receive a message from the agentscope application, and display it on
     the web UI."""
-    print("Flask: receive push_message")
+    _app.logger.debug("Flask: receive push_message")
     data = request.json
 
     run_id = data["run_id"]
@@ -306,23 +305,18 @@ def _push_message() -> Response:
         "timestamp": timestamp,
     }
 
-    print("display_message", data, "url's type is ", type(url))
-
     _socketio.emit(
         "display_message",
         data,
         room=run_id,
     )
-    print("Flask: send display_message")
+    _app.logger.debug("Flask: send display_message")
     return jsonify(status="ok")
 
 
 @_app.route("/api/messages/run/<run_id>", methods=["GET"])
 def _get_messages(run_id: str) -> Response:
     """Get the history messages of specific run_id."""
-
-    print("Require messages from " + run_id)
-
     # From registered runtime instances
     if len(_RunTable.query.filter_by(run_id=run_id).all()) > 0:
         messages = _MessageTable.query.filter_by(run_id=run_id).all()
@@ -355,7 +349,6 @@ def _get_messages(run_id: str) -> Response:
     else:
         with open(path_messages, "r", encoding="utf-8") as file:
             msgs = [json.loads(_) for _ in file.readlines()]
-            print(msgs)
             return jsonify(msgs)
 
 
@@ -424,8 +417,6 @@ def _get_all_runs() -> Response:
 def _get_invocations() -> Response:
     """Get all API invocations in a run instance."""
     run_dir = request.args.get("run_dir")
-    print(run_dir)
-
     path_invocations = os.path.join(run_dir, _DEFAULT_SUBDIR_INVOKE)
 
     invocations = []
@@ -486,7 +477,7 @@ def _convert_config_to_py() -> Response:
 def _cleanup_process(proc: subprocess.Popen) -> None:
     """Clean up the process for running application started by workstation."""
     proc.wait()
-    _app.logger.info(f"The process with pid {proc.pid} is closed")
+    _app.logger.debug(f"The process with pid {proc.pid} is closed")
 
 
 @_app.route("/convert-to-py-and-run", methods=["POST"])
@@ -564,7 +555,8 @@ def _home() -> str:
 @_socketio.on("request_user_input")
 def _request_user_input(data: dict) -> None:
     """Request user input"""
-    print("Flask: receive request_user_input")
+    _app.logger.debug("Flask: receive request_user_input")
+
     run_id = data["run_id"]
     agent_id = data["agent_id"]
 
@@ -584,13 +576,13 @@ def _request_user_input(data: dict) -> None:
         room=run_id,
     )
 
-    print("Flask: send enable_user_input")
+    _app.logger.debug("Flask: send enable_user_input")
 
 
 @_socketio.on("user_input_ready")
 def _user_input_ready(data: dict) -> None:
     """Get user input and send to the agent"""
-    print("Flask: receive user_input_ready", data)
+    _app.logger.debug(f"Flask: receive user_input_ready: {data}")
 
     run_id = data["run_id"]
     agent_id = data["agent_id"]
@@ -627,19 +619,19 @@ def _user_input_ready(data: dict) -> None:
             room=run_id,
         )
 
-    print("Flask: send fetch_user_input")
+    _app.logger.debug("Flask: send fetch_user_input")
 
 
 @_socketio.on("connect")
 def _on_connect() -> None:
     """Execute when a client is connected."""
-    print("Client connected")
+    _app.logger.info("New client connected")
 
 
 @_socketio.on("disconnect")
 def _on_disconnect() -> None:
     """Execute when a client is disconnected."""
-    print("Client disconnected")
+    _app.logger.info("Client disconnected")
 
 
 @_socketio.on("join")
@@ -693,6 +685,11 @@ def init(
     # Create the cache directory
     with _app.app_context():
         _db.create_all()
+
+    if debug:
+        _app.logger.setLevel("DEBUG")
+    else:
+        _app.logger.setLevel("INFO")
 
     _socketio.run(
         _app,

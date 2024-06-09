@@ -473,3 +473,12 @@
     white-space: pre-wrap;
     word-wrap: break-word;
 }
+
+#chat-box-content .clusterize-no-data {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    color: var(--main-color-light);
+}

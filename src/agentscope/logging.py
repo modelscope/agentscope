@@ -7,7 +7,7 @@ from typing import Optional, Literal, Any
 
 from loguru import logger
 
-from agentscope.web.studio._client import _studio_client
+from agentscope.studio._client import _studio_client
 from agentscope.web.gradio.utils import (
     generate_image_from_name,
     send_msg,
