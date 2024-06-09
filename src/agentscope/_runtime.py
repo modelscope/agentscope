@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 """Manage the id for each runtime"""
+import os
 from datetime import datetime
 from typing import Any
 
 from agentscope.utils.tools import _get_timestamp
+from agentscope.utils.tools import _get_process_creation_time
 from agentscope.utils.tools import _generate_random_code
 
 _RUNTIME_ID_FORMAT = "run_%Y%m%d-%H%M%S_{}"
@@ -14,17 +16,20 @@ class _Runtime:
     """A singleton class used to record the runtime information, which will
     be initialized when the package is imported."""
 
-    project: str = None
+    project: str
     """The project name, which is used to identify the project."""
 
-    name: str = None
+    name: str
     """The name for runtime, which is used to identify this runtime."""
 
-    runtime_id: str = None
+    runtime_id: str
     """The id for runtime, which is used to identify the this runtime and
         name the saving directory."""
 
-    _timestamp: datetime = datetime.now()
+    pid: int
+    """The process id of the runtime."""
+
+    _timestamp: datetime
     """The timestamp of when the runtime is initialized."""
 
     _instance = None
@@ -48,12 +53,21 @@ class _Runtime:
         self.project = _generate_random_code()
         self.name = _generate_random_code(uppercase=False)
 
+        self.pid = os.getpid()
+        self._timestamp = _get_process_creation_time()
+
         # Obtain time from timestamp in string format, and then turn it into
         # runtime ID format
         self.runtime_id = _get_timestamp(
             _RUNTIME_ID_FORMAT,
             self._timestamp,
         ).format(self.name)
+
+    def generate_new_runtime_id(self) -> str:
+        """Generate a new random runtime id."""
+        return _get_timestamp(_RUNTIME_ID_FORMAT).format(
+            _generate_random_code(uppercase=False),
+        )
 
     @property
     def timestamp(self) -> str:

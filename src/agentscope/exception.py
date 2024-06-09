@@ -24,6 +24,10 @@ class JsonParsingError(ResponseParsingError):
     """The exception class for JSON parsing error."""
 
 
+class JsonDictValidationError(ResponseParsingError):
+    """The exception class for JSON dict validation error."""
+
+
 class JsonTypeError(ResponseParsingError):
     """The exception class for JSON type error."""
 
@@ -92,3 +96,18 @@ class ArgumentNotFoundError(FunctionCallError):
 
 class ArgumentTypeError(FunctionCallError):
     """The exception class for argument type error."""
+
+
+class StudioError(Exception):
+    """The base class for exception raising during interaction with agentscope
+    studio."""
+
+    def __init__(self, message: str) -> None:
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}: {self.message}"
+
+
+class StudioRegisterError(StudioError):
+    """The exception class for error when registering to agentscope studio."""

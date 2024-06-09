@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AgentScope Studio</title>
+
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static', filename='css/font.css') }}">
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static', filename='css/base.css') }}">
+
+    {#  For workstation#}
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static', filename='css_third_party/drawflow.min.css') }}">
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static', filename='css_third_party/prism.min.css') }}">
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static', filename='css_third_party/prism-line-numbers.min.css') }}">
+
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static', filename='css/workstation.css') }}">
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static', filename='css/workstation-drag-components.css') }}">
+
+    <script src="{{ url_for('static', filename='js_third_party/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js_third_party/prism.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js_third_party/prism-python.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js_third_party/prism-line-numbers.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js_third_party/drawflow.min.js') }}"></script>
+
+    {#    TODO: remove#}
+    <script crossorigin="anonymous"
+            integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs="
+            src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"></script>
+
+    <script src="{{ url_for('static', filename='js_third_party/sweetalert2@9') }}"></script>
+    <script src="{{ url_for('static', filename='js_third_party/micromodal.min.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/workstation.js') }}"></script>
+</head>
+<body>
+<div id="workstation-panel">
+    <div id="workstation-titlebar unselectable-text" class="page-titlebar">
+        <span>Workstation</span>
+    </div>
+    <div class="wrapper">
+        <div class="col">
+            <li>
+                <div class="workstation-sidebar-item">Example</div>
+                <ul>
+                    <li class="workstation-sidebar-subitem unselectable-text"
+                        onclick="importExample(1);">Two Agents
+                    </li>
+                    <li class="workstation-sidebar-subitem unselectable-text"
+                        onclick="importExample(2);">Pipeline
+                    </li>
+                    <li class="workstation-sidebar-subitem unselectable-text"
+                        onclick="importExample(3);">Conversation
+                    </li>
+                    <li class="workstation-sidebar-subitem unselectable-text"
+                        onclick="importExample(4);">Group Chat
+                    </li>
+                </ul>
+            </li>
+            <div class="workstation-sidebar-placeholder"></div>
+            <li>
+                <div class="workstation-sidebar-item unselectable-text">
+                    Workflow
+                </div>
+                <ul>
+                    <li>
+                        <div class="workstation-sidebar-subitem unselectable-text"
+                             onclick="onClickSidebarSubItem(this);">
+                            Model
+                        </div>
+                        <ul class="workstation-sidebar-sub-content">
+                            <li class="workstation-sidebar-dragitem"
+                                data-node="dashscope_chat" draggable="true"
+                                ondragstart="drag(event)">DashScope Chat
+                            </li>
+                            <li class="workstation-sidebar-dragitem"
+                                data-node="openai_chat" draggable="true"
+                                ondragstart="drag(event)">OpenAI
+                                Chat
+                            </li>
+                            <li class="workstation-sidebar-dragitem"
+                                data-node="post_api_chat" draggable="true"
+                                ondragstart="drag(event)">Post API
+                            </li>
+                            <li class="workstation-sidebar-dragitem"
+                                data-node="post_api_dall_e" draggable="true"
+                                ondragstart="drag(event)">Post API Dall-E
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div class="workstation-sidebar-subitem unselectable-text"
+                             onclick="onClickSidebarSubItem(this);">
+                            Message
+                        </div>
+                        <ul class="workstation-sidebar-sub-content">
+                            <li class="workstation-sidebar-dragitem"
+                                data-node="Message"
+                                draggable="true" ondragstart="drag(event)">Msg
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div class="workstation-sidebar-subitem unselectable-text"
+                             onclick="onClickSidebarSubItem(this);">
+                            Agent
+                        </div>
+                        <ul class="workstation-sidebar-sub-content">
+                            <li class="workstation-sidebar-dragitem unselectable-text"
+                                data-node="DialogAgent"
+                                draggable="true" ondragstart="drag(event)">
+                                DialogAgent
+                            </li>
+                            <li class="workstation-sidebar-dragitem unselectable-text"
+                                data-node="UserAgent"
+                                draggable="true" ondragstart="drag(event)">
+                                UserAgent
+                            </li>
+                            <li class="workstation-sidebar-dragitem unselectable-text"
+                                data-node="TextToImageAgent"
+                                draggable="true" ondragstart="drag(event)">
+                                TextToImageAgent
+                            </li>
+                            <li class="workstation-sidebar-dragitem unselectable-text"
+                                data-node="DictDialogAgent"
+                                draggable="true" ondragstart="drag(event)">
+                                DictDialogAgent
+                            </li>
+                            <li class="workstation-sidebar-dragitem unselectable-text"
+                                data-node="ReActAgent"
+                                draggable="true" ondragstart="drag(event)">
+                                ReActAgent
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div class="workstation-sidebar-subitem unselectable-text"
+                             onclick="onClickSidebarSubItem(this);">
+                            Pipeline
+                        </div>
+                        <ul class="workstation-sidebar-sub-content">
+                            <li class="workstation-sidebar-dragitem unselectable-text"
+                                data-node="Placeholder"
+                                draggable="true" ondragstart="drag(event)">
+                                Placeholder
+                            </li>
+                            <li class="workstation-sidebar-dragitem unselectable-text"
+                                data-node="MsgHub"
+                                draggable="true" ondragstart="drag(event)">
+                                MsgHub
+                            </li>
+                            <li class="workstation-sidebar-dragitem unselectable-text"
+                                data-node="SequentialPipeline"
+                                draggable="true" ondragstart="drag(event)">
+                                SequentialPipeline
+                            </li>
+                            <li class="workstation-sidebar-dragitem unselectable-text"
+                                data-node="ForLoopPipeline"
+                                draggable="true" ondragstart="drag(event)">
+                                ForLoopPipeline
+                            </li>
+                            <li class="workstation-sidebar-dragitem unselectable-text"
+                                data-node="WhileLoopPipeline"
+                                draggable="true" ondragstart="drag(event)">
+                                WhileLoopPipeline
+                            </li>
+                            <li class="workstation-sidebar-dragitem unselectable-text"
+                                data-node="IfElsePipeline"
+                                draggable="true" ondragstart="drag(event)">
+                                IfElsePipeline
+                            </li>
+                            <li class="workstation-sidebar-dragitem unselectable-text"
+                                data-node="SwitchPipeline"
+                                draggable="true" ondragstart="drag(event)">
+                                SwitchPipeline
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div class="workstation-sidebar-subitem unselectable-text"
+                             onclick="onClickSidebarSubItem(this);">
+                            Tool
+                        </div>
+                        <ul class="workstation-sidebar-sub-content">
+                            <li class="workstation-sidebar-dragitem unselectable-text"
+                                data-node="BingSearchService"
+                                draggable="true" ondragstart="drag(event)">
+                                Bing Search
+                            </li>
+                            <li class="workstation-sidebar-dragitem unselectable-text"
+                                data-node="GoogleSearchService"
+                                draggable="true" ondragstart="drag(event)">
+                                Google Search
+                            </li>
+                            <li class="workstation-sidebar-dragitem unselectable-text"
+                                data-node="PythonService"
+                                draggable="true" ondragstart="drag(event)">
+                                Python Interpreter
+                            </li>
+                            <li class="workstation-sidebar-dragitem unselectable-text"
+                                data-node="ReadTextService"
+                                draggable="true" ondragstart="drag(event)">
+                                Read Text
+                            </li>
+                            <li class="workstation-sidebar-dragitem unselectable-text"
+                                data-node="WriteTextService"
+                                draggable="true" ondragstart="drag(event)">
+                                Write Text
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </div>
+        <div class="col-right">
+            <div class="menu">
+                <div class="menu-btn unselectable-text"
+                     title="Home"
+                     onclick="editor.changeModule('Home'); changeModule(event);">
+                    <svg class="menu-btn-svg" viewBox="0 0 1024 1024"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path d="M539.648 184.064a41.6 41.6 0 0 0-55.296 0l-256 225.024a44.757333 44.757333 0 0 0-15.018667 33.621333v365.056h149.333334v-233.173333c0-48.768 38.186667-88.277333 85.333333-88.277333h128c47.146667 0 85.333333 39.509333 85.333333 88.277333v233.173333H810.666667v-365.056c0-12.970667-5.504-25.258667-15.018667-33.621333l-256-225.024z m-110.506667-67.242667a124.8 124.8 0 0 1 165.76 0l256 225.024A134.229333 134.229333 0 0 1 896 442.709333v365.056C896 856.490667 857.813333 896 810.666667 896h-149.333334c-47.146667 0-85.333333-39.509333-85.333333-88.234667v-233.173333h-128v233.173333c0 48.725333-38.186667 88.234667-85.333333 88.234667H213.333333c-47.146667 0-85.333333-39.509333-85.333333-88.234667v-365.056c0-38.826667 16.469333-75.733333 45.098667-100.864l256-225.024z"></path>
+                    </svg>
+                </div>
+                <div class="menu-btn unselectable-text"
+                     title="Download workflow configuration"
+                     onclick="showExportHTMLPopup()">
+                    <svg class="menu-btn-svg" viewBox="0 0 1024 1024"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path d="M512 85.333333a42.666667 42.666667 0 0 1 42.666667 42.666667v409.002667l140.501333-140.501334a42.666667 42.666667 0 1 1 60.330667 60.330667l-213.333334 213.333333a42.666667 42.666667 0 0 1-60.330666 0l-213.333334-213.333333a42.666667 42.666667 0 0 1 60.330667-60.330667L469.333333 537.002667V128a42.666667 42.666667 0 0 1 42.666667-42.666667zM128 597.333333a42.666667 42.666667 0 0 1 42.666667 42.666667v51.2c0 36.565333 0 61.397333 1.621333 80.597333 1.493333 18.688 4.266667 28.288 7.68 34.944a85.333333 85.333333 0 0 0 37.290667 37.290667c6.656 3.413333 16.213333 6.186667 34.944 7.68C271.402667 853.333333 296.234667 853.333333 332.8 853.333333h358.4c36.565333 0 61.397333 0 80.597333-1.621333 18.688-1.493333 28.288-4.266667 34.944-7.68a85.333333 85.333333 0 0 0 37.290667-37.290667c3.413333-6.656 6.186667-16.213333 7.68-34.944 1.578667-19.2 1.621333-44.032 1.621333-80.597333V640a42.666667 42.666667 0 1 1 85.333334 0V692.949333c0 34.346667 0 62.72-1.877334 85.76-1.962667 24.021333-6.186667 46.08-16.725333 66.773334a170.666667 170.666667 0 0 1-74.581333 74.581333c-20.693333 10.538667-42.752 14.762667-66.730667 16.725333-23.082667 1.877333-51.456 1.877333-85.76 1.877334H331.008c-34.346667 0-62.72 0-85.76-1.877334-24.021333-1.962667-46.08-6.186667-66.773333-16.725333a170.666667 170.666667 0 0 1-74.581334-74.581333c-10.538667-20.693333-14.762667-42.752-16.725333-66.730667C85.333333 755.626667 85.333333 727.296 85.333333 692.992V640a42.666667 42.666667 0 0 1 42.666667-42.666667z"></path>
+                    </svg>
+                </div>
+                <div class="menu-btn unselectable-text"
+                     title="Load workflow configuration"
+                     onclick="showImportHTMLPopup()">
+                    <svg class="menu-btn-svg" viewBox="0 0 1024 1024"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path d="M481.834667 97.834667a42.666667 42.666667 0 0 1 60.330666 0l213.333334 213.333333a42.666667 42.666667 0 0 1-60.330667 60.330667L554.666667 230.997333V640a42.666667 42.666667 0 1 1-85.333334 0V230.997333L328.832 371.498667a42.666667 42.666667 0 0 1-60.330667-60.330667l213.333334-213.333333zM128 597.333333a42.666667 42.666667 0 0 1 42.666667 42.666667v51.2c0 36.565333 0 61.397333 1.621333 80.597333 1.493333 18.688 4.266667 28.288 7.68 34.944a85.333333 85.333333 0 0 0 37.290667 37.290667c6.656 3.413333 16.213333 6.186667 34.944 7.68C271.402667 853.333333 296.234667 853.333333 332.8 853.333333h358.4c36.565333 0 61.397333 0 80.597333-1.621333 18.688-1.493333 28.288-4.266667 34.944-7.68a85.333333 85.333333 0 0 0 37.290667-37.290667c3.413333-6.656 6.186667-16.213333 7.68-34.944 1.578667-19.2 1.621333-44.032 1.621333-80.597333V640a42.666667 42.666667 0 1 1 85.333334 0V692.949333c0 34.346667 0 62.72-1.877334 85.76-1.962667 24.021333-6.186667 46.08-16.725333 66.773334a170.666667 170.666667 0 0 1-74.581333 74.581333c-20.693333 10.538667-42.752 14.762667-66.730667 16.725333-23.082667 1.877333-51.456 1.877333-85.76 1.877334H331.008c-34.346667 0-62.72 0-85.76-1.877334-24.021333-1.962667-46.08-6.186667-66.773333-16.725333a170.666667 170.666667 0 0 1-74.581334-74.581333c-10.538667-20.693333-14.762667-42.752-16.725333-66.730667C85.333333 755.626667 85.333333 727.296 85.333333 692.992V640a42.666667 42.666667 0 0 1 42.666667-42.666667z"></path>
+                    </svg>
+                </div>
+                <div class="menu-btn unselectable-text"
+                     title="Check the workflow"
+                     onclick="showCheckPopup()">
+                    <svg class="menu-btn-svg" viewBox="0 0 1024 1024"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path d="M453.184 121.28c183.04 0.64 330.88 149.12 330.24 331.52-0.64 183.04-149.12 330.88-331.52 330.24-183.04-0.64-330.88-149.12-330.24-331.52 0-133.12 80-252.8 202.24-304.64 40.96-17.28 85.12-26.24 129.28-25.6m0-78.72a410.88 410.88 0 1 0 0.128 821.888A410.88 410.88 0 0 0 453.12 42.56z m301.44 656.64l-55.04 55.04 226.56 226.56 55.04-55.04-226.56-226.56z"></path>
+                        <path d="M625.344 284.48l-226.56 226.56-117.76-117.76-55.04 55.04 117.76 117.76 55.04 55.04 55.04-55.04 226.56-226.56-55.04-55.04z"></path>
+                    </svg>
+                </div>
+                <div class="menu-btn unselectable-text"
+                     title="Clear"
+                     onclick="clearModuleSelected()">
+                    <svg class="menu-btn-svg" viewBox="0 0 1024 1024"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path d="M298.666667 896c-23.466667 0-43.52-8.362667-60.245334-25.045333A82.176 82.176 0 0 1 213.333333 810.666667V256H170.666667V170.666667h213.333333V128h256v42.666667h213.333333v85.333333h-42.666666v554.666667c0 23.466667-8.362667 43.52-25.045334 60.288A82.176 82.176 0 0 1 725.333333 896H298.666667zM725.333333 256H298.666667v554.666667h426.666666V256zM384 725.333333h85.333333V341.333333H384v384z m170.666667 0h85.333333V341.333333h-85.333333v384z"></path>
+                    </svg>
+                </div>
+                <div class="menu-btn unselectable-text"
+                     title="Export Python code"
+                     onclick="showExportPyPopup()">
+                    <svg class="menu-btn-svg" viewBox="0 0 1024 1024"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path d="M896.170667 497.365333l-241.365334 241.365334-60.330666-60.373334 180.992-180.992-180.992-181.034666L654.805333 256l241.365334 241.365333z m-647.509334 0l181.034667 180.992-60.330667 60.373334L128 497.365333 369.365333 256l60.330667 60.330667-181.034667 181.034666z"></path>
+                    </svg>
+                </div>
+                <div class="menu-btn unselectable-text"
+                     title="Run the workflow"
+                     onclick="showExportRunPopup();">
+                    <svg class="menu-btn-svg" viewBox="0 0 1024 1024"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path d="M256 252.245333c0-6.613333 1.578667-13.098667 4.565333-18.901333 9.813333-18.773333 32-25.557333 49.621334-15.104l439.04 259.754667c5.973333 3.541333 10.88 8.789333 14.165333 15.146666 9.813333 18.773333 3.413333 42.453333-14.165333 52.864L310.186667 805.76a34.730667 34.730667 0 0 1-17.706667 4.906667C272.341333 810.666667 256 793.258667 256 771.797333V252.245333z"></path>
+                    </svg>
+                </div>
+            </div>
+            <div id="drawflow" ondragover="allowDrop(event)"
+                 ondrop="drop(event)">
+                <div class="control-bar">
+                    <div class="lock-btn">
+                        <svg id="lock-svg" viewBox="0 0 1024 1024"
+                             xmlns="http://www.w3.org/2000/svg"
+                             onclick="changeLockMode('lock');">
+                            <path d="M753.845117 371.674021l-17.46272 0 0-83.669608c0-59.275012-22.62837-115.203812-63.715137-157.482731-42.170448-43.394323-99.369172-67.291592-161.058163-67.291592-126.040624 0-224.772276 98.731652-224.772276 224.7733l0 83.669608-16.680914 0c-62.788022 0-113.688295 50.900274-113.688295 113.688295L156.467611 842.961784c0 62.788022 50.900274 113.688295 113.688295 113.688295l483.690234 0c62.788022 0 113.688295-50.900274 113.688295-113.688295L867.534436 485.362316C867.532389 422.574295 816.633139 371.674021 753.845117 371.674021zM328.176344 288.005436c0-102.858646 80.573083-183.432753 183.431729-183.432753 50.423413 0 97.093339 19.447934 131.410935 54.762231 33.547047 34.519188 52.021817 80.214926 52.021817 128.670521l0 83.669608L328.176344 371.675044 328.176344 288.005436zM826.191842 842.961784c0 39.956014-32.390711 72.346725-72.346725 72.346725L270.154883 915.308509c-39.956014 0-72.346725-32.390711-72.346725-72.346725L197.808158 485.362316c0-39.956014 32.390711-72.346725 72.346725-72.346725l483.690234 0c39.956014 0 72.346725 32.390711 72.346725 72.346725L826.191842 842.961784z"></path>
+                            <path d="M509.932921 580.446905c-11.416004 0-20.670785 9.254781-20.670785 20.670785l0 109.554138c0 11.414981 9.254781 20.670785 20.670785 20.670785 11.416004 0 20.670785-9.254781 20.670785-20.670785L530.603707 601.116667C530.602683 589.701686 521.348925 580.446905 509.932921 580.446905z"></path>
+                        </svg>
+                        <svg id="unlock-svg" viewBox="0 0 1024 1024"
+                             xmlns="http://www.w3.org/2000/svg"
+                             onclick="changeLockMode('unlock');"
+                             style="display:none;">
+                            <path d="M757.810429 373.751333 325.645708 373.751333l0-83.895759c0-103.694687 81.507362-184.922686 185.559183-184.922686 78.121242 0 146.053424 46.74565 173.062568 119.090329 3.865028 10.352789 15.384385 15.609513 25.742291 11.746532 10.351766-3.866051 15.609513-15.390525 11.744485-25.742291C688.844707 121.877815 606.198405 64.918545 511.204891 64.918545c-61.918211 0-119.246895 23.662933-161.423483 66.63156-41.3692 42.142819-64.151066 98.363262-64.151066 158.305469l0 83.895759-20.007683 0c-60.774155 0-110.042255 49.267077-110.042255 110.042255l0 366.139981c0 60.774155 49.267077 110.042255 110.042255 110.042255l492.187769 0c60.775178 0 110.042255-49.267077 110.042255-110.042255L867.852684 483.793588C867.852684 423.01841 818.585607 373.751333 757.810429 373.751333zM827.837318 849.933569c0 38.674834-31.352055 70.02689-70.02689 70.02689L265.62266 919.960459c-38.674834 0-70.02689-31.352055-70.02689-70.02689L195.59577 483.793588c0-38.674834 31.352055-70.02689 70.02689-70.02689l492.187769 0c38.674834 0 70.02689 31.352055 70.02689 70.02689L827.837318 849.933569z"></path>
+                            <path d="M509.715981 583.832002c-11.048637 0-20.007683 8.959046-20.007683 20.007683l0 110.042255c0 11.048637 8.958022 20.007683 20.007683 20.007683s20.007683-8.958022 20.007683-20.007683L529.723663 603.839685C529.723663 592.790024 520.765641 583.832002 509.715981 583.832002z"></path>
+                        </svg>
+                    </div>
+                    <div class="zoom-bar">
+                        <svg viewBox="0 0 1024 1024"
+                             xmlns="http://www.w3.org/2000/svg"
+                             onclick="editor.zoom_out()">
+                            <path d="M919.264 905.984l-138.912-138.912C851.808 692.32 896 591.328 896 480c0-229.376-186.624-416-416-416S64 250.624 64 480s186.624 416 416 416c95.008 0 182.432-32.384 252.544-86.208l141.44 141.44a31.904 31.904 0 0 0 45.248 0 32 32 0 0 0 0.032-45.248zM128 480C128 285.92 285.92 128 480 128s352 157.92 352 352-157.92 352-352 352S128 674.08 128 480z"></path>
+                            <path d="M625.792 448H336a32 32 0 0 0 0 64h289.792a32 32 0 1 0 0-64z"></path>
+                        </svg>
+                        <svg viewBox="0 0 1024 1024"
+                             xmlns="http://www.w3.org/2000/svg"
+                             onclick="editor.zoom_reset()">
+                            <path d="M919.264 905.984l-138.912-138.912C851.808 692.32 896 591.328 896 480c0-229.376-186.624-416-416-416S64 250.624 64 480s186.624 416 416 416c95.008 0 182.432-32.384 252.544-86.208l141.44 141.44a31.904 31.904 0 0 0 45.248 0 32 32 0 0 0 0.032-45.248zM128 480C128 285.92 285.92 128 480 128s352 157.92 352 352-157.92 352-352 352S128 674.08 128 480z"></path>
+                        </svg>
+                        <svg viewBox="0 0 1024 1024"
+                             xmlns="http://www.w3.org/2000/svg"
+                             onclick="editor.zoom_in()">
+                            <path d="M919.264 905.984l-138.912-138.912C851.808 692.32 896 591.328 896 480c0-229.376-186.624-416-416-416S64 250.624 64 480s186.624 416 416 416c95.008 0 182.432-32.384 252.544-86.208l141.44 141.44a31.904 31.904 0 0 0 45.248 0 32 32 0 0 0 0.032-45.248zM128 480C128 285.92 285.92 128 480 128s352 157.92 352 352-157.92 352-352 352S128 674.08 128 480z"></path>
+                            <path d="M625.792 448H512v-112a32 32 0 0 0-64 0V448h-112a32 32 0 0 0 0 64H448v112a32 32 0 1 0 64 0V512h113.792a32 32 0 1 0 0-64z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="surveyModal">
+        <div id="surveyContent">
+            <span id="surveyClose">&times;</span>
+            <h3>"We want to hear from you"</h3>
+            <button id="surveyButton">Participation in questionnaire surveys
+            </button>
+        </div>
+    </div>
+</div>
+<script>
+    console.log("Workstation page loaded");
+    initializeWorkstationPage();
+</script>
+</body>
+</html>
