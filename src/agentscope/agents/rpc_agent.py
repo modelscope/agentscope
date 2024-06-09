@@ -9,6 +9,7 @@ from agentscope.message import (
 )
 from agentscope.rpc import RpcAgentClient
 from agentscope.server.launcher import RpcAgentServerLauncher
+from agentscope.studio._client import _studio_client
 
 
 class RpcAgent(AgentBase):
@@ -70,6 +71,9 @@ class RpcAgent(AgentBase):
         launch_server = port is None
         if launch_server:
             self.host = "localhost"
+            studio_url = None
+            if _studio_client.active:
+                studio_url = _studio_client.studio_url
             self.server_launcher = RpcAgentServerLauncher(
                 host=self.host,
                 port=port,
@@ -77,6 +81,7 @@ class RpcAgent(AgentBase):
                 max_timeout_seconds=max_timeout_seconds,
                 local_mode=local_mode,
                 custom_agents=[agent_class],
+                studio_url=studio_url,
             )
             if not lazy_launch:
                 self._launch_server()

@@ -1,0 +1,139 @@
+{
+  "drawflow": {
+    "Home": {
+      "data": {
+        "2": {
+          "id": 2,
+          "name": "dashscope_chat",
+          "data": {
+            "args": {
+              "config_name": "qwen",
+              "model_name": "qwen-max",
+              "api_key": "",
+              "temperature": 0,
+              "seed": 0,
+              "model_type": "dashscope_chat",
+              "messages_key": "input"
+            }
+          },
+          "class": "dashscope_chat",
+          "typenode": false,
+          "inputs": {},
+          "outputs": {},
+          "pos_x": 351,
+          "pos_y": 113
+        },
+        "3": {
+          "id": 3,
+          "name": "WhileLoopPipeline",
+          "data": {
+            "elements": [
+              "4"
+            ],
+            "args": {
+              "condition_func": "lambda *args: True"
+            }
+          },
+          "class": "GROUP",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 699,
+          "pos_y": 151
+        },
+        "4": {
+          "id": 4,
+          "name": "SequentialPipeline",
+          "data": {
+            "elements": [
+              "6",
+              "5"
+            ]
+          },
+          "class": "GROUP",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 750,
+          "pos_y": 217
+        },
+        "5": {
+          "id": 5,
+          "name": "UserAgent",
+          "data": {
+            "args": {
+              "name": "User"
+            }
+          },
+          "class": "UserAgent",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 766,
+          "pos_y": 361
+        },
+        "6": {
+          "id": 6,
+          "name": "DialogAgent",
+          "data": {
+            "args": {
+              "name": "Assistant",
+              "sys_prompt": "You are a helpful assistant.",
+              "model_config_name": "qwen"
+            }
+          },
+          "class": "DialogAgent",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 985,
+          "pos_y": 468
+        },
+        "1": {
+          "id": 1,
+          "name": "readme",
+          "data": {},
+          "class": "welcome",
+          "html": "\n        <div class=\"title-box\"><i class=\"fa fa-book\"></i> README <span class=\"toggle-arrow\">▲</span> </div>\n        <div class=\"box-highlight\">\n      📖 This is a example of how to program a user-agent conversation in AgentScope. <br><br> <div class=\"modules-info\"><h4>Modules Used:</h4><ul><li><span class=\"highlight-module\" onclick=\"editor.selectNode(2);\">DashScope Chat:</span><br> - Each application must contain a model configured.</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(3);\">WhileLoopPipeline:</span><br> - Designed to perform repetitive operations.</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(4);\">SequentialPipeline:</span><br> - Make the message passes in a predefined, sequential order among agents.</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(5);\">UserAgent:</span><br> - Represents a user in a application.</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(6);\">DialogAgent:</span><br> - Agent for dialog in an application.</li></ur></div>For more details, please see <a href=\"https://github.com/modelscope/agentscope/tree/main/examples/conversation_basic\" target=\"_blank\">here</a>.  </div>\n      </div>\n      ",
+          "typenode": false,
+          "inputs": {},
+          "outputs": {},
+          "pos_x": 68,
+          "pos_y": 67
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,57 @@
+<div>
+    <div class="title-box" data-class="ReActAgent">
+        <div class="title-box-left-items">
+            <svg class="title-box-svg" viewBox="0 0 1024 1024"
+                 xmlns="http://www.w3.org/2000/svg">
+                <path d="M21.344 448h85.344v234.656H21.344V448zM554.656 192h64V106.656h-213.344V192h64v42.656h-320V896h725.344V234.656h-320V192z m234.688 128v490.656H234.688V320h554.656zM917.344 448h85.344v234.656h-85.344V448z"></path>
+                <path d="M341.344 512H448v106.656h-106.656V512zM576 512h106.656v106.656H576V512z"></path>
+            </svg>
+            <span>ReActAgent</span>
+        </div>
+        <button class="button copy-button">Copy</button>
+        <span class="toggle-arrow">&#x25B2;</span>
+    </div>
+
+
+    <div class="box">
+        <div class="readme">
+            Agent for ReAct (reasoning and acting) with tools
+            <div>Node ID: <span class="node-id">ID_PLACEHOLDER</span></div>
+        </div>
+
+        <label>Name</label>
+        <input type="text" df-args-name placeholder="Assistant"
+               data-required="true">
+        <br>
+
+        <label>System prompt</label>
+        <textarea type="text" df-args-sys_prompt  class="text-input"
+               placeholder="You're an assistant."
+                  data-required="true"></textarea>
+        <br>
+
+        <label>Model config name</label>
+        <input type="text" df-args-model_config_name
+               placeholder="gpt-3.5-turbo" data-required="true">
+        <br>
+
+        <label>Tools</label>
+        <div class="tools-placeholder" data-required="true">Please drag and
+            drop a Tool module into this area. Inserting other types of modules
+            may result in errors.
+        </div>
+
+        <label>Max reasoning-acting iterations</label>
+        <input type="number" df-args-max_iters placeholder=10 min=1 step=1>
+        <br>
+
+        <label>Verbose</label>
+        <input type="text" list="reactagent-verbose" df-args-verbose>
+        <br>
+
+        <datalist id="reactagent-verbose">
+            <option value="True">
+            <option value="False">
+        </datalist>
+    </div>
+</div>

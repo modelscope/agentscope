@@ -1,0 +1,102 @@
+{
+  "drawflow": {
+    "Home": {
+      "data": {
+        "2": {
+          "id": 2,
+          "name": "dashscope_chat",
+          "data": {
+            "args": {
+              "config_name": "qwen",
+              "model_name": "qwen-max",
+              "api_key": "",
+              "temperature": 0,
+              "seed": 0,
+              "model_type": "dashscope_chat",
+              "messages_key": "input"
+            }
+          },
+          "class": "dashscope_chat",
+          "html": "\n        <div>\n          <div class=\"title-box\"><i class=\"fas fa-brain\"></i> DashScope Chat\n          <span class=\"toggle-arrow\">▲</span> </div>\n          <div class=\"box\">\n            <div class=\"readme\">DashScope Chat 配置 (您的API key不会被储存和暴露给网站维护者)</div><br>\n            <label> Config Name </label>\n            <input type=\"text\" df-args-config_name placeholder=\"qwen\"><br>\n            <label> Model Name</label>\n            <input type=\"text\" list=\"dashscope_chat-model-names\" df-args-model_name><br>\n            <datalist id=\"dashscope_chat-model-names\">\n              <option value=\"qwen-turbo\">\n              <option value=\"qwen-plus\">\n              <option value=\"qwen-max\">\n              <option value=\"qwen-max-1201\">\n            </datalist>\n            <label> API key</label>\n            <input type=\"text\" df-args-api_key><br>\n            <label> Temperature </label>\n            <input type=\"number\" df-args-temperature placeholder=0 min=\"0\" max=\"2\" step=\"0.1\"><br>\n            <label> Seed </label>\n            <input type=\"number\" df-args-seed placeholder=0 min=\"0\">\n          </div>\n        </div>\n        ",
+          "typenode": false,
+          "inputs": {},
+          "outputs": {},
+          "pos_x": 399,
+          "pos_y": 127
+        },
+        "3": {
+          "id": 3,
+          "name": "UserAgent",
+          "data": {
+            "args": {
+              "name": "User"
+            }
+          },
+          "class": "UserAgent",
+          "html": "\n          <div>\n            <div class=\"title-box\"><i class=\"fas fa-robot\"></i>UserAgent\n            <button class=\"button copy-button\">Copy</button>\n            <span class=\"toggle-arrow\">▲</div>\n            <div class=\"box\">\n            <div class=\"readme\">\n            用户代理智能体\n            <div>Node ID: <span class=\"node-id\">3</span></div>\n            </div>\n              <p>Name</p>\n              <input type=\"text\" df-args-name placeholder=\"User\"><br>\n            </div>\n          </div>\n          ",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": [
+                {
+                  "node": "4",
+                  "output": "input_1"
+                }
+              ]
+            }
+          },
+          "pos_x": 716,
+          "pos_y": 245
+        },
+        "4": {
+          "id": 4,
+          "name": "DialogAgent",
+          "data": {
+            "args": {
+              "name": "Assistant",
+              "sys_prompt": "You are an assistant",
+              "model_config_name": "qwen"
+            }
+          },
+          "class": "DialogAgent",
+          "html": "\n          <div>\n            <div class=\"title-box\"><i class=\"fas fa-robot\"></i>DialogAgent\n            <button class=\"button copy-button\">Copy</button>\n                      <span class=\"toggle-arrow\">▲</span></div>\n            <div class=\"box\">\n              <div class=\"readme\">\n              用于对话的智能体\n              <div>Node ID: <span class=\"node-id\">4</span></div>\n                </div>\n              <p>Name</p>\n              <input type=\"text\" df-args-name placeholder=\"Assistant\"><br>\n              <p>System prompt</p>\n              <input type=\"text\" df-args-sys_prompt placeholder=\"You're an assistant.\"><br>\n              <p>Model config name</p>\n              <input type=\"text\" df-args-model_config_name placeholder=\"gpt-3.5-turbo\">\n            </div>\n          </div>\n          ",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": [
+                {
+                  "node": "3",
+                  "input": "output_1"
+                }
+              ]
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 1080,
+          "pos_y": 173
+        },
+        "1": {
+          "id": 1,
+          "name": "readme",
+          "data": {},
+          "class": "welcome",
+          "html": "\n        <div class=\"title-box\"><i class=\"fa fa-book\"></i> README <span class=\"toggle-arrow\">▲</span> </div>\n        <div class=\"box-highlight\">\n      📖 这是一个如何在 AgentScope 中编写单轮对话的示例。 <br><br> <div class=\"modules-info\"><h4>使用到的模块:</h4><ul><li><span class=\"highlight-module\" onclick=\"editor.selectNode(2);\">DashScope Chat:</span><br> - 每个多智能体应用都必须包含一个配置好的模型。</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(3);\">UserAgent:</span><br> - 代表应用中的用户。</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(4);\">DialogAgent:</span><br> - 应用中的对话智能体。</li></ur></div>\n ",
+          "typenode": false,
+          "inputs": {},
+          "outputs": {},
+          "pos_x": 68,
+          "pos_y": 67
+        }
+      }
+    }
+  }
+}
