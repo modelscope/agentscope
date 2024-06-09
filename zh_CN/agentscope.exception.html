@@ -89,6 +89,11 @@
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.exception.FunctionNotFoundError"><code class="docutils literal notranslate"><span class="pre">FunctionNotFoundError</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.exception.ArgumentNotFoundError"><code class="docutils literal notranslate"><span class="pre">ArgumentNotFoundError</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.exception.ArgumentTypeError"><code class="docutils literal notranslate"><span class="pre">ArgumentTypeError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.exception.StudioError"><code class="docutils literal notranslate"><span class="pre">StudioError</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.exception.StudioError.__init__"><code class="docutils literal notranslate"><span class="pre">StudioError.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.exception.StudioRegisterError"><code class="docutils literal notranslate"><span class="pre">StudioRegisterError</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines</a></li>
@@ -248,6 +253,26 @@ the response is required to be a JSON dict object with required fields.</p>
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.exception.</span></span><span class="sig-name descname"><span class="pre">ArgumentTypeError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/exception.html#ArgumentTypeError"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.exception.ArgumentTypeError" title="Link to this definition"></a></dt>
 <dd><p>基类：<a class="reference internal" href="#agentscope.exception.FunctionCallError" title="agentscope.exception.FunctionCallError"><code class="xref py py-class docutils literal notranslate"><span class="pre">FunctionCallError</span></code></a></p>
 <p>The exception class for argument type error.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="agentscope.exception.StudioError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.exception.</span></span><span class="sig-name descname"><span class="pre">StudioError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/exception.html#StudioError"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.exception.StudioError" title="Link to this definition"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>The base class for exception raising during interaction with agentscope
+studio.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.exception.StudioError.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/exception.html#StudioError.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.exception.StudioError.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="agentscope.exception.StudioRegisterError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.exception.</span></span><span class="sig-name descname"><span class="pre">StudioRegisterError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/exception.html#StudioRegisterError"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.exception.StudioRegisterError" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#agentscope.exception.StudioError" title="agentscope.exception.StudioError"><code class="xref py py-class docutils literal notranslate"><span class="pre">StudioError</span></code></a></p>
+<p>The exception class for error when registering to agentscope studio.</p>
 </dd></dl>
 
 </section>

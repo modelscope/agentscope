@@ -1,7 +1,0 @@
-agentscope.web.studio
-=====================
-
-.. automodule:: agentscope.web.studio
-   :members:
-   :undoc-members:
-   :show-inheritance:

@@ -107,6 +107,7 @@
 <span class="kn">import</span> <span class="nn">traceback</span>
 <span class="kn">from</span> <span class="nn">concurrent</span> <span class="kn">import</span> <span class="n">futures</span>
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">import</span> <span class="nn">requests</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">dill</span>
@@ -126,13 +127,34 @@
         <span class="s2">&quot;distribute&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
+<span class="kn">from</span> <span class="nn">.._runtime</span> <span class="kn">import</span> <span class="n">_runtime</span>
+<span class="kn">from</span> <span class="nn">..studio._client</span> <span class="kn">import</span> <span class="n">_studio_client</span>
 <span class="kn">from</span> <span class="nn">..agents.agent</span> <span class="kn">import</span> <span class="n">AgentBase</span>
+<span class="kn">from</span> <span class="nn">..exception</span> <span class="kn">import</span> <span class="n">StudioRegisterError</span>
 <span class="kn">from</span> <span class="nn">..rpc.rpc_agent_pb2_grpc</span> <span class="kn">import</span> <span class="n">RpcAgentServicer</span>
 <span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Msg</span><span class="p">,</span>
     <span class="n">PlaceholderMessage</span><span class="p">,</span>
     <span class="n">deserialize</span><span class="p">,</span>
 <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_register_to_studio</span><span class="p">(</span>
+    <span class="n">studio_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">server_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Register a server to studio.&quot;&quot;&quot;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">studio_url</span><span class="si">}</span><span class="s2">/api/servers/register&quot;</span>
+    <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+        <span class="n">url</span><span class="p">,</span>
+        <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;server_id&quot;</span><span class="p">:</span> <span class="n">server_id</span><span class="p">,</span> <span class="s2">&quot;host&quot;</span><span class="p">:</span> <span class="n">host</span><span class="p">,</span> <span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="n">port</span><span class="p">},</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>  <span class="c1"># todo: configurable timeout</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to register server: </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">StudioRegisterError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to register server: </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="AgentServerServicer">
@@ -146,6 +168,8 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
         <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">server_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">studio_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">max_pool_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8192</span><span class="p">,</span>
         <span class="n">max_timeout_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1800</span><span class="p">,</span>
     <span class="p">):</span>
@@ -156,6 +180,10 @@
 <span class="sd">                Hostname of the rpc agent server.</span>
 <span class="sd">            port (`int`, defaults to `None`):</span>
 <span class="sd">                Port of the rpc agent server.</span>
+<span class="sd">            server_id (`str`, defaults to `None`):</span>
+<span class="sd">                Server id of the rpc agent server.</span>
+<span class="sd">            studio_url (`str`, defaults to `None`):</span>
+<span class="sd">                URL of the AgentScope Studio.</span>
 <span class="sd">            max_pool_size (`int`, defaults to `8192`):</span>
 <span class="sd">                The max number of agent reply messages that the server can</span>
 <span class="sd">                accommodate. Note that the oldest message will be deleted</span>
@@ -166,6 +194,17 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">server_id</span> <span class="o">=</span> <span class="n">server_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">studio_url</span> <span class="o">=</span> <span class="n">studio_url</span>
+        <span class="k">if</span> <span class="n">studio_url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_register_to_studio</span><span class="p">(</span>
+                <span class="n">studio_url</span><span class="o">=</span><span class="n">studio_url</span><span class="p">,</span>
+                <span class="n">server_id</span><span class="o">=</span><span class="n">server_id</span><span class="p">,</span>
+                <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span>
+                <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">_studio_client</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">_runtime</span><span class="o">.</span><span class="n">runtime_id</span><span class="p">,</span> <span class="n">studio_url</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">result_pool</span> <span class="o">=</span> <span class="n">ExpiringDict</span><span class="p">(</span>
             <span class="n">max_len</span><span class="o">=</span><span class="n">max_pool_size</span><span class="p">,</span>
             <span class="n">max_age_seconds</span><span class="o">=</span><span class="n">max_timeout_seconds</span><span class="p">,</span>

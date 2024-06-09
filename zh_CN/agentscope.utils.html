@@ -72,7 +72,6 @@
 <li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">agentscope.utils</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.utils.setup_logger"><code class="docutils literal notranslate"><span class="pre">setup_logger()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.utils.MonitorBase"><code class="docutils literal notranslate"><span class="pre">MonitorBase</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.utils.MonitorBase.register"><code class="docutils literal notranslate"><span class="pre">MonitorBase.register()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.utils.MonitorBase.exists"><code class="docutils literal notranslate"><span class="pre">MonitorBase.exists()</span></code></a></li>
@@ -129,22 +128,6 @@
   <section id="module-agentscope.utils">
 <span id="agentscope-utils"></span><h1>agentscope.utils<a class="headerlink" href="#module-agentscope.utils" title="Link to this heading"></a></h1>
 <p>Import modules in utils package.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="agentscope.utils.setup_logger">
-<span class="sig-prename descclassname"><span class="pre">agentscope.utils.</span></span><span class="sig-name descname"><span class="pre">setup_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_log</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'TRACE'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'DEBUG'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'INFO'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'SUCCESS'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'WARNING'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'ERROR'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'CRITICAL'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'INFO'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/utils/logging_utils.html#setup_logger"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.utils.setup_logger" title="Link to this definition"></a></dt>
-<dd><p>Setup <cite>loguru.logger</cite> and redirect stderr to logging.</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>path_log</strong> (<cite>str</cite>, defaults to <cite>“”</cite>) – The directory of log files.</p></li>
-<li><p><strong>level</strong> (<cite>str</cite>, defaults to <cite>“INFO”</cite>) – The logging level, which is one of the following: <cite>“TRACE”</cite>,
-<cite>“DEBUG”</cite>, <cite>“INFO”</cite>, <cite>“SUCCESS”</cite>, <cite>“WARNING”</cite>, <cite>“ERROR”</cite>,
-<cite>“CRITICAL”</cite>.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py class">
 <dt class="sig sig-object py" id="agentscope.utils.MonitorBase">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.utils.</span></span><span class="sig-name descname"><span class="pre">MonitorBase</span></span><a class="reference internal" href="_modules/agentscope/utils/monitor.html#MonitorBase"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.utils.MonitorBase" title="Link to this definition"></a></dt>

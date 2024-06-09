@@ -161,10 +161,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">content</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">role</span> <span class="o">=</span> <span class="n">role</span>
 
-        <span class="k">if</span> <span class="n">url</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">url</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">url</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span></div>
 
@@ -381,7 +378,7 @@
 
 <div class="viewcode-block" id="PlaceholderMessage">
 <a class="viewcode-back" href="../../agentscope.message.html#agentscope.message.PlaceholderMessage">[docs]</a>
-<span class="k">class</span> <span class="nc">PlaceholderMessage</span><span class="p">(</span><span class="n">MessageBase</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">PlaceholderMessage</span><span class="p">(</span><span class="n">Msg</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A placeholder for the return message of RpcAgent.&quot;&quot;&quot;</span>
 
     <span class="n">PLACEHOLDER_ATTRS</span> <span class="o">=</span> <span class="p">{</span>

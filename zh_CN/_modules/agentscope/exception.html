@@ -239,6 +239,30 @@
 <span class="k">class</span> <span class="nc">ArgumentTypeError</span><span class="p">(</span><span class="n">FunctionCallError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for argument type error.&quot;&quot;&quot;</span></div>
 
+
+
+<div class="viewcode-block" id="StudioError">
+<a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.StudioError">[文档]</a>
+<span class="k">class</span> <span class="nc">StudioError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The base class for exception raising during interaction with agentscope</span>
+<span class="sd">    studio.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="StudioError.__init__">
+<a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.StudioError.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="StudioRegisterError">
+<a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.StudioRegisterError">[文档]</a>
+<span class="k">class</span> <span class="nc">StudioRegisterError</span><span class="p">(</span><span class="n">StudioError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for error when registering to agentscope studio.&quot;&quot;&quot;</span></div>
+
 </pre></div>
 
            </div>

@@ -116,7 +116,10 @@
     <span class="n">WorkflowNodeType</span><span class="p">,</span>
     <span class="n">DEFAULT_FLOW_VAR</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">agentscope.web.workstation.workflow_utils</span> <span class="kn">import</span> <span class="n">is_callable_expression</span>
+<span class="kn">from</span> <span class="nn">agentscope.web.workstation.workflow_utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">is_callable_expression</span><span class="p">,</span>
+    <span class="n">kwarg_converter</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
@@ -170,7 +173,7 @@
         <span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">inits</span> <span class="o">=</span> <span class="p">[</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;agentscope.init(logger_level=&quot;DEBUG&quot;)&quot;&quot;&quot;</span><span class="p">,</span>
+            <span class="s1">&#39;agentscope.init(logger_level=&quot;DEBUG&quot;)&#39;</span><span class="p">,</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2"> = None&quot;</span><span class="p">,</span>
         <span class="p">]</span>
 
@@ -217,7 +220,11 @@
 
 <div class="viewcode-block" id="ASDiGraph.compile">
 <a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_dag.html#agentscope.web.workstation.workflow_dag.ASDiGraph.compile">[docs]</a>
-    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compiled_filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span>  <span class="c1"># type: ignore[no-untyped-def]</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">compiled_filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compile DAG to a runnable python code&quot;&quot;&quot;</span>
 
         <span class="k">def</span> <span class="nf">format_python_code</span><span class="p">(</span><span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -228,6 +235,10 @@
                 <span class="k">return</span> <span class="n">format_str</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">FileMode</span><span class="p">())</span>
             <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">code</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">inits</span><span class="p">[</span>
+            <span class="mi">0</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;agentscope.init(logger_level=&quot;DEBUG&quot;, </span><span class="si">{</span><span class="n">kwarg_converter</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span>
 
         <span class="n">sorted_nodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">topological_sort</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
         <span class="n">sorted_nodes</span> <span class="o">=</span> <span class="p">[</span>
