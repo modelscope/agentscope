@@ -5,6 +5,7 @@ import threading
 import traceback
 import json
 from concurrent import futures
+from multiprocessing.synchronize import Event as EventClass
 from typing import Any
 from loguru import logger
 import requests
@@ -66,6 +67,7 @@ class AgentServerServicer(RpcAgentServicer):
 
     def __init__(
         self,
+        stop_event: EventClass,
         host: str = "localhost",
         port: int = None,
         server_id: str = None,
@@ -76,6 +78,7 @@ class AgentServerServicer(RpcAgentServicer):
         """Init the AgentServerServicer.
 
         Args:
+            stop_event (`Event`): Event to stop the server.
             host (`str`, defaults to "localhost"):
                 Hostname of the rpc agent server.
             port (`int`, defaults to `None`):
@@ -115,6 +118,7 @@ class AgentServerServicer(RpcAgentServicer):
         self.task_id_counter = 0
         self.agent_pool: dict[str, AgentBase] = {}
         self.pid = os.getpid()
+        self.stop_event = stop_event
 
     def get_task_id(self) -> int:
         """Get the auto-increment task id.
@@ -152,6 +156,15 @@ class AgentServerServicer(RpcAgentServicer):
         _: ServicerContext,
     ) -> agent_pb2.StatusResponse:
         """Check whether the server is alive."""
+        return agent_pb2.StatusResponse(ok=True)
+
+    def stop(
+        self,
+        request: Empty,
+        _: ServicerContext,
+    ) -> agent_pb2.StatusResponse:
+        """Stop the server."""
+        self.stop_event.set()
         return agent_pb2.StatusResponse(ok=True)
 
     def create_agent(

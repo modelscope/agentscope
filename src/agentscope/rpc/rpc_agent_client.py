@@ -114,6 +114,28 @@ class RpcAgentClient:
             )
             return False
 
+    def stop(self) -> None:
+        """Stop the agent server."""
+        try:
+            with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
+                stub = RpcAgentStub(channel)
+                logger.info(
+                    f"Stopping agent server at [{self.host}:{self.port}].",
+                )
+                resp = stub.stop(Empty(), timeout=5)
+                if resp.ok:
+                    logger.info(
+                        f"Agent server at [{self.host}:{self.port}] stopped.",
+                    )
+                else:
+                    logger.error(
+                        f"Fail to stop the agent server: {resp.message}",
+                    )
+        except Exception as e:
+            logger.error(
+                f"Fail to stop the agent server: {e}",
+            )
+
     def create_agent(
         self,
         agent_configs: dict,

@@ -775,4 +775,4 @@ class BasicRpcAgentTest(unittest.TestCase):
             },
         )
         self.assertIsNotNone(dia_agent)
-        launcher.shutdown()
+        client.stop()

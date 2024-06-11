@@ -29,6 +29,11 @@ class RpcAgentStub(object):
             request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             response_deserializer=rpc__agent__pb2.StatusResponse.FromString,
         )
+        self.stop = channel.unary_unary(
+            "/RpcAgent/stop",
+            request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            response_deserializer=rpc__agent__pb2.StatusResponse.FromString,
+        )
         self.create_agent = channel.unary_unary(
             "/RpcAgent/create_agent",
             request_serializer=rpc__agent__pb2.CreateAgentRequest.SerializeToString,
@@ -95,6 +100,12 @@ class RpcAgentServicer(object):
         context.set_details("Method not implemented!")
         raise NotImplementedError("Method not implemented!")
 
+    def stop(self, request, context):
+        """stop the server"""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
+
     def create_agent(self, request, context):
         """create a new agent on the server"""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -138,7 +149,7 @@ class RpcAgentServicer(object):
         raise NotImplementedError("Method not implemented!")
 
     def get_agent_memory(self, request, context):
-        """get memory of specific agent"""
+        """get memory of a specific agent"""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details("Method not implemented!")
         raise NotImplementedError("Method not implemented!")
@@ -166,6 +177,11 @@ def add_RpcAgentServicer_to_server(servicer, server):
     rpc_method_handlers = {
         "is_alive": grpc.unary_unary_rpc_method_handler(
             servicer.is_alive,
+            request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            response_serializer=rpc__agent__pb2.StatusResponse.SerializeToString,
+        ),
+        "stop": grpc.unary_unary_rpc_method_handler(
+            servicer.stop,
             request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
             response_serializer=rpc__agent__pb2.StatusResponse.SerializeToString,
         ),
@@ -253,6 +269,35 @@ class RpcAgent(object):
             request,
             target,
             "/RpcAgent/is_alive",
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            rpc__agent__pb2.StatusResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
+
+    @staticmethod
+    def stop(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            "/RpcAgent/stop",
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             rpc__agent__pb2.StatusResponse.FromString,
             options,

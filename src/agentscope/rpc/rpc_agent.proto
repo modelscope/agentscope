@@ -7,6 +7,9 @@ service RpcAgent {
     // check server is alive
     rpc is_alive (google.protobuf.Empty) returns (StatusResponse) {}
 
+    // stop the server
+    rpc stop (google.protobuf.Empty) returns (StatusResponse) {}
+
     // create a new agent on the server
     rpc create_agent (CreateAgentRequest) returns (StatusResponse) {}
 

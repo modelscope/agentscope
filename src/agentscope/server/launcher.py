@@ -121,9 +121,6 @@ async def _setup_agent_server_async(
         start_event (`EventClass`, defaults to `None`):
             An Event instance used to determine whether the child process
             has been started.
-        stop_event (`EventClass`, defaults to `None`):
-            The stop Event instance used to determine whether the child
-            process has been stopped.
         pipe (`int`, defaults to `None`):
             A pipe instance used to pass the actual port of the server.
         local_mode (`bool`, defaults to `None`):
@@ -147,6 +144,7 @@ async def _setup_agent_server_async(
     if init_settings is not None:
         init_process(**init_settings)
     servicer = AgentServerServicer(
+        stop_event=stop_event,
         host=host,
         port=port,
         server_id=server_id,
@@ -267,9 +265,9 @@ class RpcAgentServerLauncher:
         self.max_timeout_seconds = max_timeout_seconds
         self.local_mode = local_mode
         self.server = None
-        self.stop_event = None
         self.parent_con = None
         self.custom_agents = custom_agents
+        self.stop_event = Event()
         self.server_id = (
             RpcAgentServerLauncher.generate_server_id(self.host, self.port)
             if server_id is None
@@ -300,6 +298,7 @@ class RpcAgentServerLauncher:
             _setup_agent_server_async(
                 host=self.host,
                 port=self.port,
+                stop_event=self.stop_event,
                 server_id=self.server_id,
                 max_pool_size=self.max_pool_size,
                 max_timeout_seconds=self.max_timeout_seconds,
@@ -313,7 +312,6 @@ class RpcAgentServerLauncher:
         """Launch an agent server in sub-process."""
         from agentscope._init import _INIT_SETTINGS
 
-        self.stop_event = Event()
         self.parent_con, child_con = Pipe()
         start_event = Event()
         server_process = Process(
