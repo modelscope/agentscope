@@ -840,3 +840,34 @@ pre[class*="language-"] {
     line-height: 1.2;
     resize: vertical;
 }
+
+.new-action {
+    cursor: pointer;
+    padding: 8px;
+    margin-left: auto;
+    border: none;
+    border-radius: 20px;
+    background-color: #007bff;
+    color: white;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 30px;
+    overflow: hidden;
+    white-space: nowrap;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.new-action:hover, .new-action:focus {
+    width: auto;
+    padding: 8px 16px;
+    background-color: #0056b3;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.new-action:active {
+    background-color: #00488a;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
