@@ -776,3 +776,5 @@ class BasicRpcAgentTest(unittest.TestCase):
         )
         self.assertIsNotNone(dia_agent)
         client.stop()
+        time.sleep(5)
+        self.assertFalse(client.is_alive())

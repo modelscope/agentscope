@@ -108,9 +108,9 @@ class RpcAgentClient:
                         port=self.port,
                     )
                 return status.ok
-        except Exception as e:
-            logger.error(
-                f"Agent server not alive: {e}",
+        except Exception:
+            logger.info(
+                f"Agent server [{self.host}:{self.port}] not alive.",
             )
             return False
 
