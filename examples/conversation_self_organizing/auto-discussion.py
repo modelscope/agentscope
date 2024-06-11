@@ -26,7 +26,11 @@ model_configs = [
         "json_args": {},
     },
 ]
-agentscope.init(model_configs=model_configs)
+
+agentscope.init(
+    model_configs=model_configs,
+    project="Self-Organizing Conversation",
+)
 
 
 # init the self-organizing conversation

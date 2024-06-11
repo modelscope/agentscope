@@ -60,10 +60,10 @@ pip install -e .[distribute]  # 在Mac上使用`pip install -e .\[distribute\]`
 
 ```bash
 # 针对本地化的multi-agent应用
-pip install agentscope
+pip install agentscope --pre
 
 # 为分布式multi-agent应用
-pip install agentscope[distribute]  # 在Mac上使用`pip install agentscope\[distribute\]`
+pip install agentscope[distribute] --pre  # 在Mac上使用`pip install agentscope\[distribute\] --pre`
 ```
 
 [[返回顶端]](#102-installation-zh)

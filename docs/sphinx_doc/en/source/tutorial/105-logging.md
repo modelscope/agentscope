@@ -1,6 +1,6 @@
 (105-logging-en)=
 
-# Logging and WebUI
+# Logging
 
 Welcome to the tutorial on logging in multi-agent applications with AgentScope. We'll also touch on how you can visualize these logs using a simple web interface. This guide will help you track the agent's interactions and system information in a clearer and more organized way.
 
@@ -61,35 +61,5 @@ logger.warning("The agent is running slower than expected.")
 # Log an error message when something has gone wrong.
 logger.error("The agent encountered an unexpected error while processing a request.")
 ```
-
-## Integrating logging with WebUI
-
-To visualize these logs and running details, AgentScope provides a simple
-web interface.
-
-### Quick Running
-
-You can run the WebUI in the following python code:
-
-```python
-import agentscope
-
-agentscope.web.init(
-    path_save="YOUR_SAVE_PATH"
-)
-```
-
-By this way, you can see all the running instances and projects in `http://127.0.0.1:5000` as follows:
-
-![webui](https://img.alicdn.com/imgextra/i3/O1CN01kpHFkn1HpeYEkn60I_!!6000000000807-0-tps-3104-1849.jpg)
-
-By clicking a running instance, we can observe more details.
-
-![The running details](https://img.alicdn.com/imgextra/i2/O1CN01AZtsf31MIHm4FmjjO_!!6000000001411-0-tps-3104-1849.jpg)
-
-### Note
-
-The WebUI is still under development. We will provide more features and
-better user experience in the future.
 
 [[Return to the top]](#105-logging-en)

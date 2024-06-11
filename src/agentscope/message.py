@@ -58,10 +58,7 @@ class MessageBase(dict):
         self.content = content
         self.role = role
 
-        if url:
-            self.url = url
-        else:
-            self.url = None
+        self.url = url
 
         self.update(kwargs)
 
@@ -244,7 +241,7 @@ class Tht(MessageBase):
         return json.dumps({"__type": "Tht", **self})
 
 
-class PlaceholderMessage(MessageBase):
+class PlaceholderMessage(Msg):
     """A placeholder for the return message of RpcAgent."""
 
     PLACEHOLDER_ATTRS = {
