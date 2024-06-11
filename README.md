@@ -43,6 +43,7 @@ Welcome to join our community on
 
 <https://cloud.video.taobao.com/vod/play/Y1BZNGQ3dE1MTUpCcA/M2RPTTZSVndNZXRGdXVhS0pJeU4rRkRxQ0R2cis2UGVsNUp6SlVVQk5YeDlRTjdFeVFFTFA3bmNUSWpPNlRNbHV3R04zTmh3PT0>
 
+
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-05-14]** Dear AgentScope users, we are conducting a survey on **AgentScope Workstation & Copilot** user experience. We currently need your valuable feedback to help us improve the experience of AgentScope's Drag & Drop multi-agent application development and Copilot. Your feedback is valuable and the survey will take about 3~5 minutes. Please click [URL](https://survey.aliyun.com/apps/zhiliao/vgpTppn22) to participate in questionnaire surveys. Thank you very much for your support and contribution!
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-05-14]** AgentScope supports **gpt-4o** as well as other OpenAI vision models now! Try gpt-4o with its [model configuration](./examples/model_configs_template/openai_chat_template.json) and new example [Conversation with gpt-4o](./examples/conversation_with_gpt-4o)!
