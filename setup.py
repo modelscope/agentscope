@@ -49,6 +49,10 @@ gradio_requires = [
     "modelscope_studio==0.0.5",
 ]
 
+rag_requires = [
+    "llama-index",
+]
+
 studio_requires = []
 
 # released requires
@@ -91,6 +95,7 @@ full_requires = (
     + doc_requires
     + test_requires
     + gradio_requires
+    + rag_requires
     + studio_requires
 )
 

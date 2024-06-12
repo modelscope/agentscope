@@ -31,6 +31,8 @@ Welcome to join our community on
 
 ## News
 
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-06-11]** The RAG functionality is available for agents in **AgentScope** now! [**A quick introduction to RAG in AgentScope**](https://modelscope.github.io/agentscope/en/tutorial/210-rag.html) can help you equip your agent with external knowledge!
+
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-06-09]** We release **AgentScope** v0.0.5 now! In this new version, [**AgentScope Workstation**](https://modelscope.github.io/agentscope/en/tutorial/209-gui.html) is open-sourced with the refactored [**AgentScope Studio**](https://modelscope.github.io/agentscope/en/tutorial/209-gui.html)!
 
 <h5 align="center">

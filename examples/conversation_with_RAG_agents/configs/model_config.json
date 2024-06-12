@@ -1,0 +1,14 @@
+[
+  {
+    "model_type": "dashscope_text_embedding",
+    "config_name": "qwen_emb_config",
+    "model_name": "text-embedding-v2",
+    "api_key": ""
+  },
+  {
+      "model_type": "dashscope_chat",
+      "config_name": "qwen_config",
+      "model_name": "qwen-max",
+      "api_key": ""
+  }
+]
