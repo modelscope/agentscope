@@ -22,6 +22,7 @@ AgentScope is an innovative multi-agent platform designed to empower developers 
 - [Pipeline and MsgHub](202-pipeline.md)
 - [Distribution](208-distribute.md)
 - [AgentScope Studio](209-gui.md)
+- [Retrieval Augmented Generation (RAG)](210-rag.md)
 - [Logging](105-logging.md)
 - [Monitor](207-monitor.md)
 - [Example: Werewolf Game](104-usecase.md)

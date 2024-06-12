@@ -1,0 +1,336 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>简要介绍AgentScope中的RAG &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=7d86a446"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/translations.js?v=beaddf03"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../en/tutorial/210-rag.html">English</a></li> |
+    <a href="../../zh_CN/tutorial/210-rag.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="101-agentscope.html">关于AgentScope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="102-installation.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="103-example.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="203-model.html">模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="206-prompt.html">提示工程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="201-agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="205-memory.html">记忆</a></li>
+<li class="toctree-l1"><a class="reference internal" href="203-parser.html">结果解析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="204-service.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="202-pipeline.html">Pipeline和MsgHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="208-distribute.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="209-gui.html">AgentScope Studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="105-logging.html">日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="207-monitor.html">监控器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="104-usecase.html">样例：狼人杀游戏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.exception.html">agentscope.exception</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.server.html">agentscope.server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.utils.html">agentscope.utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">简要介绍AgentScope中的RAG</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorial/210-rag.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="agentscoperag">
+<span id="rag-zh"></span><h1>简要介绍AgentScope中的RAG<a class="headerlink" href="#agentscoperag" title="Link to this heading"></a></h1>
+<p>我们在此介绍AgentScope与RAG相关的三个概念：知识（Knowledge），知识库（Knowledge Bank）和RAG 智能体。</p>
+<section id="knowledge">
+<h2>Knowledge<a class="headerlink" href="#knowledge" title="Link to this heading"></a></h2>
+<p>知识模块（目前仅有“LlamaIndexKnowledge”；即将提供对LangChain的支持）负责处理所有与RAG相关的操作。</p>
+<section id="id1">
+<h3>如何初始化一个Knowledge对象<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<p>用户可以使用JSON配置来创建一个Knowledge模块，以指定1）数据路径，2）数据加载器，3）数据预处理方法，以及4）嵌入模型（模型配置名称）。
+一个详细的示例可以参考以下内容：</p>
+  <details>
+  <summary> 详细的配置示例 </summary>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;knowledge_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{your_knowledge_id}&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;emb_model_config_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{your_embed_model_config_name}&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;data_processing&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;load_data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;loader&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">&quot;create_object&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;module&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;llama_index.core&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;class&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SimpleDirectoryReader&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;init_args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;input_dir&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{path_to_your_data_dir_1}&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;required_exts&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;.md&quot;</span><span class="p">]</span>
+<span class="w">          </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;load_data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;loader&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">&quot;create_object&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;module&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;llama_index.core&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;class&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SimpleDirectoryReader&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;init_args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;input_dir&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{path_to_your_python_code_data_dir}&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;recursive&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;required_exts&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;.py&quot;</span><span class="p">]</span>
+<span class="w">          </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;store_and_index&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;transformations&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;create_object&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;module&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;llama_index.core.node_parser&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;class&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CodeSplitter&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;init_args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="nt">&quot;language&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;python&quot;</span><span class="p">,</span>
+<span class="w">              </span><span class="nt">&quot;chunk_lines&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">          </span><span class="p">}</span>
+<span class="w">        </span><span class="p">]</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+  </details>
+</section>
+<section id="id2">
+<h3>更多关于 knowledge 配置<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<p>以上提到的配置通常保存为一个JSON文件，它必须包含以下关键属性</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">knowledge_id</span></code>: 每个knowledge模块的唯一标识符;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">emb_model_config_name</span></code>: embedding模型的名称;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">chunk_size</span></code>: 对文件分块的默认大小;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">chunk_overlap</span></code>: 文件分块之间的默认重叠大小;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data_processing</span></code>: 一个list型的数据处理方法集合。</p></li>
+</ul>
+<section id="llamaindexknowledge">
+<h4>以配置 LlamaIndexKnowledge 为例<a class="headerlink" href="#llamaindexknowledge" title="Link to this heading"></a></h4>
+<p>当使用<code class="docutils literal notranslate"><span class="pre">llama_index_knowledge</span></code>是，对于上述的最后一项<code class="docutils literal notranslate"><span class="pre">data_processing</span></code> ，这个<code class="docutils literal notranslate"><span class="pre">list</span></code>型的参数中的每个条目（为<code class="docutils literal notranslate"><span class="pre">dict</span></code>型）都对应配置一个data loader对象，其功能包括用来加载所需的数据（即字段<code class="docutils literal notranslate"><span class="pre">load_data</span></code>中包含的信息），以及处理加载数据的转换对象（<code class="docutils literal notranslate"><span class="pre">store_and_index</span></code>）。换而言之，在一次载入数据时，可以同时从多个数据源中加载数据，并处理后合并在同一个索引下以供后面的数据提取使用（retrieve）。有关该组件的更多信息，请参阅 <a class="reference external" href="https://docs.llamaindex.ai/en/stable/module_guides/loading/">LlamaIndex-Loading</a>。</p>
+<p>在这里，无论是针对数据加载还是数据处理，我们都需要配置以下属性</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">create_object</span></code>：指示是否创建新对象，在此情况下必须为true；</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">module</span></code>：对象对应的类所在的位置；</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">class</span></code>：这个类的名称。</p></li>
+</ul>
+<p>更具体得说，当对<code class="docutils literal notranslate"><span class="pre">load_data</span></code>进行配置时候，您可以选择使用多种多样的的加载器，例如使用<code class="docutils literal notranslate"><span class="pre">SimpleDirectoryReader</span></code>（在<code class="docutils literal notranslate"><span class="pre">class</span></code>字段里配置）来读取各种类型的数据（例如txt、pdf、html、py、md等）。关于这个数据加载器，您还需要配置以下关键属性</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">input_dir</span></code>：数据加载的路径；</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">required_exts</span></code>：将加载的数据的文件扩展名。</p></li>
+</ul>
+<p>有关数据加载器的更多信息，请参阅<a class="reference external" href="https://docs.llamaindex.ai/en/stable/module_guides/loading/simpledirectoryreader/">这里</a>。</p>
+<p>对于<code class="docutils literal notranslate"><span class="pre">store_and_index</span></code>而言，这个配置是可选的，如果用户未指定特定的转换方式，系统将使用默认的transformation（也称为node parser）方法，名称为<code class="docutils literal notranslate"><span class="pre">SentenceSplitter</span></code>。对于某些特定需求下也可以使用不同的转换方式，例如对于代码解析可以使用<code class="docutils literal notranslate"><span class="pre">CodeSplitter</span></code>，针对这种特殊的node parser，用户可以设置以下属性：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">language</span></code>：希望处理代码的语言名；</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">chunk_lines</span></code>：分割后每个代码块的行数。</p></li>
+</ul>
+<p>有关节点解析器的更多信息，请参阅<a class="reference external" href="https://docs.llamaindex.ai/en/stable/module_guides/loading/node_parsers/">这里</a>。</p>
+<p>如果用户想要避免详细的配置，我们也在<code class="docutils literal notranslate"><span class="pre">KnowledgeBank</span></code>中提供了一种快速的方式（请参阅以下内容）。</p>
+</section>
+</section>
+<section id="id3">
+<h3>如何使用一个 Knowledge 对象<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<p>当我们成功创建了一个knowledge后，用户可以通过<code class="docutils literal notranslate"><span class="pre">.retrieve</span></code>从<code class="docutils literal notranslate"><span class="pre">Knowledge</span></code> 对象中提取信息。<code class="docutils literal notranslate"><span class="pre">.retrieve</span></code>函数一下三个参数：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">query</span></code>: 输入参数，用户希望提取与之相关的内容;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">similarity_top_k</span></code>: 提取的“数据块”数量；</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">to_list_strs</span></code>: 是否只返回字符串(str)的列表(list)。</p></li>
+</ul>
+<p><em>高阶:</em> 对于 <code class="docutils literal notranslate"><span class="pre">LlamaIndexKnowledge</span></code>, 它的<code class="docutils literal notranslate"><span class="pre">.retrieve</span></code>函数也支持熟悉LlamaIndex的用户直接传入一个建好的retriever。</p>
+</section>
+<section id="id4">
+<h3>关于<code class="docutils literal notranslate"><span class="pre">LlamaIndexKnowledge</span></code>的细节<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<p>在这里，我们将使用<code class="docutils literal notranslate"><span class="pre">LlamaIndexKnowledge</span></code>作为示例，以说明在<code class="docutils literal notranslate"><span class="pre">Knowledge</span></code>模块内的操作。
+当初始化<code class="docutils literal notranslate"><span class="pre">LlamaIndexKnowledge</span></code>对象时，<code class="docutils literal notranslate"><span class="pre">LlamaIndexKnowledge.__init__</span></code>将执行以下步骤：</p>
+<ul class="simple">
+<li><p>它处理数据并生成检索索引 (<code class="docutils literal notranslate"><span class="pre">LlamaIndexKnowledge._data_to_index(...)</span></code>中完成) 其中包括</p>
+<ul>
+<li><p>加载数据 <code class="docutils literal notranslate"><span class="pre">LlamaIndexKnowledge._data_to_docs(...)</span></code>;</p></li>
+<li><p>对数据进行预处理，使用预处理方法（比如分割）和向量模型生成向量  <code class="docutils literal notranslate"><span class="pre">LlamaIndexKnowledge._docs_to_nodes(...)</span></code>;</p></li>
+<li><p>基于生成的向量做好被查询的准备， 即生成索引。</p></li>
+</ul>
+</li>
+<li><p>如果索引已经存在，则会调用 <code class="docutils literal notranslate"><span class="pre">LlamaIndexKnowledge._load_index(...)</span></code> 来加载索引，并避免重复的嵌入调用。
+</br></p></li>
+</ul>
+</section>
+</section>
+<section id="knowledge-bank">
+<h2>Knowledge Bank<a class="headerlink" href="#knowledge-bank" title="Link to this heading"></a></h2>
+<p>知识库将一组Knowledge模块（例如，来自不同数据集的知识）作为知识的集合进行维护。因此，不同的智能体可以在没有不必要的重新初始化的情况下重复使用知识模块。考虑到配置Knowledge模块可能对大多数用户来说过于复杂，知识库还提供了一个简单的函数调用来创建Knowledge模块。</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">KnowledgeBank.add_data_as_knowledge</span></code>: 创建Knowledge模块。一种简单的方式只需要提供knowledge_id、emb_model_name和data_dirs_and_types。
+因为<code class="docutils literal notranslate"><span class="pre">KnowledgeBank</span></code>默认生成的是 <code class="docutils literal notranslate"><span class="pre">LlamaIndexKnowledge</span></code>, 所以所有文本类文件都可以支持，包括<code class="docutils literal notranslate"><span class="pre">.txt</span></code>， <code class="docutils literal notranslate"><span class="pre">.html</span></code>， <code class="docutils literal notranslate"><span class="pre">.md</span></code> ，<code class="docutils literal notranslate"><span class="pre">.csv</span></code>，<code class="docutils literal notranslate"><span class="pre">.pdf</span></code>和 所有代码文件（如<code class="docutils literal notranslate"><span class="pre">.py</span></code>）.  其他支持的文件类型可以参考 <a class="reference external" href="https://docs.llamaindex.ai/en/stable/module_guides/loading/simpledirectoryreader/">LlamaIndex document</a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">knowledge_bank</span><span class="o">.</span><span class="n">add_data_as_knowledge</span><span class="p">(</span>
+      <span class="n">knowledge_id</span><span class="o">=</span><span class="s2">&quot;agentscope_tutorial_rag&quot;</span><span class="p">,</span>
+      <span class="n">emb_model_name</span><span class="o">=</span><span class="s2">&quot;qwen_emb_config&quot;</span><span class="p">,</span>
+      <span class="n">data_dirs_and_types</span><span class="o">=</span><span class="p">{</span>
+          <span class="s2">&quot;../../docs/sphinx_doc/en/source/tutorial&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;.md&quot;</span><span class="p">],</span>
+      <span class="p">},</span>
+  <span class="p">)</span>
+</pre></div>
+</div>
+<p>对于更高级的初始化，用户仍然可以将一个知识模块配置作为参数knowledge_config传递：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># load knowledge_config as dict</span>
+<span class="n">knowledge_bank</span><span class="o">.</span><span class="n">add_data_as_knowledge</span><span class="p">(</span>
+    <span class="n">knowledge_id</span><span class="o">=</span><span class="n">knowledge_config</span><span class="p">[</span><span class="s2">&quot;knowledge_id&quot;</span><span class="p">],</span>
+    <span class="n">emb_model_name</span><span class="o">=</span><span class="n">knowledge_config</span><span class="p">[</span><span class="s2">&quot;emb_model_config_name&quot;</span><span class="p">],</span>
+    <span class="n">knowledge_config</span><span class="o">=</span><span class="n">knowledge_config</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">KnowledgeBank.get_knowledge</span></code>: 它接受两个参数，knowledge_id和duplicate。
+如果duplicate为true，则返回提供的knowledge_id对应的知识对象；否则返回深拷贝的对象。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">KnowledgeBank.equip</span></code>: 它接受三个参数，<code class="docutils literal notranslate"><span class="pre">agent</span></code>，<code class="docutils literal notranslate"><span class="pre">knowledge_id_list</span></code> 和<code class="docutils literal notranslate"><span class="pre">duplicate</span></code>。
+该函数会根据<code class="docutils literal notranslate"><span class="pre">knowledge_id_list</span></code>为<code class="docutils literal notranslate"><span class="pre">agent</span></code>提供相应的知识（放入<code class="docutils literal notranslate"><span class="pre">agent.knowledge_list</span></code>）。<code class="docutils literal notranslate"><span class="pre">duplicate</span></code> 同样决定是否是深拷贝。</p></li>
+</ul>
+</section>
+<section id="rag">
+<h2>RAG 智能体<a class="headerlink" href="#rag" title="Link to this heading"></a></h2>
+<p>RAG 智能体是可以基于检索到的知识生成答案的智能体。</p>
+<ul>
+<li><p>让智能体使用RAG: RAG agent配有一个<code class="docutils literal notranslate"><span class="pre">knowledge_list</span></code>的列表</p>
+<ul>
+<li><p>可以在初始化时就给RAG agent传入<code class="docutils literal notranslate"><span class="pre">knowledge_list</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="n">knowledge</span> <span class="o">=</span> <span class="n">knowledge_bank</span><span class="o">.</span><span class="n">get_knowledge</span><span class="p">(</span><span class="n">knowledge_id</span><span class="p">)</span>
+    <span class="n">agent</span> <span class="o">=</span> <span class="n">LlamaIndexAgent</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;rag_worker&quot;</span><span class="p">,</span>
+        <span class="n">sys_prompt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{your_prompt}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">model_config_name</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{your_model}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">knowledge_list</span><span class="o">=</span><span class="p">[</span><span class="n">knowledge</span><span class="p">],</span> <span class="c1"># provide knowledge object directly</span>
+        <span class="n">similarity_top_k</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">log_retrieval</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">recent_n_mem_for_retrieve</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>如果通过配置文件来批量启动agent，也可以给agent提供<code class="docutils literal notranslate"><span class="pre">knowledge_id_list</span></code>。这样也可以通过将agent和它的<code class="docutils literal notranslate"><span class="pre">knowledge_id_list</span></code>一起传入<code class="docutils literal notranslate"><span class="pre">KnowledgeBank.equip</span></code>来为agent赋予<code class="docutils literal notranslate"><span class="pre">knowledge_list</span></code>。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># &gt;&gt;&gt; agent.knowledge_list</span>
+    <span class="c1"># &gt;&gt;&gt; []</span>
+    <span class="n">knowledge_bank</span><span class="o">.</span><span class="n">equip</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">agent</span><span class="o">.</span><span class="n">knowledge_id_list</span><span class="p">)</span>
+    <span class="c1"># &gt;&gt;&gt; agent.knowledge_list</span>
+    <span class="c1"># [&lt;LlamaIndexKnowledge object at 0x16e516fb0&gt;]</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</li>
+<li><p>Agent 智能体可以在<code class="docutils literal notranslate"><span class="pre">reply</span></code>函数中使用从<code class="docutils literal notranslate"><span class="pre">Knowledge</span></code>中检索到的信息，将其提示组合到LLM的提示词中。</p></li>
+</ul>
+<p><strong>自己搭建 RAG 智能体.</strong> 只要您的智能体配置具有<code class="docutils literal notranslate"><span class="pre">knowledge_id_list</span></code>，您就可以将一个agent和这个列表传递给<code class="docutils literal notranslate"><span class="pre">KnowledgeBank.equip</span></code>；这样该agent就是被装配<code class="docutils literal notranslate"><span class="pre">knowledge_id</span></code>。
+您可以在<code class="docutils literal notranslate"><span class="pre">reply</span></code>函数中自己决定如何从<code class="docutils literal notranslate"><span class="pre">Knowledge</span></code>对象中提取和使用信息，甚至通过<code class="docutils literal notranslate"><span class="pre">Knowledge</span></code>修改知识库。</p>
+<p><a class="reference internal" href="#rag-zh">[回到顶部]</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

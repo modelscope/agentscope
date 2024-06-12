@@ -158,6 +158,10 @@
 </li>
       <li><a href="agentscope.agents.html#agentscope.agents.DistConf.__init__">__init__() （agentscope.agents.DistConf 方法）</a>
 </li>
+      <li><a href="agentscope.agents.html#agentscope.agents.LlamaIndexAgent.__init__">__init__() （agentscope.agents.LlamaIndexAgent 方法）</a>
+</li>
+      <li><a href="agentscope.agents.rag_agent.html#agentscope.agents.rag_agent.LlamaIndexAgent.__init__">__init__() （agentscope.agents.rag_agent.LlamaIndexAgent 方法）</a>
+</li>
       <li><a href="agentscope.agents.react_agent.html#agentscope.agents.react_agent.ReActAgent.__init__">__init__() （agentscope.agents.react_agent.ReActAgent 方法）</a>
 </li>
       <li><a href="agentscope.agents.html#agentscope.agents.ReActAgent.__init__">__init__() （agentscope.agents.ReActAgent 方法）</a>
@@ -250,12 +254,12 @@
 </li>
       <li><a href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.TaggedContent.__init__">__init__() （agentscope.parsers.tagged_content_parser.TaggedContent 方法）</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.parsers.html#agentscope.parsers.TaggedContent.__init__">__init__() （agentscope.parsers.TaggedContent 方法）</a>
 </li>
       <li><a href="agentscope.pipelines.html#agentscope.pipelines.ForLoopPipeline.__init__">__init__() （agentscope.pipelines.ForLoopPipeline 方法）</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.pipelines.html#agentscope.pipelines.IfElsePipeline.__init__">__init__() （agentscope.pipelines.IfElsePipeline 方法）</a>
 </li>
       <li><a href="agentscope.pipelines.pipeline.html#agentscope.pipelines.pipeline.ForLoopPipeline.__init__">__init__() （agentscope.pipelines.pipeline.ForLoopPipeline 方法）</a>
@@ -279,6 +283,18 @@
       <li><a href="agentscope.pipelines.html#agentscope.pipelines.WhileLoopPipeline.__init__">__init__() （agentscope.pipelines.WhileLoopPipeline 方法）</a>
 </li>
       <li><a href="agentscope.prompt.html#agentscope.prompt.PromptEngine.__init__">__init__() （agentscope.prompt.PromptEngine 方法）</a>
+</li>
+      <li><a href="agentscope.rag.html#agentscope.rag.Knowledge.__init__">__init__() （agentscope.rag.Knowledge 方法）</a>
+</li>
+      <li><a href="agentscope.rag.knowledge.html#agentscope.rag.knowledge.Knowledge.__init__">__init__() （agentscope.rag.knowledge.Knowledge 方法）</a>
+</li>
+      <li><a href="agentscope.rag.knowledge_bank.html#agentscope.rag.knowledge_bank.KnowledgeBank.__init__">__init__() （agentscope.rag.knowledge_bank.KnowledgeBank 方法）</a>
+</li>
+      <li><a href="agentscope.rag.html#agentscope.rag.KnowledgeBank.__init__">__init__() （agentscope.rag.KnowledgeBank 方法）</a>
+</li>
+      <li><a href="agentscope.rag.llama_index_knowledge.html#agentscope.rag.llama_index_knowledge.LlamaIndexKnowledge.__init__">__init__() （agentscope.rag.llama_index_knowledge.LlamaIndexKnowledge 方法）</a>
+</li>
+      <li><a href="agentscope.rag.html#agentscope.rag.LlamaIndexKnowledge.__init__">__init__() （agentscope.rag.LlamaIndexKnowledge 方法）</a>
 </li>
       <li><a href="agentscope.rpc.html#agentscope.rpc.ResponseStub.__init__">__init__() （agentscope.rpc.ResponseStub 方法）</a>
 </li>
@@ -392,6 +408,10 @@
 </li>
       <li><a href="agentscope.web.workstation.workflow_dag.html#agentscope.web.workstation.workflow_dag.ASDiGraph.add_as_node">add_as_node() （agentscope.web.workstation.workflow_dag.ASDiGraph 方法）</a>
 </li>
+      <li><a href="agentscope.rag.knowledge_bank.html#agentscope.rag.knowledge_bank.KnowledgeBank.add_data_as_knowledge">add_data_as_knowledge() （agentscope.rag.knowledge_bank.KnowledgeBank 方法）</a>
+</li>
+      <li><a href="agentscope.rag.html#agentscope.rag.KnowledgeBank.add_data_as_knowledge">add_data_as_knowledge() （agentscope.rag.KnowledgeBank 方法）</a>
+</li>
       <li><a href="agentscope.rpc.html#agentscope.rpc.add_RpcAgentServicer_to_server">add_RpcAgentServicer_to_server()（在 agentscope.rpc 模块中）</a>
 </li>
       <li><a href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.add_RpcAgentServicer_to_server">add_RpcAgentServicer_to_server()（在 agentscope.rpc.rpc_agent_pb2_grpc 模块中）</a>
@@ -448,6 +468,13 @@
 
       <ul>
         <li><a href="agentscope.agents.operator.html#module-agentscope.agents.operator">module</a>
+</li>
+      </ul></li>
+      <li>
+    agentscope.agents.rag_agent
+
+      <ul>
+        <li><a href="agentscope.agents.rag_agent.html#module-agentscope.agents.rag_agent">module</a>
 </li>
       </ul></li>
       <li>
@@ -682,12 +709,42 @@
 </li>
       </ul></li>
       <li>
+    agentscope.rag
+
+      <ul>
+        <li><a href="agentscope.rag.html#module-agentscope.rag">module</a>
+</li>
+      </ul></li>
+      <li>
+    agentscope.rag.knowledge
+
+      <ul>
+        <li><a href="agentscope.rag.knowledge.html#module-agentscope.rag.knowledge">module</a>
+</li>
+      </ul></li>
+      <li>
+    agentscope.rag.knowledge_bank
+
+      <ul>
+        <li><a href="agentscope.rag.knowledge_bank.html#module-agentscope.rag.knowledge_bank">module</a>
+</li>
+      </ul></li>
+      <li>
+    agentscope.rag.llama_index_knowledge
+
+      <ul>
+        <li><a href="agentscope.rag.llama_index_knowledge.html#module-agentscope.rag.llama_index_knowledge">module</a>
+</li>
+      </ul></li>
+      <li>
     agentscope.rpc
 
       <ul>
         <li><a href="agentscope.rpc.html#module-agentscope.rpc">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     agentscope.rpc.rpc_agent_client
 
@@ -709,8 +766,6 @@
         <li><a href="agentscope.rpc.rpc_agent_pb2_grpc.html#module-agentscope.rpc.rpc_agent_pb2_grpc">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     agentscope.server
 
@@ -1406,6 +1461,10 @@
 </li>
       <li><a href="agentscope.models.response.html#agentscope.models.response.ModelResponse.embedding">embedding（agentscope.models.response.ModelResponse 属性）</a>
 </li>
+      <li><a href="agentscope.rag.knowledge_bank.html#agentscope.rag.knowledge_bank.KnowledgeBank.equip">equip() （agentscope.rag.knowledge_bank.KnowledgeBank 方法）</a>
+</li>
+      <li><a href="agentscope.rag.html#agentscope.rag.KnowledgeBank.equip">equip() （agentscope.rag.KnowledgeBank 方法）</a>
+</li>
       <li><a href="agentscope.service.service_status.html#agentscope.service.service_status.ServiceExecStatus.ERROR">ERROR（agentscope.service.service_status.ServiceExecStatus 属性）</a>
 </li>
       <li><a href="agentscope.service.html#agentscope.service.ServiceExecStatus.ERROR">ERROR（agentscope.service.ServiceExecStatus 属性）</a>
@@ -1418,10 +1477,10 @@
 </li>
       <li><a href="agentscope.service.html#agentscope.service.execute_shell_command">execute_shell_command()（在 agentscope.service 模块中）</a>
 </li>
-      <li><a href="agentscope.service.execute_code.exec_shell.html#agentscope.service.execute_code.exec_shell.execute_shell_command">execute_shell_command()（在 agentscope.service.execute_code.exec_shell 模块中）</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.service.execute_code.exec_shell.html#agentscope.service.execute_code.exec_shell.execute_shell_command">execute_shell_command()（在 agentscope.service.execute_code.exec_shell 模块中）</a>
+</li>
       <li><a href="agentscope.utils.monitor.html#agentscope.utils.monitor.DummyMonitor.exists">exists() （agentscope.utils.monitor.DummyMonitor 方法）</a>
 </li>
       <li><a href="agentscope.utils.monitor.html#agentscope.utils.monitor.MonitorBase.exists">exists() （agentscope.utils.monitor.MonitorBase 方法）</a>
@@ -1610,6 +1669,10 @@
 </li>
       <li><a href="agentscope.service.html#agentscope.service.get_help">get_help()（在 agentscope.service 模块中）</a>
 </li>
+      <li><a href="agentscope.rag.knowledge_bank.html#agentscope.rag.knowledge_bank.KnowledgeBank.get_knowledge">get_knowledge() （agentscope.rag.knowledge_bank.KnowledgeBank 方法）</a>
+</li>
+      <li><a href="agentscope.rag.html#agentscope.rag.KnowledgeBank.get_knowledge">get_knowledge() （agentscope.rag.KnowledgeBank 方法）</a>
+</li>
       <li><a href="agentscope.memory.memory.html#agentscope.memory.memory.MemoryBase.get_memory">get_memory() （agentscope.memory.memory.MemoryBase 方法）</a>
 </li>
       <li><a href="agentscope.memory.html#agentscope.memory.MemoryBase.get_memory">get_memory() （agentscope.memory.MemoryBase 方法）</a>
@@ -1618,10 +1681,10 @@
 </li>
       <li><a href="agentscope.memory.html#agentscope.memory.TemporaryMemory.get_memory">get_memory() （agentscope.memory.TemporaryMemory 方法）</a>
 </li>
-      <li><a href="agentscope.utils.monitor.html#agentscope.utils.monitor.DummyMonitor.get_metric">get_metric() （agentscope.utils.monitor.DummyMonitor 方法）</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.utils.monitor.html#agentscope.utils.monitor.DummyMonitor.get_metric">get_metric() （agentscope.utils.monitor.DummyMonitor 方法）</a>
+</li>
       <li><a href="agentscope.utils.monitor.html#agentscope.utils.monitor.MonitorBase.get_metric">get_metric() （agentscope.utils.monitor.MonitorBase 方法）</a>
 </li>
       <li><a href="agentscope.utils.monitor.html#agentscope.utils.monitor.SqliteMonitor.get_metric">get_metric() （agentscope.utils.monitor.SqliteMonitor 方法）</a>
@@ -1770,11 +1833,19 @@
 </li>
       <li><a href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaEmbeddingWrapper.keep_alive">keep_alive（agentscope.models.ollama_model.OllamaEmbeddingWrapper 属性）</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaGenerationWrapper.keep_alive">keep_alive（agentscope.models.ollama_model.OllamaGenerationWrapper 属性）</a>
 </li>
       <li><a href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaWrapperBase.keep_alive">keep_alive（agentscope.models.ollama_model.OllamaWrapperBase 属性）</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.rag.html#agentscope.rag.KnowledgeBank">KnowledgeBank（agentscope.rag 中的类）</a>
+</li>
+      <li><a href="agentscope.rag.knowledge_bank.html#agentscope.rag.knowledge_bank.KnowledgeBank">KnowledgeBank（agentscope.rag.knowledge_bank 中的类）</a>
+</li>
+      <li><a href="agentscope.rag.html#agentscope.rag.Knowledge">Knowledge（agentscope.rag 中的类）</a>
+</li>
+      <li><a href="agentscope.rag.knowledge.html#agentscope.rag.knowledge.Knowledge">Knowledge（agentscope.rag.knowledge 中的类）</a>
 </li>
       <li><a href="agentscope.web.workstation.workflow_utils.html#agentscope.web.workstation.workflow_utils.kwarg_converter">kwarg_converter()（在 agentscope.web.workstation.workflow_utils 模块中）</a>
 </li>
@@ -1802,12 +1873,20 @@
 </li>
       <li><a href="agentscope.models.litellm_model.html#agentscope.models.litellm_model.LiteLLMWrapperBase">LiteLLMWrapperBase（agentscope.models.litellm_model 中的类）</a>
 </li>
+      <li><a href="agentscope.agents.html#agentscope.agents.LlamaIndexAgent">LlamaIndexAgent（agentscope.agents 中的类）</a>
+</li>
+      <li><a href="agentscope.agents.rag_agent.html#agentscope.agents.rag_agent.LlamaIndexAgent">LlamaIndexAgent（agentscope.agents.rag_agent 中的类）</a>
+</li>
+      <li><a href="agentscope.rag.html#agentscope.rag.LlamaIndexKnowledge">LlamaIndexKnowledge（agentscope.rag 中的类）</a>
+</li>
+      <li><a href="agentscope.rag.llama_index_knowledge.html#agentscope.rag.llama_index_knowledge.LlamaIndexKnowledge">LlamaIndexKnowledge（agentscope.rag.llama_index_knowledge 中的类）</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.memory.memory.html#agentscope.memory.memory.MemoryBase.load">load() （agentscope.memory.memory.MemoryBase 方法）</a>
 </li>
       <li><a href="agentscope.memory.html#agentscope.memory.MemoryBase.load">load() （agentscope.memory.MemoryBase 方法）</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.memory.temporary_memory.html#agentscope.memory.temporary_memory.TemporaryMemory.load">load() （agentscope.memory.temporary_memory.TemporaryMemory 方法）</a>
 </li>
       <li><a href="agentscope.memory.html#agentscope.memory.TemporaryMemory.load">load() （agentscope.memory.TemporaryMemory 方法）</a>
@@ -2012,6 +2091,8 @@
 </li>
         <li><a href="agentscope.agents.operator.html#module-agentscope.agents.operator">agentscope.agents.operator</a>
 </li>
+        <li><a href="agentscope.agents.rag_agent.html#module-agentscope.agents.rag_agent">agentscope.agents.rag_agent</a>
+</li>
         <li><a href="agentscope.agents.react_agent.html#module-agentscope.agents.react_agent">agentscope.agents.react_agent</a>
 </li>
         <li><a href="agentscope.agents.rpc_agent.html#module-agentscope.agents.rpc_agent">agentscope.agents.rpc_agent</a>
@@ -2077,6 +2158,14 @@
         <li><a href="agentscope.pipelines.pipeline.html#module-agentscope.pipelines.pipeline">agentscope.pipelines.pipeline</a>
 </li>
         <li><a href="agentscope.prompt.html#module-agentscope.prompt">agentscope.prompt</a>
+</li>
+        <li><a href="agentscope.rag.html#module-agentscope.rag">agentscope.rag</a>
+</li>
+        <li><a href="agentscope.rag.knowledge.html#module-agentscope.rag.knowledge">agentscope.rag.knowledge</a>
+</li>
+        <li><a href="agentscope.rag.knowledge_bank.html#module-agentscope.rag.knowledge_bank">agentscope.rag.knowledge_bank</a>
+</li>
+        <li><a href="agentscope.rag.llama_index_knowledge.html#module-agentscope.rag.llama_index_knowledge">agentscope.rag.llama_index_knowledge</a>
 </li>
         <li><a href="agentscope.rpc.html#module-agentscope.rpc">agentscope.rpc</a>
 </li>
@@ -2395,10 +2484,10 @@
 </li>
       <li><a href="agentscope.parsers.html#agentscope.parsers.ParserBase">ParserBase（agentscope.parsers 中的类）</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.parsers.parser_base.html#agentscope.parsers.parser_base.ParserBase">ParserBase（agentscope.parsers.parser_base 中的类）</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.pipelines.html#agentscope.pipelines.PipelineBase">PipelineBase（agentscope.pipelines 中的类）</a>
 </li>
       <li><a href="agentscope.pipelines.pipeline.html#agentscope.pipelines.pipeline.PipelineBase">PipelineBase（agentscope.pipelines.pipeline 中的类）</a>
@@ -2412,6 +2501,10 @@
       <li><a href="agentscope.message.html#agentscope.message.PlaceholderMessage">PlaceholderMessage（agentscope.message 中的类）</a>
 </li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.PlaceHolderNode">PlaceHolderNode（agentscope.web.workstation.workflow_node 中的类）</a>
+</li>
+      <li><a href="agentscope.rag.html#agentscope.rag.Knowledge.post_processing">post_processing() （agentscope.rag.Knowledge 方法）</a>
+</li>
+      <li><a href="agentscope.rag.knowledge.html#agentscope.rag.knowledge.Knowledge.post_processing">post_processing() （agentscope.rag.knowledge.Knowledge 方法）</a>
 </li>
       <li><a href="agentscope.models.html#agentscope.models.PostAPIChatWrapper">PostAPIChatWrapper（agentscope.models 中的类）</a>
 </li>
@@ -2491,6 +2584,10 @@
 </li>
       <li><a href="agentscope.utils.tools.html#agentscope.utils.tools.reform_dialogue">reform_dialogue()（在 agentscope.utils.tools 模块中）</a>
 </li>
+      <li><a href="agentscope.rag.llama_index_knowledge.html#agentscope.rag.llama_index_knowledge.LlamaIndexKnowledge.refresh_index">refresh_index() （agentscope.rag.llama_index_knowledge.LlamaIndexKnowledge 方法）</a>
+</li>
+      <li><a href="agentscope.rag.html#agentscope.rag.LlamaIndexKnowledge.refresh_index">refresh_index() （agentscope.rag.LlamaIndexKnowledge 方法）</a>
+</li>
       <li><a href="agentscope.utils.monitor.html#agentscope.utils.monitor.DummyMonitor.register">register() （agentscope.utils.monitor.DummyMonitor 方法）</a>
 </li>
       <li><a href="agentscope.utils.monitor.html#agentscope.utils.monitor.MonitorBase.register">register() （agentscope.utils.monitor.MonitorBase 方法）</a>
@@ -2532,6 +2629,10 @@
       <li><a href="agentscope.agents.dict_dialog_agent.html#agentscope.agents.dict_dialog_agent.DictDialogAgent.reply">reply() （agentscope.agents.dict_dialog_agent.DictDialogAgent 方法）</a>
 </li>
       <li><a href="agentscope.agents.html#agentscope.agents.DictDialogAgent.reply">reply() （agentscope.agents.DictDialogAgent 方法）</a>
+</li>
+      <li><a href="agentscope.agents.html#agentscope.agents.LlamaIndexAgent.reply">reply() （agentscope.agents.LlamaIndexAgent 方法）</a>
+</li>
+      <li><a href="agentscope.agents.rag_agent.html#agentscope.agents.rag_agent.LlamaIndexAgent.reply">reply() （agentscope.agents.rag_agent.LlamaIndexAgent 方法）</a>
 </li>
       <li><a href="agentscope.agents.react_agent.html#agentscope.agents.react_agent.ReActAgent.reply">reply() （agentscope.agents.react_agent.ReActAgent 方法）</a>
 </li>
@@ -2576,6 +2677,14 @@
       <li><a href="agentscope.rpc.html#agentscope.rpc.ResponseStub">ResponseStub（agentscope.rpc 中的类）</a>
 </li>
       <li><a href="agentscope.rpc.rpc_agent_client.html#agentscope.rpc.rpc_agent_client.ResponseStub">ResponseStub（agentscope.rpc.rpc_agent_client 中的类）</a>
+</li>
+      <li><a href="agentscope.rag.html#agentscope.rag.Knowledge.retrieve">retrieve() （agentscope.rag.Knowledge 方法）</a>
+</li>
+      <li><a href="agentscope.rag.knowledge.html#agentscope.rag.knowledge.Knowledge.retrieve">retrieve() （agentscope.rag.knowledge.Knowledge 方法）</a>
+</li>
+      <li><a href="agentscope.rag.llama_index_knowledge.html#agentscope.rag.llama_index_knowledge.LlamaIndexKnowledge.retrieve">retrieve() （agentscope.rag.llama_index_knowledge.LlamaIndexKnowledge 方法）</a>
+</li>
+      <li><a href="agentscope.rag.html#agentscope.rag.LlamaIndexKnowledge.retrieve">retrieve() （agentscope.rag.LlamaIndexKnowledge 方法）</a>
 </li>
       <li><a href="agentscope.memory.temporary_memory.html#agentscope.memory.temporary_memory.TemporaryMemory.retrieve_by_embedding">retrieve_by_embedding() （agentscope.memory.temporary_memory.TemporaryMemory 方法）</a>
 </li>

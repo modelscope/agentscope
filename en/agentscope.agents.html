@@ -84,6 +84,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.agents.ReActAgent"><code class="docutils literal notranslate"><span class="pre">ReActAgent</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.agents.DistConf"><code class="docutils literal notranslate"><span class="pre">DistConf</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.agents.RpcAgent"><code class="docutils literal notranslate"><span class="pre">RpcAgent</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.agents.LlamaIndexAgent"><code class="docutils literal notranslate"><span class="pre">LlamaIndexAgent</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory</a></li>
@@ -758,6 +759,73 @@ return them as a list.</p>
 <dt class="sig sig-object py" id="agentscope.agents.RpcAgent.stop">
 <span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/agents/rpc_agent.html#RpcAgent.stop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.RpcAgent.stop" title="Link to this definition"></a></dt>
 <dd><p>Stop the RpcAgent and the rpc server.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.agents.LlamaIndexAgent">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.agents.</span></span><span class="sig-name descname"><span class="pre">LlamaIndexAgent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/agents/rag_agent.html#LlamaIndexAgent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.LlamaIndexAgent" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase" title="agentscope.agents.agent.AgentBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AgentBase</span></code></a></p>
+<p>A LlamaIndex agent build on LlamaIndex.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.agents.LlamaIndexAgent.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sys_prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">knowledge_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.rag.knowledge.html#agentscope.rag.knowledge.Knowledge" title="agentscope.rag.knowledge.Knowledge"><span class="pre">Knowledge</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">knowledge_id_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">similarity_top_k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_retrieval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recent_n_mem_for_retrieve</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/agents/rag_agent.html#LlamaIndexAgent.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.LlamaIndexAgent.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the RAG LlamaIndexAgent
+:param name: the name for the agent
+:type name: str
+:param sys_prompt: system prompt for the RAG agent
+:type sys_prompt: str
+:param model_config_name: language model for the agent
+:type model_config_name: str
+:param knowledge_list: a list of knowledge.</p>
+<blockquote>
+<div><p>User can choose to pass a list knowledge object
+directly when initializing the RAG agent. Another
+choice can be passing a list of knowledge ids and
+obtain the knowledge with the <cite>equip</cite> function of a
+knowledge bank.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>knowledge_id_list</strong> (<em>list</em><em>[</em><a class="reference internal" href="agentscope.rag.html#agentscope.rag.Knowledge" title="agentscope.rag.Knowledge"><em>Knowledge</em></a><em>]</em>) – a list of id of the knowledge.
+This is designed for easy setting up multiple RAG
+agents with a config file. To obtain the knowledge
+objects, users can pass this agent to the <cite>equip</cite>
+function in a knowledge bank to add corresponding
+knowledge to agent’s self.knowledge_list.</p></li>
+<li><p><strong>similarity_top_k</strong> (<em>int</em>) – the number of most similar data blocks retrieved
+from each of the knowledge</p></li>
+<li><p><strong>log_retrieval</strong> (<em>bool</em>) – whether to print the retrieved content</p></li>
+<li><p><strong>recent_n_mem_for_retrieve</strong> (<em>int</em>) – the number of pieces of memory used as part of
+retrival query</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.agents.LlamaIndexAgent.reply">
+<span class="sig-name descname"><span class="pre">reply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/agents/rag_agent.html#LlamaIndexAgent.reply"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.LlamaIndexAgent.reply" title="Link to this definition"></a></dt>
+<dd><p>Reply function of the RAG agent.
+Processes the input data,
+1) use the input data to retrieve with RAG function;
+2) generates a prompt using the current memory and system
+prompt;
+3) invokes the language model to produce a response. The
+response is then formatted and added to the dialogue memory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<cite>dict</cite>, defaults to <cite>None</cite>) – A dictionary representing the user’s input to the agent. This
+input is added to the memory if provided. Defaults to
+None.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary representing the message generated by the agent in
+response to the user’s input.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>

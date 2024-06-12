@@ -1,0 +1,220 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.rag.knowledge &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=7d86a446"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/translations.js?v=beaddf03"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../en/agentscope.rag.knowledge.html">English</a></li> |
+    <a href="../zh_CN/agentscope.rag.knowledge.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/101-agentscope.html">关于AgentScope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/102-installation.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/103-example.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/203-model.html">模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/206-prompt.html">提示工程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/201-agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/205-memory.html">记忆</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/203-parser.html">结果解析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/204-service.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/202-pipeline.html">Pipeline和MsgHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/208-distribute.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/209-gui.html">AgentScope Studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/105-logging.html">日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/207-monitor.html">监控器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/104-usecase.html">样例：狼人杀游戏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.server.html">agentscope.server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">agentscope.rag.knowledge</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/agentscope.rag.knowledge.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-agentscope.rag.knowledge">
+<span id="agentscope-rag-knowledge"></span><h1>agentscope.rag.knowledge<a class="headerlink" href="#module-agentscope.rag.knowledge" title="Link to this heading"></a></h1>
+<p>Base class module for retrieval augmented generation (RAG).
+To accommodate the RAG process of different packages,
+we abstract the RAG process into four stages:
+- data loading: loading data into memory for following processing;
+- data indexing and storage: document chunking, embedding generation,
+and off-load the data into VDB;
+- data retrieval: taking a query and return a batch of documents or
+document chunks;
+- post-processing of the retrieved data: use the retrieved data to
+generate an answer.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.rag.knowledge.Knowledge">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.rag.knowledge.</span></span><span class="sig-name descname"><span class="pre">Knowledge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">knowledge_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">emb_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">knowledge_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.models.model.html#agentscope.models.model.ModelWrapperBase" title="agentscope.models.model.ModelWrapperBase"><span class="pre">ModelWrapperBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/rag/knowledge.html#Knowledge"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.rag.knowledge.Knowledge" title="Link to this definition"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Base class for RAG, CANNOT be instantiated directly</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.rag.knowledge.Knowledge.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">knowledge_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">emb_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">knowledge_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.models.model.html#agentscope.models.model.ModelWrapperBase" title="agentscope.models.model.ModelWrapperBase"><span class="pre">ModelWrapperBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/rag/knowledge.html#Knowledge.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.rag.knowledge.Knowledge.__init__" title="Link to this definition"></a></dt>
+<dd><p>initialize the knowledge component
+Args:
+knowledge_id (str):</p>
+<blockquote>
+<div><p>The id of the knowledge unit.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>emb_model (ModelWrapperBase):</dt><dd><p>The embedding model used for generate embeddings</p>
+</dd>
+<dt>knowledge_config (dict):</dt><dd><p>The configuration to generate or load the index.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.rag.knowledge.Knowledge.retrieve">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">retrieve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">similarity_top_k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_list_strs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/rag/knowledge.html#Knowledge.retrieve"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.rag.knowledge.Knowledge.retrieve" title="Link to this definition"></a></dt>
+<dd><p>retrieve list of content from database (vector stored index) to memory
+:param query: query for retrieval
+:type query: Any
+:param similarity_top_k: the number of most similar data returned by the</p>
+<blockquote>
+<div><p>retriever.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>to_list_strs</strong> (<em>bool</em>) – whether return a list of str</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>return a list with retrieved documents (in strings)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.rag.knowledge.Knowledge.post_processing">
+<span class="sig-name descname"><span class="pre">post_processing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">retrieved_docs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="_modules/agentscope/rag/knowledge.html#Knowledge.post_processing"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.rag.knowledge.Knowledge.post_processing" title="Link to this definition"></a></dt>
+<dd><p>A default solution for post-processing function, generates answer
+based on the retrieved documents.
+:param retrieved_docs: list of retrieved documents
+:type retrieved_docs: list[str]
+:param prompt: prompt for LLM generating answer with the retrieved documents
+:type prompt: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a synthesized answer from LLM with retrieved documents</p>
+</dd>
+<dt class="field-even">返回类型<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+<p class="rubric">示例</p>
+<p>self.postprocessing_model(prompt.format(retrieved_docs))</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
