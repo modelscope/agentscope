@@ -178,7 +178,7 @@ for i in range(1, MAX_GAME_ROUND + 1):
 
 ```python
         # werewolves vote
-  			set_parsers(wolves, Prompts.wolves_vote_parser)
+  		set_parsers(wolves, Prompts.wolves_vote_parser)
         hint = HostMsg(content=Prompts.to_wolves_vote)
         votes = [extract_name_and_id(wolf(hint).content)[0] for wolf in wolves]
         # broadcast the result to werewolves
