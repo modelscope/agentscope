@@ -293,29 +293,8 @@ cd examples/game_werewolf
 python main.py  # Assuming the pipeline is implemented in main.py
 ```
 
-游戏开始后，您将在终端看到类似于下面的日志输出。这些日志展示了游戏是如何展开的：
+游戏开始后，您将在 AgentScope Studio 看到下面的内容输出。
 
-```bash
-Moderator: Player1 and Player2, if you are the only werewolf, eliminate a player. Otherwise, discuss with your teammates and reach an agreement.
-Player1: Player2, let's discuss who we should eliminate tonight.
-Player2: I think we should eliminate Player4 tonight. They seem suspicious to me.
-Player1: I think we should eliminate Player4 tonight. They seem suspicious to me.
-Player2: I agree with Player2, let's eliminate Player4 tonight. They seem suspicious.
-Moderator: Which player do you vote to kill?
-Player1: Player4
-Player2: Player4
-Moderator: The player with the most votes is Player4.
-Moderator: Player6, you're witch. Tonight Player4 is eliminated. Would you like to resurrect Player4?
-Player6: I have considered the options, and I choose to resurrect Player4.
-Moderator: Player5, you're seer. Which player in Player1, Player2, Player3, Player4, Player5 and Player6 would you like to check tonight?
-Player5: Player3
-Moderator: Okay, the role of Player3 is villager.
-Moderator: The day is coming, all the players open your eyes. Last night is peaceful, no player is eliminated.
-...
-```
-
-## 下一步
-
-现在您已经掌握了如何使用AgentScope方便地设置多agent应用程序。您可以随意修改游戏，包括引入额外的角色或者引入更复杂的策略。如果您想更深入地探索AgentScope的更多功能，比如agent使用的内存管理和服务函数，请参考高级探索部分的教程并查阅API参考。
+![s](https://img.alicdn.com/imgextra/i3/O1CN01n2Q2tR1aCFD2gpTdu_!!6000000003293-1-tps-960-482.gif)
 
 [[返回顶部]](#104-usecase-zh)

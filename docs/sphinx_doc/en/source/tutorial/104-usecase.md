@@ -290,29 +290,8 @@ cd examples/game_werewolf
 python main.py  # Assuming the pipeline is implemented in main.py
 ```
 
-As the game starts, you'll see output in the terminal, similar to the logs below, which illustrate how the game unfolds:
+As the game starts, you'll see the output in AgentScope Studio as shown in follows:
 
-```bash
-Moderator: Player1 and Player2, if you are the only werewolf, eliminate a player. Otherwise, discuss with your teammates and reach an agreement.
-Player1: Player2, let's discuss who we should eliminate tonight.
-Player2: I think we should eliminate Player4 tonight. They seem suspicious to me.
-Player1: I think we should eliminate Player4 tonight. They seem suspicious to me.
-Player2: I agree with Player2, let's eliminate Player4 tonight. They seem suspicious.
-Moderator: Which player do you vote to kill?
-Player1: Player4
-Player2: Player4
-Moderator: The player with the most votes is Player4.
-Moderator: Player6, you're witch. Tonight Player4 is eliminated. Would you like to resurrect Player4?
-Player6: I have considered the options, and I choose to resurrect Player4.
-Moderator: Player5, you're seer. Which player in Player1, Player2, Player3, Player4, Player5 and Player6 would you like to check tonight?
-Player5: Player3
-Moderator: Okay, the role of Player3 is villager.
-Moderator: The day is coming, all the players open your eyes. Last night is peaceful, no player is eliminated.
-...
-```
-
-## Next step
-
-Now you've grasped how to conveniently set up a multi-agent application with AgentScope. Feel free to tailor the game to include additional roles and introduce more sophisticated strategies. For more advanced tutorials that delve deeper into more capabilities of AgentScope, such as *memory management* and *service functions* utilized by agents, please refer to the tutorials in the **Advanced Exploration** section and look up the API references.
+![s](https://img.alicdn.com/imgextra/i3/O1CN01n2Q2tR1aCFD2gpTdu_!!6000000003293-1-tps-960-482.gif)
 
 [[Return to the top]](#104-usecase-en)
