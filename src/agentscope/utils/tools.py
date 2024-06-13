@@ -2,6 +2,7 @@
 """ Tools for agentscope """
 import base64
 import datetime
+import hashlib
 import json
 import os.path
 import secrets
@@ -369,3 +370,13 @@ class ImportErrorReporter:
                 " of agentscope."
             )
         raise ImportError(err_msg)
+
+
+def _hash_string(
+    data: str,
+    hash_method: Literal["sha256", "md5", "sha1"],
+) -> str:
+    """Hash the string data."""
+    hash_func = getattr(hashlib, hash_method)()
+    hash_func.update(data.encode())
+    return hash_func.hexdigest()

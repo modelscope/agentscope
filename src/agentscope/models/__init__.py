@@ -64,6 +64,7 @@ __all__ = [
     "ZhipuAIEmbeddingWrapper",
     "LiteLLMChatWrapper",
     "load_model_by_config_name",
+    "load_config_by_name",
     "read_model_configs",
     "clear_model_configs",
 ]
@@ -88,6 +89,11 @@ def _get_model_wrapper(model_type: str) -> Type[ModelWrapperBase]:
         )
         return PostAPIModelWrapperBase
     return wrapper
+
+
+def load_config_by_name(config_name: str) -> Union[dict, None]:
+    """Load the model config by name."""
+    return _MODEL_CONFIGS.get(config_name, None)
 
 
 def load_model_by_config_name(config_name: str) -> ModelWrapperBase:

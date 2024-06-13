@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
 """ Import all prompt optimization related modules in the package. """
 
-from .prompt_base import PromptGeneratorBase
-from .prompt_abtest_module import PromptAbTestModule
-from .prompt_gen_method import DirectPromptGenMethod, ExamplePromptGenMethod
-from .prompt_opt_history import PromptOptWithHist
+from ._prompt_optimizer_base import SystemPromptGeneratorBase
+from ._prompt_optimizer_zh import ChineseSystemPromptGenerator
+from ._prompt_optimizer_en import EnglishSystemPromptGenerator
+from ._prompt_comparer import PromptComparer
+from .prompt_opt_history import SystemPromptOptimizer
 from .prompt_engine import PromptEngine
 
 
 __all__ = [
-    "PromptGeneratorBase",
-    "PromptAbTestModule",
-    "DirectPromptGenMethod",
-    "ExamplePromptGenMethod",
-    "PromptOptWithHist",
     "PromptEngine",
+    "SystemPromptGeneratorBase",
+    "ChineseSystemPromptGenerator",
+    "EnglishSystemPromptGenerator",
+    "PromptComparer",
+    "SystemPromptOptimizer",
 ]

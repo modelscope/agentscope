@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=C0301
 """A module that optimize agent system prompt given dialog history."""
 from typing import Union, List
 from agentscope.message import Msg
-from agentscope.models import ModelWrapperBase
+from agentscope.models import ModelWrapperBase, load_model_by_config_name
 
-OPT_PROMPT_TEMPLATE = """
+_DEFAULT_META_PROMPT_TEMPLATE = """
 You are an excellent Prompt Engineer. Your task is to optimize an Agent's system prompt by adding notes.
 
 The original system prompt provided by the user is:
@@ -33,8 +32,7 @@ The notes you add should be included within the tag [prompt_note], for example:
 If there are no obvious issues in the dialog history, then no notes need to be added.
 """  # noqa
 
-OPT_PROMPT_TEMPLATE_ZH = """
-你是一个优秀的Prompt Engineer，现在你要通过添加note的方式对一个Agent的system prompt进行优化。
+OPT_PROMPT_TEMPLATE_ZH = """你是一个优秀的Prompt Engineer，现在你要通过添加note的方式对一个Agent的system prompt进行优化。
 
 用户提供的原始system prompt是：
 ```
@@ -56,17 +54,42 @@ OPT_PROMPT_TEMPLATE_ZH = """
 """  # noqa
 
 
-class PromptOptWithHist:
-    """A module that optimize agent system prompt given dialog history."""
+class SystemPromptOptimizer:
+    """A system prompt optimizer class. For now (2024-06-13), the optimizer can
+    optimize system prompt by extracting notes from the dialog history. It's
+    more like reflection on the dialog history."""
 
     def __init__(
         self,
-        model: ModelWrapperBase,
+        model_or_model_config_name: Union[ModelWrapperBase, str],
+        meta_prompt_template: str = _DEFAULT_META_PROMPT_TEMPLATE,
     ) -> None:
-        self.model = model
+        """Initialize the system prompt optimizer.
 
-    def get_all_tagged_notes(self, response_text: str) -> List:
+        Args:
+            model_or_model_config_name (`Union[ModelWrapperBase, str]`):
+                The model or model config name to be used for generating notes.
+            meta_prompt_template (`str`,
+            defaults to `_DEFAULT_META_PROMPT_TEMPLATE`):
+                The meta prompt to guide the LLM to extract notes from the
+                system prompt and dialog history. Must contain placeholders
+                `{system_prompt}` and `{dialog_history}`.
+        """
+
+        if isinstance(model_or_model_config_name, ModelWrapperBase):
+            self.model = model_or_model_config_name
+        elif isinstance(model_or_model_config_name, str):
+            self.model = load_model_by_config_name(model_or_model_config_name)
+        else:
+            raise TypeError(
+                "model_or_model_config_name must be ModelWrapperBase or str",
+            )
+
+        self.meta_prompt = meta_prompt_template
+
+    def _get_all_tagged_notes(self, response_text: str) -> List[str]:
         """Get all the notes in the response text."""
+        # TODO: Use a parser to extract the notes
         notes = []
         start_tag = "[prompt_note]"
         end_tag = "[/prompt_note]"
@@ -87,27 +110,42 @@ class PromptOptWithHist:
                 break
         return notes
 
-    def optimize(self, system_prompt: str, history: Union[str, List]) -> List:
-        """Optimize the system prompt of the agent, given its dialog history"""
-        if isinstance(history, str):
-            dialog_history = history
-        elif isinstance(history, list):
-            dialog_history = self.model.format(history)
-        else:
-            raise ValueError("history must be str or list of messages")
+    def generate_notes(
+        self,
+        system_prompt: str,
+        dialog_history: List[Msg],
+    ) -> List[str]:
+        """Given the system prompt and dialogue history, generate notes to
+        optimize the system prompt.
+
+        Args:
+            system_prompt (`str`):
+                The system prompt provided by the user.
+            dialog_history (`List[Msg]`):
+                The dialogue history of user interaction with the agent.
+
+        Returns:
+            List[str]: The notes added to the system prompt.
+        """
+
+        dialog_history_str = "\n".join(
+            [f"{msg.name}: {msg.content}" for msg in dialog_history],
+        )
 
         prompt = self.model.format(
             Msg(
                 "user",
-                OPT_PROMPT_TEMPLATE.format(
+                self.meta_prompt.format(
                     system_prompt=system_prompt,
-                    dialog_history=dialog_history,
+                    dialog_history=dialog_history_str,
                 ),
                 role="user",
             ),
         )
+
         response = self.model(prompt).text
 
-        added_notes = self.get_all_tagged_notes(response)
+        # Extract all the notes from the response text
+        notes = self._get_all_tagged_notes(response)
 
-        return added_notes
+        return notes
