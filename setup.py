@@ -50,7 +50,7 @@ gradio_requires = [
 ]
 
 rag_requires = [
-    "llama-index",
+    "llama-index==0.10.30",
 ]
 
 studio_requires = []
