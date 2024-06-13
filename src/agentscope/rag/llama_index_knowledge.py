@@ -28,7 +28,7 @@ try:
         Document,
         TransformComponent,
     )
-except ImportError as import_error:
+except ImportError:
     llama_index = None
     BaseRetriever = None
     BaseEmbedding = None
@@ -199,7 +199,7 @@ class LlamaIndexKnowledge(Knowledge):
             raise ImportError(
                 "LlamaIndexKnowledge require llama-index installed. "
                 "Try a stable llama-index version, such as "
-                "`pip install llama-index==0.10.30`"
+                "`pip install llama-index==0.10.30`",
             )
 
         if persist_root is None:
