@@ -59,8 +59,9 @@ class _SystemPromptTestAgent(AgentBase):
         return msg
 
 
-class PromptComparer:
-    """The Abtest module to show how different system prompts perform"""
+class SystemPromptComparer:
+    """The Abtest module to compare how different system prompts perform with
+    different queries or in a multi-turn dialog."""
 
     def __init__(
         self,
