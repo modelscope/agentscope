@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Unit tests for memory classes and functions
+Unit tests for knowledge (RAG module in AgentScope)
 """
 
 import os
@@ -19,7 +19,6 @@ class DummyModel(OpenAIEmbeddingWrapper):
 
     def __init__(self) -> None:
         """dummy init"""
-        pass
 
     def __call__(self, *args: Any, **kwargs: Any) -> ModelResponse:
         """dummy call"""
@@ -38,7 +37,7 @@ class KnowledgeTest(unittest.TestCase):
             os.mkdir(self.data_dir)
         self.file_name_1 = "tmp_data_dir/file1.txt"
         self.content = "testing file"
-        with open(self.file_name_1, "w") as f:
+        with open(self.file_name_1, "w", encoding="utf-8") as f:
             f.write(self.content)
 
     def tearDown(self) -> None:
@@ -47,7 +46,6 @@ class KnowledgeTest(unittest.TestCase):
             shutil.rmtree(self.data_dir)
         if os.path.exists("./runs"):
             shutil.rmtree("./runs")
-
 
     def test_llamaindexknowledge(self) -> None:
         """test llamaindexknowledge"""
@@ -75,7 +73,7 @@ class KnowledgeTest(unittest.TestCase):
         knowledge = LlamaIndexKnowledge(
             knowledge_id="test_knowledge",
             emb_model=dummy_model,
-            knowledge_config=knowledge_config
+            knowledge_config=knowledge_config,
         )
         retrieved = knowledge.retrieve(
             query="testing",
@@ -84,7 +82,7 @@ class KnowledgeTest(unittest.TestCase):
         )
         self.assertEqual(
             retrieved,
-            [self.content]
+            [self.content],
         )
 
 
