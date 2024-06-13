@@ -9,6 +9,7 @@ from typing import Any, Optional, List, Union
 from loguru import logger
 
 try:
+    import llama_index
     from llama_index.core.base.base_retriever import BaseRetriever
     from llama_index.core.base.embeddings.base import (
         BaseEmbedding,
@@ -28,19 +29,18 @@ try:
         TransformComponent,
     )
 except ImportError as import_error:
-    from agentscope.utils.tools import ImportErrorReporter
-
-    BaseRetriever = ImportErrorReporter(import_error, "full")
-    BaseEmbedding = ImportErrorReporter(import_error, "full")
-    Embedding = ImportErrorReporter(import_error, "full")
-    IngestionPipeline = ImportErrorReporter(import_error, "full")
-    SentenceSplitter = ImportErrorReporter(import_error, "full")
-    VectorStoreIndex = ImportErrorReporter(import_error, "full")
-    StorageContext = ImportErrorReporter(import_error, "full")
-    load_index_from_storage = ImportErrorReporter(import_error, "full")
-    PrivateAttr = ImportErrorReporter(import_error, "full")
-    Document = ImportErrorReporter(import_error, "full")
-    TransformComponent = ImportErrorReporter(import_error, "full")
+    llama_index = None
+    BaseRetriever = None
+    BaseEmbedding = None
+    Embedding = None
+    IngestionPipeline = None
+    SentenceSplitter = None
+    VectorStoreIndex = None
+    StorageContext = None
+    load_index_from_storage = None
+    PrivateAttr = None
+    Document = None
+    TransformComponent = None
 
 from agentscope.file_manager import file_manager
 from agentscope.models import ModelWrapperBase
@@ -195,6 +195,13 @@ class LlamaIndexKnowledge(Knowledge):
             model=model,
             **kwargs,
         )
+        if llama_index is None:
+            raise ImportError(
+                "LlamaIndexKnowledge require llama-index installed. "
+                "Try a stable llama-index version, such as "
+                "`pip install llama-index==0.10.30`"
+            )
+
         if persist_root is None:
             persist_root = file_manager.dir
         self.persist_dir = os.path.join(persist_root, knowledge_id)
