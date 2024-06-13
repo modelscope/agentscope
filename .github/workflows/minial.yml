@@ -1,0 +1,26 @@
+name: Python Minimal Dependency Test
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    if: false == contains(github.event.pull_request.title, 'WIP')
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-13]
+        python-version: ['3.9', '3.10', '3.11', '3.12']
+    env:
+      OS: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@master
+    - name: Setup Python ${{ matrix.python-version }}
+      uses: actions/setup-python@master
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install Minimal Dependencies
+      run: |
+        pip install -q -e .
+    - name: Run tests
+      run: |
+        python -c "import agentscope; print(agentscope.__version__)"
