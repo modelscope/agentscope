@@ -125,6 +125,7 @@ class ServiceToolkitTest(unittest.TestCase):
                     "type": "object",
                     "properties": {
                         "query": {
+                            "type": "Any",
                             "description": "A message to be retrieved.",
                         },
                     },
