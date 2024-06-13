@@ -168,6 +168,8 @@ def _get_type_str(cls: Any) -&gt; Optional[Union[str, list]]:
             type_str = &quot;array&quot;
         elif cls is None.__class__:
             type_str = &quot;null&quot;
+        elif cls is Any:
+            type_str = &quot;Any&quot;
         else:
             type_str = cls.__name__
 
