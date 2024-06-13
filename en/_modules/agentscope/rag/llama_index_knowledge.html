@@ -122,6 +122,7 @@
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
 <span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">llama_index</span>
     <span class="kn">from</span> <span class="nn">llama_index.core.base.base_retriever</span> <span class="kn">import</span> <span class="n">BaseRetriever</span>
     <span class="kn">from</span> <span class="nn">llama_index.core.base.embeddings.base</span> <span class="kn">import</span> <span class="p">(</span>
         <span class="n">BaseEmbedding</span><span class="p">,</span>
@@ -140,20 +141,19 @@
         <span class="n">Document</span><span class="p">,</span>
         <span class="n">TransformComponent</span><span class="p">,</span>
     <span class="p">)</span>
-<span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">import_error</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">agentscope.utils.tools</span> <span class="kn">import</span> <span class="n">ImportErrorReporter</span>
-
-    <span class="n">BaseRetriever</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;full&quot;</span><span class="p">)</span>
-    <span class="n">BaseEmbedding</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;full&quot;</span><span class="p">)</span>
-    <span class="n">Embedding</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;full&quot;</span><span class="p">)</span>
-    <span class="n">IngestionPipeline</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;full&quot;</span><span class="p">)</span>
-    <span class="n">SentenceSplitter</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;full&quot;</span><span class="p">)</span>
-    <span class="n">VectorStoreIndex</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;full&quot;</span><span class="p">)</span>
-    <span class="n">StorageContext</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;full&quot;</span><span class="p">)</span>
-    <span class="n">load_index_from_storage</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;full&quot;</span><span class="p">)</span>
-    <span class="n">PrivateAttr</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;full&quot;</span><span class="p">)</span>
-    <span class="n">Document</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;full&quot;</span><span class="p">)</span>
-    <span class="n">TransformComponent</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;full&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">llama_index</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">BaseRetriever</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">BaseEmbedding</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">Embedding</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">IngestionPipeline</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">SentenceSplitter</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">VectorStoreIndex</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">StorageContext</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">load_index_from_storage</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">PrivateAttr</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">Document</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">TransformComponent</span> <span class="o">=</span> <span class="kc">None</span>
 
 <span class="kn">from</span> <span class="nn">agentscope.file_manager</span> <span class="kn">import</span> <span class="n">file_manager</span>
 <span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span>
@@ -312,6 +312,13 @@
             <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span>
+        <span class="k">if</span> <span class="n">llama_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="s2">&quot;LlamaIndexKnowledge require llama-index installed. &quot;</span>
+                <span class="s2">&quot;Try a stable llama-index version, such as &quot;</span>
+                <span class="s2">&quot;`pip install llama-index==0.10.30`&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
         <span class="k">if</span> <span class="n">persist_root</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">persist_root</span> <span class="o">=</span> <span class="n">file_manager</span><span class="o">.</span><span class="n">dir</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">persist_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">persist_root</span><span class="p">,</span> <span class="n">knowledge_id</span><span class="p">)</span>
