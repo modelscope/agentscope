@@ -7,13 +7,12 @@ jobs:
     if: false == contains(github.event.pull_request.title, 'WIP')
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-13]
-        python-version: ['3.9']
+        python-version: ['3.9', '3.10', '3.11', '3.12']
     env:
       OS: ${{ matrix.os }}
-      PYTHON: '3.9'
-    timeout-minutes: 20
     steps:
     - uses: actions/checkout@master
     - name: Setup Python ${{ matrix.python-version }}
