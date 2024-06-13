@@ -18,7 +18,13 @@ jobs:
       uses: actions/setup-python@master
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install Dependencies
+    - name: Install Minimal Dependencies
+      run: |
+        pip install -q -e .
+    - name: Run import tests
+      run: |
+        python -c "import agentscope; print(agentscope.__version__)"
+    - name: Install Full Dependencies
       run: |
         pip install -q -e .[full]
         pip install coverage
