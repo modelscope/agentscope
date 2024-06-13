@@ -54,6 +54,8 @@ def _get_type_str(cls: Any) -> Optional[Union[str, list]]:
             type_str = "array"
         elif cls is None.__class__:
             type_str = "null"
+        elif cls is Any:
+            type_str = "Any"
         else:
             type_str = cls.__name__
 
