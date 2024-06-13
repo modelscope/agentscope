@@ -42,10 +42,13 @@ class KnowledgeTest(unittest.TestCase):
 
     def tearDown(self) -> None:
         """Clean up before & after tests."""
-        if os.path.exists(self.data_dir):
-            shutil.rmtree(self.data_dir)
-        if os.path.exists("./runs"):
-            shutil.rmtree("./runs")
+        try:
+            if os.path.exists(self.data_dir):
+                shutil.rmtree(self.data_dir)
+            if os.path.exists("./runs"):
+                shutil.rmtree("./runs")
+        except Exception:
+            pass
 
     def test_llamaindexknowledge(self) -> None:
         """test llamaindexknowledge"""
