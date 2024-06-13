@@ -1,0 +1,101 @@
+:root {
+    --code-list-width: 350px;
+    --code-content-width: calc(100% - var(--code-list-width));
+}
+
+#code-body {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+}
+
+#code-list {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: var(--code-list-width);
+    box-sizing: border-box;
+    border: 0;
+}
+
+#code-list ul {
+    display: block;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+    height: 35px;
+    box-sizing: border-box;
+    border-bottom: 1px solid var(--border-color);
+    padding: 5px;
+    margin: 0 0 3px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#code-filename {
+    display: block;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+    height: 35px;
+    box-sizing: border-box;
+    border-bottom: 1px solid var(--border-color);
+    padding: 5px;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#code-list li {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+    height: 35px;
+    padding: 3px 15px;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+}
+
+#code-list li:hover {
+    background-color: var(--main-color-light-light);
+    cursor: pointer;
+}
+
+#code-list li.selected {
+    background-color: var(--main-color-light);
+}
+
+#code-list ul:hover {
+    background-color: var(--main-color-light);
+    overflow: visible;
+    width: fit-content;
+    border-radius: 5px;
+    z-index: 10;
+}
+
+#code-content {
+    display: flex;
+    flex-direction: column;
+    width: var(--code-content-width);
+    height: 100%;
+    box-sizing: border-box;
+    border: 1px solid var(--border-color);
+}
+
+#code-editor {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    white-space: pre;
+}

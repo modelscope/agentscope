@@ -29,6 +29,7 @@ def main() -> None:
     survivors = agentscope.init(
         model_configs="./configs/model_configs.json",
         agent_configs="./configs/agent_configs.json",
+        project="Werewolf",
     )
 
     roles = ["werewolf", "werewolf", "villager", "villager", "seer", "witch"]
@@ -70,7 +71,7 @@ def main() -> None:
                     ),
                 )
                 set_parsers(witch, Prompts.witch_resurrect_parser)
-                if witch(hint).metadata.get("recurrent", False):
+                if witch(hint).metadata.get("resurrect", False):
                     healing_used_tonight = True
                     dead_player.pop()
                     healing = False

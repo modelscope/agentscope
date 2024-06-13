@@ -1,10 +1,8 @@
 (104-usecase-en)=
 
-# Crafting Your First Application
+# Example: Werewolf Game
 
 <img src="https://img.alicdn.com/imgextra/i3/O1CN01dFpOh82643mygUh2Z_!!6000000007607-2-tps-1024-1024.png" alt="img" style="zoom:25%;" />
-
-Before diving into the advanced topics of AgentScope, in this tutorial, we will give you a glance at building a Werewolf application with out-of-the-box components of AgentScope.
 
 **Werewolf** is a well-known social-deduction game, that involves an imaginary village where a few villagers are secretly werewolves, and the objective is to identify who they are before they eliminate all other players. It's a good use case to demonstrate the interaction between multiple autonomous agents, each with its own objectives and the need for communication.
 

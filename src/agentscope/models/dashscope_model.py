@@ -505,18 +505,10 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapperBase):
         )
 
         # step5: return response
-        if len(response.output["embeddings"]) == 0:
-            return ModelResponse(
-                embedding=response.output["embedding"][0],
-                raw=response,
-            )
-        else:
-            return ModelResponse(
-                embedding=[
-                    _["embedding"] for _ in response.output["embeddings"]
-                ],
-                raw=response,
-            )
+        return ModelResponse(
+            embedding=[_["embedding"] for _ in response.output["embeddings"]],
+            raw=response,
+        )
 
 
 class DashScopeMultiModalWrapper(DashScopeWrapperBase):
@@ -614,7 +606,9 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
             messages=messages,
             **kwargs,
         )
-
+        # Unhandle code path here
+        # response could be a generator , if stream is yes
+        # suggest add a check here
         if response.status_code != HTTPStatus.OK:
             error_msg = (
                 f" Request id: {response.request_id},"
@@ -778,7 +772,7 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
         for i, unit in enumerate(input_msgs):
             if i == 0 and unit.role == "system":
                 # system prompt
-                content = self._convert_url(unit.url)
+                content = self.convert_url(unit.url)
                 content.append({"text": _convert_to_str(unit.content)})
 
                 messages.append(
@@ -793,7 +787,7 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
                     f"{unit.name}: {_convert_to_str(unit.content)}",
                 )
                 # image and audio
-                image_or_audio_dicts.extend(self._convert_url(unit.url))
+                image_or_audio_dicts.extend(self.convert_url(unit.url))
 
         dialogue_history = "\n".join(dialogue)
 
@@ -816,7 +810,7 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
 
         return messages
 
-    def _convert_url(self, url: Union[str, Sequence[str], None]) -> List[dict]:
+    def convert_url(self, url: Union[str, Sequence[str], None]) -> List[dict]:
         """Convert the url to the format of DashScope API. Note for local
         files, a prefix "file://" will be added.
 
@@ -849,7 +843,7 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
         elif isinstance(url, list):
             dicts = []
             for _ in url:
-                dicts.extend(self._convert_url(_))
+                dicts.extend(self.convert_url(_))
             return dicts
         else:
             raise TypeError(

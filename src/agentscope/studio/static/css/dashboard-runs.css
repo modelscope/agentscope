@@ -1,0 +1,124 @@
+:root {
+    --runs-content-padding-vertical: 50px;
+    --runs-content-padding-horizontal: 80px;
+    --runs-content-control-panel-height: 55px;
+    --runs-search-input-height: 35px;
+    --runs-table-height: calc(100% - var(--runs-content-control-panel-height));
+}
+
+#runs-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    padding: var(--runs-content-padding-vertical) var(--runs-content-padding-horizontal);
+    box-sizing: border-box;
+}
+
+#runs-control-panel {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: var(--runs-content-control-panel-height);
+    width: 100%;
+}
+
+#runs-table {
+    flex-grow: 1;
+    overflow-y: auto;
+    width: 100%;
+    height: var(--runs-table-height);
+    max-height: var(--runs-table-height);
+    background-color: #ffffff;
+    border: 1px solid var(--border-color);
+}
+
+#runs-search-input {
+    display: flex;
+    height: var(--runs-search-input-height);
+    flex-grow: 1;
+    align-items: center;
+    border: 1px solid var(--border-color);
+    padding: 0 10px;
+}
+
+#runs-search-input:focus {
+    border-color: var(--main-color);
+    outline: none; /* 移除默认的焦点轮廓样式 */
+}
+
+/* Remove border from tabulator */
+.tabulator .tabulator-cell,
+.tabulator .tabulator-col,
+.tabulator .tabulator-header .tabulator-col {
+    border: none !important;
+}
+
+.tabulator .tabulator-cell {
+    height: 45px;
+}
+
+/* Remove the bottom border from table header */
+.tabulator .tabulator-header {
+    border-bottom: none !important;
+}
+
+.tabulator-col-sorter-element.tabulator-sortable.tabulator-col   {
+    background-color: var(--main-color-light);
+    color: var(--main-color-dark);
+}
+
+/* Set the same color for all rows */
+/*.tabulator .tabulator-row {*/
+/*    background-color: #FFF !important; !* Replace by your color *!*/
+/*}*/
+
+/* or, you just want to remove the alternative background color and keep the basic background */
+/*.tabulator .tabulator-row:nth-child(even) {*/
+/*    background-color: var(--main-color-light-light) !important; !* Causes even row background colors to inherit the default or specified row background colors *!*/
+/*}*/
+
+.runs-table-status-tag {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 26px;
+    width: fit-content;
+    border-radius: 13px;
+    color: var(--base-color);
+    box-sizing: border-box;
+    margin: 0 5px;
+    padding: 0 14px;
+}
+
+.running.runs-table-status-tag {
+    background-color: #d1e7fa;
+    color: #58c1ef;
+    fill: #58c1ef;
+}
+
+.finished.runs-table-status-tag {
+    background-color: var(--main-color-light);
+    color: var(--main-color-dark);
+    fill: var(--main-color-dark);
+}
+
+.waiting.runs-table-status-tag {
+    background-color: #f8efba;
+    color: #f6b93b;
+    fill: #f6b93b;
+}
+
+.unknown.runs-table-status-tag {
+    background-color: #e1e1e1;
+    color: #3d4047;
+    fill: #3d4047;
+}
+
+.runs-table-status-svg {
+    display: flex;
+    width: 15px;
+    height: 15px;
+    margin-right: 7px;
+}

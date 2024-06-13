@@ -1,6 +1,6 @@
 (202-pipeline-zh)=
 
-# Pipeline 和 MsgHub
+# Pipeline和MsgHub
 
 **Pipeline**和**Message Hub**主要用于描绘应用中信息的交换和传播过程，它们极大简化了Multi-Agent应用流程的编排工作。
 在本教程中，我们将详细的介绍Pipeline和Message Hub的原理和使用方式。

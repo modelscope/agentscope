@@ -7,7 +7,7 @@ import unittest
 
 from loguru import logger
 
-from agentscope.utils import setup_logger
+from agentscope.logging import setup_logger
 
 
 class LoggerTest(unittest.TestCase):
@@ -42,6 +42,9 @@ class LoggerTest(unittest.TestCase):
         # dict
         logger.chat({"abc": 1})
 
+        # html labels
+        logger.chat({"name": "Bob", "content": "<div>abc</div"})
+
         # To avoid that logging is not finished before the file is read
         time.sleep(3)
 
@@ -58,13 +61,14 @@ class LoggerTest(unittest.TestCase):
             '"}\n',
             '{"name": "Alice", "url": "https://xxx.png"}\n',
             '{"abc": 1}\n',
+            '{"name": "Bob", "content": "<div>abc</div"}\n',
         ]
 
         self.assertListEqual(lines, ground_truth)
 
     def tearDown(self) -> None:
         """Tear down for LoggerTest."""
-        logger.stop()
+        logger.remove()
         if os.path.exists(self.run_dir):
             shutil.rmtree(self.run_dir)
 

@@ -1,0 +1,99 @@
+{
+  "drawflow": {
+    "Home": {
+      "data": {
+        "2": {
+          "id": 2,
+          "name": "dashscope_chat",
+          "data": {
+            "args": {
+              "config_name": "qwen",
+              "model_name": "qwen-max",
+              "api_key": "",
+              "temperature": 0,
+              "seed": 0,
+              "model_type": "dashscope_chat",
+              "messages_key": "input"
+            }
+          },
+          "class": "dashscope_chat",
+          "typenode": false,
+          "inputs": {},
+          "outputs": {},
+          "pos_x": 399,
+          "pos_y": 127
+        },
+        "3": {
+          "id": 3,
+          "name": "UserAgent",
+          "data": {
+            "args": {
+              "name": "User"
+            }
+          },
+          "class": "UserAgent",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": [
+                {
+                  "node": "4",
+                  "output": "input_1"
+                }
+              ]
+            }
+          },
+          "pos_x": 716,
+          "pos_y": 245
+        },
+        "4": {
+          "id": 4,
+          "name": "DialogAgent",
+          "data": {
+            "args": {
+              "name": "Assistant",
+              "sys_prompt": "You are an assistant",
+              "model_config_name": "qwen"
+            }
+          },
+          "class": "DialogAgent",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": [
+                {
+                  "node": "3",
+                  "input": "output_1"
+                }
+              ]
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 1080,
+          "pos_y": 173
+        },
+        "1": {
+          "id": 1,
+          "name": "readme",
+          "data": {},
+          "class": "welcome",
+          "html": "<div class=\"title-box\"><i class=\"fa fa-book\"></i> README <span class=\"toggle-arrow\">▲</span> </div>\n        <div class=\"box-highlight\">\n      📖 This is an example of how to program a one-round conversation in AgentScope. <br><br> <div class=\"modules-info\"><h4>Modules Used:</h4><ul><li><span class=\"highlight-module\" onclick=\"editor.selectNode(2);\">DashScope Chat:</span><br> - Each application must contain a model configured.</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(3);\">UserAgent:</span><br> - Represents a user in a application.</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(4);\">DialogAgent:</span><br> - Agent for dialog in an application.</li></ur></div>\n ",
+          "typenode": false,
+          "inputs": {},
+          "outputs": {},
+          "pos_x": 68,
+          "pos_y": 67
+        }
+      }
+    }
+  }
+}

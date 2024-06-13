@@ -6,7 +6,6 @@ from typing import Any, Union, Optional, List, Literal
 from pathlib import Path
 import numpy as np
 
-
 from agentscope._runtime import _runtime
 from agentscope.utils.tools import _download_file, _get_timestamp, _hash_string
 from agentscope.utils.tools import _generate_random_code
@@ -54,7 +53,7 @@ class _FileManager:
 
     hash_method: Literal["sha256", "md5", "sha1"] = "sha256"
 
-    dir: str = _DEFAULT_DIR
+    dir: str = os.path.abspath(_DEFAULT_DIR)
     """The directory for saving files, code and logs."""
 
     save_api_invoke: bool = False
@@ -127,7 +126,7 @@ class _FileManager:
 
     def init(self, save_dir: str, save_api_invoke: bool = False) -> None:
         """Set the directory for saving files."""
-        self.dir = save_dir
+        self.dir = os.path.abspath(save_dir)
         runtime_dir = os.path.join(save_dir, _runtime.runtime_id)
         os.makedirs(runtime_dir, exist_ok=True)
 
@@ -141,8 +140,9 @@ class _FileManager:
         cfg = {
             "project": _runtime.project,
             "name": _runtime.name,
-            "id": _runtime.runtime_id,
+            "run_id": _runtime.runtime_id,
             "timestamp": _runtime.timestamp,
+            "pid": os.getpid(),
         }
         with open(
             os.path.join(self.dir_root, _DEFAULT_CFG_NAME),

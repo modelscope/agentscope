@@ -16,7 +16,10 @@ from agentscope.web.workstation.workflow_node import (
     WorkflowNodeType,
     DEFAULT_FLOW_VAR,
 )
-from agentscope.web.workstation.workflow_utils import is_callable_expression
+from agentscope.web.workstation.workflow_utils import (
+    is_callable_expression,
+    kwarg_converter,
+)
 
 try:
     import networkx as nx
@@ -63,7 +66,7 @@ class ASDiGraph(nx.DiGraph):
         ]
 
         self.inits = [
-            """agentscope.init(logger_level="DEBUG")""",
+            'agentscope.init(logger_level="DEBUG")',
             f"{DEFAULT_FLOW_VAR} = None",
         ]
 
@@ -104,7 +107,11 @@ class ASDiGraph(nx.DiGraph):
             else:
                 raise ValueError("Too many predecessors!")
 
-    def compile(self, compiled_filename: str = "") -> str:
+    def compile(  # type: ignore[no-untyped-def]
+        self,
+        compiled_filename: str = "",
+        **kwargs,
+    ) -> str:
         """Compile DAG to a runnable python code"""
 
         def format_python_code(code: str) -> str:
@@ -115,6 +122,10 @@ class ASDiGraph(nx.DiGraph):
                 return format_str(code, mode=FileMode())
             except Exception:
                 return code
+
+        self.inits[
+            0
+        ] = f'agentscope.init(logger_level="DEBUG", {kwarg_converter(kwargs)})'
 
         sorted_nodes = list(nx.topological_sort(self))
         sorted_nodes = [

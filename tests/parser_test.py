@@ -2,6 +2,8 @@
 """Unit test for model response parser."""
 import unittest
 
+from pydantic import BaseModel, Field
+
 from agentscope.models import ModelResponse
 from agentscope.parsers import (
     MarkdownJsonDictParser,
@@ -27,7 +29,7 @@ class ModelResponseParserTest(unittest.TestCase):
             ),
         )
         self.instruction_dict_1 = (
-            "You should respond a json object in a json fenced code block "
+            "Respond a JSON dictionary in a markdown's fenced code block "
             "as follows:\n"
             "```json\n"
             '{"speak": "what you speak", '
@@ -57,6 +59,22 @@ class ModelResponseParserTest(unittest.TestCase):
             '{"speak": "what you speak", '
             '"thought": "what you thought", '
             '"end_discussion": true/false}'
+        )
+
+        self.instruction_dict_3 = (
+            "Respond a JSON dictionary in a markdown's fenced code block as "
+            "follows:\n"
+            "```json\n"
+            "{a_JSON_dictionary}\n"
+            "```\n"
+            "The generated JSON dictionary MUST follow this schema: \n"
+            "{'properties': {'speak': {'description': 'what you speak', "
+            "'title': 'Speak', 'type': 'string'}, 'thought': {'description': "
+            "'what you thought', 'title': 'Thought', 'type': 'string'}, "
+            "'end_discussion': {'description': 'whether the discussion "
+            "reached an agreement or not', 'title': 'End Discussion', "
+            "'type': 'boolean'}}, 'required': ['speak', 'thought', "
+            "'end_discussion'], 'title': 'Schema', 'type': 'object'}"
         )
 
         self.gt_to_memory = {"speak": "Hello, world!", "thought": "xxx"}
@@ -103,6 +121,44 @@ class ModelResponseParserTest(unittest.TestCase):
             "```"
         )
         self.gt_code = """\nprint("Hello, world!")\n"""
+
+    def test_markdownjsondictparser_with_schema(self) -> None:
+        """Test for MarkdownJsonDictParser with schema"""
+
+        class Schema(BaseModel):  # pylint: disable=missing-class-docstring
+            speak: str = Field(description="what you speak")
+            thought: str = Field(description="what you thought")
+            end_discussion: bool = Field(
+                description="whether the discussion reached an agreement or "
+                "not",
+            )
+
+        parser = MarkdownJsonDictParser(
+            content_hint=Schema,
+            keys_to_memory=["speak", "thought"],
+            keys_to_content="speak",
+            keys_to_metadata=["end_discussion"],
+        )
+
+        self.assertEqual(parser.format_instruction, self.instruction_dict_3)
+
+        res = parser.parse(self.res_dict_1)
+
+        self.assertDictEqual(res.parsed, self.gt_dict)
+
+        res = parser.parse(
+            ModelResponse(
+                text="""```json
+        {
+            "speak" : "Hello, world!",
+            "thought" : "xxx",
+            "end_discussion" : "true"
+        }
+        ```""",
+            ),
+        )
+
+        self.assertDictEqual(res.parsed, self.gt_dict)
 
     def test_markdownjsondictparser(self) -> None:
         """Test for MarkdownJsonDictParser"""
