@@ -1,0 +1,50 @@
+<div class="title-box" data-class="Post API Chat">
+    <div class="title-box-left-items">
+        <svg class="title-box-svg" viewBox="0 0 1024 1024"
+             xmlns="http://www.w3.org/2000/svg">
+            <path d="M847.530667 361.173333a149.546667 149.546667 0 0 0-129.28-189.824A128.213333 128.213333 0 0 0 597.333333 85.333333a127.146667 127.146667 0 0 0-85.333333 33.28A127.146667 127.146667 0 0 0 426.666667 85.333333c-55.509333 0-102.826667 35.456-120.533334 85.973334a149.546667 149.546667 0 0 0-129.664 189.866666A171.861333 171.861333 0 0 0 85.333333 512c0 45.866667 18.261333 89.002667 50.005334 120.832A173.525333 173.525333 0 0 0 128 682.666667c0 83.498667 60.245333 153.173333 141.056 167.850666A149.973333 149.973333 0 0 0 405.333333 938.666667c41.770667 0 79.530667-17.365333 106.666667-45.184A148.650667 148.650667 0 0 0 618.666667 938.666667a149.76 149.76 0 0 0 136.106666-87.893334 170.922667 170.922667 0 0 0 133.888-217.941333A170.794667 170.794667 0 0 0 938.666667 512a171.861333 171.861333 0 0 0-91.136-150.826667zM405.333333 853.333333c-30.336 0-56.746667-21.504-62.72-51.114666L333.568 768H298.666667c-47.061333 0-85.333333-38.272-85.333334-85.333333 0-15.018667 3.626667-29.098667 10.794667-41.856l19.456-34.816-33.450667-21.76A86.144 86.144 0 0 1 170.666667 512c0-41.685333 30.848-77.824 71.765333-84.138667l72.234667-11.093333-45.184-57.429333a64.085333 64.085333 0 0 1 63.914666-101.973334L384 264.832V213.333333a42.666667 42.666667 0 0 1 85.333333 0v576c0 35.285333-28.714667 64-64 64z m408.533334-269.141333l-33.450667 21.76 19.456 34.816c7.168 12.8 10.794667 26.88 10.794667 41.898667 0 47.061333-38.272 85.333333-87.466667 85.333333h-34.901333l-6.912 34.218667A64.085333 64.085333 0 0 1 618.666667 853.333333c-35.285333 0-64-28.714667-64-64V213.333333c0-23.552 19.114667-42.666667 42.666666-42.666666s42.666667 19.114667 42.666667 44.8v51.498666l50.602667-9.6a64.085333 64.085333 0 0 1 63.914666 101.973334l-45.184 57.472 72.234667 11.093333A85.418667 85.418667 0 0 1 853.333333 512c0 29.141333-14.762667 56.106667-39.466666 72.192z"></path>
+        </svg>
+        <span>Post API Chat</span>
+    </div>
+    <span class="toggle-arrow">&#x25B2;</span>
+</div>
+<div class="box">
+    <div class="readme">Post API Chat Configuration</div>
+    <br>
+
+    <label>Config Name</label>
+    <input type="text" df-args-config_name placeholder="post_chat"
+           data-required="true">
+    <br>
+
+    <label>Model Name</label>
+    <input type="text" df-args-json_args-model placeholder="gpt-4"
+           data-required="true">
+    <br>
+
+    <label>Temperature</label>
+    <input type="number" df-args-json_args-temperature placeholder=0
+           min="0" max="2" step="0.1">
+    <br>
+
+    <label>Seed</label>
+    <input type="number" df-args-json_args-seed placeholder=0 min="0">
+    <br>
+
+    <label>API url</label>
+    <input type="text" df-args-api_url>
+    <br>
+
+    <label>Content-Type</label>
+    <input type="text" df-args-headers-content_type
+           placeholder="application/json">
+    <br>
+
+    <label>Authorization</label>
+    <input type="text" df-args-headers-authorization>
+    <br>
+
+    <label>Messages Key</label>
+    <input type="text" df-args-messages_key placeholder="messages">
+    <br>
+</div>

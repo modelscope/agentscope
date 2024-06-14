@@ -17,7 +17,10 @@ model_config = {
     },
 }
 
-agentscope.init(model_configs=model_config)
+agentscope.init(
+    model_configs=model_config,
+    project="Conversation with GPT-4o",
+)
 
 # Require user to input URL, and press enter to skip the URL input
 user = UserAgent("user", require_url=True)

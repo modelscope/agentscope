@@ -6,6 +6,7 @@ import json
 import traceback
 from concurrent import futures
 from loguru import logger
+import requests
 
 try:
     import dill
@@ -25,13 +26,34 @@ except ImportError as import_error:
         "distribute",
     )
 
+from .._runtime import _runtime
+from ..studio._client import _studio_client
 from ..agents.agent import AgentBase
+from ..exception import StudioRegisterError
 from ..rpc.rpc_agent_pb2_grpc import RpcAgentServicer
 from ..message import (
     Msg,
     PlaceholderMessage,
     deserialize,
 )
+
+
+def _register_to_studio(
+    studio_url: str,
+    server_id: str,
+    host: str,
+    port: int,
+) -> None:
+    """Register a server to studio."""
+    url = f"{studio_url}/api/servers/register"
+    resp = requests.post(
+        url,
+        json={"server_id": server_id, "host": host, "port": port},
+        timeout=10,  # todo: configurable timeout
+    )
+    if resp.status_code != 200:
+        logger.error(f"Failed to register server: {resp.text}")
+        raise StudioRegisterError(f"Failed to register server: {resp.text}")
 
 
 class AgentServerServicer(RpcAgentServicer):
@@ -41,6 +63,8 @@ class AgentServerServicer(RpcAgentServicer):
         self,
         host: str = "localhost",
         port: int = None,
+        server_id: str = None,
+        studio_url: str = None,
         max_pool_size: int = 8192,
         max_timeout_seconds: int = 1800,
     ):
@@ -51,6 +75,10 @@ class AgentServerServicer(RpcAgentServicer):
                 Hostname of the rpc agent server.
             port (`int`, defaults to `None`):
                 Port of the rpc agent server.
+            server_id (`str`, defaults to `None`):
+                Server id of the rpc agent server.
+            studio_url (`str`, defaults to `None`):
+                URL of the AgentScope Studio.
             max_pool_size (`int`, defaults to `8192`):
                 The max number of agent reply messages that the server can
                 accommodate. Note that the oldest message will be deleted
@@ -61,6 +89,17 @@ class AgentServerServicer(RpcAgentServicer):
         """
         self.host = host
         self.port = port
+        self.server_id = server_id
+        self.studio_url = studio_url
+        if studio_url is not None:
+            _register_to_studio(
+                studio_url=studio_url,
+                server_id=server_id,
+                host=host,
+                port=port,
+            )
+            _studio_client.initialize(_runtime.runtime_id, studio_url)
+
         self.result_pool = ExpiringDict(
             max_len=max_pool_size,
             max_age_seconds=max_timeout_seconds,

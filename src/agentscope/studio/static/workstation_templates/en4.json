@@ -1,0 +1,255 @@
+{
+  "drawflow": {
+    "Home": {
+      "data": {
+        "4": {
+          "id": 4,
+          "name": "MsgHub",
+          "data": {
+            "elements": [
+              "5"
+            ],
+            "args": {
+              "announcement": {
+                "name": "Host",
+                "content": "This is a chat room and you can speak freely and briefly."
+              }
+            }
+          },
+          "class": "GROUP",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": [
+                {
+                  "node": "3",
+                  "input": "output_1"
+                }
+              ]
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 705,
+          "pos_y": 8
+        },
+        "5": {
+          "id": 5,
+          "name": "WhileLoopPipeline",
+          "data": {
+            "elements": [
+              "6"
+            ],
+            "args": {
+              "condition_func": "lambda *args: True"
+            }
+          },
+          "class": "GROUP",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 827,
+          "pos_y": 141.5
+        },
+        "6": {
+          "id": 6,
+          "name": "SequentialPipeline",
+          "data": {
+            "elements": [
+              "8",
+              "9",
+              "7",
+              "10"
+            ]
+          },
+          "class": "GROUP",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 893,
+          "pos_y": 254.75
+        },
+        "7": {
+          "id": 7,
+          "name": "DialogAgent",
+          "data": {
+            "args": {
+              "name": "Lingfeng",
+              "sys_prompt": "You are Lingfeng, a noble in the imperial court, known for your wisdom and strategic acumen. You often engage in complex political intrigues and have recently suspected the Queen’s adviser of treachery. Your speaking style is reminiscent of classical literature. Respond in a concise statement, no more than 30 words.",
+              "model_config_name": "qwen"
+            }
+          },
+          "class": "DialogAgent",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 934,
+          "pos_y": 343
+        },
+        "8": {
+          "id": 8,
+          "name": "DialogAgent",
+          "data": {
+            "args": {
+              "name": "Boyu",
+              "sys_prompt": "You are Boyu, a friend of Lingfeng and an enthusiast of court dramas. Your speech is modern but with a flair for the dramatic, matching your love for emotive storytelling. You've been closely following Lingfeng’s political maneuvers in the imperial court through secret correspondence. Respond in a concise statement, no more than 30 words.",
+              "model_config_name": "qwen"
+            }
+          },
+          "class": "DialogAgent",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 970,
+          "pos_y": 365
+        },
+        "9": {
+          "id": 9,
+          "name": "DialogAgent",
+          "data": {
+            "args": {
+              "name": "Haotian",
+              "sys_prompt": "You are Haotian, Lingfeng’s cousin who prefers the open fields to the confines of court life. As a celebrated athlete, your influence has protected Lingfeng in times of political strife. You promote physical training as a way to prepare for life's battles, often using sports metaphors in conversation. Respond in a concise statement, no more than 30 words.",
+              "model_config_name": "qwen"
+            }
+          },
+          "class": "DialogAgent",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 1009,
+          "pos_y": 409
+        },
+        "10": {
+          "id": 10,
+          "name": "UserAgent",
+          "data": {
+            "args": {
+              "name": "King"
+            }
+          },
+          "class": "UserAgent",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 1043,
+          "pos_y": 454
+        },
+        "2": {
+          "id": 2,
+          "name": "dashscope_chat",
+          "data": {
+            "args": {
+              "config_name": "qwen",
+              "model_name": "qwen-max",
+              "api_key": "",
+              "temperature": 0.1,
+              "seed": 1,
+              "model_type": "dashscope_chat",
+              "messages_key": "input"
+            }
+          },
+          "class": "dashscope_chat",
+          "typenode": false,
+          "inputs": {},
+          "outputs": {},
+          "pos_x": 358,
+          "pos_y": 7
+        },
+        "3": {
+          "id": 3,
+          "name": "Message",
+          "data": {
+            "args": {
+              "name": "User",
+              "content": "Hello every one",
+              "url": ""
+            }
+          },
+          "class": "Message",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": [
+                {
+                  "node": "4",
+                  "output": "input_1"
+                }
+              ]
+            }
+          },
+          "pos_x": 350,
+          "pos_y": 505
+        },
+        "1": {
+          "id": 1,
+          "name": "readme",
+          "data": {},
+          "class": "welcome",
+          "html": "\n        <div class=\"title-box\"><i class=\"fa fa-book\"></i> README <span class=\"toggle-arrow\">▲</span> </div>\n        <div class=\"box-highlight\">\n      📖 This example demonstrates a multi-agent group chat facilitated by AgentScope. <br><br> <div class=\"modules-info\"><h4>Modules Used:</h4><ul><li><span class=\"highlight-module\" onclick=\"editor.selectNode(2);\">DashScope Chat:</span><br> - Each application must contain a model configured.</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(4);\">MsgHub:</span><br> - MsgHub is where agents share their messages like a group chat.</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(3);\">Message:</span><br> - Message is flow passing among agents.</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(5);\">WhileLoopPipeline:</span><br> - Designed to perform repetitive operations.</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(6);\">SequentialPipeline:</span><br> - Make the message passes in a predefined, sequential order among agents.</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(10);\">UserAgent:</span><br> - Represents a user in a application.</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(9);\">DialogAgent:</span><br> - Agent for dialog in an application.</li></ur></div>For more details, please see <a href=\"https://github.com/modelscope/agentscope/tree/main/examples/conversation_with_mentions\" target=\"_blank\">here</a>.  </div>\n      </div>\n      ",
+          "typenode": false,
+          "inputs": {},
+          "outputs": {},
+          "pos_x": 68,
+          "pos_y": 67
+        }
+      }
+    }
+  }
+}

@@ -45,14 +45,20 @@ doc_requires = [
 test_requires = ["pytest", "pytest-cov", "pre-commit"]
 
 gradio_requires = [
-    "networkx",
     "gradio==4.19.1",
     "modelscope_studio==0.0.5",
-    "black",
 ]
+
+rag_requires = [
+    "llama-index==0.10.30",
+]
+
+studio_requires = []
 
 # released requires
 minimal_requires = [
+    "networkx",
+    "black",
     "docstring_parser",
     "pydantic",
     "loguru==0.6.0",
@@ -66,6 +72,7 @@ minimal_requires = [
     "Flask==3.0.0",
     "Flask-Cors==4.0.0",
     "Flask-SocketIO==5.3.6",
+    "flask_sqlalchemy",
     "flake8",
     # TODO: move into other requires
     "dashscope==1.14.1",
@@ -74,6 +81,7 @@ minimal_requires = [
     "google-generativeai>=0.4.0",
     "zhipuai",
     "litellm",
+    "psutil",
 ]
 
 distribute_requires = minimal_requires + rpc_requires
@@ -87,6 +95,8 @@ full_requires = (
     + doc_requires
     + test_requires
     + gradio_requires
+    + rag_requires
+    + studio_requires
 )
 
 with open("README.md", "r", encoding="UTF-8") as fh:
@@ -105,7 +115,7 @@ setuptools.setup(
     keywords=["deep-learning", "multi agents", "agents"],
     package_dir={"": "src"},
     packages=setuptools.find_packages("src"),
-    package_data={"agentscope.web": ["static/**/*"]},
+    package_data={"agentscope.studio": ["static/**/*", "templates/**/*"]},
     install_requires=minimal_requires,
     extras_require={
         "distribute": distribute_requires,
@@ -123,7 +133,8 @@ setuptools.setup(
     python_requires=">=3.9",
     entry_points={
         "console_scripts": [
-            "as_studio=agentscope.web.studio.studio:run_app",
+            "as_studio=agentscope.studio:init",
+            "as_gradio=agentscope.web.gradio.studio:run_app",
             "as_workflow=agentscope.web.workstation.workflow:main",
             "as_server=agentscope.server.launcher:as_server",
         ],

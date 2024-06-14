@@ -7,12 +7,13 @@ import os.path
 import secrets
 import string
 import socket
+import hashlib
+import random
 from typing import Any, Literal, List, Optional
 
 from urllib.parse import urlparse
-
+import psutil
 import requests
-from loguru import logger
 
 
 def _get_timestamp(
@@ -41,9 +42,7 @@ def to_openai_dict(item: dict) -> dict:
     if "content" in item:
         clean_dict["content"] = _convert_to_str(item["content"])
     else:
-        logger.warning(
-            f"Message {item} doesn't have `content` field for " f"OpenAI API.",
-        )
+        raise ValueError("The content of the message is missing.")
 
     return clean_dict
 
@@ -83,17 +82,10 @@ def check_port(port: Optional[int] = None) -> int:
     """
     if port is None:
         new_port = find_available_port()
-        logger.warning(
-            "agent server port is not provided, automatically select "
-            f"[{new_port}] as the port number.",
-        )
         return new_port
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         if s.connect_ex(("localhost", port)) == 0:
             new_port = find_available_port()
-            logger.warning(
-                f"Port [{port}] is occupied, use [{new_port}] instead",
-            )
             return new_port
     return port
 
@@ -217,7 +209,7 @@ def _download_file(url: str, path_file: str, max_retries: int = 3) -> bool:
                     file.write(chunk)
             return True
         else:
-            logger.warning(
+            raise RuntimeError(
                 f"Failed to download file from {url} (status code: "
                 f"{response.status_code}). Retry {n_retry}/{max_retries}.",
             )
@@ -239,6 +231,25 @@ def _generate_random_code(
     if digits:
         characters += string.digits
     return "".join(secrets.choice(characters) for i in range(length))
+
+
+def generate_id_from_seed(seed: str, length: int = 8) -> str:
+    """Generate random id from seed str.
+
+    Args:
+        seed (`str`): seed string.
+        length (`int`): generated id length.
+    """
+    hasher = hashlib.sha256()
+    hasher.update(seed.encode("utf-8"))
+    hash_digest = hasher.hexdigest()
+
+    random.seed(hash_digest)
+    id_chars = [
+        random.choice(string.ascii_letters + string.digits)
+        for _ in range(length)
+    ]
+    return "".join(id_chars)
 
 
 def _is_json_serializable(obj: Any) -> bool:
@@ -369,3 +380,72 @@ class ImportErrorReporter:
                 " of agentscope."
             )
         raise ImportError(err_msg)
+
+
+def _get_process_creation_time() -> datetime.datetime:
+    """Get the creation time of the process."""
+    pid = os.getpid()
+    # Find the process by pid
+    current_process = psutil.Process(pid)
+    # Obtain the process creation time
+    create_time = current_process.create_time()
+    # Change the timestamp to a readable format
+    return datetime.datetime.fromtimestamp(create_time)
+
+
+def _is_process_alive(
+    pid: int,
+    create_time_str: str,
+    create_time_format: str = "%Y-%m-%d %H:%M:%S",
+    tolerance_seconds: int = 10,
+) -> bool:
+    """Check if the process is alive by comparing the actual creation time of
+    the process with the given creation time.
+
+    Args:
+        pid (`int`):
+            The process id.
+        create_time_str (`str`):
+            The given creation time string.
+        create_time_format (`str`, defaults to `"%Y-%m-%d %H:%M:%S"`):
+            The format of the given creation time string.
+        tolerance_seconds (`int`, defaults to `10`):
+            The tolerance seconds for comparing the actual creation time with
+            the given creation time.
+
+    Returns:
+        `bool`: True if the process is alive, False otherwise.
+    """
+    try:
+        # Try to create a process object by pid
+        proc = psutil.Process(pid)
+        # Obtain the actual creation time of the process
+        actual_create_time_timestamp = proc.create_time()
+
+        # Convert the given creation time string to a datetime object
+        given_create_time_datetime = datetime.datetime.strptime(
+            create_time_str,
+            create_time_format,
+        )
+
+        # Calculate the time difference between the actual creation time and
+        time_difference = abs(
+            actual_create_time_timestamp
+            - given_create_time_datetime.timestamp(),
+        )
+
+        # Compare the actual creation time with the given creation time
+        if time_difference <= tolerance_seconds:
+            return True
+
+    except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+        # If the process is not found, access is denied, or the process is a
+        # zombie process, return False
+        return False
+
+    return False
+
+
+def _is_windows() -> bool:
+    """Check if the system is Windows."""
+    return os.name == "nt"
