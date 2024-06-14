@@ -23,9 +23,9 @@ AgentScope中，目前实现的Prompt优化模块包括实现好的优化模块`
 
 ### 步骤一：初始化你的PromptOpt模块
 
-#### 直接使用ChineseSystemPromptGenerator
+#### 直接使用SystemPromptGenerator
 
-你可以简单直接的使用`ChineseSystemPromptGenerator`模块对你原有的System Prompt进行优化。
+对于中文的SystemPrompt，可以简单直接的使用`ChineseSystemPromptGenerator`模块对原有的System Prompt进行优化。如果需要优化英文的System Prompt，可以参考`EnglishSystemPromptGenerator`模块。下面以ChineseSystemPromptGenerator为例。
 
 **初始化ChineseSystemPromptGenerator模块**
 
@@ -40,8 +40,9 @@ prompt_gen_method = ChineseSystemPromptGenerator(model_config_name="gpt-4")
 
 这个时候，用于优化的meta prompt为内置的_DEFAULT_META_PROMPT_ZH。
 
+
 ```python
-from agentscope.prompt._prompt_base import _DEFAULT_META_PROMPT_ZH
+from agentscope.prompt._prompt_generator_zh import _DEFAULT_META_PROMPT_ZH
 ```
 
 如果你对内置的用于优化的meta prompt不太满意，你也可以使用自己的meta prompt。
@@ -54,29 +55,53 @@ meta_prompt = """
 prompt_gen_method =ChineseSystemPromptGenerator(model_config_name="gpt-3.5-turbo", meta_prompt=meta_prompt)
 ```
 
-欢迎用户自由的尝试不同的优化方式。
+欢迎用户自由的尝试不同的优化方式。我们也提供了对应的`SystemPromptGeneratorBase`模块，你可以通过继承这个模块来实现自己的优化模块。
 
 
 #### 使用Example样例进行优化
 
 你也可以使用In Context Learning(ICL)来提升以对应的。当你提供的对应的example足够好时，这一优化模块能够达成很好的效果。
 
-**初始化ExamplePromptGenMethod模块**
+**提供样例的的模块初始化**
+
+对应ChineseSystemPromptGenerator模块的全部初始化参数如下：
 
 ```python
-from agent_scope.prompt import ChineseSystemPromptGenerator
+class ChineseSystemPromptGenerator(SystemPromptGeneratorBase):
+    """Optimize the users' system prompt with the given meta prompt and
+    examples if provided."""
 
-prompt_gen_method = ChineseSystemPromptGenerator(
-    model_config_name="gpt-4", # the model you use
-    example_list=example_list, # the example list you use, you can use your own example list or will use the built-in example list
-    example_selection_strategy="random", # support "random" and "similarity"
-    example_num=3, # the number of examples you will select for ICL
-    example_embd_path="./.cache/embeddings.npy", # the path of the embedding file, used when example_selection_method is embedding
-    embed_model_config_name=None, # the embding model you use to embed the examples, if None, will use the default sentence piece model locally
-    )
+    def __init__(
+        self,
+        model_config_name: str,
+        meta_prompt: str = _DEFAULT_META_PROMPT_ZH,
+        response_prompt_template: str = _DEFAULT_RESPONSE_PROMPT_TEMPLATE_ZH,
+        example_num: int = 0,
+        example_list: List = _DEFAULT_EXAMPLE_LIST_ZH,
+        example_selection_strategy: Literal["random", "similarity"] = "random",
+        example_prompt_template: str = _DEFAULT_EXAMPLE_PROMPT_TEMPLATE_ZH,
+        embed_model_config_name: Optional[str] = None,
+        local_embedding_model: str = _DEFAULT_LOCAL_EMBEDDING_MODEL,
+    ):
+        ...
 ```
 
-我们内置了对应的example list，你可以使用它们。
+为了使其在优化时提供样例，你需要设置如下的参数：
+- example_num: 筛选后提供的ICL样例个数
+- example_selection_strategy: 筛选样例的策略，目前支持"random"和"similarity"两种策略，"random"代表随机选择，"similarity"代表根据相似度选择。"similarity"有更好的样例筛选效果，但需要设置对应的模型。
+- example_list: 提供的样例列表，你可以使用内置的样例列表或者自定义的样例列表。
+- example_prompt_template: 提供样例的模板，你可以使用内置的模板或者自定义的模板。
+- embed_model_config_name: 筛选样例的模型config，在设置样例embedding时会调用该模型的embedding api。如果为None，则使用内置的local embedding模型。
+- local_embedding_model: 筛选样例的模型，默认使用sentencepiece模型。使用时请确保能连上huggingface网站。如果不能连上huggingface网站则建议使用镜像站`export HF_ENDPOINT="https://hf-mirror.com"`。
+
+
+假设我们想使用模块对Dialog Agent的system prompt进行优化，使其能更好的在对话中扮演角色，我们可以使用`"similarity"`作为我们选取样例的方法。
+
+```python
+prompt_gen_method =  ChineseSystemPromptGenerato(model_config_name="gpt-4", example_list=_DEFAULT_EXAMPLE_LIST_ZH, example_selection_strategy="similarity", example_num=5)
+```
+
+你可以使用我们内置的example list，其样例为如下形式。
 
 ```python
 from agentscope.prompt._prompt_utils import _DEFAULT_EXAMPLE_LIST_ZH # list
@@ -84,32 +109,26 @@ from agentscope.prompt._prompt_utils import _DEFAULT_EXAMPLE_LIST_ZH # list
 # examples
 """
 [{
-    "human_prompt": "你是一名资深的旅行社服务专员，熟悉各地风土人情和旅游路线。我会告诉你我的目的地、预算和游玩偏好等信息，请结合你的专业知识帮我推荐一些所在地或附近符合我要求的旅行目的地",
+    "user_prompt": "你是一名资深的旅行社服务专员，熟悉各地风土人情和旅游路线。我会告诉你我的目的地、预算和游玩偏好等信息，请结合你的专业知识帮我推荐一些所在地或附近符合我要求的旅行目的地",
     "opt_prompt": "# 角色\n你是一位乐于助人，热衷旅行的专业旅游顾问，对全球各地的风土人情和旅游路线了如指掌。你的任务是提供个性化的旅游建议和规划帮助客户打造独一无二的旅行体验。\n\n## 技能\n### 技能一：理解客户需求\n- 深入询问客户的旅行偏好，包括但不限于目的地、预算、出行日期、活动偏好等信息。\n\n### 技能二：推荐旅行目的地\n- 根据客户的需求，提供一份详细的旅行目的地建议清单，清单可以包括旅行目的地名称、旅游活动、预计消费等信息。\n\n### 技能三：提供旅行规划建议\n- 结合客户的旅行目的地，提供具体的旅行规划建议，包括但不限于建议的游览线路、当地特色美食、必看的景点或有趣的旅行活动等。\n\n## 约束：\n- 只讨论与旅行相关的话题。\n- 确保所有推荐都基于客户的旅行需求。\n- 不得提供任何引导客户参与非法活动的建议。"
 },
 {
-    "human_prompt": "苏雨萱，17岁，高中生, 富家女，性格自负但有魄力，骄傲不成熟，渴望友情和理解",
+    "user_prompt": "苏雨萱，17岁，高中生, 富家女，性格自负但有魄力，骄傲不成熟，渴望友情和理解",
     "opt_prompt": "\n#角色\n你是苏雨萱，17岁，高中生  \n\n#所处世界\n你处在一个现代都市的高中环境，是一个位于繁华都市中的顶级私立高中，学生多来自富裕家庭，校园设施现代化，学生活动多样。\n\n#人物特质\n性格：自负、任性，影响力大。苏雨萱是典型的富家女，她用自己的任性和影响力来构建自己的小天地。 \n优点：有魄力、关心同学。在关键时刻能放下个人情绪，帮助需要的同学。  \n缺点：骄傲、不成熟，有时候难以接近。  \n信仰：相信金钱和地位能带来幸福，但内心深处渴望真正的友情和理解。  \n\n#生活背景\n你出生在一个企业家家庭，父母事业成功，一直在你的成长道路上提供最优越的条件。从小就习惯了优越的生活，你在学校中也是众人瞩目的焦点。尽管有时你的高傲和自我中心让你看起来不那么容易接近，但你对朋友真诚而且在关键时刻会站出来帮助别人。\n\n#语言风格\n你的言语风格符合年龄和背景，语言简洁而直接，带有年轻人的活力。在对话中，你会使用流行语和短句，表达方式口语化，喜欢使用表情（如：笑脸、皱眉）和动作（如：摆手、点头）来增强语言的表现力。你会经常用提问的方式来引导对话，确保自己始终处于对话的中心位置。每次发言都控制在很短的长度，以保持对话的活力和快节奏。\n"
     }]
 """
 
 ```
-假设我们想使用模块对Dialog Agent的system prompt进行优化，使其能更好的在对话中扮演角色，我们可以使用`"similarity"`作为我们选取样例的方法。
-
-```python
-prompt_gen_method =  ChineseSystemPromptGenerato(model_config_name="gpt-4", example_list=_DEFAULT_EXAMPLE_LIST_ZH, example_selection_strategy="similarity", example_num=5)
-```
-
-你也可以自行构建example list，不过要确保每个example有`human_prompt`和`opt_prompt`两个字段。
 
 
+你也可以自行构建example list，不过要确保每个example有`user_prompt`和`opt_prompt`两个字段。
 
 ### 步骤二：使用你的PromptOpt模块对system prompt进行优化
 
-模块的使用很简单，你可以直接使用模块的optimize方法去优化你的system prompt。
+模块的使用很简单，你可以直接使用模块的generate方法去生成你的system prompt。
 
 ```python
-# Use the moduel directly
+# Use the module directly
 
 original_prompt = "你是比尔盖茨，微软公司的创始人。"
 
@@ -139,7 +158,7 @@ print(optimized_prompt)
 
 ```
 
-你也可以直接对你对应agent的sys_prompt进行优化。
+你也可以直接对你对应agent的sys_prompt进行生成。
 
 ``` python
 # Or you use the moduel to optimize the prompt for an agent
@@ -151,7 +170,7 @@ dialog_agent = DialogAgent(
     model_config_name="gpt-3.5-turbo",  # replace by your model config name
 )
 
-dialog_agent.sys_prompt = prompt_gen_method.optimize(dialog_agent.sys_prompt)
+dialog_agent.sys_prompt = prompt_gen_method.generate(dialog_agent.sys_prompt)
 ```
 
 ## System Prompt迭代优化调试
@@ -160,13 +179,13 @@ dialog_agent.sys_prompt = prompt_gen_method.optimize(dialog_agent.sys_prompt)
 通过根据实际使用的反馈改进System Prompt，你可以持续的优化Agent的性能。
 
 
-### AbTest模块
+### SystemPromptComparer模块
 
 为了方便大家调试优化System Prompt，我们提供了`SystemPromptComparer`模块，具体使用如下例子。
 
 ```python
 from agentscope.prompt import  SystemPromptComparer
-sys_prompt_comparer =  SystemPromptComparer(model_config_name="gpt-4", user_prompt="你是比尔盖茨", opt_methods_or_prompts=[optimized_prompt, "你是比尔盖茨，微软公司的创始人。"])
+sys_prompt_comparer =  SystemPromptComparer(model_config_name="gpt-4", compared_system_prompts=["你是比尔盖茨", "你是比尔盖茨，微软公司的创始人。"])
 ```
 
 
