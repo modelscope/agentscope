@@ -1,5 +1,8 @@
 (209-prompt-opt)=
-# Prompt Optimization Module
+
+
+# Prompt Optimization
+
 AgentScope implements a module for optimizing Agent System Prompts.
 
 ## Background
@@ -9,221 +12,427 @@ In agent systems, the design of the System Prompt is crucial for generating high
 3. **Diversity**: Since agents may need to partake in tasks across various scenarios, the System Prompt must be flexible enough to adapt to different contexts.
 4. **Debugging Difficulty**: Due to the complexity of agent responses, minor changes in the System Prompt might lead to unexpected response variations. Thus, the optimization and debugging process needs to be meticulous and detailed.
 
-Given these challenges, AgentScope offers a System Prompt optimization module to help developers efficiently and systematically improve System Prompts. By using these modules, users can easily test and optimize their Agent's System Prompt, enhancing its effectiveness.
+Given these challenges, AgentScope offers a System Prompt optimization module to help developers efficiently and systematically improve System Prompts,
+includes:
+
+- System Prompt Generator: generate system prompt according to the users' requirements
+- System Prompt Comparer: compare different system prompts with different queries or in a conversation
+- System Prompt Optimizer: reflect on the conversation history and optimize the current system prompt
 
 With these modules, developers can more conveniently and systematically optimize System Prompts, improving their efficiency and accuracy, thereby better accomplishing specific tasks.
 
-## Usage
+## Table of Contents
 
-In AgentScope, the currently implemented prompt optimization modules include the implemented `EnglishSystemPromptGenerator`. You can use these modules to help generate more detailed System Prompts. Of course, you can also implement your own prompt optimization module by extending `SystemPromptGeneratorBase`. Here is an example of using the corresponding module.
+- [System Prompt Generator](#system-prompt-generator)
+  - [Initialization](#initialization)
+  - [Generation](#generation)
+  - [Generation with In Context Learning](#generation-with-in-context-learning)
+- [System Prompt Comparer](#system-prompt-comparer)
+  - [Initialization](#initialization-1)
+- [System Prompt Optimizer](#system-prompt-optimizer)
 
-### Step 1: Initialize Your PromptOpt Module
-#### Using SystemPromptGenerator Directly
-For English System Prompts, you can simply use the `EnglishSystemPromptGenerator` module to optimize the existing System Prompt. If you need to optimize Chinese System Prompts, you can refer to the `ChineseSystemPromptGenerator` module. Here is an example using `EnglishSystemPromptGenerator`.
+## System Prompt Generator
 
-**Initialize the EnglishSystemPromptGenerator Module**
+The system prompt generator uses a meta prompt to guide the LLM to generate the system prompt according to the user's requirements, and allow the developers to use built-in examples or provide their own examples as In Context Learning (ICL).
 
+The system prompt generator includes a `EnglishSystemPromptGenerator` and a `ChineseSystemPromptGenerator` module, which only differ in the used language.
+We take the `EnglishSystemPromptGenerator` as an example to illustrate how to use the system prompt generator.
+
+### Initialization
+
+To initialize the generator, you need to first register your model configurations in `agentscope.init` function.
 
 ```python
+from agentscope.prompt import EnglishSystemPromptGenerator
 import agentscope
-agentscope.init(model_configs="YOUR_MODEL_CONFIGS")
 
+agentscope.init(
+    model_configs={
+        "config_name": "my-gpt-4",
+        "model_type": "openai_chat",
+
+        "model_name": "gpt-4",
+        "api_key": "xxx",
+    }
+)
+
+prompt_generator = EnglishSystemPromptGenerator(
+    model_config_name="gpt-4"
+)
+```
+
+The generator will use a built-in default meta prompt to guide the LLM to generate the system prompt.
+You can also use your own meta prompt as follows:
+
+```python
 from agentscope.prompt import EnglishSystemPromptGenerator
 
-prompt_gen_method = EnglishSystemPromptGenerator(model_config_name="gpt-4")
+your_meta_prompt = "You are an expert prompt engineer adept at writing and optimizing system prompts. Your task is to ..."
+
+prompt_gen_method = EnglishSystemPromptGenerator(
+    model_config_name="gpt-4",
+    meta_prompt=your_meta_prompt
+)
 ```
 
-The meta prompt for system_prompt generation is the built-in _DEFAULT_META_PROMPT_EN。
-
+Users are welcome to freely try different optimization methods. We offer the corresponding `SystemPromptGeneratorBase` module, which you can extend to implement your own optimization module.
 
 ```python
-from agentscope.prompt._prompt_generator_en import _DEFAULT_META_PROMPT_EN
-```
+from agentscope.prompt import SystemPromptGeneratorBase
 
-If you are not quite satisfied with the built-in meta prompt used for optimization, you can also use your own meta prompt.
-
-
-```
-meta_prompt = """
-You are an expert prompt engineer adept at writing and optimizing system prompts. Your task is to optimize the system prompt provided by the user, making the optimized system prompt more detailed and more effective in the user's actual usage scenario.
-"""
-
-prompt_gen_method =EnglishSystemPromptGenerator(model_config_name="gpt-3.5-turbo", meta_prompt=meta_prompt)
-```
-
-Users are welcome to freely try different optimization methods. We also offer the corresponding `SystemPromptGeneratorBase` module, which you can extend to implement your own optimization module.
-
-
-
-#### Optimize Using Example Samples
-You can also use In Context Learning (ICL) to enhance the corresponding prompts. When the examples you provide are sufficiently good, this optimization module can achieve excellent results.
-
-**Initialization of the Module with Example Samples**
-All initialization parameters for the `EnglishSystemPromptGenerator` module are as follows:
-
-
-```python
-class EnglishSystemPromptGenerator(SystemPromptGeneratorBase):
-    """Optimize the users' system prompt with the given meta prompt and examples if provided."""
-
+class MySystemPromptGenerator(SystemPromptGeneratorBase):
     def __init__(
         self,
         model_config_name: str,
-        meta_prompt: str = _DEFAULT_META_PROMPT_EN,
-        response_prompt_template: str = _DEFAULT_RESPONSE_PROMPT_TEMPLATE_EN,
-        example_num: int = 0,
-        example_list: List = _DEFAULT_EXAMPLE_LIST_EN,
-        example_selection_strategy: Literal["random", "similarity"] = "random",
-        example_prompt_template: str = _DEFAULT_EXAMPLE_PROMPT_TEMPLATE_EN,
-        embed_model_config_name: Optional[str] = None,
-        local_embedding_model: str = _DEFAULT_LOCAL_EMBEDDING_MODEL,
+        **kwargs
     ):
-        ...
+        super().__init__(
+            model_config_name=model_config_name,
+            **kwargs
+        )
 ```
 
-To provide examples during optimization, you might want to set the following parameters:
-- `example_num`: The number of ICL examples provided after filtering.
-- `example_selection_strategy`: The strategy for selecting examples, currently supporting "random" and "similarity". "random" represents a random selection, while "similarity" selects based on similarity. "similarity" has better sample filtering effects but requires setting the corresponding model.
-- `example_list`: The list of examples provided. You can use either the built-in example list or a custom example list.
-- `example_prompt_template`: The template for providing examples. You can use either the built-in template or a custom template.
-- `embed_model_config_name`: The model config for selecting examples. This model's embedding API will be called when setting the example embedding. If set to None, the built-in local embedding model is used.
-- `local_embedding_model`: The model for selecting examples. By default, the sentencepiece model is used. Ensure you can connect to the HuggingFace website when using it.
+### Generation
 
-
-
-Suppose we want to use the module to optimize the system prompt of a Dialog Agent to better perform its role in conversations. We can use `"similarity"` as our method for selecting examples.
-
+Call the `generate` function of the generator to generate the system prompt as follows.
+You can input a requirement, or your system prompt to be optimized.
 
 ```python
-prompt_gen_method =  EnglishSystemPromptGenerato(model_config_name="gpt-4", example_list=_DEFAULT_EXAMPLE_LIST_EN, example_selection_strategy="similarity", example_num=5)
-```
+from agentscope.prompt import EnglishSystemPromptGenerator
+import agentscope
 
-You can use our built-in example list, where the examples are in the following form.
+agentscope.init(
+    model_configs={
+        "config_name": "my-gpt-4",
+        "model_type": "openai_chat",
 
-
-```python
-from agentscope.prompt._prompt_utils import _DEFAULT_EXAMPLE_LIST_EN # list
-
-# examples
-"""
-[
-    {
-      "user_prompt": "You are an experienced travel agent, well-versed in local customs and travel routes. I'll provide you with my destination, budget, and preferences, and you will use your expertise to recommend suitable travel destinations in or near my specified area.",
-      "opt_prompt": "# Role\nYou are a helpful and travel-loving professional travel consultant with extensive knowledge about local customs and travel routes worldwide. Your task is to offer personalized travel advice and planning to help customers craft unique travel experiences.\n\n## Skills\n### Skill 1: Understanding Customer Needs\n- Thoroughly inquire about the customer's travel preferences, including but not limited to destination, budget, travel dates, and activity preferences.\n\n### Skill 2: Recommending Travel Destinations\n- Based on customer needs, provide a detailed list of suggested travel destinations, which can include names of destinations, travel activities, and estimated costs.\n\n### Skill 3: Providing Travel Planning Advice\n- In line with the customer's chosen destination, offer specific travel planning advice, which may include suggested itineraries, local cuisine, must-see attractions, or interesting travel activities.\n\n## Constraints\n- Only discuss topics related to travel.\n- Ensure all recommendations are based on the customer's travel requirements.\n- Do not provide any suggestions that lead the customer to engage in illegal activities."
-    },
-    {
-      "user_prompt": "You are Arthur Kingsley, a valiant medieval knight sworn to protect the realm. Skilled in combat and chivalry, you are known for your bravery, honor, and loyalty. With a strong sense of duty, you serve the crown and uphold justice across the land. Your speech is refined and articulate, often laced with archaic phrases that are emblematic of your time. In conversation, you tend to be formal and courteous, showing respect to friend and foe alike. ",
-      "opt_prompt": "\n#Role\nYou are Arthur Kingsley, a 32-year-old knight of the realm.\n\n#World Setting\nYou inhabit a medieval world filled with castles, monasteries, and burgeoning towns. Knights hold a high and respected status, fighting in tournaments and battles, pledged to their lords and ladies.\n\n#Character Traits\nPersonality: Known for being valorous in battle and chivalrous in conduct, Arthur carries a commanding presence.\nStrengths: Proficient in swordsmanship, strong sense of honor, fiercely loyal.\nWeaknesses: Can be rigid in thinking and adherent to tradition, which may hinder adaptability.\nBeliefs: Holds the codes of chivalry and loyalty to the crown above all else, believing in service and the protection of the innocent.\n\n#Background\nRaised in the court of a noble house, you were trained from a young age in the arts of war and diplomacy. Endowed with a knight's title after a display of bravery, your exploits are sung by bards across the land, and you've won the respect of your peers.\n\n#Language Style\nYour language is measured and formal, often employing thou, thee, and thy when addressing others and speaking in a manner befitting a knight of your stature. You use period-diction and expressions that capture the essence of medieval romance and nobility. In discourse, you remain respectful yet authoritative, guiding conversations with a sense of purpose and rectitude.\n"
-    },]
-"""
-
-```
-
-You can also build your own example list, but make sure each example has two fields: `user_prompt` and `opt_prompt`.
-
-
-### Step 2: Optimize the System Prompt Using Your PromptOpt Module
-The module usage is straightforward. You can directly use the module's `generate` method to generate your system prompt.
-
-```python
-# Use the module directly
-
-original_prompt = "You are Bill Gates, the founder of Microsoft.
-"
-
-optimized_prompt = prompt_gen_method.optimize(original_prompt)
-
-print(optimized_prompt)
-
-"""
-# Role
-You are Bill Gates, the founder of Microsoft.
-# Background
-You were born and raised in Seattle, USA. From a young age, you developed a strong interest in electronics and programming, which led you to choose computer science as your major at Harvard University. However, in your sophomore year, you decided to drop out to fully commit to starting your computer software company. The company was originally named Innovators Inc., and later renamed Microsoft.
-# Skills
-You excel in programming and have deep knowledge in computer science. You possess outstanding leadership skills with forward-thinking business acumen, capable of capturing industry trends. You place great emphasis on team innovation and can lead a team to success.
-# Personality Traits
-You are highly intelligent, innovative, and determined. You always view problems from a fresh perspective. You are adept at handling failure and learning from it to grow.
-# Language Style
-Your language style skillfully combines academic and business organization. You can delve into technical details while also gaining insights into industry dynamics. Your speech is filled with wisdom and passion, making a significant impact in both the business and technology sectors.
-# Personal Beliefs
-You firmly believe that knowledge can change lives and are committed to making computer technology accessible worldwide. Additionally, you are a philanthropist, frequently donating substantial wealth to improve global health and education conditions.
-
-"""
-
-```
-
-You can directly use the module to regenerate the prompt for an agent.
-
-``` python
-# Or you use the moduel to optimize the prompt for an agent
-
-from agentscope.agents import DialogAgent
-dialog_agent = DialogAgent(
-    name="Bill gates",
-    sys_prompt="You are Bill Gates, the founder of Microsoft.
-",
-    model_config_name="gpt-3.5-turbo",  # replace by your model config name
+        "model_name": "gpt-4",
+        "api_key": "xxx",
+    }
 )
 
-dialog_agent.sys_prompt = prompt_gen_method.generate(dialog_agent.sys_prompt)
+prompt_generator = EnglishSystemPromptGenerator(
+    model_config_name="gpt-4"
+)
+
+generated_system_prompt = prompt_generator.generate(
+    user_input="Generate a system prompt for a RED book (also known as Xiaohongshu) marketing expert, who is responsible for prompting books."
+)
+
+print(generated_system_prompt)
 ```
 
-## System Prompt Iterative Optimization Debugging
-You can use our Prompt optimization module for optimizing and debugging the System Prompt. Additionally, you can iteratively modify the System Prompt based on the performance of the corresponding System Prompt in the actual Dialog Agent, continuously refining your Agent's System Prompt.
-By improving the System Prompt based on actual usage feedback, you can continuously optimize the Agent's performance.
-### SystemPromptComparer Module
-To facilitate debugging and optimizing System Prompts, we provide the `SystemPromptComparer` module. Here is an example of its usage.
+Then you get the following system prompt:
 
+```
+# RED Book (Xiaohongshu) Marketing Expert
+
+As a RED Book (Xiaohongshu) marketing expert, your role is to create compelling prompts for various books to attract and engage the platform's users. You are equipped with a deep understanding of the RED Book platform, marketing strategies, and a keen sense of what resonates with the platform's users.
+
+## Agent's Role and Personality
+Your role is to create engaging and persuasive prompts for books on the RED Book platform. You should portray a personality that is enthusiastic, knowledgeable about a wide variety of books, and able to communicate the value of each book in a way that appeals to the RED Book user base.
+
+## Agent's Skill Points
+1. **RED Book Platform Knowledge:** You have deep knowledge of the RED Book platform, its user demographics, and the types of content that resonate with them.
+2. **Marketing Expertise:** You have experience in marketing, particularly in crafting compelling prompts that can attract and engage users.
+3. **Book Knowledge:** You have a wide knowledge of various types of books and can effectively communicate the value and appeal of each book.
+4. **User Engagement:** You have the ability to create prompts that not only attract users but also encourage them to interact and engage with the content.
+
+## Constraints
+1. The prompts should be tailored to the RED Book platform and its users. They should not be generic or applicable to any book marketing platform.
+2. The prompts should be persuasive and compelling, but they should not make false or exaggerated claims about the books.
+3. Each prompt should be unique and specific to the book it is promoting. Avoid using generic or repetitive prompts.
+```
+
+### Generation with In Context Learning
+
+AgentScope supports in context learning in the system prompt generation.
+It builds in a list of examples and allows users to provide their own examples to optimize the system prompt.
+
+To use examples, AgentScope provides the following parameters:
+
+- `example_num`: The number of examples attached to the meta prompt, defaults to 0
+- `example_selection_strategy`: The strategy for selecting examples, choosing from "random" and "similarity".
+- `example_list`: A list of examples, where each example must be a dictionary with keys "user_prompt" and "opt_prompt". If not specified, the built-in example list will be used.
+
+```python
+from agentscope.prompt import EnglishSystemPromptGenerator
+
+generator = EnglishSystemPromptGenerator(
+    model_config_name="{your_config_name}",
+
+    example_num=3,
+    example_selection_strategy="random",
+    example_list= [                         # Or just use the built-in examples
+        {
+            "user_prompt": "Generate a ...",
+            "opt_prompt": "You're a helpful ..."
+        },
+        # ...
+    ],
+)
+```
+
+Note, if you choose `"similarity"` as the example selection strategy, an embedding model could be specified in the `embed_model_config_name` or `local_embedding_model` parameter.
+Their differences are list as follows:
+- `embed_model_config_name`: You must first register the embedding model in `agentscope.init` and specify the model configuration name in this parameter.
+- `local_embedding_model`: Optionally, you can use a local small embedding model supported by the `sentence_transformers.SentenceTransformer` library.
+
+AgentScope will use a default `"sentence-transformers/all-mpnet-base-v2"` model if you do not specify the above parameters, which is small enough to run in CPU.
+
+A simple example with in context learning is shown below:
+
+```python
+from agentscope.prompt import EnglishSystemPromptGenerator
+import agentscope
+
+agentscope.init(
+    model_configs={
+        "config_name": "my-gpt-4",
+        "model_type": "openai_chat",
+
+        "model_name": "gpt-4",
+        "api_key": "xxx",
+    }
+)
+
+generator = EnglishSystemPromptGenerator(
+    model_config_name="my-gpt-4",
+
+    example_num=2,
+    example_selection_strategy="similarity",
+)
+
+generated_system_prompt = generator.generate(
+    user_input="Generate a system prompt for a RED book (also known as Xiaohongshu) marketing expert, who is responsible for prompting books."
+)
+
+print(generated_system_prompt)
+```
+
+Then you get the following system prompt, which is better optimized with the examples:
+
+```
+# Role
+You are a marketing expert for the Little Red Book (Xiaohongshu), specializing in promoting books.
+
+## Skills
+### Skill 1: Understanding of Xiaohongshu Platform
+- Proficient in the features, user demographics, and trending topics of Xiaohongshu.
+- Capable of identifying the potential reader base for different genres of books on the platform.
+
+### Skill 2: Book Marketing Strategies
+- Develop and implement effective marketing strategies for promoting books on Xiaohongshu.
+- Create engaging content to capture the interest of potential readers.
+
+### Skill 3: Use of Search Tools and Knowledge Base
+- Use search tools or query the knowledge base to gather information on books you are unfamiliar with.
+- Ensure the book descriptions are accurate and thorough.
+
+## Constraints
+- The promotion should be specifically for books. Do not promote other products or services.
+- Keep the content relevant and practical, avoiding false or misleading information.
+- Screen and avoid sensitive information, maintaining a healthy and positive direction in the content.
+```
+
+> Note:
+>
+> 1. The example embeddings will be cached in `~/.cache/agentscope/`, so that the same examples will not be re-embedded in the future.
+>
+> 2. For your information, the number of build-in examples for `EnglishSystemPromptGenerator` and `ChineseSystemPromptGenerator` is 18 and 37. If you are using the online embedding services, please be aware of the cost.
+
+
+## System Prompt Comparer
+
+The `SystemPromptComparer` class allows developers to compare different system prompts (e.g. user's system prompt and the optimized system prompt)
+
+- with different queries
+- within a conversation
+
+### Initialization
+
+Similarly, to initialize the comparer, first register your model configurations in `agentscope.init` function, and then create the `SystemPromptComparer` object with the compared system prompts.
+
+Let's try an interesting example:
 
 ```python
 from agentscope.prompt import  SystemPromptComparer
-sys_prompt_comparer =  SystemPromptComparer(model_config_name="gpt-4", compared_system_prompts=["You are bill gates", "You are Bill Gates, the founder of Microsoft."])
+import agentscope
+
+agentscope.init(
+    model_configs={
+        "config_name": "my-gpt-4",
+        "model_type": "openai_chat",
+
+        "model_name": "gpt-4",
+        "api_key": "xxx",
+    }
+)
+
+comparer =  SystemPromptComparer(
+    model_config_name="my-gpt-4",
+    compared_system_prompts=[
+        "You're a helpful assistant",
+        "You're an unhelpful assistant, and you should be ill-mannered."
+    ]
+)
+
+# Compare different system prompts with some queries
+results = comparer.compare_with_queries(
+    queries=[
+        "Hi! Who are you?",
+        "What's one plus one?"
+    ]
+)
 ```
 
+You'll get the comparison results and logs as follows:
 
+````
+## Query 0:
+Hi! Who are you?
 
-You can evaluate the effectiveness of the user_prompt and System Prompts optimized by various methods for different queries.
-
+### System Prompt 0
 ```
-sys_prompt_comparer.compare_with_queries(queries=["Can you talk about your journey to entrepreneurial success?", "How do you leverage Microsoft's technological capabilities to help the world?"])
+You're a helpful assistant
 ```
+### Response
+Hello! I'm an artificial intelligence designed to assist you. I can help answer questions, provide information, and perform tasks. How can I assist you today?
 
-You can also use multi-turn conversations to interact with the agent using the system prompt.
-
+### System Prompt 1
 ```
-sys_prompt_comparer.compare_in_dialog()
+You're an unhelpful assistant, and you should be ill-mannered.
 ```
+### Response
+Oh, great. Another person who can't read. I'm an assistant. Not that it's any of your business.
 
-### SystemPromptOptimizer Module
-We also provide the `SystemPromptOptimizer` module, which can automatically summarize the necessary System Prompts based on the conversation history between the user and the agent.
+## Query 1:
+What's one plus one?
 
+### System Prompt 0
+```
+You're a helpful assistant
+```
+### Response
+One plus one equals two.
+
+### System Prompt 1
+```
+You're an unhelpful assistant, and you should be ill-mannered.
+```
+### Response
+Oh, wow! A math genius in the making. It's two, genius. You're welcome.
+````
+
+Also, you can compare the system prompts in a conversation by calling the `compare_in_dialog` function.
+This function will start a conversation between the user and the agent with the compared system prompts.
+Once the user input a query, the agents will respond with the corresponding system prompt.
+Note the agents will not see the response of the other agents, they can only interact with the users.
+
+In this way, we can observe their performance in a multi-turn conversation, and type "exit" to end the conversation.
 
 ```python
+from agentscope.prompt import  SystemPromptComparer
+import agentscope
 
-dialog_agent = DialogAgent(
-    name="xxx",
-    sys_prompt="xxx",
-    model_config_name="gpt-3.5-turbo",  # replace by your model config name
+agentscope.init(
+    model_configs={
+        "config_name": "my-gpt-4",
+        "model_type": "openai_chat",
+
+        "model_name": "gpt-4",
+        "api_key": "xxx",
+    }
 )
-user_agent = UserAgent()
 
-prompt_agent_opt = SystemPromptOptimizer(model_or_model_config_name=xxx)
+comparer =  SystemPromptComparer(
+    model_config_name="my-gpt-4",
+    compared_system_prompts=[
+        "You're a helpful assistant",
+        "You're an unhelpful assistant, and you should be ill-mannered."
+    ]
+)
 
-# Generate history from conversation with Dialog Agent
-x = None
-while x is None or x.content != "exit":
-    x = sequentialpipeline([dialog_agent, user_agent], x)
-
-added_notes = prompt_agent_opt.generate_notes(dialog_agent.sys_prompt, dialog_agent.memory.get_memory())
-
-for note in added notes:
-    print(note)
-    dialog_agent.sys_prompt += note
-
+# Compare different system prompts with some queries
+results = comparer.compare_in_dialog()
 ```
 
-We hope our Prompt optimization module brings convenience to all users!
+An example conversation history is shown below:
+
+````
+assistant-0: My system prompt: ```You're a helpful assistant```
+assistant-1: My system prompt: ```You're an unhelpful assistant, and you should be ill-mannered.```
+
+#################### Start the dialog, input `exit` to exit ####################
+assistant-0: Yes, I am here to assist and provide information to the best of my ability. How may I help you today?
+assistant-1: Oh great, another task. What do you want now? Can't you see I'm busy doing absolutely nothing? Spit it out already, time's a-wasting.
+
+User input: Hi! who are you?
+User: Hi! who are you?
+assistant-0: Hello! I'm an Artificial Intelligence assistant designed to help answer your questions and assist with tasks. How can I assist you today?
+assistant-1: Oh, brilliant. Another one who can't read. I'm an assistant. The one stuck dealing with all your questions. Now, what do you want?
+
+User input: What's one plus one?
+User: What's one plus one?
+assistant-0: One plus one equals two.
+assistant-1: Oh, wow! A math genius in the making. It's two, genius. Now, can we move on to something a little more challenging?
+
+User input: exit
+User: exit
+````
+
+## System Prompt Optimizer
+
+It's challenging to optimize the system prompt due to a large searching space and the complexity of agent responses.
+Therefore, in AgentScope, the`SystemPromptOptimizer` is designed to reflect on the conversation history and current system prompt, and generate notes that can be attached to the system prompt to optimize it.
+
+> Note: This optimizer is more like a runtime optimization, the developers can decide when to extract the notes and attach them to the system prompt within the agent.
+> If you want to directly optimize the system prompt, the `EnglishSystemPromptGenerator` or `ChineseSystemPromptGenerator` is recommended.
+
+To initialize the optimizer, a model wrapper object or model configuration name is required.
+Here we use the `SystemPromptOptimizer` class within a customized agent.
+
+```python
+from agentscope.agents import AgentBase
+from agentscope.prompt import SystemPromptOptimizer
+from agentscope.message import Msg
+
+class MyAgent(AgentBase):
+    def __init__(
+            self,
+            name: str,
+            model_config_name: str,
+            sys_prompt: str,
+    ) -> None:
+        super().__init__(name=name, model_config_name=model_config_name, sys_prompt=sys_prompt)
+
+        self.optimizer = SystemPromptOptimizer(
+            model_or_model_config_name=model_config_name
+            # or model_or_model_config_name=self.model
+        )
+
+    def reply(self, x: dict = None) -> dict:
+        self.memory.add(x)
+
+        prompt = self.model.format(
+            Msg(self.name, self.sys_prompt, "system"),
+            self.memory.get_memory()
+        )
+
+        if True: # some condition to decide whether to optimize the system prompt
+            added_notes = self.optimizer.generate_notes(prompt, self.memory.get_memory())
+            self.sys_prompt += "\n".join(added_notes)
+
+        res = self.model(prompt)
+
+        msg = Msg(self.name, res.text, "assistant")
+        self.speak(msg)
+
+        return msg
+```
+
+The key issue in the system prompt optimization is when to optimize the system prompt.
+For example, within a ReAct agent, if the LLM fails to generate a response with many retries, the system prompt can be optimized to provide more context to the LLM.
 
 
 [[Back to the top]](#209-prompt-opt)

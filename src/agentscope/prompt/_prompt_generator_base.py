@@ -268,7 +268,7 @@ class SystemPromptGeneratorBase(ABC):
                 role="user",
             ),
         )
-        print(prompt)
+
         # Generate the optimized prompt
         response = self.model(prompt).text
 
