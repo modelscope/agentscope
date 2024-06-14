@@ -15,9 +15,9 @@ In agent systems, the design of the System Prompt is crucial for generating high
 Given these challenges, AgentScope offers a System Prompt optimization module to help developers efficiently and systematically improve System Prompts,
 includes:
 
-- System Prompt Generator: generate system prompt according to the users' requirements
-- System Prompt Comparer: compare different system prompts with different queries or in a conversation
-- System Prompt Optimizer: reflect on the conversation history and optimize the current system prompt
+- **System Prompt Generator**: generate system prompt according to the users' requirements
+- **System Prompt Comparer**: compare different system prompts with different queries or in a conversation
+- **System Prompt Optimizer**: reflect on the conversation history and optimize the current system prompt
 
 With these modules, developers can more conveniently and systematically optimize System Prompts, improving their efficiency and accuracy, thereby better accomplishing specific tasks.
 
@@ -57,7 +57,7 @@ agentscope.init(
 )
 
 prompt_generator = EnglishSystemPromptGenerator(
-    model_config_name="gpt-4"
+    model_config_name="my-gpt-4"
 )
 ```
 
@@ -70,7 +70,7 @@ from agentscope.prompt import EnglishSystemPromptGenerator
 your_meta_prompt = "You are an expert prompt engineer adept at writing and optimizing system prompts. Your task is to ..."
 
 prompt_gen_method = EnglishSystemPromptGenerator(
-    model_config_name="gpt-4",
+    model_config_name="my-gpt-4",
     meta_prompt=your_meta_prompt
 )
 ```
@@ -112,7 +112,7 @@ agentscope.init(
 )
 
 prompt_generator = EnglishSystemPromptGenerator(
-    model_config_name="gpt-4"
+    model_config_name="my-gpt-4"
 )
 
 generated_system_prompt = prompt_generator.generate(

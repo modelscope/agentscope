@@ -8,17 +8,17 @@ AgentScope实现了对智能体System Prompt进行优化的模块。
 
 在智能体系统中，System Prompt的设计对于产生高质量的智能体响应至关重要。System Prompt向智能体提供了执行任务的环境、角色、能力和约束等背景描述。然而，优化System Prompt的过程通常充满挑战，这主要是由于以下几点：
 
-1. **针对性**：一个良好的System Prompt应该针对性强，能够清晰地引导智能体在特定任务中更好地表现其能力和限制。
-2. **合理性**：为智能体定制的System Prompt应该合适且逻辑清晰，以保证智能体的响应不偏离预定行为。
-3. **多样性**：智能体可能需要参与多种场景的任务，这就要求System Prompt具备灵活调整以适应各种不同背景的能力。
-4. **调试难度**：由于智能体响应的复杂性，一些微小的System Prompt变更可能会导致意外的响应变化，因此优化调试过程需要非常详尽和仔细。
+1. **针对性**：一个良好的 System Prompt 应该针对性强，能够清晰地引导智能体在特定任务中更好地表现其能力和限制。
+2. **合理性**：为智能体定制的 System Prompt 应该合适且逻辑清晰，以保证智能体的响应不偏离预定行为。
+3. **多样性**：智能体可能需要参与多种场景的任务，这就要求 System Prompt 具备灵活调整以适应各种不同背景的能力。
+4. **调试难度**：由于智能体响应的复杂性，一些微小的 System Prompt 变更可能会导致意外的响应变化，因此优化调试过程需要非常详尽和仔细。
 
-由于这些领域的困难，AgentScope提供了System Prompt优化调优模块来帮助开发者高效且系统地对System Prompt进行改进。借助这些模块可以方便用户对自己Agent的System Prompt进行调试优化，提升System Prompt的有效性。
+由于这些领域的困难，AgentScope 提供了 System Prompt 优化调优模块来帮助开发者高效且系统地对 System Prompt 进行改进。借助这些模块可以方便用户对自己 Agent 的 System Prompt 进行调试优化，提升 System Prompt 的有效性。
 具体包括：
 
-- System Prompt Generator: 根据用户的需求生成对应的system prompt
-- System Prompt Comparer: 在不同的查询或者对话过程中比较不同的system prompt的效果
-- System Prompt Optimizer: 根据对话历史进行反思和总结，从而进一步提升 system prompt
+- **System Prompt Generator**: 根据用户的需求生成对应的 system prompt
+- **System Prompt Comparer**: 在不同的查询或者对话过程中比较不同的 system prompt 的效果
+- **System Prompt Optimizer**: 根据对话历史进行反思和总结，从而进一步提升 system prompt
 
 ## 目录
 
@@ -57,7 +57,7 @@ agentscope.init(
 )
 
 prompt_generator = EnglishSystemPromptGenerator(
-    model_config_name="gpt-4"
+    model_config_name="my-gpt-4"
 )
 ```
 
@@ -70,7 +70,7 @@ from agentscope.prompt import EnglishSystemPromptGenerator
 your_meta_prompt = "You are an expert prompt engineer adept at writing and optimizing system prompts. Your task is to ..."
 
 prompt_gen_method = EnglishSystemPromptGenerator(
-    model_config_name="gpt-4",
+    model_config_name="my-gpt-4",
     meta_prompt=your_meta_prompt
 )
 ```
@@ -111,7 +111,7 @@ agentscope.init(
 )
 
 prompt_generator = ChineseSystemPromptGenerator(
-    model_config_name="gpt-4"
+    model_config_name="my-gpt-4"
 )
 
 generated_system_prompt = prompt_generator.generate(
@@ -164,7 +164,6 @@ generator = ChineseSystemPromptGenerator(
 - `embed_model_config_name`: 首先在 `agentscope.init` 中注册 embedding 模型，并在此参数中指定模型配置名称。
 - `local_embedding_model`：或者，可以使用 `sentence_transformers.SentenceTransformer` 库支持的本地小型嵌入模型。
 
-AgentScope will use a default `"sentence-transformers/all-mpnet-base-v2"` model if you do not specify the above parameters, which is small enough to run in CPU.
 如果上述两个参数都没有指定，AgentScope 将默认使用 `"sentence-transformers/all-mpnet-base-v2"` 模型，该模型足够小，可以在 CPU 上运行。
 一个简单利用 In Context Learning 的示例如下：
 
@@ -196,7 +195,6 @@ generated_system_prompt = generator.generate(
 print(generated_system_prompt)
 ```
 
-Then you get the following system prompt, which is better optimized with the examples:
 运行上述代码，可以获得如下的 system prompt，相比之前的版本，这个版本已经得到了优化：
 
 ```
@@ -368,9 +366,6 @@ User: exit
 
 由于搜索空间庞大和智能体响应的复杂性，优化 system prompt 十分具有挑战性。
 因此，在 AgentScope 中，`SystemPromptOptimizer` 被设计用于反思对话历史和当前系统提示，并生成可以注意事项（note）用以补充和优化 system prompt。
-
-> Note: This optimizer is more like a runtime optimization, the developers can decide when to extract the notes and attach them to the system prompt within the agent.
-> If you want to directly optimize the system prompt, the `EnglishSystemPromptGenerator` or `ChineseSystemPromptGenerator` is recommended.
 
 > 注意：该优化器更侧重于运行时优化，开发者可以决定何时提取注意事项并将其附加到智能体的 system prompt 中。
 > 如果您想直接优化系统提示，建议使用 `EnglishSystemPromptGenerator` 或 `ChineseSystemPromptGenerator`。
