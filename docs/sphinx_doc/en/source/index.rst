@@ -27,6 +27,7 @@ AgentScope Documentation
    tutorial/201-agent.md
    tutorial/205-memory.md
    tutorial/203-parser.md
+   tutorial/209-prompt_opt.md
    tutorial/204-service.md
    tutorial/202-pipeline.md
    tutorial/208-distribute.md
