@@ -1,7 +1,7 @@
 (209-prompt-opt)=
 
 
-# Prompt Optimization
+# System Prompt Optimization
 
 AgentScope implements a module for optimizing Agent System Prompts.
 

@@ -1,6 +1,6 @@
 (209-prompt-opt-zh)=
 
-# Prompt 优化
+# 系统提示优化
 
 AgentScope实现了对智能体System Prompt进行优化的模块。
 
