@@ -68,8 +68,7 @@ prompt_gen_method =ChineseSystemPromptGenerator(model_config_name="gpt-3.5-turbo
 
 ```python
 class ChineseSystemPromptGenerator(SystemPromptGeneratorBase):
-    """Optimize the users' system prompt with the given meta prompt and
-    examples if provided."""
+    """Optimize the users' system prompt with the given meta prompt and examples if provided."""
 
     def __init__(
         self,

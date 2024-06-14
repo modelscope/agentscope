@@ -64,8 +64,7 @@ All initialization parameters for the `EnglishSystemPromptGenerator` module are 
 
 ```python
 class EnglishSystemPromptGenerator(SystemPromptGeneratorBase):
-    """Optimize the users' system prompt with the given meta prompt and
-    examples if provided."""
+    """Optimize the users' system prompt with the given meta prompt and examples if provided."""
 
     def __init__(
         self,
@@ -227,4 +226,4 @@ for note in added notes:
 We hope our Prompt optimization module brings convenience to all users!
 
 
-[[Back to top]](#209-prompt-opt)
+[[Back to the top]](#209-prompt-opt)
