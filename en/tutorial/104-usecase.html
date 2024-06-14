@@ -68,7 +68,6 @@
 <li class="toctree-l1"><a class="reference internal" href="207-monitor.html">Monitor</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Example: Werewolf Game</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#next-step">Next step</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="contribute.html">Get Involved</a></li>
@@ -137,7 +136,7 @@
 <span class="w">        </span><span class="nt">&quot;generate_args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">            </span><span class="nt">&quot;temperature&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span>
 <span class="w">        </span><span class="p">}</span>
-<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">}</span>
 <span class="p">]</span>
 </pre></div>
 </div>
@@ -202,6 +201,24 @@
 <section id="step-4-set-up-the-game-logic">
 <h3>Step 4: Set Up the Game Logic<a class="headerlink" href="#step-4-set-up-the-game-logic" title="Link to this heading"></a></h3>
 <p>In this step, you will set up the game logic and orchestrate the flow of the Werewolf game using AgentScope’s helper utilities.</p>
+<section id="parser">
+<h4>Parser<a class="headerlink" href="#parser" title="Link to this heading"></a></h4>
+<p>In order to allow <code class="docutils literal notranslate"><span class="pre">DictDialogAgent</span></code> to output fields customized by the users, and to increase the success rate of parsing different fields by LLMs, we have added the <code class="docutils literal notranslate"><span class="pre">parser</span></code> module. Here is the configuration of a parser example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">to_wolves_vote</span> <span class="o">=</span> <span class="s2">&quot;Which player do you vote to kill?&quot;</span>
+
+<span class="n">wolves_vote_parser</span> <span class="o">=</span> <span class="n">MarkdownJsonDictParser</span><span class="p">(</span>
+    <span class="n">content_hint</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;thought&quot;</span><span class="p">:</span> <span class="s2">&quot;what you thought&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;vote&quot;</span><span class="p">:</span> <span class="s2">&quot;player_name&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="n">required_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;thought&quot;</span><span class="p">,</span> <span class="s2">&quot;vote&quot;</span><span class="p">],</span>
+    <span class="n">keys_to_memory</span><span class="o">=</span><span class="s2">&quot;vote&quot;</span><span class="p">,</span>
+    <span class="n">keys_to_content</span><span class="o">=</span><span class="s2">&quot;vote&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>For more details about the  <code class="docutils literal notranslate"><span class="pre">parser</span></code> module，please see <a class="reference external" href="https://modelscope.github.io/agentscope/en/tutorial/203-parser.html">here</a>.</p>
+</section>
 <section id="leverage-pipeline-and-msghub">
 <h4>Leverage Pipeline and MsgHub<a class="headerlink" href="#leverage-pipeline-and-msghub" title="Link to this heading"></a></h4>
 <p>To simplify the construction of agent communication, AgentScope provides two helpful concepts: <strong>Pipeline</strong> and <strong>MsgHub</strong>.</p>
@@ -242,15 +259,17 @@
     <span class="c1"># Night phase: werewolves discuss</span>
     <span class="n">hint</span> <span class="o">=</span> <span class="n">HostMsg</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">Prompts</span><span class="o">.</span><span class="n">to_wolves</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n2s</span><span class="p">(</span><span class="n">wolves</span><span class="p">)))</span>
     <span class="k">with</span> <span class="n">msghub</span><span class="p">(</span><span class="n">wolves</span><span class="p">,</span> <span class="n">announcement</span><span class="o">=</span><span class="n">hint</span><span class="p">)</span> <span class="k">as</span> <span class="n">hub</span><span class="p">:</span>
+        <span class="n">set_parsers</span><span class="p">(</span><span class="n">wolves</span><span class="p">,</span> <span class="n">Prompts</span><span class="o">.</span><span class="n">wolves_discuss_parser</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">MAX_WEREWOLF_DISCUSSION_ROUND</span><span class="p">):</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">sequentialpipeline</span><span class="p">(</span><span class="n">wolves</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">agreement</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;finish_discussion&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
                 <span class="k">break</span>
 </pre></div>
 </div>
 <p>After the discussion, werewolves proceed to vote for their target, and the majority’s choice is determined.  The result of the vote is then broadcast to all werewolves.</p>
 <p><strong>Note</strong>: the detailed prompts and utility functions can be found in <code class="docutils literal notranslate"><span class="pre">examples/game_werewolf</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>        <span class="c1"># werewolves vote</span>
+        <span class="n">set_parsers</span><span class="p">(</span><span class="n">wolves</span><span class="p">,</span> <span class="n">Prompts</span><span class="o">.</span><span class="n">wolves_vote_parser</span><span class="p">)</span>
         <span class="n">hint</span> <span class="o">=</span> <span class="n">HostMsg</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">Prompts</span><span class="o">.</span><span class="n">to_wolves_vote</span><span class="p">)</span>
         <span class="n">votes</span> <span class="o">=</span> <span class="p">[</span><span class="n">extract_name_and_id</span><span class="p">(</span><span class="n">wolf</span><span class="p">(</span><span class="n">hint</span><span class="p">)</span><span class="o">.</span><span class="n">content</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">wolf</span> <span class="ow">in</span> <span class="n">wolves</span><span class="p">]</span>
         <span class="c1"># broadcast the result to werewolves</span>
@@ -275,7 +294,8 @@
                 <span class="p">),</span>
             <span class="p">)</span>
             <span class="c1"># Witch decides whether to use the poison</span>
-            <span class="k">if</span> <span class="n">witch</span><span class="p">(</span><span class="n">hint</span><span class="p">)</span><span class="o">.</span><span class="n">resurrect</span><span class="p">:</span>
+            <span class="n">set_parsers</span><span class="p">(</span><span class="n">witch</span><span class="p">,</span> <span class="n">Prompts</span><span class="o">.</span><span class="n">witch_resurrect_parser</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">witch</span><span class="p">(</span><span class="n">hint</span><span class="p">)</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;resurrect&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
                 <span class="n">healing_used_tonight</span> <span class="o">=</span> <span class="kc">True</span>
                 <span class="n">dead_player</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
                 <span class="n">healing</span> <span class="o">=</span> <span class="kc">False</span>
@@ -291,6 +311,7 @@
         <span class="n">hint</span> <span class="o">=</span> <span class="n">HostMsg</span><span class="p">(</span>
             <span class="n">content</span><span class="o">=</span><span class="n">Prompts</span><span class="o">.</span><span class="n">to_seer</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">seer</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">n2s</span><span class="p">(</span><span class="n">survivors</span><span class="p">)),</span>
         <span class="p">)</span>
+        <span class="n">set_parsers</span><span class="p">(</span><span class="n">seer</span><span class="p">,</span> <span class="n">Prompts</span><span class="o">.</span><span class="n">seer_parser</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">seer</span><span class="p">(</span><span class="n">hint</span><span class="p">)</span>
 
         <span class="n">player</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">extract_name_and_id</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
@@ -314,8 +335,10 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># Daytime discussion</span>
     <span class="k">with</span> <span class="n">msghub</span><span class="p">(</span><span class="n">survivors</span><span class="p">,</span> <span class="n">announcement</span><span class="o">=</span><span class="n">hints</span><span class="p">)</span> <span class="k">as</span> <span class="n">hub</span><span class="p">:</span>
         <span class="c1"># Discuss</span>
+        <span class="n">set_parsers</span><span class="p">(</span><span class="n">survivors</span><span class="p">,</span> <span class="n">Prompts</span><span class="o">.</span><span class="n">survivors_discuss_parser</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">sequentialpipeline</span><span class="p">(</span><span class="n">survivors</span><span class="p">)</span>
         <span class="c1"># Vote</span>
+        <span class="n">set_parsers</span><span class="p">(</span><span class="n">survivors</span><span class="p">,</span> <span class="n">Prompts</span><span class="o">.</span><span class="n">survivors_vote_parser</span><span class="p">)</span>
         <span class="n">hint</span> <span class="o">=</span> <span class="n">HostMsg</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">Prompts</span><span class="o">.</span><span class="n">to_all_vote</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n2s</span><span class="p">(</span><span class="n">survivors</span><span class="p">)))</span>
         <span class="n">votes</span> <span class="o">=</span> <span class="p">[</span><span class="n">extract_name_and_id</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="n">hint</span><span class="p">)</span><span class="o">.</span><span class="n">content</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">survivors</span><span class="p">]</span>
         <span class="n">vote_res</span> <span class="o">=</span> <span class="n">majority_vote</span><span class="p">(</span><span class="n">votes</span><span class="p">)</span>
@@ -353,48 +376,11 @@
 python<span class="w"> </span>main.py<span class="w">  </span><span class="c1"># Assuming the pipeline is implemented in main.py</span>
 </pre></div>
 </div>
-<p>As the game starts, you’ll see output in the terminal, similar to the logs below, which illustrate how the game unfolds:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>Moderator:<span class="w"> </span>Player1<span class="w"> </span>and<span class="w"> </span>Player2,<span class="w"> </span>you<span class="w"> </span>are<span class="w"> </span>werewolves.<span class="w"> </span>If<span class="w"> </span>you<span class="w"> </span>are<span class="w"> </span>alone,<span class="w"> </span>eliminate<span class="w"> </span>a<span class="w"> </span>player,<span class="w"> </span><span class="k">else</span><span class="w"> </span>discuss<span class="w"> </span>with<span class="w"> </span>your<span class="w"> </span>teammates<span class="w"> </span>and<span class="w"> </span>reach<span class="w"> </span>an<span class="w"> </span>agreement.<span class="w"> </span>Response<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>following<span class="w"> </span>format<span class="w"> </span>which<span class="w"> </span>can<span class="w"> </span>be<span class="w"> </span>loaded<span class="w"> </span>by<span class="w">  </span>json.loads<span class="o">(){</span>
-<span class="w">    </span><span class="s2">&quot;thought&quot;</span>:<span class="w"> </span><span class="s2">&quot;thought&quot;</span>,
-<span class="w">    </span><span class="s2">&quot;speak&quot;</span>:<span class="w"> </span><span class="s2">&quot;thoughts summary to say to others&quot;</span>,
-<span class="w">    </span><span class="s2">&quot;agreement&quot;</span>:<span class="w"> </span><span class="s2">&quot;whether the discussion reached an agreement or not(true/false)&quot;</span>
-<span class="o">}</span>
-Player1:<span class="w"> </span>Player2,<span class="w"> </span>let<span class="s1">&#39;s discuss who we should eliminate tonight.</span>
-<span class="s1">Player2: I think we should eliminate Player4 tonight. They seem suspicious to me.</span>
-<span class="s1">Player1: I think we should eliminate Player4 tonight. They seem suspicious to me.</span>
-<span class="s1">Player2: I agree with Player2, let&#39;</span>s<span class="w"> </span>eliminate<span class="w"> </span>Player4<span class="w"> </span>tonight.<span class="w"> </span>They<span class="w"> </span>seem<span class="w"> </span>suspicious.
-Moderator:<span class="w"> </span>Which<span class="w"> </span>player<span class="w"> </span><span class="k">do</span><span class="w"> </span>you<span class="w"> </span>vote<span class="w"> </span>to<span class="w"> </span>kill?<span class="w"> </span>Response<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>following<span class="w"> </span>format<span class="w"> </span>which<span class="w"> </span>can<span class="w"> </span>be<span class="w"> </span>loaded<span class="w"> </span>by<span class="w"> </span>python<span class="w"> </span>json.loads<span class="o">()</span>
-<span class="o">{{</span>
-<span class="w">   </span><span class="s2">&quot;thought&quot;</span>:<span class="w"> </span><span class="s2">&quot;thought&quot;</span><span class="w"> </span>,
-<span class="w">   </span><span class="s2">&quot;speak&quot;</span>:<span class="w"> </span><span class="s2">&quot;player_name&quot;</span>
-<span class="o">}}</span>
-Player1:<span class="w"> </span>Player4
-Player2:<span class="w"> </span>Player4
-Moderator:<span class="w"> </span>The<span class="w"> </span>player<span class="w"> </span>with<span class="w"> </span>the<span class="w"> </span>most<span class="w"> </span>votes<span class="w"> </span>is<span class="w"> </span>Player4.
-Moderator:<span class="w"> </span>Player6,<span class="w"> </span>you<span class="s1">&#39;re witch. Tonight Player4 is eliminated. Would you like to resurrect Player4? Response in the following format which can be loaded by python json.loads()</span>
-<span class="s1">{</span>
-<span class="s1">    &quot;thought&quot;: &quot;thought&quot;,</span>
-<span class="s1">    &quot;speak&quot;: &quot;thoughts summary to say&quot;,</span>
-<span class="s1">    &quot;resurrect&quot;: &quot;true/false&quot;</span>
-<span class="s1">}</span>
-<span class="s1">Player6: I have considered the options, and I choose to resurrect Player4.</span>
-<span class="s1">Moderator: Player5, you&#39;</span>re<span class="w"> </span>seer.<span class="w"> </span>Which<span class="w"> </span>player<span class="w"> </span><span class="k">in</span><span class="w"> </span>Player1,<span class="w"> </span>Player2,<span class="w"> </span>Player3,<span class="w"> </span>Player4,<span class="w"> </span>Player5<span class="w"> </span>and<span class="w"> </span>Player6<span class="w"> </span>would<span class="w"> </span>you<span class="w"> </span>like<span class="w"> </span>to<span class="w"> </span>check<span class="w"> </span>tonight?<span class="w"> </span>Response<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>following<span class="w"> </span>json<span class="w"> </span>format<span class="w"> </span>which<span class="w"> </span>can<span class="w"> </span>be<span class="w"> </span>loaded<span class="w"> </span>by<span class="w"> </span>python<span class="w"> </span>json.loads<span class="o">()</span>
-<span class="o">{</span>
-<span class="w">    </span><span class="s2">&quot;thought&quot;</span>:<span class="w"> </span><span class="s2">&quot;thought&quot;</span><span class="w"> </span>,
-<span class="w">    </span><span class="s2">&quot;speak&quot;</span>:<span class="w"> </span><span class="s2">&quot;player_name&quot;</span>
-<span class="o">}</span>
-Player5:<span class="w"> </span>Player3
-Moderator:<span class="w"> </span>Okay,<span class="w"> </span>the<span class="w"> </span>role<span class="w"> </span>of<span class="w"> </span>Player3<span class="w"> </span>is<span class="w"> </span>villager.
-Moderator:<span class="w"> </span>The<span class="w"> </span>day<span class="w"> </span>is<span class="w"> </span>coming,<span class="w"> </span>all<span class="w"> </span>the<span class="w"> </span>players<span class="w"> </span>open<span class="w"> </span>your<span class="w"> </span>eyes.<span class="w"> </span>Last<span class="w"> </span>night<span class="w"> </span>is<span class="w"> </span>peaceful,<span class="w"> </span>no<span class="w"> </span>player<span class="w"> </span>is<span class="w"> </span>eliminated.
-...
-</pre></div>
-</div>
-</section>
-</section>
-<section id="next-step">
-<h2>Next step<a class="headerlink" href="#next-step" title="Link to this heading"></a></h2>
-<p>Now you’ve grasped how to conveniently set up a multi-agent application with AgentScope. Feel free to tailor the game to include additional roles and introduce more sophisticated strategies. For more advanced tutorials that delve deeper into more capabilities of AgentScope, such as <em>memory management</em> and <em>service functions</em> utilized by agents, please refer to the tutorials in the <strong>Advanced Exploration</strong> section and look up the API references.</p>
+<p>It is recommended that you start the game in <a class="reference external" href="https://modelscope.github.io/agentscope/en/tutorial/209-gui.html">AgentScope Studio</a>, where you
+will see the following output in the corresponding link:</p>
+<p><img alt="s" src="https://img.alicdn.com/imgextra/i3/O1CN01n2Q2tR1aCFD2gpTdu_!!6000000003293-1-tps-960-482.gif" /></p>
 <p><a class="reference internal" href="#usecase-en">[Return to the top]</a></p>
+</section>
 </section>
 </section>
 
