@@ -208,7 +208,7 @@ dialog_agent = DialogAgent(
 )
 user_agent = UserAgent()
 
-prompt_agent_opt = SystemPromptOptimizer(model-OR_model_config_name=xxx)
+prompt_agent_opt = SystemPromptOptimizer(model_or_model_config_name=xxx)
 
 # Generate history from conversation with Dialog Agent
 x = None
