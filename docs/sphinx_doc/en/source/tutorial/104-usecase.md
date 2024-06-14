@@ -10,13 +10,13 @@ Let the adventure begin to unlock the potential of multi-agent applications with
 
 ## Getting Started
 
-Firstly, ensure that you have installed and configured AgentScope properly. Besides, we will involve the basic concepts of `Model API`,  `Agent`, `Msg`, and `Pipeline,` as described in [Tutorial-Concept](101-agentscope).
+Firstly, ensure that you have installed and configured AgentScope properly. Besides, we will involve the basic concepts of `Model API`,  `Agent`, `Msg`, and `Pipeline,` as described in [Tutorial-Concept](101-agentscope.md).
 
 **Note**: all the configurations and code for this tutorial can be found in `examples/game_werewolf`.
 
 ### Step 1: Prepare Model API and Set Model Configs
 
-As we discussed in the last tutorial, you need to prepare your model configurations into a JSON file for standard OpenAI chat API, FastChat, and vllm. More details and advanced usages such as configuring local models with POST API are presented in [Tutorial-Model-API](203-model).
+As we discussed in the last tutorial, you need to prepare your model configurations into a JSON file for standard OpenAI chat API, FastChat, and vllm. More details and advanced usages such as configuring local models with POST API are presented in [Tutorial-Model-API](203-model.md).
 
 ```json
 [
