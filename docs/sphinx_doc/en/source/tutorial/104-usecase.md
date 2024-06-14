@@ -290,7 +290,8 @@ cd examples/game_werewolf
 python main.py  # Assuming the pipeline is implemented in main.py
 ```
 
-As the game starts, you'll see the output in AgentScope Studio as shown in follows:
+It is recommended that you start the game in [AgentScope Studio](https://modelscope.github.io/agentscope/en/tutorial/209-gui.html), where you
+will see the following output in the corresponding link:
 
 ![s](https://img.alicdn.com/imgextra/i3/O1CN01n2Q2tR1aCFD2gpTdu_!!6000000003293-1-tps-960-482.gif)
 

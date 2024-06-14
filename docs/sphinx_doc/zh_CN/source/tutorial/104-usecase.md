@@ -293,7 +293,7 @@ cd examples/game_werewolf
 python main.py  # Assuming the pipeline is implemented in main.py
 ```
 
-游戏开始后，您将在 AgentScope Studio 看到下面的内容输出。
+建议您在在 [AgentScope Studio](https://modelscope.github.io/agentscope/zh_CN/tutorial/209-gui.html) 中启动游戏，在对应的链接中您将看到下面的内容输出。
 
 ![s](https://img.alicdn.com/imgextra/i3/O1CN01n2Q2tR1aCFD2gpTdu_!!6000000003293-1-tps-960-482.gif)
 
