@@ -55,6 +55,7 @@ The following code is the implementation of daytime discussion in Werewolf. With
     # ...
     with msghub(survivors, announcement=hints) as hub:
         # discuss
+        set_parsers(survivors, Prompts.survivors_discuss_parser)
         x = sequentialpipeline(survivors)
     # ...
 ```
@@ -69,11 +70,11 @@ to_wolves_vote = "Which player do you vote to kill?"
 wolves_vote_parser = MarkdownJsonDictParser(
     content_hint={
         "thought": "what you thought",
-        "speak": "player_name",
+        "vote": "player_name",
     },
-    required_keys=["thought", "speak"],
-    keys_to_memory="speak",
-    keys_to_content="speak",
+    required_keys=["thought", "vote"],
+    keys_to_memory="vote",
+    keys_to_content="vote",
 )
 ```
 
