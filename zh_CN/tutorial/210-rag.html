@@ -23,7 +23,9 @@
         <script src="../_static/translations.js?v=beaddf03"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
-    <link rel="search" title="搜索" href="../search.html" /> 
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="日志" href="105-logging.html" />
+    <link rel="prev" title="AgentScope Studio" href="209-gui.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -50,7 +52,7 @@
 </div> 
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
               <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="101-agentscope.html">关于AgentScope</a></li>
 <li class="toctree-l1"><a class="reference internal" href="102-installation.html">安装</a></li>
 <li class="toctree-l1"><a class="reference internal" href="103-example.html">快速开始</a></li>
@@ -64,6 +66,21 @@
 <li class="toctree-l1"><a class="reference internal" href="202-pipeline.html">Pipeline和MsgHub</a></li>
 <li class="toctree-l1"><a class="reference internal" href="208-distribute.html">分布式</a></li>
 <li class="toctree-l1"><a class="reference internal" href="209-gui.html">AgentScope Studio</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">简要介绍AgentScope中的RAG</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#knowledge">Knowledge</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">如何初始化一个Knowledge对象</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">更多关于 knowledge 配置</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#llamaindexknowledge">以配置 LlamaIndexKnowledge 为例</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">如何使用一个 Knowledge 对象</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">关于<code class="docutils literal notranslate"><span class="pre">LlamaIndexKnowledge</span></code>的细节</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#knowledge-bank">Knowledge Bank</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rag">RAG 智能体</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="105-logging.html">日志</a></li>
 <li class="toctree-l1"><a class="reference internal" href="207-monitor.html">监控器</a></li>
 <li class="toctree-l1"><a class="reference internal" href="104-usecase.html">样例：狼人杀游戏</a></li>
@@ -309,7 +326,10 @@
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="209-gui.html" class="btn btn-neutral float-left" title="AgentScope Studio" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="105-logging.html" class="btn btn-neutral float-right" title="日志" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 
