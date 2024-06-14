@@ -29,9 +29,9 @@ However, you are welcome to replace the Dashscope language and embedding model w
   ```
 
 
-* **AS studio:** If you want to have more organized, clean UI, you can also run with our `as_studio`.
+* **AS gradio:** If you want to have more organized, clean UI, you can also run with our `as_gradio`.
   ```bash
-  as_studio ./rag_example.py
+  as_gradio ./rag_example.py
   ```
 
 ### Agents in the example
