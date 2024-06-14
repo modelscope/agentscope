@@ -135,11 +135,11 @@
 <p>完整的样例代码可以在GitHub仓库的<a class="reference external" href="https://github.com/modelscope/agentscope/tree/main/examples/game_werewolf">examples/game_werewolf</a>找到，这里我们将介绍构建狼人杀游戏中的几个关键步骤。</p>
 <section id="id2">
 <h2>开始<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
-<p>首先，确保您已经正确安装和配置好AgentScope。除此之外，本节内容会涉及到<code class="docutils literal notranslate"><span class="pre">Model</span> <span class="pre">API</span></code>,  <code class="docutils literal notranslate"><span class="pre">Agent</span></code>, <code class="docutils literal notranslate"><span class="pre">Msg</span></code>和 <code class="docutils literal notranslate"><span class="pre">Pipeline</span></code>这几个概念（详情可以参考<a class="reference internal" href="101-agentscope.html"><span class="doc std std-doc">关于AgentScope</span></a>）。以下是本节教程内容概览。</p>
+<p>首先，确保您已经正确安装和配置好AgentScope。除此之外，本节内容会涉及到<code class="docutils literal notranslate"><span class="pre">Model</span> <span class="pre">API</span></code>,  <code class="docutils literal notranslate"><span class="pre">Agent</span></code>, <code class="docutils literal notranslate"><span class="pre">Msg</span></code>和<code class="docutils literal notranslate"><span class="pre">Pipeline</span></code>这几个概念（详情可以参考<a class="reference internal" href="101-agentscope.html"><span class="std std-doc">关于AgentScope</span></a>）。以下是本节教程内容概览。</p>
 <p><strong>提示</strong>：本教程中的所有配置和代码文件均可以在<code class="docutils literal notranslate"><span class="pre">examples/game_werewolf</span></code>中找到。</p>
 <section id="api">
 <h3>第一步: 准备模型API和设定模型配置<a class="headerlink" href="#api" title="Link to this heading"></a></h3>
-<p>就像我们在上一节教程中展示的，您需要为了您选择的OpenAI chat API, FastChat, 或vllm 准备一个JSON样式的模型配置文件。更多细节和高阶用法，比如用POST API配置本地模型，可以参考<a class="reference internal" href="203-model.html"><span class="doc std std-doc">关于模型</span></a>。</p>
+<p>就像我们在上一节教程中展示的，您需要为了您选择的OpenAI chat API, FastChat, 或vllm准备一个JSON样式的模型配置文件。更多细节和高阶用法，比如用POST API配置本地模型，可以参考<a class="reference internal" href="203-model.html"><span class="std std-doc">关于模型</span></a>。</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
 <span class="w">    </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;config_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gpt-4-temperature-0.0&quot;</span><span class="p">,</span>

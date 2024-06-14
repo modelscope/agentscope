@@ -11,13 +11,13 @@
 
 ## 开始
 
-首先，确保您已经正确安装和配置好AgentScope。除此之外，本节内容会涉及到`Model API`,  `Agent`, `Msg`和 `Pipeline`这几个概念（详情可以参考[关于AgentScope](101-agentscope)）。以下是本节教程内容概览。
+首先，确保您已经正确安装和配置好AgentScope。除此之外，本节内容会涉及到`Model API`,  `Agent`, `Msg`和`Pipeline`这几个概念（详情可以参考[关于AgentScope](101-agentscope.md)）。以下是本节教程内容概览。
 
 **提示**：本教程中的所有配置和代码文件均可以在`examples/game_werewolf`中找到。
 
 ### 第一步: 准备模型API和设定模型配置
 
-就像我们在上一节教程中展示的，您需要为了您选择的OpenAI chat API, FastChat, 或vllm 准备一个JSON样式的模型配置文件。更多细节和高阶用法，比如用POST API配置本地模型，可以参考[关于模型](203-model)。
+就像我们在上一节教程中展示的，您需要为了您选择的OpenAI chat API, FastChat, 或vllm准备一个JSON样式的模型配置文件。更多细节和高阶用法，比如用POST API配置本地模型，可以参考[关于模型](203-model.md)。
 
 ```json
 [
