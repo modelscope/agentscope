@@ -116,11 +116,8 @@
 <span class="sd">&quot;&quot;&quot;A general dialog agent.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 
-<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
-
 <span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">Msg</span>
 <span class="kn">from</span> <span class="nn">.agent</span> <span class="kn">import</span> <span class="n">AgentBase</span>
-<span class="kn">from</span> <span class="nn">..prompt</span> <span class="kn">import</span> <span class="n">PromptType</span>
 
 
 <div class="viewcode-block" id="DialogAgent">
@@ -138,7 +135,6 @@
         <span class="n">model_config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">use_memory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">memory_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">prompt_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PromptType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the dialog agent.</span>
 
@@ -155,10 +151,6 @@
 <span class="sd">                Whether the agent has memory.</span>
 <span class="sd">            memory_config (`Optional[dict]`):</span>
 <span class="sd">                The config of memory.</span>
-<span class="sd">            prompt_type (`Optional[PromptType]`, defaults to</span>
-<span class="sd">            `PromptType.LIST`):</span>
-<span class="sd">                The type of the prompt organization, chosen from</span>
-<span class="sd">                `PromptType.LIST` or `PromptType.STRING`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
@@ -166,13 +158,7 @@
             <span class="n">model_config_name</span><span class="o">=</span><span class="n">model_config_name</span><span class="p">,</span>
             <span class="n">use_memory</span><span class="o">=</span><span class="n">use_memory</span><span class="p">,</span>
             <span class="n">memory_config</span><span class="o">=</span><span class="n">memory_config</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">prompt_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;The argument `prompt_type` is deprecated and &quot;</span>
-                <span class="s2">&quot;will be removed in the future.&quot;</span><span class="p">,</span>
-            <span class="p">)</span></div>
+        <span class="p">)</span></div>
 
 
     <span class="c1"># TODO change typing from dict to MSG</span>

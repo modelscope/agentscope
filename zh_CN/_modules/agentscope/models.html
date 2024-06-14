@@ -178,6 +178,7 @@
     <span class="s2">&quot;ZhipuAIEmbeddingWrapper&quot;</span><span class="p">,</span>
     <span class="s2">&quot;LiteLLMChatWrapper&quot;</span><span class="p">,</span>
     <span class="s2">&quot;load_model_by_config_name&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;load_config_by_name&quot;</span><span class="p">,</span>
     <span class="s2">&quot;read_model_configs&quot;</span><span class="p">,</span>
     <span class="s2">&quot;clear_model_configs&quot;</span><span class="p">,</span>
 <span class="p">]</span>
@@ -204,10 +205,18 @@
     <span class="k">return</span> <span class="n">wrapper</span>
 
 
+<div class="viewcode-block" id="load_config_by_name">
+<a class="viewcode-back" href="../../agentscope.models.html#agentscope.models.load_config_by_name">[文档]</a>
+<span class="k">def</span> <span class="nf">load_config_by_name</span><span class="p">(</span><span class="n">config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the model config by name, and return the config dict.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_MODEL_CONFIGS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">config_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+
+
+
 <div class="viewcode-block" id="load_model_by_config_name">
 <a class="viewcode-back" href="../../agentscope.models.html#agentscope.models.load_model_by_config_name">[文档]</a>
 <span class="k">def</span> <span class="nf">load_model_by_config_name</span><span class="p">(</span><span class="n">config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelWrapperBase</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the model by config name.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the model by config name, and return the model wrapper.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_MODEL_CONFIGS</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">&quot;No model configs loaded, please call &quot;</span>
@@ -219,7 +228,7 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Cannot find [</span><span class="si">{</span><span class="n">config_name</span><span class="si">}</span><span class="s2">] in loaded configurations.&quot;</span><span class="p">,</span>
         <span class="p">)</span>
-    <span class="n">config</span> <span class="o">=</span> <span class="n">_MODEL_CONFIGS</span><span class="p">[</span><span class="n">config_name</span><span class="p">]</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">_MODEL_CONFIGS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">config_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>

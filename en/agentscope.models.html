@@ -95,6 +95,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.models.ZhipuAIEmbeddingWrapper"><code class="docutils literal notranslate"><span class="pre">ZhipuAIEmbeddingWrapper</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.models.LiteLLMChatWrapper"><code class="docutils literal notranslate"><span class="pre">LiteLLMChatWrapper</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.models.load_model_by_config_name"><code class="docutils literal notranslate"><span class="pre">load_model_by_config_name()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.models.load_config_by_name"><code class="docutils literal notranslate"><span class="pre">load_config_by_name()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.models.read_model_configs"><code class="docutils literal notranslate"><span class="pre">read_model_configs()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.models.clear_model_configs"><code class="docutils literal notranslate"><span class="pre">clear_model_configs()</span></code></a></li>
 </ul>
@@ -1012,7 +1013,13 @@ required.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="agentscope.models.load_model_by_config_name">
 <span class="sig-prename descclassname"><span class="pre">agentscope.models.</span></span><span class="sig-name descname"><span class="pre">load_model_by_config_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.models.model.html#agentscope.models.model.ModelWrapperBase" title="agentscope.models.model.ModelWrapperBase"><span class="pre">ModelWrapperBase</span></a></span></span><a class="reference internal" href="_modules/agentscope/models.html#load_model_by_config_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.load_model_by_config_name" title="Link to this definition"></a></dt>
-<dd><p>Load the model by config name.</p>
+<dd><p>Load the model by config name, and return the model wrapper.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.models.load_config_by_name">
+<span class="sig-prename descclassname"><span class="pre">agentscope.models.</span></span><span class="sig-name descname"><span class="pre">load_config_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/models.html#load_config_by_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.load_config_by_name" title="Link to this definition"></a></dt>
+<dd><p>Load the model config by name, and return the config dict.</p>
 </dd></dl>
 
 <dl class="py function">
