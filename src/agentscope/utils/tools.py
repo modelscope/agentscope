@@ -382,6 +382,16 @@ class ImportErrorReporter:
         raise ImportError(err_msg)
 
 
+def _hash_string(
+    data: str,
+    hash_method: Literal["sha256", "md5", "sha1"],
+) -> str:
+    """Hash the string data."""
+    hash_func = getattr(hashlib, hash_method)()
+    hash_func.update(data.encode())
+    return hash_func.hexdigest()
+
+
 def _get_process_creation_time() -> datetime.datetime:
     """Get the creation time of the process."""
     pid = os.getpid()
