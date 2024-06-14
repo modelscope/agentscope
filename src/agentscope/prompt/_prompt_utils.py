@@ -15,10 +15,18 @@ def _find_top_k_embeddings(
     k: int,
 ) -> List:
     """
-    :param query_embedding:
-    :param list_embeddings:
-    :param k:
-    :return: List of List: each element is (index, embedding, score)
+    Find the top k embeddings that are closed to the query embedding.
+
+    Args:
+        query_embedding (`List[float]`):
+            the query to be searched.
+        list_embeddings (`List[List[float]]`):
+            the list of embeddings to be searched.
+        k (`int`):
+            the number of embeddings to be returned.
+    Returns:
+        `List`:
+            the list of indices of the top k embeddings.
     """
     # Compute cosine similarity between the query and the list of embeddings.
     # cdist returns the distance of 2-dimension arrays,
