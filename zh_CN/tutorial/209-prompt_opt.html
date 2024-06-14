@@ -5,7 +5,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Prompt 优化 &mdash; AgentScope  文档</title>
+  <title>系统提示优化 &mdash; AgentScope  文档</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
@@ -23,7 +23,9 @@
         <script src="../_static/translations.js?v=beaddf03"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
-    <link rel="search" title="搜索" href="../search.html" /> 
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="工具" href="204-service.html" />
+    <link rel="prev" title="结果解析" href="203-parser.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -50,7 +52,7 @@
 </div> 
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
               <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="101-agentscope.html">关于AgentScope</a></li>
 <li class="toctree-l1"><a class="reference internal" href="102-installation.html">安装</a></li>
 <li class="toctree-l1"><a class="reference internal" href="103-example.html">快速开始</a></li>
@@ -59,6 +61,22 @@
 <li class="toctree-l1"><a class="reference internal" href="201-agent.html">Agent</a></li>
 <li class="toctree-l1"><a class="reference internal" href="205-memory.html">记忆</a></li>
 <li class="toctree-l1"><a class="reference internal" href="203-parser.html">结果解析</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">系统提示优化</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">背景</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">目录</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#system-prompt-generator">System Prompt Generator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">初始化</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#system-prompt">生成 System Prompt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#in-context-learning">使用 In Context Learning 生成</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#system-prompt-comparer">System Prompt Comparer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id5">初始化</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#system-prompt-optimizer">System Prompt Optimizer</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="204-service.html">工具</a></li>
 <li class="toctree-l1"><a class="reference internal" href="202-pipeline.html">Pipeline和MsgHub</a></li>
 <li class="toctree-l1"><a class="reference internal" href="208-distribute.html">分布式</a></li>
@@ -100,7 +118,7 @@
           <div role="navigation" aria-label="页面导航">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Prompt 优化</li>
+      <li class="breadcrumb-item active">系统提示优化</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/tutorial/209-prompt_opt.md.txt" rel="nofollow"> 查看页面源码</a>
       </li>
@@ -110,11 +128,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="prompt">
-<span id="prompt-opt-zh"></span><h1>Prompt 优化<a class="headerlink" href="#prompt" title="Link to this heading"></a></h1>
+  <section id="prompt-opt-zh">
+<span id="id1"></span><h1>系统提示优化<a class="headerlink" href="#prompt-opt-zh" title="Link to this heading"></a></h1>
 <p>AgentScope实现了对智能体System Prompt进行优化的模块。</p>
-<section id="id1">
-<h2>背景<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<section id="id2">
+<h2>背景<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
 <p>在智能体系统中，System Prompt的设计对于产生高质量的智能体响应至关重要。System Prompt向智能体提供了执行任务的环境、角色、能力和约束等背景描述。然而，优化System Prompt的过程通常充满挑战，这主要是由于以下几点：</p>
 <ol class="arabic simple">
 <li><p><strong>针对性</strong>：一个良好的 System Prompt 应该针对性强，能够清晰地引导智能体在特定任务中更好地表现其能力和限制。</p></li>
@@ -130,8 +148,8 @@
 <li><p><strong>System Prompt Optimizer</strong>: 根据对话历史进行反思和总结，从而进一步提升 system prompt</p></li>
 </ul>
 </section>
-<section id="id2">
-<h2>目录<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<section id="id3">
+<h2>目录<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="#system-prompt-generator"><span class="xref myst">System Prompt Generator</span></a></p>
 <ul>
@@ -153,8 +171,8 @@
 <p>System prompt generator 使用一个 meta prompt 来引导 LLM 根据用户输入生成对应的 system prompt，并允许开发者使用内置或自己的样例进行 In Context Learning (ICL)。</p>
 <p>具体包括 <code class="docutils literal notranslate"><span class="pre">EnglishSystemPromptGenerator</span></code> 和 <code class="docutils literal notranslate"><span class="pre">ChineseSystemPromptGenerator</span></code> 两个模块，分别用于英文和中文的系统提示生成。它们唯一的区别在于内置的 prompt 语言不同，其他功能完全一致。
 下面以 <code class="docutils literal notranslate"><span class="pre">ChineseSystemPromptGenerator</span></code> 为例，介绍如何使用 system prompt generator。</p>
-<section id="id3">
-<h3>初始化<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<section id="id4">
+<h3>初始化<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
 <p>为了初始化生成器，首先需要在 <code class="docutils literal notranslate"><span class="pre">agentscope.init</span></code> 函数中注册模型配置。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.prompt</span> <span class="kn">import</span> <span class="n">EnglishSystemPromptGenerator</span>
 <span class="kn">import</span> <span class="nn">agentscope</span>
@@ -337,8 +355,8 @@
 <li><p>在多轮对话中</p></li>
 </ul>
 <p>比较不同的 system prompt（例如优化前和优化后的 system prompt）</p>
-<section id="id4">
-<h3>初始化<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<section id="id5">
+<h3>初始化<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
 <p>为了初始化比较器，首先在 <code class="docutils literal notranslate"><span class="pre">agentscope.init</span></code> 函数中注册模型配置，然后用需要比较的 system prompt 实例化 <code class="docutils literal notranslate"><span class="pre">SystemPromptComparer</span></code> 对象。
 让我们尝试一个非常有趣的例子：</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.prompt</span> <span class="kn">import</span> <span class="n">SystemPromptComparer</span>
@@ -514,7 +532,10 @@ User: exit
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="203-parser.html" class="btn btn-neutral float-left" title="结果解析" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="204-service.html" class="btn btn-neutral float-right" title="工具" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 

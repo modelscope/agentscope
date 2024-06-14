@@ -5,7 +5,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Prompt Optimization &mdash; AgentScope  documentation</title>
+  <title>System Prompt Optimization &mdash; AgentScope  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
@@ -22,7 +22,9 @@
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Tool" href="204-service.html" />
+    <link rel="prev" title="Response Parser" href="203-parser.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -49,7 +51,7 @@
 </div> 
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="101-agentscope.html">About AgentScope</a></li>
 <li class="toctree-l1"><a class="reference internal" href="102-installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="103-example.html">Quick Start</a></li>
@@ -58,6 +60,14 @@
 <li class="toctree-l1"><a class="reference internal" href="201-agent.html">Agent</a></li>
 <li class="toctree-l1"><a class="reference internal" href="205-memory.html">Memory</a></li>
 <li class="toctree-l1"><a class="reference internal" href="203-parser.html">Response Parser</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">System Prompt Optimization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#background">Background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#table-of-contents">Table of Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#system-prompt-generator">System Prompt Generator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#system-prompt-comparer">System Prompt Comparer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#system-prompt-optimizer">System Prompt Optimizer</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="204-service.html">Tool</a></li>
 <li class="toctree-l1"><a class="reference internal" href="202-pipeline.html">Pipeline and MsgHub</a></li>
 <li class="toctree-l1"><a class="reference internal" href="208-distribute.html">Distribution</a></li>
@@ -99,7 +109,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Prompt Optimization</li>
+      <li class="breadcrumb-item active">System Prompt Optimization</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/tutorial/209-prompt_opt.md.txt" rel="nofollow"> View page source</a>
       </li>
@@ -109,8 +119,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="prompt-optimization">
-<span id="prompt-opt"></span><h1>Prompt Optimization<a class="headerlink" href="#prompt-optimization" title="Link to this heading"></a></h1>
+  <section id="system-prompt-optimization">
+<span id="prompt-opt"></span><h1>System Prompt Optimization<a class="headerlink" href="#system-prompt-optimization" title="Link to this heading"></a></h1>
 <p>AgentScope implements a module for optimizing Agent System Prompts.</p>
 <section id="background">
 <h2>Background<a class="headerlink" href="#background" title="Link to this heading"></a></h2>
@@ -533,7 +543,10 @@ For example, within a ReAct agent, if the LLM fails to generate a response with 
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="203-parser.html" class="btn btn-neutral float-left" title="Response Parser" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="204-service.html" class="btn btn-neutral float-right" title="Tool" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 

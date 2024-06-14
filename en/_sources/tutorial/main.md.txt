@@ -18,6 +18,7 @@ AgentScope is an innovative multi-agent platform designed to empower developers 
 - [Agent](201-agent.md)
 - [Memory](205-memory.md)
 - [Response Parser](203-parser.md)
+- [System Prompt Optimization](209-prompt_opt.md)
 - [Tool](204-service.md)
 - [Pipeline and MsgHub](202-pipeline.md)
 - [Distribution](208-distribute.md)
