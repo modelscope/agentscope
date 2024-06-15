@@ -116,7 +116,10 @@ setuptools.setup(
     keywords=["deep-learning", "multi agents", "agents"],
     package_dir={"": "src"},
     packages=setuptools.find_packages("src"),
-    package_data={"agentscope.studio": ["static/**/*", "templates/**/*"]},
+    package_data={
+        "agentscope.studio": ["static/**/*", "templates/**/*"],
+        "agentscope.prompt": ["_prompt_examples.json"],
+    },
     install_requires=minimal_requires,
     extras_require={
         "distribute": distribute_requires,
