@@ -246,7 +246,8 @@ class RpcAgentClient:
             str: serialized message value.
         """
         with grpc.insecure_channel(
-            f"{self.host}:{self.port}", options=_DEFAULT_RPC_OPTIONS
+            f"{self.host}:{self.port}",
+            options=_DEFAULT_RPC_OPTIONS,
         ) as channel:
             stub = RpcAgentStub(channel)
             result_msg = stub.update_placeholder(
