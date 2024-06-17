@@ -28,6 +28,7 @@ import agentscope
 from agentscope.server.servicer import AgentServerServicer
 from agentscope.agents.agent import AgentBase
 from agentscope.utils.tools import check_port, generate_id_from_seed
+from agentscope.constants import _DEFAULT_RPC_OPTIONS
 
 
 def _setup_agent_server(
@@ -178,6 +179,8 @@ async def _setup_agent_server_async(
             servicer.port = port
             server = grpc.aio.server(
                 futures.ThreadPoolExecutor(max_workers=None),
+                # set max message size to 32 MB
+                options=_DEFAULT_RPC_OPTIONS,
             )
             add_RpcAgentServicer_to_server(servicer, server)
             if local_mode:

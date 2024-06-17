@@ -26,6 +26,7 @@ except ImportError as import_error:
 from agentscope.file_manager import file_manager
 from agentscope.utils.tools import generate_id_from_seed
 from agentscope.exception import AgentServerNotAliveError
+from agentscope.constants import _DEFAULT_RPC_OPTIONS
 
 
 class RpcAgentClient:
@@ -244,7 +245,9 @@ class RpcAgentClient:
         Returns:
             str: serialized message value.
         """
-        with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
+        with grpc.insecure_channel(
+            f"{self.host}:{self.port}", options=_DEFAULT_RPC_OPTIONS
+        ) as channel:
             stub = RpcAgentStub(channel)
             result_msg = stub.update_placeholder(
                 agent_pb2.UpdatePlaceholderRequest(task_id=task_id),

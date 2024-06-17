@@ -45,6 +45,14 @@ Summarize the text after TEXT in less than {} tokens:
 # typing
 Embedding = list[Number]
 
+# rpc
+
+# set max message size to 32 MB
+_DEFAULT_RPC_OPTIONS = [
+    ("grpc.max_send_message_length", 32 * 1024 * 1024),
+    ("grpc.max_receive_message_length", 32 * 1024 * 1024),
+]
+
 
 # enums
 class ResponseFormat(IntEnum):
