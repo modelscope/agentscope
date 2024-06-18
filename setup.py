@@ -50,6 +50,10 @@ gradio_requires = [
     "modelscope_studio==0.0.5",
 ]
 
+rag_requires = [
+    "llama-index==0.10.30",
+]
+
 studio_requires = []
 
 # released requires
@@ -79,6 +83,7 @@ minimal_requires = [
     "zhipuai",
     "litellm",
     "psutil",
+    "scipy",
 ]
 
 distribute_requires = minimal_requires + rpc_requires
@@ -92,6 +97,7 @@ full_requires = (
     + doc_requires
     + test_requires
     + gradio_requires
+    + rag_requires
     + studio_requires
 )
 
@@ -111,7 +117,10 @@ setuptools.setup(
     keywords=["deep-learning", "multi agents", "agents"],
     package_dir={"": "src"},
     packages=setuptools.find_packages("src"),
-    package_data={"agentscope.studio": ["static/**/*", "templates/**/*"]},
+    package_data={
+        "agentscope.studio": ["static/**/*", "templates/**/*"],
+        "agentscope.prompt": ["_prompt_examples.json"],
+    },
     install_requires=minimal_requires,
     extras_require={
         "distribute": distribute_requires,

@@ -11,13 +11,13 @@
 
 ## 开始
 
-首先，确保您已经正确安装和配置好AgentScope。除此之外，本节内容会涉及到`Model API`,  `Agent`, `Msg`和 `Pipeline`这几个概念（详情可以参考[关于AgentScope](101-agentscope)）。以下是本节教程内容概览。
+首先，确保您已经正确安装和配置好AgentScope。除此之外，本节内容会涉及到`Model API`,  `Agent`, `Msg`和`Pipeline`这几个概念（详情可以参考[关于AgentScope](101-agentscope.md)）。以下是本节教程内容概览。
 
 **提示**：本教程中的所有配置和代码文件均可以在`examples/game_werewolf`中找到。
 
 ### 第一步: 准备模型API和设定模型配置
 
-就像我们在上一节教程中展示的，您需要为了您选择的OpenAI chat API, FastChat, 或vllm 准备一个JSON样式的模型配置文件。更多细节和高阶用法，比如用POST API配置本地模型，可以参考[关于模型](203-model)。
+就像我们在上一节教程中展示的，您需要为了您选择的OpenAI chat API, FastChat, 或vllm准备一个JSON样式的模型配置文件。更多细节和高阶用法，比如用POST API配置本地模型，可以参考[关于模型](203-model.md)。
 
 ```json
 [
@@ -30,7 +30,7 @@
         "generate_args": {
             "temperature": 0.0
         }
-    },
+    }
 ]
 ```
 
@@ -43,7 +43,7 @@
 - 预言家：一位拥有每晚看到一名玩家真实身份能力的村民。
 - 女巫：一位村民，每晚可以救活或毒杀一名玩家
 
-要实现你自己的agent，你需要继承AgentBase并实现reply函数，当通过agent1(x)调用agent实例时，将执行此函数。
+要实现您自己的agent，您需要继承AgentBase并实现reply函数，当通过agent1(x)调用agent实例时，将执行此函数。
 
 ```python
 from agentscope.agents import AgentBase
@@ -71,7 +71,7 @@ AgentScope提供了几种开箱即用的agent实现，作为一个agent样例池
 
 在这个配置中，Player1被指定为一个DictDialogAgent。参数包括一个系统提示（sys_prompt），它可以指导agent的行为；一个模型配置名（model_config_name），它决定了模型配置的名称；以及一个标志（use_memory），指示agent是否应该记住过去的互动。
 
-对于其他玩家，大家可以根据他们的角色进行定制。每个角色可能有不同的提示、模型或记忆设置。你可以参考位于AgentScope示例目录下的`examples/game_werewolf/configs/agent_configs.json`文件。
+对于其他玩家，大家可以根据他们的角色进行定制。每个角色可能有不同的提示、模型或记忆设置。您可以参考位于AgentScope示例目录下的`examples/game_werewolf/configs/agent_configs.json`文件。
 
 ### 第三步：初始化AgentScope和Agents
 
@@ -100,7 +100,28 @@ wolves, villagers, witch, seer = survivors[:2], survivors[2:-2], survivors[-1], 
 
 ### 第四步：构建游戏逻辑
 
-在这一步中，你将使用AgentScope的辅助工具设置游戏逻辑，并组织狼人游戏的流程。
+在这一步中，您将使用AgentScope的辅助工具设置游戏逻辑，并组织狼人游戏的流程。
+
+#### 使用 Parser
+
+为了能让 `DictDialogAgent` 能够按照用户定制化的字段进行输出，以及增加大模型解析不同字段内容的成功率，我们新增了 `parser`
+模块。下面是一个 `parser` 例子的配置：
+
+```
+to_wolves_vote = "Which player do you vote to kill?"
+
+wolves_vote_parser = MarkdownJsonDictParser(
+    content_hint={
+        "thought": "what you thought",
+        "vote": "player_name",
+    },
+    required_keys=["thought", "vote"],
+    keys_to_memory="vote",
+    keys_to_content="vote",
+)
+```
+
+关于 `parser` 的更多内容，可以参考[这里](https://modelscope.github.io/agentscope/en/tutorial/203-parser.html).
 
 #### 使用 Pipeline 和 MsgHub
 
@@ -115,7 +136,7 @@ wolves, villagers, witch, seer = survivors[:2], survivors[2:-2], survivors[-1], 
     x = pipe(x) # the message x will be passed and replied by agent 1,2,3 in order
     ```
 
-- **MsgHub**：你可能已经注意到，上述所有例子都是一对一通信。为了实现群聊，我们提供了另一个通信辅助工具msghub。有了它，参与者的消息将自动广播给所有其他参与者。在这种情况下，参与agent甚至不需要输入和输出消息。我们需要做的只是决定发言的顺序。此外，msghub还支持参与者的动态控制。
+- **MsgHub**：您可能已经注意到，上述所有例子都是一对一通信。为了实现群聊，我们提供了另一个通信辅助工具msghub。有了它，参与者的消息将自动广播给所有其他参与者。在这种情况下，参与agent甚至不需要输入和输出消息。我们需要做的只是决定发言的顺序。此外，msghub还支持参与者的动态控制。
 
     ```python
     with msghub(participants=[agent1, agent2, agent3]) as hub:
@@ -144,9 +165,10 @@ for i in range(1, MAX_GAME_ROUND + 1):
     # Night phase: werewolves discuss
     hint = HostMsg(content=Prompts.to_wolves.format(n2s(wolves)))
     with msghub(wolves, announcement=hint) as hub:
+      	set_parsers(wolves, Prompts.wolves_discuss_parser)
         for _ in range(MAX_WEREWOLF_DISCUSSION_ROUND):
             x = sequentialpipeline(wolves)
-            if x.agreement:
+            if x.metadata.get("finish_discussion", False):
                 break
 ```
 
@@ -156,6 +178,7 @@ for i in range(1, MAX_GAME_ROUND + 1):
 
 ```python
         # werewolves vote
+        set_parsers(wolves, Prompts.wolves_vote_parser)
         hint = HostMsg(content=Prompts.to_wolves_vote)
         votes = [extract_name_and_id(wolf(hint).content)[0] for wolf in wolves]
         # broadcast the result to werewolves
@@ -181,7 +204,8 @@ for i in range(1, MAX_GAME_ROUND + 1):
                 ),
             )
             # Witch decides whether to use the poison
-            if witch(hint).resurrect:
+            set_parsers(witch, Prompts.witch_resurrect_parser)
+            if witch(hint).metadata.get("resurrect", False):
                 healing_used_tonight = True
                 dead_player.pop()
                 healing = False
@@ -198,6 +222,7 @@ for i in range(1, MAX_GAME_ROUND + 1):
         hint = HostMsg(
             content=Prompts.to_seer.format(seer.name, n2s(survivors)),
         )
+        set_parsers(seer, Prompts.seer_parser)
         x = seer(hint)
 
         player, idx = extract_name_and_id(x.content)
@@ -223,8 +248,10 @@ for i in range(1, MAX_GAME_ROUND + 1):
     # Daytime discussion
     with msghub(survivors, announcement=hints) as hub:
         # Discuss
+        set_parsers(survivors, Prompts.survivors_discuss_parser)
         x = sequentialpipeline(survivors)
         # Vote
+        set_parsers(survivors, Prompts.survivors_vote_parser)
         hint = HostMsg(content=Prompts.to_all_vote.format(n2s(survivors)))
         votes = [extract_name_and_id(_(hint).content)[0] for _ in survivors]
         vote_res = majority_vote(votes)
@@ -258,7 +285,7 @@ for i in range(1, MAX_GAME_ROUND + 1):
 
 ### 第五步：运行应用
 
-完成了以上游戏逻辑和agent的设置，你已经可以运行狼人游戏了。通过执行`pipeline`，游戏将按预定义的阶段进行，agents
+完成了以上游戏逻辑和agent的设置，您已经可以运行狼人游戏了。通过执行`pipeline`，游戏将按预定义的阶段进行，agents
 基于它们的角色和上述编码的策略进行互动：
 
 ```bash
@@ -266,46 +293,8 @@ cd examples/game_werewolf
 python main.py  # Assuming the pipeline is implemented in main.py
 ```
 
-游戏开始后，你将在终端看到类似于下面的日志输出。这些日志展示了游戏是如何展开的：
+建议您在在 [AgentScope Studio](https://modelscope.github.io/agentscope/zh_CN/tutorial/209-gui.html) 中启动游戏，在对应的链接中您将看到下面的内容输出。
 
-```bash
-Moderator: Player1 and Player2, you are werewolves. If you are alone, eliminate a player, else discuss with your teammates and reach an agreement. Response in the following format which can be loaded by  json.loads(){
-    "thought": "thought",
-    "speak": "thoughts summary to say to others",
-    "agreement": "whether the discussion reached an agreement or not(true/false)"
-}
-Player1: Player2, let's discuss who we should eliminate tonight.
-Player2: I think we should eliminate Player4 tonight. They seem suspicious to me.
-Player1: I think we should eliminate Player4 tonight. They seem suspicious to me.
-Player2: I agree with Player2, let's eliminate Player4 tonight. They seem suspicious.
-Moderator: Which player do you vote to kill? Response in the following format which can be loaded by python json.loads()
-{{
-   "thought": "thought" ,
-   "speak": "player_name"
-}}
-Player1: Player4
-Player2: Player4
-Moderator: The player with the most votes is Player4.
-Moderator: Player6, you're witch. Tonight Player4 is eliminated. Would you like to resurrect Player4? Response in the following format which can be loaded by python json.loads()
-{
-    "thought": "thought",
-    "speak": "thoughts summary to say",
-    "resurrect": "true/false"
-}
-Player6: I have considered the options, and I choose to resurrect Player4.
-Moderator: Player5, you're seer. Which player in Player1, Player2, Player3, Player4, Player5 and Player6 would you like to check tonight? Response in the following json format which can be loaded by python json.loads()
-{
-    "thought": "thought" ,
-    "speak": "player_name"
-}
-Player5: Player3
-Moderator: Okay, the role of Player3 is villager.
-Moderator: The day is coming, all the players open your eyes. Last night is peaceful, no player is eliminated.
-...
-```
-
-## 下一步
-
-现在你已经掌握了如何使用AgentScope方便地设置多agent应用程序。您可以随意修改游戏，包括引入额外的角色或者引入更复杂的策略。如果你想更深入地探索AgentScope的更多功能，比如agent使用的内存管理和服务函数，请参考高级探索部分的教程并查阅API参考。
+![s](https://img.alicdn.com/imgextra/i3/O1CN01n2Q2tR1aCFD2gpTdu_!!6000000003293-1-tps-960-482.gif)
 
 [[返回顶部]](#104-usecase-zh)

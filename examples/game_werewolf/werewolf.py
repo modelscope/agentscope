@@ -46,8 +46,8 @@ def main() -> None:
                 if x.metadata.get("finish_discussion", False):
                     break
 
-            set_parsers(wolves, Prompts.wolves_vote_parser)
             # werewolves vote
+            set_parsers(wolves, Prompts.wolves_vote_parser)
             hint = HostMsg(content=Prompts.to_wolves_vote)
             votes = [
                 extract_name_and_id(wolf(hint).content)[0] for wolf in wolves
@@ -122,8 +122,8 @@ def main() -> None:
             set_parsers(survivors, Prompts.survivors_discuss_parser)
             x = sequentialpipeline(survivors)
 
-            set_parsers(survivors, Prompts.survivors_vote_parser)
             # vote
+            set_parsers(survivors, Prompts.survivors_vote_parser)
             hint = HostMsg(content=Prompts.to_all_vote.format(n2s(survivors)))
             votes = [
                 extract_name_and_id(_(hint).content)[0] for _ in survivors

@@ -2,11 +2,8 @@
 """A general dialog agent."""
 from typing import Optional
 
-from loguru import logger
-
 from ..message import Msg
 from .agent import AgentBase
-from ..prompt import PromptType
 
 
 class DialogAgent(AgentBase):
@@ -20,7 +17,6 @@ class DialogAgent(AgentBase):
         model_config_name: str,
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
-        prompt_type: Optional[PromptType] = None,
     ) -> None:
         """Initialize the dialog agent.
 
@@ -37,10 +33,6 @@ class DialogAgent(AgentBase):
                 Whether the agent has memory.
             memory_config (`Optional[dict]`):
                 The config of memory.
-            prompt_type (`Optional[PromptType]`, defaults to
-            `PromptType.LIST`):
-                The type of the prompt organization, chosen from
-                `PromptType.LIST` or `PromptType.STRING`.
         """
         super().__init__(
             name=name,
@@ -49,12 +41,6 @@ class DialogAgent(AgentBase):
             use_memory=use_memory,
             memory_config=memory_config,
         )
-
-        if prompt_type is not None:
-            logger.warning(
-                "The argument `prompt_type` is deprecated and "
-                "will be removed in the future.",
-            )
 
     # TODO change typing from dict to MSG
     def reply(self, x: dict = None) -> dict:

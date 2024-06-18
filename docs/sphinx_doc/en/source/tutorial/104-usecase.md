@@ -10,13 +10,13 @@ Let the adventure begin to unlock the potential of multi-agent applications with
 
 ## Getting Started
 
-Firstly, ensure that you have installed and configured AgentScope properly. Besides, we will involve the basic concepts of `Model API`,  `Agent`, `Msg`, and `Pipeline,` as described in [Tutorial-Concept](101-agentscope).
+Firstly, ensure that you have installed and configured AgentScope properly. Besides, we will involve the basic concepts of `Model API`,  `Agent`, `Msg`, and `Pipeline,` as described in [Tutorial-Concept](101-agentscope.md).
 
 **Note**: all the configurations and code for this tutorial can be found in `examples/game_werewolf`.
 
 ### Step 1: Prepare Model API and Set Model Configs
 
-As we discussed in the last tutorial, you need to prepare your model configurations into a JSON file for standard OpenAI chat API, FastChat, and vllm. More details and advanced usages such as configuring local models with POST API are presented in [Tutorial-Model-API](203-model).
+As we discussed in the last tutorial, you need to prepare your model configurations into a JSON file for standard OpenAI chat API, FastChat, and vllm. More details and advanced usages such as configuring local models with POST API are presented in [Tutorial-Model-API](203-model.md).
 
 ```json
 [
@@ -29,7 +29,7 @@ As we discussed in the last tutorial, you need to prepare your model configurati
         "generate_args": {
             "temperature": 0.0
         }
-    },
+    }
 ]
 ```
 
@@ -101,6 +101,26 @@ Through this snippet of code, we've allocated roles to our agents and associated
 
 In this step, you will set up the game logic and orchestrate the flow of the Werewolf game using AgentScope's helper utilities.
 
+#### Parser
+
+In order to allow `DictDialogAgent` to output fields customized by the users, and to increase the success rate of parsing different fields by LLMs, we have added the `parser` module. Here is the configuration of a parser example:
+
+```
+to_wolves_vote = "Which player do you vote to kill?"
+
+wolves_vote_parser = MarkdownJsonDictParser(
+    content_hint={
+        "thought": "what you thought",
+        "vote": "player_name",
+    },
+    required_keys=["thought", "vote"],
+    keys_to_memory="vote",
+    keys_to_content="vote",
+)
+```
+
+For more details about the  `parser` module，please see [here](https://modelscope.github.io/agentscope/en/tutorial/203-parser.html).
+
 #### Leverage Pipeline and MsgHub
 
 To simplify the construction of agent communication, AgentScope provides two helpful concepts: **Pipeline** and **MsgHub**.
@@ -143,9 +163,10 @@ for i in range(1, MAX_GAME_ROUND + 1):
     # Night phase: werewolves discuss
     hint = HostMsg(content=Prompts.to_wolves.format(n2s(wolves)))
     with msghub(wolves, announcement=hint) as hub:
+        set_parsers(wolves, Prompts.wolves_discuss_parser)
         for _ in range(MAX_WEREWOLF_DISCUSSION_ROUND):
             x = sequentialpipeline(wolves)
-            if x.agreement:
+            if x.metadata.get("finish_discussion", False):
                 break
 ```
 
@@ -155,6 +176,7 @@ After the discussion, werewolves proceed to vote for their target, and the major
 
 ```python
         # werewolves vote
+        set_parsers(wolves, Prompts.wolves_vote_parser)
         hint = HostMsg(content=Prompts.to_wolves_vote)
         votes = [extract_name_and_id(wolf(hint).content)[0] for wolf in wolves]
         # broadcast the result to werewolves
@@ -180,7 +202,8 @@ If the witch is still alive, she gets the opportunity to use her powers to eithe
                 ),
             )
             # Witch decides whether to use the poison
-            if witch(hint).resurrect:
+            set_parsers(witch, Prompts.witch_resurrect_parser)
+            if witch(hint).metadata.get("resurrect", False):
                 healing_used_tonight = True
                 dead_player.pop()
                 healing = False
@@ -197,6 +220,7 @@ The seer has a chance to reveal the true identity of a player. This information 
         hint = HostMsg(
             content=Prompts.to_seer.format(seer.name, n2s(survivors)),
         )
+        set_parsers(seer, Prompts.seer_parser)
         x = seer(hint)
 
         player, idx = extract_name_and_id(x.content)
@@ -222,8 +246,10 @@ During the day, all players will discuss and then vote to eliminate a suspected 
     # Daytime discussion
     with msghub(survivors, announcement=hints) as hub:
         # Discuss
+        set_parsers(survivors, Prompts.survivors_discuss_parser)
         x = sequentialpipeline(survivors)
         # Vote
+        set_parsers(survivors, Prompts.survivors_vote_parser)
         hint = HostMsg(content=Prompts.to_all_vote.format(n2s(survivors)))
         votes = [extract_name_and_id(_(hint).content)[0] for _ in survivors]
         vote_res = majority_vote(votes)
@@ -264,46 +290,9 @@ cd examples/game_werewolf
 python main.py  # Assuming the pipeline is implemented in main.py
 ```
 
-As the game starts, you'll see output in the terminal, similar to the logs below, which illustrate how the game unfolds:
+It is recommended that you start the game in [AgentScope Studio](https://modelscope.github.io/agentscope/en/tutorial/209-gui.html), where you
+will see the following output in the corresponding link:
 
-```bash
-Moderator: Player1 and Player2, you are werewolves. If you are alone, eliminate a player, else discuss with your teammates and reach an agreement. Response in the following format which can be loaded by  json.loads(){
-    "thought": "thought",
-    "speak": "thoughts summary to say to others",
-    "agreement": "whether the discussion reached an agreement or not(true/false)"
-}
-Player1: Player2, let's discuss who we should eliminate tonight.
-Player2: I think we should eliminate Player4 tonight. They seem suspicious to me.
-Player1: I think we should eliminate Player4 tonight. They seem suspicious to me.
-Player2: I agree with Player2, let's eliminate Player4 tonight. They seem suspicious.
-Moderator: Which player do you vote to kill? Response in the following format which can be loaded by python json.loads()
-{{
-   "thought": "thought" ,
-   "speak": "player_name"
-}}
-Player1: Player4
-Player2: Player4
-Moderator: The player with the most votes is Player4.
-Moderator: Player6, you're witch. Tonight Player4 is eliminated. Would you like to resurrect Player4? Response in the following format which can be loaded by python json.loads()
-{
-    "thought": "thought",
-    "speak": "thoughts summary to say",
-    "resurrect": "true/false"
-}
-Player6: I have considered the options, and I choose to resurrect Player4.
-Moderator: Player5, you're seer. Which player in Player1, Player2, Player3, Player4, Player5 and Player6 would you like to check tonight? Response in the following json format which can be loaded by python json.loads()
-{
-    "thought": "thought" ,
-    "speak": "player_name"
-}
-Player5: Player3
-Moderator: Okay, the role of Player3 is villager.
-Moderator: The day is coming, all the players open your eyes. Last night is peaceful, no player is eliminated.
-...
-```
-
-## Next step
-
-Now you've grasped how to conveniently set up a multi-agent application with AgentScope. Feel free to tailor the game to include additional roles and introduce more sophisticated strategies. For more advanced tutorials that delve deeper into more capabilities of AgentScope, such as *memory management* and *service functions* utilized by agents, please refer to the tutorials in the **Advanced Exploration** section and look up the API references.
+![s](https://img.alicdn.com/imgextra/i3/O1CN01n2Q2tR1aCFD2gpTdu_!!6000000003293-1-tps-960-482.gif)
 
 [[Return to the top]](#104-usecase-en)
