@@ -140,6 +140,10 @@ TYPESUBMIT 12 "dorsia new york city"
 
 The current browser content, objective, and current URL follow. Reply with your next command to the browser.
 
+CURRENT BROWSWER SCREEN MARKDOWN:
+------------------
+$browser_markdown
+------------------
 
 CURRENT BROWSER CONTENT:
 ------------------
@@ -226,8 +230,8 @@ class TextBrowseAgent(AgentBase):
             previous_command = prev_cmd
             prompt = prompt.replace("$previous_command", previous_command)
             prompt = prompt.replace("$browser_content", browser_content[:4500])
-            browser_content_markdown= self.browser.page_html
-            # prompt = prompt.replace("$browser_content_markdown", browser_content_markdown[:4500])
+            browser_content_markdown= self.browser.page_markdown
+            prompt = prompt.replace("$browser_content_markdown", browser_content_markdown[:4500])
 
             prompt = self.model.format(
                 Msg("user", prompt, role="user"),

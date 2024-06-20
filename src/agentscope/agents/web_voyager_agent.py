@@ -223,7 +223,8 @@ class WebVoyagerAgent(AgentBase):
         # TODO
         # self.task_question = "the Weather forcast for San Francisco, make a summary based on the hourly weather forecast in the web page."
         # self.task_question = x.content["ques"]
-        self.task_question = "If Eliud Kipchoge could maintain his record-making marathon pace indefinitely, how many thousand hours would it take him to run the distance between the Earth and the Moon its closest approach? Please use the minimum perigee value on the Wikipedia page for the Moon when carrying out your calculation. Round your result to the nearest 1000 hours and do not use any comma separators if necessary."
+        # self.task_question = "Find and open the agentscope github link, and tell me how many star is has received."
+        self.task_question = " 帮助我查看12306官方网站中，6月23日从北京到杭州的所有高铁票，返回班次信息。"
         # self.task_web = "https://weather.com/weather/tenday/l/San+Francisco+CA+USCA0987:1:US"
         self.task_web = "https://www.google.com"
         # TODO init the task dir for it
@@ -281,6 +282,7 @@ class WebVoyagerAgent(AgentBase):
                 # encode image
                 b64_img = encode_image(img_path)
 
+                self.speak(f"Web ele text is: {web_eles_text}")
                 curr_msg = format_msg(
                     it, init_msg, pdf_obs, warn_obs, b64_img, web_eles_text
                 )

@@ -4,6 +4,7 @@ The web browser interface referenced from https://github.com/nat/natbot/,
 and make it suitable for agentscope
 """
 import time
+import Path
 import markdownify
 from sys import platform
 from playwright.sync_api import sync_playwright
@@ -54,6 +55,15 @@ class WebBrowser:
         self.client = self.page.context.new_cdp_session(self.page)
         self.page_elements = {}
         self.page_element_buffer = {}
+        self._read_markpage_js()
+
+    def _read_markpage_js(self):
+        current_file_path = Path(__file__)
+
+        js_file_path = current_file_path.parent / "markpage.js"
+
+        with open(js_file_path, "r", encoding="utf-8") as file:
+            self._markpage_js = file.read()
 
     def visit_page(self, url: str) -> None:
         if "://" not in url:
@@ -173,112 +183,8 @@ class WebBrowser:
         time.sleep(5)
 
     def _get_web_element_rect(self):
-        selected_function = "getFixedColor"
 
-        js_script = f"""
-            () => {{
-                let labels = [];
-                function markPage() {{
-                    var bodyRect = document.body.getBoundingClientRect();
-                    var items = Array.prototype.slice.call(
-                        document.querySelectorAll('*')
-                    ).map(function(element) {{
-                        var vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-                        var vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
-
-                        var elementClassName = (typeof element.className === 'string' ? element.className : '').replace(/\\s+/g, '.');
-
-                        var rects = [...element.getClientRects()].filter(bb => {{
-                            var center_x = bb.left + bb.width / 2;
-                            var center_y = bb.top + bb.height / 2;
-                            var elAtCenter = document.elementFromPoint(center_x, center_y);
-                            return elAtCenter === element || element.contains(elAtCenter)
-                        }}).map(bb => {{
-                            const rect = {{
-                                left: Math.max(0, bb.left),
-                                top: Math.max(0, bb.top),
-                                right: Math.min(vw, bb.right),
-                                bottom: Math.min(vh, bb.bottom)
-                            }};
-                            return {{
-                                ...rect,
-                                width: rect.right - rect.left,
-                                height: rect.bottom - rect.top
-                            }};
-                        }});
-                        var area = rects.reduce((acc, rect) => acc + rect.width * rect.height, 0);
-                        return {{
-                            element: element,
-                            include:
-                                (element.tagName === "INPUT" || element.tagName === "TEXTAREA" || element.tagName === "SELECT") ||
-                                (element.tagName === "BUTTON" || element.tagName === "A" || (element.onclick != null) || window.getComputedStyle(element).cursor == "pointer") ||
-                                (element.tagName === "IFRAME" || element.tagName === "VIDEO" || element.tagName === "LI" || element.tagName === "TD" || element.tagName === "OPTION"),
-                            area,
-                            rects,
-                            text: element.textContent.trim().replace(/\\s{{2,}}/g, ' ')
-                        }};
-                    }}).filter(item =>
-                        item.include && (item.area >= 20)
-                    );
-
-                    const buttons = Array.from(document.querySelectorAll('button, a, input[type="button"], div[role="button"]' ));
-                    items = items.filter(x => !buttons.some(y => items.some(z => z.element === y) && y.contains(x.element) && !(x.element === y)));
-                    items = items.filter(x =>
-                        !(x.element.parentNode &&
-                        x.element.parentNode.tagName === 'SPAN' &&
-                        x.element.parentNode.children.length === 1 &&
-                        x.element.parentNode.getAttribute('role') &&
-                        items.some(y => y.element === x.element.parentNode)));
-                    items = items.filter(x => !items.some(y => x.element.contains(y.element) && !(x == y)));
-
-                    function getRandomColor(index) {{
-                        var letters = '0123456789ABCDEF';
-                        var color = '#';
-                        for (var i = 0; i < 6; i++) {{
-                            color += letters[Math.floor(Math.random() * 16)];
-                        }}
-                        return color;
-                    }}
-                    function getFixedColor(index) {{
-                        var color = '#000000';
-                        return color;
-                    }}
-
-                    items.forEach(function(item, index) {{
-                        item.rects.forEach((bbox) => {{
-                            let newElement = document.createElement("div");
-                            var borderColor = {selected_function}(index);
-                            newElement.style.outline = `2px dashed ${{borderColor}}`;
-                            newElement.style.position = "fixed";
-                            newElement.style.left = bbox.left + "px";
-                            newElement.style.top = bbox.top + "px";
-                            newElement.style.width = bbox.width + "px";
-                            newElement.style.height = bbox.height + "px";
-                            newElement.style.pointerEvents = "none";
-                            newElement.style.boxSizing = "border-box";
-                            newElement.style.zIndex = 2147483647;
-
-                            var label = document.createElement("span");
-                            label.textContent = index;
-                            label.style.position = "absolute";
-                            label.style.top = Math.max(-19, -bbox.top) + "px";
-                            label.style.left = Math.min(Math.floor(bbox.width / 5), 2) + "px";
-                            label.style.background = borderColor;
-                            label.style.color = "white";
-                            label.style.padding = "2px 4px";
-                            label.style.fontSize = "12px";
-                            label.style.borderRadius = "2px";
-                            newElement.appendChild(label);
-
-                            document.body.appendChild(newElement);
-                            labels.push(newElement);
-                        }});
-                    }});
-                    return {{ labels, items }};
-                }}
-                return markPage();
-            }}
-        """
+        js_script = self._markpage_js
 
         # 执行 JavaScript 代码 并获得返回对象
         result_handle = self.page.evaluate_handle(js_script)
@@ -430,41 +336,18 @@ class WebBrowser:
         page_element_buffer = self.page_element_buffer
         start = time.time()
 
-        page_state_as_text = []
-
         device_pixel_ratio = page.evaluate("window.devicePixelRatio")
         if platform == "darwin" and device_pixel_ratio == 1:  # lies
             device_pixel_ratio = 2
-        device_pixel_ratio = 2
+        # device_pixel_ratio = 2
 
-        win_scroll_x = page.evaluate("window.scrollX")
-        win_scroll_y = page.evaluate("window.scrollY")
         win_upper_bound = page.evaluate("window.pageYOffset")
         win_left_bound = page.evaluate("window.pageXOffset")
         win_width = page.evaluate("window.screen.width")
         win_height = page.evaluate("window.screen.height")
         win_right_bound = win_left_bound + win_width
         win_lower_bound = win_upper_bound + win_height
-        document_offset_height = page.evaluate("document.body.offsetHeight")
-        document_scroll_height = page.evaluate("document.body.scrollHeight")
 
-        # 		percentage_progress_start = (win_upper_bound / document_scroll_height) * 100
-        # 		percentage_progress_end = (
-        # 			(win_height + win_upper_bound) / document_scroll_height
-        # 		) * 100
-        percentage_progress_start = 1
-        percentage_progress_end = 2
-
-        page_state_as_text.append(
-            {
-                "x": 0,
-                "y": 0,
-                "text": "[scrollbar {:0.2f}-{:0.2f}%]".format(
-                    round(percentage_progress_start, 2),
-                    round(percentage_progress_end),
-                ),
-            },
-        )
 
         tree = self.client.send(
             "DOMSnapshot.captureSnapshot",
