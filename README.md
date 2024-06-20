@@ -35,7 +35,7 @@ Welcome to join our community on
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-06-11]** The RAG functionality is available for agents in **AgentScope** now! [**A quick introduction to RAG in AgentScope**](https://modelscope.github.io/agentscope/en/tutorial/210-rag.html) can help you equip your agent with external knowledge!
 
-- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-06-09]** We release **AgentScope** v0.0.5 now! In this new version, [**AgentScope Workstation**](https://modelscope.github.io/agentscope/en/tutorial/209-gui.html) (the online version is running on [agentscope.modelscope.cn](agentscope.modelscope.cn)) is open-sourced with the refactored [**AgentScope Studio**](https://modelscope.github.io/agentscope/en/tutorial/209-gui.html)!
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-06-09]** We release **AgentScope** v0.0.5 now! In this new version, [**AgentScope Workstation**](https://modelscope.github.io/agentscope/en/tutorial/209-gui.html) (the online version is running on [agentscope.modelscope.cn](https://agentscope.modelscope.cn)) is open-sourced with the refactored [**AgentScope Studio**](https://modelscope.github.io/agentscope/en/tutorial/209-gui.html)!
 
 <h5 align="center">
 <img src="https://img.alicdn.com/imgextra/i1/O1CN01RXAVVn1zUtjXVvuqS_!!6000000006718-1-tps-3116-1852.gif" width="600" alt="agentscope-logo">
