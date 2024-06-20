@@ -18,7 +18,7 @@ These models are tested in this example. For other models, some modifications ma
 
 Fill the next cell to meet the following requirements:
 - Set your `api_key` in the `configs/model_configs.json` file
-- Optional: Launch agentscope studio with `as_studio main.py`
+- Optional: Launch agentscope gradio with `as_gradio main.py`
 
 ## How to Use
 

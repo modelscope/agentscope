@@ -1500,7 +1500,7 @@ function showExportPyPopup() {
                             '<p>Save as main.py<br>' +
                             'Then run the following command in your terminal:<br>' +
                             '<div class="code-snippet">python main.py</div><br>' +
-                            'or <div class="code-snippet">as_studio main.py</div></p>' +
+                            'or <div class="code-snippet">as_gradio main.py</div></p>' +
                             '<pre class="line-numbers"><code class="language-py" id="export-data">' +
                             data.py_code +
                             '</code></pre>',
