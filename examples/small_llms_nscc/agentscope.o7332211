@@ -1,0 +1,29 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			Resource Usage on 2024-06-07 23:25:54.160385:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	JobId: 7332211.pbs101
+	Project: 11003841
+	Exit Status: 1
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	NCPUs: Requested(16), Used(16)
+	CPU Time Used: 22:18:46
+	Memory: Requested(110gb), Used(31969592kb)
+	Vmem Used: 65696796kb
+	Walltime: Requested(24:00:00), Used(22:26:06)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	Execution Nodes Used: (asp2a-gpu006:ncpus=16:ngpus=1:mem=115343360kb)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	GPU Duration: 22.44hrs
+	GPU Energy Consumed: 376.49W
+	GPU Max GPU Memory Used: 37.97GB
+	Memory Throughput Rate (Average): asp2a-gpu006:(gpu0:46%)
+	Memory Throughput Rate (Max): asp2a-gpu006:(gpu0:58%)
+	Memory Throughput Rate (Min): asp2a-gpu006:(gpu0:0%)
+	GPU SM Utilization (Average): asp2a-gpu006:(gpu0:95%)
+	GPU SM Utilization (Max): asp2a-gpu006:(gpu0:100%)
+	GPU SM Utilization (Min): asp2a-gpu006:(gpu0:0%)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Warning: None
+GPU application profile: High
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+

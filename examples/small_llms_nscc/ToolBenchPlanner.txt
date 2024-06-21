@@ -1,0 +1,170 @@
+2024-06-19 10:46:53.623 | INFO     | agentscope.models:read_model_configs:180 - Load configs for model wrapper: my_custom_model
+2024-06-19 10:46:53.630 | INFO     | agentscope.utils.monitor:_create_monitor_table:396 - Init [monitor_metrics] as the monitor table
+2024-06-19 10:46:53.630 | INFO     | agentscope.utils.monitor:_create_monitor_table:397 - Init [monitor_metrics_quota_exceeded] as the monitor trigger
+2024-06-19 10:46:53.630 | INFO     | agentscope.utils.monitor:__init__:366 - SqliteMonitor initialization completed at [./runs/run_20240619-104620_1wt3ck/agentscope.db]
+2024-06-19 10:46:53.771 | INFO     | agentscope.models.model:__init__:201 - Initialize model by configuration [my_custom_model]
+`low_cpu_mem_usage` was None, now set to True since model is quantized.
+2024-06-19 11:03:06.777 | INFO     | huggingface_model:load_model:313 - Successfully loaded new model 'None' from '/home/users/nus/e0690420/agentscope_small_llms/examples/small_llms_nscc/ToolBenchPlanner/sft_alpha-umi-planner-7b_2024-06-14_03-16-40'
+You set `add_prefix_space`. The tokenizer needs to be converted from the slow tokenizers
+2024-06-19 11:03:07.148 | INFO     | huggingface_model:load_tokenizer:367 - Successfully loaded new tokenizer for model 'None' from '/home/users/nus/e0690420/agentscope_small_llms/examples/small_llms_nscc/ToolBenchPlanner/sft_alpha-umi-planner-7b_2024-06-14_03-16-40'
+Parameter 'function'=functools.partial(<bound method HuggingFaceWrapper.formatting_prompts_func of <huggingface_model.HuggingFaceWrapper object at 0x14cdaa6c1220>>, data_path='timothyckl/ToolBenchPlanner') of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
+data_path timothyckl/ToolBenchPlanner
+'ToolBenchPlanner' in data_path True
+this training is for improving planner on calling summarizer.
+len(dataset['input']) 82655
+len(dataset['target']) 82655
+len(dataset_reduced['input']) 12243
+len(dataset_reduced['target']) 12243
+dataset_reduced Dataset({
+    features: ['target', 'input'],
+    num_rows: 12243
+})
+Map:   0%|          | 0/12243 [00:00<?, ? examples/s]Map:   8%|▊         | 1000/12243 [00:00<00:01, 7499.39 examples/s]Map:  21%|██        | 2597/12243 [00:00<00:00, 11878.13 examples/s]Map:  34%|███▍      | 4159/12243 [00:00<00:00, 13463.93 examples/s]Map:  48%|████▊     | 5852/12243 [00:00<00:00, 14566.03 examples/s]Map:  60%|██████    | 7394/12243 [00:00<00:00, 14858.21 examples/s]Map:  73%|███████▎  | 8972/12243 [00:00<00:00, 15162.46 examples/s]Map:  90%|█████████ | 11065/12243 [00:00<00:00, 14655.18 examples/s]Map: 100%|██████████| 12243/12243 [00:00<00:00, 13921.89 examples/s]
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+Map:   0%|          | 0/12120 [00:00<?, ? examples/s]Map:   8%|▊         | 1000/12120 [00:00<00:04, 2553.14 examples/s]Map:  17%|█▋        | 2000/12120 [00:00<00:03, 2889.63 examples/s]Map:  25%|██▍       | 3000/12120 [00:00<00:02, 3224.23 examples/s]Map:  33%|███▎      | 4000/12120 [00:01<00:02, 3502.65 examples/s]Map:  41%|████▏     | 5000/12120 [00:01<00:01, 3712.22 examples/s]Map:  50%|████▉     | 6000/12120 [00:01<00:01, 3843.85 examples/s]Map:  58%|█████▊    | 7000/12120 [00:01<00:01, 3935.53 examples/s]Map:  66%|██████▌   | 8000/12120 [00:02<00:01, 3937.09 examples/s]Map:  74%|███████▍  | 9000/12120 [00:02<00:00, 3999.65 examples/s]Map:  83%|████████▎ | 10000/12120 [00:02<00:00, 4036.62 examples/s]Map:  91%|█████████ | 11000/12120 [00:02<00:00, 4087.69 examples/s]Map:  99%|█████████▉| 12000/12120 [00:03<00:00, 4133.78 examples/s]Map: 100%|██████████| 12120/12120 [00:03<00:00, 3791.26 examples/s]
+Map:   0%|          | 0/123 [00:00<?, ? examples/s]Map: 100%|██████████| 123/123 [00:00<00:00, 3650.86 examples/s]
+Detected kernel version 4.18.0, which is below the recommended minimum of 5.5.0; this can cause the process to hang. It is recommended to upgrade the kernel to the minimum version or higher.
+2024-06-19 11:03:30.467 | INFO     | huggingface_model:fine_tune_training:683 - fine-tuning model
+  0%|          | 0/945 [00:00<?, ?it/s]../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [0,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [1,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [2,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [3,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [4,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [5,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [6,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [7,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [8,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [9,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [10,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [11,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [12,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [13,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [14,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [15,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [16,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [17,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [18,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [19,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [20,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [21,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [22,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [23,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [24,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [25,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [26,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [27,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [28,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [29,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [30,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [31,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [32,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [33,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [34,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [35,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [36,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [37,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [38,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [39,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [40,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [41,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [42,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [43,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [44,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [45,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [46,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [47,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [48,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [49,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [50,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [51,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [52,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [53,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [54,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [55,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [56,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [57,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [58,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [59,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [60,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [61,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [62,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+../aten/src/ATen/native/cuda/Indexing.cu:1289: indexSelectLargeIndex: block: [202,0,0], thread: [63,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+Traceback (most recent call last):
+  File "/home/users/nus/e0690420/agentscope_small_llms/examples/small_llms_nscc/small_llms_finetuning_ToolBenchPlanner.py", line 121, in <module>
+    main()
+  File "/home/users/nus/e0690420/agentscope_small_llms/examples/small_llms_nscc/small_llms_finetuning_ToolBenchPlanner.py", line 76, in main
+    dialog_agent = FinetuneDialogAgent(
+  File "/home/users/nus/e0690420/agentscope_small_llms/src/agentscope/agents/agent.py", line 82, in __call__
+    instance = super().__call__(*args, **kwargs)
+  File "/home/users/nus/e0690420/agentscope_small_llms/examples/small_llms_nscc/FinetuneDialogAgent.py", line 49, in __init__
+    super().__init__(
+  File "/home/users/nus/e0690420/agentscope_small_llms/src/agentscope/agents/dialog_agent.py", line 45, in __init__
+    super().__init__(
+  File "/home/users/nus/e0690420/agentscope_small_llms/src/agentscope/agents/agent.py", line 195, in __init__
+    self.model = load_model_by_config_name(model_config_name)
+  File "/home/users/nus/e0690420/agentscope_small_llms/src/agentscope/models/__init__.py", line 117, in load_model_by_config_name
+    return _get_model_wrapper(model_type=model_type)(**kwargs)
+  File "/home/users/nus/e0690420/agentscope_small_llms/examples/small_llms_nscc/huggingface_model.py", line 111, in __init__
+    self.model = self.fine_tune_training(
+  File "/home/users/nus/e0690420/agentscope_small_llms/examples/small_llms_nscc/huggingface_model.py", line 687, in fine_tune_training
+    trainer.train()
+  File "/home/users/nus/e0690420/miniconda3/envs/agentscope/lib/python3.9/site-packages/trl/trainer/sft_trainer.py", line 361, in train
+    output = super().train(*args, **kwargs)
+  File "/home/users/nus/e0690420/miniconda3/envs/agentscope/lib/python3.9/site-packages/transformers/trainer.py", line 1859, in train
+    return inner_training_loop(
+  File "/home/users/nus/e0690420/miniconda3/envs/agentscope/lib/python3.9/site-packages/transformers/trainer.py", line 2203, in _inner_training_loop
+    tr_loss_step = self.training_step(model, inputs)
+  File "/home/users/nus/e0690420/miniconda3/envs/agentscope/lib/python3.9/site-packages/transformers/trainer.py", line 3138, in training_step
+    loss = self.compute_loss(model, inputs)
+  File "/home/users/nus/e0690420/miniconda3/envs/agentscope/lib/python3.9/site-packages/transformers/trainer.py", line 3161, in compute_loss
+    outputs = model(**inputs)
+  File "/home/users/nus/e0690420/miniconda3/envs/agentscope/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1532, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/users/nus/e0690420/miniconda3/envs/agentscope/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1541, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/users/nus/e0690420/miniconda3/envs/agentscope/lib/python3.9/site-packages/torch/nn/parallel/data_parallel.py", line 185, in forward
+    outputs = self.parallel_apply(replicas, inputs, module_kwargs)
+  File "/home/users/nus/e0690420/miniconda3/envs/agentscope/lib/python3.9/site-packages/torch/nn/parallel/data_parallel.py", line 200, in parallel_apply
+    return parallel_apply(replicas, inputs, kwargs, self.device_ids[:len(replicas)])
+  File "/home/users/nus/e0690420/miniconda3/envs/agentscope/lib/python3.9/site-packages/torch/nn/parallel/parallel_apply.py", line 108, in parallel_apply
+    output.reraise()
+  File "/home/users/nus/e0690420/miniconda3/envs/agentscope/lib/python3.9/site-packages/torch/_utils.py", line 705, in reraise
+    raise exception
+RuntimeError: Caught RuntimeError in replica 0 on device 0.
+Original Traceback (most recent call last):
+  File "/home/users/nus/e0690420/miniconda3/envs/agentscope/lib/python3.9/site-packages/torch/nn/parallel/parallel_apply.py", line 83, in _worker
+    output = module(*input, **kwargs)
+  File "/home/users/nus/e0690420/miniconda3/envs/agentscope/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1532, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/users/nus/e0690420/miniconda3/envs/agentscope/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1541, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/users/nus/e0690420/miniconda3/envs/agentscope/lib/python3.9/site-packages/peft/peft_model.py", line 1129, in forward
+    return self.base_model(
+  File "/home/users/nus/e0690420/miniconda3/envs/agentscope/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1532, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/users/nus/e0690420/miniconda3/envs/agentscope/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1541, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/users/nus/e0690420/miniconda3/envs/agentscope/lib/python3.9/site-packages/peft/tuners/tuners_utils.py", line 161, in forward
+    return self.model.forward(*args, **kwargs)
+  File "/home/users/nus/e0690420/miniconda3/envs/agentscope/lib/python3.9/site-packages/accelerate/hooks.py", line 166, in new_forward
+    output = module._old_forward(*args, **kwargs)
+  File "/home/users/nus/e0690420/miniconda3/envs/agentscope/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 1208, in forward
+    outputs = self.model(
+  File "/home/users/nus/e0690420/miniconda3/envs/agentscope/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1532, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/users/nus/e0690420/miniconda3/envs/agentscope/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1541, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/users/nus/e0690420/miniconda3/envs/agentscope/lib/python3.9/site-packages/accelerate/hooks.py", line 166, in new_forward
+    output = module._old_forward(*args, **kwargs)
+  File "/home/users/nus/e0690420/miniconda3/envs/agentscope/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 985, in forward
+    cache_position = torch.arange(
+RuntimeError: CUDA error: device-side assert triggered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1.
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+
+  0%|          | 0/945 [00:02<?, ?it/s]

@@ -1,0 +1,1 @@
+python: can't open file '/home/users/nus/e0690420/agentscope_small_llms/examples/small_llms_nscc/test.py': [Errno 2] No such file or directory
