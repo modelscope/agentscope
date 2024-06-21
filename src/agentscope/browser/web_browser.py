@@ -4,6 +4,7 @@ The web browser interface referenced from https://github.com/nat/natbot/,
 and make it suitable for agentscope
 """
 import time
+import requests
 from pathlib import Path
 import markdownify
 from sys import platform
@@ -206,6 +207,9 @@ class WebBrowser:
             meta_string = " ".join(ele_meta_data)
             meta = f" {meta_string}"
 
+
+            # TODO for page too long, we should add selection
+            # on whether the element is in view port
             if with_select and not (
                 (
                     not label_text
@@ -263,6 +267,16 @@ class WebBrowser:
     @property
     def page_markdown(self):
         return markdownify.markdownify(self.page_html)
+
+    def get_jina_page(self):
+        jina_url = "https://r.jina.ai/" + self.url
+        try:
+            page_text = requests.get(jina_url).text
+            return page_text
+        except:
+            return (f"The page in {self.url} is not loaded yet"
+            "you should check the request connection or api qutoa")
+
 
     def get_elements(self):
         # TODO get the elements to click as the nat_bot from text
