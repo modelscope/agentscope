@@ -42,7 +42,7 @@ Based on your given objective, issue whatever command you believe will get you c
 You always start on Google; you should submit a search query to Google that will take you to the best page for
 achieving your objective. And then interact with that page to achieve your objective.
 
-If you find yourself on Google and there are no search results displayed yet, you should probably issue a command 
+If you find yourself on Google and there are no search results displayed yet, you should probably issue a command
 like "TYPESUBMIT 7 "search query"" to get to a more useful page.
 
 Then, if you find yourself on a Google search results page, you might issue the command "CLICK 24" to click
@@ -78,7 +78,7 @@ CURRENT BROWSER CONTENT:
 ------------------
 OBJECTIVE: Find a 2 bedroom house for sale in Anchorage AK for under $750k
 CURRENT URL: https://www.google.com/
-YOUR COMMAND: 
+YOUR COMMAND:
 TYPESUBMIT 8 "anchorage redfin"
 ==================================================
 
@@ -107,7 +107,7 @@ CURRENT BROWSER CONTENT:
 ------------------
 OBJECTIVE: Make a reservation for 4 at Dorsia at 8pm
 CURRENT URL: https://www.google.com/
-YOUR COMMAND: 
+YOUR COMMAND:
 TYPESUBMIT 8 "dorsia nyc opentable"
 ==================================================
 
@@ -126,15 +126,15 @@ CURRENT BROWSER CONTENT:
 <text id=9>Sep 28, 2022</text>
 <text id=10>7:00 PM</text>
 <text id=11>2 people</text>
-<input id=12 alt="Location, Restaurant, or Cuisine"></input> 
+<input id=12 alt="Location, Restaurant, or Cuisine"></input>
 <button id=13>Let’s go</button>
-<text id=14>It looks like you're in Peninsula. Not correct?</text> 
+<text id=14>It looks like you're in Peninsula. Not correct?</text>
 <button id=15>Get current location</button>
 <button id=16>Next</button>
 ------------------
 OBJECTIVE: Make a reservation for 4 for dinner at Dorsia in New York City at 8pm
 CURRENT URL: https://www.opentable.com/
-YOUR COMMAND: 
+YOUR COMMAND:
 TYPESUBMIT 12 "dorsia new york city"
 ==================================================
 
@@ -155,6 +155,7 @@ CURRENT URL: $url
 PREVIOUS COMMAND: $previous_command
 YOUR COMMAND:
 """
+
 
 class TextBrowseAgent(AgentBase):
     """
@@ -199,7 +200,6 @@ class TextBrowseAgent(AgentBase):
         self.objective = ""
         self.prev_command = ""
 
-
     # TODO change typing from dict to MSG
     def reply(self, x: dict = None) -> dict:
         """
@@ -219,8 +219,8 @@ class TextBrowseAgent(AgentBase):
         self.browser.visit_page("https://www.google.com/")
 
         while True:
-        # visit google as homepage here
-            
+            # visit google as homepage here
+
             # get browser content
             browser_content = "\n".join(self.browser._crawl_by_text())
             prompt = DEFAULT_PROMPT_TEMP
@@ -230,8 +230,11 @@ class TextBrowseAgent(AgentBase):
             previous_command = prev_cmd
             prompt = prompt.replace("$previous_command", previous_command)
             prompt = prompt.replace("$browser_content", browser_content[:4500])
-            browser_content_markdown= self.browser.page_markdown
-            prompt = prompt.replace("$browser_content_markdown", browser_content_markdown[:4500])
+            browser_content_markdown = self.browser.page_markdown
+            prompt = prompt.replace(
+                "$browser_content_markdown",
+                browser_content_markdown[:4500],
+            )
 
             prompt = self.model.format(
                 Msg("user", prompt, role="user"),
@@ -244,15 +247,15 @@ class TextBrowseAgent(AgentBase):
                 self.speak("----------------\n")
                 self.speak("Page Markdown:" + browser_content_markdown)
                 self.speak("----------------\n")
-                self.speak("----------------\n" + browser_content + "\n----------------\n")
+                self.speak(
+                    "----------------\n"
+                    + browser_content
+                    + "\n----------------\n",
+                )
 
             gpt_cmd = self.model(prompt).text
             if len(gpt_cmd) > 0:
                 self.speak("Suggested command: " + gpt_cmd)
-
-
-
-
 
             def run_cmd(cmd):
                 self.speak("running cmd:" + cmd)
@@ -276,7 +279,7 @@ class TextBrowseAgent(AgentBase):
                     text = text[1:-1]
 
                     if cmd.startswith("TYPESUBMIT"):
-                        text += '\n'
+                        text += "\n"
                     self.browser.type(id, text)
                 elif cmd.startswith("ANSWER"):
                     self.speak(cmd)
@@ -309,7 +312,7 @@ class TextBrowseAgent(AgentBase):
                 break
             else:
                 logger.info("Invalid command")
-            
+
             time.sleep(5)
 
         return {}

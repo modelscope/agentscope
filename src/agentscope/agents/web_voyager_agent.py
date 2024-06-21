@@ -119,7 +119,7 @@ def format_msg(it, init_msg, pdf_obs, warn_obs, web_img_b64, web_text):
             {
                 "type": "image_url",
                 "image_url": {"url": f"data:image/png;base64,{web_img_b64}"},
-            }
+            },
         )
         return init_msg_format
     else:
@@ -134,7 +134,7 @@ def format_msg(it, init_msg, pdf_obs, warn_obs, web_img_b64, web_text):
                     {
                         "type": "image_url",
                         "image_url": {
-                            "url": f"data:image/png;base64,{web_img_b64}"
+                            "url": f"data:image/png;base64,{web_img_b64}",
                         },
                     },
                 ],
@@ -150,7 +150,7 @@ def format_msg(it, init_msg, pdf_obs, warn_obs, web_img_b64, web_text):
                     {
                         "type": "image_url",
                         "image_url": {
-                            "url": f"data:image/png;base64,{web_img_b64}"
+                            "url": f"data:image/png;base64,{web_img_b64}",
                         },
                     },
                 ],
@@ -248,7 +248,7 @@ class WebVoyagerAgent(AgentBase):
         pattern = r"Thought:|Action:|Observation:"
 
         messages = [
-            {"role": "system", "content": self.sys_prompt, "name": "system"}
+            {"role": "system", "content": self.sys_prompt, "name": "system"},
         ]
         obs_prompt = "Observation: please analyze the attached screenshot and give the Thought and Action. "
 
@@ -259,6 +259,9 @@ class WebVoyagerAgent(AgentBase):
         it = 0
 
         while it < self.max_iter:
+            inp = input("iter end?")
+            if inp == "e":
+                return
             logger.info(f"Iter: {it}")
             it += 1
             if not fail_obs:
@@ -268,7 +271,8 @@ class WebVoyagerAgent(AgentBase):
                         web_eles_text,
                         screenshot_bytes,
                         web_ele_fields,
-                    ) = self.browser._crawl_by_mark()
+                    ) = self.browser.crawl_page()
+                    web_eles_text = "\n".join(web_eles_text)
                 except Exception as e:
                     logger.error("Driver error when adding set-of-mark.")
                     logger.error(e)
@@ -276,7 +280,8 @@ class WebVoyagerAgent(AgentBase):
 
                 # get screnn shot
                 img_path = os.path.join(
-                    self.task_dir, "screenshot{}.png".format(it)
+                    self.task_dir,
+                    "screenshot{}.png".format(it),
                 )
                 file_manager.save_image(screenshot_bytes, img_path)
                 # encode image
@@ -284,7 +289,12 @@ class WebVoyagerAgent(AgentBase):
 
                 self.speak(f"Web ele text is: {web_eles_text}")
                 curr_msg = format_msg(
-                    it, init_msg, pdf_obs, warn_obs, b64_img, web_eles_text
+                    it,
+                    init_msg,
+                    pdf_obs,
+                    warn_obs,
+                    b64_img,
+                    web_eles_text,
                 )
 
                 messages.append(curr_msg)
@@ -308,7 +318,7 @@ class WebVoyagerAgent(AgentBase):
                     "role": "assistant",
                     "content": gpt_4v_res,
                     "name": "assistant",
-                }
+                },
             )
 
             # extract action info
@@ -327,7 +337,8 @@ class WebVoyagerAgent(AgentBase):
             pdf_obs = ""
             warn_obs = ""
             # execute action
-            try:
+            # try:
+            if True:
                 # TODO how to prevent bad auto page navigation?
                 # window_handle_task = driver_task.current_window_handle
                 # driver_task.switch_to.window(window_handle_task)
@@ -341,7 +352,7 @@ class WebVoyagerAgent(AgentBase):
 
                     element_handle = web_ele
                     element_handle.evaluate(
-                        "element => element.setAttribute('target', '_self')"
+                        "element => element.setAttribute('target', '_self')",
                     )
                     element_handle.click()
 
@@ -384,7 +395,7 @@ class WebVoyagerAgent(AgentBase):
                         and ele_type
                         not in ["text", "search", "password", "email", "tel"]
                     ):
-                        warn_obs = f"note: The web element you're trying to type may not be a textbox, and its tag name is <{web_ele.tag_name}>, type is {ele_type}."
+                        warn_obs = f"note: The web element you're trying to type may not be a textbox, and its tag name is <{ele_tag_name}>, type is {ele_type}."
                     try:
                         page.evaluate('element => element.value = ""', web_ele)
                     except:
@@ -439,14 +450,14 @@ class WebVoyagerAgent(AgentBase):
                 else:
                     raise NotImplementedError
                 fail_obs = ""
-            except Exception as e:
-                logger.error("driver error info:")
-                logger.error(e)
-                if "element click intercepted" not in str(e):
-                    fail_obs = "The action you have chosen cannot be exected. Please double-check if you have selected the wrong Numerical Label or Action or Action format. Then provide the revised Thought and Action."
-                else:
-                    fail_obs = ""
-                time.sleep(2)
+            # except Exception as e:
+            #     logger.error("driver error info:")
+            #     logger.error(e)
+            #     if "element click intercepted" not in str(e):
+            #         fail_obs = "The action you have chosen cannot be exected. Please double-check if you have selected the wrong Numerical Label or Action or Action format. Then provide the revised Thought and Action."
+            #     else:
+            #         fail_obs = ""
+            #     time.sleep(2)
 
         # TODO save messages to trajectory
         # print_message(messages, task_dir)
