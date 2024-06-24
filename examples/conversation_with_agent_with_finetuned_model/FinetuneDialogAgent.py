@@ -43,7 +43,8 @@ class FinetuneDialogAgent(DialogAgent):
         Note:
             Refer to `class DialogAgent(AgentBase)` for more information.
         """
-        super().__init__( # pylint: disable=useless-parent-delegation
+        # pylint: disable=useless-parent-delegation
+        super().__init__(
             name,
             sys_prompt,
             model_config_name,
@@ -70,8 +71,8 @@ class FinetuneDialogAgent(DialogAgent):
             Exception: If the model loading process fails or if the
                        model wrapper does not support dynamic loading.
         """
-        if hasattr(self.model, "_load_model"):
-            self.model._load_model(
+        if hasattr(self.model, "load_model"):
+            self.model.load_model(
                 pretrained_model_name_or_path,
                 local_model_path,
                 fine_tune_config

@@ -96,7 +96,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
             self.device_map = device
             self.device = device
 
-        self._load_model(
+        self.load_model(
             pretrained_model_name_or_path,
             local_model_path=local_model_path,
             fine_tune_config=fine_tune_config,
@@ -218,7 +218,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
 
         return huggingface_msgs
 
-    def _load_model(
+    def load_model(
         self,
         pretrained_model_name_or_path: Optional[str] = None,
         local_model_path: Optional[str] = None,
