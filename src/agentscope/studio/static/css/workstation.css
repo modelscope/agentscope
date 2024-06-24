@@ -663,10 +663,10 @@ pre[class*="language-"] {
 .new-action {
     cursor: pointer;
     padding: 8px;
-    margin-left: 10px;
+    margin-left: auto;
     border: none;
     border-radius: 20px;
-    background-color: #007bff;
+    background-color: var(--main-color);
     color: white;
     transition: all 0.3s ease;
     font-size: 14px;
@@ -682,12 +682,12 @@ pre[class*="language-"] {
 .new-action:hover, .new-action:focus {
     width: auto;
     padding: 8px 16px;
-    background-color: #0056b3;
+    background-color: var(--main-color);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .new-action:active {
-    background-color: #00488a;
+    background-color: var(--main-color);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
@@ -724,7 +724,7 @@ pre[class*="language-"] {
     letter-spacing: 0.05em;
     line-height: 1.6;
     color: #333;
-    background-color: #f8f9fa;
+    background-color: rgba(173, 216, 230, 0.5);
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
     cursor: pointer;
 }
@@ -758,14 +758,14 @@ pre[class*="language-"] {
     margin: 4px;
     border: none;
     border-radius: 4px;
-    background-color: #007bff;
+    background-color: var(--main-color);
     color: white;
     cursor: pointer;
     font-size: 16px;
 }
 
 #import-prev:hover, #import-next:hover, #import-skip:hover, #import-quit:hover {
-    background-color: #0056b3;
+    background-color: var(--main-color);
     transform: translateY(-2px);
 }
 
