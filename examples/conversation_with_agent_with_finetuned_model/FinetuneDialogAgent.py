@@ -75,7 +75,7 @@ class FinetuneDialogAgent(DialogAgent):
             self.model.load_model(
                 pretrained_model_name_or_path,
                 local_model_path,
-                fine_tune_config
+                fine_tune_config,
             )
         else:
             logger.error(
@@ -102,7 +102,10 @@ class FinetuneDialogAgent(DialogAgent):
                        model wrapper does not support dynamic loading.
         """
         if hasattr(self.model, "load_tokenizer"):
-            self.model.load_tokenizer(pretrained_model_name_or_path, local_model_path)
+            self.model.load_tokenizer(
+                pretrained_model_name_or_path,
+                local_model_path,
+            )
         else:
             logger.error("The model wrapper does not support dynamic loading.")
 

@@ -531,7 +531,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
 
         if lora_config_default:
             self.lora_config = LoraConfig(**lora_config_default)
-            self.model = get_peft_model(self.model, self.lora_config)       
+            self.model = get_peft_model(self.model, self.lora_config)
 
         if output_dir is not None:
             training_defaults["output_dir"] = output_dir
@@ -558,8 +558,11 @@ class HuggingFaceWrapper(ModelWrapperBase):
             max_seq_length=2048,
         )
 
-        logger.info("Starting fine-tuning of the model '{model_name}' at {timestamp}", model_name=self.model.config.name_or_path, timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-
+        logger.info(
+            "Starting fine-tuning of the model '{model_name}' at {timestamp}",
+            model_name=self.model.config.name_or_path,
+            timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        )
 
         trainer.train()
 
