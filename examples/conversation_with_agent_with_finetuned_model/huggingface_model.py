@@ -101,13 +101,13 @@ class HuggingFaceWrapper(ModelWrapperBase):
             local_model_path=local_model_path,
             fine_tune_config=fine_tune_config,
         )
-        self._load_tokenizer(
+        self.load_tokenizer(
             pretrained_model_name_or_path,
             local_model_path=local_model_path,
         )
 
         if data_path is not None:
-            self.model = self._fine_tune_training(
+            self.model = self.fine_tune_training(
                 self.model,
                 self.tokenizer,
                 data_path,
@@ -324,7 +324,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
 
             raise
 
-    def _load_tokenizer(
+    def load_tokenizer(
         self,
         pretrained_model_name_or_path: Optional[str] = None,
         local_model_path: Optional[str] = None,
@@ -384,7 +384,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
 
             raise
 
-    def _fine_tune(
+    def fine_tune(
         self,
         data_path: Optional[str] = None,
         output_dir: Optional[str] = None,
@@ -408,7 +408,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
             or internal errors during the training process.
         """
         try:
-            self.model = self._fine_tune_training(
+            self.model = self.fine_tune_training(
                 self.model,
                 self.tokenizer,
                 data_path,
@@ -449,7 +449,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
             output_texts.append(text)
         return output_texts
 
-    def _fine_tune_training(
+    def fine_tune_training(
         self,
         model: AutoModelForCausalLM,
         tokenizer: AutoTokenizer,
