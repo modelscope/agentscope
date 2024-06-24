@@ -79,6 +79,8 @@ class HuggingFaceWrapper(ModelWrapperBase):
         """
         super().__init__(config_name=config_name)
         self.model = None
+        self.lora_config = None
+        self.tokenizer = None
         self.max_length = max_length  # Set max_length as an attribute
         self.pretrained_model_name_or_path = pretrained_model_name_or_path
         script_path = os.path.abspath(__file__)
@@ -218,7 +220,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
 
         return huggingface_msgs
 
-    def load_model(
+    def _load_model(
         self,
         pretrained_model_name_or_path: Optional[str] = None,
         local_model_path: Optional[str] = None,
@@ -250,7 +252,6 @@ class HuggingFaceWrapper(ModelWrapperBase):
         if bnb_config_default:
             bnb_config = BitsAndBytesConfig(**bnb_config_default)
 
-        self.lora_config = None
         lora_config_default = {}
 
         try:
@@ -324,7 +325,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
 
             raise
 
-    def load_tokenizer(
+    def _load_tokenizer(
         self,
         pretrained_model_name_or_path: Optional[str] = None,
         local_model_path: Optional[str] = None,
@@ -384,7 +385,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
 
             raise
 
-    def fine_tune(
+    def _fine_tune(
         self,
         data_path: Optional[str] = None,
         output_dir: Optional[str] = None,
@@ -426,7 +427,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
             )
             raise
 
-    def formatting_prompts_func(
+    def _formatting_prompts_func(
         self,
         example: Dict[str, List[List[str]]],
     ) -> List[str]:
@@ -449,7 +450,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
             output_texts.append(text)
         return output_texts
 
-    def fine_tune_training(
+    def _fine_tune_training(
         self,
         model: AutoModelForCausalLM,
         tokenizer: AutoTokenizer,
@@ -548,7 +549,9 @@ class HuggingFaceWrapper(ModelWrapperBase):
         )
 
         logger.info(
-            "fine-tuning model",
+            "Starting fine-tuning of the model '{model_name}' at {timestamp}",
+            model_name=self.model.config.name_or_path,
+            timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         )
 
         trainer.train()
