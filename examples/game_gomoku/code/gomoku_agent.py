@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """A Gomoku agent that can play the game with another agent."""
 
-from typing import Optional
+from typing import Optional, Union, Sequence
 
 import json
 
@@ -48,7 +48,7 @@ class GomokuAgent(AgentBase):
 
         self.memory.add(Msg("system", sys_prompt, role="system"))
 
-    def reply(self, x: Optional[dict] = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         if self.memory:
             self.memory.add(x)
 

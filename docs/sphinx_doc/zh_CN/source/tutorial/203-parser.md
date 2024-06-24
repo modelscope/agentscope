@@ -209,7 +209,7 @@ AgentScope中，我们通过调用`to_content`，`to_memory`和`to_metadata`方�
 
   ```python
       # ...
-      def reply(x: dict = None) -> None:
+      def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
 
           # ...
           res = self.model(prompt, parse_func=self.parser.parse)
