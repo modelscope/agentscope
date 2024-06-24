@@ -7,7 +7,7 @@ import os
 import unittest
 from unittest.mock import patch, MagicMock
 
-from agentscope.message import Msg, Tht
+from agentscope.message import Msg
 from agentscope.memory import TemporaryMemory
 
 
@@ -110,32 +110,6 @@ class TemporaryMemoryTest(unittest.TestCase):
         self.assertEqual(
             memory.get_memory(),
             [user_input, agent_input],
-        )
-
-    def test_tht_memory(self) -> None:
-        """
-        Test temporary memory with Tht,
-        add, clear, export, loading
-        """
-        memory = TemporaryMemory()
-        thought = Tht("testing")
-        memory.add(thought)
-
-        self.assertEqual(
-            memory.get_memory(),
-            [thought],
-        )
-
-        memory.export(file_path=self.file_name_2)
-        memory.clear()
-        self.assertEqual(
-            memory.get_memory(),
-            [],
-        )
-        memory.load(self.file_name_2)
-        self.assertEqual(
-            memory.get_memory(),
-            [thought],
         )
 
 
