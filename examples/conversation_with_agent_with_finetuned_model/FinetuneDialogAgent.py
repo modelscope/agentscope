@@ -5,9 +5,7 @@ which extends DialogAgent to enhance fine-tuning
 capabilities with custom hyperparameters.
 """
 from typing import Any, Optional, Dict
-
 from loguru import logger
-
 from agentscope.agents import DialogAgent
 
 
@@ -45,7 +43,6 @@ class FinetuneDialogAgent(DialogAgent):
         Note:
             Refer to `class DialogAgent(AgentBase)` for more information.
         """
-
         super().__init__(
             name,
             sys_prompt,
@@ -58,6 +55,7 @@ class FinetuneDialogAgent(DialogAgent):
         self,
         pretrained_model_name_or_path: Optional[str] = None,
         local_model_path: Optional[str] = None,
+        fine_tune_config: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
         Load a new model into the agent.
@@ -72,11 +70,11 @@ class FinetuneDialogAgent(DialogAgent):
             Exception: If the model loading process fails or if the
                        model wrapper does not support dynamic loading.
         """
-
-        if hasattr(self.model, "load_model"):
-            self.model.load_model(
+        if hasattr(self.model, "_load_model"):
+            self.model._load_model(
                 pretrained_model_name_or_path,
                 local_model_path,
+                fine_tune_config
             )
         else:
             logger.error(
@@ -86,7 +84,7 @@ class FinetuneDialogAgent(DialogAgent):
     def load_tokenizer(
         self,
         pretrained_model_name_or_path: Optional[str] = None,
-        local_tokenizer_path: Optional[str] = None,
+        local_model_path: Optional[str] = None,
     ) -> None:
         """
         Load a new tokenizer for the agent.
@@ -102,12 +100,8 @@ class FinetuneDialogAgent(DialogAgent):
             Exception: If the model tokenizer process fails or if the
                        model wrapper does not support dynamic loading.
         """
-
-        if hasattr(self.model, "load_tokenizer"):
-            self.model.load_tokenizer(
-                pretrained_model_name_or_path,
-                local_tokenizer_path,
-            )
+        if hasattr(self.model, "_load_tokenizer"):
+            self.model._load_tokenizer(pretrained_model_name_or_path, local_model_path)
         else:
             logger.error("The model wrapper does not support dynamic loading.")
 
@@ -132,9 +126,7 @@ class FinetuneDialogAgent(DialogAgent):
             Exception: If fine-tuning fails or if the
                        model wrapper does not support fine-tuning.
         """
-
-        if hasattr(self.model, "fine_tune"):
-            self.model.fine_tune(data_path, output_dir, fine_tune_config)
-            logger.info("Fine-tuning completed successfully.")
+        if hasattr(self.model, "_fine_tune"):
+            self.model._fine_tune(data_path, output_dir, fine_tune_config)
         else:
             logger.error("The model wrapper does not support fine-tuning.")

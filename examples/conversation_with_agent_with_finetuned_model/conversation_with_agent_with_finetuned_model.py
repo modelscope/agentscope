@@ -85,31 +85,41 @@ def main() -> None:
         model_config_name="my_custom_model",
     )
 
-    # # (Optional) can load another model after
-    # # the agent has been instantiated if needed
-    # dialog_agent.load_model(
-    #     pretrained_model_name_or_path="google/gemma-7b",
-    #     local_model_path=None,
-    # )  # load model gemma-2b-it from Hugging Face
-    # dialog_agent.load_tokenizer(
-    #     pretrained_model_name_or_path="google/gemma-7b",
-    #     local_tokenizer_path=None,
-    # )  # load tokenizer for gemma-2b-it from Hugging Face
+    # (Optional) can load another model after
+    # the agent has been instantiated if needed
+    # (for `fine_tune_config` specify only
+    # `lora_config` and `bnb_config` if used)
+    dialog_agent.load_model(
+        pretrained_model_name_or_path="google/gemma-7b",
+        local_model_path=None,
+        fine_tune_config={
+            "lora_config": {"r": 24, "lora_alpha": 48},
+            "bnb_config": {
+                "load_in_4bit": True,
+                "bnb_4bit_use_double_quant": True,
+                "bnb_4bit_quant_type": "nf4",
+                "bnb_4bit_compute_dtype": "bfloat16",
+            },
+        },
+    )  # load model from Hugging Face
 
-    # fine-tune loaded model with lima dataset
-    # with default hyperparameters
-    # dialog_agent.fine_tune(data_path="GAIR/lima")
+    dialog_agent.load_tokenizer(
+        pretrained_model_name_or_path="google/gemma-7b",
+        local_model_path=None,
+    )  # load tokenizer
 
     # fine-tune loaded model with lima dataset
     # with customized hyperparameters
-    # (`fine_tune_config` argument is optional. Defaults to None.)
-    # dialog_agent.fine_tune(
-    #     "GAIR/lima",
-    #     fine_tune_config={
-    #         "lora_config": {"r": 24, "lora_alpha": 48},
-    #         "training_args": {"max_steps": 300, "logging_steps": 3},
-    #     },
-    # )
+    # (`fine_tune_config` argument is optional
+    # (specify only `lora_config` and
+    # `training_args` if used). Defaults to None.)
+    dialog_agent.fine_tune(
+        "GAIR/lima",
+        fine_tune_config={
+            "lora_config": {"r": 24, "lora_alpha": 48},
+            "training_args": {"max_steps": 300, "logging_steps": 3},
+        },
+    )
 
     user_agent = UserAgent()
 

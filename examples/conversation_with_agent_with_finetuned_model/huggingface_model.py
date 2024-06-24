@@ -79,8 +79,6 @@ class HuggingFaceWrapper(ModelWrapperBase):
         """
         super().__init__(config_name=config_name)
         self.model = None
-        self.lora_config = None
-        self.tokenizer = None
         self.max_length = max_length  # Set max_length as an attribute
         self.pretrained_model_name_or_path = pretrained_model_name_or_path
         script_path = os.path.abspath(__file__)
@@ -98,18 +96,18 @@ class HuggingFaceWrapper(ModelWrapperBase):
             self.device_map = device
             self.device = device
 
-        self.load_model(
+        self._load_model(
             pretrained_model_name_or_path,
             local_model_path=local_model_path,
             fine_tune_config=fine_tune_config,
         )
-        self.load_tokenizer(
+        self._load_tokenizer(
             pretrained_model_name_or_path,
             local_model_path=local_model_path,
         )
 
         if data_path is not None:
-            self.model = self.fine_tune_training(
+            self.model = self._fine_tune_training(
                 self.model,
                 self.tokenizer,
                 data_path,
@@ -252,6 +250,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
         if bnb_config_default:
             bnb_config = BitsAndBytesConfig(**bnb_config_default)
 
+        self.lora_config = None
         lora_config_default = {}
 
         try:
@@ -409,7 +408,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
             or internal errors during the training process.
         """
         try:
-            self.model = self.fine_tune_training(
+            self.model = self._fine_tune_training(
                 self.model,
                 self.tokenizer,
                 data_path,
@@ -519,9 +518,20 @@ class HuggingFaceWrapper(ModelWrapperBase):
             "logging_steps": 1,
         }
 
+        self.lora_config = None
+        lora_config_default = {}
+
         if fine_tune_config is not None:
             if fine_tune_config.get("training_args") is not None:
                 training_defaults.update(fine_tune_config["training_args"])
+            if fine_tune_config.get("lora_config") is not None:
+                lora_config_default.update(
+                    fine_tune_config["lora_config"],
+                )
+
+        if lora_config_default:
+            self.lora_config = LoraConfig(**lora_config_default)
+            self.model = get_peft_model(self.model, self.lora_config)       
 
         if output_dir is not None:
             training_defaults["output_dir"] = output_dir
@@ -535,7 +545,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
 
         trainer = SFTTrainer(
             model,
-            formatting_func=self.formatting_prompts_func,
+            formatting_func=self._formatting_prompts_func,
             data_collator=collator,
             train_dataset=formatted_dataset["train"],
             eval_dataset=formatted_dataset["test"],
@@ -548,11 +558,8 @@ class HuggingFaceWrapper(ModelWrapperBase):
             max_seq_length=2048,
         )
 
-        logger.info(
-            "Starting fine-tuning of the model '{model_name}' at {timestamp}",
-            model_name=self.model.config.name_or_path,
-            timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        )
+        logger.info("Starting fine-tuning of the model '{model_name}' at {timestamp}", model_name=self.model.config.name_or_path, timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
 
         trainer.train()
 
