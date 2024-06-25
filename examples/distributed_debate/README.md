@@ -25,7 +25,13 @@ These models are tested in this example. For other models, some modifications ma
 ## Prerequisites
 
 Before running the example:
-- Install the distributed version of AgentScope
+- Install the distributed version of AgentScope by running 
+```bash
+# On windows
+pip install -e .[distribute]
+# On mac / linux
+pip install -e .\[distribute\]
+```
 - Fill in your model configuration correctly in `configs/model_configs.json`
 - Modify the `model_config_name` field in `configs/debate_agent_configs.json` accordingly
 - Ensure the specified ports are available and IP addresses are accessible
@@ -40,7 +46,7 @@ cd examples/distributed_debate
 python distributed_debate.py --role pro --pro-host localhost --pro-port 12011
 ```
 
-For human participation as Pro:
+(Alternatively) for human participation as Pro:
 ```shell
 python distributed_debate.py --role pro --pro-host localhost --pro-port 12011 --is-human
 ```
@@ -50,7 +56,7 @@ For an LLM-based Con:
 python distributed_debate.py --role con --con-host localhost --con-port 12012
 ```
 
-For human participation as Con:
+(Alternatively) for human participation as Con:
 ```shell
 python distributed_debate.py --role con --con-host localhost --con-port 12012 --is-human
 ```
