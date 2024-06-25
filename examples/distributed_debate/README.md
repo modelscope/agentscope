@@ -25,7 +25,7 @@ These models are tested in this example. For other models, some modifications ma
 ## Prerequisites
 
 Before running the example:
-- Install the distributed version of AgentScope by running 
+- Install the distributed version of AgentScope by running
 ```bash
 # On windows
 pip install -e .[distribute]
