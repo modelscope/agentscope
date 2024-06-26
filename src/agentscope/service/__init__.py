@@ -86,6 +86,11 @@ __all__ = [
     "dashscope_image_to_text",
     "dashscope_text_to_image",
     "dashscope_text_to_audio",
+    "get_category_members",
+    "get_infobox",
+    "get_page_content_by_paragraph",
+    "get_all_wikipedia_tables",
+    "get_page_images_with_captions",
     # to be deprecated
     "ServiceFactory",
 ]
