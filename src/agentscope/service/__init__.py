@@ -41,6 +41,14 @@ from .service_status import ServiceExecStatus
 from .web.web_digest import digest_webpage, load_web, parse_html_to_text
 from .web.download import download_from_url
 
+from .web.wiki import (
+    wiki_get_category_members,
+    wiki_get_infobox,
+    wiki_get_page_content_by_paragraph,
+    wiki_get_all_wikipedia_tables,
+    wiki_get_page_images_with_captions,
+)
+
 
 def get_help() -> None:
     """Get help message."""
@@ -86,11 +94,11 @@ __all__ = [
     "dashscope_image_to_text",
     "dashscope_text_to_image",
     "dashscope_text_to_audio",
-    "get_category_members",
-    "get_infobox",
-    "get_page_content_by_paragraph",
-    "get_all_wikipedia_tables",
-    "get_page_images_with_captions",
+    "wiki_get_category_members",
+    "wiki_get_infobox",
+    "wiki_get_page_content_by_paragraph",
+    "wiki_get_all_wikipedia_tables",
+    "wiki_get_page_images_with_captions",
     # to be deprecated
     "ServiceFactory",
 ]
