@@ -73,7 +73,7 @@ def _get_speaker_color(speaker: str) -> tuple[str, str]:
 def _chat(
     message: dict,
     *args: Any,
-    disable_studio: bool = False,
+    disable_gradio: bool = False,
     **kwargs: Any,
 ) -> None:
     """
@@ -142,15 +142,15 @@ def _chat(
                     **kwargs,
                 )
 
-                if hasattr(thread_local_data, "uid") and not disable_studio:
-                    log_studio(message, thread_local_data.uid, **kwargs)
+                if hasattr(thread_local_data, "uid") and not disable_gradio:
+                    log_gradio(message, thread_local_data.uid, **kwargs)
                 return
 
     logger.log(LEVEL_DISPLAY_MSG, message, *args, **kwargs)
     logger.log(LEVEL_SAVE_LOG, message, *args, **kwargs)
 
 
-def log_studio(message: dict, uid: str, **kwargs: Any) -> None:
+def log_gradio(message: dict, uid: str, **kwargs: Any) -> None:
     """Send chat message to studio.
 
     Args:

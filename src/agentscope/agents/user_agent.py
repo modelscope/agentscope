@@ -149,4 +149,4 @@ class UserAgent(AgentBase):
                 f"object, got {type(content)} instead.",
             )
 
-        logger.chat(msg)
+        logger.chat(msg, disable_gradio=True)
