@@ -237,7 +237,7 @@ b = AgentB(
 
 Compared with the original `to_dist()` function call, this method just initializes the agent once in the agent server process, which reduces the cost of initialization.
 
-### Manage your agent server processes
+#### Manage your agent server processes
 
 When running large-scale multi-agent applications, it's common to have multiple Agent Server processes running. To facilitate management of these processes, AgentScope offers management interfaces in the {class}`RpcAgentClient<agentscope.rpc.RpcAgentClient>` class. Here's a brief overview of these methods:
 
@@ -314,7 +314,7 @@ E-->F
 D-->F
 ```
 
-Specifically, `B` and `C` can start execution simultaneously after receiving the message from `A`, and `E` can run immediately without waiting for `A`, `B`, `C,` and `D`.
+Specifically, `B` and `C` can start execution simultaneously after receiving the message from `A`, and `E` can run immediately without waiting for `A`, `B`, `C`, and `D`.
 By implementing each Agent as an Actor, an Agent will automatically wait for its input `Msg` before starting to execute the `reply` method, and multiple Agents can also automatically execute `reply` at the same time if their input messages are ready, which avoids complex parallel control and makes things simple.
 
 ### PlaceHolder
