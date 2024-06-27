@@ -1500,7 +1500,7 @@ function showExportPyPopup() {
                             '<p>Save as main.py<br>' +
                             'Then run the following command in your terminal:<br>' +
                             '<div class="code-snippet">python main.py</div><br>' +
-                            'or <div class="code-snippet">as_studio main.py</div></p>' +
+                            'or <div class="code-snippet">as_gradio main.py</div></p>' +
                             '<pre class="line-numbers"><code class="language-py" id="export-data">' +
                             data.py_code +
                             '</code></pre>',
@@ -1863,6 +1863,7 @@ function importExample(index) {
                 editor.import(dataToImport);
                 Object.keys(dataToImport.drawflow.Home.data).forEach((nodeId) => {
                     setupNodeListeners(nodeId);
+                    setupTextInputListeners(nodeId);
                     const nodeElement = document.getElementById(`node-${nodeId}`);
                     if (nodeElement) {
                         const copyButton = nodeElement.querySelector('.button.copy-button');
@@ -1879,11 +1880,13 @@ function importExample(index) {
 function importExample_step(index) {
     fetchExample(index, data => {
         const dataToImportStep = data.json;
-        clearModuleSelected();
-        descriptionStep = ["Readme", "Model", "UserAgent",
-            "DialogAgent"];
-        initializeImport(dataToImportStep);
-    })
+        addHtmlAndReplacePlaceHolderBeforeImport(dataToImportStep).then(() => {
+            clearModuleSelected();
+            descriptionStep = ["Readme", "Model", "UserAgent",
+                "DialogAgent"];
+            initializeImport(dataToImportStep);
+        })
+    });
 }
 
 
@@ -1907,13 +1910,13 @@ function createElement(tag, id, html = '', parent = document.body) {
 
 
 function initializeImport(data) {
-    ['buttons-container', 'buttons-container-html'].forEach(cls => {
+    ['menu-btn', 'menu-btn-svg'].forEach(cls => {
         let containers = document.getElementsByClassName(cls);
         Array.from(containers).forEach(container => container.style.display = 'none');
     });
 
     createElement('div', 'left-sidebar-blur', '', document.body).style.cssText = `
-            position: fixed; top: 67px; left: 0; bottom: 0; width: 250px;
+            position: fixed; top: 60px; left: 0; bottom: 0; width: 250px;
             background: rgba(128, 128, 128, 0.7);
             filter: blur(2px); z-index: 1000; cursor: not-allowed;
         `;
@@ -1926,19 +1929,19 @@ function initializeImport(data) {
     const importButtonsDiv = document.getElementById('import-buttons');
     createElement('div', 'step-info', '', importButtonsDiv);
     createElement('button', 'import-prev',
-        '<i class="fas fa-arrow-left"></i> <span>{{_("Previous")}}</span>',
+        '<i class="fas fa-arrow-left"></i> <span>Previous</span>',
         importButtonsDiv).onclick = importPreviousComponent;
     createElement('button', 'import-next',
-        '<i class="fas fa-arrow-right"></i> <span>{{_("Next")}}</span>',
+        '<i class="fas fa-arrow-right"></i> <span>Next</span>',
         importButtonsDiv).onclick = importNextComponent;
     createElement('button', 'import-skip',
-        '<i class="fas fa-forward"></i> <span>{{_("Skip")}}</span>',
+        '<i class="fas fa-forward"></i> <span>Skip</span>',
         importButtonsDiv).onclick = importSkipComponent;
     createElement('button', 'import-quit',
-        '<i class="fas fa-sign-out-alt"></i> <span>{{_("Quit")}}</span>',
+        '<i class="fas fa-sign-out-alt"></i> <span>Quit</span>',
         importButtonsDiv).onclick = importQuitComponent;
     createElement('div', 'step-warning',
-        '{{_("Caution: You are currently in the tutorial mode where modifications are restricted.<br>Please click <strong>Quit</strong> to exit and start creating your custom multi-agent applications.")}}', document.body);
+        'Caution: You are currently in the tutorial mode where modifications are restricted.<br>Please click <strong>Quit</strong> to exit and start creating your custom multi-agent applications.', document.body);
 
     accumulatedImportData = {};
     currentImportIndex = 0;
@@ -1962,6 +1965,7 @@ function importPreviousComponent() {
 function importNextComponent() {
     const nodeId = importQueue[currentImportIndex];
     accumulatedImportData[nodeId] = dataToImportStep.drawflow.Home.data[nodeId];
+
     editor.import({drawflow: {Home: {data: accumulatedImportData}}});
     currentImportIndex++;
     updateStepInfo();
@@ -1980,7 +1984,7 @@ function importSkipComponent() {
 
 function importQuitComponent() {
     clearModuleSelected();
-    ['buttons-container', 'buttons-container-html'].forEach(cls => {
+    ['menu-btn', 'menu-btn-svg'].forEach(cls => {
         let containers = document.getElementsByClassName(cls);
         Array.from(containers).forEach(container => container.style.display = '');
     });
@@ -1991,7 +1995,7 @@ function updateStepInfo() {
     let stepInfoDiv = document.getElementById('step-info');
     if (stepInfoDiv && currentImportIndex > 0) {
         stepInfoDiv.innerHTML =
-            `{{_("Current Step")}} (${currentImportIndex}/${importQueue.length}) <br> ${descriptionStep[currentImportIndex - 1]}`;
+            `Current Step (${currentImportIndex}/${importQueue.length}) <br> ${descriptionStep[currentImportIndex - 1]}`;
     } else if (stepInfoDiv) {
         stepInfoDiv.innerHTML = 'No steps to display.';
     }
