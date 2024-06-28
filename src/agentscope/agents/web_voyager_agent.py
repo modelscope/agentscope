@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """The WebVoyager agent, an innovative MLLM powered web agent that can
 interacting with real-world websites with vision.
-Implemented referened on https://github.com/MinorJerry/WebVoyager/tree/main.
+Implemented referenced on https://github.com/MinorJerry/WebVoyager/tree/main.
 The paper link is https://arxiv.org/abs/2401.13919.
 """
 import time
@@ -25,7 +25,7 @@ from agentscope.file_manager import file_manager
 DEFAULT_SYSTEM_PROMPT = """Imagine you are a robot browsing the web, just like humans. Now you need to complete a task. In each iteration, you will receive an Observation that includes a screenshot of a webpage and some texts. This screenshot will feature Numerical Labels placed in the TOP LEFT corner of each Web Element.
 Carefully analyze the visual information to identify the Numerical Label corresponding to the Web Element that requires interaction, then follow the guidelines and choose one of the following actions:
 1. Click a Web Element.
-2. Delete existing content in a textbox and then type content.
+2. Delete existing content in a textbox and then type content. If you use TypeSubmit, it will then press enter after you type(useful when performing google search, etc.).
 3. Scroll up or down. Multiple scrolls are allowed to browse the webpage. Pay attention!! The default scroll is the whole window. If the scroll widget is located in a certain area of the webpage, then you have to specify a Web Element in that area. I would hover the mouse there and then scroll.
 4. Wait. Typically used to wait for unfinished webpage processes, with a duration of 5 seconds.
 5. Go back, returning to the previous webpage.
@@ -35,6 +35,7 @@ Carefully analyze the visual information to identify the Numerical Label corresp
 Correspondingly, Action should STRICTLY follow the format:
 - Click [Numerical_Label]
 - Type [Numerical_Label]; [Content]
+- TypeSubmit [Numerical_Label]; [Content]
 - Scroll [Numerical_Label or WINDOW]; [up or down]
 - Wait
 - GoBack
@@ -108,7 +109,7 @@ def encode_image(image_path):
 
 def format_msg(it, init_msg, pdf_obs, warn_obs, web_img_b64, web_text):
     if it == 1:
-        init_msg += f"I've provided the tag name of each element and the text it contains (if text exists). Note that <textarea> or <input> may be textbox, but not exactly. Please focus more on the screenshot and then refer to the textual information.\n{web_text}"
+        init_msg += f"I've provided the tag name of each element and the text it contains (if text exists). Note that <textarea> or <input> may be textbox, but not exactly. Please focus more on the screenshot and then refer to the textual information. The textual information in the current round is: \n{web_text}. Please note that the label number may change in the next round, so always choose within the lastest round's number."
         init_msg_format = {
             "role": "user",
             "content": [
@@ -129,7 +130,7 @@ def format_msg(it, init_msg, pdf_obs, warn_obs, web_img_b64, web_text):
                 "content": [
                     {
                         "type": "text",
-                        "text": f"Observation:{warn_obs} please analyze the attached screenshot and give the Thought and Action. I've provided the tag name of each element and the text it contains (if text exists). Note that <textarea> or <input> may be textbox, but not exactly. Please focus more on the screenshot and then refer to the textual information.\n{web_text}",
+                        "text": f"Observation:{warn_obs} please analyze the attached screenshot and give the Thought and Action. I've provided the tag name of each element and the text it contains (if text exists). Note that <textarea> or <input> may be textbox, but not exactly. Please focus more on the screenshot and then refer to the textual information.\n{web_text}. Please note that the label number may change in the next round, so always choose within the lastest round's number.",
                     },
                     {
                         "type": "image_url",
@@ -174,8 +175,10 @@ class WebVoyagerAgent(AgentBase):
         sys_prompt: str = DEFAULT_SYSTEM_PROMPT,
         max_iter: int = 30,
         max_attached_imgs: int = 5,
+        default_homepage: str = "https://www.bing.com", 
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
+
     ) -> None:
         """Initialize the dialog agent.
 
@@ -204,6 +207,7 @@ class WebVoyagerAgent(AgentBase):
         self.download_dir = download_dir
         self.max_iter = max_iter
         self.max_attached_imgs = max_attached_imgs
+        self.default_homepage = default_homepage
 
     # TODO change typing from dict to MSG
     def reply(self, x: dict = None) -> dict:
@@ -219,18 +223,15 @@ class WebVoyagerAgent(AgentBase):
             response to the user's input.
         """
         # init task
-        # self.task = x.content
+        self.task_question = x.content
         # TODO
-        # self.task_question = "the Weather forcast for San Francisco, make a summary based on the hourly weather forecast in the web page."
-        # self.task_question = x.content["ques"]
-        # self.task_question = "Find and open the agentscope github link, and tell me how many star is has received."
-        self.task_question = " 帮助我查看12306官方网站中，6月23日从北京到杭州的所有高铁票，返回班次信息。"
-        # self.task_web = "https://weather.com/weather/tenday/l/San+Francisco+CA+USCA0987:1:US"
-        self.task_web = "https://www.google.com"
+
+        self.task_web = self.default_homepage
         # TODO init the task dir for it
-        self.task_dir = (
-            "/Users/wenhao/Disk/Codes/mydev/agentscope/tmp_files/task1"
-        )
+        # self.task_dir = (
+        #     "/Users/wenhao/Disk/Codes/mydev/agentscope/tmp_files/task1"
+        # )
+        self.task_dir = file_manager.dir_file
 
         # TODO visit task['web'] page
         self.browser.visit_page(self.task_web)
@@ -252,16 +253,16 @@ class WebVoyagerAgent(AgentBase):
         ]
         obs_prompt = "Observation: please analyze the attached screenshot and give the Thought and Action. "
 
-        init_msg = f"""Now given a task: {self.task_question}  Please interact with https://www.example.com and get the answer. \n"""
+        init_msg = f"""Now given a task: {self.task_question}, Please interact with https://www.example.com and get the answer. \n"""
         init_msg = init_msg.replace("https://www.example.com", self.task_web)
         init_msg = init_msg + obs_prompt
 
         it = 0
 
         while it < self.max_iter:
-            inp = input("iter end?")
-            if inp == "e":
-                return
+            # inp = input("iter end?") # for debug usage
+            # if inp == "e":
+            #     return
             logger.info(f"Iter: {it}")
             it += 1
             if not fail_obs:
@@ -271,7 +272,7 @@ class WebVoyagerAgent(AgentBase):
                         web_eles_text,
                         screenshot_bytes,
                         web_ele_fields,
-                    ) = self.browser.crawl_page()
+                    ) = self.browser.crawl_page(with_meta=True)
                     web_eles_text = "\n".join(web_eles_text)
                 except Exception as e:
                     logger.error("Driver error when adding set-of-mark.")
@@ -308,7 +309,7 @@ class WebVoyagerAgent(AgentBase):
                 messages.append(curr_msg)
 
             # TODO Clip messages, too many attached images may cause confusion
-            # messages = clip_message_and_obs(messages, self.max_attached_imgs)
+            messages = clip_message_and_obs(messages, self.max_attached_imgs)
 
             gpt_4v_res = self.model(messages).text
             self.speak(gpt_4v_res)
@@ -337,39 +338,19 @@ class WebVoyagerAgent(AgentBase):
             pdf_obs = ""
             warn_obs = ""
             # execute action
-            # try:
-            if True:
+            try:
                 # TODO how to prevent bad auto page navigation?
                 # window_handle_task = driver_task.current_window_handle
                 # driver_task.switch_to.window(window_handle_task)
 
                 if action_key == "click":
                     click_ele_number = int(info[0])
-                    web_ele = web_eles[click_ele_number]
-
                     ele_tag_name = web_ele_fields[click_ele_number]["tag_name"]
                     ele_type = web_ele_fields[click_ele_number]["type"]
 
-                    element_handle = web_ele
-                    element_handle.evaluate(
-                        "element => element.setAttribute('target', '_self')",
-                    )
-                    element_handle.click()
+                    self.browser.click(click_ele_number) 
 
-                    # TODO deal with PDF file
-                    # current_file = sorted(os.listdir(self.download_dir))
-                    # if current_files != download_files:
-                    #     # wait for download finish
-                    #     time.sleep(10)
-                    #     current_files = sorted(os.listdir(self.download_dir))
-
-                    #     current_download_file = [pdf_file for pdf_file in current_files if pdf_file not in download_files and pdf_file.endswith('.pdf')]
-                    #     if current_download_file:
-                    #         pdf_file = current_download_file[0]
-                    #         pdf_obs = get_pdf_retrieval_ans_from_assistant(client, os.path.join(self.download_dir, pdf_file), task['ques'])
-                    #         shutil.copy(os.path.join(self.download_dir, pdf_file), self.task_dir)
-                    #         pdf_obs = "You downloaded a PDF file, I ask the Assistant API to answer the task based on the PDF file and get the following response: " + pdf_obs
-                    #     download_files = current_files
+                    # TODO what to do to deal with PDF file
 
                     if ele_tag_name == "button" and ele_type == "submit":
                         time.sleep(10)
@@ -378,13 +359,10 @@ class WebVoyagerAgent(AgentBase):
                 elif action_key == "wait":
                     time.sleep(5)
 
-                elif action_key == "type":
-                    page = self.browser.page
-                    type_ele_number = int(info["number"])
-                    web_ele = web_eles[type_ele_number]
-
+                elif action_key.startswith("type"):
                     warn_obs = ""
                     type_content = info["content"]
+                    type_ele_number = int(info["number"])
 
                     ele_tag_name = web_ele_fields[type_ele_number]["tag_name"]
                     ele_type = web_ele_fields[type_ele_number]["type"]
@@ -396,18 +374,9 @@ class WebVoyagerAgent(AgentBase):
                         not in ["text", "search", "password", "email", "tel"]
                     ):
                         warn_obs = f"note: The web element you're trying to type may not be a textbox, and its tag name is <{ele_tag_name}>, type is {ele_type}."
-                    try:
-                        page.evaluate('element => element.value = ""', web_ele)
-                    except:
-                        pass
 
-                    page.evaluate("element => element.focus()", web_ele)
-
-                    web_ele.type(type_content)
-                    time.sleep(2)
-                    web_ele.press("Enter")
-
-                    time.sleep(10)
+                    self.browser.type(type_ele_number, type_content, submit=(action_key=="typesubmit"))
+                    
                     if "wolfram" in self.task_web:
                         time.sleep(5)
 
@@ -421,17 +390,11 @@ class WebVoyagerAgent(AgentBase):
                         time.sleep(3)
                     else:
                         scroll_ele_number = int(scroll_ele_number)
-                        web_ele = web_eles[scroll_ele_number]
-                        web_ele.evaluate("element => element.focus()")
-
+                        self.browser.focus_element(scroll_ele_number)
                         if scroll_content == "down":
-                            page.keyboard.down("Alt")
-                            page.keyboard.press("ArrowDown")
-                            page.keyboard.up("Alt")
+                            self.browser.scroll_down()
                         else:
-                            page.keyboard.down("Alt")
-                            page.keyboard.press("ArrowUp")
-                            page.keyboard.up("Alt")
+                            self.browser.scroll_up()
                         time.sleep(3)
 
                 elif action_key == "goback":
@@ -450,14 +413,14 @@ class WebVoyagerAgent(AgentBase):
                 else:
                     raise NotImplementedError
                 fail_obs = ""
-            # except Exception as e:
-            #     logger.error("driver error info:")
-            #     logger.error(e)
-            #     if "element click intercepted" not in str(e):
-            #         fail_obs = "The action you have chosen cannot be exected. Please double-check if you have selected the wrong Numerical Label or Action or Action format. Then provide the revised Thought and Action."
-            #     else:
-            #         fail_obs = ""
-            #     time.sleep(2)
+            except Exception as e:
+                logger.error("driver error info:")
+                logger.error(e)
+                if "element click intercepted" not in str(e):
+                    fail_obs = "The action you have chosen cannot be exected. Please double-check if you have selected the wrong Numerical Label or Action or Action format. Then provide the revised Thought and Action."
+                else:
+                    fail_obs = ""
+                time.sleep(2)
 
         # TODO save messages to trajectory
         # print_message(messages, task_dir)
@@ -471,6 +434,7 @@ class WebVoyagerAgent(AgentBase):
         patterns = {
             "click": r"Click \[?(\d+)\]?",
             "type": r"Type \[?(\d+)\]?[; ]+\[?(.[^\]]*)\]?",
+            "typesubmit": r"TypeSubmit \[?(\d+)\]?[; ]+\[?(.[^\]]*)\]?",
             "scroll": r"Scroll \[?(\d+|WINDOW)\]?[; ]+\[?(up|down)\]?",
             "wait": r"^Wait",
             "goback": r"^GoBack",
@@ -484,7 +448,7 @@ class WebVoyagerAgent(AgentBase):
                 if key in ["click", "wait", "goback", "google"]:
                     # no content
                     return key, match.groups()
-                elif key in ["type", "scroll"]:
+                elif key in ["type", "typesubmit", "scroll", "answer"]:
                     return key, {
                         "number": match.group(1),
                         "content": match.group(2),

@@ -14,25 +14,6 @@ from agentscope.file_manager import file_manager
 
 debug = False
 
-# from nat bot
-black_listed_elements = set(
-    [
-        "html",
-        "head",
-        "title",
-        "meta",
-        "iframe",
-        "body",
-        "script",
-        "style",
-        "path",
-        "svg",
-        "br",
-        "::marker",
-    ],
-)
-
-
 class WebBrowser:
     """
     Web browser interface using playwright + chrome
@@ -54,7 +35,7 @@ class WebBrowser:
         self.page.set_default_timeout(timeout)
         self.page.set_viewport_size({"width": 1280, "height": 1080})
         self.client = self.page.context.new_cdp_session(self.page)
-        self.page_elements = {}
+        self.page_elements = []
         self._read_crawlpage_js()
 
     def _read_crawlpage_js(self):
@@ -70,7 +51,7 @@ class WebBrowser:
             url = f"https://{url}"
         self.page.goto(url)
         self.client = self.page.context.new_cdp_session(self.page)
-        self.page_elements = {}
+        self.page_elements = []
 
     def scroll(self, direction):
         if direction == "up":
@@ -79,20 +60,33 @@ class WebBrowser:
             self.scroll_down()
 
     def scroll_up(self):
-        self.page.evaluate(
-            "(document.scrollingElement || document.body).scrollTop = (document.scrollingElement || document.body).scrollTop - window.innerHeight;",
-        )
-
+        # self.page.evaluate(
+        #     "(document.scrollingElement || document.body).scrollTop = (document.scrollingElement || document.body).scrollTop - window.innerHeight;",
+        # )
+        self.page.keyboard.down("Alt")
+        self.page.keyboard.press("ArrowUp")
+        self.page.keyboard.up("Alt")
+        
     def scroll_down(self):
-        self.page.evaluate(
-            "(document.scrollingElement || document.body).scrollTop = (document.scrollingElement || document.body).scrollTop + window.innerHeight;",
-        )
+        # self.page.evaluate(
+        #     "(document.scrollingElement || document.body).scrollTop = (document.scrollingElement || document.body).scrollTop + window.innerHeight;",
+        # )
+        self.page.keyboard.down("Alt")
+        self.page.keyboard.press("ArrowDown")
+        self.page.keyboard.up("Alt")
 
-    def click(self, id: int):
+    def click(self, click_id: int):
         """
         Click on the element with the given id
+        
+        Note: The id should start from 0
         """
         # TODO enable both logic for text-based and vision-based
+        element_handle =self.page_elements[click_id]
+        element_handle.evaluate(
+            "element => element.setAttribute('target', '_self')",
+        )
+        element_handle.click()
 
     def find_on_page(self, query: str) -> bool:
         """
@@ -127,21 +121,37 @@ class WebBrowser:
         """
         self.page.keyboard.press(key)
 
-    def type(self, id: int, text: str):
-        # TODO determin where to type?
+    def type(self, click_id: int, text: str, submit=False):
         """
-        Type text in the current page
+        Type text in the given elements
         Args:
             text(`str`) : text to type
         """
-        self.click(id)
-        # print("typing text:", text)
-        self.page.keyboard.type(text)
-        # self.enter()
+        self.click(click_id)
+        web_ele = self.page_elements[click_id]
+
+        # try to clear the text within the given elements
+        try:
+            self.page.evaluate('element => element.value = ""', web_ele)
+        except:
+            pass
+        
+        # focus on the element to type
+        self.page.evaluate("element => element.focus()", web_ele)
+
+        web_ele.type(text)
+        time.sleep(2)
+        if submit:
+            web_ele.press("Enter")
+        time.sleep(3)
 
     def go_back(self):
         """Go back to the previous page"""
         self.page.go_back()
+
+    def focus_element(self, ele_id):
+        web_ele = self.page_elements[ele_id]
+        web_ele.evaluate("element => element.focus()")
 
     # from webvoyager
     def try_click_body(self) -> None:
@@ -151,17 +161,20 @@ class WebBrowser:
             pass
 
     def prevent_space(self) -> None:
-        self.page.evaluate(
-            """
-            window.onkeydown = function(e) {
-                if(e.keyCode == 32 && e.target.type != 'text' && e.target.type != 'textarea') {
-                    e.preventDefault();
-                }
-            };
-        """,
-        )
-        # do we need sleep here?
-        time.sleep(5)
+        try:
+            self.page.evaluate(
+                """
+                window.onkeydown = function(e) {
+                    if(e.keyCode == 32 && e.target.type != 'text' && e.target.type != 'textarea') {
+                        e.preventDefault();
+                    }
+                };
+            """,
+            )
+            # do we need sleep here?
+            time.sleep(5)
+        except:
+            pass
 
     def _remove_labels_by_handle(self, labels_handle):
         labels_js_handles = labels_handle.evaluate_handle("labels => labels")
@@ -190,6 +203,8 @@ class WebBrowser:
             for item in items_js_handles
             # if item.get_property("element").as_element()
         ]
+
+        self.page_elements = elements
 
         items_raw = items_handle.json_value()
         web_ele_infos = [
