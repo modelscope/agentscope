@@ -14,6 +14,7 @@ from agentscope.file_manager import file_manager
 
 debug = False
 
+
 class WebBrowser:
     """
     Web browser interface using playwright + chrome
@@ -23,6 +24,8 @@ class WebBrowser:
         self,
         headless: bool = False,
         timeout: int = 60000,
+        default_width=1280,
+        default_height=1080,
     ) -> None:
         self.headless = headless
         self.current_step = 0
@@ -33,7 +36,9 @@ class WebBrowser:
         )
         self.page = self.browser.new_page()
         self.page.set_default_timeout(timeout)
-        self.page.set_viewport_size({"width": 1280, "height": 1080})
+        self.page.set_viewport_size(
+            {"width": default_width, "height": default_height}
+        )
         self.client = self.page.context.new_cdp_session(self.page)
         self.page_elements = []
         self._read_crawlpage_js()
@@ -66,7 +71,7 @@ class WebBrowser:
         self.page.keyboard.down("Alt")
         self.page.keyboard.press("ArrowUp")
         self.page.keyboard.up("Alt")
-        
+
     def scroll_down(self):
         # self.page.evaluate(
         #     "(document.scrollingElement || document.body).scrollTop = (document.scrollingElement || document.body).scrollTop + window.innerHeight;",
@@ -78,11 +83,11 @@ class WebBrowser:
     def click(self, click_id: int):
         """
         Click on the element with the given id
-        
+
         Note: The id should start from 0
         """
         # TODO enable both logic for text-based and vision-based
-        element_handle =self.page_elements[click_id]
+        element_handle = self.page_elements[click_id]
         element_handle.evaluate(
             "element => element.setAttribute('target', '_self')",
         )
@@ -135,7 +140,7 @@ class WebBrowser:
             self.page.evaluate('element => element.value = ""', web_ele)
         except:
             pass
-        
+
         # focus on the element to type
         self.page.evaluate("element => element.focus()", web_ele)
 
@@ -222,7 +227,6 @@ class WebBrowser:
             meta_string = " ".join(ele_meta_data)
             meta = f" {meta_string}"
 
-
             # TODO for page too long, we should add selection
             # on whether the element is in view port
             if with_select and not (
@@ -289,9 +293,10 @@ class WebBrowser:
             page_text = requests.get(jina_url).text
             return page_text
         except:
-            return (f"The page in {self.url} is not loaded yet"
-            "you should check the request connection or api qutoa")
-
+            return (
+                f"The page in {self.url} is not loaded yet"
+                "you should check the request connection or api qutoa"
+            )
 
     def get_elements(self):
         # TODO get the elements to click as the nat_bot from text

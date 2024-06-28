@@ -175,10 +175,9 @@ class WebVoyagerAgent(AgentBase):
         sys_prompt: str = DEFAULT_SYSTEM_PROMPT,
         max_iter: int = 30,
         max_attached_imgs: int = 5,
-        default_homepage: str = "https://www.bing.com", 
+        default_homepage: str = "https://www.bing.com",
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
-
     ) -> None:
         """Initialize the dialog agent.
 
@@ -348,7 +347,7 @@ class WebVoyagerAgent(AgentBase):
                     ele_tag_name = web_ele_fields[click_ele_number]["tag_name"]
                     ele_type = web_ele_fields[click_ele_number]["type"]
 
-                    self.browser.click(click_ele_number) 
+                    self.browser.click(click_ele_number)
 
                     # TODO what to do to deal with PDF file
 
@@ -375,8 +374,12 @@ class WebVoyagerAgent(AgentBase):
                     ):
                         warn_obs = f"note: The web element you're trying to type may not be a textbox, and its tag name is <{ele_tag_name}>, type is {ele_type}."
 
-                    self.browser.type(type_ele_number, type_content, submit=(action_key=="typesubmit"))
-                    
+                    self.browser.type(
+                        type_ele_number,
+                        type_content,
+                        submit=(action_key == "typesubmit"),
+                    )
+
                     if "wolfram" in self.task_web:
                         time.sleep(5)
 
