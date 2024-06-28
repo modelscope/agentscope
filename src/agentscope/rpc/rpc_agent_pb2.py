@@ -17,7 +17,7 @@ from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
 DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(
-    b'\n\x0frpc_agent.proto\x1a\x1bgoogle/protobuf/empty.proto"-\n\x0eStatusResponse\x12\n\n\x02ok\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t"Z\n\x12\x43reateAgentRequest\x12\x10\n\x08\x61gent_id\x18\x01 \x01(\t\x12\x17\n\x0f\x61gent_init_args\x18\x02 \x01(\x0c\x12\x19\n\x11\x61gent_source_code\x18\x03 \x01(\x0c"\x1d\n\x08\x41gentIds\x12\x11\n\tagent_ids\x18\x01 \x03(\t"/\n\x0b\x41gentStatus\x12\x10\n\x08\x61gent_id\x18\x01 \x01(\t\x12\x0e\n\x06status\x18\x02 \x01(\t"+\n\x18UpdatePlaceholderRequest\x12\x0f\n\x07task_id\x18\x01 \x01(\x03"\x18\n\x07JsonMsg\x12\r\n\x05value\x18\x01 \x01(\t"\x1b\n\x0b\x46ileRequest\x12\x0c\n\x04path\x18\x01 \x01(\t"\x1c\n\x0c\x46ileResponse\x12\x0c\n\x04\x64\x61ta\x18\x01 \x01(\x0c">\n\x06RpcMsg\x12\r\n\x05value\x18\x01 \x01(\t\x12\x13\n\x0btarget_func\x18\x02 \x01(\t\x12\x10\n\x08\x61gent_id\x18\x03 \x01(\t2\x9b\x05\n\x08RpcAgent\x12\x35\n\x08is_alive\x12\x16.google.protobuf.Empty\x1a\x0f.StatusResponse"\x00\x12\x31\n\x04stop\x12\x16.google.protobuf.Empty\x1a\x0f.StatusResponse"\x00\x12\x36\n\x0c\x63reate_agent\x12\x13.CreateAgentRequest\x1a\x0f.StatusResponse"\x00\x12,\n\x0c\x64\x65lete_agent\x12\t.AgentIds\x1a\x0f.StatusResponse"\x00\x12%\n\x0b\x63lone_agent\x12\t.AgentIds\x1a\t.AgentIds"\x00\x12\x38\n\x11get_agent_id_list\x12\x16.google.protobuf.Empty\x1a\t.AgentIds"\x00\x12.\n\x0eget_agent_info\x12\t.AgentIds\x1a\x0f.StatusResponse"\x00\x12<\n\x0fget_server_info\x12\x16.google.protobuf.Empty\x1a\x0f.StatusResponse"\x00\x12\x30\n\x11set_model_configs\x12\x08.JsonMsg\x1a\x0f.StatusResponse"\x00\x12)\n\x10get_agent_memory\x12\t.AgentIds\x1a\x08.JsonMsg"\x00\x12%\n\x0f\x63\x61ll_agent_func\x12\x07.RpcMsg\x1a\x07.RpcMsg"\x00\x12:\n\x12update_placeholder\x12\x19.UpdatePlaceholderRequest\x1a\x07.RpcMsg"\x00\x12\x30\n\rdownload_file\x12\x0c.FileRequest\x1a\r.FileResponse"\x00\x30\x01\x62\x06proto3',
+    b'\n\x0frpc_agent.proto\x1a\x1bgoogle/protobuf/empty.proto".\n\x0fGeneralResponse\x12\n\n\x02ok\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t"Z\n\x12\x43reateAgentRequest\x12\x10\n\x08\x61gent_id\x18\x01 \x01(\t\x12\x17\n\x0f\x61gent_init_args\x18\x02 \x01(\x0c\x12\x19\n\x11\x61gent_source_code\x18\x03 \x01(\x0c"/\n\x0b\x41gentStatus\x12\x10\n\x08\x61gent_id\x18\x01 \x01(\t\x12\x0e\n\x06status\x18\x02 \x01(\t"+\n\x18UpdatePlaceholderRequest\x12\x0f\n\x07task_id\x18\x01 \x01(\x03"\x1a\n\tStringMsg\x12\r\n\x05value\x18\x01 \x01(\t"\x17\n\x07\x42yteMsg\x12\x0c\n\x04\x64\x61ta\x18\x01 \x01(\x0c">\n\x06RpcMsg\x12\r\n\x05value\x18\x01 \x01(\t\x12\x13\n\x0btarget_func\x18\x02 \x01(\t\x12\x10\n\x08\x61gent_id\x18\x03 \x01(\t2\xc3\x05\n\x08RpcAgent\x12\x36\n\x08is_alive\x12\x16.google.protobuf.Empty\x1a\x10.GeneralResponse"\x00\x12\x32\n\x04stop\x12\x16.google.protobuf.Empty\x1a\x10.GeneralResponse"\x00\x12\x37\n\x0c\x63reate_agent\x12\x13.CreateAgentRequest\x1a\x10.GeneralResponse"\x00\x12.\n\x0c\x64\x65lete_agent\x12\n.StringMsg\x1a\x10.GeneralResponse"\x00\x12?\n\x11\x64\x65lete_all_agents\x12\x16.google.protobuf.Empty\x1a\x10.GeneralResponse"\x00\x12-\n\x0b\x63lone_agent\x12\n.StringMsg\x1a\x10.GeneralResponse"\x00\x12<\n\x0eget_agent_list\x12\x16.google.protobuf.Empty\x1a\x10.GeneralResponse"\x00\x12=\n\x0fget_server_info\x12\x16.google.protobuf.Empty\x1a\x10.GeneralResponse"\x00\x12\x33\n\x11set_model_configs\x12\n.StringMsg\x1a\x10.GeneralResponse"\x00\x12\x32\n\x10get_agent_memory\x12\n.StringMsg\x1a\x10.GeneralResponse"\x00\x12%\n\x0f\x63\x61ll_agent_func\x12\x07.RpcMsg\x1a\x07.RpcMsg"\x00\x12:\n\x12update_placeholder\x12\x19.UpdatePlaceholderRequest\x1a\x07.RpcMsg"\x00\x12)\n\rdownload_file\x12\n.StringMsg\x1a\x08.ByteMsg"\x00\x30\x01\x62\x06proto3',
 )
 
 _globals = globals()
@@ -25,24 +25,20 @@ _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, "rpc_agent_pb2", _globals)
 if _descriptor._USE_C_DESCRIPTORS == False:
     DESCRIPTOR._options = None
-    _globals["_STATUSRESPONSE"]._serialized_start = 48
-    _globals["_STATUSRESPONSE"]._serialized_end = 93
-    _globals["_CREATEAGENTREQUEST"]._serialized_start = 95
-    _globals["_CREATEAGENTREQUEST"]._serialized_end = 185
-    _globals["_AGENTIDS"]._serialized_start = 187
-    _globals["_AGENTIDS"]._serialized_end = 216
-    _globals["_AGENTSTATUS"]._serialized_start = 218
-    _globals["_AGENTSTATUS"]._serialized_end = 265
-    _globals["_UPDATEPLACEHOLDERREQUEST"]._serialized_start = 267
-    _globals["_UPDATEPLACEHOLDERREQUEST"]._serialized_end = 310
-    _globals["_JSONMSG"]._serialized_start = 312
-    _globals["_JSONMSG"]._serialized_end = 336
-    _globals["_FILEREQUEST"]._serialized_start = 338
-    _globals["_FILEREQUEST"]._serialized_end = 365
-    _globals["_FILERESPONSE"]._serialized_start = 367
-    _globals["_FILERESPONSE"]._serialized_end = 395
-    _globals["_RPCMSG"]._serialized_start = 397
-    _globals["_RPCMSG"]._serialized_end = 459
-    _globals["_RPCAGENT"]._serialized_start = 462
-    _globals["_RPCAGENT"]._serialized_end = 1129
+    _globals["_GENERALRESPONSE"]._serialized_start = 48
+    _globals["_GENERALRESPONSE"]._serialized_end = 94
+    _globals["_CREATEAGENTREQUEST"]._serialized_start = 96
+    _globals["_CREATEAGENTREQUEST"]._serialized_end = 186
+    _globals["_AGENTSTATUS"]._serialized_start = 188
+    _globals["_AGENTSTATUS"]._serialized_end = 235
+    _globals["_UPDATEPLACEHOLDERREQUEST"]._serialized_start = 237
+    _globals["_UPDATEPLACEHOLDERREQUEST"]._serialized_end = 280
+    _globals["_STRINGMSG"]._serialized_start = 282
+    _globals["_STRINGMSG"]._serialized_end = 308
+    _globals["_BYTEMSG"]._serialized_start = 310
+    _globals["_BYTEMSG"]._serialized_end = 333
+    _globals["_RPCMSG"]._serialized_start = 335
+    _globals["_RPCMSG"]._serialized_end = 397
+    _globals["_RPCAGENT"]._serialized_start = 400
+    _globals["_RPCAGENT"]._serialized_end = 1107
 # @@protoc_insertion_point(module_scope)

@@ -27,52 +27,52 @@ class RpcAgentStub(object):
         self.is_alive = channel.unary_unary(
             "/RpcAgent/is_alive",
             request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            response_deserializer=rpc__agent__pb2.StatusResponse.FromString,
+            response_deserializer=rpc__agent__pb2.GeneralResponse.FromString,
         )
         self.stop = channel.unary_unary(
             "/RpcAgent/stop",
             request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            response_deserializer=rpc__agent__pb2.StatusResponse.FromString,
+            response_deserializer=rpc__agent__pb2.GeneralResponse.FromString,
         )
         self.create_agent = channel.unary_unary(
             "/RpcAgent/create_agent",
             request_serializer=rpc__agent__pb2.CreateAgentRequest.SerializeToString,
-            response_deserializer=rpc__agent__pb2.StatusResponse.FromString,
+            response_deserializer=rpc__agent__pb2.GeneralResponse.FromString,
         )
         self.delete_agent = channel.unary_unary(
             "/RpcAgent/delete_agent",
-            request_serializer=rpc__agent__pb2.AgentIds.SerializeToString,
-            response_deserializer=rpc__agent__pb2.StatusResponse.FromString,
+            request_serializer=rpc__agent__pb2.StringMsg.SerializeToString,
+            response_deserializer=rpc__agent__pb2.GeneralResponse.FromString,
+        )
+        self.delete_all_agents = channel.unary_unary(
+            "/RpcAgent/delete_all_agents",
+            request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            response_deserializer=rpc__agent__pb2.GeneralResponse.FromString,
         )
         self.clone_agent = channel.unary_unary(
             "/RpcAgent/clone_agent",
-            request_serializer=rpc__agent__pb2.AgentIds.SerializeToString,
-            response_deserializer=rpc__agent__pb2.AgentIds.FromString,
+            request_serializer=rpc__agent__pb2.StringMsg.SerializeToString,
+            response_deserializer=rpc__agent__pb2.GeneralResponse.FromString,
         )
-        self.get_agent_id_list = channel.unary_unary(
-            "/RpcAgent/get_agent_id_list",
+        self.get_agent_list = channel.unary_unary(
+            "/RpcAgent/get_agent_list",
             request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            response_deserializer=rpc__agent__pb2.AgentIds.FromString,
-        )
-        self.get_agent_info = channel.unary_unary(
-            "/RpcAgent/get_agent_info",
-            request_serializer=rpc__agent__pb2.AgentIds.SerializeToString,
-            response_deserializer=rpc__agent__pb2.StatusResponse.FromString,
+            response_deserializer=rpc__agent__pb2.GeneralResponse.FromString,
         )
         self.get_server_info = channel.unary_unary(
             "/RpcAgent/get_server_info",
             request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            response_deserializer=rpc__agent__pb2.StatusResponse.FromString,
+            response_deserializer=rpc__agent__pb2.GeneralResponse.FromString,
         )
         self.set_model_configs = channel.unary_unary(
             "/RpcAgent/set_model_configs",
-            request_serializer=rpc__agent__pb2.JsonMsg.SerializeToString,
-            response_deserializer=rpc__agent__pb2.StatusResponse.FromString,
+            request_serializer=rpc__agent__pb2.StringMsg.SerializeToString,
+            response_deserializer=rpc__agent__pb2.GeneralResponse.FromString,
         )
         self.get_agent_memory = channel.unary_unary(
             "/RpcAgent/get_agent_memory",
-            request_serializer=rpc__agent__pb2.AgentIds.SerializeToString,
-            response_deserializer=rpc__agent__pb2.JsonMsg.FromString,
+            request_serializer=rpc__agent__pb2.StringMsg.SerializeToString,
+            response_deserializer=rpc__agent__pb2.GeneralResponse.FromString,
         )
         self.call_agent_func = channel.unary_unary(
             "/RpcAgent/call_agent_func",
@@ -86,8 +86,8 @@ class RpcAgentStub(object):
         )
         self.download_file = channel.unary_stream(
             "/RpcAgent/download_file",
-            request_serializer=rpc__agent__pb2.FileRequest.SerializeToString,
-            response_deserializer=rpc__agent__pb2.FileResponse.FromString,
+            request_serializer=rpc__agent__pb2.StringMsg.SerializeToString,
+            response_deserializer=rpc__agent__pb2.ByteMsg.FromString,
         )
 
 
@@ -113,7 +113,13 @@ class RpcAgentServicer(object):
         raise NotImplementedError("Method not implemented!")
 
     def delete_agent(self, request, context):
-        """delete agents from the server"""
+        """delete agent from the server"""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
+
+    def delete_all_agents(self, request, context):
+        """clear all agent on the server"""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details("Method not implemented!")
         raise NotImplementedError("Method not implemented!")
@@ -124,14 +130,8 @@ class RpcAgentServicer(object):
         context.set_details("Method not implemented!")
         raise NotImplementedError("Method not implemented!")
 
-    def get_agent_id_list(self, request, context):
+    def get_agent_list(self, request, context):
         """get id of all agents on the server as a list"""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
-
-    def get_agent_info(self, request, context):
-        """get the agent information of the specific agent_id"""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details("Method not implemented!")
         raise NotImplementedError("Method not implemented!")
@@ -178,52 +178,52 @@ def add_RpcAgentServicer_to_server(servicer, server):
         "is_alive": grpc.unary_unary_rpc_method_handler(
             servicer.is_alive,
             request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-            response_serializer=rpc__agent__pb2.StatusResponse.SerializeToString,
+            response_serializer=rpc__agent__pb2.GeneralResponse.SerializeToString,
         ),
         "stop": grpc.unary_unary_rpc_method_handler(
             servicer.stop,
             request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-            response_serializer=rpc__agent__pb2.StatusResponse.SerializeToString,
+            response_serializer=rpc__agent__pb2.GeneralResponse.SerializeToString,
         ),
         "create_agent": grpc.unary_unary_rpc_method_handler(
             servicer.create_agent,
             request_deserializer=rpc__agent__pb2.CreateAgentRequest.FromString,
-            response_serializer=rpc__agent__pb2.StatusResponse.SerializeToString,
+            response_serializer=rpc__agent__pb2.GeneralResponse.SerializeToString,
         ),
         "delete_agent": grpc.unary_unary_rpc_method_handler(
             servicer.delete_agent,
-            request_deserializer=rpc__agent__pb2.AgentIds.FromString,
-            response_serializer=rpc__agent__pb2.StatusResponse.SerializeToString,
+            request_deserializer=rpc__agent__pb2.StringMsg.FromString,
+            response_serializer=rpc__agent__pb2.GeneralResponse.SerializeToString,
+        ),
+        "delete_all_agents": grpc.unary_unary_rpc_method_handler(
+            servicer.delete_all_agents,
+            request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            response_serializer=rpc__agent__pb2.GeneralResponse.SerializeToString,
         ),
         "clone_agent": grpc.unary_unary_rpc_method_handler(
             servicer.clone_agent,
-            request_deserializer=rpc__agent__pb2.AgentIds.FromString,
-            response_serializer=rpc__agent__pb2.AgentIds.SerializeToString,
+            request_deserializer=rpc__agent__pb2.StringMsg.FromString,
+            response_serializer=rpc__agent__pb2.GeneralResponse.SerializeToString,
         ),
-        "get_agent_id_list": grpc.unary_unary_rpc_method_handler(
-            servicer.get_agent_id_list,
+        "get_agent_list": grpc.unary_unary_rpc_method_handler(
+            servicer.get_agent_list,
             request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-            response_serializer=rpc__agent__pb2.AgentIds.SerializeToString,
-        ),
-        "get_agent_info": grpc.unary_unary_rpc_method_handler(
-            servicer.get_agent_info,
-            request_deserializer=rpc__agent__pb2.AgentIds.FromString,
-            response_serializer=rpc__agent__pb2.StatusResponse.SerializeToString,
+            response_serializer=rpc__agent__pb2.GeneralResponse.SerializeToString,
         ),
         "get_server_info": grpc.unary_unary_rpc_method_handler(
             servicer.get_server_info,
             request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-            response_serializer=rpc__agent__pb2.StatusResponse.SerializeToString,
+            response_serializer=rpc__agent__pb2.GeneralResponse.SerializeToString,
         ),
         "set_model_configs": grpc.unary_unary_rpc_method_handler(
             servicer.set_model_configs,
-            request_deserializer=rpc__agent__pb2.JsonMsg.FromString,
-            response_serializer=rpc__agent__pb2.StatusResponse.SerializeToString,
+            request_deserializer=rpc__agent__pb2.StringMsg.FromString,
+            response_serializer=rpc__agent__pb2.GeneralResponse.SerializeToString,
         ),
         "get_agent_memory": grpc.unary_unary_rpc_method_handler(
             servicer.get_agent_memory,
-            request_deserializer=rpc__agent__pb2.AgentIds.FromString,
-            response_serializer=rpc__agent__pb2.JsonMsg.SerializeToString,
+            request_deserializer=rpc__agent__pb2.StringMsg.FromString,
+            response_serializer=rpc__agent__pb2.GeneralResponse.SerializeToString,
         ),
         "call_agent_func": grpc.unary_unary_rpc_method_handler(
             servicer.call_agent_func,
@@ -237,8 +237,8 @@ def add_RpcAgentServicer_to_server(servicer, server):
         ),
         "download_file": grpc.unary_stream_rpc_method_handler(
             servicer.download_file,
-            request_deserializer=rpc__agent__pb2.FileRequest.FromString,
-            response_serializer=rpc__agent__pb2.FileResponse.SerializeToString,
+            request_deserializer=rpc__agent__pb2.StringMsg.FromString,
+            response_serializer=rpc__agent__pb2.ByteMsg.SerializeToString,
         ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -270,7 +270,7 @@ class RpcAgent(object):
             target,
             "/RpcAgent/is_alive",
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            rpc__agent__pb2.StatusResponse.FromString,
+            rpc__agent__pb2.GeneralResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -299,7 +299,7 @@ class RpcAgent(object):
             target,
             "/RpcAgent/stop",
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            rpc__agent__pb2.StatusResponse.FromString,
+            rpc__agent__pb2.GeneralResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -328,7 +328,7 @@ class RpcAgent(object):
             target,
             "/RpcAgent/create_agent",
             rpc__agent__pb2.CreateAgentRequest.SerializeToString,
-            rpc__agent__pb2.StatusResponse.FromString,
+            rpc__agent__pb2.GeneralResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -356,8 +356,37 @@ class RpcAgent(object):
             request,
             target,
             "/RpcAgent/delete_agent",
-            rpc__agent__pb2.AgentIds.SerializeToString,
-            rpc__agent__pb2.StatusResponse.FromString,
+            rpc__agent__pb2.StringMsg.SerializeToString,
+            rpc__agent__pb2.GeneralResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
+
+    @staticmethod
+    def delete_all_agents(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            "/RpcAgent/delete_all_agents",
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            rpc__agent__pb2.GeneralResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -385,8 +414,8 @@ class RpcAgent(object):
             request,
             target,
             "/RpcAgent/clone_agent",
-            rpc__agent__pb2.AgentIds.SerializeToString,
-            rpc__agent__pb2.AgentIds.FromString,
+            rpc__agent__pb2.StringMsg.SerializeToString,
+            rpc__agent__pb2.GeneralResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -398,7 +427,7 @@ class RpcAgent(object):
         )
 
     @staticmethod
-    def get_agent_id_list(
+    def get_agent_list(
         request,
         target,
         options=(),
@@ -413,38 +442,9 @@ class RpcAgent(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/RpcAgent/get_agent_id_list",
+            "/RpcAgent/get_agent_list",
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            rpc__agent__pb2.AgentIds.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
-
-    @staticmethod
-    def get_agent_info(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            "/RpcAgent/get_agent_info",
-            rpc__agent__pb2.AgentIds.SerializeToString,
-            rpc__agent__pb2.StatusResponse.FromString,
+            rpc__agent__pb2.GeneralResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -473,7 +473,7 @@ class RpcAgent(object):
             target,
             "/RpcAgent/get_server_info",
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            rpc__agent__pb2.StatusResponse.FromString,
+            rpc__agent__pb2.GeneralResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -501,8 +501,8 @@ class RpcAgent(object):
             request,
             target,
             "/RpcAgent/set_model_configs",
-            rpc__agent__pb2.JsonMsg.SerializeToString,
-            rpc__agent__pb2.StatusResponse.FromString,
+            rpc__agent__pb2.StringMsg.SerializeToString,
+            rpc__agent__pb2.GeneralResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -530,8 +530,8 @@ class RpcAgent(object):
             request,
             target,
             "/RpcAgent/get_agent_memory",
-            rpc__agent__pb2.AgentIds.SerializeToString,
-            rpc__agent__pb2.JsonMsg.FromString,
+            rpc__agent__pb2.StringMsg.SerializeToString,
+            rpc__agent__pb2.GeneralResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -617,8 +617,8 @@ class RpcAgent(object):
             request,
             target,
             "/RpcAgent/download_file",
-            rpc__agent__pb2.FileRequest.SerializeToString,
-            rpc__agent__pb2.FileResponse.FromString,
+            rpc__agent__pb2.StringMsg.SerializeToString,
+            rpc__agent__pb2.ByteMsg.FromString,
             options,
             channel_credentials,
             insecure,

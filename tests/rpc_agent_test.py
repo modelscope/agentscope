@@ -679,8 +679,8 @@ class BasicRpcAgentTest(unittest.TestCase):
         )
         launcher.launch()
         client = RpcAgentClient(host="localhost", port=launcher.port)
-        agent_ids = client.get_agent_id_list()
-        self.assertEqual(len(agent_ids), 0)
+        agent_lists = client.get_agent_list()
+        self.assertEqual(len(agent_lists), 0)
         memory_agent = DemoRpcAgentWithMemory(
             name="demo",
             to_dist={
@@ -695,12 +695,11 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertEqual(len(memory), 2)
         self.assertEqual(memory[0]["content"], "first msg")
         self.assertEqual(memory[1]["content"]["mem_size"], 1)
-        agent_ids = client.get_agent_id_list()
-        self.assertEqual(len(agent_ids), 1)
-        self.assertEqual(agent_ids[0], memory_agent.agent_id)
-        agent_info = client.get_agent_info(agent_id=memory_agent.agent_id)
+        agent_lists = client.get_agent_list()
+        self.assertEqual(len(agent_lists), 1)
+        self.assertEqual(agent_lists[0]["agent_id"], memory_agent.agent_id)
+        agent_info = agent_lists[0]
         logger.info(agent_info)
-        self.assertTrue(memory_agent.agent_id in agent_info)
         server_info = client.get_server_info()
         logger.info(server_info)
         self.assertTrue("pid" in server_info)
@@ -728,8 +727,8 @@ class BasicRpcAgentTest(unittest.TestCase):
         with open(local_file_path, "rb") as lf:
             local_content = lf.read()
         self.assertEqual(remote_content, local_content)
-        agent_ids = client.get_agent_id_list()
-        self.assertEqual(len(agent_ids), 2)
+        agent_lists = client.get_agent_list()
+        self.assertEqual(len(agent_lists), 2)
         # model not exists error
         self.assertRaises(
             Exception,
@@ -775,6 +774,8 @@ class BasicRpcAgentTest(unittest.TestCase):
             },
         )
         self.assertIsNotNone(dia_agent)
+        self.assertTrue(client.delete_all_agent())
+        self.assertEqual(len(client.get_agent_list()), 0)
         # run the following code in testsuite will block the test
         # client.stop()
         # time.sleep(1)

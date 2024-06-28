@@ -104,7 +104,7 @@ async def _setup_agent_server_async(
     pipe: int = None,
     local_mode: bool = True,
     max_pool_size: int = 8192,
-    max_timeout_seconds: int = 1800,
+    max_timeout_seconds: int = 7200,
     studio_url: str = None,
     custom_agents: list = None,
 ) -> None:
@@ -427,7 +427,7 @@ def as_server() -> None:
     parser.add_argument(
         "--max-timeout-seconds",
         type=int,
-        default=1800,
+        default=7200,
         help=(
             "max time for agent reply messages to be cached"
             "in the server. Note that expired messages will be deleted."
