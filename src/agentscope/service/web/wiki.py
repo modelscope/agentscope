@@ -5,7 +5,8 @@ including texts, categories, infotable, table,...
 """
 
 import re
-import requests
+
+# import requests
 from bs4 import BeautifulSoup
 
 from agentscope.service.service_response import (
@@ -45,11 +46,10 @@ def _check_entity_existence(entity: str) -> ServiceResponse:
             ServiceExecStatus.SUCCESS,
             {"entity": exact_match},
         )
-    else:
-        return ServiceResponse(
-            ServiceExecStatus.ERROR,
-            {"error": "Entity not found"},
-        )
+    return ServiceResponse(
+        ServiceExecStatus.ERROR,
+        {"error": "Entity not found"},
+    )
 
 
 def wiki_get_category_members(
@@ -96,7 +96,8 @@ def wiki_get_category_members(
             {
                 'status': <ServiceExecStatus.SUCCESS: 1>,
                 'content': [
-                {'pageid': 67911196, 'ns': 0, 'title': 'Bayesian learning mechanisms'},
+                {'pageid': 67911196, 'ns': 0,
+                'title': 'Bayesian learning mechanisms'},
                 {'pageid': 233488, 'ns': 0, 'title': 'Machine learning'},
                 ...]
 
@@ -133,8 +134,8 @@ def wiki_get_category_members(
 
     if len(members) > 0:
         return ServiceResponse(ServiceExecStatus.SUCCESS, members)
-    else:
-        return ServiceResponse(ServiceExecStatus.ERROR, members)
+
+    return ServiceResponse(ServiceExecStatus.ERROR, members)
 
 
 def wiki_get_infobox(
@@ -211,15 +212,14 @@ def wiki_get_infobox(
                 infobox_data[key] = val
 
         return ServiceResponse(ServiceExecStatus.SUCCESS, infobox_data)
-    else:
-        error_message = parse_data.get("error", {}).get(
-            "info",
-            "Unknown error occurred",
-        )
-        return ServiceResponse(
-            ServiceExecStatus.ERROR,
-            {"error": error_message},
-        )
+    error_message = parse_data.get("error", {}).get(
+        "info",
+        "Unknown error occurred",
+    )
+    return ServiceResponse(
+        ServiceExecStatus.ERROR,
+        {"error": error_message},
+    )
 
 
 def wiki_get_page_content_by_paragraph(
@@ -358,7 +358,7 @@ def wiki_get_all_wikipedia_tables(
         return ServiceResponse(ServiceExecStatus.ERROR, None)
 
     all_tables_data = []
-    for table_index, table in enumerate(tables):
+    for _, table in enumerate(tables):
         headers = [
             header.get_text(strip=True) for header in table.find_all("th")
         ]
@@ -451,8 +451,7 @@ def wiki_get_page_images_with_captions(
             "iiprop": "url|extmetadata",
             "format": "json",
         }
-        response = requests.get(url, params=params)
-        data = response.json()
+        data = requests_get(url, params=params)
         image_page = next(iter(data["query"]["pages"].values()))
         if "imageinfo" in image_page:
             image_info = image_page["imageinfo"][0]
