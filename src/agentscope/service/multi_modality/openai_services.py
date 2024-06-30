@@ -5,11 +5,17 @@ for more details.
 https://platform.openai.com/docs/overview
 """
 
+from io import BytesIO
 import os
+import re
+from urllib.parse import urlparse, unquote
 from typing import Literal, Optional, Union, Sequence
+import requests
+
+
 from openai import OpenAI
 from openai.types import ImagesResponse
-from openai._types import NotGiven
+from openai._types import NOT_GIVEN, NotGiven
 from agentscope.service.service_response import (
     ServiceResponse,
     ServiceExecStatus,
@@ -22,6 +28,27 @@ from agentscope.utils.tools import _download_file
 
 
 from agentscope.message import MessageBase
+
+
+def _url_to_filename(url: str) -> str:
+    """Clean the URL to remove special characters.
+    including /, \\, etc.
+    remove spaces and replace with _.
+    find the last part of the url
+    make sure the name is not too long. length <= 15
+    """
+    parsed = urlparse(unquote(url))
+    last_part = os.path.basename(parsed.path)
+    # If there's no path, use the last part of the netloc (domain)
+    if not last_part and parsed.netloc:
+        last_part = parsed.netloc.split(".")[-2]
+    last_part = os.path.splitext(last_part)[0]
+
+    cleaned = re.sub(r"[^\w\s-]", "", last_part)
+    cleaned = re.sub(r"\s+", "_", cleaned)
+    if len(cleaned) > 15:
+        return cleaned[:15]
+    return cleaned[:15]
 
 
 def _handle_openai_img_response(
@@ -39,14 +66,15 @@ def _handle_openai_img_response(
 
     images = raw_response["data"]
     urls = [_["url"] for _ in images]
-    if save_dir:
+    if save_dir is not None:
         os.makedirs(save_dir, exist_ok=True)
         urls_local = []
         for url in urls:
-            image_name = url.split("/")[-1]
+            image_name = _url_to_filename(url)
             image_path = os.path.abspath(
                 os.path.join(save_dir, image_name),
             )
+            image_path = image_path + ".png"
             _download_file(url, image_path)
             urls_local.append(image_path)
         return urls_local
@@ -54,11 +82,36 @@ def _handle_openai_img_response(
         return urls
 
 
+def _parse_url(url: str) -> BytesIO:
+    """
+    If url is a local file path, return a BytesIO of the file content.
+    If url is a web URL, fetch the content and return as BytesIO.
+    """
+    if url.startswith(("http://", "https://")):
+        response = requests.get(url)
+        response.raise_for_status()  # Raise an exception for HTTP errors
+        return BytesIO(response.content)
+    else:
+        if not os.path.exists(url):
+            raise FileNotFoundError(f"File not found: {url}")
+        with open(os.path.abspath(url), "rb") as file:
+            return BytesIO(file.read())
+
+
+def _audio_filename(text: str) -> str:
+    pattern = r"[^\w.,]+"
+    cleaned = re.sub(pattern, " ", text)
+    cleaned = re.sub(r"\s+", "_", cleaned)
+    if len(cleaned) > 15:
+        cleaned = cleaned[:15]
+    return cleaned
+
+
 def openai_text_to_image(
     prompt: str,
     api_key: str,
     n: int = 1,
-    model: Literal["dalle-e-2", "dalle-e-3"] = "dalle-e-2",
+    model: Literal["dall-e-2", "dall-e-3"] = "dall-e-2",
     size: Literal[
         "256x256",
         "512x512",
@@ -66,8 +119,8 @@ def openai_text_to_image(
         "1792x1024",
         "1024x1792",
     ] = "256x256",
-    quality: Literal["standard", "hdr"] = "standard",
-    style: Optional[Literal["vivid", "natural"]] = None,
+    quality: Literal["standard", "hd"] = "standard",
+    style: Literal["vivid", "natural"] = "vivid",
     save_dir: Optional[str] = None,
 ) -> ServiceResponse:
     """
@@ -81,14 +134,14 @@ def openai_text_to_image(
             The API key for the OpenAI API.
         n (`int`, defaults to `1`):
             The number of images to generate.
-        model (`Literal["dalle-e-2", "dalle-e-3"]`, defaults to `"dalle-e-2"`):
+        model (`Literal["dall-e-2", "dall-e-3"]`, defaults to `"dall-e-2"`):
             The model to use for image generation.
         size (`Literal["256x256", "512x512", "1024x1024", "1792x1024",
         "1024x1792"]`, defaults to `"256x256"`):
             The size of the generated image(s).
-        quality (`Literal["standard", "hdr"]`, defaults to `"standard"`):
+        quality (`Literal["standard", "hdr"]`, defaults to `"standard`):
             The quality of the generated images.
-        style (`Optional[Literal["vivid", "natural"]]`, defaults to `None`):
+        style (`Literal["vivid", "natural"]]`, defaults to `"vivid`):
             The style of the generated images.
         save_dir (`Optional[str]`, defaults to `None`):
             The directory to save the generated images. If not specified, will
@@ -132,13 +185,21 @@ def openai_text_to_image(
                 ServiceExecStatus.ERROR,
                 "Error: Failed to generate images",
             )
-        if save_dir:
+        if save_dir is not None:
+            if not os.path.isabs(save_dir):
+                cwd = os.getcwd()
+                save_dir = os.path.join(cwd, save_dir)
             os.makedirs(save_dir, exist_ok=True)
             urls_local = []
             for url in urls:
-                image_name = url.split("/")[-1]
+                image_name = _url_to_filename(url)
                 image_path = os.path.abspath(
                     os.path.join(save_dir, image_name),
+                )
+                image_path = (
+                    image_path
+                    if image_path.endswith(".png")
+                    else image_path + ".png"
                 )
                 _download_file(url, image_path)
                 urls_local.append(image_path)
@@ -160,9 +221,9 @@ def openai_text_to_image(
 
 def openai_edit_image(
     image_url: str,
-    mask_url: str,
     prompt: str,
     api_key: str,
+    mask_url: Optional[str] = None,
     n: int = 1,
     size: Literal[
         "256x256",
@@ -178,13 +239,13 @@ def openai_edit_image(
     Args:
         image_url (`str`):
             The file path or URL to the image that needs editing.
-        mask_url (`str`):
-            The file path or URL to the mask image that specifies the regions
-            to be edited.
         prompt (`str`):
             The text prompt describing the edits to be made to the image.
         api_key (`str`):
             The API key for the OpenAI API.
+        mask_url (`Optional[str]`, defaults to `None`):
+            The file path or URL to the mask image that specifies the regions
+            to be edited.
         n (`int`, defaults to `1`):
             The number of edited images to generate.
         size (`Literal["256x256", "512x512", "1024x1024"]`, defaults to
@@ -209,7 +270,7 @@ def openai_edit_image(
             mask_url = "/path/to/mask_image.png"
             prompt = "Add a sun to the sky"
             api_key = "YOUR_API_KEY"
-            print(openai_edit_image(image_url, mask_url, prompt, api_key))
+            print(openai_edit_image(image_url, prompt, api_key, mask_url))
 
         > {
         >     'status': 'SUCCESS',
@@ -217,21 +278,18 @@ def openai_edit_image(
         'EDITED_IMAGE_URL2']}
         > }
     """
-    os.environ["OPENAI_API_KEY"] = api_key
-    client = OpenAI()
+    client = OpenAI(api_key=api_key)
     # convert relative path to absolute path
-    image_url = os.path.abspath(image_url)
-    mask_url = os.path.abspath(mask_url)
-    with open(image_url, "rb") as img, open(mask_url, "rb") as mask:
+    image = _parse_url(image_url)
+    try:
         response = client.images.edit(
             model="dall-e-2",
-            image=img,
-            mask=mask,
+            image=image,
+            mask=_parse_url(mask_url) if mask_url else NOT_GIVEN,
             prompt=prompt,
             n=n,
             size=size,
         )
-    try:
         urls = _handle_openai_img_response(response, save_dir)
         return ServiceResponse(
             ServiceExecStatus.SUCCESS,
@@ -294,17 +352,15 @@ def openai_create_image_variation(
         >     'content': {'image_urls': ['VARIATION_URL1', 'VARIATION_URL2']}
         > }
     """
-    os.environ["OPENAI_API_KEY"] = api_key
-    client = OpenAI()
-    image_url = os.path.abspath(image_url)
-    with open(image_url, "rb") as img:
+    client = OpenAI(api_key=api_key)
+    image = _parse_url(image_url)
+    try:
         response = client.images.create_variation(
             model="dall-e-2",
-            image=img,
+            image=image,
             n=n,
             size=size,
         )
-    try:
         urls = _handle_openai_img_response(response, save_dir)
         return ServiceResponse(
             ServiceExecStatus.SUCCESS,
@@ -380,7 +436,7 @@ def openai_image_to_text(
 def openai_text_to_audio(
     text: str,
     api_key: str,
-    save_dir: str,
+    save_dir: str = "",
     model: Literal["tts-1", "tts-1-hd"] = "tts-1",
     voice: Literal[
         "alloy",
@@ -410,7 +466,7 @@ def openai_text_to_audio(
             The text to convert to audio.
         api_key (`str`):
             The API key for the OpenAI API.
-        save_dir (`str`):
+        save_dir (`str` defaults to `''`):
             The directory where the generated audio file will be saved.
         model (`Literal["tts-1", "tts-1-hd"]`, defaults to `"tts-1"`):
             The model to use for text-to-speech conversion.
@@ -445,10 +501,14 @@ def openai_text_to_audio(
         >     'content': {'audio_path': './audio_files/Hello,_welco.mp3'}
         > }
     """
-    os.environ["OPENAI_API_KEY"] = api_key
-    client = OpenAI()
-    save_name = text[:15] if len(text) > 15 else text
-    save_path = os.path.join(save_dir, f"{save_name}.{format}")
+    client = OpenAI(api_key=api_key)
+    save_name = _audio_filename(text)
+    if os.path.isabs(save_dir):
+        save_path = os.path.join(save_dir, f"{save_name}.{res_format}")
+    else:
+        cwd = os.getcwd()
+        save_dir = os.path.join(cwd, save_dir)
+        save_path = os.path.join(save_dir, f"{save_name}.{res_format}")
     try:
         response = client.audio.speech.create(
             model=model,
@@ -474,7 +534,7 @@ def openai_text_to_audio(
 def openai_audio_to_text(
     audio_file_url: str,
     api_key: str,
-    language: Union[str, NotGiven] = NotGiven(),
+    language: Union[str, NotGiven] = NOT_GIVEN,
     temperature: float = 0.2,
 ) -> ServiceResponse:
     """
@@ -514,13 +574,12 @@ def openai_audio_to_text(
         the audio file.'}
         > }
     """
-    os.environ["OPENAI_API_KEY"] = api_key
-    client = OpenAI()
+    client = OpenAI(api_key=api_key)
     audio_file_url = os.path.abspath(audio_file_url)
     with open(audio_file_url, "rb") as audio_file:
         try:
             transcription = client.audio.transcriptions.create(
-                model="whisper=1",
+                model="whisper-1",
                 file=audio_file,
                 language=language,
                 temperature=temperature,
