@@ -57,7 +57,6 @@ class TextToImageAgent(AgentBase):
             if self.memory and self.memory.size() > 0:
                 x = self.memory.get_memory()[-1]
             else:
-                # if no message find, just return None
                 return Msg(
                     self.name,
                     content="Please provide a text prompt to generate image.",
