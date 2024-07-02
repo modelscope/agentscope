@@ -254,7 +254,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
 
             def gen() -> ModelResponseGen:
                 text = ""
-                last_chunk = None
+                chunks = []
                 for chunk in response:
                     if (
                         len(chunk.choices) > 0
@@ -263,8 +263,9 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
                         delta = chunk.choices[0].delta.content
                         text += delta
                         yield ModelResponse(text=text, delta=delta, raw=chunk)
+                    chunks.append(chunk)
                 self._record_invocation_and_token_usage(
-                    last_chunk,
+                    chunks,
                     messages=messages,
                     **kwargs,
                 )
