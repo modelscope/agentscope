@@ -12,6 +12,8 @@ from ..utils.tools import _convert_to_str, _guess_type_by_extension
 try:
     import dashscope
     from dashscope.aigc.generation import GenerationResponse
+
+    GenerationResponseGen = Generator[GenerationResponse, None, None]
 except ImportError:
     dashscope = None
 
@@ -189,20 +191,20 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         )
 
         # step5: return model response
-        model_response = ModelResponse(raw=response, text="")
-        return self._post_process(model_response=model_response, **kwargs)
+        return self._post_process(response=response, **kwargs)
 
     def _record_invocation_and_token_usage(
         self,
         response: Union[
             GenerationResponse,
-            Generator[GenerationResponse, None, None],
+            GenerationResponseGen,
         ],
         messages: list,
         **kwargs: Any,
-    ) -> Union[GenerationResponse, Generator[GenerationResponse, None, None]]:
+    ) -> Union[GenerationResponse, GenerationResponseGen]:
         # Record the api invocation if needed,
         # token usage and update monitor accordingly
+
         try:
             self.update_monitor(
                 call_counter=1,
@@ -221,33 +223,36 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             )
             return response
         except AttributeError:
-            last_chunk = None
-            for chunk in response:
-                last_chunk = chunk
-                yield chunk
-            self.update_monitor(
-                call_counter=1,
-                prompt_tokens=last_chunk.usage.get("input_tokens", 0),
-                completion_tokens=last_chunk.usage.get("output_tokens", 0),
-                total_tokens=last_chunk.usage.get("input_tokens", 0)
-                + last_chunk.usage.get("output_tokens", 0),
-            )
-            self._save_model_invocation(
-                arguments={
-                    "model": self.model_name,
-                    "messages": messages,
-                    **kwargs,
-                },
-                response=last_chunk,
-            )
+
+            def gen() -> GenerationResponseGen:
+                last_chunk = None
+                for chunk in response:
+                    last_chunk = chunk
+                    yield chunk
+                self.update_monitor(
+                    call_counter=1,
+                    prompt_tokens=last_chunk.usage.get("input_tokens", 0),
+                    completion_tokens=last_chunk.usage.get("output_tokens", 0),
+                    total_tokens=last_chunk.usage.get("input_tokens", 0)
+                    + last_chunk.usage.get("output_tokens", 0),
+                )
+                self._save_model_invocation(
+                    arguments={
+                        "model": self.model_name,
+                        "messages": messages,
+                        **kwargs,
+                    },
+                    response=last_chunk,
+                )
+
             # avoid pylint warning
-            return None
+            return gen()
 
     def _parse_response(
         self,
-        response: ModelResponse,
+        response: GenerationResponse,
         **kwargs: Any,
-    ) -> ModelResponse:
+    ) -> str:
         # Extract the text content from a model response.
         result_format = kwargs.get("result_format", "message")
         if response.status_code != HTTPStatus.OK:
@@ -259,39 +264,35 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             )
 
             raise RuntimeError(error_msg)
-
-        model_response = ModelResponse(
-            text=response.output["choices"][0]["message"]["content"]
+        text = (
+            response.output["choices"][0]["message"]["content"]
             if result_format == "message"
-            else response.output.text,
-            raw=response,
+            else response.output.text
         )
-
-        return model_response
+        return text
 
     def _post_process(
         self,
-        model_response: ModelResponse,
+        response: Union[GenerationResponse, GenerationResponseGen],
         **kwargs: Any,
     ) -> Union[ModelResponse, ModelResponseGen]:
         stream = kwargs.get("stream", False)
-        response = model_response.raw
         if stream:
 
             def gen() -> ModelResponseGen:
+                text = ""
                 for chunk in response:
-                    delta = self._parse_response(chunk, **kwargs).text
-                    model_response.text += delta
-                    model_response.delta = delta
-                    yield model_response
+                    delta = self._parse_response(chunk, **kwargs)
+                    text += delta
+                    yield ModelResponse(text=text, delta=delta, raw=chunk)
 
             return gen()
         else:
-            model_response.text = self._parse_response(
+            text = self._parse_response(
                 response,
                 **kwargs,
-            ).text
-            return model_response
+            )
+            return ModelResponse(text=text, raw=response)
 
     def format(
         self,
