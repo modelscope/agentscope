@@ -243,6 +243,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         messages: list,
         **kwargs: Any,
     ) -> Union[ModelResponse, ModelResponseGen]:
+        # Process response and return model response
         stream = kwargs.get("stream", False)
         if stream:
 
