@@ -13,6 +13,7 @@ from ..utils.tools import _convert_to_str, _to_openai_image_url
 try:
     import openai
     from openai import ChatCompletion
+    ChatCompletionGen = Generator[ChatCompletion, None, None]
 except ImportError:
     openai = None
 
@@ -217,11 +218,11 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
         self,
         response: Union[
             ChatCompletion,
-            Generator[ChatCompletion, None, None],
+            ChatCompletionGen,
         ],
         messages: list,
         **kwargs: Any,
-    ) -> Union[ChatCompletion, Generator[ChatCompletion, None, None]]:
+    ) -> Union[ChatCompletion, ChatCompletionGen]:
         # Record the api invocation if needed,
         # token usage and update monitor accordingly
         try:
@@ -241,11 +242,12 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
         except AttributeError:
             valid_usage = {}
             response_list = []
-            for chunk in response:
-                if hasattr(chunk, "usage") and chunk.usage is not None:
-                    valid_usage = chunk.usage.model_dump()
-                response_list.append(chunk.model_dump())
-                yield chunk
+            def gen() -> ChatCompletionGen:
+                for chunk in response:
+                    if hasattr(chunk, "usage") and chunk.usage is not None:
+                        valid_usage = chunk.usage.model_dump()
+                    response_list.append(chunk.model_dump())
+                    yield chunk
             self.update_monitor(
                 call_counter=1,
                 **valid_usage,
@@ -258,8 +260,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
                 },
                 response=response_list,
             )
-            # avoid pylint warning
-            return None
+            return gen()
 
     def _post_process(
         self,
