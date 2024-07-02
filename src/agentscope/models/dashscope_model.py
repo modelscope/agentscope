@@ -215,16 +215,14 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             )
             return response
         except AttributeError:
-            last_chunk = None
             for chunk in response:
-                last_chunk = chunk
                 yield chunk
             self.update_monitor(
                 call_counter=1,
-                prompt_tokens=last_chunk.usage.get("input_tokens", 0),
-                completion_tokens=last_chunk.usage.get("output_tokens", 0),
-                total_tokens=last_chunk.usage.get("input_tokens", 0)
-                + last_chunk.usage.get("output_tokens", 0),
+                prompt_tokens=chunk.usage.get("input_tokens", 0),
+                completion_tokens=chunk.usage.get("output_tokens", 0),
+                total_tokens=chunk.usage.get("input_tokens", 0)
+                + chunk.usage.get("output_tokens", 0),
             )
             # avoid pylint warning
             return None
