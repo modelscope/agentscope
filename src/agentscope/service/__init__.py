@@ -31,6 +31,15 @@ from .multi_modality.dashscope_services import (
     dashscope_text_to_image,
     dashscope_text_to_audio,
 )
+from .multi_modality.openai_services import (
+    openai_audio_to_text,
+    openai_text_to_audio,
+    openai_text_to_image,
+    openai_image_to_text,
+    openai_edit_image,
+    openai_create_image_variation,
+)
+
 from .service_response import ServiceResponse
 from .service_toolkit import ServiceToolkit
 from .service_toolkit import ServiceFactory
@@ -86,6 +95,12 @@ __all__ = [
     "dashscope_image_to_text",
     "dashscope_text_to_image",
     "dashscope_text_to_audio",
+    "openai_audio_to_text",
+    "openai_text_to_audio",
+    "openai_text_to_image",
+    "openai_image_to_text",
+    "openai_edit_image",
+    "openai_create_image_variation",
     # to be deprecated
     "ServiceFactory",
 ]
