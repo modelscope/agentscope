@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """An agent that convert text to image."""
 
-from typing import Optional
+from typing import Optional, Union, Sequence
+
+from loguru import logger
 
 from .agent import AgentBase
 from ..message import Msg
@@ -42,7 +44,12 @@ class TextToImageAgent(AgentBase):
             memory_config=memory_config,
         )
 
-    def reply(self, x: dict = None) -> dict:
+        logger.warning(
+            "The `TextToImageAgent` will be deprecated in v0.0.6, "
+            "please use `text_to_image` service and `ReActAgent` instead.",
+        )
+
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         if self.memory:
             self.memory.add(x)
         if x is None:
@@ -50,13 +57,16 @@ class TextToImageAgent(AgentBase):
             if self.memory and self.memory.size() > 0:
                 x = self.memory.get_memory()[-1]
             else:
-                # if no message find, just return None
-                return {}
+                return Msg(
+                    self.name,
+                    content="Please provide a text prompt to generate image.",
+                    role="assistant",
+                )
         image_urls = self.model(x.content).image_urls
         # TODO: optimize the construction of content
         msg = Msg(
             self.name,
-            content="This is the generated image ",
+            content="This is the generated image",
             role="assistant",
             url=image_urls,
         )
