@@ -6,7 +6,7 @@ from http import HTTPStatus
 from typing import Any, Union, List, Sequence
 from loguru import logger
 
-from ..message import MessageBase
+from ..message import Msg
 from ..utils.tools import _convert_to_str, _guess_type_by_extension
 
 try:
@@ -66,7 +66,7 @@ class DashScopeWrapperBase(ModelWrapperBase, ABC):
 
     def format(
         self,
-        *args: Union[MessageBase, Sequence[MessageBase]],
+        *args: Union[Msg, Sequence[Msg]],
     ) -> Union[List[dict], str]:
         raise RuntimeError(
             f"Model Wrapper [{type(self).__name__}] doesn't "
@@ -213,7 +213,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
 
     def format(
         self,
-        *args: Union[MessageBase, Sequence[MessageBase]],
+        *args: Union[Msg, Sequence[Msg]],
     ) -> List:
         """Format the messages for DashScope Chat API.
 
@@ -254,7 +254,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
 
 
         Args:
-            args (`Union[MessageBase, Sequence[MessageBase]]`):
+            args (`Union[Msg, Sequence[Msg]]`):
                 The input arguments to be formatted, where each argument
                 should be a `Msg` object, or a list of `Msg` objects.
                 In distribution, placeholder is also allowed.
@@ -269,11 +269,9 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         for _ in args:
             if _ is None:
                 continue
-            if isinstance(_, MessageBase):
+            if isinstance(_, Msg):
                 input_msgs.append(_)
-            elif isinstance(_, list) and all(
-                isinstance(__, MessageBase) for __ in _
-            ):
+            elif isinstance(_, list) and all(isinstance(__, Msg) for __ in _):
                 input_msgs.extend(_)
             else:
                 raise TypeError(
@@ -655,7 +653,7 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
 
     def format(
         self,
-        *args: Union[MessageBase, Sequence[MessageBase]],
+        *args: Union[Msg, Sequence[Msg]],
     ) -> List:
         """Format the messages for DashScope Multimodal API.
 
@@ -737,7 +735,7 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
             "file://", which will be attached in this format function.
 
         Args:
-            args (`Union[MessageBase, Sequence[MessageBase]]`):
+            args (`Union[Msg, Sequence[Msg]]`):
                 The input arguments to be formatted, where each argument
                 should be a `Msg` object, or a list of `Msg` objects.
                 In distribution, placeholder is also allowed.
@@ -752,11 +750,9 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
         for _ in args:
             if _ is None:
                 continue
-            if isinstance(_, MessageBase):
+            if isinstance(_, Msg):
                 input_msgs.append(_)
-            elif isinstance(_, list) and all(
-                isinstance(__, MessageBase) for __ in _
-            ):
+            elif isinstance(_, list) and all(isinstance(__, Msg) for __ in _):
                 input_msgs.extend(_)
             else:
                 raise TypeError(

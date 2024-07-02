@@ -6,7 +6,7 @@ from typing import Union, Any, List, Sequence
 from loguru import logger
 
 from .model import ModelWrapperBase, ModelResponse
-from ..message import MessageBase
+from ..message import Msg
 from ..utils.tools import _convert_to_str
 
 try:
@@ -71,7 +71,7 @@ class ZhipuAIWrapperBase(ModelWrapperBase, ABC):
 
     def format(
         self,
-        *args: Union[MessageBase, Sequence[MessageBase]],
+        *args: Union[Msg, Sequence[Msg]],
     ) -> Union[List[dict], str]:
         raise RuntimeError(
             f"Model Wrapper [{type(self).__name__}] doesn't "
@@ -186,7 +186,7 @@ class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
 
     def format(
         self,
-        *args: Union[MessageBase, Sequence[MessageBase]],
+        *args: Union[Msg, Sequence[Msg]],
     ) -> List[dict]:
         """Format the input string and dictionary into the format that
         ZhipuAI Chat API required.
@@ -198,7 +198,7 @@ class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
         engineering strategies.
 
         Args:
-            args (`Union[MessageBase, Sequence[MessageBase]]`):
+            args (`Union[Msg, Sequence[Msg]]`):
                 The input arguments to be formatted, where each argument
                 should be a `Msg` object, or a list of `Msg` objects.
                 In distribution, placeholder is also allowed.
@@ -214,11 +214,9 @@ class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
         for _ in args:
             if _ is None:
                 continue
-            if isinstance(_, MessageBase):
+            if isinstance(_, Msg):
                 input_msgs.append(_)
-            elif isinstance(_, list) and all(
-                isinstance(__, MessageBase) for __ in _
-            ):
+            elif isinstance(_, list) and all(isinstance(__, Msg) for __ in _):
                 input_msgs.extend(_)
             else:
                 raise TypeError(

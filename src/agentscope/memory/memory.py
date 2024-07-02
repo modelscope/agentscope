@@ -12,7 +12,7 @@ from typing import Optional
 from typing import Union
 from typing import Callable
 
-from ..message import MessageBase
+from ..message import Msg
 
 
 class MemoryBase(ABC):
@@ -62,14 +62,13 @@ class MemoryBase(ABC):
     @abstractmethod
     def add(
         self,
-        memories: Union[Sequence[dict], dict, None],
+        memories: Union[Sequence[Msg], Msg, None],
     ) -> None:
         """
         Adding new memory fragment, depending on how the memory are stored
         Args:
-            memories (Union[Sequence[dict], dict, None]):
-                Memories to be added. If the memory is not in MessageBase,
-                it will first be converted into a message type.
+            memories (Union[Sequence[Msg], Msg, None]):
+                Memories to be added.
         """
 
     @abstractmethod
@@ -85,14 +84,14 @@ class MemoryBase(ABC):
     @abstractmethod
     def load(
         self,
-        memories: Union[str, list[MessageBase], MessageBase],
+        memories: Union[str, list[Msg], Msg],
         overwrite: bool = False,
     ) -> None:
         """
         Load memory, depending on how the memory are passed, design to load
         from both file or dict
         Args:
-            memories (Union[str, list[MessageBase], MessageBase]):
+            memories (Union[str, list[Msg], Msg]):
                 memories to be loaded.
                 If it is in str type, it will be first checked if it is a
                 file; otherwise it will be deserialized as messages.
