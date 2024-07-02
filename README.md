@@ -346,12 +346,17 @@ cite [our paper](https://arxiv.org/abs/2402.14034):
 @article{agentscope,
   author  = {Dawei Gao and
              Zitao Li and
-             Weirui Kuang and
              Xuchen Pan and
-             Daoyuan Chen and
+             Weirui Kuang and
              Zhijian Ma and
              Bingchen Qian and
+             Fei Wei and
+             Wenhao Zhang and
+             Yuexiang Xie and
+             Daoyuan Chen and
              Liuyi Yao and
+             Hongyi Peng and
+             Zeyu Zhang and
              Lin Zhu and
              Chen Cheng and
              Hongzhu Shi and
