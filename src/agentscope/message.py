@@ -306,7 +306,7 @@ class PlaceholderMessage(Msg):
             status = msg.pop("__status", "OK")
             if status == "ERROR":
                 raise RuntimeError(msg.content)
-            self.update(dict(msg))
+            self.update(msg)
             # the actual value has been updated, not a placeholder anymore
             self._is_placeholder = False
         return self
