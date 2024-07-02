@@ -22,7 +22,8 @@ from agentscope.browser.web_browser import WebBrowser
 from agentscope.file_manager import file_manager
 
 
-DEFAULT_SYSTEM_PROMPT = """Imagine you are a robot browsing the web, just like humans. Now you need to complete a task. In each iteration, you will receive an Observation that includes a screenshot of a webpage and some texts. This screenshot will feature Numerical Labels placed in the TOP LEFT corner of each Web Element.
+DEFAULT_SYSTEM_PROMPT = """
+Imagine you are a robot browsing the web, just like humans. Now you need to complete a task. In each iteration, you will receive an Observation that includes a screenshot of a webpage and some texts. This screenshot will feature Numerical Labels placed in the TOP LEFT corner of each Web Element.
 Carefully analyze the visual information to identify the Numerical Label corresponding to the Web Element that requires interaction, then follow the guidelines and choose one of the following actions:
 1. Click a Web Element.
 2. Delete existing content in a textbox and then type content. If you use TypeSubmit, it will then press enter after you type(useful when performing google search, etc.).
@@ -206,7 +207,9 @@ class WebVoyagerAgent(AgentBase):
         self.download_dir = download_dir
         self.max_iter = max_iter
         self.max_attached_imgs = max_attached_imgs
-        self.default_homepage = default_homepage
+        # self.default_homepage = default_homepage
+        self.default_homepage = "https://google.com"
+        self.messages = []
 
     # TODO change typing from dict to MSG
     def reply(self, x: dict = None) -> dict:
@@ -222,7 +225,25 @@ class WebVoyagerAgent(AgentBase):
             response to the user's input.
         """
         # init task
-        self.task_question = x.content
+        if isinstance(x.content, str):
+            self.task_question = x.content
+        else:
+            self.task_question = x.content["question"]
+            # self.task_dir = file_manager.dir_file
+            self.task_dir = x.content["dir"]
+
+            import os
+
+        def ensure_directory_exists(path):
+            if not os.path.exists(path):
+                os.makedirs(path)
+                print(f"Directory created: {path}")
+            else:
+                print(f"Directory already exists: {path}")
+
+        ensure_directory_exists(self.task_dir)
+
+        self.task_answer = ""
         # TODO
 
         self.task_web = self.default_homepage
@@ -230,7 +251,6 @@ class WebVoyagerAgent(AgentBase):
         # self.task_dir = (
         #     "/Users/wenhao/Disk/Codes/mydev/agentscope/tmp_files/task1"
         # )
-        self.task_dir = file_manager.dir_file
 
         # TODO visit task['web'] page
         self.browser.visit_page(self.task_web)
@@ -283,6 +303,7 @@ class WebVoyagerAgent(AgentBase):
                     self.task_dir,
                     "screenshot{}.png".format(it),
                 )
+                self.speak(f"saving image to {img_path}")
                 file_manager.save_image(screenshot_bytes, img_path)
                 # encode image
                 b64_img = encode_image(img_path)
@@ -377,7 +398,8 @@ class WebVoyagerAgent(AgentBase):
                     self.browser.type(
                         type_ele_number,
                         type_content,
-                        submit=(action_key == "typesubmit"),
+                        # submit=(action_key == "typesubmit"),
+                        submit=True,
                     )
 
                     if "wolfram" in self.task_web:
@@ -410,6 +432,7 @@ class WebVoyagerAgent(AgentBase):
 
                 elif action_key == "answer":
                     logger.info(info["content"])
+                    self.task_answer = info["content"]
                     logger.info("finish!!")
                     break
 
@@ -427,11 +450,11 @@ class WebVoyagerAgent(AgentBase):
 
         # TODO save messages to trajectory
         # print_message(messages, task_dir)
-        self.browser.close()
+        # self.browser.close()
         # TODO show token cost
         # logger.info(f'Total cost: {accumulate_prompt_token / 1000 * 0.01 + accumulate_completion_token / 1000 * 0.03}')
-
-        return {}
+        self.messages = messages
+        return {"answer": self.task_answer}
 
     def extract_action(self, text: str):
         patterns = {
@@ -451,11 +474,11 @@ class WebVoyagerAgent(AgentBase):
                 if key in ["click", "wait", "goback", "google"]:
                     # no content
                     return key, match.groups()
-                elif key in ["type", "typesubmit", "scroll", "answer"]:
+                elif key in ["type", "typesubmit", "scroll"]:
                     return key, {
                         "number": match.group(1),
                         "content": match.group(2),
                     }
                 else:
-                    return {"content": match.group(1)}
+                    return key, {"content": match.group(1)}
         return None, None

@@ -24,8 +24,8 @@ class WebBrowser:
         self,
         headless: bool = False,
         timeout: int = 60000,
-        default_width=1280,
-        default_height=1080,
+        default_width = 1280,
+        default_height = 1080,
     ) -> None:
         self.headless = headless
         self.current_step = 0
@@ -167,14 +167,13 @@ class WebBrowser:
 
     def prevent_space(self) -> None:
         try:
-            self.page.evaluate(
-                """
+            self.page.evaluate("""
                 window.onkeydown = function(e) {
                     if(e.keyCode == 32 && e.target.type != 'text' && e.target.type != 'textarea') {
                         e.preventDefault();
                     }
                 };
-            """,
+            """# noqa
             )
             # do we need sleep here?
             time.sleep(5)
