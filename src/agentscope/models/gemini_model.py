@@ -7,14 +7,18 @@ from typing import Sequence, Union, Any, List
 
 from loguru import logger
 
-from agentscope.message import Msg, MessageBase
+from agentscope.message import Msg
 from agentscope.models import ModelWrapperBase, ModelResponse
 from agentscope.utils.tools import _convert_to_str
 
 try:
     import google.generativeai as genai
+
+    # This package will be installed when the google-generativeai is installed
+    import google.ai.generativelanguage as glm
 except ImportError:
     genai = None
+    glm = None
 
 
 class GeminiWrapperBase(ModelWrapperBase, ABC):
@@ -41,6 +45,13 @@ class GeminiWrapperBase(ModelWrapperBase, ABC):
                 loaded from environment variable.
         """
         super().__init__(config_name=config_name)
+
+        # Test if the required package is installed
+        if genai is None:
+            raise ImportError(
+                "The google-generativeai package is not installed, "
+                "please install it first.",
+            )
 
         # Load the api_key from argument or environment variable
         api_key = api_key or os.environ.get("GOOGLE_API_KEY")
@@ -149,7 +160,50 @@ class GeminiChatWrapper(GeminiWrapperBase):
             **kwargs,
         )
 
-        # step3: record the api invocation if needed
+        # step3: Check for candidates and handle accordingly
+        if (
+            not response.candidates[0].content
+            or not response.candidates[0].content.parts
+            or not response.candidates[0].content.parts[0].text
+        ):
+            # If we cannot get the response text from the model
+            finish_reason = response.candidates[0].finish_reason
+            reasons = glm.Candidate.FinishReason
+
+            if finish_reason == reasons.STOP:
+                error_info = (
+                    "Natural stop point of the model or provided stop "
+                    "sequence."
+                )
+            elif finish_reason == reasons.MAX_TOKENS:
+                error_info = (
+                    "The maximum number of tokens as specified in the request "
+                    "was reached."
+                )
+            elif finish_reason == reasons.SAFETY:
+                error_info = (
+                    "The candidate content was flagged for safety reasons."
+                )
+            elif finish_reason == reasons.RECITATION:
+                error_info = (
+                    "The candidate content was flagged for recitation reasons."
+                )
+            elif finish_reason in [
+                reasons.FINISH_REASON_UNSPECIFIED,
+                reasons.OTHER,
+            ]:
+                error_info = "Unknown error."
+            else:
+                error_info = "No information provided from Gemini API."
+
+            raise ValueError(
+                "The Google Gemini API failed to generate text response with "
+                f"the following finish reason: {error_info}\n"
+                f"YOUR INPUT: {contents}\n"
+                f"RAW RESPONSE FROM GEMINI API: {response}\n",
+            )
+
+        # step4: record the api invocation if needed
         self._save_model_invocation(
             arguments={
                 "contents": contents,
@@ -160,9 +214,6 @@ class GeminiChatWrapper(GeminiWrapperBase):
         )
 
         # step5: update monitor accordingly
-        # TODO: Up to 2024/03/11, the response from Gemini doesn't contain
-        #  the detailed information about cost. Here we simply count
-        #  the tokens manually.
         token_prompt = self.model.count_tokens(contents).total_tokens
         token_response = self.model.count_tokens(response.text).total_tokens
         self.update_monitor(
@@ -199,7 +250,7 @@ class GeminiChatWrapper(GeminiWrapperBase):
 
     def format(
         self,
-        *args: Union[MessageBase, Sequence[MessageBase]],
+        *args: Union[Msg, Sequence[Msg]],
     ) -> List[dict]:
         """This function provide a basic prompting strategy for Gemini Chat
         API in multi-party conversation, which combines all input into a
@@ -228,7 +279,7 @@ class GeminiChatWrapper(GeminiWrapperBase):
         https://github.com/agentscope/agentscope!
 
         Args:
-            args (`Union[MessageBase, Sequence[MessageBase]]`):
+            args (`Union[Msg, Sequence[Msg]]`):
                 The input arguments to be formatted, where each argument
                 should be a `Msg` object, or a list of `Msg` objects.
                 In distribution, placeholder is also allowed.
@@ -241,11 +292,9 @@ class GeminiChatWrapper(GeminiWrapperBase):
         for _ in args:
             if _ is None:
                 continue
-            if isinstance(_, MessageBase):
+            if isinstance(_, Msg):
                 input_msgs.append(_)
-            elif isinstance(_, list) and all(
-                isinstance(__, MessageBase) for __ in _
-            ):
+            elif isinstance(_, list) and all(isinstance(__, Msg) for __ in _):
                 input_msgs.extend(_)
             else:
                 raise TypeError(

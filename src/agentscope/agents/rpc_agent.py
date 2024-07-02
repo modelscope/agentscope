@@ -6,9 +6,11 @@ from agentscope.agents.agent import AgentBase
 from agentscope.message import (
     PlaceholderMessage,
     serialize,
+    Msg,
 )
 from agentscope.rpc import RpcAgentClient
 from agentscope.server.launcher import RpcAgentServerLauncher
+from agentscope.studio._client import _studio_client
 
 
 class RpcAgent(AgentBase):
@@ -70,6 +72,9 @@ class RpcAgent(AgentBase):
         launch_server = port is None
         if launch_server:
             self.host = "localhost"
+            studio_url = None
+            if _studio_client.active:
+                studio_url = _studio_client.studio_url
             self.server_launcher = RpcAgentServerLauncher(
                 host=self.host,
                 port=port,
@@ -77,6 +82,7 @@ class RpcAgent(AgentBase):
                 max_timeout_seconds=max_timeout_seconds,
                 local_mode=local_mode,
                 custom_agents=[agent_class],
+                studio_url=studio_url,
             )
             if not lazy_launch:
                 self._launch_server()
@@ -100,7 +106,7 @@ class RpcAgent(AgentBase):
         )
         self.client.create_agent(self.agent_configs)
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         if self.client is None:
             self._launch_server()
         return PlaceholderMessage(

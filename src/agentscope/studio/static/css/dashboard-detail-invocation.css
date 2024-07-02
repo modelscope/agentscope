@@ -1,0 +1,44 @@
+#invocation-body {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    height: 100%;
+    width: 100%;
+}
+
+#invocation-list {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 350px;
+    box-sizing: border-box;
+    border: 0;
+    background-color: #ffffff;
+}
+
+#invocation-content {
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 350px);
+    height: 100%;
+    box-sizing: border-box;
+    border-left: 1px solid var(--border-color);
+}
+
+#invocation-content .monaco-editor {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    flex-grow: 1;
+    min-width: 100%;
+}
+
+.content-placeholder {
+    display: flex;
+    color: var(--main-color-light-light);
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}

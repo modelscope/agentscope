@@ -1,0 +1,222 @@
+:root {
+    --navigation-bar-background-color: #ffffff;
+    --logo-font-color: #000000;
+    --tab-font-color: #000000;
+
+    --navigation-bar-width: 240px;
+    --content-width: calc(100% - var(--navigation-bar-width));
+
+    /*To ensure the collapsed navigation bar fit the icon*/
+    --navigation-bar-item-icon-length: var(--tab-btn-icon-length);
+    --navigation-bar-item-icon-margin: 10px;
+    --navigation-bar-item-padding: 10px;
+    --navigation-bar-width-collapsed: calc(var(--navigation-bar-item-icon-length) + 2 * var(--navigation-bar-item-icon-margin) + 2 * var(--navigation-bar-item-padding));
+    --navigation-bar-item-height: calc(var(--navigation-bar-item-icon-length) + 2 * var(--navigation-bar-item-icon-margin))
+}
+
+html {
+    height: 100%; /* Fill the entire screen height */
+    width: 100%; /* Fill the entire screen width */
+    margin: 0; /* Eliminate default html margin */
+    padding: 0;
+}
+
+body {
+    display: flex; /* Allows body to be a flex container */
+    height: 100%; /* Fill the entire screen height */
+    width: 100%; /* Fill the entire screen width */
+    margin: 0; /* Eliminate default body margin */
+    flex-direction: row;
+    padding: 0;
+    background: var(--body-bg);
+    font-family: source-sans, sans-serif;
+    box-sizing: border-box;
+}
+
+#workstation-iframe {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+#navigation-bar {
+    display: flex;
+    flex-direction: column;
+    width: var(--navigation-bar-width);
+    height: 100%;
+    justify-content: space-between;
+    align-items: center;
+    padding: 50px 0 50px 0;
+    box-sizing: border-box;
+    background-color: var(--navigation-bar-background-color);
+    border-right: 1px solid var(--border-color);
+
+    /*Animation*/
+    transition: width 0.5s;
+}
+
+#navigation-bar.collapsed {
+    width: var(--navigation-bar-width-collapsed);
+}
+
+.navigation-bar-item-label {
+    display: flex;
+    white-space: nowrap;
+}
+
+#navigation-bar.collapsed .navigation-bar-item-label {
+    display: none;
+}
+
+#content {
+    display: flex;
+    box-sizing: border-box;
+    width: var(--content-width);
+    height: 100%;
+    flex-grow: 1;
+}
+
+#guide {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 50px
+}
+
+.guide-block {
+    display: flex;
+    flex-direction: column;
+    height: 150px;
+    width: 500px;
+    min-width: 200px;
+    background-color: var(--main-color);
+    border-radius: 10px;
+    justify-content: flex-end;
+    padding: 25px;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+/*when guide-block and right are all in class*/
+.guide-block.left {
+    margin-right: 10px;
+}
+
+.guide-block.right {
+    margin-left: 10px;
+}
+
+.guide-entry {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+    height: fit-content;
+    margin: 25px 0;
+}
+
+.empty.guide-block {
+    background-color: #ffffff;
+}
+
+.guide-block-title {
+    display: flex;
+    height: fit-content;
+    width: 100%;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.guide-block-detail {
+    display: flex;
+    height: fit-content;
+    width: 100%;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 15px;
+}
+
+#navigation-bar-logo {
+    font-family: 'krypton', sans-serif;
+    font-size: 20px;
+    color: var(--logo-font-color);
+    white-space: nowrap;
+}
+
+#navigation-bar.collapsed .navigation-bar-logo-text {
+    display: none;
+}
+
+.navigation-bar-items {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1; /* 使得 .navigation-bar-items 占据可用空间 */
+    width: 100%;
+    flex-direction: column;
+
+    padding: var(--navigation-bar-item-padding);
+    box-sizing: border-box;
+}
+
+.navigation-bar-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: var(--navigation-bar-background-color);
+    width: 100%;
+    height: var(--navigation-bar-item-height);
+    border-radius: 10px;
+    color: var(--tab-font-color);
+    box-sizing: border-box;
+    margin: 5px 0;
+    cursor: pointer;
+}
+
+.navigation-bar-item:hover {
+    background-color: var(--main-color-light);
+    fill: var(--base-color);
+    color: var(--base-color);
+}
+
+.navigation-bar-item:active {
+    background-color: var(--main-color-dark);
+    fill: var(--base-color);
+    color: var(--base-color);
+}
+
+.navigation-bar-item.selected {
+    background-color: var(--main-color);
+    fill: var(--base-color);
+    color: var(--base-color);
+}
+
+.navigation-bar-item-icon {
+    display: flex;
+    width: var(--navigation-bar-item-icon-length);
+    height: var(--navigation-bar-item-icon-length);
+    margin: 0 var(--navigation-bar-item-icon-margin);
+    min-height: var(--navigation-bar-item-icon-length);
+    min-width: var(--navigation-bar-item-icon-length);
+}
+
+.navigation-bar-hr {
+    display: flex;
+    height: 1px;
+    background-color: var(--border-color);
+    border: none;
+    margin: 10px 0;
+}
+
+.coming-soon-hint {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    color: var(--main-color-light);
+}

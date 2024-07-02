@@ -1,0 +1,82 @@
+:root {
+    --detail-sidebar-padding-vertical: 5px;
+    --detail-content-width: calc(100% - var(--page-sidebar-width));
+}
+
+#detail-body {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+}
+
+#detail-sidebar {
+    display: flex;
+    box-sizing: border-box;
+    height: 100%;
+    flex-direction: column;
+    width: var(--page-sidebar-width);
+    background-color: #ffffff;
+
+    border-right-color: var(--border-color);
+    border-right-width: 1px;
+    border-right-style: solid;
+    padding: var(--detail-sidebar-padding-vertical) 0;
+}
+
+.detail-sidebar-tabs {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    padding: 45px 10px;
+    box-sizing: border-box;
+}
+
+.detail-sidebar-tab {
+    display: flex;
+    flex-direction: row;
+    height: var(--navigation-bar-item-height);
+    width: 100%;
+    box-sizing: border-box;
+    align-items: center;
+    border-radius: 10px;
+    padding-left: 20px;
+    margin: 5px 0;
+    cursor: pointer;
+}
+
+.detail-sidebar-tab:hover {
+    background-color: var(--main-color-light);
+    fill: var(--base-color);
+    color: var(--base-color);
+}
+
+.detail-sidebar-tab:active {
+    background-color: var(--main-color-dark);
+    fill: var(--base-color);
+    color: var(--base-color);
+}
+
+.detail-sidebar-tab.selected {
+    background-color: var(--main-color);
+    fill: var(--base-color);
+    color: var(--base-color);
+}
+
+.detail-sidebar-tab-svg {
+    display: flex;
+    width: var(--tab-btn-icon-length);
+    height: var(--tab-btn-icon-length);
+    margin-right: 10px;
+}
+
+#detail-content {
+    display: flex;
+    background-color: #ffffff;
+    flex-direction: row;
+    height: 100%;
+    width: var(--detail-content-width);
+}
+
+

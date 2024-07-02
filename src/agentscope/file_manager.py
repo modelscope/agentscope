@@ -2,12 +2,12 @@
 """Manage the file system for saving files, code and logs."""
 import json
 import os
-from typing import Any, Union, Optional
-
+from typing import Any, Union, Optional, List, Literal
+from pathlib import Path
 import numpy as np
 
 from agentscope._runtime import _runtime
-from agentscope.utils.tools import _download_file, _get_timestamp
+from agentscope.utils.tools import _download_file, _get_timestamp, _hash_string
 from agentscope.utils.tools import _generate_random_code
 from agentscope.constants import (
     _DEFAULT_DIR,
@@ -20,13 +20,40 @@ from agentscope.constants import (
 )
 
 
+def _get_text_embedding_record_hash(
+    text: str,
+    embedding_model: Optional[Union[str, dict]],
+    hash_method: Literal["sha256", "md5", "sha1"] = "sha256",
+) -> str:
+    """Get the hash of the text embedding record."""
+    original_data_hash = _hash_string(text, hash_method)
+
+    if isinstance(embedding_model, dict):
+        # Format the dict to avoid duplicate keys
+        embedding_model = json.dumps(embedding_model, sort_keys=True)
+    embedding_model_hash = _hash_string(embedding_model, hash_method)
+
+    # Calculate the embedding id by hashing the hash codes of the
+    # original data and the embedding model
+    record_hash = _hash_string(
+        original_data_hash + embedding_model_hash,
+        hash_method,
+    )
+
+    return record_hash
+
+
 class _FileManager:
     """A singleton class for managing the file system for saving files,
     code and logs."""
 
     _instance = None
 
-    dir: str = _DEFAULT_DIR
+    cache_dir: str = str(Path.home() / ".cache" / "agentscope")
+
+    hash_method: Literal["sha256", "md5", "sha1"] = "sha256"
+
+    dir: str = os.path.abspath(_DEFAULT_DIR)
     """The directory for saving files, code and logs."""
 
     save_api_invoke: bool = False
@@ -52,6 +79,19 @@ class _FileManager:
     def _get_file_path(self, file_name: str) -> str:
         """Get the path of the file."""
         return os.path.join(self.dir, _runtime.runtime_id, file_name)
+
+    @property
+    def dir_cache(self) -> str:
+        """The directory for saving cache files."""
+        return self.cache_dir
+
+    @property
+    def dir_cache_embedding(self) -> str:
+        """Obtain the embedding cache directory."""
+        dir_cache_embedding = os.path.join(self.cache_dir, "embedding")
+        if not os.path.exists(dir_cache_embedding):
+            os.makedirs(dir_cache_embedding)
+        return dir_cache_embedding
 
     @property
     def dir_root(self) -> str:
@@ -86,7 +126,7 @@ class _FileManager:
 
     def init(self, save_dir: str, save_api_invoke: bool = False) -> None:
         """Set the directory for saving files."""
-        self.dir = save_dir
+        self.dir = os.path.abspath(save_dir)
         runtime_dir = os.path.join(save_dir, _runtime.runtime_id)
         os.makedirs(runtime_dir, exist_ok=True)
 
@@ -100,8 +140,9 @@ class _FileManager:
         cfg = {
             "project": _runtime.project,
             "name": _runtime.name,
-            "id": _runtime.runtime_id,
+            "run_id": _runtime.runtime_id,
             "timestamp": _runtime.timestamp,
+            "pid": os.getpid(),
         }
         with open(
             os.path.join(self.dir_root, _DEFAULT_CFG_NAME),
@@ -161,6 +202,50 @@ class _FileManager:
             Image.fromarray(image).save(path_file)
 
         return path_file
+
+    def cache_text_embedding(
+        self,
+        text: str,
+        embedding: List[float],
+        embedding_model: Union[str, dict],
+    ) -> None:
+        """Cache the text embedding locally."""
+        record_hash = _get_text_embedding_record_hash(
+            text,
+            embedding_model,
+            self.hash_method,
+        )
+
+        # Save the embedding to the cache directory
+        np.save(
+            os.path.join(
+                self.dir_cache_embedding,
+                f"{record_hash}.npy",
+            ),
+            embedding,
+        )
+
+    def fetch_cached_text_embedding(
+        self,
+        text: str,
+        embedding_model: Union[str, dict],
+    ) -> Union[None, List[float]]:
+        """Fetch the text embedding from the cache."""
+        record_hash = _get_text_embedding_record_hash(
+            text,
+            embedding_model,
+            self.hash_method,
+        )
+
+        try:
+            return np.load(
+                os.path.join(
+                    self.dir_cache_embedding,
+                    f"{record_hash}.npy",
+                ),
+            )
+        except FileNotFoundError:
+            return None
 
     @staticmethod
     def _flush() -> None:

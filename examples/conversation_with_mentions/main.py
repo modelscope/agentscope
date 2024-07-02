@@ -30,6 +30,7 @@ def main() -> None:
     npc_agents = agentscope.init(
         model_configs="./configs/model_configs.json",
         agent_configs="./configs/agent_configs.json",
+        project="Conversation with Mentions",
     )
 
     user = UserAgent()

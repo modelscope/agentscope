@@ -1,6 +1,6 @@
 (201-agent-zh)=
 
-# 定制你自己的Agent
+# Agent
 
 本教程帮助你更深入地理解Agent，并引导你通过使用AgentScope定制自己的自定义agent。
 我们首先介绍一个称为AgentBase的基本抽象概念，它作为基类维护所有agent的通用行为。然后，我们将探讨AgentPool，这是一个由预构建的、专门化的agent组成的集合，每个agent都设计有特定的目的。最后，我们将演示如何定制你自己的agent，确保它符合你项目的需求。
@@ -48,7 +48,7 @@ class AgentBase(Operator):
         if self.memory:
             self.memory.add(x)
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         # The core method to be implemented by custom agents. It defines the
         # logic for processing an input message and generating a suitable
         # response.
@@ -87,7 +87,7 @@ class AgentBase(Operator):
 * **回复方法**：`reply` 方法是处理输入消息和生成响应的主要逻辑所在
 
 ```python
-def reply(self, x: dict = None) -> dict:
+def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
     # Additional processing steps can occur here
 
     # Record the input if needed
@@ -143,9 +143,9 @@ service_bot = DialogAgent(**dialog_agent_config)
 ```python
 def reply(
     self,
-    x: dict = None,
+    x: Optional[Union[Msg, Sequence[Msg]]] = None,
     required_keys: Optional[Union[list[str], str]] = None,
-) -> dict:
+) -> Msg:
     # Check if there is initial data to be added to memory
     if self.memory:
         self.memory.add(x)

@@ -2,7 +2,7 @@
 """A simple example of using langchain to create an assistant agent in
 AgentScope."""
 import os
-from typing import Optional
+from typing import Optional, Union, Sequence
 
 from langchain_openai import OpenAI
 from langchain.memory import ConversationBufferMemory
@@ -52,7 +52,7 @@ class LangChainAgent(AgentBase):
         )
         # [END] BY LANGCHAIN
 
-    def reply(self, x: Optional[dict] = None) -> Msg:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         # [START] BY LANGCHAIN
 
         # Generate response
@@ -67,7 +67,9 @@ class LangChainAgent(AgentBase):
 # Build a conversation between user and assistant agent
 
 # init AgentScope
-agentscope.init()
+agentscope.init(
+    project="Conversation with LangChain",
+)
 
 # Create an instance of the langchain agent
 agent = LangChainAgent(name="Assistant")

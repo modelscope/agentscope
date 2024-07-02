@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """A board agent class that can host a Gomoku game, and a function to
 convert the board to an image."""
+from typing import Optional, Union, Sequence
 
 import numpy as np
 from matplotlib import pyplot as plt, patches
@@ -81,7 +82,7 @@ class BoardAgent(AgentBase):
         # Record the status of the game
         self.game_end = False
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         if x is None:
             # Beginning of the game
             content = (
@@ -89,12 +90,12 @@ class BoardAgent(AgentBase):
                 "Please make your move."
             )
         else:
-            row, col = x["content"]
+            row, col = x.content
 
             self.assert_valid_move(row, col)
 
             # change the board
-            self.board[row, col] = NAME_TO_PIECE[x["name"]]
+            self.board[row, col] = NAME_TO_PIECE[x.name]
 
             # check if the game ends
             if self.check_draw():
@@ -102,15 +103,15 @@ class BoardAgent(AgentBase):
                 self.game_end = True
             else:
                 next_player_name = (
-                    NAME_BLACK if x["name"] == NAME_WHITE else NAME_WHITE
+                    NAME_BLACK if x.name == NAME_WHITE else NAME_WHITE
                 )
                 content = CURRENT_BOARD_PROMPT_TEMPLATE.format(
                     board=self.board2text(),
                     player=next_player_name,
                 )
 
-                if self.check_win(row, col, NAME_TO_PIECE[x["name"]]):
-                    content = f"The game ends, {x['name']} wins!"
+                if self.check_win(row, col, NAME_TO_PIECE[x.name]):
+                    content = f"The game ends, {x.name} wins!"
                     self.game_end = True
 
         msg_host = Msg(self.name, content, role="assistant")

@@ -1,0 +1,114 @@
+[
+  {
+    "knowledge_id": "agentscope_code_rag",
+    "emb_model_config_name": "qwen_emb_config",
+    "chunk_size": 2048,
+    "chunk_overlap": 40,
+    "data_processing": [
+      {
+        "load_data": {
+          "loader": {
+            "create_object": true,
+            "module": "llama_index.core",
+            "class": "SimpleDirectoryReader",
+            "init_args": {
+              "input_dir": "../../src/agentscope",
+              "recursive": true,
+              "required_exts": [
+                ".py"
+              ]
+            }
+          }
+        },
+        "store_and_index": {
+          "transformations": [
+            {
+              "create_object": true,
+              "module": "llama_index.core.node_parser",
+              "class": "CodeSplitter",
+              "init_args": {
+                "language": "python",
+                "chunk_lines": 100
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "knowledge_id": "agentscope_api_rag",
+    "emb_model_config_name": "qwen_emb_config",
+    "chunk_size": 1024,
+    "chunk_overlap": 40,
+    "data_processing": [
+      {
+        "load_data": {
+          "loader": {
+            "create_object": true,
+            "module": "llama_index.core",
+            "class": "SimpleDirectoryReader",
+            "init_args": {
+              "input_dir": "../../docs/docstring_html/",
+              "required_exts": [
+                ".html"
+              ]
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "knowledge_id": "agentscope_global_rag",
+    "emb_model_config_name": "qwen_emb_config",
+    "chunk_size": 2048,
+    "chunk_overlap": 40,
+    "data_processing": [
+      {
+        "load_data": {
+          "loader": {
+            "create_object": true,
+            "module": "llama_index.core",
+            "class": "SimpleDirectoryReader",
+            "init_args": {
+              "input_dir": "../../docs/sphinx_doc/en/source/tutorial",
+              "required_exts": [
+                ".md"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "load_data": {
+          "loader": {
+            "create_object": true,
+            "module": "llama_index.core",
+            "class": "SimpleDirectoryReader",
+            "init_args": {
+              "input_dir": "../../src/agentscope",
+              "recursive": true,
+              "required_exts": [
+                ".py"
+              ]
+            }
+          }
+        },
+        "store_and_index": {
+          "transformations": [
+            {
+              "create_object": true,
+              "module": "llama_index.core.node_parser",
+              "class": "CodeSplitter",
+              "init_args": {
+                "language": "python",
+                "chunk_lines": 100
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

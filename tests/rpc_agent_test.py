@@ -4,7 +4,10 @@ Unit tests for rpc agent classes
 """
 import unittest
 import time
+import os
 import shutil
+from typing import Optional, Union, Sequence
+
 from loguru import logger
 
 import agentscope
@@ -25,7 +28,7 @@ class DemoRpcAgent(AgentBase):
         super().__init__(**kwargs)
         self.id = 0
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         """Response after 2s"""
         x.id = self.id
         self.id += 1
@@ -36,7 +39,7 @@ class DemoRpcAgent(AgentBase):
 class DemoRpcAgentAdd(AgentBase):
     """A demo Rpc agent for test usage"""
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         """add the value, wait 1s"""
         x.content["value"] += 1
         time.sleep(1)
@@ -46,7 +49,7 @@ class DemoRpcAgentAdd(AgentBase):
 class DemoLocalAgentAdd(AgentBase):
     """A demo local agent for test usage"""
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         """add the value, wait 1s"""
         x.content["value"] += 1
         time.sleep(1)
@@ -56,7 +59,7 @@ class DemoLocalAgentAdd(AgentBase):
 class DemoRpcAgentWithMemory(AgentBase):
     """A demo Rpc agent that count its memory"""
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         self.memory.add(x)
         msg = Msg(
             name=self.name,
@@ -71,7 +74,7 @@ class DemoRpcAgentWithMemory(AgentBase):
 class DemoRpcAgentWithMonitor(AgentBase):
     """A demo Rpc agent that use monitor"""
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         monitor = MonitorFactory.get_monitor()
         try:
             monitor.update({"msg_num": 1})
@@ -102,7 +105,7 @@ class DemoGeneratorAgent(AgentBase):
         super().__init__(name)
         self.value = value
 
-    def reply(self, _: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         time.sleep(1)
         return Msg(
             name=self.name,
@@ -125,7 +128,7 @@ class DemoGatherAgent(AgentBase):
         super().__init__(name, to_dist=to_dist)
         self.agents = agents
 
-    def reply(self, _: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         result = []
         stime = time.time()
         for agent in self.agents:
@@ -147,7 +150,7 @@ class DemoGatherAgent(AgentBase):
 class DemoErrorAgent(AgentBase):
     """A demo Rpc agent that raise Error"""
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         raise RuntimeError("Demo Error")
 
 
@@ -159,14 +162,15 @@ class BasicRpcAgentTest(unittest.TestCase):
         agentscope.init(
             project="test",
             name="rpc_agent",
-            save_dir="./test_runs",
+            save_dir="./.unittest_runs",
             save_log=True,
         )
+        self.assertTrue(os.path.exists("./.unittest_runs"))
 
     def tearDown(self) -> None:
         MonitorFactory._instance = None  # pylint: disable=W0212
         logger.remove()
-        shutil.rmtree("./test_runs")
+        shutil.rmtree("./.unittest_runs")
 
     def test_single_rpc_agent_server(self) -> None:
         """test setup a single rpc agent"""

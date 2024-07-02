@@ -64,6 +64,7 @@ __all__ = [
     "ZhipuAIEmbeddingWrapper",
     "LiteLLMChatWrapper",
     "load_model_by_config_name",
+    "load_config_by_name",
     "read_model_configs",
     "clear_model_configs",
 ]
@@ -90,8 +91,13 @@ def _get_model_wrapper(model_type: str) -> Type[ModelWrapperBase]:
     return wrapper
 
 
+def load_config_by_name(config_name: str) -> Union[dict, None]:
+    """Load the model config by name, and return the config dict."""
+    return _MODEL_CONFIGS.get(config_name, None)
+
+
 def load_model_by_config_name(config_name: str) -> ModelWrapperBase:
-    """Load the model by config name."""
+    """Load the model by config name, and return the model wrapper."""
     if len(_MODEL_CONFIGS) == 0:
         raise ValueError(
             "No model configs loaded, please call "
@@ -103,7 +109,7 @@ def load_model_by_config_name(config_name: str) -> ModelWrapperBase:
         raise ValueError(
             f"Cannot find [{config_name}] in loaded configurations.",
         )
-    config = _MODEL_CONFIGS[config_name]
+    config = _MODEL_CONFIGS.get(config_name, None)
 
     if config is None:
         raise ValueError(
