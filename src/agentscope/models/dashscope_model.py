@@ -229,7 +229,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             # avoid pylint warning
             return None
 
-    def _handle_response(
+    def _parse_response(
         self,
         response: ModelResponse,
         **kwargs: Any,
@@ -266,14 +266,14 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
 
             def gen() -> ModelResponseGen:
                 for response in raw_response:
-                    delta = self._handle_response(response, **kwargs).text
+                    delta = self._parse_response(response, **kwargs).text
                     model_response.text += delta
                     model_response.delta = delta
                     yield model_response
 
             return gen()
         else:
-            model_response.text = self._handle_response(
+            model_response.text = self._parse_response(
                 raw_response,
                 **kwargs,
             ).text
