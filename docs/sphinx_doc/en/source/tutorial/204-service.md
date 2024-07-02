@@ -262,6 +262,9 @@ import json
 import inspect
 from agentscope.service import ServiceResponse
 from agentscope.agents import AgentBase
+from agentscope.message import Msg
+
+from typing import Optional, Union, Sequence
 
 
 def create_file(file_path: str, content: str = "") -> ServiceResponse:
@@ -282,7 +285,7 @@ def create_file(file_path: str, content: str = "") -> ServiceResponse:
 class YourAgent(AgentBase):
     # ... [omitted for brevity]
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         # ... [omitted for brevity]
 
         # construct a prompt to ask the agent to provide the parameters in JSON format
