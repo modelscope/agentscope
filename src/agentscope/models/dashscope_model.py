@@ -181,7 +181,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             **kwargs,
         )
 
-        # step4: return process response and return model response
+        # step4: process response and return model response
         return self._process_response(
             response=response,
             messages=messages,

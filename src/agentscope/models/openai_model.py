@@ -203,71 +203,50 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
             **kwargs,
         )
 
-        # step4: record the api invocation if needed, token usage
-        # and update monitor accordingly
-        response = self._record_invocation_and_token_usage(
-            response,
+        # step4: process response and return model response
+        return self._process_response(
+            response=response,
             messages=messages,
             **kwargs,
         )
 
-        # step5: return model response
-        model_response = ModelResponse(raw=response, text="")
-        return self._post_process(model_response=model_response, **kwargs)
-
     def _record_invocation_and_token_usage(
         self,
-        response: Union[
-            ChatCompletion,
-            ChatCompletionGen,
-        ],
+        response: Union[list, ChatCompletion],
         messages: list,
         **kwargs: Any,
-    ) -> Union[ChatCompletion, ChatCompletionGen]:
+    ) -> None:
         # Record the api invocation if needed,
         # token usage and update monitor accordingly
-        try:
-            self.update_monitor(
-                call_counter=1,
-                **response.usage.model_dump(),
-            )
-            self._save_model_invocation(
-                arguments={
-                    "model": self.model_name,
-                    "messages": messages,
-                    **kwargs,
-                },
-                response=response.model_dump(),
-            )
-            return response
-        except AttributeError:
 
-            def gen() -> ChatCompletionGen:
-                valid_usage = {}
-                response_list = []
-                for chunk in response:
-                    if hasattr(chunk, "usage") and chunk.usage is not None:
-                        valid_usage = chunk.usage.model_dump()
-                    response_list.append(chunk.model_dump())
-                    yield chunk
-                self.update_monitor(
-                    call_counter=1,
-                    **valid_usage,
-                )
-                self._save_model_invocation(
-                    arguments={
-                        "model": self.model_name,
-                        "messages": messages,
-                        **kwargs,
-                    },
-                    response=response_list,
-                )
+        if not isinstance(response, list):
+            valid_usage = response.usage.model_dump()
+        else:
+            valid_usage = {}
+            response_list = []
+            for chunk in response:
+                if hasattr(chunk, "usage") and chunk.usage is not None:
+                    valid_usage = chunk.usage.model_dump()
+                response_list.append(chunk.model_dump())
+            response = response_list
 
-            return gen()
+        self.update_monitor(
+            call_counter=1,
+            **valid_usage,
+        )
+        self._save_model_invocation(
+            arguments={
+                "model": self.model_name,
+                "messages": messages,
+                **kwargs,
+            },
+            response=response,
+        )
 
-    def _post_process(
+    def _process_response(
         self,
-        model_response: ModelResponse,
+        model_response: ChatCompletion,
+        messages: list,
         **kwargs: Any,
     ) -> Union[ModelResponse, ModelResponseGen]:
         stream = kwargs.get("stream", False)
@@ -275,20 +254,31 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
         if stream:
 
             def gen() -> ModelResponseGen:
+                text = ""
+                last_chunk = None
                 for chunk in response:
                     if (
                         len(chunk.choices) > 0
                         and chunk.choices[0].delta.content
                     ):
                         delta = chunk.choices[0].delta.content
-                        model_response.text += delta
-                        model_response.delta = delta
-                        yield model_response
+                        text += delta
+                        yield ModelResponse(text=text, delta=delta, raw=chunk)
+                self._record_invocation_and_token_usage(
+                    last_chunk,
+                    messages=messages,
+                    **kwargs,
+                )
 
             return gen()
         else:
-            model_response.text = response.choices[0].message.content
-            return model_response
+            text = response.choices[0].message.content
+            self._record_invocation_and_token_usage(
+                response,
+                messages=messages,
+                **kwargs,
+            )
+            return ModelResponse(text=text, raw=response)
 
     def _format_msg_with_url(
         self,
