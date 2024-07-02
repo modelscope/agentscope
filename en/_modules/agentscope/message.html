@@ -312,85 +312,6 @@
 
 
 
-<div class="viewcode-block" id="Tht">
-<a class="viewcode-back" href="../../agentscope.message.html#agentscope.message.Tht">[docs]</a>
-<span class="k">class</span> <span class="nc">Tht</span><span class="p">(</span><span class="n">MessageBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Thought message is used to record the thought of the agent to</span>
-<span class="sd">    help them make decisions and responses. Generally, it shouldn&#39;t be</span>
-<span class="sd">    passed to or seen by the other agents.</span>
-
-<span class="sd">    In our framework, we formulate the thought in prompt as follows:</span>
-<span class="sd">    - For OpenAI API calling:</span>
-
-<span class="sd">    .. code-block:: python</span>
-
-<span class="sd">        [</span>
-<span class="sd">            ...</span>
-<span class="sd">            {</span>
-<span class="sd">                &quot;role&quot;: &quot;assistant&quot;,</span>
-<span class="sd">                &quot;name&quot;: &quot;thought&quot;,</span>
-<span class="sd">                &quot;content&quot;: &quot;I should ...&quot;</span>
-<span class="sd">            },</span>
-<span class="sd">            ...</span>
-<span class="sd">        ]</span>
-
-<span class="sd">    - For open-source models that accepts string as input:</span>
-
-<span class="sd">    .. code-block:: python</span>
-
-<span class="sd">        ...</span>
-<span class="sd">        {self.name} thought: I should ...</span>
-<span class="sd">        ...</span>
-
-<span class="sd">    We admit that there maybe better ways to formulate the thought. Users</span>
-<span class="sd">    are encouraged to create their own thought formulation methods by</span>
-<span class="sd">    inheriting `MessageBase` class and rewrite the `__init__` and `to_str`</span>
-<span class="sd">    function.</span>
-
-<span class="sd">    .. code-block:: python</span>
-
-<span class="sd">        class MyThought(MessageBase):</span>
-<span class="sd">            def to_str(self) -&gt; str:</span>
-<span class="sd">                # implement your own thought formulation method</span>
-<span class="sd">                pass</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-<div class="viewcode-block" id="Tht.__init__">
-<a class="viewcode-back" href="../../agentscope.message.html#agentscope.message.Tht.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">content</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
-        <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="s2">&quot;name&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-            <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s2">&quot;role&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-            <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;role&quot;</span><span class="p">)</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;thought&quot;</span><span class="p">,</span>
-            <span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">,</span>
-            <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
-            <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-        <span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="Tht.to_str">
-<a class="viewcode-back" href="../../agentscope.message.html#agentscope.message.Tht.to_str">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the string representation of the message&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> thought: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2">&quot;</span></div>
-
-
-<div class="viewcode-block" id="Tht.serialize">
-<a class="viewcode-back" href="../../agentscope.message.html#agentscope.message.Tht.serialize">[docs]</a>
-    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s2">&quot;__type&quot;</span><span class="p">:</span> <span class="s2">&quot;Tht&quot;</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="p">})</span></div>
-</div>
-
-
-
 <div class="viewcode-block" id="PlaceholderMessage">
 <a class="viewcode-back" href="../../agentscope.message.html#agentscope.message.PlaceholderMessage">[docs]</a>
 <span class="k">class</span> <span class="nc">PlaceholderMessage</span><span class="p">(</span><span class="n">Msg</span><span class="p">):</span>
@@ -535,7 +456,7 @@
             <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;ERROR&quot;</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-            <span class="c1"># the actual value has been updated, not a placeholder any more</span>
+            <span class="c1"># the actual value has been updated, not a placeholder anymore</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_is_placeholder</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
@@ -584,14 +505,13 @@
 
 <span class="n">_MSGS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;Msg&quot;</span><span class="p">:</span> <span class="n">Msg</span><span class="p">,</span>
-    <span class="s2">&quot;Tht&quot;</span><span class="p">:</span> <span class="n">Tht</span><span class="p">,</span>
     <span class="s2">&quot;PlaceholderMessage&quot;</span><span class="p">:</span> <span class="n">PlaceholderMessage</span><span class="p">,</span>
 <span class="p">}</span>
 
 
 <div class="viewcode-block" id="deserialize">
 <a class="viewcode-back" href="../../agentscope.message.html#agentscope.message.deserialize">[docs]</a>
-<span class="k">def</span> <span class="nf">deserialize</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">]:</span>
+<span class="k">def</span> <span class="nf">deserialize</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Deserialize json string into MessageBase&quot;&quot;&quot;</span>
     <span class="n">js_msg</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
     <span class="n">msg_type</span> <span class="o">=</span> <span class="n">js_msg</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;__type&quot;</span><span class="p">)</span>

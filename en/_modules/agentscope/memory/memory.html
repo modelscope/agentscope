@@ -127,7 +127,7 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
 
-<span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">MessageBase</span>
+<span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">Msg</span>
 
 
 <div class="viewcode-block" id="MemoryBase">
@@ -190,14 +190,13 @@
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">add</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">memories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="n">memories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">],</span> <span class="n">Msg</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adding new memory fragment, depending on how the memory are stored</span>
 <span class="sd">        Args:</span>
-<span class="sd">            memories (Union[Sequence[dict], dict, None]):</span>
-<span class="sd">                Memories to be added. If the memory is not in MessageBase,</span>
-<span class="sd">                it will first be converted into a message type.</span>
+<span class="sd">            memories (Union[Sequence[Msg], Msg, None]):</span>
+<span class="sd">                Memories to be added.</span>
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
 
@@ -219,14 +218,14 @@
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">load</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">memories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">],</span> <span class="n">MessageBase</span><span class="p">],</span>
+        <span class="n">memories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">],</span> <span class="n">Msg</span><span class="p">],</span>
         <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load memory, depending on how the memory are passed, design to load</span>
 <span class="sd">        from both file or dict</span>
 <span class="sd">        Args:</span>
-<span class="sd">            memories (Union[str, list[MessageBase], MessageBase]):</span>
+<span class="sd">            memories (Union[str, list[Msg], Msg]):</span>
 <span class="sd">                memories to be loaded.</span>
 <span class="sd">                If it is in str type, it will be first checked if it is a</span>
 <span class="sd">                file; otherwise it will be deserialized as messages.</span>

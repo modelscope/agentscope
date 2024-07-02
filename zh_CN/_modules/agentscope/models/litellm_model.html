@@ -123,7 +123,7 @@
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
 <span class="kn">from</span> <span class="nn">.model</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ModelResponse</span>
-<span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">MessageBase</span>
+<span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">Msg</span>
 <span class="kn">from</span> <span class="nn">..utils.tools</span> <span class="kn">import</span> <span class="n">_convert_to_str</span>
 
 <span class="k">try</span><span class="p">:</span>
@@ -197,7 +197,7 @@
 <a class="viewcode-back" href="../../../agentscope.models.litellm_model.html#agentscope.models.LiteLLMWrapperBase.format">[文档]</a>
     <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">]],</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Model Wrapper [</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">] doesn&#39;t &quot;</span>
@@ -313,16 +313,16 @@
 <a class="viewcode-back" href="../../../agentscope.models.litellm_model.html#agentscope.models.LiteLLMChatWrapper.format">[文档]</a>
     <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">]],</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the input string and dictionary into the unified format.</span>
-<span class="sd">        Note that the format function might not be the optimal way to contruct</span>
+<span class="sd">        Note that the format function might not be the optimal way to construct</span>
 <span class="sd">        prompt for every model, but a common way to do so.</span>
 <span class="sd">        Developers are encouraged to implement their own prompt</span>
 <span class="sd">        engineering strategies if have strong performance concerns.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            args (`Union[MessageBase, Sequence[MessageBase]]`):</span>
+<span class="sd">            args (`Union[Msg, Sequence[Msg]]`):</span>
 <span class="sd">                The input arguments to be formatted, where each argument</span>
 <span class="sd">                should be a `Msg` object, or a list of `Msg` objects.</span>
 <span class="sd">                In distribution, placeholder is also allowed.</span>
@@ -337,11 +337,9 @@
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">_</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">continue</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">MessageBase</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
                 <span class="n">input_msgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span>
-                <span class="nb">isinstance</span><span class="p">(</span><span class="n">__</span><span class="p">,</span> <span class="n">MessageBase</span><span class="p">)</span> <span class="k">for</span> <span class="n">__</span> <span class="ow">in</span> <span class="n">_</span>
-            <span class="p">):</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">__</span><span class="p">,</span> <span class="n">Msg</span><span class="p">)</span> <span class="k">for</span> <span class="n">__</span> <span class="ow">in</span> <span class="n">_</span><span class="p">):</span>
                 <span class="n">input_msgs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>

@@ -183,7 +183,7 @@
 <span class="kn">from</span> <span class="nn">..exception</span> <span class="kn">import</span> <span class="n">ResponseParsingError</span>
 
 <span class="kn">from</span> <span class="nn">..file_manager</span> <span class="kn">import</span> <span class="n">file_manager</span>
-<span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">MessageBase</span>
+<span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">Msg</span>
 <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">MonitorFactory</span>
 <span class="kn">from</span> <span class="nn">..utils.monitor</span> <span class="kn">import</span> <span class="n">get_full_name</span>
 <span class="kn">from</span> <span class="nn">..utils.tools</span> <span class="kn">import</span> <span class="n">_get_timestamp</span>
@@ -353,7 +353,7 @@
 <a class="viewcode-back" href="../../../agentscope.models.model.html#agentscope.models.ModelWrapperBase.format">[docs]</a>
     <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">MessageBase</span><span class="p">]],</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the input string or dict into the format that the model</span>
 <span class="sd">        API required.&quot;&quot;&quot;</span>

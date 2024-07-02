@@ -77,7 +77,6 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">agentscope.message</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.message.MessageBase"><code class="docutils literal notranslate"><span class="pre">MessageBase</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.message.Msg"><code class="docutils literal notranslate"><span class="pre">Msg</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.message.Tht"><code class="docutils literal notranslate"><span class="pre">Tht</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.message.PlaceholderMessage"><code class="docutils literal notranslate"><span class="pre">PlaceholderMessage</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.message.deserialize"><code class="docutils literal notranslate"><span class="pre">deserialize()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.message.serialize"><code class="docutils literal notranslate"><span class="pre">serialize()</span></code></a></li>
@@ -253,80 +252,6 @@ purposes.</p></li>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="agentscope.message.Tht">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.message.</span></span><span class="sig-name descname"><span class="pre">Tht</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/message.html#Tht"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.message.Tht" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#agentscope.message.MessageBase" title="agentscope.message.MessageBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageBase</span></code></a></p>
-<p>The Thought message is used to record the thought of the agent to
-help them make decisions and responses. Generally, it shouldn’t be
-passed to or seen by the other agents.</p>
-<p>In our framework, we formulate the thought in prompt as follows:
-- For OpenAI API calling:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
-    <span class="o">...</span>
-    <span class="p">{</span>
-        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;thought&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;I should ...&quot;</span>
-    <span class="p">},</span>
-    <span class="o">...</span>
-<span class="p">]</span>
-</pre></div>
-</div>
-<ul class="simple">
-<li><p>For open-source models that accepts string as input:</p></li>
-</ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">...</span>
-<span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">}</span> <span class="n">thought</span><span class="p">:</span> <span class="n">I</span> <span class="n">should</span> <span class="o">...</span>
-<span class="o">...</span>
-</pre></div>
-</div>
-<p>We admit that there maybe better ways to formulate the thought. Users
-are encouraged to create their own thought formulation methods by
-inheriting <cite>MessageBase</cite> class and rewrite the <cite>__init__</cite> and <cite>to_str</cite>
-function.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyThought</span><span class="p">(</span><span class="n">MessageBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">to_str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="c1"># implement your own thought formulation method</span>
-        <span class="k">pass</span>
-</pre></div>
-</div>
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.message.Tht.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/message.html#Tht.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.message.Tht.__init__" title="Link to this definition"></a></dt>
-<dd><p>Initialize the message object</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<cite>str</cite>) – The name of who send the message. It’s often used in
-role-playing scenario to tell the name of the sender.</p></li>
-<li><p><strong>content</strong> (<cite>Any</cite>) – The content of the message.</p></li>
-<li><p><strong>role</strong> (<cite>Literal[“system”, “user”, “assistant”]</cite>, defaults to “assistant”) – The role of who send the message. It can be one of the
-<cite>“system”</cite>, <cite>“user”</cite>, or <cite>“assistant”</cite>. Default to
-<cite>“assistant”</cite>.</p></li>
-<li><p><strong>url</strong> (<cite>Optional[Union[list[str], str]]</cite>, defaults to None) – A url to file, image, video, audio or website.</p></li>
-<li><p><strong>timestamp</strong> (<cite>Optional[str]</cite>, defaults to None) – The timestamp of the message, if None, it will be set to
-current time.</p></li>
-<li><p><strong>**kwargs</strong> (<cite>Any</cite>) – Other attributes of the message.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.message.Tht.to_str">
-<span class="sig-name descname"><span class="pre">to_str</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/message.html#Tht.to_str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.message.Tht.to_str" title="Link to this definition"></a></dt>
-<dd><p>Return the string representation of the message</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.message.Tht.serialize">
-<span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/message.html#Tht.serialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.message.Tht.serialize" title="Link to this definition"></a></dt>
-<dd><p>Return the serialized message.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="agentscope.message.PlaceholderMessage">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.message.</span></span><span class="sig-name descname"><span class="pre">PlaceholderMessage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.rpc.rpc_agent_client.html#agentscope.rpc.rpc_agent_client.RpcAgentClient" title="agentscope.rpc.rpc_agent_client.RpcAgentClient"><span class="pre">RpcAgentClient</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/message.html#PlaceholderMessage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.message.PlaceholderMessage" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#agentscope.message.Msg" title="agentscope.message.Msg"><code class="xref py py-class docutils literal notranslate"><span class="pre">Msg</span></code></a></p>
@@ -393,7 +318,7 @@ this placeholder.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="agentscope.message.deserialize">
-<span class="sig-prename descclassname"><span class="pre">agentscope.message.</span></span><span class="sig-name descname"><span class="pre">deserialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#agentscope.message.MessageBase" title="agentscope.message.MessageBase"><span class="pre">MessageBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span></span></span><a class="reference internal" href="_modules/agentscope/message.html#deserialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.message.deserialize" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">agentscope.message.</span></span><span class="sig-name descname"><span class="pre">deserialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span></span></span><a class="reference internal" href="_modules/agentscope/message.html#deserialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.message.deserialize" title="Link to this definition"></a></dt>
 <dd><p>Deserialize json string into MessageBase</p>
 </dd></dl>
 
