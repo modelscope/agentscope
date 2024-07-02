@@ -392,7 +392,7 @@ class MyAgent(AgentBase):
             # 或是 model_or_model_config_name=self.model
         )
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         self.memory.add(x)
 
         prompt = self.model.format(

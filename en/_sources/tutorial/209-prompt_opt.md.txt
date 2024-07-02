@@ -397,6 +397,8 @@ from agentscope.agents import AgentBase
 from agentscope.prompt import SystemPromptOptimizer
 from agentscope.message import Msg
 
+from typing import Optional, Union, Sequence
+
 class MyAgent(AgentBase):
     def __init__(
             self,
@@ -411,7 +413,7 @@ class MyAgent(AgentBase):
             # or model_or_model_config_name=self.model
         )
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         self.memory.add(x)
 
         prompt = self.model.format(

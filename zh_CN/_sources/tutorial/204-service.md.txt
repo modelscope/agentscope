@@ -262,7 +262,7 @@ def create_file(file_path: str, content: str = "") -> ServiceResponse:
 class YourAgent(AgentBase):
     # ... [为简洁起见省略代码]
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         # ... [为简洁起见省略代码]
 
         # 构造提示，让代理提供 JSON 格式的参数

@@ -211,7 +211,7 @@ In AgentScope, we achieve post-processing by calling the `to_content`, `to_memor
 
   ```python
       # ...
-      def reply(x: dict = None) -> None:
+      def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
 
           # ...
           res = self.model(prompt, parse_func=self.parser.parse)

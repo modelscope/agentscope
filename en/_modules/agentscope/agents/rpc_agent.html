@@ -121,6 +121,7 @@
 <span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">PlaceholderMessage</span><span class="p">,</span>
     <span class="n">serialize</span><span class="p">,</span>
+    <span class="n">Msg</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">agentscope.rpc</span> <span class="kn">import</span> <span class="n">RpcAgentClient</span>
 <span class="kn">from</span> <span class="nn">agentscope.server.launcher</span> <span class="kn">import</span> <span class="n">RpcAgentServerLauncher</span>
@@ -227,7 +228,7 @@
 
 <div class="viewcode-block" id="RpcAgent.reply">
 <a class="viewcode-back" href="../../../agentscope.agents.rpc_agent.html#agentscope.agents.RpcAgent.reply">[docs]</a>
-    <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_launch_server</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">PlaceholderMessage</span><span class="p">(</span>
