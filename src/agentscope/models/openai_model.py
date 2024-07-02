@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for OpenAI models"""
 from abc import ABC
-from typing import Union, Any, List, Sequence, Dict
+from typing import Union, Any, List, Sequence, Dict, Generator
 
 from loguru import logger
 
-from .model import ModelWrapperBase, ModelResponse
+from .model import ModelWrapperBase, ModelResponse, ModelResponseGen
 from ..file_manager import file_manager
 from ..message import MessageBase
 from ..utils.tools import _convert_to_str, _to_openai_image_url
 
 try:
     import openai
+    from openai import ChatCompletion
 except ImportError:
     openai = None
 
@@ -189,6 +190,10 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
                 "and 'content' key for OpenAI API.",
             )
 
+        stream = kwargs.get("stream", False)
+        if stream:
+            kwargs["stream_options"] = {"include_usage": True}
+
         # step3: forward to generate response
         response = self.client.chat.completions.create(
             model=self.model_name,
@@ -196,24 +201,90 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
             **kwargs,
         )
 
-        # step4: record the api invocation if needed
-        self._save_model_invocation(
-            arguments={
-                "model": self.model_name,
-                "messages": messages,
-                **kwargs,
-            },
-            response=response.model_dump(),
+        # step4: record the api invocation if needed, token usage
+        # and update monitor accordingly
+        response = self._record_invocation_and_token_usage(
+            response,
+            messages=messages,
+            **kwargs,
         )
 
-        # step5: update monitor accordingly
-        self.update_monitor(call_counter=1, **response.usage.model_dump())
+        # step5: return model response
+        model_response = ModelResponse(raw=response, text="")
+        return self._post_process(model_response=model_response, **kwargs)
 
-        # step6: return response
-        return ModelResponse(
-            text=response.choices[0].message.content,
-            raw=response.model_dump(),
-        )
+    def _record_invocation_and_token_usage(
+        self,
+        response: Union[
+            ChatCompletion,
+            Generator[ChatCompletion, None, None],
+        ],
+        messages: list,
+        **kwargs: Any,
+    ) -> Union[ChatCompletion, Generator[ChatCompletion, None, None]]:
+        # Record the api invocation if needed,
+        # token usage and update monitor accordingly
+        try:
+            self.update_monitor(
+                call_counter=1,
+                **response.usage.model_dump(),
+            )
+            self._save_model_invocation(
+                arguments={
+                    "model": self.model_name,
+                    "messages": messages,
+                    **kwargs,
+                },
+                response=response.model_dump(),
+            )
+            return response
+        except AttributeError:
+            valid_usage = {}
+            response_list = []
+            for chunk in response:
+                if hasattr(chunk, "usage") and chunk.usage is not None:
+                    valid_usage = chunk.usage.model_dump()
+                response_list.append(chunk.model_dump())
+                yield chunk
+            self.update_monitor(
+                call_counter=1,
+                **valid_usage,
+            )
+            self._save_model_invocation(
+                arguments={
+                    "model": self.model_name,
+                    "messages": messages,
+                    **kwargs,
+                },
+                response=response_list,
+            )
+            # avoid pylint warning
+            return None
+
+    def _post_process(
+        self,
+        model_response: ModelResponse,
+        **kwargs: Any,
+    ) -> Union[ModelResponse, ModelResponseGen]:
+        stream = kwargs.get("stream", False)
+        response = model_response.raw
+        if stream:
+
+            def gen() -> ModelResponseGen:
+                for chunk in response:
+                    if (
+                        len(chunk.choices) > 0
+                        and chunk.choices[0].delta.content
+                    ):
+                        delta = chunk.choices[0].delta.content
+                        model_response.text += delta
+                        model_response.delta = delta
+                        yield model_response
+
+            return gen()
+        else:
+            model_response.text = response.choices[0].message.content
+            return model_response
 
     def _format_msg_with_url(
         self,
