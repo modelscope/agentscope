@@ -14,6 +14,8 @@
     <link rel="stylesheet" type="text/css"
           href="{{ url_for('static', filename='css/dashboard.css') }}">
     <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static', filename='css/server.css') }}">
+    <link rel="stylesheet" type="text/css"
           href="{{ url_for('static', filename='css_third_party/tabulator.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css_third_party/highlight.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css_third_party/katex.min.css') }}">
@@ -77,12 +79,12 @@
         </div>
         <div id="server-tab-btn"
              class="navigation-bar-item unselectable-text"
-             onclick="loadTabPage('static/html/server.html', null);return false;">
+             onclick="loadTabPage('static/html/server.html', 'static/js/server.js');return false;">
             <svg class="navigation-bar-item-icon" viewBox="0 0 1424 1024"
                  xmlns="http://www.w3.org/2000/svg">
                 <path d="M1242.261914 1023.997329l-886.826208-1.023998A127.242798 127.242798 0 0 1 338.472968 1023.997329 340.011635 340.011635 0 0 1 0.108633 675.393021 348.737873 348.737873 0 0 1 276.765998 333.912172a343.217192 343.217192 0 0 1 680.958224-51.155344 193.580017 193.580017 0 0 1 31.165136-2.493211 207.337198 207.337198 0 0 1 205.689898 208.539282 198.967133 198.967133 0 0 1-1.6473 25.688976 255.331508 255.331508 0 0 1 59.926105 495.614707v-0.311651z m-40.06946-90.200808a198.87809 198.87809 0 0 0 133.564869-164.997135 164.730005 164.730005 0 0 0-195.360882-161.613492l-48.395004-64.912526a117.358998 117.358998 0 0 0-103.201122-171.897986 114.865787 114.865787 0 0 0-50.264913 12.065359l-63.665921-39.713287a254.708205 254.708205 0 1 0-509.371888 5.876854c0 6.989895 0.534259 13.935268 1.068519 20.880641l-41.182501 48.528569A257.646632 257.646632 0 0 0 89.151879 675.393021a251.324562 251.324562 0 0 0 249.321089 258.225413H1202.192454z"></path>
             </svg>
-            <span class="navigation-bar-item-label">Server Management</span>
+            <span class="navigation-bar-item-label">Server Manager</span>
         </div>
 
         <div class="navigation-bar-hr"></div>

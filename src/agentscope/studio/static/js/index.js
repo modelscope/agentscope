@@ -30,6 +30,9 @@ function initializeTabPageByUrl(pageUrl) {
             script.src = "static/js/workstation_iframe.js";
             document.head.appendChild(script);
             break;
+        case "static/html/server.html":
+            initializeServerPage();
+            break;
     }
 }
 

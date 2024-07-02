@@ -267,6 +267,37 @@ def _register_server() -> Response:
     return jsonify(status="ok")
 
 
+@_app.route("/api/servers/all", methods=["GET"])
+def _get_all_servers() -> Response:
+    """Get all servers."""
+    servers = _ServerTable.query.all()
+
+    return jsonify(
+        [
+            {
+                "id": server.id,
+                "host": server.host,
+                "port": server.port,
+                "create_time": server.create_time.strftime(
+                    "%Y-%m-%d %H:%M:%S",
+                ),
+            }
+            for server in servers
+        ],
+    )
+
+
+@_app.route("/api/servers/agent_info/<server_id>", methods=["GET"])
+def _get_server_agent_info(server_id: str) -> Response:
+    _app.logger.info(f"Get info of server [{server_id}]")
+    return jsonify()
+
+
+@_app.route("/api/servers/status", methods=["GET"])
+def _get_server_status() -> Response:
+    return jsonify()
+
+
 @_app.route("/api/messages/push", methods=["POST"])
 def _push_message() -> Response:
     """Receive a message from the agentscope application, and display it on

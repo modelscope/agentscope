@@ -252,6 +252,21 @@ def generate_id_from_seed(seed: str, length: int = 8) -> str:
     return "".join(id_chars)
 
 
+def is_web_accessible(url: str) -> bool:
+    """Whether the url is accessible from the Web.
+
+    Args:
+        url (`str`):
+            The url to check.
+
+    Note:
+        This function is not perfect, it only checks if the URL starts with
+        common web protocols, e.g., http, https, ftp, oss.
+    """
+    parsed_url = urlparse(url)
+    return parsed_url.scheme in ["http", "https", "ftp", "oss"]
+
+
 def _is_json_serializable(obj: Any) -> bool:
     """Check if the given object is json serializable."""
     try:
