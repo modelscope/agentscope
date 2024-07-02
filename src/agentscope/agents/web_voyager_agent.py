@@ -8,14 +8,12 @@ import time
 import os
 import base64
 import re
-import shutil
 from typing import Optional
 
 from loguru import logger
 
 from ..message import Msg
 from .agent import AgentBase
-from ..prompt import PromptType
 
 from agentscope.message import message_from_dict
 from agentscope.browser.web_browser import WebBrowser
@@ -23,20 +21,20 @@ from agentscope.file_manager import file_manager
 
 
 DEFAULT_SYSTEM_PROMPT = """
-Imagine you are a robot browsing the web, just like humans. Now you need to complete a task. In each iteration, you will receive an Observation that includes a screenshot of a webpage and some texts. This screenshot will feature Numerical Labels placed in the TOP LEFT corner of each Web Element.
+Imagine you are a robot browsing the web, just like humans. Now you need to complete a task.
+In each iteration, you will receive an Observation that includes a screenshot of a webpage and some texts. This screenshot will feature Numerical Labels placed in the TOP LEFT corner of each Web Element.
 Carefully analyze the visual information to identify the Numerical Label corresponding to the Web Element that requires interaction, then follow the guidelines and choose one of the following actions:
-1. Click a Web Element.
-2. Delete existing content in a textbox and then type content. If you use TypeSubmit, it will then press enter after you type(useful when performing google search, etc.).
-3. Scroll up or down. Multiple scrolls are allowed to browse the webpage. Pay attention!! The default scroll is the whole window. If the scroll widget is located in a certain area of the webpage, then you have to specify a Web Element in that area. I would hover the mouse there and then scroll.
-4. Wait. Typically used to wait for unfinished webpage processes, with a duration of 5 seconds.
-5. Go back, returning to the previous webpage.
-6. Google, directly jump to the Google search page. When you can't find information in some websites, try starting over with Google.
-7. Answer. This action should only be chosen when all questions in the task have been solved.
+- Click a Web Element.
+- Type content in a textbox. It will delete existing content in the text box.
+- Scroll up or down. Multiple scrolls are allowed to browse the webpage. Pay attention!! The default scroll is the whole window. If the scroll widget is located in a certain area of the webpage, then you have to specify a Web Element in that area. I would hover the mouse there and then scroll.
+- Wait. Typically used to wait for unfinished webpage processes, with a duration of 5 seconds.
+- Go back, returning to the previous webpage.
+- Google, directly jump to the Google search page. When you can't find information in some websites, try starting over with Google.
+- Answer. This action should only be chosen when all questions in the task have been solved.
 
 Correspondingly, Action should STRICTLY follow the format:
 - Click [Numerical_Label]
 - Type [Numerical_Label]; [Content]
-- TypeSubmit [Numerical_Label]; [Content]
 - Scroll [Numerical_Label or WINDOW]; [up or down]
 - Wait
 - GoBack
@@ -63,7 +61,7 @@ Action: {One Action format you choose}
 
 Then the User will provide:
 Observation: {A labeled screenshot Given by User}
-"""
+"""  # noqa
 
 
 def clip_message_and_obs(msg, max_img_num):
@@ -74,7 +72,7 @@ def clip_message_and_obs(msg, max_img_num):
         if curr_msg["role"] != "user":
             clipped_msg = [curr_msg] + clipped_msg
         else:
-            if type(curr_msg["content"]) == str:
+            if isinstance(curr_msg["content"], str):
                 clipped_msg = [curr_msg] + clipped_msg
             elif img_num < max_img_num:
                 img_num += 1
@@ -108,7 +106,7 @@ def encode_image(image_path):
         return base64.b64encode(image_file.read()).decode("utf-8")
 
 
-def format_msg(it, init_msg, pdf_obs, warn_obs, web_img_b64, web_text):
+def format_msg(it, init_msg, warn_obs, web_img_b64, web_text):
     if it == 1:
         init_msg += f"I've provided the tag name of each element and the text it contains (if text exists). Note that <textarea> or <input> may be textbox, but not exactly. Please focus more on the screenshot and then refer to the textual information. The textual information in the current round is: \n{web_text}. Please note that the label number may change in the next round, so always choose within the lastest round's number."
         init_msg_format = {
@@ -125,39 +123,22 @@ def format_msg(it, init_msg, pdf_obs, warn_obs, web_img_b64, web_text):
         )
         return init_msg_format
     else:
-        if not pdf_obs:
-            curr_msg = {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": f"Observation:{warn_obs} please analyze the attached screenshot and give the Thought and Action. I've provided the tag name of each element and the text it contains (if text exists). Note that <textarea> or <input> may be textbox, but not exactly. Please focus more on the screenshot and then refer to the textual information.\n{web_text}. Please note that the label number may change in the next round, so always choose within the lastest round's number.",
+        curr_msg = {
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": f"Observation:{warn_obs} please analyze the attached screenshot and give the Thought and Action. I've provided the tag name of each element and the text it contains (if text exists). Note that <textarea> or <input> may be textbox, but not exactly. Please focus more on the screenshot and then refer to the textual information.\n{web_text}. Please note that the label number may change in the next round, so always choose within the lastest round's number.",
+                },
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": f"data:image/png;base64,{web_img_b64}",
                     },
-                    {
-                        "type": "image_url",
-                        "image_url": {
-                            "url": f"data:image/png;base64,{web_img_b64}",
-                        },
-                    },
-                ],
-            }
-        else:
-            curr_msg = {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": f"Observation: {pdf_obs} Please analyze the response given by Assistant, then consider whether to continue iterating or not. The screenshot of the current page is also attached, give the Thought and Action. I've provided the tag name of each element and the text it contains (if text exists). Note that <textarea> or <input> may be textbox, but not exactly. Please focus more on the screenshot and then refer to the textual information.\n{web_text}",
-                    },
-                    {
-                        "type": "image_url",
-                        "image_url": {
-                            "url": f"data:image/png;base64,{web_img_b64}",
-                        },
-                    },
-                ],
-            }
-        # curr_msg = message_from_dict(curr_msg)
+                },
+            ],
+        }
+
         return curr_msg
 
 
@@ -207,8 +188,7 @@ class WebVoyagerAgent(AgentBase):
         self.download_dir = download_dir
         self.max_iter = max_iter
         self.max_attached_imgs = max_attached_imgs
-        # self.default_homepage = default_homepage
-        self.default_homepage = "https://google.com"
+        self.default_homepage = default_homepage
         self.messages = []
 
     # TODO change typing from dict to MSG
@@ -217,9 +197,7 @@ class WebVoyagerAgent(AgentBase):
         Given the command, execute the browsing actions.
         Args:
             x (`dict`, defaults to `None`):
-                A dictionary representing the user's input to the agent. This
-                input is added to the dialogue memory if provided. Defaults to
-                None.
+                A dictionary representing the user's input to the agent.
         Returns:
             A dictionary representing the message generated by the agent in
             response to the user's input.
@@ -227,12 +205,10 @@ class WebVoyagerAgent(AgentBase):
         # init task
         if isinstance(x.content, str):
             self.task_question = x.content
+            self.task_dir = file_manager.dir_file
         else:
             self.task_question = x.content["question"]
-            # self.task_dir = file_manager.dir_file
             self.task_dir = x.content["dir"]
-
-            import os
 
         def ensure_directory_exists(path):
             if not os.path.exists(path):
@@ -244,23 +220,14 @@ class WebVoyagerAgent(AgentBase):
         ensure_directory_exists(self.task_dir)
 
         self.task_answer = ""
-        # TODO
 
         self.task_web = self.default_homepage
-        # TODO init the task dir for it
-        # self.task_dir = (
-        #     "/Users/wenhao/Disk/Codes/mydev/agentscope/tmp_files/task1"
-        # )
 
-        # TODO visit task['web'] page
         self.browser.visit_page(self.task_web)
         time.sleep(5)
         self.browser.try_click_body()
 
-        # self.browser.prevent_space()
-
-        # clear the pdf files
-        download_files = []
+        # TODO self.browser.prevent_space()
 
         fail_obs = ""  # When error execute the action
         pdf_obs = ""  # When download PDF file
@@ -279,10 +246,7 @@ class WebVoyagerAgent(AgentBase):
         it = 0
 
         while it < self.max_iter:
-            # inp = input("iter end?") # for debug usage
-            # if inp == "e":
-            #     return
-            logger.info(f"Iter: {it}")
+            self.speak(f"Iter: {it}")
             it += 1
             if not fail_obs:
                 try:
@@ -303,16 +267,15 @@ class WebVoyagerAgent(AgentBase):
                     self.task_dir,
                     "screenshot{}.png".format(it),
                 )
-                self.speak(f"saving image to {img_path}")
+                # self.speak(f"saving image to {img_path}")
                 file_manager.save_image(screenshot_bytes, img_path)
                 # encode image
                 b64_img = encode_image(img_path)
 
-                self.speak(f"Web ele text is: {web_eles_text}")
+                # self.speak(f"Web ele text is: {web_eles_text}")
                 curr_msg = format_msg(
                     it,
                     init_msg,
-                    pdf_obs,
                     warn_obs,
                     b64_img,
                     web_eles_text,
@@ -355,7 +318,6 @@ class WebVoyagerAgent(AgentBase):
             action_key, info = self.extract_action(bot_action)
 
             fail_obs = ""
-            pdf_obs = ""
             warn_obs = ""
             # execute action
             try:
@@ -406,7 +368,6 @@ class WebVoyagerAgent(AgentBase):
                         time.sleep(5)
 
                 elif action_key == "scroll":
-                    page = self.browser.page
                     scroll_ele_number = info["number"]
                     scroll_content = info["content"]
 
@@ -414,6 +375,9 @@ class WebVoyagerAgent(AgentBase):
                         self.browser.scroll(direction=scroll_content)
                         time.sleep(3)
                     else:
+                        # add try click body
+                        self.browser.try_click_body()
+
                         scroll_ele_number = int(scroll_ele_number)
                         self.browser.focus_element(scroll_ele_number)
                         if scroll_content == "down":
@@ -431,9 +395,9 @@ class WebVoyagerAgent(AgentBase):
                     time.sleep(2)
 
                 elif action_key == "answer":
-                    logger.info(info["content"])
+                    self.speak(info["content"])
                     self.task_answer = info["content"]
-                    logger.info("finish!!")
+                    self.speak("finish.")
                     break
 
                 else:
@@ -448,12 +412,11 @@ class WebVoyagerAgent(AgentBase):
                     fail_obs = ""
                 time.sleep(2)
 
-        # TODO save messages to trajectory
-        # print_message(messages, task_dir)
-        # self.browser.close()
         # TODO show token cost
         # logger.info(f'Total cost: {accumulate_prompt_token / 1000 * 0.01 + accumulate_completion_token / 1000 * 0.03}')
         self.messages = messages
+        # TODO save messages to trajectory
+        # TODO when to close self.browser
         return {"answer": self.task_answer}
 
     def extract_action(self, text: str):
