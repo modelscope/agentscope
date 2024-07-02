@@ -180,8 +180,13 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             **kwargs,
         )
 
-        # step4: record the api invocation if needed token usage and update monitor accordingly
-        response = self._record_invocation_and_token_usage(response, messages=messages, **kwargs)
+        # step4: record the api invocation if needed, token usage
+        # and update monitor accordingly
+        response = self._record_invocation_and_token_usage(
+            response,
+            messages=messages,
+            **kwargs,
+        )
 
         # step5: return model response
         model_response = ModelResponse(raw=response, text="")
@@ -196,7 +201,8 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         messages: list,
         **kwargs: Any,
     ) -> Union[GenerationResponse, Generator[GenerationResponse, None, None]]:
-        # Record the last token usage and update monitor accordingly
+        # Record the api invocation if needed,
+        # token usage and update monitor accordingly
         try:
             self.update_monitor(
                 call_counter=1,
@@ -215,14 +221,16 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             )
             return response
         except AttributeError:
+            last_chunk = None
             for chunk in response:
+                last_chunk = chunk
                 yield chunk
             self.update_monitor(
                 call_counter=1,
-                prompt_tokens=chunk.usage.get("input_tokens", 0),
-                completion_tokens=chunk.usage.get("output_tokens", 0),
-                total_tokens=chunk.usage.get("input_tokens", 0)
-                + chunk.usage.get("output_tokens", 0),
+                prompt_tokens=last_chunk.usage.get("input_tokens", 0),
+                completion_tokens=last_chunk.usage.get("output_tokens", 0),
+                total_tokens=last_chunk.usage.get("input_tokens", 0)
+                + last_chunk.usage.get("output_tokens", 0),
             )
             self._save_model_invocation(
                 arguments={
@@ -230,7 +238,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                     "messages": messages,
                     **kwargs,
                 },
-                response=chunk,
+                response=last_chunk,
             )
             # avoid pylint warning
             return None
@@ -267,12 +275,12 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         **kwargs: Any,
     ) -> Union[ModelResponse, ModelResponseGen]:
         stream = kwargs.get("stream", False)
-        raw_response = model_response.raw
+        response = model_response.raw
         if stream:
 
             def gen() -> ModelResponseGen:
-                for response in raw_response:
-                    delta = self._parse_response(response, **kwargs).text
+                for chunk in response:
+                    delta = self._parse_response(chunk, **kwargs).text
                     model_response.text += delta
                     model_response.delta = delta
                     yield model_response
@@ -280,7 +288,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             return gen()
         else:
             model_response.text = self._parse_response(
-                raw_response,
+                response,
                 **kwargs,
             ).text
             return model_response
