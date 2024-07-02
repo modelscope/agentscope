@@ -279,7 +279,7 @@ def openai_edit_image(
         > }
     """
     client = OpenAI(api_key=api_key)
-    # convert relative path to absolute path
+    # _parse_url handles both local and web URLs and returns BytesIO
     image = _parse_url(image_url)
     try:
         response = client.images.edit(
@@ -353,6 +353,7 @@ def openai_create_image_variation(
         > }
     """
     client = OpenAI(api_key=api_key)
+    # _parse_url handles both local and web URLs and returns BytesIO
     image = _parse_url(image_url)
     try:
         response = client.images.create_variation(
