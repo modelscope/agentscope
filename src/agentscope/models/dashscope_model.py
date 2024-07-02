@@ -181,72 +181,40 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             **kwargs,
         )
 
-        # step4: record the api invocation if needed, token usage
-        # and update monitor accordingly
-        response = self._record_invocation_and_token_usage(
-            response,
+        # step4: return process response and return model response
+        return self._process_response(
+            response=response,
             messages=messages,
             **kwargs,
         )
 
-        # step5: return model response
-        return self._post_process(response=response, **kwargs)
-
     def _record_invocation_and_token_usage(
         self,
-        response: Union[
-            GenerationResponse,
-            GenerationResponseGen,
-        ],
+        response: GenerationResponse,
         messages: list,
         **kwargs: Any,
-    ) -> Union[GenerationResponse, GenerationResponseGen]:
+    ) -> None:
         # Record the api invocation if needed,
         # token usage and update monitor accordingly
 
-        try:
-            self.update_monitor(
-                call_counter=1,
-                prompt_tokens=response.usage.get("input_tokens", 0),
-                completion_tokens=response.usage.get("output_tokens", 0),
-                total_tokens=response.usage.get("input_tokens", 0)
-                + response.usage.get("output_tokens", 0),
-            )
-            self._save_model_invocation(
-                arguments={
-                    "model": self.model_name,
-                    "messages": messages,
-                    **kwargs,
-                },
-                response=response,
-            )
-            return response
-        except AttributeError:
+        self.update_monitor(
+            call_counter=1,
+            prompt_tokens=response.usage.get("input_tokens", 0),
+            completion_tokens=response.usage.get("output_tokens", 0),
+            total_tokens=response.usage.get("input_tokens", 0)
+            + response.usage.get("output_tokens", 0),
+        )
 
-            def gen() -> GenerationResponseGen:
-                last_chunk = None
-                for chunk in response:
-                    last_chunk = chunk
-                    yield chunk
-                self.update_monitor(
-                    call_counter=1,
-                    prompt_tokens=last_chunk.usage.get("input_tokens", 0),
-                    completion_tokens=last_chunk.usage.get("output_tokens", 0),
-                    total_tokens=last_chunk.usage.get("input_tokens", 0)
-                    + last_chunk.usage.get("output_tokens", 0),
-                )
-                self._save_model_invocation(
-                    arguments={
-                        "model": self.model_name,
-                        "messages": messages,
-                        **kwargs,
-                    },
-                    response=last_chunk,
-                )
+        self._save_model_invocation(
+            arguments={
+                "model": self.model_name,
+                "messages": messages,
+                **kwargs,
+            },
+            response=response,
+        )
 
-            return gen()
-
-    def _parse_response(
+    def _extract_content_from_response(
         self,
         response: GenerationResponse,
         **kwargs: Any,
@@ -269,9 +237,10 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         )
         return text
 
-    def _post_process(
+    def _process_response(
         self,
         response: Union[GenerationResponse, GenerationResponseGen],
+        messages: list,
         **kwargs: Any,
     ) -> Union[ModelResponse, ModelResponseGen]:
         stream = kwargs.get("stream", False)
@@ -279,15 +248,30 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
 
             def gen() -> ModelResponseGen:
                 text = ""
+                last_chunk = None
                 for chunk in response:
-                    delta = self._parse_response(chunk, **kwargs)
+                    last_chunk = chunk
+                    delta = self._extract_content_from_response(
+                        chunk,
+                        **kwargs,
+                    )
                     text += delta
                     yield ModelResponse(text=text, delta=delta, raw=chunk)
+                self._record_invocation_and_token_usage(
+                    last_chunk,
+                    messages=messages,
+                    **kwargs,
+                )
 
             return gen()
         else:
-            text = self._parse_response(
+            text = self._extract_content_from_response(
                 response,
+                **kwargs,
+            )
+            self._record_invocation_and_token_usage(
+                response,
+                messages=messages,
                 **kwargs,
             )
             return ModelResponse(text=text, raw=response)
