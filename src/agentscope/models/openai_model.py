@@ -13,6 +13,7 @@ from ..utils.tools import _convert_to_str, _to_openai_image_url
 try:
     import openai
     from openai import ChatCompletion
+
     ChatCompletionGen = Generator[ChatCompletion, None, None]
 except ImportError:
     openai = None
@@ -240,6 +241,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
             )
             return response
         except AttributeError:
+
             def gen() -> ChatCompletionGen:
                 valid_usage = {}
                 response_list = []
@@ -260,6 +262,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
                     },
                     response=response_list,
                 )
+
             return gen()
 
     def _post_process(

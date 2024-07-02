@@ -222,6 +222,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             )
             return response
         except AttributeError:
+
             def gen() -> GenerationResponseGen:
                 last_chunk = None
                 for chunk in response:
@@ -242,6 +243,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                     },
                     response=last_chunk,
                 )
+
             return gen()
 
     def _parse_response(
