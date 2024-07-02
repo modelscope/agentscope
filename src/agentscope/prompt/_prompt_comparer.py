@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """The Abtest module to show how different system prompt performs"""
-from typing import List
+from typing import List, Optional, Union, Sequence
 from loguru import logger
 
 from agentscope.models import load_model_by_config_name
@@ -41,7 +41,7 @@ class _SystemPromptTestAgent(AgentBase):
         """Enable the display of the output message."""
         self.display = True
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         """Reply the message with the given system prompt."""
         self.memory.add(x)
 

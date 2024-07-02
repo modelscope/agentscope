@@ -11,7 +11,7 @@ from agentscope.agents import AgentBase
 from agentscope.message import Msg
 from agentscope.exception import ResponseParsingError
 from agentscope.parsers import MarkdownJsonDictParser
-from typing import List, Callable
+from typing import List, Callable, Optional, Union, Sequence
 import json
 from agentscope.service import (
     ServiceFactory,
@@ -206,7 +206,7 @@ class SWEAgent(AgentBase):
         self.running_memory.append(str(action) + str(obs))
         return msg_res
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         action_name = None
         self.main_goal = x.content
         while not action_name == "exit":
