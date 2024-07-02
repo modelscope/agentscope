@@ -245,12 +245,11 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
 
     def _process_response(
         self,
-        model_response: ChatCompletion,
+        response: Union[ChatCompletion, ChatCompletionGen],
         messages: list,
         **kwargs: Any,
     ) -> Union[ModelResponse, ModelResponseGen]:
         stream = kwargs.get("stream", False)
-        response = model_response.raw
         if stream:
 
             def gen() -> ModelResponseGen:
