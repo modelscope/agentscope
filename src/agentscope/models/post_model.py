@@ -127,6 +127,7 @@ class PostAPIModelWrapperBase(ModelWrapperBase, ABC):
             **post_args,
         }
 
+        print(1)
         # step2: prepare post requests
         for i in range(1, self.max_retries + 1):
             response = requests.post(**request_kwargs)

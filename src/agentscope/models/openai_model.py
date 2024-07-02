@@ -240,9 +240,9 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
             )
             return response
         except AttributeError:
-            valid_usage = {}
-            response_list = []
             def gen() -> ChatCompletionGen:
+                valid_usage = {}
+                response_list = []
                 for chunk in response:
                     if hasattr(chunk, "usage") and chunk.usage is not None:
                         valid_usage = chunk.usage.model_dump()

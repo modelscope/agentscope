@@ -169,7 +169,6 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                 "Each message in the 'messages' list must contain a 'role' "
                 "and 'content' key for DashScope API.",
             )
-
         stream = kwargs.get("stream", False)
         if stream:
             kwargs["incremental_output"] = True
@@ -223,7 +222,6 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             )
             return response
         except AttributeError:
-
             def gen() -> GenerationResponseGen:
                 last_chunk = None
                 for chunk in response:
@@ -244,8 +242,6 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                     },
                     response=last_chunk,
                 )
-
-            # avoid pylint warning
             return gen()
 
     def _parse_response(
