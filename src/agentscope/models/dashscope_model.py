@@ -180,29 +180,21 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             **kwargs,
         )
 
-        # step4: record the api invocation if needed
-        self._save_model_invocation(
-            arguments={
-                "model": self.model_name,
-                "messages": messages,
-                **kwargs,
-            },
-            response=response,
-        )
+        # step4: record the api invocation if needed token usage and update monitor accordingly
+        response = self._record_invocation_and_token_usage(response, messages=messages, **kwargs)
 
-        # step5: record token usage and update monitor accordingly
-        response = self._record_last_token_usage(response)
-
-        # step6: return model response
+        # step5: return model response
         model_response = ModelResponse(raw=response, text="")
         return self._post_process(model_response=model_response, **kwargs)
 
-    def _record_last_token_usage(
+    def _record_invocation_and_token_usage(
         self,
         response: Union[
             GenerationResponse,
             Generator[GenerationResponse, None, None],
         ],
+        messages: list,
+        **kwargs: Any,
     ) -> Union[GenerationResponse, Generator[GenerationResponse, None, None]]:
         # Record the last token usage and update monitor accordingly
         try:
@@ -212,6 +204,14 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                 completion_tokens=response.usage.get("output_tokens", 0),
                 total_tokens=response.usage.get("input_tokens", 0)
                 + response.usage.get("output_tokens", 0),
+            )
+            self._save_model_invocation(
+                arguments={
+                    "model": self.model_name,
+                    "messages": messages,
+                    **kwargs,
+                },
+                response=response,
             )
             return response
         except AttributeError:
@@ -223,6 +223,14 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                 completion_tokens=chunk.usage.get("output_tokens", 0),
                 total_tokens=chunk.usage.get("input_tokens", 0)
                 + chunk.usage.get("output_tokens", 0),
+            )
+            self._save_model_invocation(
+                arguments={
+                    "model": self.model_name,
+                    "messages": messages,
+                    **kwargs,
+                },
+                response=chunk,
             )
             # avoid pylint warning
             return None
