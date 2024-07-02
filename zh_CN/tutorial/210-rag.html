@@ -79,6 +79,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#knowledge-bank">Knowledge Bank</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#rag">RAG 智能体</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#embedding-model">(拓展) 架设自己的embedding model服务</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="105-logging.html">日志</a></li>
@@ -319,6 +320,110 @@
 </ul>
 <p><strong>自己搭建 RAG 智能体.</strong> 只要您的智能体配置具有<code class="docutils literal notranslate"><span class="pre">knowledge_id_list</span></code>，您就可以将一个agent和这个列表传递给<code class="docutils literal notranslate"><span class="pre">KnowledgeBank.equip</span></code>；这样该agent就是被装配<code class="docutils literal notranslate"><span class="pre">knowledge_id</span></code>。
 您可以在<code class="docutils literal notranslate"><span class="pre">reply</span></code>函数中自己决定如何从<code class="docutils literal notranslate"><span class="pre">Knowledge</span></code>对象中提取和使用信息，甚至通过<code class="docutils literal notranslate"><span class="pre">Knowledge</span></code>修改知识库。</p>
+</section>
+<section id="embedding-model">
+<h2>(拓展) 架设自己的embedding model服务<a class="headerlink" href="#embedding-model" title="Link to this heading"></a></h2>
+<p>我们在此也对架设本地embedding model感兴趣的用户提供以下的样例。
+以下样例基于在embedding model范围中很受欢迎的<code class="docutils literal notranslate"><span class="pre">sentence_transformers</span></code> 包（基于<code class="docutils literal notranslate"><span class="pre">transformer</span></code> 而且兼容HuggingFace和ModelScope的模型）。
+这个样例中，我们会使用当下最好的文本向量模型之一<code class="docutils literal notranslate"><span class="pre">gte-Qwen2-7B-instruct</span></code>。</p>
+<ul class="simple">
+<li><p>第一步: 遵循在 <a class="reference external" href="https://huggingface.co/Alibaba-NLP/gte-Qwen2-7B-instruct">HuggingFace</a> 或者 <a class="reference external" href="https://www.modelscope.cn/models/iic/gte_Qwen2-7B-instruct">ModelScope</a>的指示下载模型。
+(如果无法直接从HuggingFace下载模型，也可以考虑使用HuggingFace镜像：bash命令行<code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">HF_ENDPOINT=https://hf-mirror.com</span></code>，或者在Python代码中加入<code class="docutils literal notranslate"><span class="pre">os.environ[&quot;HF_ENDPOINT&quot;]</span> <span class="pre">=</span> <span class="pre">&quot;https://hf-mirror.com&quot;</span></code>)</p></li>
+<li><p>第二步: 设置服务器。以下是一段参考代码。</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">request</span>
+<span class="kn">from</span> <span class="nn">sentence_transformers</span> <span class="kn">import</span> <span class="n">SentenceTransformer</span>
+
+<span class="k">def</span> <span class="nf">create_timestamp</span><span class="p">(</span><span class="n">format_</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get current timestamp.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">format_</span><span class="p">)</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/embedding/&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">get_embedding</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Receive post request and return response&quot;&quot;&quot;</span>
+    <span class="n">json</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+
+    <span class="n">inputs</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">)</span>
+
+    <span class="k">global</span> <span class="n">model</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">inputs</span><span class="p">]</span>
+
+    <span class="n">embeddings</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;completion_tokens&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="s2">&quot;prompt_tokens&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;response&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;embedding&quot;</span><span class="p">:</span> <span class="n">emb</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+                    <span class="p">}</span>
+                    <span class="k">for</span> <span class="n">emb</span> <span class="ow">in</span> <span class="n">embeddings</span>
+                <span class="p">],</span>
+                <span class="s2">&quot;created&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">create_timestamp</span><span class="p">(),</span>
+                <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;flask_model&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="s2">&quot;text_completion&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;usage&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;completion_tokens&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s2">&quot;prompt_tokens&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s2">&quot;total_tokens&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="p">},</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;total_tokens&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--model_name_or_path&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--device&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--port&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">8000</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="k">global</span> <span class="n">model</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;setting up for embedding model....&quot;</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">SentenceTransformer</span><span class="p">(</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">model_name_or_path</span>
+    <span class="p">)</span>
+
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>第三部：启动服务器。</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>setup_ms_service.py<span class="w"> </span>--model_name_or_path<span class="w"> </span><span class="o">{</span><span class="nv">$PATH_TO_gte_Qwen2_7B_instruct</span><span class="o">}</span>
+</pre></div>
+</div>
+<p>测试服务是否成功启动。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models.post_model</span> <span class="kn">import</span> <span class="n">PostAPIEmbeddingWrapper</span>
+
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">PostAPIEmbeddingWrapper</span><span class="p">(</span>
+    <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;test_config&quot;</span><span class="p">,</span>
+    <span class="n">api_url</span><span class="o">=</span><span class="s2">&quot;http://127.0.0.1:8000/embedding/&quot;</span><span class="p">,</span>
+    <span class="n">json_args</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;max_length&quot;</span><span class="p">:</span> <span class="mi">4096</span><span class="p">,</span>
+        <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.5</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="p">(</span><span class="s2">&quot;testing&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
 <p><a class="reference internal" href="#rag-zh">[回到顶部]</a></p>
 </section>
 </section>
