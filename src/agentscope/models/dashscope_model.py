@@ -3,7 +3,7 @@
 import os
 from abc import ABC
 from http import HTTPStatus
-from typing import Any, Union, List, Sequence
+from typing import Any, Union, List, Sequence, Generator
 from loguru import logger
 
 from ..message import MessageBase
@@ -11,10 +11,11 @@ from ..utils.tools import _convert_to_str, _guess_type_by_extension
 
 try:
     import dashscope
+    from dashscope.aigc.generation import GenerationResponse
 except ImportError:
     dashscope = None
 
-from .model import ModelWrapperBase, ModelResponse
+from .model import ModelWrapperBase, ModelResponse, ModelResponseGen
 
 from ..file_manager import file_manager
 
@@ -108,7 +109,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         self,
         messages: list,
         **kwargs: Any,
-    ) -> ModelResponse:
+    ) -> Union[ModelResponse, ModelResponseGen]:
         """Processes a list of messages to construct a payload for the
         DashScope API call. It then makes a request to the DashScope API
         and returns the response. This method also updates monitoring
@@ -167,6 +168,10 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                 "and 'content' key for DashScope API.",
             )
 
+        stream = kwargs.get("stream", False)
+        if stream:
+            kwargs["incremental_output"] = True
+
         # step3: forward to generate response
         response = dashscope.Generation.call(
             model=self.model_name,
@@ -174,16 +179,6 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             result_format="message",  # set the result to be "message" format.
             **kwargs,
         )
-
-        if response.status_code != HTTPStatus.OK:
-            error_msg = (
-                f" Request id: {response.request_id},"
-                f" Status code: {response.status_code},"
-                f" error code: {response.code},"
-                f" error message: {response.message}."
-            )
-
-            raise RuntimeError(error_msg)
 
         # step4: record the api invocation if needed
         self._save_model_invocation(
@@ -195,21 +190,94 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             response=response,
         )
 
-        # step5: update monitor accordingly
-        # The metric names are unified for comparison
-        self.update_monitor(
-            call_counter=1,
-            prompt_tokens=response.usage.get("input_tokens", 0),
-            completion_tokens=response.usage.get("output_tokens", 0),
-            total_tokens=response.usage.get("input_tokens", 0)
-            + response.usage.get("output_tokens", 0),
-        )
+        # step5: record token usage and update monitor accordingly
+        response = self._record_last_token_usage(response)
 
-        # step6: return response
-        return ModelResponse(
-            text=response.output["choices"][0]["message"]["content"],
+        # step6: return model response
+        model_response = ModelResponse(raw=response, text="")
+        return self._post_process(model_response=model_response, **kwargs)
+
+    def _record_last_token_usage(
+        self,
+        response: Union[
+            GenerationResponse,
+            Generator[GenerationResponse, None, None],
+        ],
+    ) -> Union[GenerationResponse, Generator[GenerationResponse, None, None]]:
+        # Record the last token usage and update monitor accordingly
+        try:
+            self.update_monitor(
+                call_counter=1,
+                prompt_tokens=response.usage.get("input_tokens", 0),
+                completion_tokens=response.usage.get("output_tokens", 0),
+                total_tokens=response.usage.get("input_tokens", 0)
+                + response.usage.get("output_tokens", 0),
+            )
+            return response
+        except AttributeError:
+            last_chunk = None
+            for chunk in response:
+                last_chunk = chunk
+                yield chunk
+            self.update_monitor(
+                call_counter=1,
+                prompt_tokens=last_chunk.usage.get("input_tokens", 0),
+                completion_tokens=last_chunk.usage.get("output_tokens", 0),
+                total_tokens=last_chunk.usage.get("input_tokens", 0)
+                + last_chunk.usage.get("output_tokens", 0),
+            )
+            # avoid pylint warning
+            return None
+
+    def _handle_response(
+        self,
+        response: ModelResponse,
+        **kwargs: Any,
+    ) -> ModelResponse:
+        # Extract the text content from a model response.
+        result_format = kwargs.get("result_format", "message")
+        if response.status_code != HTTPStatus.OK:
+            error_msg = (
+                f" Request id: {response.request_id},"
+                f" Status code: {response.status_code},"
+                f" error code: {response.code},"
+                f" error message: {response.message}."
+            )
+
+            raise RuntimeError(error_msg)
+
+        model_response = ModelResponse(
+            text=response.output["choices"][0]["message"]["content"]
+            if result_format == "message"
+            else response.output.text,
             raw=response,
         )
+
+        return model_response
+
+    def _post_process(
+        self,
+        model_response: ModelResponse,
+        **kwargs: Any,
+    ) -> Union[ModelResponse, ModelResponseGen]:
+        stream = kwargs.get("stream", False)
+        raw_response = model_response.raw
+        if stream:
+
+            def gen() -> ModelResponseGen:
+                for response in raw_response:
+                    delta = self._handle_response(response, **kwargs).text
+                    model_response.text += delta
+                    model_response.delta = delta
+                    yield model_response
+
+            return gen()
+        else:
+            model_response.text = self._handle_response(
+                raw_response,
+                **kwargs,
+            ).text
+            return model_response
 
     def format(
         self,

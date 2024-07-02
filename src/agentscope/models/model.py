@@ -63,7 +63,7 @@ from typing import Sequence, Any, Callable, Union, List, Type
 from loguru import logger
 
 from agentscope.utils import QuotaExceededError
-from .response import ModelResponse
+from .response import ModelResponse, ModelResponseGen
 from ..exception import ResponseParsingError
 
 from ..file_manager import file_manager
@@ -217,7 +217,7 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
         else:
             return None  # type: ignore[return-value]
 
-    def __call__(self, *args: Any, **kwargs: Any) -> ModelResponse:
+    def __call__(self, *args: Any, **kwargs: Any) -> Union[ModelResponse, ModelResponseGen]:
         """Processing input with the model."""
         raise NotImplementedError(
             f"Model Wrapper [{type(self).__name__}]"

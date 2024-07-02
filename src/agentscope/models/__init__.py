@@ -45,6 +45,7 @@ from .litellm_model import (
 __all__ = [
     "ModelWrapperBase",
     "ModelResponse",
+    "ModelResponseGen",
     "PostAPIModelWrapperBase",
     "PostAPIChatWrapper",
     "OpenAIWrapperBase",

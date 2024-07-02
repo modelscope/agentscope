@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Parser for model response."""
 import json
-from typing import Optional, Sequence, Any
+from typing import Optional, Sequence, Any, Generator
 
 from loguru import logger
 
@@ -16,6 +16,7 @@ class ModelResponse:
     """
 
     text: Optional[str] = None
+    delta: Optional[str] = None
     embedding: Optional[Sequence] = None
     raw: Optional[Any] = None
     image_urls: Optional[Sequence[str]] = None
@@ -24,6 +25,7 @@ class ModelResponse:
     def __init__(
         self,
         text: str = None,
+        delta: str = None,
         embedding: Sequence = None,
         image_urls: Sequence[str] = None,
         raw: Any = None,
@@ -34,6 +36,8 @@ class ModelResponse:
         Args:
             text (`str`, optional):
                 The text field.
+            delta (`str`, optional):
+                The incremental text field(only used when streaming).
             embedding (`Sequence`, optional):
                 The embedding returned by the model.
             image_urls (`Sequence[str]`, optional):
@@ -44,6 +48,7 @@ class ModelResponse:
                 The parsed data returned by the model.
         """
         self.text = text
+        self.delta = delta
         self.embedding = embedding
         self.image_urls = image_urls
         self.raw = raw
@@ -77,9 +82,12 @@ class ModelResponse:
 
         serialized_fields = {
             "text": self.text,
+            "delta": self.delta,
             "embedding": self.embedding,
             "image_urls": self.image_urls,
             "parsed": self.parsed,
             "raw": raw,
         }
         return json.dumps(serialized_fields, indent=4, ensure_ascii=False)
+
+ModelResponseGen = Generator[ModelResponse, None, None]
