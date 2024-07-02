@@ -248,18 +248,18 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
                         valid_usage = chunk.usage.model_dump()
                     response_list.append(chunk.model_dump())
                     yield chunk
-            self.update_monitor(
-                call_counter=1,
-                **valid_usage,
-            )
-            self._save_model_invocation(
-                arguments={
-                    "model": self.model_name,
-                    "messages": messages,
-                    **kwargs,
-                },
-                response=response_list,
-            )
+                self.update_monitor(
+                    call_counter=1,
+                    **valid_usage,
+                )
+                self._save_model_invocation(
+                    arguments={
+                        "model": self.model_name,
+                        "messages": messages,
+                        **kwargs,
+                    },
+                    response=response_list,
+                )
             return gen()
 
     def _post_process(
