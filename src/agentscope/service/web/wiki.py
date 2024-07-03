@@ -16,8 +16,12 @@ from agentscope.service.service_response import (
 from agentscope.utils.common import requests_get
 
 
-def _check_entity_existence(entity: str) -> ServiceResponse:
+def wiki_api(params):
     url = "https://en.wikipedia.org/w/api.php"
+    return requests_get(url, params=params)
+
+
+def _check_entity_existence(entity: str) -> ServiceResponse:
     search_params = {
         "action": "query",
         "list": "search",
@@ -25,7 +29,7 @@ def _check_entity_existence(entity: str) -> ServiceResponse:
         "format": "json",
     }
 
-    search_data = requests_get(url, params=search_params)
+    search_data = wiki_api(search_params)
 
     if "query" in search_data and search_data["query"]["search"]:
         exact_match = None
@@ -104,7 +108,6 @@ def wiki_get_category_members(
             }
 
     """
-    url = "https://en.wikipedia.org/w/api.php"
     params = {
         "action": "query",
         "list": "categorymembers",
@@ -117,7 +120,7 @@ def wiki_get_category_members(
     total_fetched = 0
 
     while total_fetched < max_members:
-        data = requests_get(url, params=params)
+        data = wiki_api(params)
         batch_members = data["query"]["categorymembers"]
         members.extend(batch_members)
         total_fetched += len(batch_members)
@@ -184,7 +187,6 @@ def wiki_get_infobox(
     if existence_response.status == ServiceExecStatus.ERROR:
         return existence_response
 
-    url = "https://en.wikipedia.org/w/api.php"
     parse_params = {
         "action": "parse",
         "page": entity,
@@ -192,7 +194,7 @@ def wiki_get_infobox(
         "format": "json",
     }
 
-    parse_data = requests_get(url, params=parse_params)
+    parse_data = wiki_api(parse_params)
 
     if "parse" in parse_data:
         raw_html = parse_data["parse"]["text"]["*"]
@@ -265,7 +267,6 @@ def wiki_get_page_content_by_paragraph(
     if existence_response.status == ServiceExecStatus.ERROR:
         return existence_response
 
-    url = "https://en.wikipedia.org/w/api.php"
     params = {
         "action": "query",
         "prop": "extracts",
@@ -274,7 +275,7 @@ def wiki_get_page_content_by_paragraph(
         "format": "json",
     }
 
-    data = requests_get(url, params=params)
+    data = wiki_api(params)
     page = next(iter(data["query"]["pages"].values()))
     content = page.get("extract", "No content found.")
     if content == "No content found.":
@@ -340,7 +341,6 @@ def wiki_get_all_wikipedia_tables(
     if existence_response.status == ServiceExecStatus.ERROR:
         return existence_response
 
-    url = "https://en.wikipedia.org/w/api.php"
     params = {
         "action": "parse",
         "page": entity,
@@ -348,7 +348,7 @@ def wiki_get_all_wikipedia_tables(
         "format": "json",
     }
 
-    data = requests_get(url, params=params)
+    data = wiki_api(params)
     raw_html = data["parse"]["text"]["*"]
 
     soup = BeautifulSoup(raw_html, "html.parser")
@@ -427,15 +427,13 @@ def wiki_get_page_images_with_captions(
     if existence_response.status == ServiceExecStatus.ERROR:
         return existence_response
 
-    url = "https://en.wikipedia.org/w/api.php"
-
     params = {
         "action": "query",
         "prop": "images",
         "titles": entity,
         "format": "json",
     }
-    data = requests_get(url, params=params)
+    data = wiki_api(params)
     page = next(iter(data["query"]["pages"].values()))
     images = page.get("images", [])
     if len(images) == 0:
@@ -451,7 +449,7 @@ def wiki_get_page_images_with_captions(
             "iiprop": "url|extmetadata",
             "format": "json",
         }
-        data = requests_get(url, params=params)
+        data = wiki_api(params)
         image_page = next(iter(data["query"]["pages"].values()))
         if "imageinfo" in image_page:
             image_info = image_page["imageinfo"][0]
