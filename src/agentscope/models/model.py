@@ -67,7 +67,7 @@ from .response import ModelResponse, ModelResponseGen
 from ..exception import ResponseParsingError
 
 from ..file_manager import file_manager
-from ..message import MessageBase
+from ..message import Msg
 from ..utils import MonitorFactory
 from ..utils.monitor import get_full_name
 from ..utils.tools import _get_timestamp
@@ -227,7 +227,7 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
 
     def format(
         self,
-        *args: Union[MessageBase, Sequence[MessageBase]],
+        *args: Union[Msg, Sequence[Msg]],
     ) -> Union[List[dict], str]:
         """Format the input string or dict into the format that the model
         API required."""

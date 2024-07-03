@@ -7,7 +7,7 @@ from loguru import logger
 
 from .model import ModelWrapperBase, ModelResponse, ModelResponseGen
 from ..file_manager import file_manager
-from ..message import MessageBase
+from ..message import Msg
 from ..utils.tools import _convert_to_str, _to_openai_image_url
 
 try:
@@ -94,7 +94,7 @@ class OpenAIWrapperBase(ModelWrapperBase, ABC):
 
     def format(
         self,
-        *args: Union[MessageBase, Sequence[MessageBase]],
+        *args: Union[Msg, Sequence[Msg]],
     ) -> Union[List[dict], str]:
         raise RuntimeError(
             f"Model Wrapper [{type(self).__name__}] doesn't "
@@ -283,7 +283,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
 
     def _format_msg_with_url(
         self,
-        msg: MessageBase,
+        msg: Msg,
     ) -> Dict:
         """Format a message with image urls into openai chat format.
         This format method is used for gpt-4o, gpt-4-turbo, gpt-4-vision and
@@ -354,13 +354,13 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
 
     def format(
         self,
-        *args: Union[MessageBase, Sequence[MessageBase]],
+        *args: Union[Msg, Sequence[Msg]],
     ) -> List[dict]:
         """Format the input string and dictionary into the format that
         OpenAI Chat API required.
 
         Args:
-            args (`Union[MessageBase, Sequence[MessageBase]]`):
+            args (`Union[Msg, Sequence[Msg]]`):
                 The input arguments to be formatted, where each argument
                 should be a `Msg` object, or a list of `Msg` objects.
                 In distribution, placeholder is also allowed.
@@ -374,7 +374,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
         for arg in args:
             if arg is None:
                 continue
-            if isinstance(arg, MessageBase):
+            if isinstance(arg, Msg):
                 if arg.url is not None:
                     messages.append(self._format_msg_with_url(arg))
                 else:
