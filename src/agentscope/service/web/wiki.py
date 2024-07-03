@@ -32,25 +32,26 @@ def _check_entity_existence(entity: str) -> ServiceResponse:
 
     search_data = wiki_api(search_params)
 
-    if "query" in search_data and search_data["query"]["search"]:
-        exact_match = None
-        for result in search_data["query"]["search"]:
-            if result["title"].lower() == entity.lower():
-                exact_match = result["title"]
-                break
-        if not exact_match:
-            similar_entities = [
-                result["title"]
-                for result in search_data["query"]["search"][:5]
-            ]
+    if "query" in search_data and "search" in search_data["query"]:
+        if search_data["query"]["search"]:
+            exact_match = None
+            for result in search_data["query"]["search"]:
+                if result["title"].lower() == entity.lower():
+                    exact_match = result["title"]
+                    break
+            if not exact_match:
+                similar_entities = [
+                    result["title"]
+                    for result in search_data["query"]["search"][:5]
+                ]
+                return ServiceResponse(
+                    ServiceExecStatus.ERROR,
+                    {"similar_entities": similar_entities},
+                )
             return ServiceResponse(
-                ServiceExecStatus.ERROR,
-                {"similar_entities": similar_entities},
+                ServiceExecStatus.SUCCESS,
+                {"entity": exact_match},
             )
-        return ServiceResponse(
-            ServiceExecStatus.SUCCESS,
-            {"entity": exact_match},
-        )
     return ServiceResponse(
         ServiceExecStatus.ERROR,
         {"error": "Entity not found"},
