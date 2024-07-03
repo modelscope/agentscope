@@ -16,7 +16,8 @@ from agentscope.service.service_response import (
 from agentscope.utils.common import requests_get
 
 
-def wiki_api(params):
+def wiki_api(params: dict) -> dict:
+    """Scratch information via Wiki API"""
     url = "https://en.wikipedia.org/w/api.php"
     return requests_get(url, params=params)
 
