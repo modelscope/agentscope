@@ -147,6 +147,15 @@
     <span class="n">dashscope_text_to_image</span><span class="p">,</span>
     <span class="n">dashscope_text_to_audio</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.multi_modality.openai_services</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">openai_audio_to_text</span><span class="p">,</span>
+    <span class="n">openai_text_to_audio</span><span class="p">,</span>
+    <span class="n">openai_text_to_image</span><span class="p">,</span>
+    <span class="n">openai_image_to_text</span><span class="p">,</span>
+    <span class="n">openai_edit_image</span><span class="p">,</span>
+    <span class="n">openai_create_image_variation</span><span class="p">,</span>
+<span class="p">)</span>
+
 <span class="kn">from</span> <span class="nn">.service_response</span> <span class="kn">import</span> <span class="n">ServiceResponse</span>
 <span class="kn">from</span> <span class="nn">.service_toolkit</span> <span class="kn">import</span> <span class="n">ServiceToolkit</span>
 <span class="kn">from</span> <span class="nn">.service_toolkit</span> <span class="kn">import</span> <span class="n">ServiceFactory</span>
@@ -205,6 +214,12 @@
     <span class="s2">&quot;dashscope_image_to_text&quot;</span><span class="p">,</span>
     <span class="s2">&quot;dashscope_text_to_image&quot;</span><span class="p">,</span>
     <span class="s2">&quot;dashscope_text_to_audio&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;openai_audio_to_text&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;openai_text_to_audio&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;openai_text_to_image&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;openai_image_to_text&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;openai_edit_image&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;openai_create_image_variation&quot;</span><span class="p">,</span>
     <span class="c1"># to be deprecated</span>
     <span class="s2">&quot;ServiceFactory&quot;</span><span class="p">,</span>
 <span class="p">]</span>

@@ -137,6 +137,12 @@
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.service.dashscope_image_to_text"><code class="docutils literal notranslate"><span class="pre">dashscope_image_to_text()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.service.dashscope_text_to_image"><code class="docutils literal notranslate"><span class="pre">dashscope_text_to_image()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.service.dashscope_text_to_audio"><code class="docutils literal notranslate"><span class="pre">dashscope_text_to_audio()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.service.openai_audio_to_text"><code class="docutils literal notranslate"><span class="pre">openai_audio_to_text()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.service.openai_text_to_audio"><code class="docutils literal notranslate"><span class="pre">openai_text_to_audio()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.service.openai_text_to_image"><code class="docutils literal notranslate"><span class="pre">openai_text_to_image()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.service.openai_image_to_text"><code class="docutils literal notranslate"><span class="pre">openai_image_to_text()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.service.openai_edit_image"><code class="docutils literal notranslate"><span class="pre">openai_edit_image()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.service.openai_create_image_variation"><code class="docutils literal notranslate"><span class="pre">openai_create_image_variation()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.service.ServiceFactory"><code class="docutils literal notranslate"><span class="pre">ServiceFactory</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.service.ServiceFactory.get"><code class="docutils literal notranslate"><span class="pre">ServiceFactory.get()</span></code></a></li>
 </ul>
@@ -1418,6 +1424,285 @@ the generated audio.</p>
 </pre></div>
 </div>
 <p>&gt; {‘status’: ‘SUCCESS’, ‘content’: {“audio_path”: “AUDIO_PATH”}}</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.openai_audio_to_text">
+<span class="sig-prename descclassname"><span class="pre">agentscope.service.</span></span><span class="sig-name descname"><span class="pre">openai_audio_to_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">audio_file_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">language</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">NotGiven</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">NOT_GIVEN</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.2</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.service.service_response.html#agentscope.service.service_response.ServiceResponse" title="agentscope.service.service_response.ServiceResponse"><span class="pre">ServiceResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/service/multi_modality/openai_services.html#openai_audio_to_text"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.openai_audio_to_text" title="Link to this definition"></a></dt>
+<dd><p>Convert an audio file to text using OpenAI’s transcription service.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>audio_file_url</strong> (<cite>str</cite>) – The file path or URL to the audio file that needs to be
+transcribed.</p></li>
+<li><p><strong>api_key</strong> (<cite>str</cite>) – The API key for the OpenAI API.</p></li>
+<li><p><strong>language</strong> (<cite>Union[str, NotGiven]</cite>, defaults to <cite>NotGiven()</cite>) – The language of the audio. If not specified, the language will
+be auto-detected.</p></li>
+<li><p><strong>temperature</strong> (<cite>float</cite>, defaults to <cite>0.2</cite>) – The temperature for the transcription, which affects the
+randomness of the output.</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary with two variables: <cite>status</cite> and <cite>content</cite>.
+If <cite>status</cite> is <cite>ServiceExecStatus.SUCCESS</cite>,
+the <cite>content</cite> contains a dictionary with key ‘transcription’ and
+value as the transcribed text.</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
+</dd>
+</dl>
+<p class="rubric">示例</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">audio_file_url</span> <span class="o">=</span> <span class="s2">&quot;/path/to/audio.mp3&quot;</span>
+<span class="n">api_key</span> <span class="o">=</span> <span class="s2">&quot;YOUR_API_KEY&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">openai_audio_to_text</span><span class="p">(</span><span class="n">audio_file_url</span><span class="p">,</span> <span class="n">api_key</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>&gt; {
+&gt;     ‘status’: ‘SUCCESS’,
+&gt;     ‘content’: {‘transcription’: ‘This is the transcribed text from
+the audio file.’}
+&gt; }</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.openai_text_to_audio">
+<span class="sig-prename descclassname"><span class="pre">agentscope.service.</span></span><span class="sig-name descname"><span class="pre">openai_text_to_audio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'tts-1'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'tts-1-hd'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'tts-1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'alloy'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'echo'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'fable'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'onyx'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'nova'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'shimmer'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'alloy'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'mp3'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'wav'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'opus'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'aac'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'flac'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'pcm'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'mp3'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.service.service_response.html#agentscope.service.service_response.ServiceResponse" title="agentscope.service.service_response.ServiceResponse"><span class="pre">ServiceResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/service/multi_modality/openai_services.html#openai_text_to_audio"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.openai_text_to_audio" title="Link to this definition"></a></dt>
+<dd><p>Convert text to an audio file using a specified model and voice, and save
+the audio file locally.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<cite>str</cite>) – The text to convert to audio.</p></li>
+<li><p><strong>api_key</strong> (<cite>str</cite>) – The API key for the OpenAI API.</p></li>
+<li><p><strong>save_dir</strong> (<cite>str</cite> defaults to <cite>‘’</cite>) – The directory where the generated audio file will be saved.</p></li>
+<li><p><strong>model</strong> (<cite>Literal[“tts-1”, “tts-1-hd”]</cite>, defaults to <cite>“tts-1”</cite>) – The model to use for text-to-speech conversion.</p></li>
+<li><p><strong>(</strong><strong>`Literal</strong><strong>[</strong><strong>&quot;alloy&quot;</strong> (<em>voice</em>) – </p></li>
+<li><p><strong>&quot;echo&quot;</strong></p></li>
+<li><p><strong>&quot;fable&quot;</strong></p></li>
+<li><p><strong>&quot;onyx&quot;</strong></p></li>
+<li><p><strong>&quot;nova&quot;</strong></p></li>
+<li><p><strong>&quot;shimmer&quot;</strong><strong>]</strong><strong>`</strong></p></li>
+</ul>
+</dd>
+</dl>
+<p>:param :
+:param defaults to <cite>“alloy”</cite>): The voice to use for the audio output.
+:param speed: The speed of the audio playback. A value of 1.0 is normal speed.
+:type speed: <cite>float</cite>, defaults to <cite>1.0</cite>
+:param res_format (<cite>Literal[“mp3”:
+:param “wav”:
+:param “opus”:
+:param “aac”:
+:param “flac”:
+:param :
+:param “wav”:
+:param “pcm”]</cite>:
+:param :
+:param defaults to <cite>“mp3”</cite>): The format of the audio file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary with two variables: <cite>status</cite> and <cite>content</cite>.
+If <cite>status</cite> is <cite>ServiceExecStatus.SUCCESS</cite>,
+the <cite>content</cite> is a dict with key ‘audio_path’ and
+value is the path to the generated audio file.</p>
+</dd>
+<dt class="field-even">返回类型<span class="colon">:</span></dt>
+<dd class="field-even"><p><cite>ServiceResponse</cite></p>
+</dd>
+</dl>
+<p class="rubric">示例</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Hello, welcome to the text-to-speech service!&quot;</span>
+<span class="n">api_key</span> <span class="o">=</span> <span class="s2">&quot;YOUR_API_KEY&quot;</span>
+<span class="n">save_dir</span> <span class="o">=</span> <span class="s2">&quot;./audio_files&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">openai_text_to_audio</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">api_key</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>&gt; {
+&gt;     ‘status’: ‘SUCCESS’,
+&gt;     ‘content’: {‘audio_path’: ‘./audio_files/Hello,_welco.mp3’}
+&gt; }</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.openai_text_to_image">
+<span class="sig-prename descclassname"><span class="pre">agentscope.service.</span></span><span class="sig-name descname"><span class="pre">openai_text_to_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'dall-e-2'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'dall-e-3'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dall-e-2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'256x256'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'512x512'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'1024x1024'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'1792x1024'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'1024x1792'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'256x256'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'standard'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'hd'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'standard'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'vivid'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'natural'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'vivid'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.service.service_response.html#agentscope.service.service_response.ServiceResponse" title="agentscope.service.service_response.ServiceResponse"><span class="pre">ServiceResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/service/multi_modality/openai_services.html#openai_text_to_image"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.openai_text_to_image" title="Link to this definition"></a></dt>
+<dd><p>Generate image(s) based on the given prompt, and return image URL(s) or
+save them locally.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prompt</strong> (<cite>str</cite>) – The text prompt to generate images.</p></li>
+<li><p><strong>api_key</strong> (<cite>str</cite>) – The API key for the OpenAI API.</p></li>
+<li><p><strong>n</strong> (<cite>int</cite>, defaults to <cite>1</cite>) – The number of images to generate.</p></li>
+<li><p><strong>model</strong> (<cite>Literal[“dall-e-2”, “dall-e-3”]</cite>, defaults to <cite>“dall-e-2”</cite>) – The model to use for image generation.</p></li>
+<li><p><strong>(</strong><strong>`Literal</strong><strong>[</strong><strong>&quot;256x256&quot;</strong> (<em>size</em>) – </p></li>
+<li><p><strong>&quot;512x512&quot;</strong></p></li>
+<li><p><strong>&quot;1024x1024&quot;</strong></p></li>
+<li><p><strong>&quot;1792x1024&quot;</strong></p></li>
+</ul>
+</dd>
+</dl>
+<p>:param :
+:param “1024x1792”]`: The size of the generated image(s).
+:param defaults to <cite>“256x256”</cite>): The size of the generated image(s).
+:param quality: The quality of the generated images.
+:type quality: <cite>Literal[“standard”, “hdr”]</cite>, defaults to <cite>“standard</cite>
+:param style: The style of the generated images.
+:type style: <cite>Literal[“vivid”, “natural”]]</cite>, defaults to <cite>“vivid</cite>
+:param save_dir: The directory to save the generated images. If not specified, will</p>
+<blockquote>
+<div><p>return the web URLs.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">返回<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary with two variables: <cite>status</cite> and <cite>content</cite>.
+If <cite>status</cite> is <cite>ServiceExecStatus.SUCCESS</cite>,
+the <cite>content</cite> is a dict with key ‘image_urls’ and
+value is a list of the paths to the generated images or URLs.</p>
+</dd>
+<dt class="field-even">返回类型<span class="colon">:</span></dt>
+<dd class="field-even"><p><cite>ServiceResponse</cite></p>
+</dd>
+</dl>
+<p class="rubric">示例</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;A futuristic city skyline at sunset&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">openai_text_to_image</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{api_key}</span><span class="s2">&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>&gt; {
+&gt;     ‘status’: ‘SUCCESS’,
+&gt;     ‘content’: {‘image_urls’: [‘IMAGE_URL1’, ‘IMAGE_URL2’]}
+&gt; }</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.openai_image_to_text">
+<span class="sig-prename descclassname"><span class="pre">agentscope.service.</span></span><span class="sig-name descname"><span class="pre">openai_image_to_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_urls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Describe</span> <span class="pre">the</span> <span class="pre">image'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'gpt-4o'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'gpt-4-turbo'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'gpt-4o'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.service.service_response.html#agentscope.service.service_response.ServiceResponse" title="agentscope.service.service_response.ServiceResponse"><span class="pre">ServiceResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/service/multi_modality/openai_services.html#openai_image_to_text"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.openai_image_to_text" title="Link to this definition"></a></dt>
+<dd><p>Generate descriptive text for given image(s) using a specified model, and
+return the generated text.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image_urls</strong> (<cite>Union[str, Sequence[str]]</cite>) – The URL or list of URLs pointing to the images that need to be
+described.</p></li>
+<li><p><strong>api_key</strong> (<cite>str</cite>) – The API key for the OpenAI API.</p></li>
+<li><p><strong>prompt</strong> (<cite>str</cite>, defaults to <cite>“Describe the image”</cite>) – The prompt that instructs the model on how to describe
+the image(s).</p></li>
+<li><p><strong>model</strong> (<cite>Literal[“gpt-4o”, “gpt-4-turbo”]</cite>, defaults to <cite>“gpt-4o”</cite>) – The model to use for generating the text descriptions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary with two variables: <cite>status</cite> and <cite>content</cite>.
+If <cite>status</cite> is <cite>ServiceExecStatus.SUCCESS</cite>,
+the <cite>content</cite> contains the generated text description(s).</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
+</dd>
+</dl>
+<p class="rubric">示例</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">image_url</span> <span class="o">=</span> <span class="s2">&quot;https://example.com/image.jpg&quot;</span>
+<span class="n">api_key</span> <span class="o">=</span> <span class="s2">&quot;YOUR_API_KEY&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">openai_image_to_text</span><span class="p">(</span><span class="n">image_url</span><span class="p">,</span> <span class="n">api_key</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>&gt; {
+&gt;     ‘status’: ‘SUCCESS’,
+&gt;     ‘content’: “A detailed description of the image…”
+&gt; }</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.openai_edit_image">
+<span class="sig-prename descclassname"><span class="pre">agentscope.service.</span></span><span class="sig-name descname"><span class="pre">openai_edit_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'256x256'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'512x512'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'1024x1024'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'256x256'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.service.service_response.html#agentscope.service.service_response.ServiceResponse" title="agentscope.service.service_response.ServiceResponse"><span class="pre">ServiceResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/service/multi_modality/openai_services.html#openai_edit_image"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.openai_edit_image" title="Link to this definition"></a></dt>
+<dd><p>Edit an image based on the provided mask and prompt, and return the edited
+image URL(s) or save them locally.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image_url</strong> (<cite>str</cite>) – The file path or URL to the image that needs editing.</p></li>
+<li><p><strong>prompt</strong> (<cite>str</cite>) – The text prompt describing the edits to be made to the image.</p></li>
+<li><p><strong>api_key</strong> (<cite>str</cite>) – The API key for the OpenAI API.</p></li>
+<li><p><strong>mask_url</strong> (<cite>Optional[str]</cite>, defaults to <cite>None</cite>) – The file path or URL to the mask image that specifies the regions
+to be edited.</p></li>
+<li><p><strong>n</strong> (<cite>int</cite>, defaults to <cite>1</cite>) – The number of edited images to generate.</p></li>
+<li><p><strong>(</strong><strong>`Literal</strong><strong>[</strong><strong>&quot;256x256&quot;</strong> (<em>size</em>) – </p></li>
+<li><p><strong>&quot;512x512&quot;</strong></p></li>
+<li><p><strong>&quot;1024x1024&quot;</strong><strong>]</strong><strong>`</strong></p></li>
+<li><p><strong>to</strong> (<em>defaults</em>)</p></li>
+<li><p><strong>&quot;256x256&quot;</strong><strong>)</strong> – The size of the edited images.</p></li>
+<li><p><strong>save_dir</strong> (<cite>Optional[str]</cite>, defaults to <cite>None</cite>) – The directory to save the edited images. If not specified, will
+return the web URLs.</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary with two variables: <cite>status</cite> and <cite>content</cite>.
+If <cite>status</cite> is <cite>ServiceExecStatus.SUCCESS</cite>,
+the <cite>content</cite> is a dict with key ‘image_urls’ and
+value is a list of the paths to the edited images or URLs.</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
+</dd>
+</dl>
+<p class="rubric">示例</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">image_url</span> <span class="o">=</span> <span class="s2">&quot;/path/to/original_image.png&quot;</span>
+<span class="n">mask_url</span> <span class="o">=</span> <span class="s2">&quot;/path/to/mask_image.png&quot;</span>
+<span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;Add a sun to the sky&quot;</span>
+<span class="n">api_key</span> <span class="o">=</span> <span class="s2">&quot;YOUR_API_KEY&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">openai_edit_image</span><span class="p">(</span><span class="n">image_url</span><span class="p">,</span> <span class="n">prompt</span><span class="p">,</span> <span class="n">api_key</span><span class="p">,</span> <span class="n">mask_url</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>&gt; {
+&gt;     ‘status’: ‘SUCCESS’,
+&gt;     ‘content’: {‘image_urls’: [‘EDITED_IMAGE_URL1’,
+‘EDITED_IMAGE_URL2’]}
+&gt; }</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.openai_create_image_variation">
+<span class="sig-prename descclassname"><span class="pre">agentscope.service.</span></span><span class="sig-name descname"><span class="pre">openai_create_image_variation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'256x256'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'512x512'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'1024x1024'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'256x256'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.service.service_response.html#agentscope.service.service_response.ServiceResponse" title="agentscope.service.service_response.ServiceResponse"><span class="pre">ServiceResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/service/multi_modality/openai_services.html#openai_create_image_variation"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.openai_create_image_variation" title="Link to this definition"></a></dt>
+<dd><p>Create variations of an image and return the image URL(s) or save them
+locally.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image_url</strong> (<cite>str</cite>) – The file path or URL to the image from which variations will be
+generated.</p></li>
+<li><p><strong>api_key</strong> (<cite>str</cite>) – The API key for the OpenAI API.</p></li>
+<li><p><strong>n</strong> (<cite>int</cite>, defaults to <cite>1</cite>) – The number of image variations to generate.</p></li>
+<li><p><strong>(</strong><strong>`Literal</strong><strong>[</strong><strong>&quot;256x256&quot;</strong> (<em>size</em>) – </p></li>
+<li><p><strong>&quot;512x512&quot;</strong></p></li>
+<li><p><strong>&quot;1024x1024&quot;</strong><strong>]</strong><strong>`</strong></p></li>
+<li><p><strong>`</strong> (<em>defaults to</em>)</p></li>
+<li><p><strong>&quot;256x256&quot;`</strong><strong>)</strong> – <p>The size of the generated image variations.</p>
+</p></li>
+<li><p><strong>save_dir</strong> (<cite>Optional[str]</cite>, defaults to <cite>None</cite>) – The directory to save the generated image variations. If not
+specified, will return the web URLs.</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary with two variables: <cite>status</cite> and <cite>content</cite>.
+If <cite>status</cite> is <cite>ServiceExecStatus.SUCCESS</cite>,
+the <cite>content</cite> is a dict with key ‘image_urls’ and
+value is a list of the paths to the generated images or URLs.</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
+</dd>
+</dl>
+<p class="rubric">示例</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">image_url</span> <span class="o">=</span> <span class="s2">&quot;/path/to/image.png&quot;</span>
+<span class="n">api_key</span> <span class="o">=</span> <span class="s2">&quot;YOUR_API_KEY&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">openai_create_image_variation</span><span class="p">(</span><span class="n">image_url</span><span class="p">,</span> <span class="n">api_key</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>&gt; {
+&gt;     ‘status’: ‘SUCCESS’,
+&gt;     ‘content’: {‘image_urls’: [‘VARIATION_URL1’, ‘VARIATION_URL2’]}
+&gt; }</p>
 </dd></dl>
 
 <dl class="py class">
