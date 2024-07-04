@@ -7,7 +7,7 @@ from loguru import logger
 
 from .config import _ModelConfig
 from .model import ModelWrapperBase
-from .response import ModelResponse
+from .response import ModelResponse, ModelResponseGen
 from .post_model import (
     PostAPIModelWrapperBase,
     PostAPIChatWrapper,

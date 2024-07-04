@@ -8,7 +8,7 @@ from typing import Sequence, Union, Any, List
 from loguru import logger
 
 from agentscope.message import Msg
-from agentscope.models import ModelWrapperBase, ModelResponse
+from agentscope.models import ModelWrapperBase, ModelResponse, ModelResponseGen
 from agentscope.utils.tools import _convert_to_str
 
 try:
@@ -16,6 +16,7 @@ try:
 
     # This package will be installed when the google-generativeai is installed
     import google.ai.generativelanguage as glm
+    from glm import GenerateContentResponse
 except ImportError:
     genai = None
     glm = None
@@ -160,7 +161,48 @@ class GeminiChatWrapper(GeminiWrapperBase):
             **kwargs,
         )
 
-        # step3: Check for candidates and handle accordingly
+        # step3: process response and return model response
+        return self._process_response(
+            response=response,
+            contents= contents,
+            stream = stream,
+            **kwargs,
+        )
+        
+
+    def _record_invocation_and_token_usage(
+        self,
+        response: GenerateContentResponse,
+        contents: Union[Sequence, str],
+        stream: bool,
+        **kwargs: Any,
+    ) -> None:
+        # Record the api invocation if needed,
+        # token usage and update monitor accordingly
+
+        self.update_monitor(
+            call_counter=1,
+            prompt_tokens=response.usage_metadata.prompt_token_count,
+            completion_tokens=response.usage_metadata.candidates_token_count,
+            total_tokens=response.usage_metadata.total_token_count,
+        )
+
+        self._save_model_invocation(
+            arguments={
+                "contents": contents,
+                "stream": stream,
+                **kwargs,
+            },
+            response=response.to_dict(),
+        )
+
+    def _extract_content_from_response(
+        self,
+        response: GenerateContentResponse,
+        **kwargs: Any,
+    ) -> str:
+        # Check for candidates and handle accordingly
+        # and xtract the text content from a model response.
         if (
             not response.candidates[0].content
             or not response.candidates[0].content.parts
@@ -198,36 +240,53 @@ class GeminiChatWrapper(GeminiWrapperBase):
 
             raise ValueError(
                 "The Google Gemini API failed to generate text response with "
-                f"the following finish reason: {error_info}\n"
-                f"YOUR INPUT: {contents}\n"
-                f"RAW RESPONSE FROM GEMINI API: {response}\n",
+                f"the following finish reason: {error_info}"
             )
+        
+        text = response.text
+        return text
 
-        # step4: record the api invocation if needed
-        self._save_model_invocation(
-            arguments={
-                "contents": contents,
-                "stream": stream,
+    def _process_response(
+        self,
+        response: GenerateContentResponse,
+        contents: Union[Sequence, str],
+        stream: bool,
+        **kwargs: Any,
+    ) -> Union[ModelResponse, ModelResponseGen]:
+        # Process response and return model response
+        if stream:
+
+            def gen() -> ModelResponseGen:
+                text = ""
+                last_chunk = None
+                for chunk in response:
+                    last_chunk = chunk
+                    delta = self._extract_content_from_response(
+                        chunk,
+                        **kwargs,
+                    )
+                    text += delta
+                    yield ModelResponse(text=text, delta=delta, raw=chunk)
+                self._record_invocation_and_token_usage(
+                    last_chunk,
+                    contents=contents,
+                    stream=stream,
+                    **kwargs,
+                )
+
+            return gen()
+        else:
+            text = self._extract_content_from_response(
+                response,
                 **kwargs,
-            },
-            response=str(response),
-        )
-
-        # step5: update monitor accordingly
-        token_prompt = self.model.count_tokens(contents).total_tokens
-        token_response = self.model.count_tokens(response.text).total_tokens
-        self.update_monitor(
-            call_counter=1,
-            completion_tokens=token_response,
-            prompt_tokens=token_prompt,
-            total_tokens=token_prompt + token_response,
-        )
-
-        # step6: return response
-        return ModelResponse(
-            text=response.text,
-            raw=response,
-        )
+            )
+            self._record_invocation_and_token_usage(
+                response,
+                contents=contents,
+                stream=stream,
+                **kwargs,
+            )
+            return ModelResponse(text=text, raw=response)
 
     def _register_default_metrics(self) -> None:
         """Register the default metrics for the model."""
