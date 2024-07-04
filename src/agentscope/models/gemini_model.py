@@ -16,7 +16,7 @@ try:
 
     # This package will be installed when the google-generativeai is installed
     import google.ai.generativelanguage as glm
-    from glm import GenerateContentResponse
+    from google.ai.generativelanguage import GenerateContentResponse
 except ImportError:
     genai = None
     glm = None
