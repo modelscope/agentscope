@@ -154,7 +154,6 @@ class GeminiChatWrapper(GeminiWrapperBase):
             )
 
         # step2: forward to generate response
-        # TODO: support response in stream mode
         response = self.model.generate_content(
             contents,
             stream=stream,
@@ -187,6 +186,7 @@ class GeminiChatWrapper(GeminiWrapperBase):
             total_tokens=response.usage_metadata.total_token_count,
         )
 
+        # record the api invocation if needed
         self._save_model_invocation(
             arguments={
                 "contents": contents,
@@ -202,7 +202,7 @@ class GeminiChatWrapper(GeminiWrapperBase):
         **kwargs: Any,
     ) -> str:
         # Check for candidates and handle accordingly
-        # and xtract the text content from a model response.
+        # and extract the text content from a model response.
         if (
             not response.candidates[0].content
             or not response.candidates[0].content.parts

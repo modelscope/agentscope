@@ -234,6 +234,8 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
             call_counter=1,
             **valid_usage,
         )
+
+        # record the api invocation if needed
         self._save_model_invocation(
             arguments={
                 "model": self.model_name,

@@ -205,6 +205,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             + response.usage.get("output_tokens", 0),
         )
 
+        # record the api invocation if needed
         self._save_model_invocation(
             arguments={
                 "model": self.model_name,

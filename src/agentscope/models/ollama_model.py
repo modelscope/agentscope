@@ -4,11 +4,12 @@ from abc import ABC
 from typing import Sequence, Any, Optional, List, Union
 
 from agentscope.message import Msg
-from agentscope.models import ModelWrapperBase, ModelResponse
+from agentscope.models import ModelWrapperBase, ModelResponse, ModelResponseGen
 from agentscope.utils.tools import _convert_to_str
 
 try:
     import ollama
+    from ollama import ChatResponse, GenerateResponse
 except ImportError:
     ollama = None
 
@@ -78,6 +79,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
         messages: Sequence[dict],
         options: Optional[dict] = None,
         keep_alive: Optional[str] = None,
+        stream: Optional[bool] = False,
         **kwargs: Any,
     ) -> ModelResponse:
         """Generate response from the given messages.
@@ -115,22 +117,30 @@ class OllamaChatWrapper(OllamaWrapperBase):
             messages=messages,
             options=options,
             keep_alive=keep_alive,
+            stream=stream,
             **kwargs,
         )
 
-        # step2: record the api invocation if needed
-        self._save_model_invocation(
-            arguments={
-                "model": self.model_name,
-                "messages": messages,
-                "options": options,
-                "keep_alive": keep_alive,
-                **kwargs,
-            },
+        # step3: process response and return model response
+        return self._process_response(
             response=response,
+            options=options,
+            keep_alive=keep_alive,
+            stream=stream,
+            **kwargs,
         )
 
-        # step3: monitor the response
+    def _record_invocation_and_token_usage(
+        self,
+        response: Any,
+        options: Optional[dict] = None,
+        keep_alive: Optional[str] = None,
+        stream: Optional[bool] = False,
+        **kwargs: Any,
+    ) -> None:
+        # Record the api invocation if needed,
+        # token usage and update monitor accordingly
+
         self.update_monitor(
             call_counter=1,
             prompt_tokens=response.get("prompt_eval_count", 0),
@@ -139,11 +149,57 @@ class OllamaChatWrapper(OllamaWrapperBase):
             + response.get("eval_count", 0),
         )
 
-        # step4: return response
-        return ModelResponse(
-            text=response["message"]["content"],
-            raw=response,
+        # record the api invocation if needed
+        self._save_model_invocation(
+            arguments={
+                "model": self.model_name,
+                "options": options,
+                "keep_alive": keep_alive,
+                "stream": stream,
+                **kwargs,
+            },
+            response=response,
         )
+
+    def _process_response(
+        self,
+        response: Union[ChatResponse, GenerateResponse],
+        options: Optional[dict] = None,
+        keep_alive: Optional[str] = None,
+        stream: Optional[bool] = False,
+        **kwargs: Any,
+    ) -> Union[ModelResponse, ModelResponseGen]:
+        # Process response and return model response
+
+        if stream:
+
+            def gen() -> ModelResponseGen:
+                text = ""
+                last_chunk = None
+                for chunk in response:
+                    last_chunk = chunk
+                    delta = response["message"]["content"]
+                    text += delta
+                    yield ModelResponse(text=text, delta=delta, raw=chunk)
+                self._record_invocation_and_token_usage(
+                    last_chunk,
+                    options=options,
+                    keep_alive=keep_alive,
+                    stream=stream,
+                    **kwargs,
+                )
+
+            return gen()
+        else:
+            text = response["message"]["content"]
+            self._record_invocation_and_token_usage(
+                response,
+                options=options,
+                keep_alive=keep_alive,
+                stream=stream,
+                **kwargs,
+            )
+            return ModelResponse(text=text, raw=response)
 
     def _register_default_metrics(self) -> None:
         """Register metrics to the monitor."""
