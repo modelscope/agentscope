@@ -131,7 +131,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
 
     def _record_invocation_and_token_usage(
         self,
-        response: Union[dict, Generator[dict, None, None]],
+        response: dict,
         options: Optional[dict] = None,
         keep_alive: Optional[str] = None,
         stream: Optional[bool] = False,

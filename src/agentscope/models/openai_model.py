@@ -219,7 +219,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
         # Record the api invocation if needed,
         # token usage and update monitor accordingly
 
-        if not isinstance(response, list):
+        if isinstance(response, ChatCompletion):
             valid_usage = response.usage.model_dump()
         else:
             valid_usage = {}
