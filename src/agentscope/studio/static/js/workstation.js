@@ -968,9 +968,7 @@ function hideShowGroupNodes(groupId, show) {
                 elementNode.style.display = show ? '' : 'none';
             }
             if (childNodeInfo.class === 'GROUP') {
-                if (!show) {
-                    hideShowGroupNodes(elementNodeId, show);
-                } else if (contentBox && !contentBox.classList.contains('hidden')) {
+                if (!show || (contentBox && !contentBox.classList.contains('hidden'))) {
                     hideShowGroupNodes(elementNodeId, show);
                 }
             }
