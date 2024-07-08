@@ -2,7 +2,7 @@
 """dashscope test"""
 import unittest
 from unittest.mock import patch, MagicMock
-
+from typing import Generator
 from agentscope.models import (
     ModelResponse,
     DashScopeChatWrapper,
@@ -62,6 +62,58 @@ class TestDashScopeChatWrapper(unittest.TestCase):
             model=self.model_name,
             messages=messages,
             result_format="message",
+        )
+
+    @patch("agentscope.models.dashscope_model.dashscope.Generation.call")
+    def test_stream_call_success(self, mock_generation_call: MagicMock) -> None:
+        """Test call success"""
+        # Set up the mock response for a successful API call
+
+        mock_responses = []
+        for _ in range(3):
+            mock_response = MagicMock()
+            mock_response.status_code = 200
+            mock_response.request_id = "test_request_id"
+            mock_response.usage = {
+                "input_tokens": 3,
+                "output_tokens": 5,
+                "total_tokens": 8,
+            }
+            mock_response.output = {
+                "choices": [{"message": {"content": "Hello, world!"}}],
+            }
+            mock_responses.append(mock_response)
+
+        def mock_response_generator():
+            for mock_response in mock_responses:
+                yield mock_response
+            
+
+        mock_generation_call.return_value = mock_response_generator()
+
+        # Define test input
+        messages = [
+            {"role": "user", "content": "Hi!"},
+            {"role": "assistant", "content": "Hello!"},
+        ]
+
+        # Call the wrapper method
+        response = self.wrapper(messages, stream=True)
+
+        # Verify the response
+        self.assertIsInstance(response, Generator)
+        for chunk, mock_response in zip(response, mock_response_generator()):
+            self.assertIsInstance(chunk, ModelResponse)
+            self.assertEqual(chunk.delta, "Hello, world!")
+            self.assertEqual(chunk.raw, mock_response)
+
+        # Verify call to dashscope.Generation.call
+        mock_generation_call.assert_called_once_with(
+            model=self.model_name,
+            messages=messages,
+            result_format="message",
+            stream=True,
+            incremental_output=True
         )
 
     @patch("agentscope.models.dashscope_model.dashscope.Generation.call")
