@@ -65,7 +65,7 @@ class TestDashScopeChatWrapper(unittest.TestCase):
         )
 
     @patch("agentscope.models.dashscope_model.dashscope.Generation.call")
-    def test_stream_call_success(self, mock_generation_call: MagicMock) -> None:
+    def test_call_success_with_stream(self, mock_generation_call: MagicMock) -> None:
         """Test call success"""
         # Set up the mock response for a successful API call
 

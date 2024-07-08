@@ -88,8 +88,38 @@ class GeminiModelWrapperTest(unittest.TestCase):
 
         model = load_model_by_config_name("my_gemini_chat")
         response = model(contents="Hi!")
-
+            
         self.assertEqual(str(response.raw), str(DummyResponse()))
+
+    @patch("google.generativeai.GenerativeModel")
+    def test_gemini_chat(self, mock_model: MagicMock) -> None:
+        """Test for chat API."""
+        # prepare mock response
+        mock_responses = [DummyResponse() for _ in range(3)]
+
+        def mock_response_generator():
+            for mock_response in mock_responses:
+                yield mock_response
+
+        # connect
+        mock_model.return_value.model_name = "gemini-pro"   
+        mock_model.return_value.generate_content.return_value = mock_response_generator()
+
+        agentscope.init(
+            model_configs={
+                "config_name": "my_gemini_chat",
+                "model_type": "gemini_chat",
+                "model_name": "gemini-pro",
+                "api_key": "xxx",
+            },
+        )
+
+        model = load_model_by_config_name("my_gemini_chat")
+        response = model(contents="Hi!", stream=True)
+
+        # self.assertIsInstance(response, Generator)
+        for chunk, mock_response in zip(response, mock_response_generator()):
+            self.assertEqual(str(chunk.raw), str(mock_response))
 
     @patch("google.generativeai.embed_content")
     def test_gemini_embedding(self, mock_model: MagicMock) -> None:

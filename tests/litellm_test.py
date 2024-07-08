@@ -56,6 +56,55 @@ class TestLiteLLMChatWrapper(unittest.TestCase):
 
         self.assertEqual(response.text, "Hello, this is a mocked response!")
 
+    @patch("agentscope.models.litellm_model.litellm")
+    def test_chat_with_stream(self, mock_litellm: MagicMock) -> None:
+        """
+        Test chat"""
+        mock_responses = []
+        for _ in range(3):
+            mock_response = MagicMock()
+            mock_response.model_dump.return_value = {
+                "choices": [
+                    {"delta": {"content": "Hello, this is a mocked response!"}},
+                ],
+                "usage": {
+                    "prompt_tokens": 100,
+                    "completion_tokens": 5,
+                    "total_tokens": 105,
+                },
+            }
+            mock_response.choices[
+                0
+            ].delta.content = "Hello, this is a mocked response!"
+
+            mock_responses.append(mock_response)
+
+        def mock_response_generator():
+            for mock_response in mock_responses:
+                yield mock_response
+
+        mock_litellm.completion.return_value = mock_response_generator()
+
+        agentscope.init(
+            model_configs={
+                "config_name": "test_config",
+                "model_type": "litellm_chat",
+                "model_name": "ollama/llama3:8b",
+                "api_key": self.api_key,
+            },
+        )
+
+        model = load_model_by_config_name("test_config")
+
+        response = model(
+            messages=self.messages,
+            api_base="http://localhost:11434",
+            stream=True,
+        )
+        
+        for chunk in response:
+            self.assertEqual(chunk.delta, "Hello, this is a mocked response!")
+
 
 if __name__ == "__main__":
     unittest.main()

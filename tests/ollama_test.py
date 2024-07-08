@@ -29,10 +29,8 @@ class OllamaModelWrapperTest(unittest.TestCase):
             "created_at": "2024-03-12T04:16:48.911377Z",
             "message": {
                 "role": "assistant",
-                "content": (
-                    "Hello! It's nice to meet you. Is there something I can "
-                    "help you with or would you like to chat?",
-                ),
+                "content": 
+                    "Hello! It's nice to meet you. Is there something I can help you with or would you like to chat?",
             },
             "done": True,
             "total_duration": 20892900042,
@@ -117,6 +115,36 @@ class OllamaModelWrapperTest(unittest.TestCase):
         response = model(messages=[{"role": "user", "content": "Hi!"}])
 
         self.assertEqual(response.raw, self.dummy_response)
+
+    @patch("ollama.chat")
+    def test_ollama_chat_with_stream(self, mock_chat: MagicMock) -> None:
+        """Unit test for ollama chat API."""
+        # prepare the mock
+        mock_responses = [self.dummy_response for _ in range(3)]
+        def mock_response_generator():
+            for mock_response in mock_responses:
+                yield mock_response
+
+        mock_chat.return_value = mock_response_generator()
+
+        # run test
+        agentscope.init(
+            model_configs={
+                "config_name": "my_ollama_chat",
+                "model_type": "ollama_chat",
+                "model_name": "llama2",
+                "options": {
+                    "temperature": 0.5,
+                },
+                "keep_alive": "5m",
+            },
+        )
+
+        model = load_model_by_config_name("my_ollama_chat")
+        response = model(messages=[{"role": "user", "content": "Hi!"}], stream=True)
+
+        for chunk in response:
+            self.assertEqual(chunk.raw, self.dummy_response)
 
     @patch("ollama.embeddings")
     def test_ollama_embedding(self, mock_embeddings: MagicMock) -> None:
