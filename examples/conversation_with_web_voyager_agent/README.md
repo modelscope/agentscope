@@ -117,8 +117,7 @@ Action: Click [18]
 
 As the agent view the github page of agentscope, it note the github stars, hence it answer our question.
 
-<img src="https://github.com/garyzhang99/agentscope/assets/46197280/5cad5472-b45b-4ef3-a8fa-324d5a20073a" alt="screenshot_3" width="600">
-
+![screenshot_3](https://github.com/garyzhang99/agentscope/assets/46197280/5cad5472-b45b-4ef3-a8fa-324d5a20073a)
 
 
 ```
