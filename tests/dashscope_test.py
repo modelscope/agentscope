@@ -84,7 +84,8 @@ class TestDashScopeChatWrapper(unittest.TestCase):
             }
             mock_responses.append(mock_response)
 
-        def mock_response_generator():
+        from typing import Generator
+        def mock_response_generator() -> Generator[MagicMock, None, None]:
             for mock_response in mock_responses:
                 yield mock_response
             

@@ -30,7 +30,8 @@ class OllamaModelWrapperTest(unittest.TestCase):
             "message": {
                 "role": "assistant",
                 "content": 
-                    "Hello! It's nice to meet you. Is there something I can help you with or would you like to chat?",
+                    "Hello! It's nice to meet you. Is there something"
+                    " I can help you with or would you like to chat?",
             },
             "done": True,
             "total_duration": 20892900042,
@@ -121,7 +122,8 @@ class OllamaModelWrapperTest(unittest.TestCase):
         """Unit test for ollama chat API."""
         # prepare the mock
         mock_responses = [self.dummy_response for _ in range(3)]
-        def mock_response_generator():
+        from typing import Generator
+        def mock_response_generator() -> Generator[MagicMock, None, None]:
             for mock_response in mock_responses:
                 yield mock_response
 

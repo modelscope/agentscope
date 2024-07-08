@@ -92,12 +92,13 @@ class GeminiModelWrapperTest(unittest.TestCase):
         self.assertEqual(str(response.raw), str(DummyResponse()))
 
     @patch("google.generativeai.GenerativeModel")
-    def test_gemini_chat(self, mock_model: MagicMock) -> None:
+    def test_gemini_chat_with_stream(self, mock_model: MagicMock) -> None:
         """Test for chat API."""
         # prepare mock response
         mock_responses = [DummyResponse() for _ in range(3)]
 
-        def mock_response_generator():
+        from typing import Generator
+        def mock_response_generator() -> Generator[MagicMock, None, None]:
             for mock_response in mock_responses:
                 yield mock_response
 
