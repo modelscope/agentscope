@@ -221,21 +221,17 @@ class WebVoyagerAgent(AgentBase):
         time.sleep(5)
         self.browser.try_click_body()
 
-        # TODO self.browser.prevent_space()
-
         fail_obs = ""  # When error execute the action
         warn_obs = ""  # Type warning
         pattern = r"Thought:|Action:|Observation:"
 
-        messages = [
-            message_from_dict(
+        self.memory.add(message_from_dict(
                 {
                     "role": "system",
                     "content": self.sys_prompt,
                     "name": "system",
                 },
-            ),
-        ]
+            ))
 
         it = 0
 
@@ -261,7 +257,7 @@ class WebVoyagerAgent(AgentBase):
                     self.task_dir,
                     f"screenshot_{it}.png",
                 )
-                # self.speak(f"saving image to {img_path}")
+
                 file_manager.save_image(screenshot_bytes, img_path)
 
                 curr_msg = self._get_step_msg(
@@ -271,7 +267,7 @@ class WebVoyagerAgent(AgentBase):
                     web_eles_text,
                 )
 
-                messages.append(curr_msg)
+                self.memory.add(curr_msg)
             else:
                 # TODO change fail obs
                 curr_msg = message_from_dict(
@@ -281,15 +277,15 @@ class WebVoyagerAgent(AgentBase):
                         "content": fail_obs,
                     },
                 )
-                messages.append(curr_msg)
+                self.memory.add(curr_msg)
 
-            messages = self._clip_message_and_obs(messages)
+            messages = self._clip_message_and_obs(self.memory.get_memory())
 
             formated_messages = self.model.format(messages)
             gpt_4v_res = self.model(formated_messages).text
             self.speak(gpt_4v_res)
 
-            messages.append(
+            self.memory.add(
                 message_from_dict(
                     {
                         "role": "assistant",
@@ -307,17 +303,14 @@ class WebVoyagerAgent(AgentBase):
                 fail_obs = "Format ERROR: Both 'Thought' and 'Action' should be included in your reply."  # noqa
                 continue
 
-            # bot_thought = re.split(pattern, gpt_4v_res)[1].strip()
+            _bot_thought = re.split(pattern, gpt_4v_res)[1].strip()
             bot_action = re.split(pattern, gpt_4v_res)[2].strip()
             action_key, info = self._extract_action(bot_action)
 
             fail_obs = ""
             warn_obs = ""
-            # execute action
             try:
                 # TODO how to prevent bad auto page navigation?
-                # window_handle_task = driver_task.current_window_handle
-                # driver_task.switch_to.window(window_handle_task)
 
                 if action_key == "click":
                     click_ele_number = int(info[0])
@@ -326,7 +319,7 @@ class WebVoyagerAgent(AgentBase):
 
                     self.browser.click(click_ele_number)
 
-                    # TODO what to do to deal with PDF file
+                    # TODO what to do when encounter PDF file
 
                     if ele_tag_name == "button" and ele_type == "submit":
                         time.sleep(10)
@@ -367,7 +360,7 @@ class WebVoyagerAgent(AgentBase):
                         self.browser.scroll(direction=scroll_content)
                         time.sleep(3)
                     else:
-                        # add try click body
+                        # add try click body to enable scroll on more webpage
                         self.browser.try_click_body()
 
                         scroll_ele_number = int(scroll_ele_number)
@@ -404,8 +397,6 @@ class WebVoyagerAgent(AgentBase):
                     fail_obs = ""
                 time.sleep(2)
 
-        # TODO save messages to trajectory
-        # TODO when to close self.browser
         return Msg(name=self.name, content=self.task_answer, role="assistant")
 
     def _extract_action(self, text: str) -> Tuple[Any, Any]:
