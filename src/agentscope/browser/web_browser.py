@@ -7,8 +7,18 @@ from pathlib import Path
 
 import requests
 import markdownify
-from playwright.sync_api import sync_playwright
 from loguru import logger
+
+try:
+    from playwright.sync_api import sync_playwright
+except ImportError as import_error:
+    from agentscope.utils.tools import ImportErrorReporter
+
+    sync_playwright = ImportErrorReporter(
+        import_error,
+        "playwright in your system following guides"
+        "in https://playwright.dev/python/docs/intro to run with the current",
+    )
 
 
 class WebBrowser:
