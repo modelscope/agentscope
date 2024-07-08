@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for Ollama models."""
 from abc import ABC
-from typing import Sequence, Any, Optional, List, Union, Generator
+from typing import Sequence, Any, Optional, List, Union
 
 from agentscope.message import Msg
 from agentscope.models import ModelWrapperBase, ModelResponse, ModelResponseGen
@@ -132,7 +132,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
 
     def _record_invocation_and_token_usage(
         self,
-        response: dict,
+        response: Optional[dict] = None,
         options: Optional[dict] = None,
         keep_alive: Optional[str] = None,
         stream: Optional[bool] = False,
@@ -163,7 +163,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
 
     def _process_response(
         self,
-        response: Union[dict, Generator[dict, None, None]],
+        response: dict,
         options: Optional[dict] = None,
         keep_alive: Optional[str] = None,
         stream: Optional[bool] = False,
