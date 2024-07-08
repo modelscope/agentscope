@@ -84,7 +84,7 @@ class WebVoyagerAgent(AgentBase):
         name: str,
         sys_prompt: str = DEFAULT_SYSTEM_PROMPT,
         max_iter: int = 30,
-        max_attached_imgs: int = 5,
+        max_attached_imgs: int = 2,
         default_homepage: str = "https://www.google.com",
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
@@ -211,9 +211,6 @@ class WebVoyagerAgent(AgentBase):
         path = self.task_dir
         if not os.path.exists(path):
             os.makedirs(path)
-            print(f"Directory created: {path}")
-        else:
-            print(f"Directory already exists: {path}")
 
         self.task_web = self.default_homepage
 
@@ -225,13 +222,15 @@ class WebVoyagerAgent(AgentBase):
         warn_obs = ""  # Type warning
         pattern = r"Thought:|Action:|Observation:"
 
-        self.memory.add(message_from_dict(
+        self.memory.add(
+            message_from_dict(
                 {
                     "role": "system",
                     "content": self.sys_prompt,
                     "name": "system",
                 },
-            ))
+            ),
+        )
 
         it = 0
 
@@ -303,7 +302,7 @@ class WebVoyagerAgent(AgentBase):
                 fail_obs = "Format ERROR: Both 'Thought' and 'Action' should be included in your reply."  # noqa
                 continue
 
-            _bot_thought = re.split(pattern, gpt_4v_res)[1].strip()
+            # bot_thought = re.split(pattern, gpt_4v_res)[1].strip()
             bot_action = re.split(pattern, gpt_4v_res)[2].strip()
             action_key, info = self._extract_action(bot_action)
 

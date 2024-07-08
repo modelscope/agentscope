@@ -445,6 +445,7 @@ def serialize(messages: Union[Sequence[MessageBase], MessageBase]) -> str:
 
 
 def message_from_dict(msg: dict) -> Msg:
+    """Helper function that convert dict to Msg"""
     if msg.get("name", None) is None:
         msg["name"] = msg["role"]
     return Msg(**msg)
