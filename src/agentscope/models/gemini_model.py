@@ -142,7 +142,8 @@ class GeminiChatWrapper(GeminiWrapperBase):
         Returns:
             `Union[ModelResponse, ModelResponseGen]`:
                 The response text in text field, and the raw response in
-                raw field. If `stream` is `True, returns a `ModelResponse` generator.
+                raw field.
+                If `stream` is `True, returns a `ModelResponse` generator.
         """
         # step1: checking messages
         if isinstance(contents, Iterable):
@@ -163,11 +164,10 @@ class GeminiChatWrapper(GeminiWrapperBase):
         # step3: process response and return model response
         return self._process_response(
             response=response,
-            contents= contents,
-            stream = stream,
+            contents=contents,
+            stream=stream,
             **kwargs,
         )
-        
 
     def _record_invocation_and_token_usage(
         self,
@@ -199,7 +199,6 @@ class GeminiChatWrapper(GeminiWrapperBase):
     def _extract_content_from_response(
         self,
         response: GenerateContentResponse,
-        **kwargs: Any,
     ) -> str:
         # Check for candidates and handle accordingly
         # and extract the text content from a model response.
@@ -240,9 +239,9 @@ class GeminiChatWrapper(GeminiWrapperBase):
 
             raise ValueError(
                 "The Google Gemini API failed to generate text response with "
-                f"the following finish reason: {error_info}"
+                f"the following finish reason: {error_info}",
             )
-        
+
         text = response.text
         return text
 
@@ -261,10 +260,7 @@ class GeminiChatWrapper(GeminiWrapperBase):
                 last_chunk = None
                 for chunk in response:
                     last_chunk = chunk
-                    delta = self._extract_content_from_response(
-                        chunk,
-                        **kwargs,
-                    )
+                    delta = self._extract_content_from_response(chunk)
                     text += delta
                     yield ModelResponse(text=text, delta=delta, raw=chunk)
                 self._record_invocation_and_token_usage(
@@ -276,10 +272,7 @@ class GeminiChatWrapper(GeminiWrapperBase):
 
             return gen()
         else:
-            text = self._extract_content_from_response(
-                response,
-                **kwargs,
-            )
+            text = self._extract_content_from_response(response)
             self._record_invocation_and_token_usage(
                 response,
                 contents=contents,

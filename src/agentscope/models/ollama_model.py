@@ -100,7 +100,8 @@ class OllamaChatWrapper(OllamaWrapperBase):
         Returns:
             `Union[ModelResponse, ModelResponseGen]`:
                 The response text in text field, and the raw response in
-                raw field. If `stream` is `True, returns a `ModelResponse` generator.
+                raw field.
+                If `stream` is `True, returns a `ModelResponse` generator.
         """
         # step1: prepare parameters accordingly
         if options is None:

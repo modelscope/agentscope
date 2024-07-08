@@ -124,7 +124,7 @@ class LiteLLMChatWrapper(LiteLLMWrapperBase):
         self,
         messages: list,
         **kwargs: Any,
-    ) -> ModelResponse:
+    ) -> Union[ModelResponse, ModelResponseGen]:
         """
         Args:
             messages (`list`):
@@ -138,7 +138,8 @@ class LiteLLMChatWrapper(LiteLLMWrapperBase):
         Returns:
             `Union[ModelResponse, ModelResponseGen]`:
                 The response text in text field, and the raw response in
-                raw field. If `stream` is `True, returns a `ModelResponse` generator.
+                raw field.
+                If `stream` is `True, returns a `ModelResponse` generator.
         """
 
         # step1: prepare keyword arguments

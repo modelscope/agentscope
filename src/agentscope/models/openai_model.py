@@ -137,7 +137,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
         self,
         messages: list,
         **kwargs: Any,
-    ) -> ModelResponse:
+    ) -> Union[ModelResponse, ModelResponseGen]:
         """Processes a list of messages to construct a payload for the OpenAI
         API call. It then makes a request to the OpenAI API and returns the
         response. This method also updates monitoring metrics based on the
@@ -161,7 +161,8 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
         Returns:
             `Union[ModelResponse, ModelResponseGen]`:
                 The response text in text field, and the raw response in
-                raw field. If `stream` is `True, returns a `ModelResponse` generator.
+                raw field.
+                If `stream` is `True, returns a `ModelResponse` generator.
 
         Note:
             `parse_func`, `fault_handler` and `max_retries` are reserved for

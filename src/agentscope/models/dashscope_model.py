@@ -136,7 +136,8 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         Returns:
             `Union[ModelResponse, ModelResponseGen]`:
                 The response text in text field, and the raw response in
-                raw field. If `stream` is `True, returns a `ModelResponse` generator.
+                raw field.
+                If `stream` is `True, returns a `ModelResponse` generator.
 
         Note:
             `parse_func`, `fault_handler` and `max_retries` are reserved for

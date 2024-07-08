@@ -90,4 +90,5 @@ class ModelResponse:
         }
         return json.dumps(serialized_fields, indent=4, ensure_ascii=False)
 
+
 ModelResponseGen = Generator[ModelResponse, None, None]
