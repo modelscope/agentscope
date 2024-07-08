@@ -65,7 +65,11 @@ class TestLiteLLMChatWrapper(unittest.TestCase):
             mock_response = MagicMock()
             mock_response.model_dump.return_value = {
                 "choices": [
-                    {"delta": {"content": "Hello, this is a mocked response!"}},
+                    {
+                        "delta": {
+                            "content": "Hello, this is a mocked response!",
+                        },
+                    },
                 ],
                 "usage": {
                     "prompt_tokens": 100,
@@ -80,6 +84,7 @@ class TestLiteLLMChatWrapper(unittest.TestCase):
             mock_responses.append(mock_response)
 
         from typing import Generator
+
         def mock_response_generator() -> Generator[MagicMock, None, None]:
             for mock_response in mock_responses:
                 yield mock_response
@@ -102,7 +107,7 @@ class TestLiteLLMChatWrapper(unittest.TestCase):
             api_base="http://localhost:11434",
             stream=True,
         )
-        
+
         for chunk in response:
             self.assertEqual(chunk.delta, "Hello, this is a mocked response!")
 

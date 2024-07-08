@@ -37,12 +37,14 @@ class DummyCandidate:
 
     content = DummyContent()
 
+
 class DummyUsageMetaData:
     """Dummy candidate for testing."""
 
     prompt_token_count = 1
     candidates_token_count = 1
     total_token_count = 2
+
 
 class DummyResponse:
     """Dummy response for testing."""
@@ -88,7 +90,7 @@ class GeminiModelWrapperTest(unittest.TestCase):
 
         model = load_model_by_config_name("my_gemini_chat")
         response = model(contents="Hi!")
-            
+
         self.assertEqual(str(response.raw), str(DummyResponse()))
 
     @patch("google.generativeai.GenerativeModel")
@@ -98,13 +100,16 @@ class GeminiModelWrapperTest(unittest.TestCase):
         mock_responses = [DummyResponse() for _ in range(3)]
 
         from typing import Generator
-        def mock_response_generator() -> Generator[MagicMock, None, None]:
+
+        def mock_response_generator() -> Generator[DummyResponse, None, None]:
             for mock_response in mock_responses:
                 yield mock_response
 
         # connect
-        mock_model.return_value.model_name = "gemini-pro"   
-        mock_model.return_value.generate_content.return_value = mock_response_generator()
+        mock_model.return_value.model_name = "gemini-pro"
+        mock_model.return_value.generate_content.return_value = (
+            mock_response_generator()
+        )
 
         agentscope.init(
             model_configs={

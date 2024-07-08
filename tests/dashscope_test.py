@@ -2,7 +2,6 @@
 """dashscope test"""
 import unittest
 from unittest.mock import patch, MagicMock
-from typing import Generator
 from agentscope.models import (
     ModelResponse,
     DashScopeChatWrapper,
@@ -65,7 +64,10 @@ class TestDashScopeChatWrapper(unittest.TestCase):
         )
 
     @patch("agentscope.models.dashscope_model.dashscope.Generation.call")
-    def test_call_success_with_stream(self, mock_generation_call: MagicMock) -> None:
+    def test_call_success_with_stream(
+        self,
+        mock_generation_call: MagicMock,
+    ) -> None:
         """Test call success"""
         # Set up the mock response for a successful API call
 
@@ -85,10 +87,10 @@ class TestDashScopeChatWrapper(unittest.TestCase):
             mock_responses.append(mock_response)
 
         from typing import Generator
+
         def mock_response_generator() -> Generator[MagicMock, None, None]:
             for mock_response in mock_responses:
                 yield mock_response
-            
 
         mock_generation_call.return_value = mock_response_generator()
 
@@ -114,7 +116,7 @@ class TestDashScopeChatWrapper(unittest.TestCase):
             messages=messages,
             result_format="message",
             stream=True,
-            incremental_output=True
+            incremental_output=True,
         )
 
     @patch("agentscope.models.dashscope_model.dashscope.Generation.call")

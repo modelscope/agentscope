@@ -68,7 +68,11 @@ class TestZhipuAIChatWrapper(unittest.TestCase):
             mock_response = MagicMock()
             mock_response.model_dump.return_value = {
                 "choices": [
-                    {"delta": {"content": "Hello, this is a mocked response!"}},
+                    {
+                        "delta": {
+                            "content": "Hello, this is a mocked response!",
+                        },
+                    },
                 ],
                 "usage": {
                     "prompt_tokens": 100,
@@ -83,6 +87,7 @@ class TestZhipuAIChatWrapper(unittest.TestCase):
             mock_responses.append(mock_response)
 
         from typing import Generator
+
         def mock_response_generator() -> Generator[MagicMock, None, None]:
             for mock_response in mock_responses:
                 yield mock_response

@@ -29,9 +29,8 @@ class OllamaModelWrapperTest(unittest.TestCase):
             "created_at": "2024-03-12T04:16:48.911377Z",
             "message": {
                 "role": "assistant",
-                "content": 
-                    "Hello! It's nice to meet you. Is there something"
-                    " I can help you with or would you like to chat?",
+                "content": "Hello! It's nice to meet you. Is there something"
+                " I can help you with or would you like to chat?",
             },
             "done": True,
             "total_duration": 20892900042,
@@ -123,7 +122,8 @@ class OllamaModelWrapperTest(unittest.TestCase):
         # prepare the mock
         mock_responses = [self.dummy_response for _ in range(3)]
         from typing import Generator
-        def mock_response_generator() -> Generator[MagicMock, None, None]:
+
+        def mock_response_generator() -> Generator[dict, None, None]:
             for mock_response in mock_responses:
                 yield mock_response
 
@@ -143,7 +143,10 @@ class OllamaModelWrapperTest(unittest.TestCase):
         )
 
         model = load_model_by_config_name("my_ollama_chat")
-        response = model(messages=[{"role": "user", "content": "Hi!"}], stream=True)
+        response = model(
+            messages=[{"role": "user", "content": "Hi!"}],
+            stream=True,
+        )
 
         for chunk in response:
             self.assertEqual(chunk.raw, self.dummy_response)
