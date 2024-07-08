@@ -55,6 +55,10 @@ rag_requires = [
 
 studio_requires = []
 
+web_requires = [
+    "playwright"
+]
+
 # released requires
 minimal_requires = [
     "networkx",
@@ -98,6 +102,7 @@ full_requires = (
     + gradio_requires
     + rag_requires
     + studio_requires
+    + web_requires
 )
 
 with open("README.md", "r", encoding="UTF-8") as fh:
