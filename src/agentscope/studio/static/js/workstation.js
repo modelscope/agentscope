@@ -962,11 +962,15 @@ function hideShowGroupNodes(groupId, show) {
         groupInfo.data.elements.forEach(elementNodeId => {
             const elementNode = document.getElementById(`node-${elementNodeId}`);
             const childNodeInfo = editor.getNodeFromId(elementNodeId);
+            const contentBox = elementNode.querySelector('.box') ||
+                elementNode.querySelector('.box-highlight');
             if (elementNode) {
                 elementNode.style.display = show ? '' : 'none';
             }
             if (childNodeInfo.class === 'GROUP') {
-                hideShowGroupNodes(elementNodeId, show);
+                if (!show || (contentBox && !contentBox.classList.contains('hidden'))) {
+                    hideShowGroupNodes(elementNodeId, show);
+                }
             }
         });
     }
