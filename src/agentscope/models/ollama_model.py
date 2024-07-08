@@ -98,9 +98,9 @@ class OllamaChatWrapper(OllamaWrapperBase):
                 override the `keep_alive` input in the constructor.
 
         Returns:
-            `ModelResponse`:
-                The response text in `text` field, and the raw response in
-                `raw` field.
+            `Union[ModelResponse, ModelResponseGen]`:
+                The response text in text field, and the raw response in
+                raw field. If `stream` is `True, returns a `ModelResponse` generator.
         """
         # step1: prepare parameters accordingly
         if options is None:

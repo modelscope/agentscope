@@ -140,9 +140,9 @@ class GeminiChatWrapper(GeminiWrapperBase):
                 The additional arguments for generating response.
 
         Returns:
-            `ModelResponse`:
-                The response text in text field, and the raw response in raw
-                field.
+            `Union[ModelResponse, ModelResponseGen]`:
+                The response text in text field, and the raw response in
+                raw field. If `stream` is `True, returns a `ModelResponse` generator.
         """
         # step1: checking messages
         if isinstance(contents, Iterable):

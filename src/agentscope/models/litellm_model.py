@@ -136,9 +136,9 @@ class LiteLLMChatWrapper(LiteLLMWrapperBase):
                 for more detailed arguments.
 
         Returns:
-            `ModelResponse`:
+            `Union[ModelResponse, ModelResponseGen]`:
                 The response text in text field, and the raw response in
-                raw field.
+                raw field. If `stream` is `True, returns a `ModelResponse` generator.
         """
 
         # step1: prepare keyword arguments
