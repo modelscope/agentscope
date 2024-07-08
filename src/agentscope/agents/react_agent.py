@@ -3,7 +3,7 @@
 and act iteratively to solve problems. More details can be found in the paper
 https://arxiv.org/abs/2210.03629.
 """
-from typing import Any
+from typing import Any, Optional, Union, Sequence
 
 from loguru import logger
 
@@ -140,7 +140,7 @@ class ReActAgent(AgentBase):
             keys_to_content=True if self.verbose else "speak",
         )
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         """The reply function that achieves the ReAct algorithm.
         The more details please refer to https://arxiv.org/abs/2210.03629"""
 

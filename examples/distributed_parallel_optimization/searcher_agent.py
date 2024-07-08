@@ -2,6 +2,8 @@
 """Searcher agent."""
 
 from functools import partial
+from typing import Optional, Union, Sequence
+
 from agentscope.message import Msg
 from agentscope.agents import AgentBase
 from agentscope.service import google_search, bing_search
@@ -56,7 +58,7 @@ class SearcherAgent(AgentBase):
             assert api_key is not None, "bing search requires 'api_key'"
             self.search = partial(bing_search, api_key=api_key)
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         prompt = self.model.format(
             Msg(name="system", role="system", content=self.sys_prompt),
             x,

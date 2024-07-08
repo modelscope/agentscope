@@ -27,10 +27,12 @@ AgentScope 文档
    tutorial/201-agent.md
    tutorial/205-memory.md
    tutorial/203-parser.md
+   tutorial/209-prompt_opt.md
    tutorial/204-service.md
    tutorial/202-pipeline.md
    tutorial/208-distribute.md
    tutorial/209-gui.md
+   tutorial/210-rag.md
    tutorial/105-logging.md
    tutorial/207-monitor.md
    tutorial/104-usecase.md

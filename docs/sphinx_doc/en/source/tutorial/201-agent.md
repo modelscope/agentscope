@@ -39,7 +39,7 @@ class AgentBase(Operator):
     ) -> None:
 
     # ... [code omitted for brevity]
-    def observe(self, x: Union[dict, Sequence[dict]]) -> None:
+    def observe(self, x: Union[Msg, Sequence[Msg]]) -> None:
         # An optional method for updating the agent's internal state based on
         # messages it has observed. This method can be used to enrich the
         # agent's understanding and memory without producing an immediate
@@ -47,7 +47,7 @@ class AgentBase(Operator):
         if self.memory:
             self.memory.add(x)
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         # The core method to be implemented by custom agents. It defines the
         # logic for processing an input message and generating a suitable
         # response.
@@ -86,7 +86,7 @@ Below, we provide usages of how to configure various agents from the AgentPool:
 * **Reply Method**: The `reply` method is where the main logic for processing input *message* and generating responses.
 
 ```python
-def reply(self, x: dict = None) -> dict:
+def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
     # Additional processing steps can occur here
 
     # Record the input if needed
@@ -142,9 +142,9 @@ service_bot = DialogAgent(**dialog_agent_config)
 ```python
 def reply(
     self,
-    x: dict = None,
+    x: Optional[Union[Msg, Sequence[Msg]]] = None,
     required_keys: Optional[Union[list[str], str]] = None,
-) -> dict:
+) -> Msg:
     # Check if there is initial data to be added to memory
     if self.memory:
         self.memory.add(x)

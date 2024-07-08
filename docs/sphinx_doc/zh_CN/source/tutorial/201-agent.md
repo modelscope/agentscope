@@ -48,7 +48,7 @@ class AgentBase(Operator):
         if self.memory:
             self.memory.add(x)
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         # The core method to be implemented by custom agents. It defines the
         # logic for processing an input message and generating a suitable
         # response.
@@ -87,7 +87,7 @@ class AgentBase(Operator):
 * **回复方法**：`reply` 方法是处理输入消息和生成响应的主要逻辑所在
 
 ```python
-def reply(self, x: dict = None) -> dict:
+def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
     # Additional processing steps can occur here
 
     # Record the input if needed
@@ -143,9 +143,9 @@ service_bot = DialogAgent(**dialog_agent_config)
 ```python
 def reply(
     self,
-    x: dict = None,
+    x: Optional[Union[Msg, Sequence[Msg]]] = None,
     required_keys: Optional[Union[list[str], str]] = None,
-) -> dict:
+) -> Msg:
     # Check if there is initial data to be added to memory
     if self.memory:
         self.memory.add(x)

@@ -6,7 +6,7 @@ from typing import Union, Any, List, Sequence
 from loguru import logger
 
 from .model import ModelWrapperBase, ModelResponse
-from ..message import MessageBase
+from ..message import Msg
 from ..utils.tools import _convert_to_str
 
 try:
@@ -73,7 +73,7 @@ class LiteLLMWrapperBase(ModelWrapperBase, ABC):
 
     def format(
         self,
-        *args: Union[MessageBase, Sequence[MessageBase]],
+        *args: Union[Msg, Sequence[Msg]],
     ) -> Union[List[dict], str]:
         raise RuntimeError(
             f"Model Wrapper [{type(self).__name__}] doesn't "
@@ -183,16 +183,16 @@ class LiteLLMChatWrapper(LiteLLMWrapperBase):
 
     def format(
         self,
-        *args: Union[MessageBase, Sequence[MessageBase]],
+        *args: Union[Msg, Sequence[Msg]],
     ) -> List[dict]:
         """Format the input string and dictionary into the unified format.
-        Note that the format function might not be the optimal way to contruct
+        Note that the format function might not be the optimal way to construct
         prompt for every model, but a common way to do so.
         Developers are encouraged to implement their own prompt
         engineering strategies if have strong performance concerns.
 
         Args:
-            args (`Union[MessageBase, Sequence[MessageBase]]`):
+            args (`Union[Msg, Sequence[Msg]]`):
                 The input arguments to be formatted, where each argument
                 should be a `Msg` object, or a list of `Msg` objects.
                 In distribution, placeholder is also allowed.
@@ -207,11 +207,9 @@ class LiteLLMChatWrapper(LiteLLMWrapperBase):
         for _ in args:
             if _ is None:
                 continue
-            if isinstance(_, MessageBase):
+            if isinstance(_, Msg):
                 input_msgs.append(_)
-            elif isinstance(_, list) and all(
-                isinstance(__, MessageBase) for __ in _
-            ):
+            elif isinstance(_, list) and all(isinstance(__, Msg) for __ in _):
                 input_msgs.extend(_)
             else:
                 raise TypeError(
