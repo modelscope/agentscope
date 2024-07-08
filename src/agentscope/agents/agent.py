@@ -405,7 +405,6 @@ class AgentBase(Operator, metaclass=_AgentMeta):
             serialized_fields["model"] = {
                 "model_type": self.model.model_type,
                 "config_name": self.model.config_name,
-                "model_name": self.model.model_name,
             }
         return json.dumps(serialized_fields, ensure_ascii=False)
 

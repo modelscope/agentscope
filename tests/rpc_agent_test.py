@@ -703,9 +703,9 @@ class BasicRpcAgentTest(unittest.TestCase):
         server_info = client.get_server_info()
         logger.info(server_info)
         self.assertTrue("pid" in server_info)
-        self.assertTrue("CPU Times" in server_info)
-        self.assertTrue("CPU Percent" in server_info)
-        self.assertTrue("Memory Usage" in server_info)
+        self.assertTrue("id" in server_info)
+        self.assertTrue("cpu" in server_info)
+        self.assertTrue("mem" in server_info)
         # test download file
         file_agent = FileAgent("File").to_dist(
             host="localhost",

@@ -40,7 +40,7 @@
 }
 
 
-#flush-server-btn {
+.align-right-btn {
     margin-left: auto;
 }
 
@@ -57,4 +57,41 @@
     width: 100%;
     background-color: #ffffff;
     border: 0px;
+}
+
+.status-tag {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 26px;
+    width: fit-content;
+    border-radius: 13px;
+    color: var(--base-color);
+    box-sizing: border-box;
+    margin: 0 5px;
+    padding: 0 14px;
+}
+
+.running.status-tag {
+    background-color: #ccf4dd;
+    color: #27ae60;
+    fill: #27ae60;
+}
+
+.dead.status-tag {
+    background-color: #f5d5d1;
+    color: #c0392b;
+    fill: #c0392b;
+}
+
+.loading.status-tag {
+    background-color: #e1e1e1;
+    color: #3d4047;
+    fill: #3d4047;
+}
+
+.unknown.status-tag {
+    background-color: #e1e1e1;
+    color: #3d4047;
+    fill: #3d4047;
 }

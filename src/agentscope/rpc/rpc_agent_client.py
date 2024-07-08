@@ -280,13 +280,17 @@ class RpcAgentClient:
 
     def get_server_info(self) -> dict:
         """Get the agent server resource usage information."""
-        with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
-            stub = RpcAgentStub(channel)
-            resp = stub.get_server_info(Empty())
-            if not resp.ok:
-                logger.error(f"Error in get_server_info: {resp.message}")
-                return {}
-            return json.loads(resp.message)
+        try:
+            with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
+                stub = RpcAgentStub(channel)
+                resp = stub.get_server_info(Empty())
+                if not resp.ok:
+                    logger.error(f"Error in get_server_info: {resp.message}")
+                    return {}
+                return json.loads(resp.message)
+        except Exception:
+            logger.info(f"Agent server [{self.host}:{self.port}] not alive.")
+            return {}
 
     def set_model_configs(
         self,

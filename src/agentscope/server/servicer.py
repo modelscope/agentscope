@@ -348,10 +348,10 @@ class AgentServerServicer(RpcAgentServicer):
         """Get the agent server resource usage information."""
         status = {}
         status["pid"] = self.pid
+        status["id"] = self.server_id
         process = psutil.Process(self.pid)
-        status["CPU Times"] = process.cpu_times()
-        status["CPU Percent"] = process.cpu_percent()
-        status["Memory Usage"] = process.memory_info().rss
+        status["cpu"] = process.cpu_percent(interval=1)
+        status["mem"] = process.memory_info().rss / (1024**2)
         return agent_pb2.GeneralResponse(ok=True, message=json.dumps(status))
 
     def set_model_configs(

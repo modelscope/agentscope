@@ -27,6 +27,7 @@ from flask_socketio import SocketIO, join_room, leave_room
 from agentscope._runtime import _runtime
 from agentscope.constants import _DEFAULT_SUBDIR_CODE, _DEFAULT_SUBDIR_INVOKE
 from agentscope.utils.tools import _is_process_alive, _is_windows
+from agentscope.rpc.rpc_agent_client import RpcAgentClient
 
 _app = Flask(__name__)
 
@@ -287,15 +288,55 @@ def _get_all_servers() -> Response:
     )
 
 
+@_app.route("/api/servers/status/<server_id>", methods=["GET"])
+def _get_server_status(server_id: str) -> Response:
+    server = _ServerTable.query.filter_by(id=server_id).first()
+    status = RpcAgentClient(
+        host=server.host,
+        port=server.port,
+    ).get_server_info()
+    if not status or status["id"] != server_id:
+        return jsonify({"status": "dead"})
+    else:
+        return jsonify(
+            {
+                "status": "running",
+                "cpu": status["cpu"],
+                "mem": status["mem"],
+            },
+        )
+
+
+@_app.route("/api/servers/delete/<server_id>", methods=["GET"])
+def _delete_server(server_id: str) -> Response:
+    server = _ServerTable.query.filter_by(id=server_id).first()
+    RpcAgentClient(host=server.host, port=server.port).stop()
+    _ServerTable.query.filter_by(id=server_id).delete()
+    _db.session.commit()
+    return jsonify({"status": "ok"})
+
+
 @_app.route("/api/servers/agent_info/<server_id>", methods=["GET"])
 def _get_server_agent_info(server_id: str) -> Response:
     _app.logger.info(f"Get info of server [{server_id}]")
-    return jsonify()
+    server = _ServerTable.query.filter_by(id=server_id).first()
+    agents = RpcAgentClient(
+        host=server.host,
+        port=server.port,
+    ).get_agent_list()
+    return jsonify(agents)
 
 
-@_app.route("/api/servers/status", methods=["GET"])
-def _get_server_status() -> Response:
-    return jsonify()
+@_app.route("/api/servers/agents/delete", methods=["POST"])
+def _delete_agent() -> Response:
+    _app.logger.info(f"Delete agent {request.json}")
+    server_id = request.json.get("server_id")
+    agent_id = request.json.get("agent_id")
+    server = _ServerTable.query.filter_by(id=server_id).first()
+    ok = RpcAgentClient(host=server.host, port=server.port).delete_agent(
+        agent_id,
+    )
+    return jsonify(status="ok" if ok else "fail")
 
 
 @_app.route("/api/messages/push", methods=["POST"])
