@@ -58,6 +58,9 @@ function loadTabPage(pageUrl, javascriptUrl) {
                 activeExpanded = false;
             }
 
+            // Load the page content
+            document.getElementById("content").innerHTML = html;
+
             // Load the javascript file
             if (javascriptUrl && !isScriptLoaded(javascriptUrl)) {
                 let script = document.createElement("script");
@@ -72,9 +75,6 @@ function loadTabPage(pageUrl, javascriptUrl) {
                 // If is not the first time, we can directly call the initialization function
                 initializeTabPageByUrl(pageUrl);
             }
-
-            // Load the page content
-            document.getElementById("content").innerHTML = html;
 
             // switch selected status of the tab buttons
             switch (pageUrl) {
