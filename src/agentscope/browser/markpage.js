@@ -1,7 +1,9 @@
 /* the js code here is referenced from WebVoyager and tarsier */
 function crawlPage(addLabel=true) {
     let labels = [];
+    /*
     var bodyRect = document.body.getBoundingClientRect();
+    */
     let allElements = Array.prototype.slice.call(
         document.querySelectorAll('*')
     )

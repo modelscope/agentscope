@@ -157,7 +157,7 @@ class WebVoyagerAgent(AgentBase):
         sys_prompt: str = DEFAULT_SYSTEM_PROMPT,
         max_iter: int = 30,
         max_attached_imgs: int = 5,
-        default_homepage: str = "https://www.bing.com",
+        default_homepage: str = "https://www.google.com",
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
     ) -> None:

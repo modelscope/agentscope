@@ -3,16 +3,12 @@
 The web browser interface for agentscope
 """
 import time
-import requests
 from pathlib import Path
+
+import requests
 import markdownify
-from sys import platform
 from playwright.sync_api import sync_playwright
 from loguru import logger
-
-from agentscope.file_manager import file_manager
-
-debug = False
 
 
 class WebBrowser:
@@ -27,6 +23,9 @@ class WebBrowser:
         default_width: int = 1280,
         default_height: int = 1080,
     ) -> None:
+        """
+        Init the playwright process and web browser.
+        """
         self.headless = headless
         self.current_step = 0
 
@@ -44,6 +43,9 @@ class WebBrowser:
         self._read_crawlpage_js()
 
     def _read_crawlpage_js(self) -> None:
+        """
+        Read the crawpage JavaScript from local file.
+        """
         current_file_path = Path(__file__)
 
         js_file_path = current_file_path.parent / "markpage.js"
@@ -52,6 +54,9 @@ class WebBrowser:
             self._crawlpage_js = file.read()
 
     def visit_page(self, url: str) -> None:
+        """
+        Goto the given url.
+        """
         if "://" not in url:
             url = f"https://{url}"
         self.page.goto(url)
@@ -59,17 +64,26 @@ class WebBrowser:
         self.page_elements = []
 
     def scroll(self, direction: str) -> None:
+        """
+        Scroll towards direction.
+        """
         if direction == "up":
             self.scroll_up()
         elif direction == "down":
             self.scroll_down()
 
     def scroll_up(self) -> None:
+        """
+        Scroll up the current browser window.
+        """
         self.page.keyboard.down("Alt")
         self.page.keyboard.press("ArrowUp")
         self.page.keyboard.up("Alt")
 
     def scroll_down(self) -> None:
+        """
+        Scroll down the current browser window.
+        """
         self.page.keyboard.down("Alt")
         self.page.keyboard.press("ArrowDown")
         self.page.keyboard.up("Alt")
@@ -95,17 +109,22 @@ class WebBrowser:
         Returns:
             bool : whether the query is found
         """
-        # TODO
+        # TODO the function is not yet implement
+        # TODO whether to implement this in javascript or find other methods
+        logger.info(f"searching on {query}")
         return False
 
     def find_next(self) -> None:
         """
         Goto the next position of the previous ctrl-f query
         """
-        # TODO
-        pass
+        # TODO add this
+        return None
 
     def enter(self) -> None:
+        """
+        Press enter.
+        """
         self.page.keyboard.press("Enter")
 
     def press_key(self, key: str) -> None:
@@ -132,8 +151,11 @@ class WebBrowser:
         # try to clear the text within the given elements
         try:
             self.page.evaluate('element => element.value = ""', web_ele)
-        except:
-            logger.info("Unable to clear the value within the given elements")
+        except Exception as e:
+            logger.info(
+                f"Expection {str(e)}, "
+                "unable to clear the value within the given elements.",
+            )
 
         # focus on the element to type
         self.page.evaluate("element => element.focus()", web_ele)
@@ -149,33 +171,28 @@ class WebBrowser:
         self.page.go_back()
 
     def focus_element(self, ele_id: int) -> None:
+        """
+        Focus on the element with given id.
+        """
         web_ele = self.page_elements[ele_id]
         web_ele.evaluate("element => element.focus()")
 
     # from webvoyager
     def try_click_body(self) -> None:
+        """
+        Try to click the main body of webpage.
+        """
         try:
             self.page.locator("body").click()
-        except:
-            logger.info("No main 'body' found in webpage")
-
-    def prevent_space(self) -> None:
-        try:
-            self.page.evaluate(
-                """
-                window.onkeydown = function(e) {
-                    if(e.keyCode == 32 && e.target.type != 'text' && e.target.type != 'textarea') {
-                        e.preventDefault();
-                    }
-                };
-            """,  # noqa
+        except Exception as e:
+            logger.info(
+                f"Unable to locat and click 'body' in webpage, {str(e)}",
             )
-            # do we need sleep here?
-            time.sleep(2)
-        except:
-            logger.info("disable space failed")
 
     def _remove_labels_by_handle(self, labels_handle: object) -> None:
+        """
+        Remove the SOM labels by their element handles.
+        """
         labels_js_handles = labels_handle.evaluate_handle("labels => labels")
         labels = labels_js_handles.get_properties().values()
         for label in labels:
@@ -187,6 +204,30 @@ class WebBrowser:
         with_meta: bool = False,
         with_select: bool = False,
     ) -> tuple:
+        """
+        Process the current page, return the interactive elements and
+        corresponding infos.
+
+        Args:
+            vision (`bool`):
+                Whether to Adding set-of-mark of webpage if vision is enabled.
+            with_meta (`bool`):
+                Whether to include meta_data field in the returned format text.
+            with_select (`bool`):
+                Return only the selected interactive elements or all
+                interactive elements.
+
+        Returns:
+            elements:
+                the handler from playwright of interactive elements.
+            format_ele_text:
+                the text description of formated elements.
+            screenshot_bytes:
+                the screenshot of webpage, with SOM, in bytes.
+            web_ele_infos:
+                the info dict of interactive elements.
+
+        """
         js_script = self._crawlpage_js
 
         self.page.evaluate(js_script)
@@ -272,46 +313,44 @@ class WebBrowser:
 
     @property
     def url(self) -> str:
+        """return the url of current page"""
         return self.page.url
 
     @property
     def page_html(self) -> str:
+        """return the html content of current page"""
         return self.page.content()
 
     @property
     def page_title(self) -> str:
+        """return the title of current page"""
         return self.page.title()
 
     @property
     def page_markdown(self) -> str:
+        """return the content of current page, in markdown format"""
         return markdownify.markdownify(self.page_html)
 
-    def get_jina_page(self) -> str:
+    def _get_jina_page(self) -> str:
+        """return the formattted current page text, using api from jina"""
         jina_url = "https://r.jina.ai/" + self.url
         try:
             page_text = requests.get(jina_url).text
             return page_text
-        except:
+        except Exception as e:
             return (
-                f"The page in {self.url} is not loaded yet"
-                "you should check the request connection or api qutoa"
+                f"Enconter exception {str(e)}"
+                f"The page in {self.url} might not be loaded yet"
+                "you might want to check the request connection or api qutoa."
             )
 
     def page_screenshot(self) -> bytes:
-        # TODO makesure the mark is aligned with page elements id
+        # TODO whether to keep this or intergrate into crawlpage.
         """
         Get the screen shot of the current page
-
-        Args:
-            with_mark(`bool`) :
-                whether to add the set of mark to the screen shot,
-                showing all clickable elements and their id
         """
-        # file_manager.save_image(
-        #     self.page.screenshot(),
-        #     filename=f"web_step{self.current_step}_screenshot.png"
-        # )
         return self.page.screenshot()
 
     def close(self) -> None:
+        """close the browser"""
         self.browser.close()
