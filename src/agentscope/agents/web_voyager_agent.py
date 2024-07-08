@@ -1,21 +1,20 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=C0301
 """The WebVoyager agent, an innovative MLLM powered web agent that can
 interacting with real-world websites with vision.
-Implemented referenced on https://github.com/MinorJerry/WebVoyager/tree/main.
+Implementation referenced on https://github.com/MinorJerry/WebVoyager/tree/main
 The paper link is https://arxiv.org/abs/2401.13919.
 """
 import time
 import os
-import base64
 import re
-from typing import Optional
+from typing import Optional, Tuple, Any
 
 from loguru import logger
 
-from ..message import Msg
-from .agent import AgentBase
 
-from agentscope.message import message_from_dict
+from agentscope.agents import AgentBase
+from agentscope.message import message_from_dict, Msg
 from agentscope.browser.web_browser import WebBrowser
 from agentscope.file_manager import file_manager
 
@@ -63,83 +62,13 @@ Then the User will provide:
 Observation: {A labeled screenshot Given by User}
 """  # noqa
 
+INIT_MSG_PROMPT = """Now given a task: {task_question}, Please interact with {task_web_url} and get the answer.
+Observation: please analyze the attached screenshot and give the Thought and Action.
+I've provided the tag name of each element and the text it contains (if text exists). Note that <textarea> or <input> may be textbox, but not exactly. Please focus more on the screenshot and then refer to the textual information. The textual information in the current round is: \n{web_text}. Please note that the label number may change in the next round, so always choose within the lastest round's number.
+"""  # noqa
 
-def clip_message_and_obs(msg, max_img_num):
-    clipped_msg = []
-    img_num = 0
-    for idx in range(len(msg)):
-        curr_msg = msg[len(msg) - 1 - idx]
-        if curr_msg["role"] != "user":
-            clipped_msg = [curr_msg] + clipped_msg
-        else:
-            if isinstance(curr_msg["content"], str):
-                clipped_msg = [curr_msg] + clipped_msg
-            elif img_num < max_img_num:
-                img_num += 1
-                clipped_msg = [curr_msg] + clipped_msg
-            else:
-                msg_no_pdf = (
-                    curr_msg["content"][0]["text"]
-                    .split("Observation:")[0]
-                    .strip()
-                    + "Observation: A screenshot and some texts. (Omitted in context.)"
-                )
-                msg_pdf = (
-                    curr_msg["content"][0]["text"]
-                    .split("Observation:")[0]
-                    .strip()
-                    + "Observation: A screenshot, a PDF file and some texts. (Omitted in context.)"
-                )
-                curr_msg_clip = {
-                    "role": curr_msg["role"],
-                    "content": msg_no_pdf
-                    if "You downloaded a PDF file"
-                    not in curr_msg["content"][0]["text"]
-                    else msg_pdf,
-                }
-                clipped_msg = [curr_msg_clip] + clipped_msg
-    return clipped_msg
-
-
-def encode_image(image_path):
-    with open(image_path, "rb") as image_file:
-        return base64.b64encode(image_file.read()).decode("utf-8")
-
-
-def format_msg(it, init_msg, warn_obs, web_img_b64, web_text):
-    if it == 1:
-        init_msg += f"I've provided the tag name of each element and the text it contains (if text exists). Note that <textarea> or <input> may be textbox, but not exactly. Please focus more on the screenshot and then refer to the textual information. The textual information in the current round is: \n{web_text}. Please note that the label number may change in the next round, so always choose within the lastest round's number."
-        init_msg_format = {
-            "role": "user",
-            "content": [
-                {"type": "text", "text": init_msg},
-            ],
-        }
-        init_msg_format["content"].append(
-            {
-                "type": "image_url",
-                "image_url": {"url": f"data:image/png;base64,{web_img_b64}"},
-            },
-        )
-        return init_msg_format
-    else:
-        curr_msg = {
-            "role": "user",
-            "content": [
-                {
-                    "type": "text",
-                    "text": f"Observation:{warn_obs} please analyze the attached screenshot and give the Thought and Action. I've provided the tag name of each element and the text it contains (if text exists). Note that <textarea> or <input> may be textbox, but not exactly. Please focus more on the screenshot and then refer to the textual information.\n{web_text}. Please note that the label number may change in the next round, so always choose within the lastest round's number.",
-                },
-                {
-                    "type": "image_url",
-                    "image_url": {
-                        "url": f"data:image/png;base64,{web_img_b64}",
-                    },
-                },
-            ],
-        }
-
-        return curr_msg
+OBS_MSG_PROMPT = """Observation:{warn_obs} please analyze the attached screenshot and give the Thought and Action. I've provided the tag name of each element and the text it contains (if text exists). Note that <textarea> or <input> may be textbox, but not exactly. Please focus more on the screenshot and then refer to the textual information.\n{web_text}. Please note that the label number may change in the next round, so always choose within the lastest round's number.
+"""  # noqa
 
 
 class WebVoyagerAgent(AgentBase):
@@ -153,7 +82,6 @@ class WebVoyagerAgent(AgentBase):
         browser: WebBrowser,
         model_config_name: str,
         name: str,
-        download_dir: str = ".",
         sys_prompt: str = DEFAULT_SYSTEM_PROMPT,
         max_iter: int = 30,
         max_attached_imgs: int = 5,
@@ -185,14 +113,83 @@ class WebVoyagerAgent(AgentBase):
             memory_config=memory_config,
         )
         self.browser = browser
-        self.download_dir = download_dir
         self.max_iter = max_iter
         self.max_attached_imgs = max_attached_imgs
         self.default_homepage = default_homepage
-        self.messages = []
+        self.task_question = ""
+        self.task_dir = ""
+        self.task_web = ""
+        self.task_answer = ""
 
-    # TODO change typing from dict to MSG
+    def _clip_message_and_obs(self, msg_list: list) -> list:
+        """
+        Avoid to much image contents so the model won't confuse.
+        """
+        max_img_num = self.max_attached_imgs
+        clipped_msg = []
+        img_num = 0
+        for idx in range(len(msg_list)):
+            curr_msg = msg_list[len(msg_list) - 1 - idx]
+            if curr_msg.role != "user":
+                clipped_msg = [curr_msg] + clipped_msg
+            else:
+                if curr_msg.url is None:
+                    clipped_msg = [curr_msg] + clipped_msg
+                elif img_num < max_img_num:
+                    img_num += 1
+                    clipped_msg = [curr_msg] + clipped_msg
+                else:
+                    msg_omit = (
+                        curr_msg.content.split("Observation:")[0].strip()
+                        + "Observation: A screenshot and some texts. (Omitted in context.)"  # noqa
+                    )
+                    curr_msg_clip = Msg(
+                        name=curr_msg.name,
+                        content=msg_omit,
+                        role=curr_msg.role,
+                    )
+                    clipped_msg = [curr_msg_clip] + clipped_msg
+        return clipped_msg
+
+    def _get_step_msg(
+        self,
+        it: int,
+        warn_obs: str,
+        image_url: str,
+        web_text: str,
+    ) -> Msg:
+        """
+        Get the step message for the current iter.
+        """
+        if it == 1:
+            init_msg = INIT_MSG_PROMPT.format(
+                task_question=self.task_question,
+                task_web_url=self.task_web,
+                web_text=web_text,
+            )
+            init_msg_format = Msg(
+                name="user",
+                content=init_msg,
+                role="user",
+                url=image_url,
+            )
+            return init_msg_format
+        else:
+            obs_text = OBS_MSG_PROMPT.format(
+                warn_obs=warn_obs,
+                web_text=web_text,
+            )
+            curr_msg = Msg(
+                name="user",
+                content=obs_text,
+                role="user",
+                url=image_url,
+            )
+            return curr_msg
+
     def reply(self, x: dict = None) -> dict:
+        # pylint: disable=R0912
+        # pylint: disable=R0915
         """
         Given the command, execute the browsing actions.
         Args:
@@ -210,16 +207,13 @@ class WebVoyagerAgent(AgentBase):
             self.task_question = x.content["question"]
             self.task_dir = x.content["dir"]
 
-        def ensure_directory_exists(path):
-            if not os.path.exists(path):
-                os.makedirs(path)
-                print(f"Directory created: {path}")
-            else:
-                print(f"Directory already exists: {path}")
-
-        ensure_directory_exists(self.task_dir)
-
-        self.task_answer = ""
+        # ensure directory exists
+        path = self.task_dir
+        if not os.path.exists(path):
+            os.makedirs(path)
+            print(f"Directory created: {path}")
+        else:
+            print(f"Directory already exists: {path}")
 
         self.task_web = self.default_homepage
 
@@ -230,18 +224,18 @@ class WebVoyagerAgent(AgentBase):
         # TODO self.browser.prevent_space()
 
         fail_obs = ""  # When error execute the action
-        pdf_obs = ""  # When download PDF file
         warn_obs = ""  # Type warning
         pattern = r"Thought:|Action:|Observation:"
 
         messages = [
-            {"role": "system", "content": self.sys_prompt, "name": "system"},
+            message_from_dict(
+                {
+                    "role": "system",
+                    "content": self.sys_prompt,
+                    "name": "system",
+                },
+            ),
         ]
-        obs_prompt = "Observation: please analyze the attached screenshot and give the Thought and Action. "
-
-        init_msg = f"""Now given a task: {self.task_question}, Please interact with https://www.example.com and get the answer. \n"""
-        init_msg = init_msg.replace("https://www.example.com", self.task_web)
-        init_msg = init_msg + obs_prompt
 
         it = 0
 
@@ -251,7 +245,7 @@ class WebVoyagerAgent(AgentBase):
             if not fail_obs:
                 try:
                     (
-                        web_eles,
+                        _web_eles,
                         web_eles_text,
                         screenshot_bytes,
                         web_ele_fields,
@@ -265,44 +259,44 @@ class WebVoyagerAgent(AgentBase):
                 # get screnn shot
                 img_path = os.path.join(
                     self.task_dir,
-                    "screenshot{}.png".format(it),
+                    f"screenshot_{it}.png",
                 )
                 # self.speak(f"saving image to {img_path}")
                 file_manager.save_image(screenshot_bytes, img_path)
-                # encode image
-                b64_img = encode_image(img_path)
 
-                # self.speak(f"Web ele text is: {web_eles_text}")
-                curr_msg = format_msg(
+                curr_msg = self._get_step_msg(
                     it,
-                    init_msg,
                     warn_obs,
-                    b64_img,
+                    img_path,
                     web_eles_text,
                 )
 
                 messages.append(curr_msg)
             else:
                 # TODO change fail obs
-                curr_msg = {
-                    "role": "user",
-                    "name": "user",
-                    "content": fail_obs,
-                }
+                curr_msg = message_from_dict(
+                    {
+                        "role": "user",
+                        "name": "user",
+                        "content": fail_obs,
+                    },
+                )
                 messages.append(curr_msg)
 
-            # TODO Clip messages, too many attached images may cause confusion
-            messages = clip_message_and_obs(messages, self.max_attached_imgs)
+            messages = self._clip_message_and_obs(messages)
 
-            gpt_4v_res = self.model(messages).text
+            formated_messages = self.model.format(messages)
+            gpt_4v_res = self.model(formated_messages).text
             self.speak(gpt_4v_res)
 
             messages.append(
-                {
-                    "role": "assistant",
-                    "content": gpt_4v_res,
-                    "name": "assistant",
-                },
+                message_from_dict(
+                    {
+                        "role": "assistant",
+                        "content": gpt_4v_res,
+                        "name": "assistant",
+                    },
+                ),
             )
 
             # extract action info
@@ -310,12 +304,12 @@ class WebVoyagerAgent(AgentBase):
                 assert "Thought:" in gpt_4v_res and "Action:" in gpt_4v_res
             except AssertionError as e:
                 logger.error(e)
-                fail_obs = "Format ERROR: Both 'Thought' and 'Action' should be included in your reply."
+                fail_obs = "Format ERROR: Both 'Thought' and 'Action' should be included in your reply."  # noqa
                 continue
 
             # bot_thought = re.split(pattern, gpt_4v_res)[1].strip()
             bot_action = re.split(pattern, gpt_4v_res)[2].strip()
-            action_key, info = self.extract_action(bot_action)
+            action_key, info = self._extract_action(bot_action)
 
             fail_obs = ""
             warn_obs = ""
@@ -348,14 +342,12 @@ class WebVoyagerAgent(AgentBase):
 
                     ele_tag_name = web_ele_fields[type_ele_number]["tag_name"]
                     ele_type = web_ele_fields[type_ele_number]["type"]
-                    if (
-                        ele_tag_name != "input" and ele_tag_name != "textarea"
-                    ) or (
+                    if (ele_tag_name not in ("input", "textarea")) or (
                         ele_tag_name == "input"
                         and ele_type
                         not in ["text", "search", "password", "email", "tel"]
                     ):
-                        warn_obs = f"note: The web element you're trying to type may not be a textbox, and its tag name is <{ele_tag_name}>, type is {ele_type}."
+                        warn_obs = f"note: The web element you're trying to type may not be a textbox, and its tag name is <{ele_tag_name}>, type is {ele_type}."  # noqa
 
                     self.browser.type(
                         type_ele_number,
@@ -407,23 +399,22 @@ class WebVoyagerAgent(AgentBase):
                 logger.error("driver error info:")
                 logger.error(e)
                 if "element click intercepted" not in str(e):
-                    fail_obs = "The action you have chosen cannot be exected. Please double-check if you have selected the wrong Numerical Label or Action or Action format. Then provide the revised Thought and Action."
+                    fail_obs = "The action you have chosen cannot be exected. Please double-check if you have selected the wrong Numerical Label or Action or Action format. Then provide the revised Thought and Action."  # noqa
                 else:
                     fail_obs = ""
                 time.sleep(2)
 
-        # TODO show token cost
-        # logger.info(f'Total cost: {accumulate_prompt_token / 1000 * 0.01 + accumulate_completion_token / 1000 * 0.03}')
-        self.messages = messages
         # TODO save messages to trajectory
         # TODO when to close self.browser
-        return {"answer": self.task_answer}
+        return Msg(name=self.name, content=self.task_answer, role="assistant")
 
-    def extract_action(self, text: str):
+    def _extract_action(self, text: str) -> Tuple[Any, Any]:
+        """
+        Extract action from responsed action text
+        """
         patterns = {
             "click": r"Click \[?(\d+)\]?",
             "type": r"Type \[?(\d+)\]?[; ]+\[?(.[^\]]*)\]?",
-            "typesubmit": r"TypeSubmit \[?(\d+)\]?[; ]+\[?(.[^\]]*)\]?",
             "scroll": r"Scroll \[?(\d+|WINDOW)\]?[; ]+\[?(up|down)\]?",
             "wait": r"^Wait",
             "goback": r"^GoBack",
@@ -437,7 +428,7 @@ class WebVoyagerAgent(AgentBase):
                 if key in ["click", "wait", "goback", "google"]:
                     # no content
                     return key, match.groups()
-                elif key in ["type", "typesubmit", "scroll"]:
+                elif key in ["type", "scroll"]:
                     return key, {
                         "number": match.group(1),
                         "content": match.group(2),
