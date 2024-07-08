@@ -5,12 +5,13 @@ from typing import Union, Any, List, Sequence
 
 from loguru import logger
 
-from .model import ModelWrapperBase, ModelResponse
+from .model import ModelWrapperBase, ModelResponse, ModelResponseGen
 from ..message import Msg
 from ..utils.tools import _convert_to_str
 
 try:
     import litellm
+    from litellm import ModelResponse as LiteModelResponse, CustomStreamWrapper
 except ImportError:
     litellm = None
 
@@ -155,6 +156,10 @@ class LiteLLMChatWrapper(LiteLLMWrapperBase):
                 "and 'content' key for LiteLLM API.",
             )
 
+        stream = kwargs.get("stream", False)
+        if stream:
+            kwargs["stream_options"] = {"include_usage": True}
+
         # step3: forward to generate response
         response = litellm.completion(
             model=self.model_name,
@@ -162,24 +167,85 @@ class LiteLLMChatWrapper(LiteLLMWrapperBase):
             **kwargs,
         )
 
-        # step4: record the api invocation if needed
+        # step4: process response and return model response
+        return self._process_response(
+            response=response,
+            messages=messages,
+            **kwargs,
+        )
+
+    def _record_invocation_and_token_usage(
+        self,
+        response: Union[list, LiteModelResponse],
+        messages: list,
+        **kwargs: Any,
+    ) -> None:
+        # Record the api invocation if needed,
+        # token usage and update monitor accordingly
+
+        if isinstance(response, LiteModelResponse):
+            valid_usage = response.usage.model_dump()
+        else:
+            valid_usage = {}
+            response_list = []
+            for chunk in response:
+                if hasattr(chunk, "usage") and chunk.usage is not None:
+                    valid_usage = chunk.usage.model_dump()
+                response_list.append(chunk.model_dump())
+            response = response_list
+
+        self.update_monitor(
+            call_counter=1,
+            **valid_usage,
+        )
+
+        # record the api invocation if needed
         self._save_model_invocation(
             arguments={
                 "model": self.model_name,
                 "messages": messages,
                 **kwargs,
             },
-            response=response.model_dump(),
+            response=response,
         )
 
-        # step5: update monitor accordingly
-        self.update_monitor(call_counter=1, **response.usage.model_dump())
+    def _process_response(
+        self,
+        response: Union[LiteModelResponse, CustomStreamWrapper],
+        messages: list,
+        **kwargs: Any,
+    ) -> Union[ModelResponse, ModelResponseGen]:
+        # Process response and return model response
+        stream = kwargs.get("stream", False)
+        if stream:
 
-        # step6: return response
-        return ModelResponse(
-            text=response.choices[0].message.content,
-            raw=response.model_dump(),
-        )
+            def gen() -> ModelResponseGen:
+                text = ""
+                chunks = []
+                for chunk in response:
+                    if (
+                        len(chunk.choices) > 0
+                        and chunk.choices[0].delta.content
+                    ):
+                        delta = chunk.choices[0].delta.content
+                        text += delta
+                        yield ModelResponse(text=text, delta=delta, raw=chunk)
+                    chunks.append(chunk)
+                self._record_invocation_and_token_usage(
+                    chunks,
+                    messages=messages,
+                    **kwargs,
+                )
+
+            return gen()
+        else:
+            text = response.choices[0].message.content
+            self._record_invocation_and_token_usage(
+                response,
+                messages=messages,
+                **kwargs,
+            )
+            return ModelResponse(text=text, raw=response)
 
     def format(
         self,
