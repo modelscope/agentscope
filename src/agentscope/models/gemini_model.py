@@ -193,7 +193,7 @@ class GeminiChatWrapper(GeminiWrapperBase):
                 "stream": stream,
                 **kwargs,
             },
-            response=response.to_dict(),
+            response=str(response),
         )
 
     def _extract_content_from_response(

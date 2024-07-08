@@ -37,6 +37,12 @@ class DummyCandidate:
 
     content = DummyContent()
 
+class DummyUsageMetaData:
+    """Dummy candidate for testing."""
+
+    prompt_token_count = 1
+    candidates_token_count = 1
+    total_token_count = 2
 
 class DummyResponse:
     """Dummy response for testing."""
@@ -44,6 +50,8 @@ class DummyResponse:
     text = "Hello! How can I help you?"
 
     candidates = [DummyCandidate]
+
+    usage_metadata = DummyUsageMetaData
 
     def __str__(self) -> str:
         """Return string representation."""
