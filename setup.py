@@ -56,7 +56,7 @@ rag_requires = [
 studio_requires = []
 
 web_requires = [
-    "playwright"
+    "playwright",
 ]
 
 # released requires
