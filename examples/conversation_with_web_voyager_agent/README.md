@@ -96,6 +96,8 @@ We can see from the saved screenshot here that the interactive elements in this 
 After recieving the observation, the agent will give it's thought and corresponding action.
 In this case, the agent select the search bar (numbered as [4]) and type in it.
 
+![screenshot_1](https://github.com/garyzhang99/agentscope/assets/46197280/9de208b8-4ef4-4b4f-9328-2f7bb500fcb2)
+
 
 ```
 Thought: To find out how many stars the project "agentscope" has on GitHub, I need to search for "agentscope GitHub" on Google first.
@@ -105,6 +107,7 @@ Action: Type [4]; agentscope GitHub
 
 
 In the next iter, we see that the agent is presented with the searching result page, and the agent select the offical github link.
+![screenshot_2](https://github.com/garyzhang99/agentscope/assets/46197280/9b6708c6-eced-4d8b-8ebe-cdbd197b40ea)
 
 ```
 Thought: The search results from Google have populated, and I found a link that likely leads to the "agentscope" GitHub project page.
@@ -113,6 +116,8 @@ Action: Click [18]
 ```
 
 As the agent view the github page of agentscope, it note the github stars, hence it answer our question.
+![screenshot_3](https://github.com/garyzhang99/agentscope/assets/46197280/5cad5472-b45b-4ef3-a8fa-324d5a20073a)
+
 
 ```
 Thought: I can see from the screenshot that the star count for the "agentscope" project on GitHub is listed as "2.9k" stars.
