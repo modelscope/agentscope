@@ -2,12 +2,12 @@
 # pylint: disable=C0301
 """ Utils for mixing model's answers in agentscope """
 
-from typing import Union, List, Sequence
+from typing import Union, List, Sequence, Tuple
+import concurrent.futures
 
 from agentscope.message import Msg
 from agentscope.models import (
     ModelWrapperBase,
-    ModelResponse,
     load_model_by_config_name,
 )
 
@@ -18,7 +18,7 @@ DEFAULT_AGGREGATOR_PROMPT = """You have been provided with a set of responses fr
 Responses from models:"""  # noqa
 
 
-class MoAModel:
+class MixtureOfAgents:
     """
     The MoA model that take multiple models and aggregate their responses,
     leverages the collective strengths of multiple LLMs to enhance performance.
@@ -29,6 +29,7 @@ class MoAModel:
         self,
         main_model: Union[str, ModelWrapperBase],
         reference_models: List[Union[str, ModelWrapperBase]],
+        rounds: int = 1,
         aggregator_prompt: str = DEFAULT_AGGREGATOR_PROMPT,
     ) -> None:
         """
@@ -68,13 +69,36 @@ class MoAModel:
                     "reference_models must be a list of strings "
                     "or ModelWrapperBase instances",
                 )
-
+        self.references: List[str] = [
+            "" for _ in range(len(self.reference_models))
+        ]
+        self.rounds = rounds
         self.aggregator_prompt = aggregator_prompt
 
-    def format_and_call(
+    def _get_res_with_aggregate_model(
+        self,
+        aggre_model: ModelWrapperBase,
+    ) -> str:
+        messages = []
+        messages.append(
+            Msg(role="system", content=self.aggregator_prompt, name="system"),
+        )
+        for i, ref in enumerate(self.references, start=0):
+            messages.append(
+                Msg(
+                    role="user",
+                    content=ref,
+                    name=f"Model_{i}",
+                ),
+            )
+        aggre_format_msg = aggre_model.format(messages)
+        aggre_res = aggre_model(aggre_format_msg)
+        return aggre_res.text
+
+    def reply(
         self,
         *args: Union[Msg, Sequence[Msg]],
-    ) -> ModelResponse:
+    ) -> Msg:
         """
         Get model response from messages.
         Is equivalent to calling a model with:
@@ -87,24 +111,46 @@ class MoAModel:
             *args (`Union[Msg, Sequence[Msg]]`):
                 The messages to be sent to the model.
         """
-        messages = []
-        messages.append(
-            Msg(role="system", content=self.aggregator_prompt, name="system"),
-        )
-        # TODO make this loop async or multi-threaded
-        # to user our distributed module
-        for ref_model in self.reference_models:
+
+        def _process_reference(
+            i: int,
+            ref_model: ModelWrapperBase,
+            *args: Union[Msg, Sequence[Msg]],
+        ) -> Tuple[int, str]:
             format_msg = ref_model.format(*args)
             ref_model_res = ref_model(format_msg)
-            # TODO findout the best way to present model names
-            # with actual model names might induce bias
-            messages.append(
-                Msg(
-                    role="user",
-                    content=ref_model_res.text,
-                    name=ref_model.model_name,
-                ),
-            )
-        main_format_msg = self.main_model.format(messages)
-        main_res = self.main_model(main_format_msg)
-        return main_res
+            return i, ref_model_res.text
+
+        def _process_new_refs(
+            i: int,
+            ref_model: ModelWrapperBase,
+        ) -> Tuple[int, str]:
+            return i, self._get_res_with_aggregate_model(ref_model)
+
+        # get all the references
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            futures = [
+                executor.submit(_process_reference, i, ref_model, *args)
+                for i, ref_model in enumerate(self.reference_models, start=0)
+            ]
+            for future in concurrent.futures.as_completed(futures):
+                i, result = future.result()
+                self.references[i] = result
+
+        for _ in range(self.rounds):
+            new_refs = ["" for __ in range(len(self.reference_models))]
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                futures = [
+                    executor.submit(_process_new_refs, i, ref_model)
+                    for i, ref_model in enumerate(
+                        self.reference_models,
+                        start=0,
+                    )
+                ]
+                for future in concurrent.futures.as_completed(futures):
+                    i, result = future.result()
+                    new_refs[i] = result
+            self.references = new_refs
+
+        final_res = self._get_res_with_aggregate_model(self.main_model)
+        return Msg(role="assistant", content=final_res, name="assistant")
