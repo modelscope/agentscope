@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Simulation benchmark
 
 Please install pytest and pytest-benchmark to run this benchmark.
@@ -5,12 +6,12 @@ Please install pytest and pytest-benchmark to run this benchmark.
 
 import pytest  # pylint: disable=W0611
 from participant import Moderator, RandomParticipant, LLMParticipant
-from main import run_main_process
+from main import run_main_process  # pylint: disable=E0611
 import agentscope
 from agentscope.server import RpcAgentServerLauncher
 
 
-def test_simulation(benchmark):
+def test_simulation(benchmark):  # type: ignore[no-untyped-def]
     """A single benchmark for the simulation"""
     base_port = 23300
     par_server_num = 4

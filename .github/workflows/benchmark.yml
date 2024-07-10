@@ -32,6 +32,7 @@ jobs:
       with:
         name: Python Benchmark with pytest-benchmark
         tool: 'pytest'
+        gh-pages-branch: gh-bench-pages
         output-file-path: examples/distributed_simulation/output.json
         github-token: ${{ secrets.GITHUB_TOKEN }}
         auto-push: true
