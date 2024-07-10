@@ -1,0 +1,42 @@
+name: AgentScope Benchmark
+
+on: [push, pull_request]
+
+jobs:
+  bench:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: True
+      matrix:
+        os: [ubuntu-latest]
+    env:
+      OS: ${{ matrix.os }}
+      PYTHON: '3.9'
+    steps:
+    - uses: actions/checkout@master
+    - name: Setup Python
+      uses: actions/setup-python@master
+      with:
+        python-version: 3.9
+    - name: Install AgentScope
+      run: |
+        pip install -q -e .[distribute]
+        pip install pytest pytest-benchmark
+    - name: Run bench
+      run: |
+        cd examples/distributed_simulation
+        pytest bench.py --benchmark-json output.json
+
+    - name: Store benchmark result
+      uses: benchmark-action/github-action-benchmark@v1
+      with:
+        name: Python Benchmark with pytest-benchmark
+        tool: 'pytest'
+        output-file-path: examples/distributed_simulation/output.json
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        auto-push: true
+          # Show alert with commit comment on detecting possible performance regression
+        alert-threshold: '150%'
+        comment-on-alert: true
+        fail-on-alert: true
+        alert-comment-cc-users: '@pan-x-c'
