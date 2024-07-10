@@ -28,7 +28,6 @@ class RpcAgent(AgentBase):
         lazy_launch: bool = True,
         agent_id: str = None,
         connect_existing: bool = False,
-        upload_source_code: bool = False,
     ) -> None:
         """Initialize a RpcAgent instance.
 
@@ -57,12 +56,6 @@ class RpcAgent(AgentBase):
             connect_existing (`bool`, defaults to `False`):
                 Set to `True`, if the agent is already running on the agent
                 server.
-            upload_source_code (`bool`, default to `False`):
-                Upload the source code of the agent to the agent server.
-                Only takes effect when connecting to an existing server.
-                When you are using an agent that doens't exist on the server
-                (such as your customized agent that is not officially provided
-                by AgentScope), please set this value to `True`.
         """
         super().__init__(name=name)
         self.agent_class = agent_class
@@ -101,7 +94,6 @@ class RpcAgent(AgentBase):
             if not self.connect_existing:
                 self.client.create_agent(
                     agent_configs,
-                    upload_source_code=upload_source_code,
                 )
 
     def _launch_server(self) -> None:

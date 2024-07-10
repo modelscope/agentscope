@@ -72,10 +72,6 @@ class _AgentMeta(ABCMeta):
                         "lazy_launch",
                         True,
                     ),
-                    upload_source_code=to_dist.pop(  # type: ignore[arg-type]
-                        "upload_source_code",
-                        False,
-                    ),
                     agent_id=cls.generate_agent_id(),
                     connect_existing=False,
                     agent_class=cls,
@@ -105,7 +101,6 @@ class DistConf(dict):
         max_timeout_seconds: int = 1800,
         local_mode: bool = True,
         lazy_launch: bool = True,
-        upload_source_code: bool = False,
     ):
         """Init the distributed configuration.
 
@@ -123,12 +118,6 @@ class DistConf(dict):
                 requests.
             lazy_launch (`bool`, defaults to `True`):
                 Only launch the server when the agent is called.
-            upload_source_code (`bool`, defaults to `False`):
-                Upload the source code of the agent to the agent server.
-                Only takes effect when connecting to an existing server.
-                When you are using an agent that doens't exist on the server
-                (such as your customized agent that is not officially provided
-                by AgentScope), please set this value to `True`.
         """
         self["host"] = host
         self["port"] = port
@@ -136,7 +125,6 @@ class DistConf(dict):
         self["max_timeout_seconds"] = max_timeout_seconds
         self["local_mode"] = local_mode
         self["lazy_launch"] = lazy_launch
-        self["upload_source_code"] = upload_source_code
 
 
 class AgentBase(Operator, metaclass=_AgentMeta):
@@ -425,7 +413,6 @@ class AgentBase(Operator, metaclass=_AgentMeta):
         max_timeout_seconds: int = 1800,
         local_mode: bool = True,
         lazy_launch: bool = True,
-        upload_source_code: bool = False,
         launch_server: bool = None,
     ) -> AgentBase:
         """Convert current agent instance into a distributed version.
@@ -452,12 +439,6 @@ class AgentBase(Operator, metaclass=_AgentMeta):
                 Only takes effect when `host` and `port` are not filled in.
                 If `True`, launch the agent server when the agent is called,
                 otherwise, launch the agent server immediately.
-            upload_source_code (`bool`, defaults to `False`):
-                Upload the source code of the agent to the agent server.
-                Only takes effect when connecting to an existing server.
-                When you are using an agent that doens't exist on the server
-                (such as your customized agent that is not officially provided
-                by AgentScope), please set this value to `True`.
             launch_server(`bool`, defaults to `None`):
                 This field has been deprecated and will be removed in
                 future releases.
@@ -487,5 +468,4 @@ class AgentBase(Operator, metaclass=_AgentMeta):
             local_mode=local_mode,
             lazy_launch=lazy_launch,
             agent_id=self.agent_id,
-            upload_source_code=upload_source_code,
         )

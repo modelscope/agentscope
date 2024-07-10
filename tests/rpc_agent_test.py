@@ -172,6 +172,24 @@ class FileAgent(AgentBase):
         )
 
 
+class CustomizedAgent(AgentBase):
+    """A customized agent that not supported by agent server."""
+
+    def __init__(  # type: ignore[no-untyped-def]
+        self,
+        **kwargs,
+    ) -> None:
+        super().__init__(**kwargs)
+        self.id = 0
+
+    def reply(self, x: dict = None) -> dict:
+        return Msg(
+            name=self.name,
+            role="assistant",
+            content="Customized",
+        )
+
+
 class BasicRpcAgentTest(unittest.TestCase):
     "Test cases for Rpc Agent"
 
@@ -631,44 +649,36 @@ class BasicRpcAgentTest(unittest.TestCase):
 
     def test_customized_agent(self) -> None:
         """Test customized agent"""
-        launcher = RpcAgentServerLauncher(
+        launcher1 = RpcAgentServerLauncher(
             host="localhost",
             port=12010,
             local_mode=False,
         )
         # launch without customized agent
-        launcher.launch()
+        launcher1.launch()
 
-        class CustomizedAgent(AgentBase):
-            """A customized agent that not supported by agent server."""
-
-            def __init__(  # type: ignore[no-untyped-def]
-                self,
-                **kwargs,
-            ) -> None:
-                super().__init__(**kwargs)
-                self.id = 0
-
-            def reply(self, x: dict = None) -> dict:
-                return Msg(
-                    name=self.name,
-                    role="assistant",
-                    content="Customized",
-                )
+        launcher2 = RpcAgentServerLauncher(
+            host="localhost",
+            port=12011,
+            local_mode=False,
+            custom_agents=[CustomizedAgent],
+        )
+        # launch without customized agent
+        launcher2.launch()
 
         agent = CustomizedAgent(name="customized")
         self.assertRaises(
             Exception,
             agent.to_dist,
-            host=launcher.host,
-            port=launcher.port,
+            host=launcher1.host,
+            port=launcher1.port,
         )
         agent = agent.to_dist(
-            host=launcher.host,
-            port=launcher.port,
-            upload_source_code=True,
+            host=launcher2.host,
+            port=launcher2.port,
         )
-        launcher.shutdown()
+        launcher1.shutdown()
+        launcher2.shutdown()
 
     def test_agent_server_management_funcs(self) -> None:
         """Test agent server management functions"""
@@ -676,6 +686,7 @@ class BasicRpcAgentTest(unittest.TestCase):
             host="localhost",
             port=12010,
             local_mode=False,
+            custom_agents=[DemoRpcAgentWithMemory, FileAgent],
         )
         launcher.launch()
         client = RpcAgentClient(host="localhost", port=launcher.port)
@@ -686,7 +697,6 @@ class BasicRpcAgentTest(unittest.TestCase):
             to_dist={
                 "host": "localhost",
                 "port": launcher.port,
-                "upload_source_code": True,
             },
         )
         resp = memory_agent(Msg(name="test", content="first msg", role="user"))
@@ -710,7 +720,6 @@ class BasicRpcAgentTest(unittest.TestCase):
         file_agent = FileAgent("File").to_dist(
             host="localhost",
             port=launcher.port,
-            upload_source_code=True,
         )
         file = file_agent()
         remote_file_path = os.path.abspath(
@@ -739,7 +748,6 @@ class BasicRpcAgentTest(unittest.TestCase):
             to_dist={
                 "host": "localhost",
                 "port": launcher.port,
-                "upload_source_code": True,
             },
         )
         # set model configs
