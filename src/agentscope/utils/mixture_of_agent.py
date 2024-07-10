@@ -31,6 +31,7 @@ class MixtureOfAgents:
         reference_models: List[Union[str, ModelWrapperBase]],
         rounds: int = 1,
         aggregator_prompt: str = DEFAULT_AGGREGATOR_PROMPT,
+        show_internal: bool = False,
     ) -> None:
         """
         Args:
@@ -77,6 +78,7 @@ class MixtureOfAgents:
         ]
         self.rounds = rounds
         self.aggregator_prompt = aggregator_prompt
+        self.show_internal = show_internal
 
     def _get_res_with_aggregate_model(
         self,
@@ -139,9 +141,13 @@ class MixtureOfAgents:
             for future in concurrent.futures.as_completed(futures):
                 i, result = future.result()
                 self.references[i] = result
+                if self.show_internal:
+                    print(f"Round {0}, Model_{i}: {result}")
 
-        for _ in range(self.rounds):
-            new_refs = ["" for __ in range(len(self.reference_models))]
+        for r in range(self.rounds):
+            if self.show_internal:
+                print("=" * 20)
+            new_refs = ["" for _ in range(len(self.reference_models))]
             with concurrent.futures.ThreadPoolExecutor() as executor:
                 futures = [
                     executor.submit(_process_new_refs, i, ref_model)
@@ -153,6 +159,8 @@ class MixtureOfAgents:
                 for future in concurrent.futures.as_completed(futures):
                     i, result = future.result()
                     new_refs[i] = result
+                    if self.show_internal:
+                        print(f"Round {r+1}, Model_{i}: {result}")
             self.references = new_refs
 
         final_res = self._get_res_with_aggregate_model(self.main_model)
