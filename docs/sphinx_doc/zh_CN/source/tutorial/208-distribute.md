@@ -238,20 +238,26 @@ b = AgentB(
 
 在运行大规模多智能体应用时，往往需要启动众多的 Agent Server 进程。为了让使用者能够有效管理这些进程，AgentScope 在 {class}`RpcAgentClient<agentscope.rpc.RpcAgentClient>` 中提供了如下管理接口：
 
-- `get_agent_id_list`: 该方法能够获取该 Agent Server 进程中正在运行的所有 Agent 的 `agent_id` 列表。
+- `is_alive`: 该方法能够判断该 Agent Server 进程是否正在运行。
 
     ```python
         client = RpcAgentClient(host=server_host, port=server_port)
-        agent_id_list = client.get_agent_id_list()
-        print(agent_id_list)  # [agent_id1, agent_id2, ...]
+        if client.is_alive():
+            do_something()
     ```
 
-- `get_agent_info`: 该方法能够获取指定 `agent_id` 对应的 Agent 的信息，具体展示的信息内容取决于该 Agent 类的 `__str__` 方法的实现。
+- `stop`: 该方法能够停止连接的 Agent Server 进程。
 
     ```python
-        agent_id = my_agent.agent_id
-        agent_info = client.get_agent_info(agent_id)
-        print(agent_info)  # { agent_id: "Agent Informations..." }
+        client.stop()
+        assert(client.is_alive() == False)
+    ```
+
+- `get_agent_list`: 该方法能够获取该 Agent Server 进程中正在运行的所有 Agent 的 JSON 格式的缩略信息列表，具体展示的缩略信息内容取决于该 Agent 类的 `__str__` 方法。
+
+    ```python
+        agent_list = client.get_agent_list()
+        print(agent_list)  # [agent1_info, agent2_info, ...]
     ```
 
 - `get_agent_memory`: 该方法能够获取指定 `agent_id` 对应 Agent 实例的 memory 内容。
@@ -262,11 +268,11 @@ b = AgentB(
         print(agent_memory) # [msg1, msg2, ...]
     ```
 
-- `get_server_info`：该方法能够获取该 Agent Server 进程的资源占用情况，包括 CPU 利用率、内存占用以及总运行时长。
+- `get_server_info`：该方法能够获取该 Agent Server 进程的资源占用情况，包括 CPU 利用率、内存占用。
 
     ```python
         server_info = client.get_server_info()
-        print(server_info)  # { "CPU Percentage": xxx, "Memory Usage": xxx, "CPU Times": xxx }
+        print(server_info)  # { "cpu": xxx, "mem": xxx }
     ```
 
 - `set_model_configs`: 该方法可以将指定的模型配置信息设置到 Agent Server 进程中，新创建的 Agent 实例可以直接使用这些模型配置信息。
@@ -291,6 +297,19 @@ b = AgentB(
                 # ...
             }
         )
+    ```
+
+- `delete_agent`: 该方法用于删除指定 `agent_id` 对应的 Agent 实例。
+
+    ```python
+        agent_id = agent.agent_id
+        ok = client.delete_agent(agent_id)
+    ```
+
+- `delete_all_agent`: 该方法可以删除 Agent Server 进程中所有的 Agent 实例。
+
+    ```python
+        ok = client.delete_all_agent()
     ```
 
 ## 实现原理
