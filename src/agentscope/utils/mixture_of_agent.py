@@ -100,10 +100,10 @@ class MixtureOfAgents:
         aggre_res = aggre_model(aggre_format_msg)
         return aggre_res.text
 
-    def reply(
+    def __call__(
         self,
         *args: Union[Msg, Sequence[Msg]],
-    ) -> Msg:
+    ) -> str:
         """
         Get model response from messages.
         Is equivalent to calling a model with:
@@ -164,4 +164,4 @@ class MixtureOfAgents:
             self.references = new_refs
 
         final_res = self._get_res_with_aggregate_model(self.main_model)
-        return Msg(role="assistant", content=final_res, name="assistant")
+        return final_res
