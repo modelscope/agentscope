@@ -26,7 +26,7 @@ We plan to test additional vision models in the near future. Additionally, we wi
 
 To run this example, you need to:
 
-1. Set your API key in `./configs/model_configs.json`. Ensure you have access to a vision model that can handle vision tasks.
+1. Ensure you have access to a vision model that can handle vision tasks, and set your api key in the model config.
 2. Install the necessary Playwright packages:
     - Run `pip install playwright` to set up the Python environment.
     - Run `playwright install` to install the required browser for Playwright.
