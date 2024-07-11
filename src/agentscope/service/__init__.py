@@ -26,6 +26,12 @@ from .web.dblp import (
     dblp_search_authors,
     dblp_search_venues,
 )
+from .reasoning.wolfram_alpha import (
+    query_wolfram_alpha_short_answers,
+    query_wolfram_alpha_simple,
+    query_wolfram_alpha_show_steps,
+    query_wolfram_alpha_llm,
+)
 from .multi_modality.dashscope_services import (
     dashscope_image_to_text,
     dashscope_text_to_image,
@@ -101,6 +107,10 @@ __all__ = [
     "openai_image_to_text",
     "openai_edit_image",
     "openai_create_image_variation",
+    "query_wolfram_alpha_short_answers",
+    "query_wolfram_alpha_simple",
+    "query_wolfram_alpha_show_steps",
+    "query_wolfram_alpha_llm",
     # to be deprecated
     "ServiceFactory",
 ]

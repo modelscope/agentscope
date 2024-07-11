@@ -1,13 +1,18 @@
 # -*- coding: utf-8 -*-
 """Query Wolfram Alpha API"""
-import requests
-import json
-from typing import Optional
-from agentscope.service.service_response import ServiceResponse, ServiceExecStatus
-from loguru import logger
+from typing import Any, Dict  # Corrected import order
+import requests  # Corrected import order
+from loguru import logger  # Corrected import order
+from agentscope.service.service_response import (
+    ServiceResponse,
+    ServiceExecStatus,
+)
 
 
-def query_wolfram_alpha_short_answers(api_key: str, query: str) -> ServiceResponse:
+def query_wolfram_alpha_short_answers(
+    api_key: str,
+    query: str,
+) -> ServiceResponse:
     """
     Query the Wolfram Alpha Short Answers API.
 
@@ -20,7 +25,8 @@ def query_wolfram_alpha_short_answers(api_key: str, query: str) -> ServiceRespon
     Returns:
         `ServiceResponse`: A dictionary with two variables: `status` and
         `content`. The `status` variable is from the ServiceExecStatus enum,
-        and `content` is a dictionary containing the result or error information,
+        and `content` is a dictionary containing
+        the result or error information,
         which depends on the `status` variable.
 
     Example:
@@ -41,21 +47,25 @@ def query_wolfram_alpha_short_answers(api_key: str, query: str) -> ServiceRespon
         if response.status_code == 200:
             return ServiceResponse(
                 status=ServiceExecStatus.SUCCESS,
-                content={"result": response.text}
+                content={"result": response.text},
             )
-        else:
-            return ServiceResponse(
-                status=ServiceExecStatus.ERROR,
-                content={"error": f"HTTP Error: {response.status_code} {response.text}"}
-            )
+        return ServiceResponse(
+            status=ServiceExecStatus.ERROR,
+            content={
+                "error": f"HTTP Error: {response.status_code} {response.text}",
+            },
+        )
     except Exception as e:
         return ServiceResponse(
             status=ServiceExecStatus.ERROR,
-            content={"error": str(e)}
+            content={"error": str(e)},
         )
 
-# Define the Wolfram Alpha Simple query function
-def query_wolfram_alpha_simple(api_key: str, query: str) -> ServiceResponse:
+
+def query_wolfram_alpha_simple(
+    api_key: str,
+    query: str,
+) -> ServiceResponse:
     """
     Query the Wolfram Alpha Simple API.
 
@@ -68,7 +78,8 @@ def query_wolfram_alpha_simple(api_key: str, query: str) -> ServiceResponse:
     Returns:
         `ServiceResponse`: A dictionary with two variables: `status` and
         `content`. The `status` variable is from the ServiceExecStatus enum,
-        and `content` is a dictionary containing the result or error information,
+        and `content` is a dictionary containing
+        the result or error information,
         which depends on the `status` variable.
 
     Example:
@@ -87,26 +98,32 @@ def query_wolfram_alpha_simple(api_key: str, query: str) -> ServiceResponse:
     try:
         response = requests.get(url, params=params)
         if response.status_code == 200:
-            with open('wolfram_alpha_result.png', 'wb') as file:
+            with open("wolfram_alpha_result.png", "wb") as file:
                 file.write(response.content)
             print("Result saved as 'wolfram_alpha_result.png'")
             return ServiceResponse(
                 status=ServiceExecStatus.SUCCESS,
-                content={"result": response.text}
+                content={
+                    "result": "Image saved as 'wolfram_alpha_result.png'",
+                },
             )
-        else:
-            return ServiceResponse(
-                status=ServiceExecStatus.ERROR,
-                content={"error": f"HTTP Error: {response.status_code} {response.text}"}
-            )
+        return ServiceResponse(
+            status=ServiceExecStatus.ERROR,
+            content={
+                "error": f"HTTP Error: {response.status_code} {response.text}",
+            },
+        )
     except Exception as e:
         return ServiceResponse(
             status=ServiceExecStatus.ERROR,
-            content={"error": str(e)}
+            content={"error": str(e)},
         )
 
-# Define the Wolfram Alpha Show Steps query function
-def query_wolfram_alpha_show_steps(api_key: str, query: str) -> ServiceResponse:
+
+def query_wolfram_alpha_show_steps(
+    api_key: str,
+    query: str,
+) -> ServiceResponse:
     """
     Query the Wolfram Alpha Show Steps API.
 
@@ -119,7 +136,8 @@ def query_wolfram_alpha_show_steps(api_key: str, query: str) -> ServiceResponse:
     Returns:
         `ServiceResponse`: A dictionary with two variables: `status` and
         `content`. The `status` variable is from the ServiceExecStatus enum,
-        and `content` is a dictionary containing the result or error information,
+        and `content` is a dictionary containing
+        the result or error information,
         which depends on the `status` variable.
 
     Example:
@@ -137,46 +155,57 @@ def query_wolfram_alpha_show_steps(api_key: str, query: str) -> ServiceResponse:
         "input": query,
         "appid": api_key,
         "output": "JSON",
-        "podstate": "Step-by-step solution"
+        "podstate": "Step-by-step solution",
     }
 
     try:
         response = requests.get(url, params=params)
         if response.status_code == 200:
-            data = json.loads(response.text)
+            data: Dict[str, Any] = response.json()
             steps = []
             logger.info(f"Show Steps API response: {data}")
-            for pod in data['queryresult'].get('pods', []):
+            for pod in data["queryresult"].get("pods", []):
                 logger.info(f"Processing pod: {pod.get('title')}")
-                for subpod in pod.get('subpods', []):
+                for subpod in pod.get("subpods", []):
                     logger.info(f"Processing subpod: {subpod.get('title')}")
-                    plaintext = subpod.get('plaintext', '').strip()
+                    plaintext = subpod.get("plaintext", "").strip()
                     if plaintext:
                         steps.append(plaintext)
             if not steps:
-                logger.warning("No step-by-step solution found in the response.")
+                logger.warning(
+                    "No step-by-step solution found in the response.",
+                )
                 return ServiceResponse(
                     status=ServiceExecStatus.ERROR,
-                    content={"error": "No step-by-step solution found in the response."}
+                    content={
+                        "error": (
+                            "No step-by-step solution found in the response."
+                        ),
+                    },
                 )
             formatted_steps = "\n".join(steps)
             print(formatted_steps)
             return ServiceResponse(
                 status=ServiceExecStatus.SUCCESS,
-                content={"result": formatted_steps}
+                content={"result": formatted_steps},
             )
-        else:
-            return ServiceResponse(
-                status=ServiceExecStatus.ERROR,
-                content={"error": f"HTTP Error: {response.status_code} {response.text}"}
-            )
+        return ServiceResponse(
+            status=ServiceExecStatus.ERROR,
+            content={
+                "error": f"HTTP Error: {response.status_code} {response.text}",
+            },
+        )
     except Exception as e:
         return ServiceResponse(
             status=ServiceExecStatus.ERROR,
-            content={"error": str(e)}
+            content={"error": str(e)},
         )
-    
-def query_wolfram_alpha_llm(api_key: str, query: str) -> ServiceResponse:
+
+
+def query_wolfram_alpha_llm(
+    api_key: str,
+    query: str,
+) -> ServiceResponse:
     """
     Query the Wolfram Alpha LLM API.
 
@@ -189,7 +218,8 @@ def query_wolfram_alpha_llm(api_key: str, query: str) -> ServiceResponse:
     Returns:
         `ServiceResponse`: A dictionary with two variables: `status` and
         `content`. The `status` variable is from the ServiceExecStatus enum,
-        and `content` is a dictionary containing the result or error information,
+        and `content` is a dictionary containing
+        the result or error information,
         which depends on the `status` variable.
 
     Example:
@@ -199,7 +229,7 @@ def query_wolfram_alpha_llm(api_key: str, query: str) -> ServiceResponse:
                 "your_api_key",
                 "Explain quantum entanglement"
             )
-            if result.status == ServiceExecStatus.SUCCESS:
+            if result.status == ServiceExecStatus.SUCCESS,
                 print(result.content['result'])
     """
     url = "https://www.wolframalpha.com/api/v1/llm-api"
@@ -210,15 +240,16 @@ def query_wolfram_alpha_llm(api_key: str, query: str) -> ServiceResponse:
         if response.status_code == 200:
             return ServiceResponse(
                 status=ServiceExecStatus.SUCCESS,
-                content={"result": response.text}
+                content={"result": response.text},
             )
-        else:
-            return ServiceResponse(
-                status=ServiceExecStatus.ERROR,
-                content={"error": f"HTTP Error: {response.status_code} {response.text}"}
-            )
+        return ServiceResponse(
+            status=ServiceExecStatus.ERROR,
+            content={
+                "error": f"HTTP Error: {response.status_code} {response.text}",
+            },
+        )
     except Exception as e:
         return ServiceResponse(
             status=ServiceExecStatus.ERROR,
-            content={"error": str(e)}
+            content={"error": str(e)},
         )
