@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=line-too-long
 """
-Implementation of paper .
+Implementation of paper [MoA](https://github.com/togethercomputer/MoA).
 Here is a simple example for conversation with MoA in Agentscope.
 """
 import argparse
