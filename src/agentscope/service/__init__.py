@@ -22,9 +22,9 @@ from .sql_query.mongodb import query_mongodb
 from .web.search import bing_search, google_search
 from .web.arxiv import arxiv_search
 from .web.tripadvisor import (
-    get_tripadvisor_location_photos, 
-    search_tripadvisor, 
-    get_tripadvisor_location_details
+    get_tripadvisor_location_photos,
+    search_tripadvisor,
+    get_tripadvisor_location_details,
 )
 from .web.dblp import (
     dblp_search_publications,
