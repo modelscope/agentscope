@@ -55,8 +55,6 @@ class TemporaryMemory(MemoryBase):
         else:
             self.embedding_model = embedding_model
 
-        self.anchors = list()
-
     def add(
         self,
         memories: Union[Sequence[Msg], Msg, None],
@@ -350,33 +348,3 @@ class TemporaryMemory(MemoryBase):
             memories = [_ for i, _ in enumerate(memories) if filter_func(i, _)]
 
         return memories
-
-    def get_anchor(self) -> str:
-        """Get the current anchor of the memory."""
-        return len(self._content)
-
-    def reset_memory_to_anchor(self, anchor: Optional[str] = None) -> None:
-        """Reset memory to a certain anchor.
-
-        Args:
-            anchor (`Optional[str]`, defaults to `None`):
-                The anchor to reset the memory to, if not provided, reset to
-                the beginning.
-        """
-        if anchor is None:
-            self.clear()
-        else:
-            try:
-                anchor = int(anchor)
-            except ValueError as e:
-                raise ValueError(
-                    f"Cannot convert anchor [{anchor}] to int.",
-                ) from e
-
-            if anchor < 0 or anchor > self.size():
-                raise ValueError(
-                    f"Anchor [{anchor}] is out of the range of "
-                    f"memory size [{self.size()}].",
-                )
-
-            self._content = self._content[:anchor]
