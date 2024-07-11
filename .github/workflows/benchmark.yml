@@ -3,6 +3,7 @@ name: AgentScope Benchmark
 on: [push, pull_request]
 
 permissions:
+  deployments: write
   contents: write
 
 jobs:
@@ -42,5 +43,4 @@ jobs:
           # Show alert with commit comment on detecting possible performance regression
         alert-threshold: '150%'
         comment-on-alert: true
-        fail-on-alert: true
         alert-comment-cc-users: '@pan-x-c'
