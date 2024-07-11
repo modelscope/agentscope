@@ -2,9 +2,8 @@
 """TripAdvisor APIs for searching and retrieving location information."""
 
 from typing import List, Any, Dict
-
+from loguru import logger
 import requests
-
 from agentscope.service.service_response import ServiceResponse
 from agentscope.service.service_status import ServiceExecStatus
 
@@ -78,11 +77,18 @@ def get_tripadvisor_location_photos(
         "accept": "application/json",
     }
 
+    logger.info(f"Requesting photos for location ID {location_id}")
+
     try:
         response = requests.get(url, headers=headers)
+        logger.info(
+            f"Received response with status code {response.status_code}",
+        )
+
         if response.status_code == 200:
             data = response.json()
             largest_photo = find_largest_photo(data["data"])
+            logger.info("Successfully retrieved the largest photo")
             return ServiceResponse(
                 status=ServiceExecStatus.SUCCESS,
                 content={"largest_photo": largest_photo},
@@ -92,11 +98,13 @@ def get_tripadvisor_location_photos(
             .get("error", {})
             .get("message", f"HTTP Error: {response.status_code}")
         )
+        logger.error(f"Error in response: {error_detail}")
         return ServiceResponse(
             status=ServiceExecStatus.ERROR,
             content={"error": error_detail},
         )
     except Exception as e:
+        logger.exception("Exception occurred while requesting location photos")
         return ServiceResponse(
             status=ServiceExecStatus.ERROR,
             content={"error": str(e)},
@@ -140,9 +148,16 @@ def search_tripadvisor(
         "accept": "application/json",
     }
 
+    logger.info(f"Searching for locations with query '{query}'")
+
     try:
         response = requests.get(url, headers=headers)
+        logger.info(
+            f"Received response with status code {response.status_code}",
+        )
+
         if response.status_code == 200:
+            logger.info("Successfully retrieved search results")
             return ServiceResponse(
                 status=ServiceExecStatus.SUCCESS,
                 content=response.json(),
@@ -152,11 +167,13 @@ def search_tripadvisor(
             .get("error", {})
             .get("message", f"HTTP Error: {response.status_code}")
         )
+        logger.error(f"Error in response: {error_detail}")
         return ServiceResponse(
             status=ServiceExecStatus.ERROR,
             content={"error": error_detail},
         )
     except Exception as e:
+        logger.exception("Exception occurred while searching for locations")
         return ServiceResponse(
             status=ServiceExecStatus.ERROR,
             content={"error": str(e)},
@@ -205,9 +222,16 @@ def get_tripadvisor_location_details(
         "accept": "application/json",
     }
 
+    logger.info(f"Requesting details for location ID {location_id}")
+
     try:
         response = requests.get(url, headers=headers)
+        logger.info(
+            f"Received response with status code {response.status_code}",
+        )
+
         if response.status_code == 200:
+            logger.info("Successfully retrieved location details")
             return ServiceResponse(
                 status=ServiceExecStatus.SUCCESS,
                 content=response.json(),
@@ -217,11 +241,15 @@ def get_tripadvisor_location_details(
             .get("error", {})
             .get("message", f"HTTP Error: {response.status_code}")
         )
+        logger.error(f"Error in response: {error_detail}")
         return ServiceResponse(
             status=ServiceExecStatus.ERROR,
             content={"error": error_detail},
         )
     except Exception as e:
+        logger.exception(
+            "Exception occurred while requesting location details",
+        )
         return ServiceResponse(
             status=ServiceExecStatus.ERROR,
             content={"error": str(e)},
