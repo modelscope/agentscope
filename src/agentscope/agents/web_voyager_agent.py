@@ -14,7 +14,7 @@ from loguru import logger
 
 
 from agentscope.agents import AgentBase
-from agentscope.message import message_from_dict, Msg
+from agentscope.message import Msg
 from agentscope.browser.web_browser import WebBrowser
 from agentscope.file_manager import file_manager
 
@@ -86,7 +86,6 @@ class WebVoyagerAgent(AgentBase):
         max_iter: int = 30,
         max_attached_imgs: int = 2,
         default_homepage: str = "https://www.google.com",
-        use_memory: bool = True,
         memory_config: Optional[dict] = None,
     ) -> None:
         """Initialize the dialog agent.
@@ -100,8 +99,6 @@ class WebVoyagerAgent(AgentBase):
             sys_prompt (`Optional[str]`):
                 The system prompt of the agent, which can be passed by args
                 or hard-coded in the agent.tion.
-            use_memory (`bool`, defaults to `True`):
-                Whether the agent has memory.
             memory_config (`Optional[dict]`):
                 The config of memory.
         """
@@ -109,7 +106,7 @@ class WebVoyagerAgent(AgentBase):
             name=name,
             sys_prompt=sys_prompt,
             model_config_name=model_config_name,
-            use_memory=use_memory,
+            use_memory=True,
             memory_config=memory_config,
         )
         self.browser = browser
@@ -223,13 +220,7 @@ class WebVoyagerAgent(AgentBase):
         pattern = r"Thought:|Action:|Observation:"
 
         self.memory.add(
-            message_from_dict(
-                {
-                    "role": "system",
-                    "content": self.sys_prompt,
-                    "name": "system",
-                },
-            ),
+            Msg(name="system", content=self.sys_prompt, role="system"),
         )
 
         it = 0
@@ -269,12 +260,10 @@ class WebVoyagerAgent(AgentBase):
                 self.memory.add(curr_msg)
             else:
                 # TODO change fail obs
-                curr_msg = message_from_dict(
-                    {
-                        "role": "user",
-                        "name": "user",
-                        "content": fail_obs,
-                    },
+                curr_msg = Msg(
+                    name="user",
+                    content=fail_obs,
+                    role="user",
                 )
                 self.memory.add(curr_msg)
 
@@ -285,13 +274,7 @@ class WebVoyagerAgent(AgentBase):
             self.speak(gpt_4v_res)
 
             self.memory.add(
-                message_from_dict(
-                    {
-                        "role": "assistant",
-                        "content": gpt_4v_res,
-                        "name": "assistant",
-                    },
-                ),
+                Msg(name="assistant", content=gpt_4v_res, role="assistant"),
             )
 
             # extract action info

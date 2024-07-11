@@ -54,7 +54,9 @@ class WebBrowser:
 
     def _read_crawlpage_js(self) -> None:
         """
-        Read the crawpage JavaScript from local file.
+        Read the crawlpage JavaScript from local file.
+        The JavaScript written in markpage.js will crawl all the
+        interactive elements on the page, and mark them on with square marks.
         """
         current_file_path = Path(__file__)
 
@@ -121,7 +123,7 @@ class WebBrowser:
         """
         # TODO the function is not yet implement
         # TODO whether to implement this in javascript or find other methods
-        logger.info(f"searching on {query}")
+        logger.info(f"Searching on {query}")
         return False
 
     def find_next(self) -> None:
@@ -220,7 +222,7 @@ class WebBrowser:
 
         Args:
             vision (`bool`):
-                Whether to Adding set-of-mark of webpage if vision is enabled.
+                Will add set-of-mark to webpage if vision is enabled.
             with_meta (`bool`):
                 Whether to include meta_data field in the returned format text.
             with_select (`bool`):

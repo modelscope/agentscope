@@ -26,7 +26,7 @@ We plan to test additional vision models in the near future. Additionally, we wi
 
 To run this example, you need to:
 
-1. Set your API key in `./configs/model_configs.json`. Ensure you have access to a multimodal model that can handle vision tasks.
+1. Set your API key in `./configs/model_configs.json`. Ensure you have access to a vision model that can handle vision tasks.
 2. Install the necessary Playwright packages:
     - Run `pip install playwright` to set up the Python environment.
     - Run `playwright install` to install the required browser for Playwright.
@@ -35,7 +35,7 @@ To run this example, you need to:
 
 ## Code Snippets and Example Demonstration
 
-Here is a demo of the how web browsing currently work in AgentScope.
+Here is a demo of the how web browsing currently works in AgentScope.
 
 ### Code Snippets
 
@@ -73,7 +73,7 @@ from agentscope.agents.web_voyager_agent import WebVoyagerAgent
 browser = WebBrowser()
 agent = WebVoyagerAgent(
     browser=browser,
-    model_config_name="gpt-4o",A
+    model_config_name="gpt-4o",
     name="Browser Agent")
 ```
 
@@ -89,7 +89,7 @@ ans_msg = agent.reply(msg)
 
 ### Example Demonstration
 
-In the first iter of our web browsing agent, the agent open the default webpage, in this case, the google webpage.
+In the first iter of our web browsing agent, the agent opens the default webpage, in this case, the google webpage.
 
 We can see from the saved screenshot here that the interactive elements in this webpage are marked with numbers. This is called the set-of-mark prompting([github link](https://github.com/microsoft/SoM), [paper link](https://arxiv.org/abs/2310.11441)). Utilizing the set-of-mark prompting, the agent can interact with the webpage more naturally by selecting the elements with the corresponding numbers.
 

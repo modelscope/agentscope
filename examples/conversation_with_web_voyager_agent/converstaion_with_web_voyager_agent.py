@@ -3,7 +3,7 @@
 import agentscope
 
 from agentscope.browser.web_browser import WebBrowser
-from agentscope.agents.web_voyager_agent import WebVoyagerAgent
+from agentscope.agents import WebVoyagerAgent
 from agentscope.agents import UserAgent
 
 # Fill in your OpenAI API key
