@@ -1,4 +1,4 @@
-[English](./README.md) | 中文
+[English](https://github.com/modelscope/agentscope/blob/main/README.md) | 中文
 
 # AgentScope
 

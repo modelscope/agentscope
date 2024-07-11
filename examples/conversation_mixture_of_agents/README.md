@@ -11,7 +11,7 @@ You can refer to the [paper of MoA](https://arxiv.org/abs/2406.04692) or their [
 ## Implementation
 
 Here, we implement the MoA algorithm in AgentScope, and provide an example of using MoA.
-For implementation, please refer to [mixture_of_agent.py](../../src/agentscope/utils/mixture_of_agent.py).
+For implementation, please refer to [mixture_of_agent.py](https://github.com/modelscope/agentscope/blob/main/src/agentscope/utils/mixture_of_agent.py).
 
 
 ## Usage
@@ -24,7 +24,7 @@ python conversation_moa.py --show_internal --multi_turn --rounds 1
 
 ## Prerequisites
 To set up model serving with open-source LLMs, follow the guidance in
-[scripts/README.md](../../scripts/README.md).
+[scripts/README.md](https://github.com/modelscope/agentscope/blob/main/scripts/README.md).
 
 ## Notice
 With the MoA module, inference time will increase and more tokens are used.
