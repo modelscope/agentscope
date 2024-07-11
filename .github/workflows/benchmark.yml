@@ -2,6 +2,9 @@ name: AgentScope Benchmark
 
 on: [push, pull_request]
 
+permissions:
+  contents: write
+
 jobs:
   bench:
     runs-on: ${{ matrix.os }}
