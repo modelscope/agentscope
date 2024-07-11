@@ -1,7 +1,8 @@
 name: AgentScope Benchmark
 
 on: [push, pull_request]
-
+permissions:
+  contents: write
 
 jobs:
   bench:
@@ -35,11 +36,6 @@ jobs:
       with:
         name: Python Benchmark with pytest-benchmark
         tool: 'pytest'
-        gh-pages-branch: gh-bench-pages
         output-file-path: examples/distributed_simulation/output.json
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        auto-push: true
-          # Show alert with commit comment on detecting possible performance regression
-        alert-threshold: '150%'
-        comment-on-alert: true
-        alert-comment-cc-users: '@pan-x-c'
+        auto-push: false
