@@ -23,7 +23,15 @@ except ImportError as import_error:
 
 class WebBrowser:
     """
-    Web browser interface using playwright + chrome
+    Web browser interface using playwright + built-in browser.
+
+    This class serve as an interface between agentscope's agent and
+    the web browser to control. The interface is still under update, and more
+    interactive actions, better webpage format presentation will be added
+    in the future.
+
+    You have to run `pip install playwright` to install python env
+    and `playwright install` to install the browser before using it.
     """
 
     def __init__(
@@ -35,6 +43,18 @@ class WebBrowser:
     ) -> None:
         """
         Init the playwright process and web browser.
+
+        Args:
+            headless (bool, optional):
+                Whether to run the browser in headless mode. Defaults to False.
+                When set to False, the browser will be visible to user.
+            timeout (int, optional):
+                The timeout for the browser to wait for the page to load.
+                Defaults to 60000.
+            default_width (int, optional):
+                The default width of the browser. Defaults to 1280.
+            default_height (int, optional):
+                The default height of the browser. Defaults to 1080.
         """
         self.headless = headless
         self.current_step = 0
@@ -223,6 +243,13 @@ class WebBrowser:
         Args:
             vision (`bool`):
                 Will add set-of-mark to webpage if vision is enabled.
+                Set-of-mark is a visual prompting method that
+                partition an image into numbered regions,
+                to improve the visual grounding ability of LLMs.
+                Here, instead of using segmentation model, we use the native
+                JavaScript to bound the interactive elements in the webpage.
+                You can refer to the paper https://arxiv.org/abs/2310.11441
+                if you want to know more details about set-of-mark.
             with_meta (`bool`):
                 Whether to include meta_data field in the returned format text.
             with_select (`bool`):
