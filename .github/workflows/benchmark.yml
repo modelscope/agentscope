@@ -2,12 +2,11 @@ name: AgentScope Benchmark
 
 on: [push, pull_request]
 
-permissions:
-  deployments: write
-  contents: write
 
 jobs:
   bench:
+    permissions:
+      contents: write
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: True
