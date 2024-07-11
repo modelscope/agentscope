@@ -127,3 +127,19 @@ class MemoryBase(ABC):
     def size(self) -> int:
         """Returns the number of memory segments in memory."""
         raise NotImplementedError
+
+    @abstractmethod
+    def get_anchor(self) -> str:
+        """Get the current anchor of the memory."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def reset_memory_to_anchor(self, anchor: Optional[str] = None) -> None:
+        """Reset memory to a certain anchor.
+
+        Args:
+            anchor (`Optional[str]`, defaults to `None`):
+                The anchor to reset the memory to, if not provided, reset to
+                the latest anchor.
+        """
+        raise NotImplementedError
