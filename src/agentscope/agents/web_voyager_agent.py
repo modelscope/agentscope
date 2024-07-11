@@ -15,7 +15,7 @@ from loguru import logger
 
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
-from agentscope.browser.web_browser import WebBrowser
+from agentscope.browser import WebBrowser
 from agentscope.file_manager import file_manager
 
 
