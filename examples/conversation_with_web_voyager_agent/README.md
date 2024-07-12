@@ -89,6 +89,10 @@ ans_msg = agent.reply(msg)
 
 ### Example Demonstration
 
+
+https://github.com/user-attachments/assets/6d03caab-6193-4ac6-8b1c-36f152ec02ec
+
+
 In the first iter of our web browsing agent, the agent opens the default webpage, in this case, the google webpage.
 
 We can see from the saved screenshot here that the interactive elements in this webpage are marked with numbers. This is called the set-of-mark prompting([github link](https://github.com/microsoft/SoM), [paper link](https://arxiv.org/abs/2310.11441)). Utilizing the set-of-mark prompting, the agent can interact with the webpage more naturally by selecting the elements with the corresponding numbers.
