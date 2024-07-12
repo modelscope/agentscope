@@ -335,6 +335,10 @@ class ServiceToolkit:
                     f"Cannot find a tool function named `{func_name}`.",
                 )
 
+             # If it is json(str) convert to json(dict)
+            if isinstance(sub_cmd["arguments"], str):
+                sub_cmd["arguments"] = json.loads(sub_cmd["arguments"])
+                
             # Type error for the arguments
             if not isinstance(sub_cmd["arguments"], dict):
                 raise FunctionCallFormatError(
