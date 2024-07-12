@@ -218,7 +218,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
     def generate_agent_id(cls) -> str:
         """Generate the agent_id of this agent instance"""
         # TODO: change cls.__name__ into a global unique agent_type
-        return f"{cls.__name__}_{uuid.uuid4().hex}"
+        return uuid.uuid4().hex
 
     # todo: add a unique agent_type field to distinguish different agent class
     @classmethod

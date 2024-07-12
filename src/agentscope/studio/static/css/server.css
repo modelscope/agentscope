@@ -44,7 +44,7 @@
     margin-left: auto;
 }
 
-#server-content svg {
+#server-content .icon {
     display: flex;
     height: 20px;
     padding: 4px 15px;
