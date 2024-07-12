@@ -24,6 +24,8 @@ except ImportError as import_error:
         "in https://playwright.dev/python/docs/intro to run with the current",
     )
 
+from agentscope.service import ServiceResponse, ServiceExecStatus
+
 
 class WebBrowser:
     """
@@ -89,45 +91,73 @@ class WebBrowser:
         with open(js_file_path, "r", encoding="utf-8") as file:
             self._crawlpage_js = file.read()
 
-    def visit_page(self, url: str) -> None:
+    def visit_page(self, url: str) -> ServiceResponse:
         """
         Goto the given url.
+
+        Args:
+            url (str): The url to visit.
         """
         if "://" not in url:
             url = f"https://{url}"
         self.page.goto(url)
         self.client = self.page.context.new_cdp_session(self.page)
         self.page_elements = []
+        return ServiceResponse(
+            status=ServiceExecStatus.SUCCESS,
+            content=self.page.url,
+        )
 
-    def scroll(self, direction: str) -> None:
+    def scroll(self, direction: str) -> ServiceResponse:
         """
         Scroll towards direction.
-        """
-        if direction == "up":
-            self.scroll_up()
-        elif direction == "down":
-            self.scroll_down()
 
-    def scroll_up(self) -> None:
+        Args:
+            direction (str): The direction to scroll. Should be Up or Down.
+        """
+        if direction.lower() == "up":
+            self.scroll_up()
+        elif direction.lower() == "down":
+            self.scroll_down()
+        else:
+            return ServiceResponse(
+                status=ServiceExecStatus.ERROR,
+                content=f"Invalid scroll direction {direction}",
+            )
+        return ServiceResponse(
+            status=ServiceExecStatus.SUCCESS,
+            content=f"Scroll to {direction} done",
+        )
+
+    def scroll_up(self) -> ServiceResponse:
         """
         Scroll up the current browser window.
         """
         self.page.keyboard.down("Alt")
         self.page.keyboard.press("ArrowUp")
         self.page.keyboard.up("Alt")
+        return ServiceResponse(
+            status=ServiceExecStatus.SUCCESS,
+            content="Scroll up done",
+        )
 
-    def scroll_down(self) -> None:
+    def scroll_down(self) -> ServiceResponse:
         """
         Scroll down the current browser window.
         """
         self.page.keyboard.down("Alt")
         self.page.keyboard.press("ArrowDown")
         self.page.keyboard.up("Alt")
+        return ServiceResponse(
+            status=ServiceExecStatus.SUCCESS,
+            content="Scroll down done",
+        )
 
-    def click(self, click_id: int) -> None:
+    def click(self, click_id: int) -> ServiceResponse:
         """
         Click on the element with the given id
-
+        Args:
+            click_id (int): The id of the element to click.
         Note: The id should start from 0
         """
         # TODO enable both logic for text-based and vision-based
@@ -143,8 +173,12 @@ class WebBrowser:
             time.sleep(5)
         element_handle.click()
         time.sleep(3)
+        return ServiceResponse(
+            status=ServiceExecStatus.SUCCESS,
+            content=f"Click on element {click_id} done",
+        )
 
-    def find_on_page(self, query: str) -> bool:
+    def find_on_page(self, query: str) -> ServiceResponse:
         """
         Find the query in the current page, make it center of the page,
         behave like control_f
@@ -155,22 +189,32 @@ class WebBrowser:
         # TODO the function is not yet implement
         # TODO whether to implement this in javascript or find other methods
         logger.info(f"Searching on {query}")
-        return False
+        return ServiceResponse(
+            status=ServiceExecStatus.SUCCESS,
+            content=f"Search on {query} done, found xxx",
+        )
 
-    def find_next(self) -> None:
+    def find_next(self) -> ServiceResponse:
         """
         Goto the next position of the previous ctrl-f query
         """
-        # TODO add this
-        return None
+        # TODO the function is not yet implement
+        return ServiceResponse(
+            status=ServiceExecStatus.SUCCESS,
+            content="Find next done",
+        )
 
-    def enter(self) -> None:
+    def enter(self) -> ServiceResponse:
         """
         Press enter.
         """
         self.page.keyboard.press("Enter")
+        return ServiceResponse(
+            status=ServiceExecStatus.SUCCESS,
+            content="Enter pressed",
+        )
 
-    def press_key(self, key: str) -> None:
+    def press_key(self, key: str) -> ServiceResponse:
         """
         Press down a key in the current page
         Args:
@@ -181,12 +225,23 @@ class WebBrowser:
         etc.
         """
         self.page.keyboard.press(key)
+        return ServiceResponse(
+            status=ServiceExecStatus.SUCCESS,
+            content=f"Press key: {key} done",
+        )
 
-    def type(self, click_id: int, text: str, submit: bool = False) -> None:
+    def type(
+        self,
+        click_id: int,
+        text: str,
+        submit: bool = False,
+    ) -> ServiceResponse:
         """
         Type text in the given elements
         Args:
+            click_id(`int`) : the id of the element to type into
             text(`str`) : text to type
+            submit(`bool`) : whether to submit the type result after typing
         """
         self.click(click_id)
         web_ele = self.page_elements[click_id]
@@ -208,17 +263,32 @@ class WebBrowser:
         if submit:
             web_ele.press("Enter")
         time.sleep(2)
+        return ServiceResponse(
+            status=ServiceExecStatus.SUCCESS,
+            content="Typing done",
+        )
 
-    def go_back(self) -> None:
+    def go_back(self) -> ServiceResponse:
         """Go back to the previous page"""
         self.page.go_back()
+        return ServiceResponse(
+            status=ServiceExecStatus.SUCCESS,
+            content="Go back done",
+        )
 
-    def focus_element(self, ele_id: int) -> None:
+    def focus_element(self, ele_id: int) -> ServiceResponse:
         """
-        Focus on the element with given id.
+        Scroll to focus on the element with given id.
+
+        Args:
+            ele_id(`int`) : the id of the element to focus on
         """
         web_ele = self.page_elements[ele_id]
         web_ele.evaluate("element => element.focus()")
+        return ServiceResponse(
+            status=ServiceExecStatus.SUCCESS,
+            content=f"Focus on element {ele_id} done",
+        )
 
     # from webvoyager
     def try_click_body(self) -> None:
