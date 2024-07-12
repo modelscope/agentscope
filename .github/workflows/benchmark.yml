@@ -30,4 +30,4 @@ jobs:
       run: |
         cd examples/distributed_simulation
         pytest bench.py --benchmark-json output.json
-        cat output.json| jq -r ".benchmarks[] | .stats
+        cat output.json| jq -r ".benchmarks[] | .stats"
