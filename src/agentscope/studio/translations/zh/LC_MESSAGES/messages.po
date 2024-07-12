@@ -1,0 +1,183 @@
+# Chinese translations for PROJECT.
+# Copyright (C) 2024 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2024-05-23 10:39+0800\n"
+"PO-Revision-Date: 2024-05-06 14:26+0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.15.0\n"
+
+#: templates/index.html:5
+msgid "AgentScope WorkStation Login Page"
+msgstr "AgentScope工作站登陆页"
+
+#: templates/index.html:27
+msgid "Welcome to AgentScope WorkStation"
+msgstr "欢迎来到AgentScope工作站"
+
+#: templates/index.html:51
+msgid "Please log in and star the AgentScope repository"
+msgstr "请登录并为AgentScope仓库点星"
+
+#: templates/index.html:53
+msgid "By logging in, you acknowledge that"
+msgstr "通过登录，您知晓并同意"
+
+#: templates/index.html:55
+msgid ""
+"This service will star🌟 AgentScope repository on your\n"
+"                behalf"
+msgstr "使用该服务将代表您自愿为AgentScope仓库点星🌟"
+
+#: templates/index.html:58
+msgid ""
+"Your API key will NOT be stored and exposed to the website\n"
+"                maintainer"
+msgstr "您的API密钥不会被存储和暴露给网站维护者"
+
+#: templates/index.html:61
+msgid ""
+"No user data (e.g., drawn workflow) within the service\n"
+"                will be saved"
+msgstr "本网站不会保存服务中的任何用户数据（例如，绘制的工作流程）"
+
+#: templates/index.html:68
+msgid "I agree to the terms of service"
+msgstr "我同意服务条款"
+
+#: templates/index.html:72
+msgid "Login with GitHub"
+msgstr "使用GitHub登录"
+
+#: templates/index.html:78
+msgid "Please wait"
+msgstr "请稍候"
+
+#: templates/index.html:85 templates/workstation.html:326
+msgid "We want to hear from you"
+msgstr "我们希望倾听您的反馈"
+
+#: templates/index.html:86 templates/workstation.html:327
+msgid ""
+"Participation in questionnaire\n"
+"            surveys"
+msgstr "参与问卷调研"
+
+#: templates/workstation.html:7 templates/workstation.html:45
+msgid "WorkStation"
+msgstr "工作站"
+
+#: templates/workstation.html:76
+msgid "Examples"
+msgstr "示例"
+
+#: templates/workstation.html:85
+msgid "Two Agents"
+msgstr "智能体"
+
+#: templates/workstation.html:98 templates/workstation.html:188
+msgid "Pipeline"
+msgstr "基础流程"
+
+#: templates/workstation.html:111
+msgid "Conversation"
+msgstr "循环对话"
+
+#: templates/workstation.html:124
+msgid "Group Chat"
+msgstr "群组聊天"
+
+#: templates/workstation.html:133
+msgid "Workflow"
+msgstr "工作流"
+
+#: templates/workstation.html:136
+msgid "Model"
+msgstr "模型"
+
+#: templates/workstation.html:156
+msgid "Message"
+msgstr "消息"
+
+#: templates/workstation.html:164
+msgid "Agent"
+msgstr "智能体"
+
+#: templates/workstation.html:221
+msgid "Tool"
+msgstr "工具/服务"
+
+#: templates/workstation.html:258
+msgid "Home"
+msgstr "主页"
+
+#: templates/workstation.html:263
+msgid "Copilot"
+msgstr "智能助手"
+
+#: templates/workstation.html:270
+msgid "Export HTML"
+msgstr "导出HTML"
+
+#: templates/workstation.html:273
+msgid "Import HTML"
+msgstr "导入HTML"
+
+#: templates/workstation.html:279
+msgid "Check"
+msgstr "检查"
+
+#: templates/workstation.html:282
+msgid "Clear"
+msgstr "清空"
+
+#: templates/workstation.html:288
+msgid "Export Config"
+msgstr "导出Config"
+
+#: templates/workstation.html:295
+msgid "Export Python"
+msgstr "导出Python"
+
+#: templates/workstation.html:302
+msgid "Run in ModelScope"
+msgstr "魔搭创空间运行"
+
+#: templates/workstation.html:2561
+msgid "Previous"
+msgstr "上一步"
+
+#: templates/workstation.html:2564
+msgid "Next"
+msgstr "下一步"
+
+#: templates/workstation.html:2567
+msgid "Skip"
+msgstr "跳过"
+
+#: templates/workstation.html:2570
+msgid "Quit"
+msgstr "退出"
+
+#: templates/workstation.html:2573
+msgid ""
+"Caution: You are currently in the tutorial mode where modifications are "
+"restricted.<br>Please click <strong>Quit</strong> to exit and start "
+"creating your custom multi-agent applications."
+msgstr "警告：您当前处于教程模式，修改功能受到限制。请点击<strong>退出</strong>以开始创建您的自定义多智能体应用程序。"
+
+#: templates/workstation.html:2621
+msgid "Current Step"
+msgstr "当前步骤"
+

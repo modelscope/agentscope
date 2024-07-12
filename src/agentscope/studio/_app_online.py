@@ -1,0 +1,316 @@
+# -*- coding: utf-8 -*-
+"""The Web Server of the AgentScope Workstation Online Version."""
+import ipaddress
+import os
+import secrets
+import fcntl
+import tempfile
+from typing import Tuple
+
+import requests
+import oss2
+from loguru import logger
+from flask import (
+    Flask,
+    Response,
+    request,
+    redirect,
+    session,
+    url_for,
+    render_template,
+    jsonify,
+    make_response,
+)
+from flask_babel import Babel, refresh
+from dotenv import load_dotenv
+
+from agentscope.studio.utils import require_auth
+from agentscope.studio._app import _convert_config_to_py, _read_examples
+
+_app = Flask(__name__)
+_app.config["BABEL_DEFAULT_LOCALE"] = "en"
+
+babel = Babel(_app)
+EXPIRATION_SECONDS = 604800  # One week
+
+
+def is_ip(address: str) -> bool:
+    try:
+        ipaddress.ip_address(address)
+        return True
+    except ValueError:
+        return False
+
+
+def get_locale() -> str:
+    cookie = request.cookies.get("locale")
+    if cookie in ["zh", "en"]:
+        return cookie
+    return request.accept_languages.best_match(
+        _app.config.get("BABEL_DEFAULT_LOCALE"),
+    )
+
+
+babel.init_app(_app, locale_selector=get_locale)
+
+load_dotenv()
+
+_app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "your_default_secret_key")
+_app.config["SESSION_TYPE"] = os.getenv("SESSION_TYPE", "filesystem")
+if os.getenv("LOCAL_WORKSTATION", "false").lower() == "true":
+    IP = "127.0.0.1"
+    COPILOT_IP = "127.0.0.1"
+else:
+    IP = os.getenv("IP", "127.0.0.1")
+    COPILOT_IP = os.getenv("COPILOT_IP", "127.0.0.1")
+
+PORT = os.getenv("PORT", "8080")
+COPILOT_PORT = os.getenv("COPILOT_PORT", "8081")
+
+if not is_ip(IP):
+    PORT = ""
+if not is_ip(COPILOT_IP):
+    COPILOT_PORT = ""
+
+CLIENT_ID = os.getenv("CLIENT_ID")
+OWNER = os.getenv("OWNER")
+REPO = os.getenv("REPO")
+USER_FILE_NAME = os.getenv("USER_FILE_NAME", "user_logins.txt")
+OSS_ENDPOINT = os.getenv("OSS_ENDPOINT")
+OSS_BUCKET_NAME = os.getenv("OSS_BUCKET_NAME")
+
+OSS_ACCESS_KEY_ID = os.getenv("OSS_ACCESS_KEY_ID")
+OSS_ACCESS_KEY_SECRET = os.getenv("OSS_ACCESS_KEY_SECRET")
+CLIENT_SECRET = os.getenv("CLIENT_SECRET")
+
+required_envs = {
+    "OSS_ACCESS_KEY_ID": OSS_ACCESS_KEY_ID,
+    "OSS_ACCESS_KEY_SECRET": OSS_ACCESS_KEY_SECRET,
+    "CLIENT_SECRET": CLIENT_SECRET,
+}
+
+for key, value in required_envs.items():
+    if not value:
+        logger.warning(f"{key} is not set on envs!")
+
+
+def add_login_safe(file_name, user_login, verification_token) -> None:
+    with open(file_name, "a+") as file:
+        fcntl.flock(file, fcntl.LOCK_EX)
+        file.seek(0)
+        existing_logins = set(file.read().splitlines())
+        if f"【{user_login}】?【{verification_token}】" not in existing_logins:
+            file.write(f"【{user_login}】?【{verification_token}】\n")
+        fcntl.flock(file, fcntl.LOCK_UN)
+
+
+def get_oss_config() -> Tuple:
+    return (
+        OSS_ACCESS_KEY_ID,
+        OSS_ACCESS_KEY_SECRET,
+        OSS_ENDPOINT,
+        OSS_BUCKET_NAME,
+    )
+
+
+def upload_to_oss(
+    bucket,
+    local_file_path,
+    oss_file_path,
+    is_private=False,
+) -> str:
+    bucket.put_object_from_file(oss_file_path, local_file_path)
+    if not is_private:
+        bucket.put_object_acl(oss_file_path, oss2.OBJECT_ACL_PUBLIC_READ)
+    file_url = (
+        f"https://{bucket.bucket_name}"
+        f".{bucket.endpoint.replace('http://', '')}/{oss_file_path}"
+    )
+    return file_url
+
+
+def generate_verification_token() -> str:
+    return secrets.token_urlsafe()
+
+
+def star_repository(access_token):
+    url = f"https://api.github.com/user/starred/{OWNER}/{REPO}"
+    headers = {
+        "Authorization": f"token {access_token}",
+        "Content-Length": "0",
+        "Accept": "application/vnd.github.v3+json",
+    }
+    response = requests.put(url, headers=headers)
+    return response.status_code == 204
+
+
+def get_user_info(access_token):
+    """
+    Get user information.
+    """
+    url = "https://api.github.com/user"
+    headers = {
+        "Authorization": f"token {access_token}",
+        "Accept": "application/vnd.github.v3+json",
+    }
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        return response.json()
+    return None
+
+
+@_app.route("/")
+def _home():
+    """
+    Render the login page.
+    """
+    return render_template("login.html", client_id=CLIENT_ID, ip=IP, port=PORT)
+
+
+@_app.route("/oauth/callback")
+def oauth_callback():
+    """
+    Github oauth callback.
+    """
+    code = request.args.get("code")
+    if not code:
+        return "Error: Code not found."
+
+    token_response = requests.post(
+        "https://github.com/login/oauth/access_token",
+        headers={"Accept": "application/json"},
+        data={
+            "client_id": CLIENT_ID,
+            "client_secret": CLIENT_SECRET,
+            "code": code,
+        },
+    ).json()
+
+    access_token = token_response.get("access_token")
+    user_info = get_user_info(access_token)
+    if not access_token or not user_info:
+        return (
+            "Error: Access token not found or failed to fetch user "
+            "information."
+        )
+
+    user_login = user_info.get("login")
+
+    try:
+        with open(USER_FILE_NAME, "r", encoding="utf-8") as file:
+            existing_logins = set(file.read().splitlines())
+    except FileNotFoundError:
+        existing_logins = set()
+
+    if star_repository(access_token=access_token):
+        verification_token = generate_verification_token()
+        session["verification_token"] = verification_token
+        session["user_login"] = user_login
+
+        if f"【{user_login}】?【{verification_token}】" not in existing_logins:
+            add_login_safe(
+                file_name=USER_FILE_NAME,
+                user_login=user_login,
+                verification_token=verification_token,
+            )
+
+        return redirect(
+            url_for(
+                "workstation",
+                token=verification_token,
+                user_login=user_login,
+            ),
+        )
+    else:
+        return "Error: Unable to star the repository."
+
+
+@_app.route("/workstation")
+@require_auth(ip=IP, copilot_ip=COPILOT_IP, copilot_port=COPILOT_PORT)
+def _workstation_online(**kwargs) -> str:
+    """Render the workstation page."""
+    return render_template("workstation.html", **kwargs)
+
+
+@_app.route("/upload-to-oss", methods=["POST"])
+@require_auth(fail_with_exception=True, ip=IP)
+def _upload_file_to_oss_online(**kwargs) -> Response:
+    # pylint: disable=unused-argument
+    """
+    Upload content to oss bucket.
+    """
+    def write_and_upload(content, user_login):
+        with tempfile.NamedTemporaryFile(mode="w", delete=True) as tmp_file:
+            tmp_file.write(content)
+            tmp_file.flush()
+            ak_id, ak_secret, endpoint, bucket_name = get_oss_config()
+
+            auth = oss2.Auth(ak_id, ak_secret)
+            bucket = oss2.Bucket(auth, endpoint, bucket_name)
+
+            file_key = f"modelscope_user/{user_login}_config.json"
+
+            upload_to_oss(
+                bucket,
+                tmp_file.name,
+                file_key,
+                is_private=True,
+            )
+
+        public_url = bucket.sign_url(
+            "GET",
+            file_key,
+            EXPIRATION_SECONDS,
+            slash_safe=True,
+        )
+        return public_url
+
+    content = request.json.get("data")
+    user_login = request.args.get("user_login", "")
+
+    config_url = write_and_upload(content, user_login)
+    return jsonify(config_url=config_url)
+
+
+@_app.route("/convert-to-py", methods=["POST"])
+@require_auth(fail_with_exception=True, ip=IP)
+def _online_convert_config_to_py(**kwargs) -> Response:
+    # pylint: disable=unused-argument
+    """
+    Convert json config to python code and send back.
+    """
+    return _convert_config_to_py()
+
+
+@_app.route("/read-examples", methods=["POST"])
+@require_auth(fail_with_exception=True, ip=IP)
+def _read_examples_online(**kwargs) -> Response:
+    # pylint: disable=unused-argument
+    """
+    Read tutorial examples from local file.
+    """
+    return _read_examples()
+
+
+@_app.route("/set_locale")
+def set_locale() -> Response:
+    """
+    Switch language.
+    """
+    lang = request.args.get("language")
+    response = make_response(jsonify(message=lang))
+    if lang == "en":
+        refresh()
+        response.set_cookie("locale", "en")
+        return response
+
+    if lang == "zh":
+        refresh()
+        response.set_cookie("locale", "zh")
+        return response
+
+    return jsonify({"data": "success"})
+
+
+if __name__ == "__main__":
+    _app.run(host="0.0.0.0", port=PORT)
