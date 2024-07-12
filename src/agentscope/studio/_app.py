@@ -331,11 +331,18 @@ def _get_server_agent_info(server_id: str) -> Response:
 def _delete_agent() -> Response:
     _app.logger.info(f"Delete agent {request.json}")
     server_id = request.json.get("server_id")
-    agent_id = request.json.get("agent_id")
+    agent_id = request.json.get("agent_id", None)
     server = _ServerTable.query.filter_by(id=server_id).first()
-    ok = RpcAgentClient(host=server.host, port=server.port).delete_agent(
-        agent_id,
-    )
+    # delete all agents if agent_id is None
+    if agent_id is not None:
+        ok = RpcAgentClient(host=server.host, port=server.port).delete_agent(
+            agent_id,
+        )
+    else:
+        ok = RpcAgentClient(
+            host=server.host,
+            port=server.port,
+        ).delete_all_agent()
     return jsonify(status="ok" if ok else "fail")
 
 

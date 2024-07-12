@@ -4,7 +4,7 @@ var curServerId;
 
 function deleteServer(e, cell) {
     const serverId = cell.getData().id;
-    if (confirm(`Are you sure you want to stop server ${serverId} ?`)) {
+    if (confirm(`Are you sure to stop server ${serverId} ?`)) {
         fetch(`/api/servers/delete/${serverId}`)
             .then((response) => {
                 if (!response.ok) {
@@ -117,6 +117,25 @@ function flushServerTable(data) {
     }
 }
 
+function deleteDeadServer() {
+    let deadServerIds = [];
+    if (serversTable) {
+        let rows = serversTable.getRows();
+        for (let i = 0; i < rows.length; i++) {
+            let row = rows[i];
+            console.log(row.getData().status);
+            if (row.getData().status == "dead") {
+                row.delete();
+                deadServerIds.push(row.getData().id);
+            }
+        }
+    } else {
+        console.error("Server Table is not initialized.");
+    }
+    console.log("Delete dead servers: ", deadServerIds);
+    return deadServerIds;
+}
+
 function flushAgentTable(serverId, data) {
     if (agentsTable) {
         agentsTable.setData(data);
@@ -126,8 +145,36 @@ function flushAgentTable(serverId, data) {
     }
 }
 
+function deleteAllAgent() {
+    let serverId = curServerId;
+    if (agentsTable) {
+        if (confirm(`Are you sure to delete all agent on ${serverId} ?`)) {
+            fetch(`/api/servers/agents/delete`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8",
+                },
+                body: JSON.stringify({
+                    server_id: serverId,
+                }),
+            })
+                .then((response) => {
+                    return response.json();
+                })
+                .then((data) => {
+                    agentsTable.clearData();
+                })
+                .catch((error) => {
+                    console.error("Error when deleting all agent:", error);
+                });
+        }
+    } else {
+        console.error("Agent Table is not initialized.");
+    }
+}
+
 function deleteIcon(cell, formatterParams, onRendered) {
-    return '<img src="/static/svg/circle-delete.svg" class="icon"/>';
+    return '<img src="/static/svg/trash-bin.svg" class="icon"/>';
 }
 
 function getServerStatus(cell, formatterParams, onRendered) {
@@ -144,10 +191,10 @@ function getServerStatus(cell, formatterParams, onRendered) {
             return response.json();
         })
         .then((data) => {
+            let row = cell.getRow();
             if (data.status == "running") {
                 cell.getElement().innerHTML =
                     '<div class="status-tag running">running</div>';
-                var row = cell.getRow();
                 row.update({
                     status: data.status,
                     cpu: data.cpu,
@@ -156,6 +203,9 @@ function getServerStatus(cell, formatterParams, onRendered) {
             } else {
                 cell.getElement().innerHTML =
                     '<div class="status-tag dead">dead</div>';
+                row.update({
+                    status: "dead",
+                });
             }
         })
         .catch((error) => {
@@ -283,9 +333,13 @@ function initializeServerPage() {
     serverflushBtn.onclick = function () {
         getServerTableData(flushServerTable);
     };
+    let deleteDeadServerBtn = document.getElementById("delete-dead-server-btn");
+    deleteDeadServerBtn.onclick = deleteDeadServer;
     let agentflushBtn = document.getElementById("flush-agent-btn");
     agentflushBtn.onclick = function () {
         let serverId = curServerId;
         getAgentTableData(serverId, flushAgentTable);
     };
+    let deleteAllAgentBtn = document.getElementById("delete-all-agent-btn");
+    deleteAllAgentBtn.onclick = deleteAllAgent;
 }
