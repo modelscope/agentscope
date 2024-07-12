@@ -374,10 +374,3 @@ def serialize(messages: Union[Sequence[MessageBase], MessageBase]) -> str:
         return messages.serialize()
     seq = [msg.serialize() for msg in messages]
     return json.dumps({"__type": "List", "__value": seq})
-
-
-def message_from_dict(msg: dict) -> Msg:
-    """Helper function that convert dict to Msg"""
-    if msg.get("name", None) is None:
-        msg["name"] = msg["role"]
-    return Msg(**msg)

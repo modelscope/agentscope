@@ -57,6 +57,7 @@ studio_requires = []
 
 web_requires = [
     "playwright",
+    "markdownify",
 ]
 
 # released requires
@@ -87,7 +88,6 @@ minimal_requires = [
     "litellm",
     "psutil",
     "scipy",
-    "markdownify",
 ]
 
 distribute_requires = minimal_requires + rpc_requires

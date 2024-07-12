@@ -8,7 +8,7 @@ The paper link is https://arxiv.org/abs/2401.13919.
 import time
 import os
 import re
-from typing import Optional, Tuple, Any
+from typing import Optional, Tuple, Any, Union, Sequence
 
 from loguru import logger
 
@@ -184,7 +184,7 @@ class WebVoyagerAgent(AgentBase):
             )
             return curr_msg
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         # pylint: disable=R0912
         # pylint: disable=R0915
         """
@@ -330,9 +330,6 @@ class WebVoyagerAgent(AgentBase):
                         # submit=(action_key == "typesubmit"),
                         submit=True,
                     )
-
-                    if "wolfram" in self.task_web:
-                        time.sleep(5)
 
                 elif action_key == "scroll":
                     scroll_ele_number = info["number"]
