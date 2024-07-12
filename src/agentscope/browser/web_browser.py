@@ -136,7 +136,7 @@ class WebBrowser:
         )
         ele_info = self.page.evaluate("getElementInfo", element_handle)
         if ele_info["tag_name"] == "button" and ele_info["type"] == "submit":
-            time.sleep(3)
+            time.sleep(5)
         element_handle.click()
         time.sleep(3)
 
