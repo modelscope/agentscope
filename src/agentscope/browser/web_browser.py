@@ -131,7 +131,14 @@ class WebBrowser:
         element_handle.evaluate(
             "element => element.setAttribute('target', '_self')",
         )
+        ele_info = element_handle.evaluate(
+            "element => element.getBoundingClientRect()",
+        )
+        ele_info = self.page.evaluate("getElementInfo", element_handle)
+        if ele_info["tag_name"] == "button" and ele_info["type"] == "submit":
+            time.sleep(3)
         element_handle.click()
+        time.sleep(3)
 
     def find_on_page(self, query: str) -> bool:
         """
@@ -346,7 +353,7 @@ class WebBrowser:
             screenshot_bytes = self.page_screenshot()
             self._remove_labels_by_handle(labels_handle)
 
-        time.sleep(5)
+        time.sleep(3)
 
         return elements, format_ele_text, screenshot_bytes, web_ele_infos
 

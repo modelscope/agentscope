@@ -296,25 +296,18 @@ class WebVoyagerAgent(AgentBase):
 
                 if action_key == "click":
                     click_ele_number = int(info[0])
-                    ele_tag_name = web_ele_fields[click_ele_number]["tag_name"]
-                    ele_type = web_ele_fields[click_ele_number]["type"]
-
                     self.browser.click(click_ele_number)
-
                     # TODO what to do when encounter PDF file
-
-                    if ele_tag_name == "button" and ele_type == "submit":
-                        time.sleep(10)
-                    time.sleep(5)
 
                 elif action_key == "wait":
                     time.sleep(5)
 
                 elif action_key.startswith("type"):
-                    warn_obs = ""
                     type_content = info["content"]
                     type_ele_number = int(info["number"])
 
+                    # get warn_obs
+                    warn_obs = ""
                     ele_tag_name = web_ele_fields[type_ele_number]["tag_name"]
                     ele_type = web_ele_fields[type_ele_number]["type"]
                     if (ele_tag_name not in ("input", "textarea")) or (
@@ -337,7 +330,7 @@ class WebVoyagerAgent(AgentBase):
 
                     if scroll_ele_number == "WINDOW":
                         self.browser.scroll(direction=scroll_content)
-                        time.sleep(3)
+                        time.sleep(1)
                     else:
                         # add try click body to enable scroll on more webpage
                         self.browser.try_click_body()
@@ -348,7 +341,7 @@ class WebVoyagerAgent(AgentBase):
                             self.browser.scroll_down()
                         else:
                             self.browser.scroll_up()
-                        time.sleep(3)
+                        time.sleep(1)
 
                 elif action_key == "goback":
                     self.browser.go_back()
