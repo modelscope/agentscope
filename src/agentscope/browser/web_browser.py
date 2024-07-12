@@ -6,14 +6,18 @@ import time
 from pathlib import Path
 
 import requests
-import markdownify
 from loguru import logger
 
 try:
+    import markdownify
     from playwright.sync_api import sync_playwright
 except ImportError as import_error:
     from agentscope.utils.tools import ImportErrorReporter
 
+    markdownify = ImportErrorReporter(
+        import_error,
+        "web",
+    )
     sync_playwright = ImportErrorReporter(
         import_error,
         "playwright in your system following guides"
