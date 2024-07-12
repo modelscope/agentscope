@@ -30,12 +30,4 @@ jobs:
       run: |
         cd examples/distributed_simulation
         pytest bench.py --benchmark-json output.json
-
-    - name: Store benchmark result
-      uses: benchmark-action/github-action-benchmark@v1
-      with:
-        name: Python Benchmark with pytest-benchmark
-        tool: 'pytest'
-        output-file-path: examples/distributed_simulation/output.json
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        auto-push: false
+        cat output.json| jq -r ".benchmarks[] | .stats
