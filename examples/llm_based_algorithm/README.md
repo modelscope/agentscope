@@ -1,7 +1,15 @@
 # LLM-based algorithms
 
 
-This folder contains the source code for the arXiv preprint "On the Design and Analysis of LLM-Based Algorithms".
+This folder contains the source code for reproducing the experiment results in our arXiv preprint "On the Design and Analysis of LLM-Based Algorithms".
+
+Our work initiates a formal investigation into the design and analysis of LLM-based algorithms,
+i.e. algorithms that contain one or multiple calls of large language models (LLMs) as sub-routines and critically rely on the capabilities of LLMs.
+With some key abstractions identified, we provide analytical study for the accuracy and efficiency of generic LLM-based algorithms as well as diverse concrete tasks, which is validated by extensive experiments.
+
+Within this folder, you can find our implementation for the key abstractions,
+the LLM-based algorithms in four concrete examples,
+and the experiments for validating our analysis in the manuscript.
 
 
 ## Tested Models
