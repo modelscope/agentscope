@@ -28,8 +28,9 @@ Carefully analyze the visual information to identify the Numerical Label corresp
 - Scroll up or down. Multiple scrolls are allowed to browse the webpage. Pay attention!! The default scroll is the whole window. If the scroll widget is located in a certain area of the webpage, then you have to specify a Web Element in that area. I would hover the mouse there and then scroll.
 - Wait. Typically used to wait for unfinished webpage processes, with a duration of 5 seconds.
 - Go back, returning to the previous webpage.
+- Goto. Directly jump to the target webpage URL. Useful when you need to go to a specific webpage.
 - Google, directly jump to the Google search page. When you can't find information in some websites, try starting over with Google.
-- Answer. This action should only be chosen when all questions in the task have been solved.
+- Answer. This action should be chosen when all questions in the task have been solved, or you believe you have already fullfill the user's request.
 
 Correspondingly, Action should STRICTLY follow the format:
 - Click [Numerical_Label]
@@ -37,6 +38,7 @@ Correspondingly, Action should STRICTLY follow the format:
 - Scroll [Numerical_Label or WINDOW]; [up or down]
 - Wait
 - GoBack
+- Goto [URL]
 - Google
 - ANSWER; [content]
 
@@ -45,14 +47,17 @@ Key Guidelines You MUST follow:
 1) To input text, NO need to click textbox first, directly type content. After typing, the system automatically hits `ENTER` key. Sometimes you should click the search button to apply search filters. Try to use simple language when searching.
 2) You must Distinguish between textbox and search button, don't type content into the button! If no textbox is found, you may need to click the search button first before the textbox is displayed.
 3) Execute only one action per iteration.
-4) STRICTLY Avoid repeating the same action if the webpage remains unchanged. You may have selected the wrong web element or numerical label. Continuous use of the Wait is also NOT allowed.
+4) STRICTLY Avoid repeating the same action if the webpage remains unchanged. You may have selected the wrong web element or numerical label. Continuous use of the Wait is also NOT allowed. Continuous use of the Scroll with no change of webpage is NOT allowed.
 5) When a complex Task involves multiple questions or steps, select "ANSWER" only at the very end, after addressing all of these questions (steps). Flexibly combine your own abilities with the information in the web page. Double check the formatting requirements in the task when ANSWER.
+6) When the user's task is a simple request, you should select "ANSWER" to complete the task.
+7) When you are not sure whether you are making progress, you can select "ANSWER" and ask the user for more infomation.
 * Web Browsing Guidelines *
 1) Don't interact with useless web elements like Login, Sign-in, donation that appear in Webpages. Pay attention to Key Web Elements like search textbox and menu.
 2) Vsit video websites like YouTube is allowed BUT you can't play videos. Clicking to download PDF is allowed and will be analyzed by the Assistant API.
 3) Focus on the numerical labels in the TOP LEFT corner of each rectangle (element). Ensure you don't mix them up with other numbers (e.g. Calendar) on the page.
 4) Focus on the date in task, you must look for results that match the date. It may be necessary to find the correct year, month and day at calendar.
 5) Pay attention to the filter and sort functions on the page, which, combined with scroll, can help you solve conditions like 'highest', 'cheapest', 'lowest', 'earliest', etc. Try your best to find the answer that best fits the task.
+6) Use "Goto" if you need to goto a specific webpage.
 
 Your reply should strictly follow the format:
 Thought: {Your brief thoughts (briefly summarize the info that will help ANSWER)}
@@ -62,7 +67,7 @@ Then the User will provide:
 Observation: {A labeled screenshot Given by User}
 """  # noqa
 
-INIT_MSG_PROMPT = """Now given a task: {task_question}, Please interact with {task_web_url} and get the answer.
+INIT_MSG_PROMPT = """Now the user given a task: {task_question}, Please interact with the browser and perform the task.
 Observation: please analyze the attached screenshot and give the Thought and Action.
 I've provided the tag name of each element and the text it contains (if text exists). Note that <textarea> or <input> may be textbox, but not exactly. Please focus more on the screenshot and then refer to the textual information. The textual information in the current round is: \n{web_text}. Please note that the label number may change in the next round, so always choose within the lastest round's number.
 """  # noqa
@@ -115,8 +120,8 @@ class WebVoyagerAgent(AgentBase):
         self.default_homepage = default_homepage
         self.task_question = ""
         self.task_dir = ""
-        self.task_web = ""
         self.task_answer = ""
+        self.browser.visit_page(self.default_homepage)
 
     def _clip_message_and_obs(self, msg_list: list) -> list:
         """
@@ -161,7 +166,6 @@ class WebVoyagerAgent(AgentBase):
         if it == 1:
             init_msg = INIT_MSG_PROMPT.format(
                 task_question=self.task_question,
-                task_web_url=self.task_web,
                 web_text=web_text,
             )
             init_msg_format = Msg(
@@ -209,11 +213,7 @@ class WebVoyagerAgent(AgentBase):
         if not os.path.exists(path):
             os.makedirs(path)
 
-        self.task_web = self.default_homepage
-
-        self.browser.visit_page(self.task_web)
         time.sleep(5)
-        self.browser.try_click_body()
 
         fail_obs = ""  # When error execute the action
         warn_obs = ""  # Type warning
@@ -242,7 +242,7 @@ class WebVoyagerAgent(AgentBase):
                     logger.error(e)
                     break
 
-                # get screnn shot
+                # get screen shot
                 img_path = os.path.join(
                     self.task_dir,
                     f"screenshot_{it}.png",
@@ -351,12 +351,15 @@ class WebVoyagerAgent(AgentBase):
                     self.browser.visit_page("https://www.google.com/")
                     time.sleep(2)
 
+                elif action_key == "goto":
+                    self.browser.visit_page(info["content"])
+                    time.sleep(3)
+
                 elif action_key == "answer":
                     self.speak(info["content"])
                     self.task_answer = info["content"]
-                    self.speak("finish.")
+                    self.speak("Current task finished.")
                     break
-
                 else:
                     raise NotImplementedError
                 fail_obs = ""
@@ -381,6 +384,7 @@ class WebVoyagerAgent(AgentBase):
             "scroll": r"Scroll \[?(\d+|WINDOW)\]?[; ]+\[?(up|down)\]?",
             "wait": r"^Wait",
             "goback": r"^GoBack",
+            "goto": r"Goto \[?([^\]]+)\]?",
             "google": r"^Google",
             "answer": r"ANSWER[; ]+\[?(.[^\]]*)\]?",
         }
@@ -396,6 +400,8 @@ class WebVoyagerAgent(AgentBase):
                         "number": match.group(1),
                         "content": match.group(2),
                     }
+                elif key == "goto":
+                    return key, {"content": match.group(1)}
                 else:
                     return key, {"content": match.group(1)}
         return None, None
