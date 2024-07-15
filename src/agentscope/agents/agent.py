@@ -233,7 +233,6 @@ class AgentBase(Operator, metaclass=_AgentMeta):
             Type[AgentBase]: the AgentBase sub-class.
         """
         if agent_class_name not in cls._registry:
-            logger.error(f"Agent class <{agent_class_name}> not found.")
             raise ValueError(f"Agent class <{agent_class_name}> not found.")
         return cls._registry[agent_class_name]  # type: ignore[return-value]
 

@@ -164,7 +164,7 @@ class AgentServerServicer(RpcAgentServicer):
     def is_alive(
         self,
         request: Empty,
-        _: ServicerContext,
+        context: ServicerContext,
     ) -> agent_pb2.GeneralResponse:
         """Check whether the server is alive."""
         return agent_pb2.GeneralResponse(ok=True)
@@ -172,7 +172,7 @@ class AgentServerServicer(RpcAgentServicer):
     def stop(
         self,
         request: Empty,
-        _: ServicerContext,
+        context: ServicerContext,
     ) -> agent_pb2.GeneralResponse:
         """Stop the server."""
         self.stop_event.set()
@@ -227,7 +227,7 @@ class AgentServerServicer(RpcAgentServicer):
     def delete_agent(
         self,
         request: agent_pb2.StringMsg,
-        _: ServicerContext,
+        context: ServicerContext,
     ) -> agent_pb2.GeneralResponse:
         """Delete agents from the server.
 
@@ -256,7 +256,7 @@ class AgentServerServicer(RpcAgentServicer):
     def clone_agent(
         self,
         request: agent_pb2.StringMsg,
-        _: ServicerContext,
+        context: ServicerContext,
     ) -> agent_pb2.GeneralResponse:
         """Clone a new agent instance from the origin instance.
 

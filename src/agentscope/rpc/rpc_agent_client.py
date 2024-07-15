@@ -4,7 +4,7 @@
 import threading
 import json
 import os
-from typing import Optional, Sequence, Union, Tuple
+from typing import Optional, Sequence, Union
 from loguru import logger
 
 try:
@@ -62,7 +62,7 @@ class RpcAgentClient:
 
         Args:
             func_name (`str`): The name of the function being called.
-            valuer (`str`, optional): The serialized function input value.
+            value (`str`, optional): The serialized function input value.
             Defaults to None.
             timeout (`int`, optional): The timeout for the RPC call in seconds.
             Defaults to 300.
@@ -231,7 +231,7 @@ class RpcAgentClient:
             else:
                 return resp.message
 
-    def update_placeholder(self, task_id: int) -> Tuple[bool, str]:
+    def update_placeholder(self, task_id: int) -> str:
         """Update the placeholder value.
 
         Args:
@@ -246,10 +246,14 @@ class RpcAgentClient:
             options=_DEFAULT_RPC_OPTIONS,
         ) as channel:
             stub = RpcAgentStub(channel)
-            result_msg = stub.update_placeholder(
+            resp = stub.update_placeholder(
                 agent_pb2.UpdatePlaceholderRequest(task_id=task_id),
             )
-            return result_msg.ok, result_msg.message
+            if not resp.ok:
+                raise ValueError(
+                    f"Failed to update_placeholder: {resp.message}",
+                )
+            return resp.message
 
     def get_agent_list(self) -> Sequence[dict]:
         """
@@ -261,6 +265,9 @@ class RpcAgentClient:
         with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
             stub = RpcAgentStub(channel)
             resp = stub.get_agent_list(Empty())
+            if not resp.ok:
+                logger.error(f"Error when get agent list: {resp.message}")
+                return []
             return [
                 json.loads(agent_str) for agent_str in json.loads(resp.message)
             ]
@@ -275,8 +282,8 @@ class RpcAgentClient:
                     logger.error(f"Error in get_server_info: {resp.message}")
                     return {}
                 return json.loads(resp.message)
-        except Exception:
-            logger.info(f"Agent server [{self.host}:{self.port}] not alive.")
+        except Exception as e:
+            logger.error(f"Error in get_server_info: {e}")
             return {}
 
     def set_model_configs(

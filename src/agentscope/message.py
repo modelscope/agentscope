@@ -366,9 +366,7 @@ class PlaceholderMessage(Msg):
             # retrieve real message from rpc agent server
             self.__update_task_id()
             client = RpcAgentClient(self._host, self._port)
-            ok, result = client.update_placeholder(task_id=self._task_id)
-            if not ok:
-                raise RuntimeError(result)
+            result = client.update_placeholder(task_id=self._task_id)
             msg = deserialize(result)
             self.__update_url(msg)  # type: ignore[arg-type]
             self.update(msg)
@@ -376,11 +374,11 @@ class PlaceholderMessage(Msg):
             self._is_placeholder = False
         return self
 
-    def __update_url(self, msg: dict) -> None:
+    def __update_url(self, msg: MessageBase) -> None:
         """Update the url field of the message."""
-        if "url" not in msg or msg["url"] is None:
+        if hasattr(msg, "url") and msg.url is None:
             return
-        url = msg["url"]
+        url = msg.url
         if isinstance(url, str):
             urls = [url]
         else:
@@ -392,7 +390,7 @@ class PlaceholderMessage(Msg):
                 checked_urls.append(client.download_file(path=url))
             else:
                 checked_urls.append(url)
-        msg["url"] = checked_urls[0] if isinstance(url, str) else checked_urls
+        msg.url = checked_urls[0] if isinstance(url, str) else checked_urls
 
     def __update_task_id(self) -> None:
         if self._stub is not None:
