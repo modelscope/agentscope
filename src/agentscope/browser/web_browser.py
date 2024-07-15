@@ -341,7 +341,7 @@ class WebBrowser:
             elements:
                 the handler from playwright of interactive elements.
             format_ele_text:
-                the text description of formated elements.
+                a list of the formated elements' text description.
             screenshot_bytes:
                 the screenshot of webpage, with SOM, in bytes.
             web_ele_infos:
