@@ -157,6 +157,13 @@
                                 draggable="true" ondragstart="drag(event)">
                                 ReActAgent
                             </li>
+                            {% for agent_cls_name in customized_agents %}
+                            <li class="workstation-sidebar-dragitem unselectable-text"
+                                data-node="{{agent_cls_name}}"
+                                draggable="true" ondragstart="drag(event)">
+                                {{ agent_cls_name }}
+                            </li>
+                            {% endfor %}
                         </ul>
                     </li>
                     <li>

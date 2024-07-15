@@ -11,6 +11,18 @@ from .react_agent import ReActAgent
 from .rag_agent import LlamaIndexAgent
 
 
+_BUILTIN_AGENTS = [
+    "DialogAgent",
+    "DictDialogAgent",
+    "TextToImageAgent",
+    "UserAgent",
+    "ReActAgent",
+    "RpcAgent",
+    "LlamaIndexAgent",
+    "_SystemPromptTestAgent",
+]
+
+
 __all__ = [
     "AgentBase",
     "Operator",
@@ -22,4 +34,5 @@ __all__ = [
     "DistConf",
     "RpcAgent",
     "LlamaIndexAgent",
+    "_BUILTIN_AGENTS",
 ]

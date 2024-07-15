@@ -23,8 +23,10 @@ from flask import (
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, join_room, leave_room
+from jinja2 import Environment, FileSystemLoader
 
 from agentscope._runtime import _runtime
+from agentscope.agents.customized_agents import customized_agents
 from agentscope.constants import _DEFAULT_SUBDIR_CODE, _DEFAULT_SUBDIR_INVOKE
 from agentscope.utils.tools import _is_process_alive, _is_windows
 
@@ -205,10 +207,51 @@ def _convert_to_py(  # type: ignore[no-untyped-def]
         )
 
 
+@_app.route("/data/customized_agents")
+def _customized_agents_info() -> str:
+    """Get the information about customized agents."""
+    all_customized_agent_cls_names = (
+        customized_agents.get_all_agent_cls_names()
+    )
+    customized_agents_info = [
+        {
+            "_cls_name": customized_agent_cls_name,
+            **customized_agents.get_agent_params(customized_agent_cls_name),
+        }
+        for customized_agent_cls_name in all_customized_agent_cls_names
+    ]
+    return jsonify(customized_agents_info)
+
+
+@_app.route("/data/customized_agents/<agent_name>")
+def _customized_agent(agent_name: str) -> str:
+    """Render the customized agent page."""
+    try:
+        customized_agent_info = customized_agents.get_agent_params(agent_name)
+        customized_agent_info["_cls_name"] = agent_name
+        html_path = os.path.join(
+            _app.root_path,
+            "static",
+            "html-drag-components",
+            "agent-customizedagent.html",
+        )
+        env = Environment(loader=FileSystemLoader(os.path.dirname(html_path)))
+        template = env.get_template(os.path.basename(html_path))
+    except Exception as e:
+        abort(400, f"Customized Agent {agent_name} not found with error: {e}")
+    return template.render(agent=customized_agent_info)
+
+
 @_app.route("/workstation")
 def _workstation() -> str:
     """Render the workstation page."""
-    return render_template("workstation.html")
+    all_customized_agent_cls_names = (
+        customized_agents.get_all_agent_cls_names()
+    )
+    return render_template(
+        "workstation.html",
+        customized_agents=all_customized_agent_cls_names,
+    )
 
 
 @_app.route("/api/runs/register", methods=["POST"])
@@ -660,6 +703,16 @@ def _on_leave(data: dict) -> None:
     leave_room(run_id)
 
 
+def initialize_customized_agents() -> None:
+    """Initialize customized agents."""
+    from agentscope.agents import AgentBase, _BUILTIN_AGENTS
+
+    # pylint: disable=protected-access
+    for cls_name, cls in AgentBase._registry.items():
+        if cls_name not in _BUILTIN_AGENTS:
+            customized_agents.register(cls_name, cls)
+
+
 def init(
     host: str = "127.0.0.1",
     port: int = 5000,
@@ -694,6 +747,9 @@ def init(
         _app.logger.setLevel("DEBUG")
     else:
         _app.logger.setLevel("INFO")
+
+    # Initialize customized agents
+    initialize_customized_agents()
 
     _socketio.run(
         _app,

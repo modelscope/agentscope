@@ -37,6 +37,8 @@ let nameToHtmlFile = {
     'WriteTextService': 'service-write-text.html',
 }
 
+let customizedAgentNames = []
+
 // Cache the loaded html files
 let htmlCache = {};
 
@@ -69,6 +71,25 @@ async function fetchHtml(fileName) {
 
 async function initializeWorkstationPage() {
     console.log("Initialize Workstation Page")
+
+    // load customized agents
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            const response = await fetch('/data/customized_agents');
+            if (!response.ok) {
+                throw new Error('Fail to load customized agents');
+            }
+            const agents = await response.json();
+            agents.forEach(agent => {
+                const agentName = agent._cls_name;
+                customizedAgentNames.push(agentName);
+            })
+            console.log("customizedAgentNames", customizedAgentNames);
+        } catch (error) {
+            console.error(error);
+        }
+    });
+
     // Initialize the Drawflow editor
     let id = document.getElementById("drawflow");
     editor = new Drawflow(id);
@@ -767,6 +788,20 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
             break;
 
         default:
+            // customized agents
+            if (customizedAgentNames.includes(name)) {
+                const CustomizedAgentID = editor.addNode(name, 1, 1, pos_x,
+                    pos_y, name, {
+                        "args": {
+                            "_cls_name": name,
+                        }
+                    }, htmlSourceCode);
+                var nodeElement = document.querySelector(`#node-${CustomizedAgentID} .node-id`);
+                if (nodeElement) {
+                    nodeElement.textContent = CustomizedAgentID;
+                }
+            }
+            break;
     }
 }
 
@@ -1775,7 +1810,20 @@ async function fetchHtmlSourceCodeByName(name) {
     }
 
     // Load the HTML source code
-    let htmlSourceCode = await fetchHtml(nameToHtmlFile[name]);
+    let htmlSourceCode;
+    if (customizedAgentNames.includes(name)) {
+        try {
+            const response = await fetch('/data/customized_agents/' + name);
+            if (!response.ok) {
+                throw new Error('Fail to load customized agent ' + name);
+            }
+            htmlSourceCode = await response.text();
+        } catch (error) {
+            console.error(error);
+        }
+    } else {
+        htmlSourceCode = await fetchHtml(nameToHtmlFile[name]);
+    }
     htmlCache[name] = htmlSourceCode;
     return htmlSourceCode;
 }

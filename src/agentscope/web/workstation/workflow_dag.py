@@ -11,10 +11,12 @@ from typing import Any
 from loguru import logger
 
 import agentscope
+from agentscope.agents.customized_agents import customized_agents
 from agentscope.web.workstation.workflow_node import (
     NODE_NAME_MAPPING,
     WorkflowNodeType,
     DEFAULT_FLOW_VAR,
+    CustomizedAgentNode,
 )
 from agentscope.web.workstation.workflow_utils import (
     is_callable_expression,
@@ -308,6 +310,14 @@ def build_dag(config: dict) -> ASDiGraph:
     Raises:
         ValueError: If the resulting graph is not acyclic.
     """
+    # Update NODE_NAME_MAPPING for customized agents
+    NODE_NAME_MAPPING.update(
+        {
+            agent_cls: CustomizedAgentNode
+            for agent_cls in customized_agents.get_all_agent_cls_names()
+        },
+    )
+
     dag = ASDiGraph()
 
     for node_id, node_info in config.items():

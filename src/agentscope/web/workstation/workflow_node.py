@@ -12,6 +12,7 @@ from agentscope.agents import (
     DictDialogAgent,
     ReActAgent,
 )
+from agentscope.agents.customized_agents import customized_agents
 from agentscope.message import Msg
 from agentscope.models import read_model_configs
 from agentscope.pipelines import (
@@ -310,6 +311,41 @@ class ReActAgentNode(WorkflowNode):
             "inits": f"{self.var_name} = ReActAgent"
             f"({kwarg_converter(self.opt_kwargs)}, tools"
             f"={deps_converter(self.dep_vars)})",
+            "execs": f"{DEFAULT_FLOW_VAR} = {self.var_name}"
+            f"({DEFAULT_FLOW_VAR})",
+        }
+
+
+class CustomizedAgentNode(WorkflowNode):
+    """
+    A node representing a CustomizedAgent within a workflow.
+    """
+
+    node_type = WorkflowNodeType.AGENT
+
+    def __init__(
+        self,
+        node_id: str,
+        opt_kwargs: dict,
+        source_kwargs: dict,
+        dep_opts: list,
+    ) -> None:
+        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+        self.agent_cls_name = self.opt_kwargs["_cls_name"]
+        self.opt_kwargs.pop("_cls_name", None)
+        self.pipeline = customized_agents.get_agent_cls(self.agent_cls_name)(
+            **self.opt_kwargs,
+        )
+
+    def __call__(self, x: dict = None) -> dict:
+        return self.pipeline(x)
+
+    def compile(self) -> dict:
+        return {
+            "imports": "from agentscope.agents.customized_agents "
+            f"import {self.agent_cls_name}",
+            "inits": f"{self.var_name} = {self.agent_cls_name}("
+            f"{kwarg_converter(self.opt_kwargs)})",
             "execs": f"{DEFAULT_FLOW_VAR} = {self.var_name}"
             f"({DEFAULT_FLOW_VAR})",
         }
