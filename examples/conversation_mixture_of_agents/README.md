@@ -1,6 +1,6 @@
 # Using Mixture of Agents to Enhance Performance in AgentScope
 
-This example will show how to use Mixture of Agents in AgentScope.
+This example will show how to use [Mixture of Agents]((https://arxiv.org/abs/2406.04692)) in AgentScope.
 
 ## Background
 
