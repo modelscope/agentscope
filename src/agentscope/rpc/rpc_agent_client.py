@@ -27,6 +27,7 @@ from agentscope.file_manager import file_manager
 from agentscope.utils.tools import generate_id_from_seed
 from agentscope.exception import AgentServerNotAliveError
 from agentscope.constants import _DEFAULT_RPC_OPTIONS
+from agentscope.exception import AgentCallError
 
 
 class RpcAgentClient:
@@ -250,8 +251,10 @@ class RpcAgentClient:
                 agent_pb2.UpdatePlaceholderRequest(task_id=task_id),
             )
             if not resp.ok:
-                raise ValueError(
-                    f"Failed to update_placeholder: {resp.message}",
+                raise AgentCallError(
+                    host=self.host,
+                    port=self.port,
+                    message=f"Failed to update placeholder: {resp.message}",
                 )
             return resp.message
 

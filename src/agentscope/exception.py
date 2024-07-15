@@ -153,3 +153,7 @@ class AgentServerNotAliveError(AgentServerError):
 
 class AgentCreationError(AgentServerError):
     """The exception class for failing to create agent."""
+
+
+class AgentCallError(AgentServerError):
+    """The exception class for failing to call agent."""

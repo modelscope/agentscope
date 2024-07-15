@@ -18,6 +18,7 @@ from agentscope.msghub import msghub
 from agentscope.pipelines import sequentialpipeline
 from agentscope.utils import MonitorFactory, QuotaExceededError
 from agentscope.rpc.rpc_agent_client import RpcAgentClient
+from agentscope.exception import AgentCallError
 
 
 class DemoRpcAgent(AgentBase):
@@ -559,7 +560,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         """Test error handling"""
         agent = DemoErrorAgent(name="a").to_dist()
         x = agent()
-        self.assertRaises(RuntimeError, x.__getattr__, "content")
+        self.assertRaises(AgentCallError, x.__getattr__, "content")
 
     def test_agent_nesting(self) -> None:
         """Test agent nesting"""
