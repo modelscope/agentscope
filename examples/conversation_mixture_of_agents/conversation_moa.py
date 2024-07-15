@@ -8,7 +8,7 @@ from typing import Optional, Union, Sequence
 
 import agentscope
 from agentscope.agents import AgentBase, UserAgent
-from agentscope.utils.mixture_of_agent import MixtureOfAgents
+from agentscope.strategy import MixtureOfAgents
 from agentscope.message import Msg
 
 
