@@ -1,107 +1,39 @@
 var serversTable;
 var agentsTable;
+var agentMemoryTable;
 var curServerId;
+var curAgentId;
+var messageEditor;
 
-function deleteServer(e, cell) {
+// Sever table functions
+
+function deleteServer(row) {
+    fetch("/api/servers/delete", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json; charset=utf-8",
+        },
+        body: JSON.stringify({
+            server_id: row.getData().id,
+            stop: row.getData().status == "running",
+        }),
+    })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Failed to delete server");
+            }
+            return response.json();
+        })
+        .then((data) => {
+            row.delete();
+        });
+}
+
+function deleteServerBtn(e, cell) {
     const serverId = cell.getData().id;
     if (confirm(`Are you sure to stop server ${serverId} ?`)) {
-        fetch(`/api/servers/delete/${serverId}`)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Failed to delete server");
-                }
-                return response.json();
-            })
-            .then((data) => {
-                cell.getRow().delete();
-            });
+        deleteServer(cell.getRow());
     }
-}
-
-function initAgentTable(serverId, data) {
-    curServerId = serverId;
-    agentsTable = new Tabulator("#agent-table", {
-        data: data,
-        columns: [
-            {
-                title: "ID",
-                field: "agent_id",
-                vertAlign: "middle",
-            },
-            {
-                title: "Name",
-                field: "name",
-                vertAlign: "middle",
-            },
-            {
-                title: "Class",
-                field: "type",
-                vertAlign: "middle",
-            },
-            {
-                title: "Model",
-                field: "model",
-                vertAlign: "middle",
-                formatter: function (cell, formatterParams, onRendered) {
-                    if (cell.getData().model == null) {
-                        return `<div class="status-tag unknown">None</div>`;
-                    }
-                    return `<div class="status-tag running">[${
-                        cell.getData().model.model_type
-                    }]: ${cell.getData().model.config_name}</div>`;
-                },
-            },
-            {
-                title: "Delete",
-                formatter: deleteIcon,
-                width: 75,
-                hozAlign: "center",
-                vertAlign: "middle",
-                cellClick: function (e, cell) {
-                    if (
-                        confirm(
-                            `Are you sure you want to delete agent ${
-                                cell.getData().id
-                            } ?`
-                        )
-                    ) {
-                        fetch(`/api/servers/agents/delete`, {
-                            method: "POST",
-                            headers: {
-                                "Content-Type":
-                                    "application/json; charset=utf-8",
-                            },
-                            body: JSON.stringify({
-                                agent_id: cell.getData().agent_id,
-                                server_id: serverId,
-                            }),
-                        })
-                            .then((response) => {
-                                return response.json();
-                            })
-                            .then((data) => {
-                                cell.getRow().delete();
-                            })
-                            .catch((error) => {
-                                console.error(
-                                    "Error when deleting agent:",
-                                    error
-                                );
-                            });
-                    }
-                },
-            },
-        ],
-        layout: "fitColumns",
-    });
-}
-
-function loadAgentDetails(serverData) {
-    var serverDetail = document.getElementById("server-detail");
-    var serverDetailTitle = serverDetail.querySelector(".server-section-title");
-    serverDetail.classList.remove("collapsed");
-    serverDetailTitle.textContent = `Agents on [${serverData.id}](${serverData.host}:${serverData.port})`;
-    getAgentTableData(serverData.id, initAgentTable);
 }
 
 function newServer() {
@@ -123,10 +55,9 @@ function deleteDeadServer() {
         let rows = serversTable.getRows();
         for (let i = 0; i < rows.length; i++) {
             let row = rows[i];
-            console.log(row.getData().status);
             if (row.getData().status == "dead") {
-                row.delete();
                 deadServerIds.push(row.getData().id);
+                deleteServer(row);
             }
         }
     } else {
@@ -136,45 +67,8 @@ function deleteDeadServer() {
     return deadServerIds;
 }
 
-function flushAgentTable(serverId, data) {
-    if (agentsTable) {
-        agentsTable.setData(data);
-        console.log("Flush Agent Table");
-    } else {
-        console.error("Agent Table is not initialized.");
-    }
-}
-
-function deleteAllAgent() {
-    let serverId = curServerId;
-    if (agentsTable) {
-        if (confirm(`Are you sure to delete all agent on ${serverId} ?`)) {
-            fetch(`/api/servers/agents/delete`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json; charset=utf-8",
-                },
-                body: JSON.stringify({
-                    server_id: serverId,
-                }),
-            })
-                .then((response) => {
-                    return response.json();
-                })
-                .then((data) => {
-                    agentsTable.clearData();
-                })
-                .catch((error) => {
-                    console.error("Error when deleting all agent:", error);
-                });
-        }
-    } else {
-        console.error("Agent Table is not initialized.");
-    }
-}
-
 function deleteIcon(cell, formatterParams, onRendered) {
-    return '<img src="/static/svg/trash-bin.svg" class="icon"/>';
+    return '<img src="/static/svg/trash-bin.svg" class="icon cell-btn"/>';
 }
 
 function getServerStatus(cell, formatterParams, onRendered) {
@@ -216,10 +110,11 @@ function getServerStatus(cell, formatterParams, onRendered) {
 }
 
 function cpuUsage(cell, formatterParams, onRendered) {
-    if (cell.getData().cpu) {
-        return `<div class="status-tag running">${cell.getData().cpu} %</div>`;
-    } else {
+    const cpu = cell.getData().cpu;
+    if (!cpu && cpu !== 0) {
         return '<div class="status-tag unknown">unknown</div>';
+    } else {
+        return `<div class="status-tag running">${cell.getData().cpu} %</div>`;
     }
 }
 
@@ -243,19 +138,6 @@ function getServerTableData(callback) {
         })
         .then((data) => {
             callback(data);
-        });
-}
-
-function getAgentTableData(serverId, callback) {
-    fetch(`/api/servers/agent_info/${serverId}`)
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("Failed to fetch agents data");
-            }
-            return response.json();
-        })
-        .then((data) => {
-            callback(serverId, data);
         });
 }
 
@@ -311,7 +193,7 @@ function initServerTable(data) {
                 formatter: deleteIcon,
                 width: 75,
                 vertAlign: "middle",
-                cellClick: deleteServer,
+                cellClick: deleteServerBtn,
             },
         ],
         layout: "fitColumns",
@@ -320,8 +202,259 @@ function initServerTable(data) {
         if (row.getData().status != "running") {
             return;
         }
+        if (e.target.classList.contains("cell-btn")) {
+            return;
+        }
         loadAgentDetails(row.getData());
     });
+}
+
+// Agent table functions
+
+function getAgentTableData(serverId, callback) {
+    fetch(`/api/servers/agent_info/${serverId}`)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Failed to fetch agents data");
+            }
+            return response.json();
+        })
+        .then((data) => {
+            callback(serverId, data);
+        });
+}
+
+function flushAgentTable(serverId, data) {
+    if (agentsTable) {
+        agentsTable.setData(data);
+        console.log("Flush Agent Table");
+    } else {
+        console.error("Agent Table is not initialized.");
+    }
+}
+
+function deleteAllAgent() {
+    let serverId = curServerId;
+    if (agentsTable) {
+        if (confirm(`Are you sure to delete all agent on ${serverId} ?`)) {
+            fetch(`/api/servers/agents/delete`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8",
+                },
+                body: JSON.stringify({
+                    server_id: serverId,
+                }),
+            })
+                .then((response) => {
+                    return response.json();
+                })
+                .then((data) => {
+                    agentsTable.clearData();
+                })
+                .catch((error) => {
+                    console.error("Error when deleting all agent:", error);
+                });
+        }
+    } else {
+        console.error("Agent Table is not initialized.");
+    }
+}
+
+function initAgentTable(serverId, data) {
+    curServerId = serverId;
+    agentsTable = new Tabulator("#agent-table", {
+        data: data,
+        columns: [
+            {
+                title: "ID",
+                field: "agent_id",
+                vertAlign: "middle",
+            },
+            {
+                title: "Name",
+                field: "name",
+                vertAlign: "middle",
+            },
+            {
+                title: "Class",
+                field: "type",
+                vertAlign: "middle",
+            },
+            {
+                title: "System prompt",
+                field: "sys_prompt",
+                vertAlign: "middle",
+            },
+            {
+                title: "Model",
+                field: "model",
+                vertAlign: "middle",
+                formatter: function (cell, formatterParams, onRendered) {
+                    if (cell.getData().model == null) {
+                        return `<div class="status-tag unknown">None</div>`;
+                    }
+                    return `<div class="status-tag running">[${
+                        cell.getData().model.model_type
+                    }]: ${cell.getData().model.config_name}</div>`;
+                },
+            },
+            {
+                title: "Delete",
+                formatter: deleteIcon,
+                width: 75,
+                hozAlign: "center",
+                vertAlign: "middle",
+                cellClick: function (e, cell) {
+                    if (
+                        confirm(
+                            `Are you sure to delete agent ${
+                                cell.getData().id
+                            } ?`
+                        )
+                    ) {
+                        fetch(`/api/servers/agents/delete`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type":
+                                    "application/json; charset=utf-8",
+                            },
+                            body: JSON.stringify({
+                                agent_id: cell.getData().agent_id,
+                                server_id: serverId,
+                            }),
+                        })
+                            .then((response) => {
+                                return response.json();
+                            })
+                            .then((data) => {
+                                cell.getRow().delete();
+                            })
+                            .catch((error) => {
+                                console.error(
+                                    "Error when deleting agent:",
+                                    error
+                                );
+                            });
+                    }
+                },
+            },
+        ],
+        layout: "fitColumns",
+    });
+    agentsTable.on("rowClick", function (e, row) {
+        if (e.target.classList.contains("cell-btn")) {
+            return;
+        }
+        loadAgentMemory(serverId, row.getData().agent_id, row.getData().name);
+    });
+}
+
+function loadAgentDetails(serverData) {
+    var serverDetail = document.getElementById("server-detail");
+    var serverDetailTitle = serverDetail.querySelector(".server-section-title");
+    serverDetailTitle.textContent = `Agents on (${serverData.host}:${serverData.port})[${serverData.id}]`;
+    serverDetail.classList.remove("collapsed");
+    var agentMemory = document.getElementById("agent-memory");
+    if (!agentMemory.classList.contains("collapsed")) {
+        agentMemory.classList.add("collapsed");
+    }
+    getAgentTableData(serverData.id, initAgentTable);
+}
+
+// agent memory functions
+
+function showMessage(message) {
+    if (messageEditor) {
+        messageEditor.setValue(JSON.stringify(message, null, 2));
+    } else {
+        console.error("Message Editor is not initialized.");
+    }
+}
+
+function loadAgentMemory(serverId, agentId, agentName) {
+    var agentMemory = document.getElementById("agent-memory");
+    var agentMemoryTitle = agentMemory.querySelector(".server-section-title");
+    agentMemoryTitle.textContent = `Memory of (${agentName})[${agentId}]`;
+    agentMemory.classList.remove("collapsed");
+    getAgentMemoryData(serverId, agentId, initAgentMemoryTable);
+}
+
+function getAgentMemoryData(serverId, agentId, callback) {
+    fetch(`/api/servers/agents/memory`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json; charset=utf-8",
+        },
+        body: JSON.stringify({
+            server_id: serverId,
+            agent_id: agentId,
+        }),
+    })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Failed to fetch agent memory data");
+            }
+            return response.json();
+        })
+        .then((data) => {
+            // Update the agent memory table with the fetched data
+            callback(agentId, data);
+        });
+}
+
+function initAgentMemoryTable(agentId, memoryData) {
+    agentMemoryTable = new Tabulator("#agent-memory-table", {
+        data: memoryData,
+        columns: [
+            {
+                title: "Name",
+                field: "name",
+                vertAlign: "middle",
+            },
+            {
+                title: "Role",
+                field: "role",
+                vertAlign: "middle",
+            },
+        ],
+        layout: "fitColumns",
+    });
+    agentMemoryTable.on("rowClick", function (e, row) {
+        showMessage(row.getData());
+    });
+    require.config({
+        paths: {
+            vs: "https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs",
+        },
+    });
+    require(["vs/editor/editor.main"], function () {
+        if (messageEditor) {
+            messageEditor.dispose();
+            messageEditor = null;
+        }
+        messageEditor = monaco.editor.create(
+            document.getElementById("agent-memory-raw"),
+            {
+                language: "json",
+                theme: "vs-light",
+                minimap: {
+                    enabled: false,
+                },
+                scrollBeyondLastLine: false,
+                readOnly: true,
+            }
+        );
+    });
+}
+
+function flushAgentMemoryTable(agentId, data) {
+    if (agentMemoryTable) {
+        agentMemoryTable.setData(data);
+        console.log("Flush Agent Memory Table");
+    } else {
+        console.error("Agent Memory Table is not initialized.");
+    }
 }
 
 // Initialize the server page with a table of servers
@@ -342,4 +475,9 @@ function initializeServerPage() {
     };
     let deleteAllAgentBtn = document.getElementById("delete-all-agent-btn");
     deleteAllAgentBtn.onclick = deleteAllAgent;
+    window.addEventListener("resize", () => {
+        if (messageEditor) {
+            messageEditor.layout();
+        }
+    });
 }

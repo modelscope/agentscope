@@ -188,9 +188,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
         """
         self.name = name
         self.memory_config = memory_config
-
-        if sys_prompt is not None:
-            self.sys_prompt = sys_prompt
+        self.sys_prompt = sys_prompt
 
         # TODO: support to receive a ModelWrapper instance
         if model_config_name is not None:
@@ -387,6 +385,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
         serialized_fields = {
             "name": self.name,
             "type": self.__class__.__name__,
+            "sys_prompt": self.sys_prompt,
             "agent_id": self.agent_id,
         }
         if hasattr(self, "model"):

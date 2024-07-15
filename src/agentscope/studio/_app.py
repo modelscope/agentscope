@@ -307,10 +307,13 @@ def _get_server_status(server_id: str) -> Response:
         )
 
 
-@_app.route("/api/servers/delete/<server_id>", methods=["GET"])
-def _delete_server(server_id: str) -> Response:
+@_app.route("/api/servers/delete", methods=["POST"])
+def _delete_server() -> Response:
+    server_id = request.json.get("server_id")
+    stop_server = request.json.get("stop", False)
     server = _ServerTable.query.filter_by(id=server_id).first()
-    RpcAgentClient(host=server.host, port=server.port).stop()
+    if stop_server:
+        RpcAgentClient(host=server.host, port=server.port).stop()
     _ServerTable.query.filter_by(id=server_id).delete()
     _db.session.commit()
     return jsonify({"status": "ok"})
@@ -329,7 +332,6 @@ def _get_server_agent_info(server_id: str) -> Response:
 
 @_app.route("/api/servers/agents/delete", methods=["POST"])
 def _delete_agent() -> Response:
-    _app.logger.info(f"Delete agent {request.json}")
     server_id = request.json.get("server_id")
     agent_id = request.json.get("agent_id", None)
     server = _ServerTable.query.filter_by(id=server_id).first()
@@ -344,6 +346,19 @@ def _delete_agent() -> Response:
             port=server.port,
         ).delete_all_agent()
     return jsonify(status="ok" if ok else "fail")
+
+
+@_app.route("/api/servers/agents/memory", methods=["POST"])
+def _agent_memory() -> Response:
+    server_id = request.json.get("server_id")
+    agent_id = request.json.get("agent_id")
+    server = _ServerTable.query.filter_by(id=server_id).first()
+    mem = RpcAgentClient(host=server.host, port=server.port).get_agent_memory(
+        agent_id,
+    )
+    if isinstance(mem, dict):
+        mem = [mem]
+    return jsonify(mem)
 
 
 @_app.route("/api/messages/push", methods=["POST"])

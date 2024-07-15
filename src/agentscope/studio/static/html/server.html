@@ -11,12 +11,6 @@
             <div class="server-section-title-bar">
                 <span>Servers</span>
                 <img
-                    src="/static/svg/circle-add.svg"
-                    class="icon"
-                    id="new-server-btn"
-                    onclick="newServer()"
-                />
-                <img
                     src="/static/svg/flush.svg"
                     id="flush-server-btn"
                     class="icon"
@@ -33,11 +27,6 @@
             <div class="server-section-title-bar">
                 <span class="server-section-title"></span>
                 <img
-                    src="/static/svg/circle-add.svg"
-                    class="icon"
-                    id="new-agent-btn"
-                />
-                <img
                     src="/static/svg/flush.svg"
                     class="icon"
                     id="flush-agent-btn"
@@ -49,6 +38,20 @@
                 />
             </div>
             <div id="agent-table"></div>
+        </div>
+        <div id="agent-memory" class="server-section collapsed">
+            <div class="server-section-title-bar">
+                <span class="server-section-title"></span>
+                <img
+                    src="/static/svg/flush.svg"
+                    class="icon"
+                    id="flush-agent-btn"
+                />
+            </div>
+            <div id="agent-memory-content">
+                <div id="agent-memory-table"></div>
+                <div id="agent-memory-raw"></div>
+            </div>
         </div>
     </div>
 </div>

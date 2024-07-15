@@ -200,14 +200,12 @@ async def _setup_agent_server_async(
     if start_event is not None:
         pipe.send(port)
         start_event.set()
-        while not stop_event.is_set():
-            await asyncio.sleep(1)
-        logger.info(
-            f"Stopping agent server at [{host}:{port}]",
-        )
-        await server.stop(grace=10.0)
-    else:
-        await server.wait_for_termination()
+    while not stop_event.is_set():
+        await asyncio.sleep(1)
+    logger.info(
+        f"Stopping agent server at [{host}:{port}]",
+    )
+    await server.stop(grace=10.0)
     logger.info(
         f"agent server [{server_id}] at {host}:{port} stopped successfully",
     )

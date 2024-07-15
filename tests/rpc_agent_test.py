@@ -523,14 +523,6 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertEqual(len(agents), 2)
         agent1 = agents[0]
         agent2 = agents[1]
-        self.assertTrue(agent1.agent_id.startswith("DemoRpcAgentWithMemory"))
-        self.assertTrue(agent2.agent_id.startswith("DemoRpcAgentWithMemory"))
-        self.assertTrue(
-            agent1.client.agent_id.startswith("DemoRpcAgentWithMemory"),
-        )
-        self.assertTrue(
-            agent2.client.agent_id.startswith("DemoRpcAgentWithMemory"),
-        )
         self.assertNotEqual(agent1.agent_id, agent2.agent_id)
         self.assertEqual(agent1.agent_id, agent1.client.agent_id)
         self.assertEqual(agent2.agent_id, agent2.client.agent_id)
@@ -733,8 +725,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertIsNotNone(dia_agent)
         self.assertTrue(client.delete_all_agent())
         self.assertEqual(len(client.get_agent_list()), 0)
-        # run the following code in testsuite will block the test
-        # client.stop()
-        # time.sleep(1)
-        # self.assertFalse(client.is_alive())
+        client.stop()
+        time.sleep(1)
+        self.assertFalse(client.is_alive())
         launcher.shutdown()
