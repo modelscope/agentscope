@@ -37,6 +37,7 @@ class AnswererAgent(AgentBase):
             return Msg(
                 self.name,
                 content=f"Unable to load web page [{x.url}].",
+                role="system",
                 url=x.url,
             )
         # prepare prompt
@@ -54,7 +55,7 @@ class AnswererAgent(AgentBase):
         )
         # call llm and generate response
         response = self.model(prompt).text
-        msg = Msg(self.name, content=response, url=x.url)
+        msg = Msg(self.name, content=response, role="assistant", url=x.url)
 
         self.speak(msg)
 

@@ -1,246 +1,184 @@
 # -*- coding: utf-8 -*-
-"""
-Memory module for conversation
-"""
-
-import json
-import os
-from typing import Iterable, Sequence
-from typing import Optional
-from typing import Union
-from typing import Callable
+"""The in-memory store for memory, which stores the memory in a list, as well
+as a temporary memory class that inherits from the in-memory store and memory
+actions."""
+from typing import Optional, Callable, Union
 
 from loguru import logger
 
-from .memory import MemoryBase
-from ..models import load_model_by_config_name
-from ..service.retrieval.retrieval_from_list import retrieve_from_list
-from ..service.retrieval.similarity import Embedding
-from ..message import (
-    deserialize,
-    serialize,
-    MessageBase,
-    Msg,
-    PlaceholderMessage,
-)
+from . import MemoryActions
+from ..constants import Embedding
+from ..memory import MemoryStoreBase
+from ..message import Msg, msg_serialize, msg_deserialize
+from ..models import load_model_by_config_name, ModelResponse
+from ..service import retrieve_from_list
 
 
-class TemporaryMemory(MemoryBase):
-    """
-    In-memory memory module, not writing to hard disk
-    """
+class InMemoryStore(MemoryStoreBase):
+    """The in-memory store for memory, which stores the memory in a list."""
 
     def __init__(
         self,
-        config: Optional[dict] = None,
-        embedding_model: Union[str, Callable] = None,
+        embedding_model: Optional[Union[str, Callable]] = None,
     ) -> None:
-        """
-        Temporary memory module for conversation.
-        Args:
-            config (dict):
-                configuration of the memory
-            embedding_model (Union[str, Callable])
-                if the temporary memory needs to be embedded,
-                then either pass the name of embedding model or
-                the embedding model itself.
-        """
-        super().__init__(config)
+        """Initialize the in-memory store.
 
+        Args:
+            embedding_model (`Optional[Union[str, Callable]]`,
+            defaults to `None`):
+                The embedding model to embed the memory unit. If not provided,
+                the memory unit will not be embedded.
+        """
+
+        # The memory store
         self._content = []
+        # The embeddings of the memory store
+        self._embeddings = []
 
         # prepare embedding model if needed
         if isinstance(embedding_model, str):
-            self.embedding_model = load_model_by_config_name(embedding_model)
+            self.embedding_model = load_model_by_config_name(
+                embedding_model,
+            )
         else:
             self.embedding_model = embedding_model
 
-    def add(
-        self,
-        memories: Union[Sequence[Msg], Msg, None],
-        embed: bool = False,
-    ) -> None:
-        # pylint: disable=too-many-branches
-        """
-        Adding new memory fragment, depending on how the memory are stored
+    def _insert(self, msg: Msg, index: int = -1) -> None:
+        """Insert a new memory unit
+
         Args:
-            memories (`Union[Sequence[Msg], Msg, None]`):
-                Memories to be added.
-            embed (`bool`):
-                Whether to generate embedding for the new added memories
+            msg (`Msg`):
+                The memory unit to be inserted.
+            index (`int`, defaults to `-1`):
+                The index to insert the memory unit. If the index is `-1`, the
+                memory unit will be appended to the memory store
         """
-        if memories is None:
-            return
+        self._content.append(msg)
 
-        if not isinstance(memories, Sequence):
-            record_memories = [memories]
-        else:
-            record_memories = memories
+        if self.embedding_model is not None:
+            self._embeddings.append(self._get_embedding(msg))
 
-        # if memory doesn't have id attribute, we skip the checking
-        memories_idx = set(_.id for _ in self._content if hasattr(_, "id"))
-        for memory_unit in record_memories:
-            if not issubclass(type(memory_unit), MessageBase):
-                try:
-                    memory_unit = Msg(**memory_unit)
-                except Exception as exc:
-                    raise ValueError(
-                        f"Cannot add {memory_unit} to memory, "
-                        f"must be with subclass of MessageBase",
-                    ) from exc
+    def _delete(self, index: int) -> None:
+        """Delete a memory unit by index
 
-            # in case this is a PlaceholderMessage, try to update
-            # the values first
-            if isinstance(memory_unit, PlaceholderMessage):
-                memory_unit.update_value()
-                memory_unit = Msg(**memory_unit)
-
-            # add to memory if it's new
-            if (
-                not hasattr(memory_unit, "id")
-                or memory_unit.id not in memories_idx
-            ):
-                if embed:
-                    if self.embedding_model:
-                        # TODO: embed only content or its string representation
-                        memory_unit.embedding = self.embedding_model(
-                            [memory_unit],
-                            return_embedding_only=True,
-                        )
-                    else:
-                        raise RuntimeError("Embedding model is not provided.")
-                self._content.append(memory_unit)
-
-    def delete(self, index: Union[Iterable, int]) -> None:
-        """
-        Delete memory fragment, depending on how the memory are stored
-        and matched
         Args:
-            index (Union[Iterable, int]):
-                indices of the memory fragments to delete
+            index (`int`):
+                The index of the memory unit to be deleted.
         """
-        if self.size() == 0:
-            logger.warning(
-                "The memory is empty, and the delete operation is "
-                "skipping.",
-            )
-            return
+        self._content.pop(index)
 
-        if isinstance(index, int):
-            index = [index]
+        if self.embedding_model is not None:
+            self._embeddings.pop(index)
 
-        if isinstance(index, list):
-            index = set(index)
+    def _get(self, index: int) -> Msg:
+        """Get a memory unit by index
 
-            invalid_index = [_ for _ in index if _ >= self.size() or _ < 0]
-            if len(invalid_index) > 0:
-                logger.warning(
-                    f"Skip delete operation for the invalid "
-                    f"index {invalid_index}",
-                )
-
-            self._content = [
-                _ for i, _ in enumerate(self._content) if i not in index
-            ]
-        else:
-            raise NotImplementedError(
-                "index type only supports {None, int, list}",
-            )
-
-    def export(
-        self,
-        file_path: Optional[str] = None,
-        to_mem: bool = False,
-    ) -> Optional[list]:
-        """
-        Export memory, depending on how the memory are stored
         Args:
-            file_path (Optional[str]):
-                file path to save the memory to. The messages will
-                be serialized and written to the file.
-            to_mem (Optional[str]):
-                if True, just return the list of messages in memory
-        Notice: this method prevents file_path is None when to_mem
-        is False.
+            index (`int`):
+                The index of the memory unit to be retrieved.
         """
-        if to_mem:
-            return self._content
+        return self._content[index]
 
-        if to_mem is False and file_path is not None:
-            with open(file_path, "w", encoding="utf-8") as f:
-                f.write(serialize(self._content))
-        else:
-            raise NotImplementedError(
-                "file type only supports "
-                "{json, yaml, pkl}, default is json",
-            )
-        return None
+    def _update(self, index: int, new_msg: Msg) -> None:
+        """Update a memory unit by index
 
-    def load(
-        self,
-        memories: Union[str, list[Msg], Msg],
-        overwrite: bool = False,
-    ) -> None:
-        """
-        Load memory, depending on how the memory are passed, design to load
-        from both file or dict
         Args:
-            memories (Union[str, list[Msg], Msg]):
-                memories to be loaded.
-                If it is in str type, it will be first checked if it is a
-                file; otherwise it will be deserialized as messages.
-                Otherwise, memories must be either in message type or list
-                 of messages.
-            overwrite (bool):
-                if True, clear the current memory before loading the new ones;
-                if False, memories will be appended to the old one at the end.
+            index (`int`):
+                The index of the memory unit to be updated.
+            new_msg (`Msg`):
+                The new memory unit to replace the old one
         """
-        if isinstance(memories, str):
-            if os.path.isfile(memories):
-                with open(memories, "r", encoding="utf-8") as f:
-                    load_memories = deserialize(f.read())
-            else:
-                try:
-                    load_memories = deserialize(memories)
-                    if not isinstance(load_memories, dict) and not isinstance(
-                        load_memories,
-                        list,
-                    ):
-                        logger.warning(
-                            "The memory loaded by json.loads is "
-                            "neither a dict nor a list, which may "
-                            "cause unpredictable errors.",
-                        )
-                except json.JSONDecodeError as e:
-                    raise json.JSONDecodeError(
-                        f"Cannot load [{memories}] via " f"json.loads.",
-                        e.doc,
-                        e.pos,
-                    )
-        else:
-            load_memories = memories
+        self._content[index] = new_msg
 
-        # overwrite the original memories after loading the new ones
-        if overwrite:
-            self.clear()
+        # Update the embedding if the embedding model is provided
+        if self.embedding_model is not None:
+            self._embeddings[index] = self._get_embedding(new_msg)
 
-        self.add(load_memories)
-
-    def clear(self) -> None:
-        """Clean memory, depending on how the memory are stored"""
-        self._content = []
-
-    def size(self) -> int:
-        """Returns the number of memory segments in memory."""
+    def _size(self) -> int:
+        """The size of the memory store"""
         return len(self._content)
 
-    def retrieve_by_embedding(
+    def _clear(self) -> None:
+        """Clear the memory store"""
+        self._content = []
+        self._embeddings = []
+
+    def _contain(self, msg_id: str) -> bool:
+        """Check if the memory store contains a memory unit by msg id
+
+        Args:
+            msg_id (`str`):
+                The id of the memory unit to be checked.
+        """
+        for _ in range(self._size()):
+            if self._get(_).id == msg_id:
+                return True
+        return False
+
+    def _export(self, file_path: Optional[str] = None) -> str:
+        """Export the memory store to a file
+
+        Args:
+            file_path (`Optional[str]`, defaults to `None`):
+                The file path to save the memory store
+        """
+        serialized_msgs: str = msg_serialize(self._content)
+
+        if file_path is not None:
+            with open(file_path, "w", encoding="utf-8") as file:
+                file.write(serialized_msgs)
+
+        return serialized_msgs
+
+    def _load(
+        self,
+        file_path: str,
+        overwrite: bool = True,
+        embedding: bool = False,
+    ) -> None:
+        """Load the memory from a file
+
+        Args:
+            file_path (`str`):
+                The file path to load the memory from.
+            overwrite (`bool`, defaults to `True`):
+                Whether to overwrite the current memory store.
+            embedding (`bool`， defaults to `False`):
+                Whether to embed the memory units. Only available when the
+                embedding model is provided.
+        """
+        # Load the memory from the file
+        with open(file_path, "r", encoding="utf-8") as file:
+            loaded_memory = msg_deserialize(file.read())
+        if isinstance(loaded_memory, list):
+            loaded_memory = [loaded_memory]
+
+        # Handle the embedding if needed
+        loaded_embeddings = []
+        if embedding:
+            if self.embedding_model is None:
+                logger.warning(
+                    "Embedding model is not provided. Skip embedding.",
+                )
+            else:
+                for msg in loaded_memory:
+                    loaded_embeddings.append(self._get_embedding(msg))
+
+        # Overwrite the memory store if needed
+        if overwrite:
+            self._clear()
+            self._content = loaded_memory
+            self._embeddings = loaded_embeddings
+        else:
+            self._content.extend(loaded_memory)
+            self._embeddings.extend(loaded_embeddings)
+
+    def _retrieve_by_embedding(
         self,
         query: Union[str, Embedding],
         metric: Callable[[Embedding, Embedding], float],
         top_k: int = 1,
         preserve_order: bool = True,
-        embedding_model: Callable[[Union[str, dict]], Embedding] = None,
     ) -> list[dict]:
         """Retrieve memory by their embeddings.
 
@@ -256,10 +194,6 @@ class TemporaryMemory(MemoryBase):
             preserve_order (`bool`, defaults to `True`):
                 Whether to preserve the original order of the retrieved memory
                 units.
-            embedding_model (`Callable[[Union[str, dict]], Embedding]`, \
-                defaults to `None`):
-                A callable object to embed the memory unit. If not provided, it
-                will use the default embedding model.
 
         Returns:
             `list[dict]`: a list of retrieved memory units in
@@ -268,7 +202,7 @@ class TemporaryMemory(MemoryBase):
 
         retrieved_items = retrieve_from_list(
             query,
-            self.get_embeddings(embedding_model or self.embedding_model),
+            self._embeddings,
             metric,
             top_k,
             self.embedding_model,
@@ -288,63 +222,45 @@ class TemporaryMemory(MemoryBase):
 
         return response
 
-    def get_embeddings(
-        self,
-        embedding_model: Callable[[Union[str, dict]], Embedding] = None,
-    ) -> list:
-        """Get embeddings of all memory units. If `embedding_model` is
-        provided, the memory units that doesn't have `embedding` attribute
-        will be embedded. Otherwise, its embedding will be `None`.
+    def _get_embedding(self, msg: Msg) -> Embedding:
+        """Get embedding of a message unit.
 
         Args:
-            embedding_model
-                (`Callable[[Union[str, dict]], Embedding]`, defaults to
-                `None`):
-                Embedding model or embedding vector.
+            msg (`Msg`):
+                The message unit to be embedded.
 
         Returns:
-            `list[Union[Embedding, None]]`: List of embeddings or None.
+            `Embedding`: The embedding of the message unit.
         """
-        embeddings = []
-        for memory_unit in self._content:
-            if memory_unit.embedding is None and embedding_model is not None:
-                # embedding
-                # TODO: embed only content or its string representation
-                memory_unit.embedding = embedding_model(memory_unit)
-            embeddings.append(memory_unit.embedding)
-        return embeddings
+        # Raise error if the embedding model is not provided
+        if self.embedding_model is None:
+            raise ModuleNotFoundError(
+                "The embedding model is not provided during initialization.",
+            )
 
-    def get_memory(
+        response = self.embedding_model(msg_serialize(msg))
+
+        if isinstance(response, ModelResponse):
+            return response.content
+        else:
+            return response
+
+
+class TemporaryMemory(InMemoryStore, MemoryActions):
+    """The temporary memory class that inherits from the in-memory store and
+    memory actions."""
+
+    def __init__(
         self,
-        recent_n: Optional[int] = None,
-        filter_func: Optional[Callable[[int, dict], bool]] = None,
-    ) -> list:
-        """Retrieve memory.
+        embedding_model: Optional[Union[str, Callable]] = None,
+    ) -> None:
+        """Initialize the temporary memory object.
 
         Args:
-            recent_n (`Optional[int]`, default `None`):
-                The last number of memories to return.
-            filter_func
-                (`Callable[[int, dict], bool]`, default to `None`):
-                The function to filter memories, which take the index and
-                memory unit as input, and return a boolean value.
+            embedding_model (`Optional[str, Callable]`, defaults to `None`):
+                The embedding model to embed the memory unit. If not provided,
+                the memory unit will not be embedded.
         """
-        # extract the recent `recent_n` entries in memories
-        if recent_n is None:
-            memories = self._content
-        else:
-            if recent_n > self.size():
-                logger.warning(
-                    "The retrieved number of memories {} is "
-                    "greater than the total number of memories {"
-                    "}",
-                    recent_n,
-                    self.size(),
-                )
-            memories = self._content[-recent_n:]
 
-        # filter the memories
-        if filter_func is not None:
-            memories = [_ for i, _ in enumerate(memories) if filter_func(i, _)]
-
-        return memories
+        InMemoryStore.__init__(self, embedding_model)
+        MemoryActions.__init__(self)

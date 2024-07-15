@@ -5,8 +5,8 @@ from typing import Type, Optional, Union, Sequence
 from agentscope.agents.agent import AgentBase
 from agentscope.message import (
     PlaceholderMessage,
-    serialize,
     Msg,
+    msg_serialize,
 )
 from agentscope.rpc import RpcAgentClient
 from agentscope.server.launcher import RpcAgentServerLauncher
@@ -109,19 +109,24 @@ class RpcAgent(AgentBase):
     def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         if self.client is None:
             self._launch_server()
+
+        stub = call_in_thread(
+            client,
+            msg_serialize(x),
+            "_reply",
+        )
+
         return PlaceholderMessage(
-            name=self.name,
-            content=None,
             client=self.client,
             x=x,
         )
 
-    def observe(self, x: Union[dict, Sequence[dict]]) -> None:
+    def observe(self, x: Union[Msg, Sequence[Msg]]) -> None:
         if self.client is None:
             self._launch_server()
         self.client.call_func(
             func_name="_observe",
-            value=serialize(x),  # type: ignore[arg-type]
+            value=msg_serialize(x),
         )
 
     def clone_instances(

@@ -182,7 +182,7 @@ class LlamaIndexAgent(AgentBase):
 
         # call llm and generate response
         response = self.model(prompt).text
-        msg = Msg(self.name, response)
+        msg = Msg(self.name, response, "assistant")
 
         # Print/speak the message in this agent's voice
         self.speak(msg)

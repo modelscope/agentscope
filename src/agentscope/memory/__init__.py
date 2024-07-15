@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
-
-"""
-import al memory related modules
-"""
-
-from .memory import MemoryBase
+"""Import all memory related modules."""
+from .action_base import MemoryActions
+from .store_base import MemoryStoreBase
 from .temporary_memory import TemporaryMemory
 
 __all__ = [
-    "MemoryBase",
+    "MemoryStoreBase",
+    "MemoryActions",
     "TemporaryMemory",
 ]

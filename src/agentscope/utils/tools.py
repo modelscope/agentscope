@@ -12,6 +12,8 @@ import random
 from typing import Any, Literal, List, Optional
 
 from urllib.parse import urlparse
+from uuid import uuid4
+
 import psutil
 import requests
 
@@ -214,6 +216,11 @@ def _download_file(url: str, path_file: str, max_retries: int = 3) -> bool:
                 f"{response.status_code}). Retry {n_retry}/{max_retries}.",
             )
     return False
+
+
+def _generate_msg_id() -> str:
+    """Generate a message id."""
+    return uuid4().hex
 
 
 def _generate_random_code(

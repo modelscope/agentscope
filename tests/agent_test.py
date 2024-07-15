@@ -26,9 +26,6 @@ class TestAgent(AgentBase):
             use_memory=(
                 kwargs["use_memory"] if "use_memory" in kwargs else None
             ),
-            memory_config=(
-                kwargs["memory_config"] if "memory_config" in kwargs else None
-            ),
         )
 
 

@@ -141,7 +141,6 @@ class AgentBase(Operator, metaclass=_AgentMeta):
         sys_prompt: Optional[str] = None,
         model_config_name: str = None,
         use_memory: bool = True,
-        memory_config: Optional[dict] = None,
         to_dist: Optional[Union[DistConf, bool]] = False,
     ) -> None:
         r"""Initialize an agent from the given arguments.
@@ -157,8 +156,6 @@ class AgentBase(Operator, metaclass=_AgentMeta):
                 configuration.
             use_memory (`bool`, defaults to `True`):
                 Whether the agent has memory.
-            memory_config (`Optional[dict]`):
-                The config of memory.
             to_dist (`Optional[Union[DistConf, bool]]`, default to `False`):
                 The configurations passed to :py:meth:`to_dist` method. Used in
                 :py:class:`_AgentMeta`, when this parameter is provided,
@@ -186,7 +183,6 @@ class AgentBase(Operator, metaclass=_AgentMeta):
                 See :doc:`Tutorial<tutorial/208-distribute>` for detail.
         """
         self.name = name
-        self.memory_config = memory_config
 
         if sys_prompt is not None:
             self.sys_prompt = sys_prompt
@@ -196,7 +192,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
             self.model = load_model_by_config_name(model_config_name)
 
         if use_memory:
-            self.memory = TemporaryMemory(memory_config)
+            self.memory = TemporaryMemory()
         else:
             self.memory = None
 
@@ -290,7 +286,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
     def load_memory(self, memory: Sequence[dict]) -> None:
         r"""Load input memory."""
 
-    def __call__(self, *args: Any, **kwargs: Any) -> dict:
+    def __call__(self, *args: Any, **kwargs: Any) -> Msg:
         """Calling the reply function, and broadcast the generated
         response to all audiences if needed."""
         res = self.reply(*args, **kwargs)
@@ -331,11 +327,11 @@ class AgentBase(Operator, metaclass=_AgentMeta):
 
         logger.chat(msg)
 
-    def observe(self, x: Union[dict, Sequence[dict]]) -> None:
+    def observe(self, x: Union[Msg, Sequence[Msg]]) -> None:
         """Observe the input, store it in memory without response to it.
 
         Args:
-            x (`Union[dict, Sequence[dict]]`):
+            x (`Union[Msg, Sequence[Msg]]`):
                 The input message to be recorded in memory.
         """
         if self.memory:
@@ -377,7 +373,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
                     f"audience for its inexistence.",
                 )
 
-    def _broadcast_to_audience(self, x: dict) -> None:
+    def _broadcast_to_audience(self, x: Msg) -> None:
         """Broadcast the input to all audiences."""
         for agent in self._audience:
             agent.observe(x)

@@ -34,10 +34,10 @@ class MsgHubTest(unittest.TestCase):
 
     def test_msghub_operation(self) -> None:
         """Test add, delete and broadcast operations"""
-        msg1 = Msg(name="a1", content="msg1")
-        msg2 = Msg(name="a2", content="msg2")
-        msg3 = Msg(name="a3", content="msg3")
-        msg4 = Msg(name="a4", content="msg4")
+        msg1 = Msg(name="a1", content="msg1", role="assistant")
+        msg2 = Msg(name="a2", content="msg2", role="assistant")
+        msg3 = Msg(name="a3", content="msg3", role="assistant")
+        msg4 = Msg(name="a4", content="msg4", role="assistant")
 
         with msghub(participants=[self.agent1, self.agent2]) as hub:
             self.agent1(msg1)

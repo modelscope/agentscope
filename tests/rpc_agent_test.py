@@ -15,7 +15,7 @@ from agentscope.agents import AgentBase, DistConf
 from agentscope.server import RpcAgentServerLauncher
 from agentscope.message import Msg
 from agentscope.message import PlaceholderMessage
-from agentscope.message import deserialize
+from agentscope.message import msg_deserialize
 from agentscope.msghub import msghub
 from agentscope.pipelines import sequentialpipeline
 from agentscope.utils import MonitorFactory, QuotaExceededError
@@ -190,7 +190,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertEqual(result["name"], "a")
         js_placeholder_result = result.serialize()
         self.assertTrue(result._is_placeholder)  # pylint: disable=W0212
-        placeholder_result = deserialize(js_placeholder_result)
+        placeholder_result = msg_deserialize(js_placeholder_result)
         self.assertTrue(isinstance(placeholder_result, PlaceholderMessage))
         self.assertEqual(placeholder_result.name, "a")
         self.assertEqual(
@@ -214,7 +214,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertEqual(placeholder_result.id, 0)
         # check msg
         js_msg_result = result.serialize()
-        msg_result = deserialize(js_msg_result)
+        msg_result = msg_deserialize(js_msg_result)
         self.assertTrue(isinstance(msg_result, Msg))
         self.assertEqual(msg_result.content, msg.content)
         self.assertEqual(msg_result.id, 0)
@@ -460,21 +460,45 @@ class BasicRpcAgentTest(unittest.TestCase):
         )
         agent3._agent_id = agent1.agent_id  # pylint: disable=W0212
         agent3.client.agent_id = agent1.client.agent_id
-        msg1 = Msg(name="System", content="First Msg for agent1")
+        msg1 = Msg(
+            name="System",
+            content="First Msg for agent1",
+            role="assistant",
+        )
         res1 = agent1(msg1)
         self.assertEqual(res1.content["mem_size"], 1)
-        msg2 = Msg(name="System", content="First Msg for agent2")
+
+        msg2 = Msg(
+            name="System",
+            content="First Msg for agent2",
+            role="assistant",
+        )
         res2 = agent2(msg2)
         self.assertEqual(res2.content["mem_size"], 1)
-        msg3 = Msg(name="System", content="First Msg for agent3")
+
+        msg3 = Msg(
+            name="System",
+            content="First Msg for agent3",
+            role="assistant",
+        )
         res3 = agent3(msg3)
         self.assertEqual(res3.content["mem_size"], 3)
-        msg4 = Msg(name="System", content="Second Msg for agent2")
+
+        msg4 = Msg(
+            name="System",
+            content="Second Msg for agent2",
+            role="assistant",
+        )
         res4 = agent2(msg4)
         self.assertEqual(res4.content["mem_size"], 3)
+
         # delete existing agent
         agent2.client.delete_agent()
-        msg2 = Msg(name="System", content="First Msg for agent2")
+        msg2 = Msg(
+            name="System",
+            content="First Msg for agent2",
+            role="assistant",
+        )
         res2 = agent2(msg2)
         self.assertRaises(ValueError, res2.__getattr__, "content")
 
@@ -485,7 +509,11 @@ class BasicRpcAgentTest(unittest.TestCase):
             host="127.0.0.1",
             port=launcher.port,
         )
-        msg5 = Msg(name="System", content="Second Msg for agent4")
+        msg5 = Msg(
+            name="System",
+            content="Second Msg for agent4",
+            role="assistant",
+        )
         res5 = agent4(msg5)
         self.assertEqual(res5.name, "b")
         self.assertEqual(res5.content["mem_size"], 1)
@@ -521,10 +549,18 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertIsNotNone(agent.server_launcher)
         self.assertIsNotNone(agent1.server_launcher)
         self.assertIsNone(agent2.server_launcher)
-        msg1 = Msg(name="System", content="First Msg for agent1")
+        msg1 = Msg(
+            name="System",
+            content="First Msg for agent1",
+            role="assistant",
+        )
         res1 = agent1(msg1)
         self.assertEqual(res1.content["mem_size"], 1)
-        msg2 = Msg(name="System", content="First Msg for agent2")
+        msg2 = Msg(
+            name="System",
+            content="First Msg for agent2",
+            role="assistant",
+        )
         res2 = agent2(msg2)
         self.assertEqual(res2.content["mem_size"], 1)
         new_agents = agent.clone_instances(2, including_self=False)
@@ -535,10 +571,18 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertNotEqual(agent4.agent_id, agent.agent_id)
         self.assertIsNone(agent3.server_launcher)
         self.assertIsNone(agent4.server_launcher)
-        msg3 = Msg(name="System", content="First Msg for agent3")
+        msg3 = Msg(
+            name="System",
+            content="First Msg for agent3",
+            role="assistant",
+        )
         res3 = agent3(msg3)
         self.assertEqual(res1.content["mem_size"], 1)
-        msg4 = Msg(name="System", content="First Msg for agent4")
+        msg4 = Msg(
+            name="System",
+            content="First Msg for agent4",
+            role="assistant",
+        )
         res4 = agent4(msg4)
         self.assertEqual(res3.content["mem_size"], 1)
         self.assertEqual(res4.content["mem_size"], 1)

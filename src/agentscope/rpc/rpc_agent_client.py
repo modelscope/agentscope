@@ -94,7 +94,7 @@ class RpcAgentClient:
 
 
 class ResponseStub:
-    """A stub used to save the response of an rpc call in a sub-thread."""
+    """A stub used to save the response of a rpc call in a sub-thread."""
 
     def __init__(self) -> None:
         self.response = None
@@ -122,9 +122,12 @@ def call_in_thread(
     """Call rpc function in a sub-thread.
 
     Args:
-        client (`RpcAgentClient`): the rpc client.
-        x (`str`): the value of the reqeust.
-        func_name (`str`): the name of the function being called.
+        client (`RpcAgentClient`):
+            The rpc client.
+        value (`str`):
+            The value of the request.
+        func_name (`str`):
+            The name of the remote function to be called.
 
     Returns:
         `ResponseStub`: a stub to get the response.

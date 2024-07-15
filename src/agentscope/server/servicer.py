@@ -34,7 +34,7 @@ from ..rpc.rpc_agent_pb2_grpc import RpcAgentServicer
 from ..message import (
     Msg,
     PlaceholderMessage,
-    deserialize,
+    msg_deserialize,
 )
 
 
@@ -209,24 +209,20 @@ class AgentServerServicer(RpcAgentServicer):
             `RpcMsg`: A serialized Msg instance with attributes name, host,
             port and task_id
         """
-        if request.value:
-            msg = deserialize(request.value)
-        else:
-            msg = None
+        msg = msg_deserialize(request.value)
+
         task_id = self.get_task_id()
         self.result_pool[task_id] = threading.Condition()
+
         self.executor.submit(
             self.process_messages,
             task_id,
             request.agent_id,
-            msg,  # type: ignore[arg-type]
+            msg,
         )
+
         return RpcMsg(
-            value=Msg(  # type: ignore[arg-type]
-                name=self.agent_pool[request.agent_id].name,
-                content=None,
-                task_id=task_id,
-            ).serialize(),
+            value=task_id,
         )
 
     def _get(self, request: RpcMsg) -> RpcMsg:
@@ -263,7 +259,7 @@ class AgentServerServicer(RpcAgentServicer):
         Returns:
             `RpcMsg`: Empty RpcMsg.
         """
-        msgs = deserialize(request.value)
+        msgs = msg_deserialize(request.value)
         for msg in msgs:
             if isinstance(msg, PlaceholderMessage):
                 msg.update_value()
@@ -334,13 +330,18 @@ class AgentServerServicer(RpcAgentServicer):
         """
         if isinstance(task_msg, PlaceholderMessage):
             task_msg.update_value()
+
         cond = self.result_pool[task_id]
         try:
             result = self.agent_pool[agent_id].reply(task_msg)
             self.result_pool[task_id] = result
+
         except Exception:
             error_msg = traceback.format_exc()
             logger.error(f"Error in agent [{agent_id}]:\n{error_msg}")
+            self.result_pool[task_id] = {
+                "name"
+            }
             self.result_pool[task_id] = Msg(
                 name="ERROR",
                 role="assistant",
