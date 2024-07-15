@@ -34,6 +34,9 @@ agent = WebVoyagerAgent(
 
 user = UserAgent("user")
 
-question_msg = user(None)
-
-ans_msg = agent.reply(question_msg)
+x = user(None)
+while x is not None:
+    x = agent.reply(x)
+    x = user(x)
+    if x.content == "exit":  # type exit to break
+        break
