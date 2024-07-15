@@ -3,7 +3,7 @@
 # default values
 base_port=12330
 host_name="localhost"
-moderator_num=1
+moderator_num=4
 
 # get number of server
 if ! [[ "$1" =~ ^[0-9]+$ ]]; then

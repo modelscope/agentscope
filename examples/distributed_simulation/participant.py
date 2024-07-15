@@ -21,7 +21,6 @@ class RandomParticipant(AgentBase):
         """Initialize the participant."""
         super().__init__(
             name=name,
-            use_memory=True,
         )
         self.max_value = max_value
         self.sleep_time = sleep_time
@@ -36,8 +35,6 @@ class RandomParticipant(AgentBase):
         # generate a response in content
         response = self.generate_random_response()
         msg = Msg(self.name, content=response)
-        if self.memory:
-            self.memory.add(msg)
         return msg
 
 
