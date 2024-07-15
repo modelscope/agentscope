@@ -62,6 +62,17 @@ def _register_server_to_studio(
         raise StudioRegisterError(f"Failed to register server: {resp.text}")
 
 
+class _AgentError:
+    """Use this class to represent an error when calling agent funcs."""
+
+    def __init__(self, agent_id: str, err_msg: str) -> None:
+        self.agent_id = agent_id
+        self.err_msg = err_msg
+
+    def __repr__(self) -> str:
+        return f"Agent[{self.agent_id}] error: {self.err_msg}"
+
+
 class AgentServerServicer(RpcAgentServicer):
     """A Servicer for RPC Agent Server (formerly RpcServerSideWrapper)"""
 
@@ -292,7 +303,7 @@ class AgentServerServicer(RpcAgentServicer):
         self,
         request: agent_pb2.RpcMsg,
         context: ServicerContext,
-    ) -> agent_pb2.RpcMsg:
+    ) -> agent_pb2.GeneralResponse:
         """Call the specific servicer function."""
         if not self.agent_exists(request.agent_id):
             return context.abort(
@@ -313,7 +324,7 @@ class AgentServerServicer(RpcAgentServicer):
         self,
         request: agent_pb2.UpdatePlaceholderRequest,
         context: ServicerContext,
-    ) -> agent_pb2.RpcMsg:
+    ) -> agent_pb2.GeneralResponse:
         """Update the value of a placeholder."""
         task_id = request.task_id
         while True:
@@ -323,7 +334,16 @@ class AgentServerServicer(RpcAgentServicer):
                     result.wait(timeout=1)
             else:
                 break
-        return agent_pb2.RpcMsg(value=result.serialize())
+        if isinstance(result, _AgentError):
+            return agent_pb2.GeneralResponse(
+                ok=False,
+                message=result.err_msg,
+            )
+        else:
+            return agent_pb2.GeneralResponse(
+                ok=True,
+                message=result.serialize(),
+            )
 
     def get_agent_list(
         self,
@@ -413,7 +433,7 @@ class AgentServerServicer(RpcAgentServicer):
                     break
                 yield agent_pb2.ByteMsg(data=piece)
 
-    def _reply(self, request: agent_pb2.RpcMsg) -> agent_pb2.RpcMsg:
+    def _reply(self, request: agent_pb2.RpcMsg) -> agent_pb2.GeneralResponse:
         """Call function of RpcAgentService
 
         Args:
@@ -437,15 +457,16 @@ class AgentServerServicer(RpcAgentServicer):
             request.agent_id,
             msg,  # type: ignore[arg-type]
         )
-        return agent_pb2.RpcMsg(
-            value=Msg(  # type: ignore[arg-type]
+        return agent_pb2.GeneralResponse(
+            ok=True,
+            message=Msg(  # type: ignore[arg-type]
                 name=self.get_agent(request.agent_id).name,
                 content=None,
                 task_id=task_id,
             ).serialize(),
         )
 
-    def _observe(self, request: agent_pb2.RpcMsg) -> agent_pb2.RpcMsg:
+    def _observe(self, request: agent_pb2.RpcMsg) -> agent_pb2.GeneralResponse:
         """Observe function of the original agent.
 
         Args:
@@ -460,7 +481,7 @@ class AgentServerServicer(RpcAgentServicer):
             if isinstance(msg, PlaceholderMessage):
                 msg.update_value()
         self.agent_pool[request.agent_id].observe(msgs)
-        return agent_pb2.RpcMsg()
+        return agent_pb2.GeneralResponse(ok=True)
 
     def _process_messages(
         self,
@@ -485,11 +506,6 @@ class AgentServerServicer(RpcAgentServicer):
         except Exception:
             error_msg = traceback.format_exc()
             logger.error(f"Error in agent [{agent_id}]:\n{error_msg}")
-            self.result_pool[task_id] = Msg(
-                name="ERROR",
-                role="assistant",
-                __status="ERROR",
-                content=f"Error in agent [{agent_id}]:\n{error_msg}",
-            )
+            self.result_pool[task_id] = _AgentError(agent_id, error_msg)
         with cond:
             cond.notify_all()

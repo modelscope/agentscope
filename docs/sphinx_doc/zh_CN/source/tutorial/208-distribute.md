@@ -59,7 +59,7 @@ b = AgentB(
 
 在独立进程模式中，需要首先在目标机器上启动智能体服务器进程，启动时需要提供该服务器能够使用的模型的配置信息，以及服务器的 IP 和端口号。
 例如想要将两个智能体服务进程部署在 IP 分别为 `ip_a` 和 `ip_b` 的机器上（假设这两台机器分别为`Machine1` 和 `Machine2`）。
-你可以在 `Machine1` 上运行如下代码。在运行之前请确保该机器能够正确访问到应用中所使用的所有模型。具体来讲，需要将用到的所有模型的配置信息放置在 `model_config_path_a` 文件中，并检查API key 等环境变量是否正确设置，模型配置文件样例可参考 `examples/model_configs_template`。除此之外，还要将那些需要在该服务器中运行的自定义 Agent 类在 `custom_agents` 中注册，以便启动的服务器能够正确识别这些自定义的 Agent，如果只是使用 AgentScope 内置的 Agent 类,则不需要填写 `custom_agents`。
+你可以在 `Machine1` 上运行如下代码。在运行之前请确保该机器能够正确访问到应用中所使用的所有模型。具体来讲，需要将用到的所有模型的配置信息放置在 `model_config_path_a` 文件中，并检查API key 等环境变量是否正确设置，模型配置文件样例可参考 `examples/model_configs_template`。除此之外，还要将那些需要在该服务器中运行的自定义 Agent 类在 `custom_agent_classes` 中注册，以便启动的服务器能够正确识别这些自定义的 Agent，如果只是使用 AgentScope 内置的 Agent 类,则不需要填写 `custom_agent_classes`。
 
 ```python
 # import some packages
@@ -72,7 +72,7 @@ agentscope.init(
 server = RpcAgentServerLauncher(
     host="ip_a",
     port=12001,  # choose an available port
-    custom_agents=[AgentA, AgentB] # register your customized agent classes
+    custom_agent_classes=[AgentA, AgentB] # register your customized agent classes
 )
 
 # Start the service
@@ -99,7 +99,7 @@ agentscope.init(
 server = RpcAgentServerLauncher(
     host="ip_b",
     port=12002, # choose an available port
-    custom_agents=[AgentA, AgentB] # register your customized agent classes
+    custom_agent_classes=[AgentA, AgentB] # register your customized agent classes
 )
 
 # Start the service

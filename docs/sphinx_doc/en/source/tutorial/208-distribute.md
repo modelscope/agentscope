@@ -61,7 +61,7 @@ b = AgentB(
 In the Independent Process Mode, we need to start the agent server process on the target machine first.
 When starting the agent server process, you need to specify a model config file, which contains the models which can be used in the agent server, the IP address and port of the agent server process
 For example, start two agent server processes on the two different machines with IP `ip_a` and `ip_b`(called `Machine1` and `Machine2` accrodingly).
-You can run the following code on `Machine1`.Before running, make sure that the machine has access to all models that used in your application, specifically, you need to put your model config file in `model_config_path_a` and set environment variables such as your model API key correctly in `Machine1`. The example model config file instances are located under `examples/model_configs_template`. In addition, your customized agent classes that need to run in the server must be registered in `custom_agents` so that the server can correctly identify these agents. If you only use AgentScope's built-in agents, you can ignore `custom_agents` field.
+You can run the following code on `Machine1`.Before running, make sure that the machine has access to all models that used in your application, specifically, you need to put your model config file in `model_config_path_a` and set environment variables such as your model API key correctly in `Machine1`. The example model config file instances are located under `examples/model_configs_template`. In addition, your customized agent classes that need to run in the server must be registered in `custom_agent_classes` so that the server can correctly identify these agents. If you only use AgentScope's built-in agents, you can ignore `custom_agent_classes` field.
 
 ```python
 # import some packages
@@ -74,7 +74,7 @@ agentscope.init(
 server = RpcAgentServerLauncher(
     host="ip_a",
     port=12001,  # choose an available port
-    custom_agents=[AgentA, AgentB] # register your customized agent classes
+    custom_agent_classes=[AgentA, AgentB] # register your customized agent classes
 )
 
 # Start the service
@@ -101,7 +101,7 @@ agentscope.init(
 server = RpcAgentServerLauncher(
     host="ip_b",
     port=12002, # choose an available port
-    custom_agents=[AgentA, AgentB] # register your customized agent classes
+    custom_agent_classes=[AgentA, AgentB] # register your customized agent classes
 )
 
 # Start the service

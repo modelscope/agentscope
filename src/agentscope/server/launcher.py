@@ -41,9 +41,9 @@ def _setup_agent_server(
     pipe: int = None,
     local_mode: bool = True,
     max_pool_size: int = 8192,
-    max_timeout_seconds: int = 1800,
+    max_timeout_seconds: int = 7200,
     studio_url: str = None,
-    custom_agents: list = None,
+    custom_agent_classes: list = None,
 ) -> None:
     """Setup agent server.
 
@@ -64,15 +64,15 @@ def _setup_agent_server(
             process has been stopped.
         pipe (`int`, defaults to `None`):
             A pipe instance used to pass the actual port of the server.
-        local_mode (`bool`, defaults to `None`):
+        local_mode (`bool`, defaults to `True`):
             Only listen to local requests.
         max_pool_size (`int`, defaults to `8192`):
             Max number of agent replies that the server can accommodate.
-        max_timeout_seconds (`int`, defaults to `1800`):
+        max_timeout_seconds (`int`, defaults to `7200`):
             Timeout for agent replies.
         studio_url (`str`, defaults to `None`):
             URL of the AgentScope Studio.
-        custom_agents (`list`, defaults to `None`):
+        custom_agent_classes (`list`, defaults to `None`):
             A list of customized agent classes that are not in
             `agentscope.agents`.
     """
@@ -89,7 +89,7 @@ def _setup_agent_server(
             max_pool_size=max_pool_size,
             max_timeout_seconds=max_timeout_seconds,
             studio_url=studio_url,
-            custom_agents=custom_agents,
+            custom_agent_classes=custom_agent_classes,
         ),
     )
 
@@ -106,7 +106,7 @@ async def _setup_agent_server_async(
     max_pool_size: int = 8192,
     max_timeout_seconds: int = 7200,
     studio_url: str = None,
-    custom_agents: list = None,
+    custom_agent_classes: list = None,
 ) -> None:
     """Setup agent server in an async way.
 
@@ -124,19 +124,19 @@ async def _setup_agent_server_async(
             has been started.
         pipe (`int`, defaults to `None`):
             A pipe instance used to pass the actual port of the server.
-        local_mode (`bool`, defaults to `None`):
+        local_mode (`bool`, defaults to `True`):
             If `True`, only listen to requests from "localhost", otherwise,
             listen to requests from all hosts.
         max_pool_size (`int`, defaults to `8192`):
             The max number of agent reply messages that the server can
             accommodate. Note that the oldest message will be deleted
             after exceeding the pool size.
-        max_timeout_seconds (`int`, defaults to `1800`):
+        max_timeout_seconds (`int`, defaults to `7200`):
             Maximum time for reply messages to be cached in the server.
             Note that expired messages will be deleted.
         studio_url (`str`, defaults to `None`):
             URL of the AgentScope Studio.
-        custom_agents (`list`, defaults to `None`):
+        custom_agent_classes (`list`, defaults to `None`):
             A list of customized agent classes that are not in
             `agentscope.agents`.
     """
@@ -154,8 +154,8 @@ async def _setup_agent_server_async(
         max_timeout_seconds=max_timeout_seconds,
     )
     # update agent registry
-    if custom_agents is not None:
-        for agent_class in custom_agents:
+    if custom_agent_classes is not None:
+        for agent_class in custom_agent_classes:
             AgentBase.register_agent_class(agent_class=agent_class)
 
     async def shutdown_signal_handler() -> None:
@@ -219,9 +219,9 @@ class RpcAgentServerLauncher:
         host: str = "localhost",
         port: int = None,
         max_pool_size: int = 8192,
-        max_timeout_seconds: int = 1800,
+        max_timeout_seconds: int = 7200,
         local_mode: bool = False,
-        custom_agents: list = None,
+        custom_agent_classes: list = None,
         server_id: str = None,
         studio_url: str = None,
         agent_class: Type[AgentBase] = None,
@@ -239,13 +239,13 @@ class RpcAgentServerLauncher:
                 The max number of agent reply messages that the server can
                 accommodate. Note that the oldest message will be deleted
                 after exceeding the pool size.
-            max_timeout_seconds (`int`, defaults to `1800`):
+            max_timeout_seconds (`int`, defaults to `7200`):
                 Maximum time for reply messages to be cached in the server.
                 Note that expired messages will be deleted.
             local_mode (`bool`, defaults to `False`):
                 If `True`, only listen to requests from "localhost", otherwise,
                 listen to requests from all hosts.
-            custom_agents (`list`, defaults to `None`):
+            custom_agent_classes (`list`, defaults to `None`):
                 A list of customized agent classes that are not in
                 `agentscope.agents`.
             server_id (`str`, defaults to `None`):
@@ -267,7 +267,7 @@ class RpcAgentServerLauncher:
         self.local_mode = local_mode
         self.server = None
         self.parent_con = None
-        self.custom_agents = custom_agents
+        self.custom_agent_classes = custom_agent_classes
         self.stop_event = Event()
         self.server_id = (
             RpcAgentServerLauncher.generate_server_id(self.host, self.port)
@@ -304,7 +304,7 @@ class RpcAgentServerLauncher:
                 max_pool_size=self.max_pool_size,
                 max_timeout_seconds=self.max_timeout_seconds,
                 local_mode=self.local_mode,
-                custom_agents=self.custom_agents,
+                custom_agent_classes=self.custom_agent_classes,
                 studio_url=self.studio_url,
             ),
         )
@@ -329,7 +329,7 @@ class RpcAgentServerLauncher:
                 "max_timeout_seconds": self.max_timeout_seconds,
                 "local_mode": self.local_mode,
                 "studio_url": self.studio_url,
-                "custom_agents": self.custom_agents,
+                "custom_agent_classes": self.custom_agent_classes,
             },
         )
         server_process.start()

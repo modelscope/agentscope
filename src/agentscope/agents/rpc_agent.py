@@ -80,7 +80,7 @@ class RpcAgent(AgentBase):
                 max_pool_size=max_pool_size,
                 max_timeout_seconds=max_timeout_seconds,
                 local_mode=local_mode,
-                custom_agents=[agent_class],
+                custom_agent_classes=[agent_class],
                 studio_url=studio_url,
             )
             if not lazy_launch:

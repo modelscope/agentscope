@@ -62,7 +62,7 @@ def setup_participant_agent_server(host: str, port: int) -> None:
         host=host,
         port=port,
         max_pool_size=16384,
-        custom_agents=[Moderator, RandomParticipant, LLMParticipant],
+        custom_agent_classes=[Moderator, RandomParticipant, LLMParticipant],
         studio_url="http://127.0.0.1:5000",
     )
     assistant_server_launcher.launch(in_subprocess=False)
