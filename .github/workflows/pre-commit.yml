@@ -46,7 +46,19 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         issue-number: ${{ github.event.pull_request.number }}
         body: |
-          ## Pre-commit
+          ## 🚀 Pre-commit Format Check Results
+
+          Hello everyone! The pre-commit hook has finished running, and the results are available below. If the report indicates any issues, please review and make the necessary changes as instructed to comply with the project's coding standards. Our goal is to maintain high-quality and consistent code across the project.
+
+          ### Check Results:
           ```plaintext
           ${{ env.PRE_COMMIT_REPORT }}
           ```
+          ### 🔴 Action Required:
+          If there are errors in the report, you are required to address them by modifying your code in accordance with the pre-commit guidelines. Follow the detailed instructions attached to each error if available.
+          After making the required modifications, please commit your changes and push them again. The pre-commit checks will rerun to verify that all issues have been resolved.
+
+          ### 💡 Tips for Success:
+          It's highly recommended to run pre-commit checks locally before pushing your changes to avoid any surprises.
+          Familiarize yourself with the project's contribution guidelines, so you're aware of the coding standards we follow.
+          Thank you for your contribution to maintain a clean and orderly codebase! Together, we can ensure our project's success.
