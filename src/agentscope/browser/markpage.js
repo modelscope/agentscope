@@ -1,4 +1,7 @@
-/* the js code here is referenced from WebVoyager and tarsier */
+/* the js code here is referenced from WebVoyager and tarsier
+WebVoyager js code: https://github.com/MinorJerry/WebVoyager/blob/main/utils.py
+tarsier js code: https://github.com/reworkd/tarsier/blob/main/tarsier/tag_utils.ts
+*/
 function crawlPage(addLabel=true) {
     let labels = [];
     /*

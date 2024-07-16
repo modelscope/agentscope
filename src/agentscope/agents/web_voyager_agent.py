@@ -88,31 +88,38 @@ class WebVoyagerAgent(AgentBase):
         model_config_name: str,
         name: str,
         sys_prompt: str = DEFAULT_SYSTEM_PROMPT,
-        max_iter: int = 30,
+        max_iter: int = 15,
         max_attached_imgs: int = 2,
         default_homepage: str = "https://www.google.com",
-        memory_config: Optional[dict] = None,
     ) -> None:
-        """Initialize the dialog agent.
+        """Initialize the WebVoyager agent.
 
         Arguments:
-            name (`str`):
-                The name of the agent.
+            browser (`WebBrowser`):
+                The browser instance that the agent interacts with.
             model_config_name (`str`):
                 The name of the model config, which is used to load model from
                 configuration.
+            name (`str`):
+                The name of the agent.
             sys_prompt (`Optional[str]`):
                 The system prompt of the agent, which can be passed by args
-                or hard-coded in the agent.tion.
-            memory_config (`Optional[dict]`):
-                The config of memory.
+                or hard-coded in the agent.
+            max_iter (`int`):
+                The maximum number of iterations per reply.
+            max_attached_imgs (`int`):
+                The maximum number of attached images send to MLLM.
+                We use this argument to clip messages sent to model,
+                to speed up model api call and avoid the
+                confusion of the MLLMs.
+            default_homepage(`str`):
+                The default homepage that browser visits when init the agent.
         """
         super().__init__(
             name=name,
             sys_prompt=sys_prompt,
             model_config_name=model_config_name,
             use_memory=True,
-            memory_config=memory_config,
         )
         self.browser = browser
         self.max_iter = max_iter
@@ -130,8 +137,8 @@ class WebVoyagerAgent(AgentBase):
         max_img_num = self.max_attached_imgs
         clipped_msg = []
         img_num = 0
-        for idx in range(len(msg_list)):
-            curr_msg = msg_list[len(msg_list) - 1 - idx]
+        for idx in reversed(range(len(msg_list))):
+            curr_msg = msg_list[idx]
             if curr_msg.role != "user":
                 clipped_msg = [curr_msg] + clipped_msg
             else:
