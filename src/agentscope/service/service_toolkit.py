@@ -259,7 +259,10 @@ class ServiceToolkit:
                 {"function_prompt": tools_description},
             )
 
-    def _parse_and_check_text(self, cmd: Union[list[dict], str]) -> List[dict]:
+    def _parse_and_check_text(  # pylint: disable=too-many-branches
+        self,
+        cmd: Union[list[dict], str],
+    ) -> List[dict]:
         """Parsing and check the format of the function calling text."""
 
         # Record the error
@@ -334,6 +337,15 @@ class ServiceToolkit:
                 raise FunctionNotFoundError(
                     f"Cannot find a tool function named `{func_name}`.",
                 )
+
+            # If it is json(str) convert to json(dict)
+            if isinstance(sub_cmd["arguments"], str):
+                try:
+                    sub_cmd["arguments"] = json.loads(sub_cmd["arguments"])
+                except json.decoder.JSONDecodeError:
+                    logger.debug(
+                        f"Fail to parse the argument: {sub_cmd['arguments']}",
+                    )
 
             # Type error for the arguments
             if not isinstance(sub_cmd["arguments"], dict):
