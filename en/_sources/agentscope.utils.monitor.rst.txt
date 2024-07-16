@@ -1,5 +1,6 @@
-agentscope.utils.monitor
-========================
+agentscope.utils.monitor module
+===============================
+
 .. automodule:: agentscope.utils.monitor
    :members:
    :undoc-members:

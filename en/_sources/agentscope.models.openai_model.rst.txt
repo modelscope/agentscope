@@ -1,5 +1,6 @@
-agentscope.models.openai_model
-==============================
+agentscope.models.openai\_model module
+======================================
+
 .. automodule:: agentscope.models.openai_model
    :members:
    :undoc-members:

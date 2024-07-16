@@ -1,5 +1,6 @@
-agentscope.models.post_model
-============================
+agentscope.models.post\_model module
+====================================
+
 .. automodule:: agentscope.models.post_model
    :members:
    :undoc-members:

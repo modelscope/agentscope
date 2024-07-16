@@ -1,5 +1,16 @@
-agentscope.service.text_processing
-==================================
+agentscope.service.text\_processing package
+===========================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   agentscope.service.text_processing.summarization
+
+Module contents
+---------------
 
 .. automodule:: agentscope.service.text_processing
    :members:

@@ -1,5 +1,18 @@
-agentscope.rpc
-==============
+agentscope.rpc package
+======================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   agentscope.rpc.rpc_agent_client
+   agentscope.rpc.rpc_agent_pb2
+   agentscope.rpc.rpc_agent_pb2_grpc
+
+Module contents
+---------------
 
 .. automodule:: agentscope.rpc
    :members:

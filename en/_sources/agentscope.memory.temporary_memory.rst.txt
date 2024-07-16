@@ -1,5 +1,6 @@
-agentscope.memory.temporary_memory
-==================================
+agentscope.memory.temporary\_memory module
+==========================================
+
 .. automodule:: agentscope.memory.temporary_memory
    :members:
    :undoc-members:

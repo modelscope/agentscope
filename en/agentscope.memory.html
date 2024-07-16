@@ -5,7 +5,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>agentscope.memory &mdash; AgentScope  documentation</title>
+  <title>agentscope.memory package &mdash; AgentScope  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c9484b72" />
@@ -23,8 +23,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="agentscope.parsers" href="agentscope.parsers.html" />
-    <link rel="prev" title="agentscope.agents" href="agentscope.agents.html" /> 
+    <link rel="next" title="agentscope.memory.memory module" href="agentscope.memory.memory.html" />
+    <link rel="prev" title="agentscope.agents.user_agent module" href="agentscope.agents.user_agent.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -73,24 +73,24 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">agentscope.memory</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.memory.MemoryBase"><code class="docutils literal notranslate"><span class="pre">MemoryBase</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.memory.TemporaryMemory"><code class="docutils literal notranslate"><span class="pre">TemporaryMemory</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">agentscope.memory package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-agentscope.memory">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.server.html">agentscope.server</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.server.html">agentscope.server package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils package</a></li>
 </ul>
 
         </div>
@@ -107,7 +107,8 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">agentscope.memory</li>
+          <li class="breadcrumb-item"><a href="agentscope.html">agentscope package</a></li>
+      <li class="breadcrumb-item active">agentscope.memory package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/agentscope.memory.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -117,8 +118,48 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-agentscope.memory">
-<span id="agentscope-memory"></span><h1>agentscope.memory<a class="headerlink" href="#module-agentscope.memory" title="Link to this heading"></a></h1>
+  <section id="agentscope-memory-package">
+<h1>agentscope.memory package<a class="headerlink" href="#agentscope-memory-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.memory.html">agentscope.memory.memory module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.memory.memory.html#agentscope.memory.memory.MemoryBase"><code class="docutils literal notranslate"><span class="pre">MemoryBase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.memory.memory.html#agentscope.memory.memory.MemoryBase.__init__"><code class="docutils literal notranslate"><span class="pre">MemoryBase.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.memory.memory.html#agentscope.memory.memory.MemoryBase.update_config"><code class="docutils literal notranslate"><span class="pre">MemoryBase.update_config()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.memory.memory.html#agentscope.memory.memory.MemoryBase.get_memory"><code class="docutils literal notranslate"><span class="pre">MemoryBase.get_memory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.memory.memory.html#agentscope.memory.memory.MemoryBase.add"><code class="docutils literal notranslate"><span class="pre">MemoryBase.add()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.memory.memory.html#agentscope.memory.memory.MemoryBase.delete"><code class="docutils literal notranslate"><span class="pre">MemoryBase.delete()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.memory.memory.html#agentscope.memory.memory.MemoryBase.load"><code class="docutils literal notranslate"><span class="pre">MemoryBase.load()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.memory.memory.html#agentscope.memory.memory.MemoryBase.export"><code class="docutils literal notranslate"><span class="pre">MemoryBase.export()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.memory.memory.html#agentscope.memory.memory.MemoryBase.clear"><code class="docutils literal notranslate"><span class="pre">MemoryBase.clear()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.memory.memory.html#agentscope.memory.memory.MemoryBase.size"><code class="docutils literal notranslate"><span class="pre">MemoryBase.size()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.temporary_memory.html">agentscope.memory.temporary_memory module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.memory.temporary_memory.html#agentscope.memory.temporary_memory.TemporaryMemory"><code class="docutils literal notranslate"><span class="pre">TemporaryMemory</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.memory.temporary_memory.html#agentscope.memory.temporary_memory.TemporaryMemory.__init__"><code class="docutils literal notranslate"><span class="pre">TemporaryMemory.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.memory.temporary_memory.html#agentscope.memory.temporary_memory.TemporaryMemory.add"><code class="docutils literal notranslate"><span class="pre">TemporaryMemory.add()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.memory.temporary_memory.html#agentscope.memory.temporary_memory.TemporaryMemory.delete"><code class="docutils literal notranslate"><span class="pre">TemporaryMemory.delete()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.memory.temporary_memory.html#agentscope.memory.temporary_memory.TemporaryMemory.export"><code class="docutils literal notranslate"><span class="pre">TemporaryMemory.export()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.memory.temporary_memory.html#agentscope.memory.temporary_memory.TemporaryMemory.load"><code class="docutils literal notranslate"><span class="pre">TemporaryMemory.load()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.memory.temporary_memory.html#agentscope.memory.temporary_memory.TemporaryMemory.clear"><code class="docutils literal notranslate"><span class="pre">TemporaryMemory.clear()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.memory.temporary_memory.html#agentscope.memory.temporary_memory.TemporaryMemory.size"><code class="docutils literal notranslate"><span class="pre">TemporaryMemory.size()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.memory.temporary_memory.html#agentscope.memory.temporary_memory.TemporaryMemory.retrieve_by_embedding"><code class="docutils literal notranslate"><span class="pre">TemporaryMemory.retrieve_by_embedding()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.memory.temporary_memory.html#agentscope.memory.temporary_memory.TemporaryMemory.get_embeddings"><code class="docutils literal notranslate"><span class="pre">TemporaryMemory.get_embeddings()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.memory.temporary_memory.html#agentscope.memory.temporary_memory.TemporaryMemory.get_memory"><code class="docutils literal notranslate"><span class="pre">TemporaryMemory.get_memory()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="module-agentscope.memory">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-agentscope.memory" title="Link to this heading"></a></h2>
 <p>import al memory related modules</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="agentscope.memory.MemoryBase">
@@ -384,13 +425,14 @@ memory unit as input, and return a boolean value.</p></li>
 </dd></dl>
 
 </section>
+</section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="agentscope.agents.html" class="btn btn-neutral float-left" title="agentscope.agents" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="agentscope.parsers.html" class="btn btn-neutral float-right" title="agentscope.parsers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="agentscope.agents.user_agent.html" class="btn btn-neutral float-left" title="agentscope.agents.user_agent module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="agentscope.memory.memory.html" class="btn btn-neutral float-right" title="agentscope.memory.memory module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

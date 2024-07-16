@@ -1,5 +1,6 @@
-agentscope.message
-==================
+agentscope.message module
+=========================
+
 .. automodule:: agentscope.message
    :members:
    :undoc-members:

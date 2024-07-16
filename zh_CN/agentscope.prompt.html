@@ -5,7 +5,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>agentscope.prompt &mdash; AgentScope  文档</title>
+  <title>agentscope.prompt package &mdash; AgentScope  文档</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c9484b72" />
@@ -24,8 +24,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="agentscope.utils" href="agentscope.utils.html" />
-    <link rel="prev" title="agentscope.web" href="agentscope.web.html" /> 
+    <link rel="next" title="agentscope.rag package" href="agentscope.rag.html" />
+    <link rel="prev" title="agentscope.pipelines.pipeline module" href="agentscope.pipelines.pipeline.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -74,53 +74,56 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.server.html">agentscope.server</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">agentscope.prompt</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.prompt.PromptEngine"><code class="docutils literal notranslate"><span class="pre">PromptEngine</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.prompt.PromptEngine.__init__"><code class="docutils literal notranslate"><span class="pre">PromptEngine.__init__()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.prompt.PromptEngine.join"><code class="docutils literal notranslate"><span class="pre">PromptEngine.join()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.prompt.PromptEngine.join_to_str"><code class="docutils literal notranslate"><span class="pre">PromptEngine.join_to_str()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.prompt.PromptEngine.join_to_list"><code class="docutils literal notranslate"><span class="pre">PromptEngine.join_to_list()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.server.html">agentscope.server package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">agentscope.prompt package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-agentscope.prompt">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.prompt.PromptEngine"><code class="docutils literal notranslate"><span class="pre">PromptEngine</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.prompt.PromptEngine.__init__"><code class="docutils literal notranslate"><span class="pre">PromptEngine.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.prompt.PromptEngine.join"><code class="docutils literal notranslate"><span class="pre">PromptEngine.join()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.prompt.PromptEngine.join_to_str"><code class="docutils literal notranslate"><span class="pre">PromptEngine.join_to_str()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.prompt.PromptEngine.join_to_list"><code class="docutils literal notranslate"><span class="pre">PromptEngine.join_to_list()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.prompt.SystemPromptGeneratorBase"><code class="docutils literal notranslate"><span class="pre">SystemPromptGeneratorBase</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.prompt.SystemPromptGeneratorBase.__init__"><code class="docutils literal notranslate"><span class="pre">SystemPromptGeneratorBase.__init__()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.prompt.SystemPromptGeneratorBase.generate"><code class="docutils literal notranslate"><span class="pre">SystemPromptGeneratorBase.generate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.prompt.SystemPromptGeneratorBase"><code class="docutils literal notranslate"><span class="pre">SystemPromptGeneratorBase</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.prompt.SystemPromptGeneratorBase.__init__"><code class="docutils literal notranslate"><span class="pre">SystemPromptGeneratorBase.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.prompt.SystemPromptGeneratorBase.generate"><code class="docutils literal notranslate"><span class="pre">SystemPromptGeneratorBase.generate()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.prompt.ChineseSystemPromptGenerator"><code class="docutils literal notranslate"><span class="pre">ChineseSystemPromptGenerator</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.prompt.ChineseSystemPromptGenerator.__init__"><code class="docutils literal notranslate"><span class="pre">ChineseSystemPromptGenerator.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.prompt.ChineseSystemPromptGenerator"><code class="docutils literal notranslate"><span class="pre">ChineseSystemPromptGenerator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.prompt.ChineseSystemPromptGenerator.__init__"><code class="docutils literal notranslate"><span class="pre">ChineseSystemPromptGenerator.__init__()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.prompt.EnglishSystemPromptGenerator"><code class="docutils literal notranslate"><span class="pre">EnglishSystemPromptGenerator</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.prompt.EnglishSystemPromptGenerator.__init__"><code class="docutils literal notranslate"><span class="pre">EnglishSystemPromptGenerator.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.prompt.EnglishSystemPromptGenerator"><code class="docutils literal notranslate"><span class="pre">EnglishSystemPromptGenerator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.prompt.EnglishSystemPromptGenerator.__init__"><code class="docutils literal notranslate"><span class="pre">EnglishSystemPromptGenerator.__init__()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.prompt.SystemPromptComparer"><code class="docutils literal notranslate"><span class="pre">SystemPromptComparer</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.prompt.SystemPromptComparer.__init__"><code class="docutils literal notranslate"><span class="pre">SystemPromptComparer.__init__()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.prompt.SystemPromptComparer.compare_with_queries"><code class="docutils literal notranslate"><span class="pre">SystemPromptComparer.compare_with_queries()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.prompt.SystemPromptComparer.compare_in_dialog"><code class="docutils literal notranslate"><span class="pre">SystemPromptComparer.compare_in_dialog()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.prompt.SystemPromptComparer"><code class="docutils literal notranslate"><span class="pre">SystemPromptComparer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.prompt.SystemPromptComparer.__init__"><code class="docutils literal notranslate"><span class="pre">SystemPromptComparer.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.prompt.SystemPromptComparer.compare_with_queries"><code class="docutils literal notranslate"><span class="pre">SystemPromptComparer.compare_with_queries()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.prompt.SystemPromptComparer.compare_in_dialog"><code class="docutils literal notranslate"><span class="pre">SystemPromptComparer.compare_in_dialog()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.prompt.SystemPromptOptimizer"><code class="docutils literal notranslate"><span class="pre">SystemPromptOptimizer</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.prompt.SystemPromptOptimizer.__init__"><code class="docutils literal notranslate"><span class="pre">SystemPromptOptimizer.__init__()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.prompt.SystemPromptOptimizer.generate_notes"><code class="docutils literal notranslate"><span class="pre">SystemPromptOptimizer.generate_notes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.prompt.SystemPromptOptimizer"><code class="docutils literal notranslate"><span class="pre">SystemPromptOptimizer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.prompt.SystemPromptOptimizer.__init__"><code class="docutils literal notranslate"><span class="pre">SystemPromptOptimizer.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.prompt.SystemPromptOptimizer.generate_notes"><code class="docutils literal notranslate"><span class="pre">SystemPromptOptimizer.generate_notes()</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils package</a></li>
 </ul>
 
         </div>
@@ -137,7 +140,8 @@
           <div role="navigation" aria-label="页面导航">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">agentscope.prompt</li>
+          <li class="breadcrumb-item"><a href="agentscope.html">agentscope package</a></li>
+      <li class="breadcrumb-item active">agentscope.prompt package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/agentscope.prompt.rst.txt" rel="nofollow"> 查看页面源码</a>
       </li>
@@ -147,8 +151,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-agentscope.prompt">
-<span id="agentscope-prompt"></span><h1>agentscope.prompt<a class="headerlink" href="#module-agentscope.prompt" title="Link to this heading"></a></h1>
+  <section id="agentscope-prompt-package">
+<h1>agentscope.prompt package<a class="headerlink" href="#agentscope-prompt-package" title="Link to this heading"></a></h1>
+<section id="module-agentscope.prompt">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-agentscope.prompt" title="Link to this heading"></a></h2>
 <p>Import all prompt related modules in the package.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="agentscope.prompt.PromptEngine">
@@ -466,13 +472,14 @@ optimize the system prompt.</p>
 </dd></dl>
 
 </section>
+</section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
-        <a href="agentscope.web.html" class="btn btn-neutral float-left" title="agentscope.web" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
-        <a href="agentscope.utils.html" class="btn btn-neutral float-right" title="agentscope.utils" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="agentscope.pipelines.pipeline.html" class="btn btn-neutral float-left" title="agentscope.pipelines.pipeline module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="agentscope.rag.html" class="btn btn-neutral float-right" title="agentscope.rag package" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

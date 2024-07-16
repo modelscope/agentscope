@@ -1,5 +1,6 @@
-agentscope.memory.memory
-========================
+agentscope.memory.memory module
+===============================
+
 .. automodule:: agentscope.memory.memory
    :members:
    :undoc-members:

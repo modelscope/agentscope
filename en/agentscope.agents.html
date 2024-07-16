@@ -5,7 +5,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>agentscope.agents &mdash; AgentScope  documentation</title>
+  <title>agentscope.agents package &mdash; AgentScope  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c9484b72" />
@@ -23,8 +23,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="agentscope.memory" href="agentscope.memory.html" />
-    <link rel="prev" title="agentscope.models" href="agentscope.models.html" /> 
+    <link rel="next" title="agentscope.agents.agent module" href="agentscope.agents.agent.html" />
+    <link rel="prev" title="agentscope package" href="agentscope.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -73,32 +73,24 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">agentscope.agents</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.agents.AgentBase"><code class="docutils literal notranslate"><span class="pre">AgentBase</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.agents.Operator"><code class="docutils literal notranslate"><span class="pre">Operator</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.agents.DialogAgent"><code class="docutils literal notranslate"><span class="pre">DialogAgent</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.agents.DictDialogAgent"><code class="docutils literal notranslate"><span class="pre">DictDialogAgent</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.agents.TextToImageAgent"><code class="docutils literal notranslate"><span class="pre">TextToImageAgent</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.agents.UserAgent"><code class="docutils literal notranslate"><span class="pre">UserAgent</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.agents.ReActAgent"><code class="docutils literal notranslate"><span class="pre">ReActAgent</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.agents.DistConf"><code class="docutils literal notranslate"><span class="pre">DistConf</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.agents.RpcAgent"><code class="docutils literal notranslate"><span class="pre">RpcAgent</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.agents.LlamaIndexAgent"><code class="docutils literal notranslate"><span class="pre">LlamaIndexAgent</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">agentscope.agents package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-agentscope.agents">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.server.html">agentscope.server</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.server.html">agentscope.server package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils package</a></li>
 </ul>
 
         </div>
@@ -115,7 +107,8 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">agentscope.agents</li>
+          <li class="breadcrumb-item"><a href="agentscope.html">agentscope package</a></li>
+      <li class="breadcrumb-item active">agentscope.agents package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/agentscope.agents.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -125,8 +118,107 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-agentscope.agents">
-<span id="agentscope-agents"></span><h1>agentscope.agents<a class="headerlink" href="#module-agentscope.agents" title="Link to this heading"></a></h1>
+  <section id="agentscope-agents-package">
+<h1>agentscope.agents package<a class="headerlink" href="#agentscope-agents-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.agent.html">agentscope.agents.agent module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.agents.agent.html#agentscope.agents.agent.DistConf"><code class="docutils literal notranslate"><span class="pre">DistConf</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.agent.html#agentscope.agents.agent.DistConf.__init__"><code class="docutils literal notranslate"><span class="pre">DistConf.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase"><code class="docutils literal notranslate"><span class="pre">AgentBase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.__init__"><code class="docutils literal notranslate"><span class="pre">AgentBase.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.generate_agent_id"><code class="docutils literal notranslate"><span class="pre">AgentBase.generate_agent_id()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.get_agent_class"><code class="docutils literal notranslate"><span class="pre">AgentBase.get_agent_class()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.register_agent_class"><code class="docutils literal notranslate"><span class="pre">AgentBase.register_agent_class()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.reply"><code class="docutils literal notranslate"><span class="pre">AgentBase.reply()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.load_from_config"><code class="docutils literal notranslate"><span class="pre">AgentBase.load_from_config()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.export_config"><code class="docutils literal notranslate"><span class="pre">AgentBase.export_config()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.load_memory"><code class="docutils literal notranslate"><span class="pre">AgentBase.load_memory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.speak"><code class="docutils literal notranslate"><span class="pre">AgentBase.speak()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.observe"><code class="docutils literal notranslate"><span class="pre">AgentBase.observe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.reset_audience"><code class="docutils literal notranslate"><span class="pre">AgentBase.reset_audience()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.clear_audience"><code class="docutils literal notranslate"><span class="pre">AgentBase.clear_audience()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.rm_audience"><code class="docutils literal notranslate"><span class="pre">AgentBase.rm_audience()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.agent_id"><code class="docutils literal notranslate"><span class="pre">AgentBase.agent_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.to_dist"><code class="docutils literal notranslate"><span class="pre">AgentBase.to_dist()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.dialog_agent.html">agentscope.agents.dialog_agent module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.agents.dialog_agent.html#agentscope.agents.dialog_agent.DialogAgent"><code class="docutils literal notranslate"><span class="pre">DialogAgent</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.dialog_agent.html#agentscope.agents.dialog_agent.DialogAgent.__init__"><code class="docutils literal notranslate"><span class="pre">DialogAgent.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.dialog_agent.html#agentscope.agents.dialog_agent.DialogAgent.reply"><code class="docutils literal notranslate"><span class="pre">DialogAgent.reply()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.dict_dialog_agent.html">agentscope.agents.dict_dialog_agent module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.agents.dict_dialog_agent.html#agentscope.agents.dict_dialog_agent.DictDialogAgent"><code class="docutils literal notranslate"><span class="pre">DictDialogAgent</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.dict_dialog_agent.html#agentscope.agents.dict_dialog_agent.DictDialogAgent.__init__"><code class="docutils literal notranslate"><span class="pre">DictDialogAgent.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.dict_dialog_agent.html#agentscope.agents.dict_dialog_agent.DictDialogAgent.set_parser"><code class="docutils literal notranslate"><span class="pre">DictDialogAgent.set_parser()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.dict_dialog_agent.html#agentscope.agents.dict_dialog_agent.DictDialogAgent.reply"><code class="docutils literal notranslate"><span class="pre">DictDialogAgent.reply()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.operator.html">agentscope.agents.operator module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.agents.operator.html#agentscope.agents.operator.Operator"><code class="docutils literal notranslate"><span class="pre">Operator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.rag_agent.html">agentscope.agents.rag_agent module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.agents.rag_agent.html#agentscope.agents.rag_agent.LlamaIndexAgent"><code class="docutils literal notranslate"><span class="pre">LlamaIndexAgent</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.rag_agent.html#agentscope.agents.rag_agent.LlamaIndexAgent.__init__"><code class="docutils literal notranslate"><span class="pre">LlamaIndexAgent.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.rag_agent.html#agentscope.agents.rag_agent.LlamaIndexAgent.reply"><code class="docutils literal notranslate"><span class="pre">LlamaIndexAgent.reply()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.react_agent.html">agentscope.agents.react_agent module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.agents.react_agent.html#agentscope.agents.react_agent.ReActAgent"><code class="docutils literal notranslate"><span class="pre">ReActAgent</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.react_agent.html#agentscope.agents.react_agent.ReActAgent.__init__"><code class="docutils literal notranslate"><span class="pre">ReActAgent.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.react_agent.html#agentscope.agents.react_agent.ReActAgent.reply"><code class="docutils literal notranslate"><span class="pre">ReActAgent.reply()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.rpc_agent.html">agentscope.agents.rpc_agent module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.RpcAgent"><code class="docutils literal notranslate"><span class="pre">RpcAgent</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.RpcAgent.__init__"><code class="docutils literal notranslate"><span class="pre">RpcAgent.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.RpcAgent.reply"><code class="docutils literal notranslate"><span class="pre">RpcAgent.reply()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.RpcAgent.observe"><code class="docutils literal notranslate"><span class="pre">RpcAgent.observe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.RpcAgent.clone_instances"><code class="docutils literal notranslate"><span class="pre">RpcAgent.clone_instances()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.rpc_agent.html#agentscope.agents.rpc_agent.RpcAgent.stop"><code class="docutils literal notranslate"><span class="pre">RpcAgent.stop()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.text_to_image_agent.html">agentscope.agents.text_to_image_agent module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.agents.text_to_image_agent.html#agentscope.agents.text_to_image_agent.TextToImageAgent"><code class="docutils literal notranslate"><span class="pre">TextToImageAgent</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.text_to_image_agent.html#agentscope.agents.text_to_image_agent.TextToImageAgent.__init__"><code class="docutils literal notranslate"><span class="pre">TextToImageAgent.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.text_to_image_agent.html#agentscope.agents.text_to_image_agent.TextToImageAgent.reply"><code class="docutils literal notranslate"><span class="pre">TextToImageAgent.reply()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.user_agent.html">agentscope.agents.user_agent module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.agents.user_agent.html#agentscope.agents.user_agent.UserAgent"><code class="docutils literal notranslate"><span class="pre">UserAgent</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.user_agent.html#agentscope.agents.user_agent.UserAgent.__init__"><code class="docutils literal notranslate"><span class="pre">UserAgent.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.user_agent.html#agentscope.agents.user_agent.UserAgent.reply"><code class="docutils literal notranslate"><span class="pre">UserAgent.reply()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.user_agent.html#agentscope.agents.user_agent.UserAgent.speak"><code class="docutils literal notranslate"><span class="pre">UserAgent.speak()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="module-agentscope.agents">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-agentscope.agents" title="Link to this heading"></a></h2>
 <p>Import all agent related modules in the package.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="agentscope.agents.AgentBase">
@@ -841,13 +933,14 @@ the agent doesn’t need any input.</p>
 </dd></dl>
 
 </section>
+</section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="agentscope.models.html" class="btn btn-neutral float-left" title="agentscope.models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="agentscope.memory.html" class="btn btn-neutral float-right" title="agentscope.memory" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="agentscope.html" class="btn btn-neutral float-left" title="agentscope package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="agentscope.agents.agent.html" class="btn btn-neutral float-right" title="agentscope.agents.agent module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

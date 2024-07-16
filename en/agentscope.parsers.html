@@ -5,7 +5,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>agentscope.parsers &mdash; AgentScope  documentation</title>
+  <title>agentscope.parsers package &mdash; AgentScope  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c9484b72" />
@@ -23,8 +23,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="agentscope.exception" href="agentscope.exception.html" />
-    <link rel="prev" title="agentscope.memory" href="agentscope.memory.html" /> 
+    <link rel="next" title="agentscope.parsers.code_block_parser module" href="agentscope.parsers.code_block_parser.html" />
+    <link rel="prev" title="agentscope.models.zhipu_model module" href="agentscope.models.zhipu_model.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -73,28 +73,24 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">agentscope.parsers</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.parsers.ParserBase"><code class="docutils literal notranslate"><span class="pre">ParserBase</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.parsers.MarkdownJsonObjectParser"><code class="docutils literal notranslate"><span class="pre">MarkdownJsonObjectParser</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.parsers.MarkdownJsonDictParser"><code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.parsers.MarkdownCodeBlockParser"><code class="docutils literal notranslate"><span class="pre">MarkdownCodeBlockParser</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.parsers.TaggedContent"><code class="docutils literal notranslate"><span class="pre">TaggedContent</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.parsers.MultiTaggedContentParser"><code class="docutils literal notranslate"><span class="pre">MultiTaggedContentParser</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">agentscope.parsers package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-agentscope.parsers">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.server.html">agentscope.server</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.server.html">agentscope.server package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils package</a></li>
 </ul>
 
         </div>
@@ -111,7 +107,8 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">agentscope.parsers</li>
+          <li class="breadcrumb-item"><a href="agentscope.html">agentscope package</a></li>
+      <li class="breadcrumb-item active">agentscope.parsers package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/agentscope.parsers.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -121,8 +118,87 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-agentscope.parsers">
-<span id="agentscope-parsers"></span><h1>agentscope.parsers<a class="headerlink" href="#module-agentscope.parsers" title="Link to this heading"></a></h1>
+  <section id="agentscope-parsers-package">
+<h1>agentscope.parsers package<a class="headerlink" href="#agentscope-parsers-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.code_block_parser.html">agentscope.parsers.code_block_parser module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.parsers.code_block_parser.html#agentscope.parsers.code_block_parser.MarkdownCodeBlockParser"><code class="docutils literal notranslate"><span class="pre">MarkdownCodeBlockParser</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.code_block_parser.html#agentscope.parsers.code_block_parser.MarkdownCodeBlockParser.tag_end"><code class="docutils literal notranslate"><span class="pre">MarkdownCodeBlockParser.tag_end</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.code_block_parser.html#agentscope.parsers.code_block_parser.MarkdownCodeBlockParser.__init__"><code class="docutils literal notranslate"><span class="pre">MarkdownCodeBlockParser.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.code_block_parser.html#agentscope.parsers.code_block_parser.MarkdownCodeBlockParser.name"><code class="docutils literal notranslate"><span class="pre">MarkdownCodeBlockParser.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.code_block_parser.html#agentscope.parsers.code_block_parser.MarkdownCodeBlockParser.tag_begin"><code class="docutils literal notranslate"><span class="pre">MarkdownCodeBlockParser.tag_begin</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.code_block_parser.html#agentscope.parsers.code_block_parser.MarkdownCodeBlockParser.content_hint"><code class="docutils literal notranslate"><span class="pre">MarkdownCodeBlockParser.content_hint</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.code_block_parser.html#agentscope.parsers.code_block_parser.MarkdownCodeBlockParser.format_instruction"><code class="docutils literal notranslate"><span class="pre">MarkdownCodeBlockParser.format_instruction</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.code_block_parser.html#agentscope.parsers.code_block_parser.MarkdownCodeBlockParser.parse"><code class="docutils literal notranslate"><span class="pre">MarkdownCodeBlockParser.parse()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.json_object_parser.html">agentscope.parsers.json_object_parser module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser"><code class="docutils literal notranslate"><span class="pre">MarkdownJsonObjectParser</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.name"><code class="docutils literal notranslate"><span class="pre">MarkdownJsonObjectParser.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.tag_begin"><code class="docutils literal notranslate"><span class="pre">MarkdownJsonObjectParser.tag_begin</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.tag_end"><code class="docutils literal notranslate"><span class="pre">MarkdownJsonObjectParser.tag_end</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.__init__"><code class="docutils literal notranslate"><span class="pre">MarkdownJsonObjectParser.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.content_hint"><code class="docutils literal notranslate"><span class="pre">MarkdownJsonObjectParser.content_hint</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.parse"><code class="docutils literal notranslate"><span class="pre">MarkdownJsonObjectParser.parse()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.format_instruction"><code class="docutils literal notranslate"><span class="pre">MarkdownJsonObjectParser.format_instruction</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonDictParser"><code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.name"><code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.tag_begin"><code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser.tag_begin</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.tag_end"><code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser.tag_end</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.__init__"><code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.content_hint"><code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser.content_hint</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.required_keys"><code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser.required_keys</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.format_instruction"><code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser.format_instruction</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.parse"><code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser.parse()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.parser_base.html">agentscope.parsers.parser_base module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.parsers.parser_base.html#agentscope.parsers.parser_base.ParserBase"><code class="docutils literal notranslate"><span class="pre">ParserBase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.parser_base.html#agentscope.parsers.parser_base.ParserBase.parse"><code class="docutils literal notranslate"><span class="pre">ParserBase.parse()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.parsers.parser_base.html#agentscope.parsers.parser_base.DictFilterMixin"><code class="docutils literal notranslate"><span class="pre">DictFilterMixin</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.parser_base.html#agentscope.parsers.parser_base.DictFilterMixin.__init__"><code class="docutils literal notranslate"><span class="pre">DictFilterMixin.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.parser_base.html#agentscope.parsers.parser_base.DictFilterMixin.to_memory"><code class="docutils literal notranslate"><span class="pre">DictFilterMixin.to_memory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.parser_base.html#agentscope.parsers.parser_base.DictFilterMixin.to_content"><code class="docutils literal notranslate"><span class="pre">DictFilterMixin.to_content()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.parser_base.html#agentscope.parsers.parser_base.DictFilterMixin.to_metadata"><code class="docutils literal notranslate"><span class="pre">DictFilterMixin.to_metadata()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.tagged_content_parser.html">agentscope.parsers.tagged_content_parser module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.TaggedContent"><code class="docutils literal notranslate"><span class="pre">TaggedContent</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.TaggedContent.__init__"><code class="docutils literal notranslate"><span class="pre">TaggedContent.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.TaggedContent.name"><code class="docutils literal notranslate"><span class="pre">TaggedContent.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.TaggedContent.tag_begin"><code class="docutils literal notranslate"><span class="pre">TaggedContent.tag_begin</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.TaggedContent.content_hint"><code class="docutils literal notranslate"><span class="pre">TaggedContent.content_hint</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.TaggedContent.tag_end"><code class="docutils literal notranslate"><span class="pre">TaggedContent.tag_end</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.TaggedContent.parse_json"><code class="docutils literal notranslate"><span class="pre">TaggedContent.parse_json</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.MultiTaggedContentParser"><code class="docutils literal notranslate"><span class="pre">MultiTaggedContentParser</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.MultiTaggedContentParser.json_required_hint"><code class="docutils literal notranslate"><span class="pre">MultiTaggedContentParser.json_required_hint</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.MultiTaggedContentParser.__init__"><code class="docutils literal notranslate"><span class="pre">MultiTaggedContentParser.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.MultiTaggedContentParser.format_instruction"><code class="docutils literal notranslate"><span class="pre">MultiTaggedContentParser.format_instruction</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.MultiTaggedContentParser.parse"><code class="docutils literal notranslate"><span class="pre">MultiTaggedContentParser.parse()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="module-agentscope.parsers">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-agentscope.parsers" title="Link to this heading"></a></h2>
 <p>Model response parser module.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="agentscope.parsers.ParserBase">
@@ -537,13 +613,14 @@ will be parsed as a JSON object by <cite>json.loads</cite>.</p>
 </dd></dl>
 
 </section>
+</section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="agentscope.memory.html" class="btn btn-neutral float-left" title="agentscope.memory" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="agentscope.exception.html" class="btn btn-neutral float-right" title="agentscope.exception" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="agentscope.models.zhipu_model.html" class="btn btn-neutral float-left" title="agentscope.models.zhipu_model module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="agentscope.parsers.code_block_parser.html" class="btn btn-neutral float-right" title="agentscope.parsers.code_block_parser module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

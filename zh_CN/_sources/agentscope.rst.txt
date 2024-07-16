@@ -1,5 +1,41 @@
-agentscope
-==========
+agentscope package
+==================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   agentscope.agents
+   agentscope.memory
+   agentscope.models
+   agentscope.parsers
+   agentscope.pipelines
+   agentscope.prompt
+   agentscope.rag
+   agentscope.rpc
+   agentscope.server
+   agentscope.service
+   agentscope.studio
+   agentscope.utils
+   agentscope.web
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   agentscope.constants
+   agentscope.exception
+   agentscope.file_manager
+   agentscope.logging
+   agentscope.message
+   agentscope.msghub
+
+Module contents
+---------------
 
 .. automodule:: agentscope
    :members:

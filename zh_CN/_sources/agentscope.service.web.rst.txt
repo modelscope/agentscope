@@ -1,5 +1,20 @@
-agentscope.service.web
-======================
+agentscope.service.web package
+==============================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   agentscope.service.web.arxiv
+   agentscope.service.web.dblp
+   agentscope.service.web.download
+   agentscope.service.web.search
+   agentscope.service.web.web_digest
+
+Module contents
+---------------
 
 .. automodule:: agentscope.service.web
    :members:

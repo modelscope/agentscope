@@ -1,5 +1,17 @@
-agentscope.pipelines
-====================
+agentscope.pipelines package
+============================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   agentscope.pipelines.functional
+   agentscope.pipelines.pipeline
+
+Module contents
+---------------
 
 .. automodule:: agentscope.pipelines
    :members:

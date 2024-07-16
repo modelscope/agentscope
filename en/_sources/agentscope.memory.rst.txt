@@ -1,5 +1,17 @@
-agentscope.memory
-=================
+agentscope.memory package
+=========================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   agentscope.memory.memory
+   agentscope.memory.temporary_memory
+
+Module contents
+---------------
 
 .. automodule:: agentscope.memory
    :members:

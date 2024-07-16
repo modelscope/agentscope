@@ -1,5 +1,6 @@
-agentscope.service.sql_query.mongodb
-====================================
+agentscope.service.sql\_query.mongodb module
+============================================
+
 .. automodule:: agentscope.service.sql_query.mongodb
    :members:
    :undoc-members:

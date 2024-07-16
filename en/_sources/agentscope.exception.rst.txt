@@ -1,5 +1,6 @@
-agentscope.exception
-====================
+agentscope.exception module
+===========================
+
 .. automodule:: agentscope.exception
    :members:
    :undoc-members:

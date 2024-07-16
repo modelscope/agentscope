@@ -1,5 +1,19 @@
-agentscope.web.workstation
-==========================
+agentscope.web.workstation package
+==================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   agentscope.web.workstation.workflow
+   agentscope.web.workstation.workflow_dag
+   agentscope.web.workstation.workflow_node
+   agentscope.web.workstation.workflow_utils
+
+Module contents
+---------------
 
 .. automodule:: agentscope.web.workstation
    :members:

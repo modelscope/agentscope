@@ -1,5 +1,17 @@
-agentscope.service.retrieval
-============================
+agentscope.service.retrieval package
+====================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   agentscope.service.retrieval.retrieval_from_list
+   agentscope.service.retrieval.similarity
+
+Module contents
+---------------
 
 .. automodule:: agentscope.service.retrieval
    :members:

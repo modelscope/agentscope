@@ -1,5 +1,6 @@
-agentscope.service.web.download
-===============================
+agentscope.service.web.download module
+======================================
+
 .. automodule:: agentscope.service.web.download
    :members:
    :undoc-members:

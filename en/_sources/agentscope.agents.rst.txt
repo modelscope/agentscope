@@ -1,5 +1,24 @@
-agentscope.agents
-=================
+agentscope.agents package
+=========================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   agentscope.agents.agent
+   agentscope.agents.dialog_agent
+   agentscope.agents.dict_dialog_agent
+   agentscope.agents.operator
+   agentscope.agents.rag_agent
+   agentscope.agents.react_agent
+   agentscope.agents.rpc_agent
+   agentscope.agents.text_to_image_agent
+   agentscope.agents.user_agent
+
+Module contents
+---------------
 
 .. automodule:: agentscope.agents
    :members:

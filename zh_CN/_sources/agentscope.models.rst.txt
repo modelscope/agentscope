@@ -1,5 +1,25 @@
-agentscope.models
-=================
+agentscope.models package
+=========================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   agentscope.models.config
+   agentscope.models.dashscope_model
+   agentscope.models.gemini_model
+   agentscope.models.litellm_model
+   agentscope.models.model
+   agentscope.models.ollama_model
+   agentscope.models.openai_model
+   agentscope.models.post_model
+   agentscope.models.response
+   agentscope.models.zhipu_model
+
+Module contents
+---------------
 
 .. automodule:: agentscope.models
    :members:

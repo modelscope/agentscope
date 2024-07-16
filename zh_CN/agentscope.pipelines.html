@@ -5,7 +5,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>agentscope.pipelines &mdash; AgentScope  文档</title>
+  <title>agentscope.pipelines package &mdash; AgentScope  文档</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c9484b72" />
@@ -24,8 +24,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="agentscope.service" href="agentscope.service.html" />
-    <link rel="prev" title="agentscope.exception" href="agentscope.exception.html" /> 
+    <link rel="next" title="agentscope.pipelines.functional module" href="agentscope.pipelines.functional.html" />
+    <link rel="prev" title="agentscope.parsers.tagged_content_parser module" href="agentscope.parsers.tagged_content_parser.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -74,51 +74,59 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">agentscope.pipelines</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.pipelines.PipelineBase"><code class="docutils literal notranslate"><span class="pre">PipelineBase</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.pipelines.PipelineBase.__init__"><code class="docutils literal notranslate"><span class="pre">PipelineBase.__init__()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">agentscope.pipelines package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.pipelines.functional.html">agentscope.pipelines.functional module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.pipelines.pipeline.html">agentscope.pipelines.pipeline module</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.pipelines.SequentialPipeline"><code class="docutils literal notranslate"><span class="pre">SequentialPipeline</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.pipelines.SequentialPipeline.__init__"><code class="docutils literal notranslate"><span class="pre">SequentialPipeline.__init__()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-agentscope.pipelines">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.pipelines.PipelineBase"><code class="docutils literal notranslate"><span class="pre">PipelineBase</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.pipelines.PipelineBase.__init__"><code class="docutils literal notranslate"><span class="pre">PipelineBase.__init__()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.pipelines.IfElsePipeline"><code class="docutils literal notranslate"><span class="pre">IfElsePipeline</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.pipelines.IfElsePipeline.__init__"><code class="docutils literal notranslate"><span class="pre">IfElsePipeline.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.pipelines.SequentialPipeline"><code class="docutils literal notranslate"><span class="pre">SequentialPipeline</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.pipelines.SequentialPipeline.__init__"><code class="docutils literal notranslate"><span class="pre">SequentialPipeline.__init__()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.pipelines.SwitchPipeline"><code class="docutils literal notranslate"><span class="pre">SwitchPipeline</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.pipelines.SwitchPipeline.__init__"><code class="docutils literal notranslate"><span class="pre">SwitchPipeline.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.pipelines.IfElsePipeline"><code class="docutils literal notranslate"><span class="pre">IfElsePipeline</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.pipelines.IfElsePipeline.__init__"><code class="docutils literal notranslate"><span class="pre">IfElsePipeline.__init__()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.pipelines.ForLoopPipeline"><code class="docutils literal notranslate"><span class="pre">ForLoopPipeline</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.pipelines.ForLoopPipeline.__init__"><code class="docutils literal notranslate"><span class="pre">ForLoopPipeline.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.pipelines.SwitchPipeline"><code class="docutils literal notranslate"><span class="pre">SwitchPipeline</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.pipelines.SwitchPipeline.__init__"><code class="docutils literal notranslate"><span class="pre">SwitchPipeline.__init__()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.pipelines.WhileLoopPipeline"><code class="docutils literal notranslate"><span class="pre">WhileLoopPipeline</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.pipelines.WhileLoopPipeline.__init__"><code class="docutils literal notranslate"><span class="pre">WhileLoopPipeline.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.pipelines.ForLoopPipeline"><code class="docutils literal notranslate"><span class="pre">ForLoopPipeline</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.pipelines.ForLoopPipeline.__init__"><code class="docutils literal notranslate"><span class="pre">ForLoopPipeline.__init__()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.pipelines.sequentialpipeline"><code class="docutils literal notranslate"><span class="pre">sequentialpipeline()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.pipelines.ifelsepipeline"><code class="docutils literal notranslate"><span class="pre">ifelsepipeline()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.pipelines.switchpipeline"><code class="docutils literal notranslate"><span class="pre">switchpipeline()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.pipelines.forlooppipeline"><code class="docutils literal notranslate"><span class="pre">forlooppipeline()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.pipelines.whilelooppipeline"><code class="docutils literal notranslate"><span class="pre">whilelooppipeline()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.pipelines.WhileLoopPipeline"><code class="docutils literal notranslate"><span class="pre">WhileLoopPipeline</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.pipelines.WhileLoopPipeline.__init__"><code class="docutils literal notranslate"><span class="pre">WhileLoopPipeline.__init__()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.server.html">agentscope.server</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.pipelines.sequentialpipeline"><code class="docutils literal notranslate"><span class="pre">sequentialpipeline()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.pipelines.ifelsepipeline"><code class="docutils literal notranslate"><span class="pre">ifelsepipeline()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.pipelines.switchpipeline"><code class="docutils literal notranslate"><span class="pre">switchpipeline()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.pipelines.forlooppipeline"><code class="docutils literal notranslate"><span class="pre">forlooppipeline()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.pipelines.whilelooppipeline"><code class="docutils literal notranslate"><span class="pre">whilelooppipeline()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.server.html">agentscope.server package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils package</a></li>
 </ul>
 
         </div>
@@ -135,7 +143,8 @@
           <div role="navigation" aria-label="页面导航">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">agentscope.pipelines</li>
+          <li class="breadcrumb-item"><a href="agentscope.html">agentscope package</a></li>
+      <li class="breadcrumb-item active">agentscope.pipelines package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/agentscope.pipelines.rst.txt" rel="nofollow"> 查看页面源码</a>
       </li>
@@ -145,8 +154,53 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-agentscope.pipelines">
-<span id="agentscope-pipelines"></span><h1>agentscope.pipelines<a class="headerlink" href="#module-agentscope.pipelines" title="Link to this heading"></a></h1>
+  <section id="agentscope-pipelines-package">
+<h1>agentscope.pipelines package<a class="headerlink" href="#agentscope-pipelines-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.functional.html">agentscope.pipelines.functional module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.pipelines.functional.html#agentscope.pipelines.functional.placeholder"><code class="docutils literal notranslate"><span class="pre">placeholder()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.pipelines.functional.html#agentscope.pipelines.functional.sequentialpipeline"><code class="docutils literal notranslate"><span class="pre">sequentialpipeline()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.pipelines.functional.html#agentscope.pipelines.functional.ifelsepipeline"><code class="docutils literal notranslate"><span class="pre">ifelsepipeline()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.pipelines.functional.html#agentscope.pipelines.functional.switchpipeline"><code class="docutils literal notranslate"><span class="pre">switchpipeline()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.pipelines.functional.html#agentscope.pipelines.functional.forlooppipeline"><code class="docutils literal notranslate"><span class="pre">forlooppipeline()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.pipelines.functional.html#agentscope.pipelines.functional.whilelooppipeline"><code class="docutils literal notranslate"><span class="pre">whilelooppipeline()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.pipeline.html">agentscope.pipelines.pipeline module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.pipelines.pipeline.html#agentscope.pipelines.pipeline.PipelineBase"><code class="docutils literal notranslate"><span class="pre">PipelineBase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.pipelines.pipeline.html#agentscope.pipelines.pipeline.PipelineBase.__init__"><code class="docutils literal notranslate"><span class="pre">PipelineBase.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.pipelines.pipeline.html#agentscope.pipelines.pipeline.IfElsePipeline"><code class="docutils literal notranslate"><span class="pre">IfElsePipeline</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.pipelines.pipeline.html#agentscope.pipelines.pipeline.IfElsePipeline.__init__"><code class="docutils literal notranslate"><span class="pre">IfElsePipeline.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.pipelines.pipeline.html#agentscope.pipelines.pipeline.SwitchPipeline"><code class="docutils literal notranslate"><span class="pre">SwitchPipeline</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.pipelines.pipeline.html#agentscope.pipelines.pipeline.SwitchPipeline.__init__"><code class="docutils literal notranslate"><span class="pre">SwitchPipeline.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.pipelines.pipeline.html#agentscope.pipelines.pipeline.ForLoopPipeline"><code class="docutils literal notranslate"><span class="pre">ForLoopPipeline</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.pipelines.pipeline.html#agentscope.pipelines.pipeline.ForLoopPipeline.__init__"><code class="docutils literal notranslate"><span class="pre">ForLoopPipeline.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.pipelines.pipeline.html#agentscope.pipelines.pipeline.WhileLoopPipeline"><code class="docutils literal notranslate"><span class="pre">WhileLoopPipeline</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.pipelines.pipeline.html#agentscope.pipelines.pipeline.WhileLoopPipeline.__init__"><code class="docutils literal notranslate"><span class="pre">WhileLoopPipeline.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.pipelines.pipeline.html#agentscope.pipelines.pipeline.SequentialPipeline"><code class="docutils literal notranslate"><span class="pre">SequentialPipeline</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.pipelines.pipeline.html#agentscope.pipelines.pipeline.SequentialPipeline.__init__"><code class="docutils literal notranslate"><span class="pre">SequentialPipeline.__init__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="module-agentscope.pipelines">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-agentscope.pipelines" title="Link to this heading"></a></h2>
 <p>Import all pipeline related modules in the package.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="agentscope.pipelines.PipelineBase">
@@ -455,13 +509,14 @@ defaults to <cite>lambda _,__: False</cite></p></li>
 </dd></dl>
 
 </section>
+</section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
-        <a href="agentscope.exception.html" class="btn btn-neutral float-left" title="agentscope.exception" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
-        <a href="agentscope.service.html" class="btn btn-neutral float-right" title="agentscope.service" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="agentscope.parsers.tagged_content_parser.html" class="btn btn-neutral float-left" title="agentscope.parsers.tagged_content_parser module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="agentscope.pipelines.functional.html" class="btn btn-neutral float-right" title="agentscope.pipelines.functional module" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

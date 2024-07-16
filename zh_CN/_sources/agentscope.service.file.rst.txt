@@ -1,5 +1,18 @@
-agentscope.service.file
-=======================
+agentscope.service.file package
+===============================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   agentscope.service.file.common
+   agentscope.service.file.json
+   agentscope.service.file.text
+
+Module contents
+---------------
 
 .. automodule:: agentscope.service.file
    :members:

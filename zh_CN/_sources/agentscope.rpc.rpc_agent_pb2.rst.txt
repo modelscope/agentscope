@@ -1,5 +1,6 @@
-agentscope.rpc.rpc_agent_pb2
-============================
+agentscope.rpc.rpc\_agent\_pb2 module
+=====================================
+
 .. automodule:: agentscope.rpc.rpc_agent_pb2
    :members:
    :undoc-members:

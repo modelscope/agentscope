@@ -1,5 +1,6 @@
-agentscope.service.web.search
-=============================
+agentscope.service.web.search module
+====================================
+
 .. automodule:: agentscope.service.web.search
    :members:
    :undoc-members:

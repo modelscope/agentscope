@@ -1,5 +1,8 @@
-agentscope.prompt
-=================
+agentscope.prompt package
+=========================
+
+Module contents
+---------------
 
 .. automodule:: agentscope.prompt
    :members:

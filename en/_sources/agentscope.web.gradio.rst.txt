@@ -1,5 +1,18 @@
-agentscope.web.gradio
-=====================
+agentscope.web.gradio package
+=============================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   agentscope.web.gradio.constants
+   agentscope.web.gradio.studio
+   agentscope.web.gradio.utils
+
+Module contents
+---------------
 
 .. automodule:: agentscope.web.gradio
    :members:

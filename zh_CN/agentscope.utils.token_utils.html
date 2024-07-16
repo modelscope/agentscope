@@ -5,7 +5,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>agentscope.utils.token_utils &mdash; AgentScope  文档</title>
+  <title>agentscope.utils.token_utils module &mdash; AgentScope  文档</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c9484b72" />
@@ -23,7 +23,9 @@
         <script src="_static/translations.js?v=beaddf03"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
-    <link rel="search" title="搜索" href="search.html" /> 
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="agentscope.utils.tools module" href="agentscope.utils.tools.html" />
+    <link rel="prev" title="agentscope.utils.monitor module" href="agentscope.utils.monitor.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -71,21 +73,36 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorial/contribute.html">参与贡献</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.server.html">agentscope.server</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils</a></li>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.server.html">agentscope.server package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="agentscope.utils.html">agentscope.utils package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="agentscope.utils.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="agentscope.utils.common.html">agentscope.utils.common module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.utils.monitor.html">agentscope.utils.monitor module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">agentscope.utils.token_utils module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.utils.token_utils.get_openai_max_length"><code class="docutils literal notranslate"><span class="pre">get_openai_max_length()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.utils.token_utils.count_openai_token"><code class="docutils literal notranslate"><span class="pre">count_openai_token()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.utils.token_utils.num_tokens_from_content"><code class="docutils literal notranslate"><span class="pre">num_tokens_from_content()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.utils.tools.html">agentscope.utils.tools module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.utils.html#module-agentscope.utils">Module contents</a></li>
+</ul>
+</li>
 </ul>
 
         </div>
@@ -102,7 +119,9 @@
           <div role="navigation" aria-label="页面导航">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">agentscope.utils.token_utils</li>
+          <li class="breadcrumb-item"><a href="agentscope.html">agentscope package</a></li>
+          <li class="breadcrumb-item"><a href="agentscope.utils.html">agentscope.utils package</a></li>
+      <li class="breadcrumb-item active">agentscope.utils.token_utils module</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/agentscope.utils.token_utils.rst.txt" rel="nofollow"> 查看页面源码</a>
       </li>
@@ -113,7 +132,7 @@
            <div itemprop="articleBody">
              
   <section id="module-agentscope.utils.token_utils">
-<span id="agentscope-utils-token-utils"></span><h1>agentscope.utils.token_utils<a class="headerlink" href="#module-agentscope.utils.token_utils" title="Link to this heading"></a></h1>
+<span id="agentscope-utils-token-utils-module"></span><h1>agentscope.utils.token_utils module<a class="headerlink" href="#module-agentscope.utils.token_utils" title="Link to this heading"></a></h1>
 <p>Token utils.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="agentscope.utils.token_utils.get_openai_max_length">
@@ -138,7 +157,10 @@
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="agentscope.utils.monitor.html" class="btn btn-neutral float-left" title="agentscope.utils.monitor module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="agentscope.utils.tools.html" class="btn btn-neutral float-right" title="agentscope.utils.tools module" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 

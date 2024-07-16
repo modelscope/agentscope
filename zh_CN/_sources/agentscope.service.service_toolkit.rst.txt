@@ -1,5 +1,6 @@
-agentscope.service.service_toolkit
-==================================
+agentscope.service.service\_toolkit module
+==========================================
+
 .. automodule:: agentscope.service.service_toolkit
    :members:
    :undoc-members:

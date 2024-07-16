@@ -1,5 +1,6 @@
-agentscope.constants
-====================
+agentscope.constants module
+===========================
+
 .. automodule:: agentscope.constants
    :members:
    :undoc-members:

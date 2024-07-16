@@ -5,7 +5,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>agentscope.models &mdash; AgentScope  documentation</title>
+  <title>agentscope.models package &mdash; AgentScope  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c9484b72" />
@@ -23,8 +23,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="agentscope.agents" href="agentscope.agents.html" />
-    <link rel="prev" title="agentscope.message" href="agentscope.message.html" /> 
+    <link rel="next" title="agentscope.models.config module" href="agentscope.models.config.html" />
+    <link rel="prev" title="agentscope.memory.temporary_memory module" href="agentscope.memory.temporary_memory.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -73,46 +73,24 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">agentscope.models</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.models.ModelWrapperBase"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.models.ModelResponse"><code class="docutils literal notranslate"><span class="pre">ModelResponse</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.models.PostAPIModelWrapperBase"><code class="docutils literal notranslate"><span class="pre">PostAPIModelWrapperBase</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.models.PostAPIChatWrapper"><code class="docutils literal notranslate"><span class="pre">PostAPIChatWrapper</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.models.OpenAIWrapperBase"><code class="docutils literal notranslate"><span class="pre">OpenAIWrapperBase</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.models.OpenAIChatWrapper"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.models.OpenAIDALLEWrapper"><code class="docutils literal notranslate"><span class="pre">OpenAIDALLEWrapper</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.models.OpenAIEmbeddingWrapper"><code class="docutils literal notranslate"><span class="pre">OpenAIEmbeddingWrapper</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.models.DashScopeChatWrapper"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.models.DashScopeImageSynthesisWrapper"><code class="docutils literal notranslate"><span class="pre">DashScopeImageSynthesisWrapper</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.models.DashScopeTextEmbeddingWrapper"><code class="docutils literal notranslate"><span class="pre">DashScopeTextEmbeddingWrapper</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.models.DashScopeMultiModalWrapper"><code class="docutils literal notranslate"><span class="pre">DashScopeMultiModalWrapper</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.models.OllamaChatWrapper"><code class="docutils literal notranslate"><span class="pre">OllamaChatWrapper</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.models.OllamaEmbeddingWrapper"><code class="docutils literal notranslate"><span class="pre">OllamaEmbeddingWrapper</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.models.OllamaGenerationWrapper"><code class="docutils literal notranslate"><span class="pre">OllamaGenerationWrapper</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.models.GeminiChatWrapper"><code class="docutils literal notranslate"><span class="pre">GeminiChatWrapper</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.models.GeminiEmbeddingWrapper"><code class="docutils literal notranslate"><span class="pre">GeminiEmbeddingWrapper</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.models.ZhipuAIChatWrapper"><code class="docutils literal notranslate"><span class="pre">ZhipuAIChatWrapper</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.models.ZhipuAIEmbeddingWrapper"><code class="docutils literal notranslate"><span class="pre">ZhipuAIEmbeddingWrapper</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.models.LiteLLMChatWrapper"><code class="docutils literal notranslate"><span class="pre">LiteLLMChatWrapper</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.models.load_model_by_config_name"><code class="docutils literal notranslate"><span class="pre">load_model_by_config_name()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.models.load_config_by_name"><code class="docutils literal notranslate"><span class="pre">load_config_by_name()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.models.read_model_configs"><code class="docutils literal notranslate"><span class="pre">read_model_configs()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.models.clear_model_configs"><code class="docutils literal notranslate"><span class="pre">clear_model_configs()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">agentscope.models package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-agentscope.models">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.server.html">agentscope.server</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.server.html">agentscope.server package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils package</a></li>
 </ul>
 
         </div>
@@ -129,7 +107,8 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">agentscope.models</li>
+          <li class="breadcrumb-item"><a href="agentscope.html">agentscope package</a></li>
+      <li class="breadcrumb-item active">agentscope.models package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/agentscope.models.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -139,8 +118,233 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-agentscope.models">
-<span id="agentscope-models"></span><h1>agentscope.models<a class="headerlink" href="#module-agentscope.models" title="Link to this heading"></a></h1>
+  <section id="agentscope-models-package">
+<h1>agentscope.models package<a class="headerlink" href="#agentscope-models-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.config.html">agentscope.models.config module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.dashscope_model.html">agentscope.models.dashscope_model module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeWrapperBase"><code class="docutils literal notranslate"><span class="pre">DashScopeWrapperBase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeWrapperBase.__init__"><code class="docutils literal notranslate"><span class="pre">DashScopeWrapperBase.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeWrapperBase.format"><code class="docutils literal notranslate"><span class="pre">DashScopeWrapperBase.format()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeChatWrapper"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeChatWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper.model_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeChatWrapper.deprecated_model_type"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper.deprecated_model_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeChatWrapper.format"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper.format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeChatWrapper.config_name"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper.config_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeChatWrapper.model_name"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper.model_name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeImageSynthesisWrapper"><code class="docutils literal notranslate"><span class="pre">DashScopeImageSynthesisWrapper</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeImageSynthesisWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">DashScopeImageSynthesisWrapper.model_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeImageSynthesisWrapper.config_name"><code class="docutils literal notranslate"><span class="pre">DashScopeImageSynthesisWrapper.config_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeImageSynthesisWrapper.model_name"><code class="docutils literal notranslate"><span class="pre">DashScopeImageSynthesisWrapper.model_name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeTextEmbeddingWrapper"><code class="docutils literal notranslate"><span class="pre">DashScopeTextEmbeddingWrapper</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeTextEmbeddingWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">DashScopeTextEmbeddingWrapper.model_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeTextEmbeddingWrapper.config_name"><code class="docutils literal notranslate"><span class="pre">DashScopeTextEmbeddingWrapper.config_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeTextEmbeddingWrapper.model_name"><code class="docutils literal notranslate"><span class="pre">DashScopeTextEmbeddingWrapper.model_name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeMultiModalWrapper"><code class="docutils literal notranslate"><span class="pre">DashScopeMultiModalWrapper</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeMultiModalWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">DashScopeMultiModalWrapper.model_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeMultiModalWrapper.format"><code class="docutils literal notranslate"><span class="pre">DashScopeMultiModalWrapper.format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeMultiModalWrapper.convert_url"><code class="docutils literal notranslate"><span class="pre">DashScopeMultiModalWrapper.convert_url()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeMultiModalWrapper.config_name"><code class="docutils literal notranslate"><span class="pre">DashScopeMultiModalWrapper.config_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeMultiModalWrapper.model_name"><code class="docutils literal notranslate"><span class="pre">DashScopeMultiModalWrapper.model_name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.gemini_model.html">agentscope.models.gemini_model module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiWrapperBase"><code class="docutils literal notranslate"><span class="pre">GeminiWrapperBase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiWrapperBase.__init__"><code class="docutils literal notranslate"><span class="pre">GeminiWrapperBase.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiWrapperBase.list_models"><code class="docutils literal notranslate"><span class="pre">GeminiWrapperBase.list_models()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiChatWrapper"><code class="docutils literal notranslate"><span class="pre">GeminiChatWrapper</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiChatWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">GeminiChatWrapper.model_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiChatWrapper.generation_method"><code class="docutils literal notranslate"><span class="pre">GeminiChatWrapper.generation_method</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiChatWrapper.__init__"><code class="docutils literal notranslate"><span class="pre">GeminiChatWrapper.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiChatWrapper.format"><code class="docutils literal notranslate"><span class="pre">GeminiChatWrapper.format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiChatWrapper.config_name"><code class="docutils literal notranslate"><span class="pre">GeminiChatWrapper.config_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiChatWrapper.model_name"><code class="docutils literal notranslate"><span class="pre">GeminiChatWrapper.model_name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiEmbeddingWrapper"><code class="docutils literal notranslate"><span class="pre">GeminiEmbeddingWrapper</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiEmbeddingWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">GeminiEmbeddingWrapper.model_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiEmbeddingWrapper.config_name"><code class="docutils literal notranslate"><span class="pre">GeminiEmbeddingWrapper.config_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiEmbeddingWrapper.model_name"><code class="docutils literal notranslate"><span class="pre">GeminiEmbeddingWrapper.model_name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.litellm_model.html">agentscope.models.litellm_model module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.models.litellm_model.html#agentscope.models.litellm_model.LiteLLMWrapperBase"><code class="docutils literal notranslate"><span class="pre">LiteLLMWrapperBase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.litellm_model.html#agentscope.models.litellm_model.LiteLLMWrapperBase.__init__"><code class="docutils literal notranslate"><span class="pre">LiteLLMWrapperBase.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.litellm_model.html#agentscope.models.litellm_model.LiteLLMWrapperBase.format"><code class="docutils literal notranslate"><span class="pre">LiteLLMWrapperBase.format()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.models.litellm_model.html#agentscope.models.litellm_model.LiteLLMChatWrapper"><code class="docutils literal notranslate"><span class="pre">LiteLLMChatWrapper</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.litellm_model.html#agentscope.models.litellm_model.LiteLLMChatWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">LiteLLMChatWrapper.model_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.litellm_model.html#agentscope.models.litellm_model.LiteLLMChatWrapper.format"><code class="docutils literal notranslate"><span class="pre">LiteLLMChatWrapper.format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.litellm_model.html#agentscope.models.litellm_model.LiteLLMChatWrapper.config_name"><code class="docutils literal notranslate"><span class="pre">LiteLLMChatWrapper.config_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.litellm_model.html#agentscope.models.litellm_model.LiteLLMChatWrapper.model_name"><code class="docutils literal notranslate"><span class="pre">LiteLLMChatWrapper.model_name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.model.html">agentscope.models.model module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.models.model.html#agentscope.models.model.ModelWrapperBase"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.model.html#agentscope.models.model.ModelWrapperBase.model_type"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.model_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.model.html#agentscope.models.model.ModelWrapperBase.model_name"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.model_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.model.html#agentscope.models.model.ModelWrapperBase.__init__"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.model.html#agentscope.models.model.ModelWrapperBase.config_name"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.config_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.model.html#agentscope.models.model.ModelWrapperBase.get_wrapper"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.get_wrapper()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.model.html#agentscope.models.model.ModelWrapperBase.format"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.model.html#agentscope.models.model.ModelWrapperBase.update_monitor"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.update_monitor()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.ollama_model.html">agentscope.models.ollama_model module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaWrapperBase"><code class="docutils literal notranslate"><span class="pre">OllamaWrapperBase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaWrapperBase.model_type"><code class="docutils literal notranslate"><span class="pre">OllamaWrapperBase.model_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaWrapperBase.__init__"><code class="docutils literal notranslate"><span class="pre">OllamaWrapperBase.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaWrapperBase.model_name"><code class="docutils literal notranslate"><span class="pre">OllamaWrapperBase.model_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaWrapperBase.options"><code class="docutils literal notranslate"><span class="pre">OllamaWrapperBase.options</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaWrapperBase.keep_alive"><code class="docutils literal notranslate"><span class="pre">OllamaWrapperBase.keep_alive</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaChatWrapper"><code class="docutils literal notranslate"><span class="pre">OllamaChatWrapper</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaChatWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">OllamaChatWrapper.model_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaChatWrapper.format"><code class="docutils literal notranslate"><span class="pre">OllamaChatWrapper.format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaChatWrapper.model_name"><code class="docutils literal notranslate"><span class="pre">OllamaChatWrapper.model_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaChatWrapper.options"><code class="docutils literal notranslate"><span class="pre">OllamaChatWrapper.options</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaChatWrapper.keep_alive"><code class="docutils literal notranslate"><span class="pre">OllamaChatWrapper.keep_alive</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaChatWrapper.config_name"><code class="docutils literal notranslate"><span class="pre">OllamaChatWrapper.config_name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaEmbeddingWrapper"><code class="docutils literal notranslate"><span class="pre">OllamaEmbeddingWrapper</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaEmbeddingWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">OllamaEmbeddingWrapper.model_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaEmbeddingWrapper.model_name"><code class="docutils literal notranslate"><span class="pre">OllamaEmbeddingWrapper.model_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaEmbeddingWrapper.options"><code class="docutils literal notranslate"><span class="pre">OllamaEmbeddingWrapper.options</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaEmbeddingWrapper.keep_alive"><code class="docutils literal notranslate"><span class="pre">OllamaEmbeddingWrapper.keep_alive</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaEmbeddingWrapper.config_name"><code class="docutils literal notranslate"><span class="pre">OllamaEmbeddingWrapper.config_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaEmbeddingWrapper.format"><code class="docutils literal notranslate"><span class="pre">OllamaEmbeddingWrapper.format()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaGenerationWrapper"><code class="docutils literal notranslate"><span class="pre">OllamaGenerationWrapper</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaGenerationWrapper.model_name"><code class="docutils literal notranslate"><span class="pre">OllamaGenerationWrapper.model_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaGenerationWrapper.options"><code class="docutils literal notranslate"><span class="pre">OllamaGenerationWrapper.options</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaGenerationWrapper.keep_alive"><code class="docutils literal notranslate"><span class="pre">OllamaGenerationWrapper.keep_alive</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaGenerationWrapper.config_name"><code class="docutils literal notranslate"><span class="pre">OllamaGenerationWrapper.config_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaGenerationWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">OllamaGenerationWrapper.model_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaGenerationWrapper.format"><code class="docutils literal notranslate"><span class="pre">OllamaGenerationWrapper.format()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.openai_model.html">agentscope.models.openai_model module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIWrapperBase"><code class="docutils literal notranslate"><span class="pre">OpenAIWrapperBase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIWrapperBase.__init__"><code class="docutils literal notranslate"><span class="pre">OpenAIWrapperBase.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIWrapperBase.format"><code class="docutils literal notranslate"><span class="pre">OpenAIWrapperBase.format()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIChatWrapper"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIChatWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper.model_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIChatWrapper.deprecated_model_type"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper.deprecated_model_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIChatWrapper.substrings_in_vision_models_names"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper.substrings_in_vision_models_names</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIChatWrapper.format"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper.format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIChatWrapper.config_name"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper.config_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIChatWrapper.model_name"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper.model_name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIDALLEWrapper"><code class="docutils literal notranslate"><span class="pre">OpenAIDALLEWrapper</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIDALLEWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">OpenAIDALLEWrapper.model_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIDALLEWrapper.config_name"><code class="docutils literal notranslate"><span class="pre">OpenAIDALLEWrapper.config_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIDALLEWrapper.model_name"><code class="docutils literal notranslate"><span class="pre">OpenAIDALLEWrapper.model_name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIEmbeddingWrapper"><code class="docutils literal notranslate"><span class="pre">OpenAIEmbeddingWrapper</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIEmbeddingWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">OpenAIEmbeddingWrapper.model_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIEmbeddingWrapper.config_name"><code class="docutils literal notranslate"><span class="pre">OpenAIEmbeddingWrapper.config_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIEmbeddingWrapper.model_name"><code class="docutils literal notranslate"><span class="pre">OpenAIEmbeddingWrapper.model_name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.post_model.html">agentscope.models.post_model module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.models.post_model.html#agentscope.models.post_model.PostAPIModelWrapperBase"><code class="docutils literal notranslate"><span class="pre">PostAPIModelWrapperBase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.post_model.html#agentscope.models.post_model.PostAPIModelWrapperBase.model_type"><code class="docutils literal notranslate"><span class="pre">PostAPIModelWrapperBase.model_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.post_model.html#agentscope.models.post_model.PostAPIModelWrapperBase.__init__"><code class="docutils literal notranslate"><span class="pre">PostAPIModelWrapperBase.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.post_model.html#agentscope.models.post_model.PostAPIModelWrapperBase.config_name"><code class="docutils literal notranslate"><span class="pre">PostAPIModelWrapperBase.config_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.post_model.html#agentscope.models.post_model.PostAPIModelWrapperBase.model_name"><code class="docutils literal notranslate"><span class="pre">PostAPIModelWrapperBase.model_name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.models.post_model.html#agentscope.models.post_model.PostAPIChatWrapper"><code class="docutils literal notranslate"><span class="pre">PostAPIChatWrapper</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.post_model.html#agentscope.models.post_model.PostAPIChatWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">PostAPIChatWrapper.model_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.post_model.html#agentscope.models.post_model.PostAPIChatWrapper.format"><code class="docutils literal notranslate"><span class="pre">PostAPIChatWrapper.format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.post_model.html#agentscope.models.post_model.PostAPIChatWrapper.config_name"><code class="docutils literal notranslate"><span class="pre">PostAPIChatWrapper.config_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.post_model.html#agentscope.models.post_model.PostAPIChatWrapper.model_name"><code class="docutils literal notranslate"><span class="pre">PostAPIChatWrapper.model_name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.models.post_model.html#agentscope.models.post_model.PostAPIDALLEWrapper"><code class="docutils literal notranslate"><span class="pre">PostAPIDALLEWrapper</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.post_model.html#agentscope.models.post_model.PostAPIDALLEWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">PostAPIDALLEWrapper.model_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.post_model.html#agentscope.models.post_model.PostAPIDALLEWrapper.deprecated_model_type"><code class="docutils literal notranslate"><span class="pre">PostAPIDALLEWrapper.deprecated_model_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.post_model.html#agentscope.models.post_model.PostAPIDALLEWrapper.format"><code class="docutils literal notranslate"><span class="pre">PostAPIDALLEWrapper.format()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.models.post_model.html#agentscope.models.post_model.PostAPIEmbeddingWrapper"><code class="docutils literal notranslate"><span class="pre">PostAPIEmbeddingWrapper</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.post_model.html#agentscope.models.post_model.PostAPIEmbeddingWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">PostAPIEmbeddingWrapper.model_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.post_model.html#agentscope.models.post_model.PostAPIEmbeddingWrapper.format"><code class="docutils literal notranslate"><span class="pre">PostAPIEmbeddingWrapper.format()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.response.html">agentscope.models.response module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.models.response.html#agentscope.models.response.ModelResponse"><code class="docutils literal notranslate"><span class="pre">ModelResponse</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.response.html#agentscope.models.response.ModelResponse.__init__"><code class="docutils literal notranslate"><span class="pre">ModelResponse.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.response.html#agentscope.models.response.ModelResponse.text"><code class="docutils literal notranslate"><span class="pre">ModelResponse.text</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.response.html#agentscope.models.response.ModelResponse.embedding"><code class="docutils literal notranslate"><span class="pre">ModelResponse.embedding</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.response.html#agentscope.models.response.ModelResponse.image_urls"><code class="docutils literal notranslate"><span class="pre">ModelResponse.image_urls</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.response.html#agentscope.models.response.ModelResponse.raw"><code class="docutils literal notranslate"><span class="pre">ModelResponse.raw</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.response.html#agentscope.models.response.ModelResponse.parsed"><code class="docutils literal notranslate"><span class="pre">ModelResponse.parsed</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.zhipu_model.html">agentscope.models.zhipu_model module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.models.zhipu_model.html#agentscope.models.zhipu_model.ZhipuAIWrapperBase"><code class="docutils literal notranslate"><span class="pre">ZhipuAIWrapperBase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.zhipu_model.html#agentscope.models.zhipu_model.ZhipuAIWrapperBase.__init__"><code class="docutils literal notranslate"><span class="pre">ZhipuAIWrapperBase.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.zhipu_model.html#agentscope.models.zhipu_model.ZhipuAIWrapperBase.format"><code class="docutils literal notranslate"><span class="pre">ZhipuAIWrapperBase.format()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.models.zhipu_model.html#agentscope.models.zhipu_model.ZhipuAIChatWrapper"><code class="docutils literal notranslate"><span class="pre">ZhipuAIChatWrapper</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.zhipu_model.html#agentscope.models.zhipu_model.ZhipuAIChatWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">ZhipuAIChatWrapper.model_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.zhipu_model.html#agentscope.models.zhipu_model.ZhipuAIChatWrapper.format"><code class="docutils literal notranslate"><span class="pre">ZhipuAIChatWrapper.format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.zhipu_model.html#agentscope.models.zhipu_model.ZhipuAIChatWrapper.config_name"><code class="docutils literal notranslate"><span class="pre">ZhipuAIChatWrapper.config_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.zhipu_model.html#agentscope.models.zhipu_model.ZhipuAIChatWrapper.model_name"><code class="docutils literal notranslate"><span class="pre">ZhipuAIChatWrapper.model_name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.models.zhipu_model.html#agentscope.models.zhipu_model.ZhipuAIEmbeddingWrapper"><code class="docutils literal notranslate"><span class="pre">ZhipuAIEmbeddingWrapper</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.zhipu_model.html#agentscope.models.zhipu_model.ZhipuAIEmbeddingWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">ZhipuAIEmbeddingWrapper.model_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.zhipu_model.html#agentscope.models.zhipu_model.ZhipuAIEmbeddingWrapper.config_name"><code class="docutils literal notranslate"><span class="pre">ZhipuAIEmbeddingWrapper.config_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.zhipu_model.html#agentscope.models.zhipu_model.ZhipuAIEmbeddingWrapper.model_name"><code class="docutils literal notranslate"><span class="pre">ZhipuAIEmbeddingWrapper.model_name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="module-agentscope.models">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-agentscope.models" title="Link to this heading"></a></h2>
 <p>Import modules in models package.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="agentscope.models.ModelWrapperBase">
@@ -1052,13 +1256,14 @@ configs.</p></li>
 </dd></dl>
 
 </section>
+</section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="agentscope.message.html" class="btn btn-neutral float-left" title="agentscope.message" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="agentscope.agents.html" class="btn btn-neutral float-right" title="agentscope.agents" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="agentscope.memory.temporary_memory.html" class="btn btn-neutral float-left" title="agentscope.memory.temporary_memory module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="agentscope.models.config.html" class="btn btn-neutral float-right" title="agentscope.models.config module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -1,5 +1,6 @@
-agentscope.parsers.tagged_content_parser
-========================================
+agentscope.parsers.tagged\_content\_parser module
+=================================================
+
 .. automodule:: agentscope.parsers.tagged_content_parser
    :members:
    :undoc-members:

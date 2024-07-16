@@ -1,5 +1,6 @@
-agentscope.service.web.arxiv
-============================
+agentscope.service.web.arxiv module
+===================================
+
 .. automodule:: agentscope.service.web.arxiv
    :members:
    :undoc-members:

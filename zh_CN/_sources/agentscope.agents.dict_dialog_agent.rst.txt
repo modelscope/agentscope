@@ -1,5 +1,6 @@
-agentscope.agents.dict_dialog_agent
-===================================
+agentscope.agents.dict\_dialog\_agent module
+============================================
+
 .. automodule:: agentscope.agents.dict_dialog_agent
    :members:
    :undoc-members:

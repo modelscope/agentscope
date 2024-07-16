@@ -1,5 +1,6 @@
-agentscope.pipelines.pipeline
-=============================
+agentscope.pipelines.pipeline module
+====================================
+
 .. automodule:: agentscope.pipelines.pipeline
    :members:
    :undoc-members:

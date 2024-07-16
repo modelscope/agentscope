@@ -1,5 +1,32 @@
-agentscope.service
-==================
+agentscope.service package
+==========================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   agentscope.service.execute_code
+   agentscope.service.file
+   agentscope.service.multi_modality
+   agentscope.service.retrieval
+   agentscope.service.sql_query
+   agentscope.service.text_processing
+   agentscope.service.web
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   agentscope.service.service_response
+   agentscope.service.service_status
+   agentscope.service.service_toolkit
+
+Module contents
+---------------
 
 .. automodule:: agentscope.service
    :members:

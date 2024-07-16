@@ -1,5 +1,17 @@
-agentscope.service.multi_modality
-=================================
+agentscope.service.multi\_modality package
+==========================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   agentscope.service.multi_modality.dashscope_services
+   agentscope.service.multi_modality.openai_services
+
+Module contents
+---------------
 
 .. automodule:: agentscope.service.multi_modality
    :members:

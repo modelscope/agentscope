@@ -1,5 +1,6 @@
-agentscope.service.sql_query.sqlite
-===================================
+agentscope.service.sql\_query.sqlite module
+===========================================
+
 .. automodule:: agentscope.service.sql_query.sqlite
    :members:
    :undoc-members:

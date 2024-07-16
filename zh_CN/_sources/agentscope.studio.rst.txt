@@ -1,5 +1,8 @@
-agentscope.studio
-=================
+agentscope.studio package
+=========================
+
+Module contents
+---------------
 
 .. automodule:: agentscope.studio
    :members:

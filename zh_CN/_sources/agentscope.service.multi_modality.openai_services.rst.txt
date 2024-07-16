@@ -1,5 +1,6 @@
-agentscope.service.multi_modality.openai_services
-=================================================
+agentscope.service.multi\_modality.openai\_services module
+==========================================================
+
 .. automodule:: agentscope.service.multi_modality.openai_services
    :members:
    :undoc-members:

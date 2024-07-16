@@ -1,5 +1,6 @@
-agentscope.models.ollama_model
-==============================
+agentscope.models.ollama\_model module
+======================================
+
 .. automodule:: agentscope.models.ollama_model
    :members:
    :undoc-members:
