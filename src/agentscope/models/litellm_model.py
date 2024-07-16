@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Model wrapper based on litellm https://docs.litellm.ai/docs/"""
 from abc import ABC
-from typing import Union, Any, List, Sequence
+from typing import Union, Any, List, Sequence, Optional
 
 from loguru import logger
 
@@ -26,7 +26,7 @@ class LiteLLMWrapperBase(ModelWrapperBase, ABC):
         **kwargs: Any,
     ) -> None:
         """
-        To use the LiteLLM wrapper, environent variables must be set.
+        To use the LiteLLM wrapper, environment variables must be set.
         Different model_name could be using different environment variables.
         For example:
             - for model_name: "gpt-3.5-turbo", you need to set "OPENAI_API_KEY"
@@ -36,7 +36,8 @@ class LiteLLMWrapperBase(ModelWrapperBase, ABC):
             - for model_name: "claude-2", you need to set "ANTHROPIC_API_KEY"
             - for Azure OpenAI, you need to set "AZURE_API_KEY",
             "AZURE_API_BASE", "AZURE_API_VERSION"
-        You should refer to the docs in https://docs.litellm.ai/docs/ .
+        You should refer to the docs in https://docs.litellm.ai/docs/
+
         Args:
             config_name (`str`):
                 The name of the model config.
@@ -47,7 +48,7 @@ class LiteLLMWrapperBase(ModelWrapperBase, ABC):
                 e.g. `temperature`, `seed`.
                 For generate_args, please refer to
                 https://docs.litellm.ai/docs/completion/input
-                for more detailes.
+                for more details.
 
         """
 
@@ -64,7 +65,7 @@ class LiteLLMWrapperBase(ModelWrapperBase, ABC):
                 "1. Install litellm by `pip install litellm`"
                 "2. If you still have import error, you should try to "
                 "update the openai to higher version, e.g. "
-                "by runing `pip install openai==1.25.1",
+                "by running `pip install openai==1.25.1",
             )
 
         self.model_name = model_name
@@ -99,6 +100,52 @@ class LiteLLMChatWrapper(LiteLLMWrapperBase):
 
     model_type: str = "litellm_chat"
 
+    def __init__(
+        self,
+        config_name: str,
+        model_name: str = None,
+        stream: bool = False,
+        generate_args: dict = None,
+        **kwargs: Any,
+    ) -> None:
+        """
+        To use the LiteLLM wrapper, environment variables must be set.
+        Different model_name could be using different environment variables.
+        For example:
+            - for model_name: "gpt-3.5-turbo", you need to set "OPENAI_API_KEY"
+            ```
+            os.environ["OPENAI_API_KEY"] = "your-api-key"
+            ```
+            - for model_name: "claude-2", you need to set "ANTHROPIC_API_KEY"
+            - for Azure OpenAI, you need to set "AZURE_API_KEY",
+            "AZURE_API_BASE", "AZURE_API_VERSION"
+        You should refer to the docs in https://docs.litellm.ai/docs/
+
+        Args:
+            config_name (`str`):
+                The name of the model config.
+            model_name (`str`, default `None`):
+                The name of the model to use in OpenAI API.
+            stream (`bool`, default `False`):
+                Whether to enable stream mode.
+            generate_args (`dict`, default `None`):
+                The extra keyword arguments used in litellm api generation,
+                e.g. `temperature`, `seed`.
+                For generate_args, please refer to
+                https://docs.litellm.ai/docs/completion/input
+                for more details.
+
+        """
+
+        super().__init__(
+            config_name=config_name,
+            model_name=model_name,
+            generate_args=generate_args,
+            **kwargs,
+        )
+
+        self.stream = stream
+
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
         # TODO: set quota to the following metrics
@@ -122,12 +169,16 @@ class LiteLLMChatWrapper(LiteLLMWrapperBase):
     def __call__(
         self,
         messages: list,
+        stream: Optional[bool] = None,
         **kwargs: Any,
     ) -> ModelResponse:
         """
         Args:
             messages (`list`):
                 A list of messages to process.
+            stream (`Optional[bool]`, default `None`):
+                Whether to enable stream mode. If not set, the stream mode
+                will be set to the value in the initialization.
             **kwargs (`Any`):
                 The keyword arguments to litellm chat completions API,
                 e.g. `temperature`, `max_tokens`, `top_p`, etc. Please refer to
@@ -156,9 +207,13 @@ class LiteLLMChatWrapper(LiteLLMWrapperBase):
             )
 
         # step3: forward to generate response
+        if stream is None:
+            stream = self.stream
+
         response = litellm.completion(
             model=self.model_name,
             messages=messages,
+            stream=stream,
             **kwargs,
         )
 
@@ -167,6 +222,7 @@ class LiteLLMChatWrapper(LiteLLMWrapperBase):
             arguments={
                 "model": self.model_name,
                 "messages": messages,
+                "stream": stream,
                 **kwargs,
             },
             response=response.model_dump(),

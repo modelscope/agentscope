@@ -3,7 +3,7 @@
 import os
 from abc import ABC
 from http import HTTPStatus
-from typing import Any, Union, List, Sequence
+from typing import Any, Union, List, Sequence, Optional
 from loguru import logger
 
 from ..message import Msg
@@ -85,6 +85,42 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
 
     deprecated_model_type: str = "tongyi_chat"
 
+    def __init__(
+        self,
+        config_name: str,
+        model_name: str = None,
+        api_key: str = None,
+        stream: bool = False,
+        generate_args: dict = None,
+        **kwargs: Any,
+    ) -> None:
+        """Initialize the DashScope wrapper.
+
+        Args:
+            config_name (`str`):
+                The name of the model config.
+            model_name (`str`, default `None`):
+                The name of the model to use in DashScope API.
+            api_key (`str`, default `None`):
+                The API key for DashScope API.
+            stream (`bool`, default `False`):
+                If True, the response will be a generator in the `stream`
+                field of the returned `ModelResponse` object.
+            generate_args (`dict`, default `None`):
+                The extra keyword arguments used in DashScope api generation,
+                e.g. `temperature`, `seed`.
+        """
+
+        super().__init__(
+            config_name=config_name,
+            model_name=model_name,
+            api_key=api_key,
+            generate_args=generate_args,
+            **kwargs,
+        )
+
+        self.stream = stream
+
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
         # TODO: set quota to the following metrics
@@ -108,6 +144,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
     def __call__(
         self,
         messages: list,
+        stream: Optional[bool] = None,
         **kwargs: Any,
     ) -> ModelResponse:
         """Processes a list of messages to construct a payload for the
@@ -124,6 +161,9 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         Args:
             messages (`list`):
                 A list of messages to process.
+            stream (`Optional[bool]`, default `None`):
+                The stream flag to control the response format, which will
+                overwrite the stream flag in the constructor.
             **kwargs (`Any`):
                 The keyword arguments to DashScope chat completions API,
                 e.g. `temperature`, `max_tokens`, `top_p`, etc. Please
@@ -133,8 +173,9 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
 
         Returns:
             `ModelResponse`:
-                The response text in text field, and the raw response in
-                raw field.
+                A response object with the response text in text field, and
+                the raw response in raw field. If stream is True, the response
+                will be a generator in the `stream` field.
 
         Note:
             `parse_func`, `fault_handler` and `max_retries` are reserved for
@@ -169,12 +210,20 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             )
 
         # step3: forward to generate response
-        response = dashscope.Generation.call(
-            model=self.model_name,
-            messages=messages,
-            result_format="message",  # set the result to be "message" format.
-            **kwargs,
+        if stream is None:
+            stream = self.stream
+
+        kwargs.update(
+            {
+                "model": self.model_name,
+                "messages": messages,
+                # Set the result to be "message" format.
+                "result_format": "message",
+                "stream": stream,
+            },
         )
+
+        response = dashscope.Generation.call(**kwargs)
 
         if response.status_code != HTTPStatus.OK:
             error_msg = (
@@ -188,11 +237,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
 
         # step4: record the api invocation if needed
         self._save_model_invocation(
-            arguments={
-                "model": self.model_name,
-                "messages": messages,
-                **kwargs,
-            },
+            arguments=kwargs,
             response=response,
         )
 

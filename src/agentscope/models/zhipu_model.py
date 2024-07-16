@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for ZhipuAI models"""
 from abc import ABC
-from typing import Union, Any, List, Sequence
+from typing import Union, Any, List, Sequence, Optional
 
 from loguru import logger
 
@@ -85,6 +85,47 @@ class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
 
     model_type: str = "zhipuai_chat"
 
+    def __init__(
+        self,
+        config_name: str,
+        model_name: str = None,
+        api_key: str = None,
+        stream: bool = False,
+        client_args: dict = None,
+        generate_args: dict = None,
+        **kwargs: Any,
+    ) -> None:
+        """Initialize the zhipuai client.
+        To init the ZhipuAi client, the api_key is required.
+        Other client args include base_url and timeout.
+        The base_url is set to https://open.bigmodel.cn/api/paas/v4
+        if not specified. The timeout arg is set for http request timeout.
+
+        Args:
+            config_name (`str`):
+                The name of the model config.
+            model_name (`str`, default `None`):
+                The name of the model to use in ZhipuAI API.
+            api_key (`str`, default `None`):
+                The API key for ZhipuAI API. If not specified, it will
+                be read from the environment variable.
+            stream (`bool`, default `False`):
+                Whether to enable stream mode.
+            generate_args (`dict`, default `None`):
+                The extra keyword arguments used in zhipuai api generation,
+                e.g. `temperature`, `seed`.
+        """
+
+        super().__init__(
+            config_name=config_name,
+            model_name=model_name,
+            api_key=api_key,
+            client_args=client_args,
+            generate_args=generate_args,
+        )
+
+        self.stream = stream
+
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
         # TODO: set quota to the following metrics
@@ -108,6 +149,7 @@ class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
     def __call__(
         self,
         messages: list,
+        stream: Optional[bool] = None,
         **kwargs: Any,
     ) -> ModelResponse:
         """Processes a list of messages to construct a payload for the ZhipuAI
@@ -118,6 +160,9 @@ class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
         Args:
             messages (`list`):
                 A list of messages to process.
+            stream (`Optional[bool]`, default `None`):
+                Whether to enable stream mode. If not specified, it will
+                use the stream mode set in the constructor.
             **kwargs (`Any`):
                 The keyword arguments to ZhipuAI chat completions API,
                 e.g. `temperature`, `max_tokens`, `top_p`, etc. Please refer to
@@ -159,9 +204,13 @@ class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
             )
 
         # step3: forward to generate response
+        if stream is None:
+            stream = self.stream
+
         response = self.client.chat.completions.create(
             model=self.model_name,
             messages=messages,
+            stream=stream,
             **kwargs,
         )
 
@@ -170,6 +219,7 @@ class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
             arguments={
                 "model": self.model_name,
                 "messages": messages,
+                "stream": stream,
                 **kwargs,
             },
             response=response.model_dump(),

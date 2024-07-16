@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for OpenAI models"""
 from abc import ABC
-from typing import Union, Any, List, Sequence, Dict
+from typing import Union, Any, List, Sequence, Dict, Optional
 
 from loguru import logger
 
@@ -110,6 +110,56 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
     substrings_in_vision_models_names = ["gpt-4-turbo", "vision", "gpt-4o"]
     """The substrings in the model names of vision models."""
 
+    def __init__(
+        self,
+        config_name: str,
+        model_name: str = None,
+        api_key: str = None,
+        organization: str = None,
+        client_args: dict = None,
+        stream: bool = False,
+        generate_args: dict = None,
+        budget: float = _DEFAULT_API_BUDGET,
+        **kwargs: Any,
+    ) -> None:
+        """Initialize the openai client.
+
+        Args:
+            config_name (`str`):
+                The name of the model config.
+            model_name (`str`, default `None`):
+                The name of the model to use in OpenAI API.
+            api_key (`str`, default `None`):
+                The API key for OpenAI API. If not specified, it will
+                be read from the environment variable `OPENAI_API_KEY`.
+            organization (`str`, default `None`):
+                The organization ID for OpenAI API. If not specified, it will
+                be read from the environment variable `OPENAI_ORGANIZATION`.
+            client_args (`dict`, default `None`):
+                The extra keyword arguments to initialize the OpenAI client.
+            stream (`bool`, default `False`):
+                Whether to enable stream mode.
+            generate_args (`dict`, default `None`):
+                The extra keyword arguments used in openai api generation,
+                e.g. `temperature`, `seed`.
+            budget (`float`, default `None`):
+                The total budget using this model. Set to `None` means no
+                limit.
+        """
+
+        super().__init__(
+            config_name=config_name,
+            model_name=model_name,
+            api_key=api_key,
+            organization=organization,
+            client_args=client_args,
+            generate_args=generate_args,
+            budget=budget,
+            **kwargs,
+        )
+
+        self.stream = stream
+
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
         # TODO: set quota to the following metrics
@@ -133,6 +183,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
     def __call__(
         self,
         messages: list,
+        stream: Optional[bool] = None,
         **kwargs: Any,
     ) -> ModelResponse:
         """Processes a list of messages to construct a payload for the OpenAI
@@ -149,6 +200,9 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
         Args:
             messages (`list`):
                 A list of messages to process.
+            stream (`Optional[bool]`, defaults to `None`)
+                Whether to enable stream mode, which will override the
+                `stream` argument in the constructor if provided.
             **kwargs (`Any`):
                 The keyword arguments to OpenAI chat completions API,
                 e.g. `temperature`, `max_tokens`, `top_p`, etc. Please refer to
@@ -190,9 +244,13 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
             )
 
         # step3: forward to generate response
+        if stream is None:
+            stream = self.stream
+
         response = self.client.chat.completions.create(
             model=self.model_name,
             messages=messages,
+            stream=stream,
             **kwargs,
         )
 
@@ -201,6 +259,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
             arguments={
                 "model": self.model_name,
                 "messages": messages,
+                "stream": stream,
                 **kwargs,
             },
             response=response.model_dump(),

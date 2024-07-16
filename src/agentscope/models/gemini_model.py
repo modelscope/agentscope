@@ -3,7 +3,7 @@
 import os
 from abc import ABC
 from collections.abc import Iterable
-from typing import Sequence, Union, Any, List
+from typing import Sequence, Union, Any, List, Optional
 
 from loguru import logger
 
@@ -110,8 +110,20 @@ class GeminiChatWrapper(GeminiWrapperBase):
         config_name: str,
         model_name: str,
         api_key: str = None,
+        stream: bool = False,
         **kwargs: Any,
     ) -> None:
+        """Initialize the wrapper for Google Gemini model.
+
+        Args:
+            model_name (`str`):
+                The name of the model.
+            api_key (`str`, defaults to `None`):
+                The api_key for the model. If it is not provided, it will be
+                loaded from environment variable.
+            stream (`bool`, defaults to `False`):
+                Whether to use stream mode.
+        """
         super().__init__(
             config_name=config_name,
             model_name=model_name,
@@ -119,13 +131,15 @@ class GeminiChatWrapper(GeminiWrapperBase):
             **kwargs,
         )
 
+        self.stream = stream
+
         # Create the generative model
         self.model = genai.GenerativeModel(model_name, **kwargs)
 
     def __call__(
         self,
         contents: Union[Sequence, str],
-        stream: bool = False,
+        stream: Optional[bool] = None,
         **kwargs: Any,
     ) -> ModelResponse:
         """Generate response for the given contents.
@@ -133,7 +147,7 @@ class GeminiChatWrapper(GeminiWrapperBase):
         Args:
             contents (`Union[Sequence, str]`):
                 The content to generate response.
-            stream (`bool`, defaults to `False`):
+            stream (`Optional[bool]`, defaults to `None`)
                 Whether to use stream mode.
             **kwargs:
                 The additional arguments for generating response.
@@ -151,6 +165,10 @@ class GeminiChatWrapper(GeminiWrapperBase):
                 "The input content is not a string or a list of "
                 "messages, which may cause unexpected behavior.",
             )
+
+        # Check if stream is provided
+        if stream is None:
+            stream = self.stream
 
         # step2: forward to generate response
         # TODO: support response in stream mode

@@ -73,9 +73,44 @@ class OllamaChatWrapper(OllamaWrapperBase):
 
     model_type: str = "ollama_chat"
 
+    def __init__(
+        self,
+        config_name: str,
+        model_name: str,
+        stream: bool = False,
+        options: dict = None,
+        keep_alive: str = "5m",
+        **kwargs: Any,
+    ) -> None:
+        """Initialize the model wrapper for Ollama API.
+
+        Args:
+            model_name (`str`):
+                The model name used in ollama API.
+            stream (`bool`, default `False`):
+                Whether to enable stream mode.
+            options (`dict`, default `None`):
+                The extra keyword arguments used in Ollama api generation,
+                e.g. `{"temperature": 0., "seed": 123}`.
+            keep_alive (`str`, default `5m`):
+                Controls how long the model will stay loaded into memory
+                following the request.
+        """
+
+        super().__init__(
+            config_name=config_name,
+            model_name=model_name,
+            options=options,
+            keep_alive=keep_alive,
+            **kwargs,
+        )
+
+        self.stream = stream
+
     def __call__(
         self,
         messages: Sequence[dict],
+        stream: Optional[bool] = None,
         options: Optional[dict] = None,
         keep_alive: Optional[str] = None,
         **kwargs: Any,
@@ -86,6 +121,9 @@ class OllamaChatWrapper(OllamaWrapperBase):
             messages (`Sequence[dict]`):
                 A list of messages, each message is a dict contains the `role`
                 and `content` of the message.
+            stream (`bool`, default `None`):
+                Whether to enable stream mode, which will override the `stream`
+                input in the constructor.
             options (`dict`, default `None`):
                 The extra arguments used in ollama chat API, which takes
                 effect only on this call, and will be merged with the
@@ -110,9 +148,13 @@ class OllamaChatWrapper(OllamaWrapperBase):
         keep_alive = keep_alive or self.keep_alive
 
         # step2: forward to generate response
+        if stream is None:
+            stream = self.stream
+
         response = ollama.chat(
             model=self.model_name,
             messages=messages,
+            stream=stream,
             options=options,
             keep_alive=keep_alive,
             **kwargs,
@@ -123,6 +165,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
             arguments={
                 "model": self.model_name,
                 "messages": messages,
+                "stream": stream,
                 "options": options,
                 "keep_alive": keep_alive,
                 **kwargs,
