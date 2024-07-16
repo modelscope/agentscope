@@ -150,6 +150,7 @@ class RegexTaggedContentParser(ParserBase, DictFilterMixin):
         if len(keys_missing) > 0:
             raise TagNotFoundError(
                 f"Failed to find tags: {', '.join(keys_missing)}",
+                response.text,
             )
 
         if self.try_parse_json:

@@ -145,26 +145,28 @@ class ReActAgent(AgentBase):
                     max_retries=1,
                 )
 
-                # Record the response in memory
-                self.memory.add(
-                    Msg(
-                        self.name,
-                        self.parser.to_memory(res.parsed),
-                        "assistant",
-                    ),
-                )
+                msg_raw = Msg(self.name, res.text, "assistant")
 
-                # Print out the response
+                # Record the response in memory
+                self.memory.add(msg_raw)
+
+                # The message to print out
                 msg_returned = Msg(
                     self.name,
                     self.parser.to_content(res.parsed),
                     "assistant",
                 )
-                self.speak(msg_returned)
+
+                if self.verbose:
+                    # Print raw response for debugging
+                    self.speak(res.text)
+                else:
+                    # Print out the returned message
+                    self.speak(msg_returned)
 
                 # Skip the next steps if no need to call tools
                 # The parsed field is a dictionary
-                arg_function = res.parsed["function"]
+                arg_function = res.parsed.get("function", "")
                 if (
                     isinstance(arg_function, str)
                     and arg_function in ["[]", ""]
@@ -196,6 +198,20 @@ class ReActAgent(AgentBase):
 
             # Parse, check and execute the tool functions in service toolkit
             try:
+                # Reorganize the parsed response to the required format of the
+                # service toolkit
+                res.parsed["function"] = [
+                    {
+                        "name": res.parsed["function"],
+                        "arguments": {
+                            k: v
+                            for k, v in res.parsed.items()
+                            if k not in ["speak", "thought", "function"]
+                        },
+                    },
+                ]
+
+                # Execute the function
                 execute_results = self.service_toolkit.parse_and_call_func(
                     res.parsed["function"],
                 )
