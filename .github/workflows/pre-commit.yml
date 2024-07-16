@@ -1,6 +1,9 @@
 name: Pre-commit
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  pull_request_target:
 
 jobs:
   run:
