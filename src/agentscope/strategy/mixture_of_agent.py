@@ -53,6 +53,8 @@ class MixtureOfAgents:
             aggregator_prompt (`str`):
                 The prompt used for aggregating responses.
                 Using the prompt from paper MoA by default.
+            show_internal (`bool`):
+                Whether to show the internal process of MoA.
         """
         # init main_model
         if isinstance(main_model, str):

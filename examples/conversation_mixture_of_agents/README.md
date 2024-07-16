@@ -44,7 +44,7 @@ You can init the module as follows:
 
 After you init the module, you can use it to replace the original model.
 
-Instead of first use `format = model.format(msg)` then use `__call__` by `res = model(format).text`, you can use `res = moa_module(msg)` directly.
+Instead of first use `prompt = model.format(msg)` then use `__call__` by `res = model(prompt).text`, you can use `res = moa_module(msg)` directly.
 
 To be more specific, comparing with how the DialogAgent use the model:
 ```python
