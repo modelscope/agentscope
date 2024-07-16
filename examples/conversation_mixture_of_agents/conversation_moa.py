@@ -19,8 +19,6 @@ class DialogAgentWithMoA(AgentBase):
     def __init__(
         self,
         name: str,
-        sys_prompt: str,
-        # model_config_name: str,
         moa_module: MixtureOfAgents,  # changed to passing moa_module here
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
@@ -42,8 +40,7 @@ class DialogAgentWithMoA(AgentBase):
         """
         super().__init__(
             name=name,
-            sys_prompt=sys_prompt,
-            # model_config_name=model_config_name,
+            sys_prompt="",
             use_memory=use_memory,
             memory_config=memory_config,
         )
@@ -67,17 +64,7 @@ class DialogAgentWithMoA(AgentBase):
         if self.memory:
             self.memory.add(x)
 
-        # # prepare prompt
-        # prompt = self.model.format(
-        #     Msg("system", self.sys_prompt, role="system"),
-        #     self.memory
-        #     and self.memory.get_memory()
-        #     or x,  # type: ignore[arg-type]
-        # )
-        # # call llm and generate response
-        # response = self.model(prompt).text
-
-        # changed the commented model usage above to below:
+        # use the module as below:
         response = self.moa_module(
             Msg("system", self.sys_prompt, role="system"),
             self.memory
@@ -143,7 +130,6 @@ if __name__ == "__main__":
     # Init two agents
     dialog_agent = DialogAgentWithMoA(
         name="Assistant",
-        sys_prompt="",
         moa_module=your_moa_module,
         use_memory=True,  # whether to use memory for this agent
     )

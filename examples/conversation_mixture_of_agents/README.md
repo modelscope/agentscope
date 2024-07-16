@@ -46,6 +46,29 @@ After you init the module, you can use it to replace the original model.
 
 Instead of first use `format = model.format(msg)` then use `__call__` by `res = model(format).text`, you can use `res = moa_module(msg)` directly.
 
+To be more specific, comparing with how the DialogAgent use the model:
+```python
+    # prepare prompt
+    prompt = self.model.format(
+        Msg("system", self.sys_prompt, role="system"),
+        self.memory
+        and self.memory.get_memory()
+        or x,  # type: ignore[arg-type]
+    )
+    # call llm and generate response
+    response = self.model(prompt).text
+```
+
+With MoA module, you can use it as follows:
+```python
+    response = self.moa_module(
+        Msg("system", self.sys_prompt, role="system"),
+        self.memory
+        and self.memory.get_memory()
+        or x,  # type: ignore[arg-type]
+    )
+```
+
 ## Prerequisites
 To set up model serving with open-source LLMs, follow the guidance in
 [scripts/README.md](https://github.com/modelscope/agentscope/blob/main/scripts/README.md).

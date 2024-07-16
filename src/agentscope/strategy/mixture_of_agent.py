@@ -4,6 +4,7 @@
 
 from typing import Union, List, Sequence, Tuple
 import concurrent.futures
+from loguru import logger
 
 from agentscope.message import Msg
 from agentscope.models import (
@@ -146,11 +147,11 @@ class MixtureOfAgents:
                 i, result = future.result()
                 self.references[i] = result
                 if self.show_internal:
-                    print(f"Round {0}, Model_{i}: {result}")
+                    logger.info(f"Round {0}, Model_{i}: {result}")
 
         for r in range(self.rounds):
             if self.show_internal:
-                print("=" * 20)
+                logger.info("=" * 20)
             new_refs = ["" for _ in range(len(self.reference_models))]
             with concurrent.futures.ThreadPoolExecutor() as executor:
                 futures = [
