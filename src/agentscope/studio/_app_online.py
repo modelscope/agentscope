@@ -5,7 +5,7 @@ import os
 import secrets
 import fcntl
 import tempfile
-from typing import Tuple
+from typing import Tuple, Any
 
 import requests
 import oss2
@@ -35,6 +35,9 @@ EXPIRATION_SECONDS = 604800  # One week
 
 
 def is_ip(address: str) -> bool:
+    """
+    Check whether the IP is the domain or not.
+    """
     try:
         ipaddress.ip_address(address)
         return True
@@ -43,6 +46,9 @@ def is_ip(address: str) -> bool:
 
 
 def get_locale() -> str:
+    """
+    Get current language type.
+    """
     cookie = request.cookies.get("locale")
     if cookie in ["zh", "en"]:
         return cookie
@@ -78,7 +84,6 @@ REPO = os.getenv("REPO")
 USER_FILE_NAME = os.getenv("USER_FILE_NAME", "user_logins.txt")
 OSS_ENDPOINT = os.getenv("OSS_ENDPOINT")
 OSS_BUCKET_NAME = os.getenv("OSS_BUCKET_NAME")
-
 OSS_ACCESS_KEY_ID = os.getenv("OSS_ACCESS_KEY_ID")
 OSS_ACCESS_KEY_SECRET = os.getenv("OSS_ACCESS_KEY_SECRET")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
@@ -94,8 +99,15 @@ for key, value in required_envs.items():
         logger.warning(f"{key} is not set on envs!")
 
 
-def add_login_safe(file_name, user_login, verification_token) -> None:
-    with open(file_name, "a+") as file:
+def add_login_safe(
+    file_name: str,
+    user_login: str,
+    verification_token: str,
+) -> None:
+    """
+    Log user info when user login.
+    """
+    with open(file_name, "a+", encoding="utf-8") as file:
         fcntl.flock(file, fcntl.LOCK_EX)
         file.seek(0)
         existing_logins = set(file.read().splitlines())
@@ -105,6 +117,9 @@ def add_login_safe(file_name, user_login, verification_token) -> None:
 
 
 def get_oss_config() -> Tuple:
+    """
+    Obtain oss related configs.
+    """
     return (
         OSS_ACCESS_KEY_ID,
         OSS_ACCESS_KEY_SECRET,
@@ -114,11 +129,14 @@ def get_oss_config() -> Tuple:
 
 
 def upload_to_oss(
-    bucket,
-    local_file_path,
-    oss_file_path,
-    is_private=False,
+    bucket: str,
+    local_file_path: str,
+    oss_file_path: str,
+    is_private: bool = False,
 ) -> str:
+    """
+    Upload content to oss.
+    """
     bucket.put_object_from_file(oss_file_path, local_file_path)
     if not is_private:
         bucket.put_object_acl(oss_file_path, oss2.OBJECT_ACL_PUBLIC_READ)
@@ -130,10 +148,16 @@ def upload_to_oss(
 
 
 def generate_verification_token() -> str:
+    """
+    Generate token.
+    """
     return secrets.token_urlsafe()
 
 
-def star_repository(access_token):
+def star_repository(access_token: str) -> int:
+    """
+    Star the Repo.
+    """
     url = f"https://api.github.com/user/starred/{OWNER}/{REPO}"
     headers = {
         "Authorization": f"token {access_token}",
@@ -144,7 +168,7 @@ def star_repository(access_token):
     return response.status_code == 204
 
 
-def get_user_info(access_token):
+def get_user_info(access_token: str) -> Any:
     """
     Get user information.
     """
@@ -160,7 +184,7 @@ def get_user_info(access_token):
 
 
 @_app.route("/")
-def _home():
+def _home() -> str:
     """
     Render the login page.
     """
@@ -168,7 +192,7 @@ def _home():
 
 
 @_app.route("/oauth/callback")
-def oauth_callback():
+def oauth_callback() -> str:
     """
     Github oauth callback.
     """
@@ -227,28 +251,32 @@ def oauth_callback():
 
 @_app.route("/workstation")
 @require_auth(ip=IP, copilot_ip=COPILOT_IP, copilot_port=COPILOT_PORT)
-def _workstation_online(**kwargs) -> str:
+def _workstation_online(**kwargs: Any) -> str:
     """Render the workstation page."""
+    user_login = request.args.get("user_login", "")
+    kwargs["user_login"] = user_login
+
     return render_template("workstation.html", **kwargs)
 
 
 @_app.route("/upload-to-oss", methods=["POST"])
 @require_auth(fail_with_exception=True, ip=IP)
-def _upload_file_to_oss_online(**kwargs) -> Response:
+def _upload_file_to_oss_online(**kwargs: Any) -> Response:
     # pylint: disable=unused-argument
     """
     Upload content to oss bucket.
     """
-    def write_and_upload(content, user_login):
+
+    def write_and_upload(ct: str, user: str) -> str:
         with tempfile.NamedTemporaryFile(mode="w", delete=True) as tmp_file:
-            tmp_file.write(content)
+            tmp_file.write(ct)
             tmp_file.flush()
             ak_id, ak_secret, endpoint, bucket_name = get_oss_config()
 
             auth = oss2.Auth(ak_id, ak_secret)
             bucket = oss2.Bucket(auth, endpoint, bucket_name)
 
-            file_key = f"modelscope_user/{user_login}_config.json"
+            file_key = f"modelscope_user/{user}_config.json"
 
             upload_to_oss(
                 bucket,
@@ -274,7 +302,7 @@ def _upload_file_to_oss_online(**kwargs) -> Response:
 
 @_app.route("/convert-to-py", methods=["POST"])
 @require_auth(fail_with_exception=True, ip=IP)
-def _online_convert_config_to_py(**kwargs) -> Response:
+def _online_convert_config_to_py(**kwargs: Any) -> Response:
     # pylint: disable=unused-argument
     """
     Convert json config to python code and send back.
@@ -284,7 +312,7 @@ def _online_convert_config_to_py(**kwargs) -> Response:
 
 @_app.route("/read-examples", methods=["POST"])
 @require_auth(fail_with_exception=True, ip=IP)
-def _read_examples_online(**kwargs) -> Response:
+def _read_examples_online(**kwargs: Any) -> Response:
     # pylint: disable=unused-argument
     """
     Read tutorial examples from local file.

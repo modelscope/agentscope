@@ -773,10 +773,10 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
 function setupTextInputListeners(nodeId) {
     const newNode = document.getElementById(`node-${nodeId}`);
     if (newNode) {
-        const stopPropagation = function(event) {
+        const stopPropagation = function (event) {
             event.stopPropagation();
         };
-        newNode.addEventListener('mousedown', function(event) {
+        newNode.addEventListener('mousedown', function (event) {
             const target = event.target;
             if (target.tagName === 'TEXTAREA' || target.tagName === 'INPUT') {
                 stopPropagation(event);
@@ -1029,7 +1029,7 @@ function setupNodeListeners(nodeId) {
             function doDragSE(e) {
                 newNode.style.width = 'auto';
 
-                const newWidth = (startWidth + e.clientX - startX) ;
+                const newWidth = (startWidth + e.clientX - startX);
                 if (newWidth > 200) {
                     contentBox.style.width = newWidth + 'px';
                     titleBox.style.width = newWidth + 'px';
@@ -1552,6 +1552,18 @@ function showExportPyPopup() {
 
 
 function showExportRunPopup() {
+    var userLogin = '{{ user_login }}';
+    var ip = '{{ ip }}';
+
+    if ((!userLogin || userLogin.trim() === '') && ip === '') {
+        showExportRunLocalPopup();
+    } else {
+        showExportRunMSPopup();
+    }
+}
+
+
+function showExportRunLocalPopup() {
     if (checkConditions()) {
         const rawData = editor.export();
         const hasError = sortElementsByPosition(rawData);
@@ -1636,6 +1648,82 @@ function showExportRunPopup() {
                     'There was an error running your workflow.',
                     'error');
             });
+    }
+}
+
+
+function filterOutApiKey(obj) {
+    for (let key in obj) {
+        if (typeof obj[key] === 'object' && obj[key] !== null) {
+            filterOutApiKey(obj[key]);
+        }
+        if (key === 'api_key') {
+            delete obj[key];
+        }
+    }
+}
+
+
+function showExportRunMSPopup() {
+    if (checkConditions()) {
+        Swal.fire({
+            title: 'Are you sure to run the workflow in ModelScope Studio?',
+            text:
+                "You are about to navigate to another page. " +
+                "Please make sure all the configurations are set " +
+                "besides your api-key " +
+                "(your api-key should be set in ModelScope Studio page).",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, create it!',
+            cancelButtonText: 'Close'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const rawData = editor.export();
+                const hasError = sortElementsByPosition(rawData);
+                if (hasError) {
+                    return;
+                }
+                const filteredData = reorganizeAndFilterConfigForAgentScope(rawData);
+                filterOutApiKey(filteredData)
+
+                Swal.fire({
+                    title: 'Processing...',
+                    text: 'Please wait.',
+                    allowOutsideClick: false,
+                    onBeforeOpen: () => {
+                        Swal.showLoading()
+                    }
+                });
+                fetch('/upload-to-oss', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        data: JSON.stringify(filteredData, null, 4),
+                        user_login: '{{ user_login }}',
+                        token_query: '{{ token_query }}',
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        const params = {'CONFIG_URL': data.config_url};
+                        const paramsStr = encodeURIComponent(JSON.stringify(params));
+                        const org = "agentscope";
+                        const fork_repo = "agentscope_workstation";
+                        const url = `https://www.modelscope.cn/studios/fork?target=${org}/${fork_repo}&overwriteEnv=${paramsStr}`;
+                        window.open(url, '_blank');
+                        Swal.fire('Success!', '', 'success');
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire('Failed!', '', 'error');
+                    });
+            }
+        })
     }
 }
 
