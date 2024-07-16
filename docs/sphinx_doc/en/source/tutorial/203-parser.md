@@ -65,12 +65,14 @@ You should generate python code in a fenced code block as follows
 
 AgentScope provides multiple built-in parsers, and developers can choose according to their needs.
 
-| Target Format | Parser Class | Description                                                                                                                                                                  |
-| --- | --- |------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| String | `MarkdownCodeBlockParser` | Requires LLM to generate specified text within a Markdown code block marked by ```. The result is a string.                                                                  |
-| Dictionary | `MarkdownJsonDictParser` | Requires LLM to produce a specified dictionary within the code block marked by \```json and \```. The result is a Python dictionary.                                         |
-|  | `MultiTaggedContentParser` | Requires LLM to generate specified content within multiple tags. Contents from different tags will be parsed into a single Python dictionary with different key-value pairs. |
+| Target Format             | Parser Class               | Description                                                                                                                                                                  |
+|---------------------------|----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| String                    | `MarkdownCodeBlockParser`  | Requires LLM to generate specified text within a Markdown code block marked by ```. The result is a string.                                                                  |
+| Dictionary                | `MarkdownJsonDictParser`   | Requires LLM to produce a specified dictionary within the code block marked by \```json and \```. The result is a Python dictionary.                                         |
+|                           | `MultiTaggedContentParser` | Requires LLM to generate specified content within multiple tags. Contents from different tags will be parsed into a single Python dictionary with different key-value pairs. |
+|                           | `RegexTaggedContentParser` | For uncertain tag names and quantities, allows users to modify regular expressions, and the return result is a dictionary.                                                   |
 | JSON / Python Object Type | `MarkdownJsonObjectParser` | Requires LLM to produce specified content within the code block marked by \```json and \```. The result will be converted into a Python object via json.loads.               |
+
 
 > **NOTE**: Compared to `MarkdownJsonDictParser`, `MultiTaggedContentParser` is more suitable for weak LLMs and when the required format is too complex.
 > For example, when LLM is required to generate Python code, if the code is returned directly within a dictionary, LLM needs to be aware of escaping characters (\t, \n, ...), and the differences between double and single quotes when calling `json.loads`
@@ -263,12 +265,34 @@ In AgentScope, we achieve post-processing by calling the `to_content`, `to_memor
 >   None
 >   ```
 
+#### Parsers
 
-Next we will introduce two parsers for dictionary type.
+For dictionary type return values, AgentScope provides multiple parsers for developers to choose from according to their needs.
 
-#### MarkdownJsonDictParser
+##### RegexTaggedContentParser
 
-##### Initialization & Format Instruction Template
+###### Initialization
+
+`RegexTaggedContentParser` is designed for scenarios where 1) the tag name is uncertain, and 2) the number of tags is uncertain.
+In this case, the parser cannot provide a general response format instruction, so developers need to provide the corresponding response format instruction (`format_instruction`) when initializing.
+Of course, the developers can handle the prompt engineering by themselves optionally.
+
+```python
+from agentscope.parsers import RegexTaggedContentParser
+
+parser = RegexTaggedContentParser(
+    format_instruction="""Respond with specific tags as outlined below
+<thought>what you thought</thought>
+<speak>what you speak</speak>
+""",
+    try_parse_json=True,                    # Try to parse the content of the tag as JSON object
+    required_keys=["thought", "speak"]      # Required keys in the returned dictionary
+)
+```
+
+##### MarkdownJsonDictParser
+
+###### Initialization & Format Instruction Template
 
 - `MarkdownJsonDictParser` requires LLM to generate dictionary within a code block fenced by \```json and \``` tags.
 
@@ -303,7 +327,7 @@ This parameter can be a string or a dictionary. For dictionary, it will be autom
   ```
   ````
 
-##### Validation
+###### Validation
 
 The `content_hint` parameter in `MarkdownJsonDictParser` also supports type validation based on Pydantic. When initializing, you can set `content_hint` to a Pydantic model class, and AgentScope will modify the `instruction_format` attribute based on this class. Besides, Pydantic will be used to validate the dictionary returned by LLM during parsing.
 
@@ -346,11 +370,11 @@ parser.parser("""
 """)
 ````
 
-#### MultiTaggedContentParser
+##### MultiTaggedContentParser
 
 `MultiTaggedContentParser` asks LLM to generate specific content within multiple tag pairs. The content from different tag pairs will be parsed into a single Python dictionary. Its usage is similar to `MarkdownJsonDictParser`, but the initialization method is different, and it is more suitable for weak LLMs or complex return content.
 
-##### Initialization & Format Instruction Template
+###### Initialization & Format Instruction Template
 
 Within `MultiTaggedContentParser`, each tag pair will be specified by as `TaggedContent` object, which contains
 - Tag name (`name`), the key value in the returned dictionary
@@ -393,7 +417,7 @@ Respond with specific tags as outlined below, and the content between [FINISH_DI
 [FINISH_DISCUSSION]true/false, whether the discussion is finished[/FINISH_DISCUSSION]
 ```
 
-##### Parse Function
+###### Parse Function
 
 - `MultiTaggedContentParser`'s parsing result is a dictionary, whose keys are the value of `name` in the `TaggedContent` objects.
 The following is an example of parsing the LLM response in the werewolf game:

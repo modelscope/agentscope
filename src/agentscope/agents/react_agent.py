@@ -3,16 +3,15 @@
 and act iteratively to solve problems. More details can be found in the paper
 https://arxiv.org/abs/2210.03629.
 """
-from typing import Any, Optional, Union, Sequence
-
-from loguru import logger
+from typing import Optional, Union, Sequence
 
 from agentscope.exception import ResponseParsingError, FunctionCallError
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
-from agentscope.parsers import MarkdownJsonDictParser
+from agentscope.parsers.regex_tagged_content_parser import (
+    RegexTaggedContentParser,
+)
 from agentscope.service import ServiceToolkit
-from agentscope.service.service_toolkit import ServiceFunction
 
 INSTRUCTION_PROMPT = """## What You Should Do:
 1. First, analyze the current situation, and determine your goal.
@@ -42,11 +41,10 @@ class ReActAgent(AgentBase):
         self,
         name: str,
         model_config_name: str,
-        service_toolkit: ServiceToolkit = None,
+        service_toolkit: ServiceToolkit,
         sys_prompt: str = "You're a helpful assistant. Your name is {name}.",
         max_iters: int = 10,
         verbose: bool = True,
-        **kwargs: Any,
     ) -> None:
         """Initialize the ReAct agent with the given name, model config name
         and tools.
@@ -74,39 +72,6 @@ class ReActAgent(AgentBase):
             model_config_name=model_config_name,
         )
 
-        # TODO: To compatible with the old version, which will be deprecated
-        #  soon
-        if "tools" in kwargs:
-            logger.warning(
-                "The argument `tools` will be deprecated soon. "
-                "Please use `service_toolkit` instead. Example refers to "
-                "https://github.com/modelscope/agentscope/blob/main/"
-                "examples/conversation_with_react_agent/code/"
-                "conversation_with_react_agent.py",
-            )
-
-            service_funcs = {}
-            for func, json_schema in kwargs["tools"]:
-                name = json_schema["function"]["name"]
-                service_funcs[name] = ServiceFunction(
-                    name=name,
-                    original_func=func,
-                    processed_func=func,
-                    json_schema=json_schema,
-                )
-
-            if service_toolkit is None:
-                service_toolkit = ServiceToolkit()
-                service_toolkit.service_funcs = service_funcs
-            else:
-                service_toolkit.service_funcs.update(service_funcs)
-
-        elif service_toolkit is None:
-            raise ValueError(
-                "The argument `service_toolkit` is required to initialize "
-                "the ReActAgent.",
-            )
-
         self.service_toolkit = service_toolkit
         self.verbose = verbose
         self.max_iters = max_iters
@@ -129,13 +94,22 @@ class ReActAgent(AgentBase):
         self.memory.add(Msg("system", self.sys_prompt, role="system"))
 
         # Initialize a parser object to formulate the response from the model
-        self.parser = MarkdownJsonDictParser(
-            content_hint={
-                "thought": "what you thought",
-                "speak": "what you speak",
-                "function": service_toolkit.tools_calling_format,
-            },
-            required_keys=["thought", "speak", "function"],
+        self.parser = RegexTaggedContentParser(
+            format_instruction="""Respond with specific tags as outlined below:
+
+- When not calling any tool functions:
+<thought>what you thought</thought>
+<speak>what you speak</speak>
+
+- When calling tool functions, note the "arg_name" should be replaced with the actual argument name:
+<thought>what you thought</thought>
+<speak>what you speak</speak>
+<function>the function name you want to call</function>
+<arg_name>the value of the argument</arg_name>
+<arg_name>the value of the argument</arg_name>
+...""",  # noqa
+            try_parse_json=True,
+            required_keys=["thought", "speak"],
             # Only print the speak field when verbose is False
             keys_to_content=True if self.verbose else "speak",
         )
