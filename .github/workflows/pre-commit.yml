@@ -33,3 +33,20 @@ jobs:
           exit 1
         fi
         echo -e "\e[46m  ********************************Passed******************************** \e[0m"
+    - name: Read report
+      id: read_report
+      run: |
+        echo "PRE_COMMIT_REPORT<<EOF" >> $GITHUB_ENV
+        cat pre-commit.log >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
+    - name: Comment PR with pre-commit.log
+      if: github.event_name == 'pull_request'
+      uses: peter-evans/create-or-update-comment@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        issue-number: ${{ github.event.pull_request.number }}
+        body: |
+          ## Pre-commit
+          ```plaintext
+          ${{ env.PRE_COMMIT_REPORT }}
+          ```
