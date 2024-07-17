@@ -186,7 +186,7 @@ class GeminiChatWrapper(GeminiWrapperBase):
                 text = ""
                 last_chunk = None
                 for chunk in response:
-                    text = self._extract_text_content_from_response(
+                    text += self._extract_text_content_from_response(
                         contents,
                         chunk,
                     )
@@ -194,7 +194,7 @@ class GeminiChatWrapper(GeminiWrapperBase):
                     last_chunk = chunk
 
                 # Update the last chunk
-                response.candidates[0].content.parts[0].text = text
+                last_chunk.candidates[0].content.parts[0].text = text
 
                 self._save_model_invocation_and_update_monitor(
                     contents,
@@ -233,8 +233,13 @@ class GeminiChatWrapper(GeminiWrapperBase):
         )
 
         # Update monitor accordingly
-        token_prompt = self.model.count_tokens(contents).total_tokens
-        token_response = self.model.count_tokens(response.text).total_tokens
+        if hasattr(response, "usage_metadata"):
+            token_prompt = response.usage_metadata.prompt_token_count
+            token_response = response.usage_metadata.candidates_token_count
+        else:
+            token_prompt = self.model.count_tokens(contents).total_tokens
+            token_response = self.model.count_tokens(response.text).total_tokens
+
         self.update_monitor(
             call_counter=1,
             completion_tokens=token_response,

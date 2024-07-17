@@ -274,15 +274,13 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
                     last_chunk = chunk
 
                 # Update the last chunk to save locally
-                if last_chunk is not None:
-                    last_chunk["choices"] = [
-                        {
-                            "message": {
-                                "role": "assistant",
-                                "content": text,
-                            },
-                        },
-                    ]
+                if last_chunk["choices"] in [None, []]:
+                    last_chunk["choices"] = [{}]
+
+                last_chunk["choices"][0]["message"] = {
+                    "role": "assistant",
+                    "content": text,
+                }
 
                 self._save_model_invocation_and_update_monitor(
                     kwargs,
@@ -291,7 +289,6 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
 
             return ModelResponse(
                 stream=generator(),
-                raw=response,
             )
         else:
             response = response.model_dump()
@@ -300,7 +297,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
                 response,
             )
 
-            # step6: return response
+            # return response
             return ModelResponse(
                 text=response["choices"][0]["message"]["content"],
                 raw=response,

@@ -5,6 +5,7 @@ from typing import Union, Any, List, Sequence, Optional, Generator
 
 from loguru import logger
 
+from ._model_utils import _verify_text_content_in_openai_delta_response
 from .model import ModelWrapperBase, ModelResponse
 from ..message import Msg
 from ..utils.tools import _convert_to_str
@@ -232,49 +233,41 @@ class LiteLLMChatWrapper(LiteLLMWrapperBase):
                 for chunk in response:
                     # In litellm, the content maybe `None` for the last second
                     # chunk
-                    if (
-                        len(chunk.choices) != 0
-                        and chunk.choices[0].delta.content is not None
-                    ):
-                        text += chunk.choices[0].delta.content
+                    chunk = chunk.model_dump()
+                    if _verify_text_content_in_openai_delta_response(chunk):
+                        text += chunk["choices"][0]["delta"]["content"]
                         yield text
                     last_chunk = chunk
 
                 # Update the last chunk to save locally
-                last_chunk = last_chunk.model_dump()
-                last_chunk["choices"] = [
-                    {
-                        "message": {
-                            "role": "assistant",
-                            "content": text,
-                        },
-                    },
-                ]
+                if last_chunk["choices"] in [None, []]:
+                    last_chunk["choices"] = [{}]
 
-                if (
-                    hasattr(last_chunk, "usage")
-                    and last_chunk.usage is not None
-                ):
-                    self._save_model_invocation_and_update_monitor(
-                        kwargs,
-                        last_chunk,
-                    )
+                last_chunk["choices"][0]["message"] = {
+                    "role": "assistant",
+                    "content": text,
+                }
+
+                self._save_model_invocation_and_update_monitor(
+                    kwargs,
+                    last_chunk,
+                )
 
             return ModelResponse(
                 stream=generator(),
-                raw=response.model_dump(),
             )
 
         else:
+            response = response.model_dump()
             self._save_model_invocation_and_update_monitor(
                 kwargs,
-                response.model_dump(),
+                response,
             )
 
-            # step6: return response
+            # return response
             return ModelResponse(
-                text=response.choices[0].message.content,
-                raw=response.model_dump(),
+                text=response["choices"][0]["message"]["content"],
+                raw=response,
             )
 
     def _save_model_invocation_and_update_monitor(
