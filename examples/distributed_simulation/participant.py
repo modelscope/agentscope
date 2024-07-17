@@ -3,6 +3,8 @@
 import random
 import time
 import re
+from typing import Optional, Union, Sequence
+
 from loguru import logger
 
 from agentscope.message import Msg
@@ -30,7 +32,7 @@ class RandomParticipant(AgentBase):
         time.sleep(self.sleep_time)
         return str(random.randint(0, self.max_value))
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         """Generate a random value"""
         # generate a response in content
         response = self.generate_random_response()
@@ -74,7 +76,7 @@ class LLMParticipant(AgentBase):
         else:
             return numbers[-1]
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         """Generate a value by LLM"""
         if self.memory:
             self.memory.add(x)
@@ -134,7 +136,7 @@ class Moderator(AgentBase):
                 for config in part_configs
             ]
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         results = []
         msg = Msg(
             name="moderator",

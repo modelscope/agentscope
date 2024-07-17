@@ -31,6 +31,9 @@ Welcome to join our community on
 
 ## News
 
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/> **[2024-07-15]** We have implemented the Mixture of Agents algorithm in AgentScope. Refer to our [MoA example](https://github.com/modelscope/agentscope/blob/main/examples/conversation_mixture_of_agents) for more details.
+
+
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-06-14]** A new prompt tuning module is available in AgentScope to help developers generate and optimize the agents' system prompts! Refer to our [tutorial](https://modelscope.github.io/agentscope/en/tutorial/209-prompt_opt.html) for more details!
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-06-11]** The RAG functionality is available for agents in **AgentScope** now! [**A quick introduction to RAG in AgentScope**](https://modelscope.github.io/agentscope/en/tutorial/210-rag.html) can help you equip your agent with external knowledge!
@@ -151,6 +154,7 @@ the following libraries.
   - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Conversation with gpt-4o](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_gpt-4o)
   - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Conversation with Software Engineering Agent](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_swe-agent/)
   - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Conversation with Customized Services](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_customized_services/)
+  - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Conversation with Mixture of Agents](https://github.com/modelscope/agentscope/blob/main/examples/conversation_mixture_of_agents/)
 
 - Game
   - [Gomoku](https://github.com/modelscope/agentscope/blob/main/examples/game_gomoku)
@@ -346,12 +350,17 @@ cite [our paper](https://arxiv.org/abs/2402.14034):
 @article{agentscope,
   author  = {Dawei Gao and
              Zitao Li and
-             Weirui Kuang and
              Xuchen Pan and
-             Daoyuan Chen and
+             Weirui Kuang and
              Zhijian Ma and
              Bingchen Qian and
+             Fei Wei and
+             Wenhao Zhang and
+             Yuexiang Xie and
+             Daoyuan Chen and
              Liuyi Yao and
+             Hongyi Peng and
+             Zeyu Zhang and
              Lin Zhu and
              Chen Cheng and
              Hongzhu Shi and

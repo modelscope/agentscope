@@ -40,6 +40,12 @@
 | 多模态        | `dashscope_text_to_image`  | 使用 DashScope API 将文本生成图片。               |
 |            | `dashscope_image_to_text`  | 使用 DashScope API 根据图片生成文字。              |
 |            | `dashscope_text_to_audio`  | 使用 DashScope API 根据文本生成音频。             |
+|                             | `openai_text_to_image`     | 使用 OpenAI API根据文本生成图片。
+|                             | `openai_edit_image`        | 使用 OpenAI API 根据提供的遮罩和提示编辑图像。
+|                             | `openai_create_image_variation`        | 使用 OpenAI API 创建图像的变体。
+|                             | `openai_image_to_text` | 使用 OpenAI API 根据图片生成文字。
+|                             | `openai_text_to_audio` | 使用 OpenAI API 根据文本生成音频。
+|                             | `openai_audio_to_text` | 使用OpenAI API将音频转换为文本。
 | *更多服务即将推出* |                       | 正在开发更多服务功能，并将添加到 AgentScope 以进一步增强其能力。  |
 
 关于详细的参数、预期输入格式、返回类型，请参阅[API文档](https://modelscope.github.io/agentscope/)。
@@ -262,7 +268,7 @@ def create_file(file_path: str, content: str = "") -> ServiceResponse:
 class YourAgent(AgentBase):
     # ... [为简洁起见省略代码]
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         # ... [为简洁起见省略代码]
 
         # 构造提示，让代理提供 JSON 格式的参数

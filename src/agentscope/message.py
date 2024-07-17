@@ -174,73 +174,6 @@ class Msg(MessageBase):
         return json.dumps({"__type": "Msg", **self})
 
 
-class Tht(MessageBase):
-    """The Thought message is used to record the thought of the agent to
-    help them make decisions and responses. Generally, it shouldn't be
-    passed to or seen by the other agents.
-
-    In our framework, we formulate the thought in prompt as follows:
-    - For OpenAI API calling:
-
-    .. code-block:: python
-
-        [
-            ...
-            {
-                "role": "assistant",
-                "name": "thought",
-                "content": "I should ..."
-            },
-            ...
-        ]
-
-    - For open-source models that accepts string as input:
-
-    .. code-block:: python
-
-        ...
-        {self.name} thought: I should ...
-        ...
-
-    We admit that there maybe better ways to formulate the thought. Users
-    are encouraged to create their own thought formulation methods by
-    inheriting `MessageBase` class and rewrite the `__init__` and `to_str`
-    function.
-
-    .. code-block:: python
-
-        class MyThought(MessageBase):
-            def to_str(self) -> str:
-                # implement your own thought formulation method
-                pass
-    """
-
-    def __init__(
-        self,
-        content: Any,
-        timestamp: Optional[str] = None,
-        **kwargs: Any,
-    ) -> None:
-        if "name" in kwargs:
-            kwargs.pop("name")
-        if "role" in kwargs:
-            kwargs.pop("role")
-        super().__init__(
-            name="thought",
-            content=content,
-            role="assistant",
-            timestamp=timestamp,
-            **kwargs,
-        )
-
-    def to_str(self) -> str:
-        """Return the string representation of the message"""
-        return f"{self.name} thought: {self.content}"
-
-    def serialize(self) -> str:
-        return json.dumps({"__type": "Tht", **self})
-
-
 class PlaceholderMessage(Msg):
     """A placeholder for the return message of RpcAgent."""
 
@@ -370,7 +303,7 @@ class PlaceholderMessage(Msg):
             msg = deserialize(result)
             self.__update_url(msg)  # type: ignore[arg-type]
             self.update(msg)
-            # the actual value has been updated, not a placeholder any more
+            # the actual value has been updated, not a placeholder anymore
             self._is_placeholder = False
         return self
 
@@ -432,12 +365,11 @@ class PlaceholderMessage(Msg):
 
 _MSGS = {
     "Msg": Msg,
-    "Tht": Tht,
     "PlaceholderMessage": PlaceholderMessage,
 }
 
 
-def deserialize(s: Union[str, bytes]) -> Union[MessageBase, Sequence]:
+def deserialize(s: Union[str, bytes]) -> Union[Msg, Sequence]:
     """Deserialize json string into MessageBase"""
     js_msg = json.loads(s)
     msg_type = js_msg.pop("__type")

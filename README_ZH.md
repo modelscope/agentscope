@@ -1,4 +1,4 @@
-[English](./README.md) | 中文
+[English](https://github.com/modelscope/agentscope/blob/main/README.md) | 中文
 
 # AgentScope
 
@@ -27,6 +27,9 @@
 | <img src="https://gw.alicdn.com/imgextra/i1/O1CN01hhD1mu1Dd3BWVUvxN_!!6000000000238-2-tps-400-400.png" width="100" height="100"> | <img src="https://img.alicdn.com/imgextra/i2/O1CN01tuJ5971OmAqNg9cOw_!!6000000001747-0-tps-444-460.jpg" width="100" height="100"> |
 
 ## 新闻
+
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/> **[2024-07-15]** 我们在AgentScope中实现了Mixture of Agents算法。算法模块的使用样例请参考我们的[MoA示例](https://github.com/modelscope/agentscope/blob/main/examples/conversation_mixture_of_agents)。
+
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-06-14]** 新的提示调优（Prompt tuning）模块已经上线 AgentScope，用以帮助开发者生成和优化智能体的 system prompt。更多的细节和使用样例请参考 AgentScope [教程](https://modelscope.github.io/agentscope/en/tutorial/209-prompt_opt.html)！
 
@@ -137,6 +140,7 @@ AgentScope支持使用以下库快速部署本地模型服务。
   - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[与gpt-4o模型对话](./examples/conversation_with_gpt-4o)
   - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[与SoftWare Engineering智能体对话](./examples/conversation_with_swe-agent/)
   - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[与自定义服务对话](./examples/conversation_with_customized_services/)
+  - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[与混合智能体(Mixture of Agents)对话](https://github.com/modelscope/agentscope/blob/main/examples/conversation_mixture_of_agents/)
 
 - 游戏
   - [五子棋](./examples/game_gomoku)
@@ -316,12 +320,17 @@ pre-commit install
 @article{agentscope,
   author  = {Dawei Gao and
              Zitao Li and
-             Weirui Kuang and
              Xuchen Pan and
-             Daoyuan Chen and
+             Weirui Kuang and
              Zhijian Ma and
              Bingchen Qian and
+             Fei Wei and
+             Wenhao Zhang and
+             Yuexiang Xie and
+             Daoyuan Chen and
              Liuyi Yao and
+             Hongyi Peng and
+             Zeyu Zhang and
              Lin Zhu and
              Chen Cheng and
              Hongzhu Shi and

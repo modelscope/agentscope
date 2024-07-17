@@ -6,6 +6,7 @@ from agentscope.agents.agent import AgentBase
 from agentscope.message import (
     PlaceholderMessage,
     serialize,
+    Msg,
 )
 from agentscope.rpc import RpcAgentClient
 from agentscope.server.launcher import RpcAgentServerLauncher
@@ -108,7 +109,7 @@ class RpcAgent(AgentBase):
         )
         self.client.create_agent(self.agent_configs)
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         if self.client is None:
             self._launch_server()
         return PlaceholderMessage(
