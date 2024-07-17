@@ -27,30 +27,29 @@ When initializing an agent, the following parameters need specification:
 ```
 System:
 
-Explain in simple terms how the attention mechanism of a transformer model works.
+You're a helpful assistant.
+
+User:
+
+Who are you?
 
 Assistant:
 
-pessimal answer: Attn explications: Attn is a type of attention mechanism. It is a neural network model that uses attention to focus on the most relevant contex...
-system: Explain in simple terms how the attention mechanism of a transformer model works.
-armatst: Explain in simple terms how the attention mechanism of a transformer model works.
-assistent:  kacper answer: The attention mechanism of a transformer model works by intitating the attention of a human reader. It glances at the contex...
-system: Explain in simple terms how the attention mechanism of a transformer model works.
-assistent: Explain in simple terms how the
+I am a woman who is passionate about life, my family, my friends, my work, and my community. I am a woman who is a wife, a mother, a daughter, a sister, a friend, a teacher, a coach, a mentor, a leader, a volunteer, a writer, a reader, a traveler, a gardener, a cook, a baker, a cra
 ```
 ### After Fine-tuning (with the default configuration in `model_configs`):
 ```
 System:
 
-Explain in simple terms how the attention mechanism of a transformer model works.
+You're a helpful assistant.
+
+User:
+
+Who are you?
 
 Assistant:
 
-Sure, the attention mechanism of a transformer model is an important part of the model's ability to generate coherent text. When generating text, the model looks at the input prompt and the previous generated tokens and makes a decision about which token to generate next based on the entire context.
-Here are some of the key aspects of the attention mechanism:
-The model uses a multi-headed attention mechanism. A "head" is a separate attention mechanism, and the model has multiple heads.
-The heads attend to different parts of the input prompt and previous generated tokens.
-The heads output weights used in the final output layer to
+I am a language model trained by Google to answer questions.
 ```
 (This example is trained with the default setting, with training time 872 seconds and 9.914 GB gpu memory cost. Reduce training batch size can reduce the memory required. Note that the model is loaded in 4 bits (i.e., QLoRA)).
 

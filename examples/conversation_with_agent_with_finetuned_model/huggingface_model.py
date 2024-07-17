@@ -86,6 +86,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
         self.max_length = max_length  # Set max_length as an attribute
         self.pretrained_model_name_or_path = pretrained_model_name_or_path
         self.local_model_path = local_model_path
+        self.lora_config = None
         script_path = os.path.abspath(__file__)
         script_dir = os.path.dirname(script_path)
         dotenv_path = os.path.join(script_dir, ".env")
@@ -660,13 +661,12 @@ class HuggingFaceWrapper(ModelWrapperBase):
             "per_device_train_batch_size": 4,
             "gradient_accumulation_steps": 1,
             "gradient_checkpointing": False,
-            "num_train_epochs": 3,
+            "num_train_epochs": 1,
             "output_dir": "./",
             "optim": "paged_adamw_8bit",
             "logging_steps": 1,
         }
 
-        self.lora_config = None
         lora_config_default = {}
 
         if fine_tune_config is not None:
@@ -678,14 +678,16 @@ class HuggingFaceWrapper(ModelWrapperBase):
                 )
 
         if fine_tune_config.get("continue_lora_finetuning") is True:
-            self.lora_config = PeftConfig.from_pretrained(
-                self.local_model_path,
-            )
-            model = PeftModel.from_pretrained(model, self.local_model_path)
-            # unfreeze lora parameters. Assuming 'lora' is in the layer name.
-            for name, param in model.named_parameters():
-                if "lora" in name:
-                    param.requires_grad = True
+            if not isinstance(model, PeftModel):
+                self.lora_config = PeftConfig.from_pretrained(
+                    self.local_model_path,
+                )
+                model = PeftModel.from_pretrained(model, self.local_model_path)
+                # unfreeze lora parameters. Assuming
+                # 'lora' is in the lora layer name.
+                for name, param in model.named_parameters():
+                    if "lora" in name:
+                        param.requires_grad = True
         else:
             if lora_config_default:
                 self.lora_config = LoraConfig(**lora_config_default)
