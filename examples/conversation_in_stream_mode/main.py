@@ -10,7 +10,7 @@ from agentscope.utils import MonitorFactory
 import os
 
 stream = True
-model_name = "gpt-4"
+model_name = "glm-4"
 
 os.environ["OPENAI_API_KEY"] = ""
 
@@ -34,6 +34,17 @@ agentscope.init(
             "model_type": "litellm_chat",
             "model_name": "gpt-4",
             "stream": stream,
+        },
+        {
+            "model_type": "zhipuai_chat",
+            "config_name": "glm-4",
+            "model_name": "glm-4",
+            "stream": stream,
+            "api_key": "",
+            # Load from env if not provided
+            "generate_args": {
+                "temperature": 0.5,
+            },
         },
     ],
     save_api_invoke=True,
@@ -66,11 +77,7 @@ class StreamingAgent(AgentBase):
 
         res = self.model(prompt)
 
-        if stream:
-            for chunk in res.stream:
-                self.speak(Msg(self.name, chunk, "assistant"))
-        else:
-            self.speak(Msg(self.name, res.text, "assistant"))
+        self.speak(Msg(self.name, res.text, "assistant"))
 
         msg_returned = Msg(self.name, res.text, "assistant")
 
@@ -82,7 +89,7 @@ class StreamingAgent(AgentBase):
 agent = StreamingAgent(
     "assistant",
     "You're a helpful assistant",
-    "stream_litellm",
+    "glm-4",
 )
 user = UserAgent("user")
 
