@@ -9,6 +9,7 @@ The conversation continues until the user exits.
 Features include model and tokenizer loading,
 and fine-tuning on the lima dataset with adjustable parameters.
 """
+
 # pylint: disable=unused-import
 from huggingface_model import HuggingFaceWrapper
 from FinetuneDialogAgent import FinetuneDialogAgent
@@ -30,9 +31,8 @@ def main() -> None:
                 # Or another generative model of your choice.
                 # Needed from loading from Hugging Face.
                 "pretrained_model_name_or_path": "google/gemma-7b",
-                # "local_model_path": , # Specify your local model path
-                # "local_tokenizer_path":,  # Specify your local tokenizer path
-                "max_length": 128,
+                # "local_model_path": "", # Specify your local model path
+                "max_length": 256,
                 # Device for inference. Fine-tuning occurs on gpus.
                 "device": "cuda",
                 # Specify a Hugging Face data path if you
@@ -46,8 +46,13 @@ def main() -> None:
                 # fine-tuning method. Defaults to None.
                 # `lora_config` and `training_args` follow
                 # the standard lora and sfttrainer fields.
+                # "lora_config" shouldn't be specified if 
+                # loading a model saved as lora model
+                # '"continue_lora_finetuning": True' if
+                # loading a model saved as lora model
                 "fine_tune_config": {
-                    "lora_config": {
+                    "continue_lora_finetuning": False,                                                        
+                    "lora_config": {               
                         "r": 16,
                         "lora_alpha": 32,
                         "lora_dropout": 0.05,
@@ -56,14 +61,16 @@ def main() -> None:
                     },
                     "training_args": {
                         "num_train_epochs": 5,
+                        # "max_steps": 100,
                         "logging_steps": 1,
+                        # "learning_rate": 5e-07
                     },
-                    "bnb_config": {
-                        "load_in_4bit": True,
-                        "bnb_4bit_use_double_quant": True,
-                        "bnb_4bit_quant_type": "nf4",
-                        "bnb_4bit_compute_dtype": "bfloat16",
-                    },
+                    # "bnb_config": {
+                    #     "load_in_8bit": True,
+                        # "bnb_4bit_use_double_quant": True,
+                        # "bnb_4bit_quant_type": "nf4",
+                        # "bnb_4bit_compute_dtype": "bfloat16",
+                    # },
                 },
             },
         ],
@@ -78,8 +85,7 @@ def main() -> None:
     dialog_agent = FinetuneDialogAgent(
         name="Assistant",
         sys_prompt=(
-            "Explain in simple terms how the attention mechanism of "
-            "a transformer model works."
+            "You're a helpful assistant."
         ),
         # Use your custom model config name here
         model_config_name="my_custom_model",
@@ -91,32 +97,36 @@ def main() -> None:
     # `lora_config` and `bnb_config` if used)
     dialog_agent.load_model(
         pretrained_model_name_or_path="google/gemma-7b",
-        local_model_path=None,
+        # local_model_path="",
         fine_tune_config={
-            "lora_config": {"r": 24, "lora_alpha": 48},
-            "bnb_config": {
-                "load_in_4bit": True,
-                "bnb_4bit_use_double_quant": True,
-                "bnb_4bit_quant_type": "nf4",
-                "bnb_4bit_compute_dtype": "bfloat16",
-            },
+            # "bnb_config": {
+            #     "load_in_4bit": True,
+            #     "bnb_4bit_use_double_quant": True,
+            #     "bnb_4bit_quant_type": "nf4",
+            #     "bnb_4bit_compute_dtype": "bfloat16",
+            # },
         },
     )  # load model from Hugging Face
 
     dialog_agent.load_tokenizer(
         pretrained_model_name_or_path="google/gemma-7b",
-        local_model_path=None,
+        # local_model_path="",
     )  # load tokenizer
 
     # fine-tune loaded model with lima dataset
     # with customized hyperparameters
-    # (`fine_tune_config` argument is optional
-    # (specify only `lora_config` and
-    # `training_args` if used). Defaults to None.)
+    # `fine_tune_config` argument is optional
+    # specify only `lora_config` and
+    # `training_args` if used). Defaults to None.
+    # "lora_config" shouldn't be specified if 
+    # loading a model saved as lora model
+    # '"continue_lora_finetuning": True' if
+    # loading a model saved as lora model
     dialog_agent.fine_tune(
         "GAIR/lima",
         fine_tune_config={
-            "lora_config": {"r": 24, "lora_alpha": 48},
+            "continue_lora_finetuning": True,
+            # "lora_config": {"r": 24, "lora_alpha": 48}, 
             "training_args": {"max_steps": 300, "logging_steps": 3},
         },
     )
@@ -126,7 +136,7 @@ def main() -> None:
     # Start the conversation between user and assistant
     x = None
     while x is None or x.content != "exit":
-        x = sequentialpipeline([dialog_agent, user_agent], x)
+        x = sequentialpipeline([user_agent, dialog_agent], x)
 
 
 if __name__ == "__main__":
