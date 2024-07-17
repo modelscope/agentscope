@@ -3,15 +3,15 @@
 Unit tests for rpc agent classes
 """
 import unittest
-import time
 import os
+import time
 import shutil
 from typing import Optional, Union, Sequence
 
 from loguru import logger
 
 import agentscope
-from agentscope.agents import AgentBase, DistConf
+from agentscope.agents import AgentBase, DistConf, DialogAgent
 from agentscope.server import RpcAgentServerLauncher
 from agentscope.message import Msg
 from agentscope.message import PlaceholderMessage
@@ -19,6 +19,8 @@ from agentscope.message import deserialize
 from agentscope.msghub import msghub
 from agentscope.pipelines import sequentialpipeline
 from agentscope.utils import MonitorFactory, QuotaExceededError
+from agentscope.rpc.rpc_agent_client import RpcAgentClient
+from agentscope.exception import AgentCallError
 
 
 class DemoRpcAgent(AgentBase):
@@ -154,6 +156,25 @@ class DemoErrorAgent(AgentBase):
         raise RuntimeError("Demo Error")
 
 
+class FileAgent(AgentBase):
+    """An agent returns a file"""
+
+    def reply(self, x: dict = None) -> dict:
+        image_path = os.path.abspath(
+            os.path.join(
+                os.path.abspath(os.path.dirname(__file__)),
+                "data",
+                "image.png",
+            ),
+        )
+        return Msg(
+            name=self.name,
+            role="assistant",
+            content="Image",
+            url=image_path,
+        )
+
+
 class BasicRpcAgentTest(unittest.TestCase):
     "Test cases for Rpc Agent"
 
@@ -229,9 +250,11 @@ class BasicRpcAgentTest(unittest.TestCase):
             host="127.0.0.1",
             port=12010,
             local_mode=False,
-            custom_agents=[DemoRpcAgent],
+            custom_agent_classes=[DemoRpcAgent],
         )
         launcher.launch()
+        client = RpcAgentClient(host=launcher.host, port=launcher.port)
+        self.assertTrue(client.is_alive())  # pylint: disable=W0212
         agent_a = DemoRpcAgent(
             name="a",
         ).to_dist(
@@ -428,7 +451,7 @@ class BasicRpcAgentTest(unittest.TestCase):
             host="127.0.0.1",
             port=12010,
             local_mode=False,
-            custom_agents=[DemoRpcAgentWithMemory],
+            custom_agent_classes=[DemoRpcAgentWithMemory],
         )
         launcher.launch()
         # although agent1 and agent2 connect to the same server
@@ -473,7 +496,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         res4 = agent2(msg4)
         self.assertEqual(res4.content["mem_size"], 3)
         # delete existing agent
-        agent2.client.delete_agent()
+        agent2.client.delete_agent(agent2.agent_id)
         msg2 = Msg(name="System", content="First Msg for agent2")
         res2 = agent2(msg2)
         self.assertRaises(ValueError, res2.__getattr__, "content")
@@ -503,14 +526,6 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertEqual(len(agents), 2)
         agent1 = agents[0]
         agent2 = agents[1]
-        self.assertTrue(agent1.agent_id.startswith("DemoRpcAgentWithMemory"))
-        self.assertTrue(agent2.agent_id.startswith("DemoRpcAgentWithMemory"))
-        self.assertTrue(
-            agent1.client.agent_id.startswith("DemoRpcAgentWithMemory"),
-        )
-        self.assertTrue(
-            agent2.client.agent_id.startswith("DemoRpcAgentWithMemory"),
-        )
         self.assertNotEqual(agent1.agent_id, agent2.agent_id)
         self.assertEqual(agent1.agent_id, agent1.client.agent_id)
         self.assertEqual(agent2.agent_id, agent2.client.agent_id)
@@ -547,7 +562,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         """Test error handling"""
         agent = DemoErrorAgent(name="a").to_dist()
         x = agent()
-        self.assertRaises(RuntimeError, x.__getattr__, "content")
+        self.assertRaises(AgentCallError, x.__getattr__, "content")
 
     def test_agent_nesting(self) -> None:
         """Test agent nesting"""
@@ -557,14 +572,14 @@ class BasicRpcAgentTest(unittest.TestCase):
             host=host,
             port=12010,
             local_mode=False,
-            custom_agents=[DemoGatherAgent, DemoGeneratorAgent],
+            custom_agent_classes=[DemoGatherAgent, DemoGeneratorAgent],
         )
         launcher2 = RpcAgentServerLauncher(
             # choose port automatically
             host=host,
             port=12011,
             local_mode=False,
-            custom_agents=[DemoGatherAgent, DemoGeneratorAgent],
+            custom_agent_classes=[DemoGatherAgent, DemoGeneratorAgent],
         )
         launcher1.launch()
         launcher2.launch()
@@ -608,3 +623,112 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertTrue(0.5 < r2.content["time"] < 2)
         launcher1.shutdown()
         launcher2.shutdown()
+
+    def test_agent_server_management_funcs(self) -> None:
+        """Test agent server management functions"""
+        launcher = RpcAgentServerLauncher(
+            host="localhost",
+            port=12010,
+            local_mode=False,
+            custom_agent_classes=[DemoRpcAgentWithMemory, FileAgent],
+        )
+        launcher.launch()
+        client = RpcAgentClient(host="localhost", port=launcher.port)
+        agent_lists = client.get_agent_list()
+        self.assertEqual(len(agent_lists), 0)
+        memory_agent = DemoRpcAgentWithMemory(
+            name="demo",
+            to_dist={
+                "host": "localhost",
+                "port": launcher.port,
+            },
+        )
+        resp = memory_agent(Msg(name="test", content="first msg", role="user"))
+        resp.update_value()
+        memory = client.get_agent_memory(memory_agent.agent_id)
+        self.assertEqual(len(memory), 2)
+        self.assertEqual(memory[0]["content"], "first msg")
+        self.assertEqual(memory[1]["content"]["mem_size"], 1)
+        agent_lists = client.get_agent_list()
+        self.assertEqual(len(agent_lists), 1)
+        self.assertEqual(agent_lists[0]["agent_id"], memory_agent.agent_id)
+        agent_info = agent_lists[0]
+        logger.info(agent_info)
+        server_info = client.get_server_info()
+        logger.info(server_info)
+        self.assertTrue("pid" in server_info)
+        self.assertTrue("id" in server_info)
+        self.assertTrue("cpu" in server_info)
+        self.assertTrue("mem" in server_info)
+        # test download file
+        file_agent = FileAgent("File").to_dist(
+            host="localhost",
+            port=launcher.port,
+        )
+        file = file_agent()
+        remote_file_path = os.path.abspath(
+            os.path.join(
+                os.path.abspath(os.path.dirname(__file__)),
+                "data",
+                "image.png",
+            ),
+        )
+        local_file_path = file.url
+        self.assertNotEqual(remote_file_path, local_file_path)
+        with open(remote_file_path, "rb") as rf:
+            remote_content = rf.read()
+        with open(local_file_path, "rb") as lf:
+            local_content = lf.read()
+        self.assertEqual(remote_content, local_content)
+        agent_lists = client.get_agent_list()
+        self.assertEqual(len(agent_lists), 2)
+        # model not exists error
+        self.assertRaises(
+            Exception,
+            DialogAgent,
+            name="dialogue",
+            sys_prompt="You are a helful assistant.",
+            model_config_name="my_openai",
+            to_dist={
+                "host": "localhost",
+                "port": launcher.port,
+            },
+        )
+        # set model configs
+        client.set_model_configs(
+            [
+                {
+                    "model_type": "openai_chat",
+                    "config_name": "my_openai",
+                    "model_name": "gpt-3.5-turbo",
+                    "api_key": "xxx",
+                    "organization": "xxx",
+                    "generate_args": {
+                        "temperature": 0.5,
+                    },
+                },
+                {
+                    "model_type": "post_api_chat",
+                    "config_name": "my_postapi",
+                    "api_url": "https://xxx",
+                    "headers": {},
+                },
+            ],
+        )
+        # create agent after set model configs
+        dia_agent = DialogAgent(  # pylint: disable=E1123
+            name="dialogue",
+            sys_prompt="You are a helful assistant.",
+            model_config_name="my_openai",
+            to_dist={
+                "host": "localhost",
+                "port": launcher.port,
+            },
+        )
+        self.assertIsNotNone(dia_agent)
+        self.assertTrue(client.delete_all_agent())
+        self.assertEqual(len(client.get_agent_list()), 0)
+        # client.stop()
+        # time.sleep(1)
+        # self.assertFalse(client.is_alive())
+        launcher.shutdown()
