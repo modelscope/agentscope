@@ -163,6 +163,8 @@ async def _setup_agent_server_async(
             f"Received shutdown signal. Gracefully stopping the server at "
             f"[{host}:{port}].",
         )
+        if stop_event is not None:
+            stop_event.set()
         await server.stop(grace=5)
 
     loop = asyncio.get_running_loop()
