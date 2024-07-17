@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Model wrapper for Yi models"""
 from abc import ABC
 import logging
@@ -52,9 +53,10 @@ class YiWrapperBase(ModelWrapperBase, ABC):
 
         if region == "overseas" and model_name not in ["yi-large"]:
             logger.warning(
-                f"Model {model_name} may not be available for overseas region. "
+                "Model %s may not be available for overseas region. "
                 "Only yi-large is confirmed to work. More information can be "
-                "found here https://platform.01.ai/docs#models-and-pricing"
+                "found here https://platform.01.ai/docs#models-and-pricing",
+                model_name
             )
         self.client = OpenAI(
             api_key=api_key,
