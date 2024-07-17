@@ -27,6 +27,10 @@
 |---------|----------|
 | <img src="https://gw.alicdn.com/imgextra/i1/O1CN01hhD1mu1Dd3BWVUvxN_!!6000000000238-2-tps-400-400.png" width="100" height="100"> | <img src="https://img.alicdn.com/imgextra/i2/O1CN01tuJ5971OmAqNg9cOw_!!6000000001747-0-tps-444-460.jpg" width="100" height="100"> |
 
+访问我们的网站 [agentscope.io](agentscope.io)，使用拖拽界面构建多智能体应用程序。
+
+----
+
 ## 新闻
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/> **[2024-07-15]** 我们在AgentScope中实现了Mixture of Agents算法。算法模块的使用样例请参考我们的[MoA示例](https://github.com/modelscope/agentscope/blob/main/examples/conversation_mixture_of_agents)。
