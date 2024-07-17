@@ -6,11 +6,10 @@ fine-tuning, and response generation.
 Key features include handling model and tokenizer operations,
 adapting to specialized datasets, and robust error management.
 """
-from typing import Sequence, Any, Union, List, Optional, Dict, Literal, Tuple
+from typing import Sequence, Any, Union, List, Optional, Dict, Tuple
 import os
 from datetime import datetime
 import json
-from dataclasses import dataclass
 
 import torch
 from transformers import (
@@ -24,7 +23,7 @@ import transformers
 from peft import LoraConfig
 from peft import get_peft_model
 from peft import PeftModel, PeftConfig
-from trl import SFTTrainer, DataCollatorForCompletionOnlyLM
+from trl import SFTTrainer
 from datasets import load_dataset, Dataset
 from loguru import logger
 from dotenv import load_dotenv
@@ -32,7 +31,6 @@ from dotenv import load_dotenv
 from agentscope.models import ModelWrapperBase, ModelResponse
 from agentscope.message import MessageBase
 from agentscope.utils.tools import _convert_to_str
-
 
 
 class HuggingFaceWrapper(ModelWrapperBase):
@@ -84,6 +82,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
         """
         super().__init__(config_name=config_name)
         self.model = None
+        self.tokenizer = None
         self.max_length = max_length  # Set max_length as an attribute
         self.pretrained_model_name_or_path = pretrained_model_name_or_path
         self.local_model_path = local_model_path
@@ -111,7 +110,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
             pretrained_model_name_or_path,
             local_model_path=local_model_path,
         )
-        
+
         if data_path is not None:
             self.model = self.fine_tune_training(
                 self.model,
@@ -147,25 +146,21 @@ class HuggingFaceWrapper(ModelWrapperBase):
         Raises:
             Exception: If an error occurs during text generation.
         """
-
-        if self.local_model_path is not None:
-            if self.tokenizer.chat_template is not None:
-                if self.model.get_input_embeddings().weight.size()[0] != len(self.tokenizer):
-                    self.model, self.tokenizer = self.setup_chat_format(self.model, self.tokenizer)
-                    loaded_embed_tokens_weights = torch.load(self.local_model_path+'/embed_tokens_weights.pt')
-                    self.model.get_input_embeddings().weight.data.copy_(loaded_embed_tokens_weights)
-                    del loaded_embed_tokens_weights
-                    torch.cuda.empty_cache()
-            else:
-                if self.tokenizer.chat_template is None:
-                    self.model, self.tokenizer = self.setup_chat_format(self.model, self.tokenizer)
+        if self.tokenizer is not None:
+            self.model, self.tokenizer = self._setup_model_and_tokenizer(
+                self.model,
+                self.tokenizer,
+            )
         else:
-            if self.tokenizer.chat_template is None:
-                self.model, self.tokenizer = self.setup_chat_format(self.model, self.tokenizer)
+            logger.error("Tokenizer is not initialized")
 
         try:
-
-            input_ids = self.tokenizer.apply_chat_template(inputs, tokenize=True, add_generation_prompt=True, return_tensors="pt")
+            input_ids = self.tokenizer.apply_chat_template(
+                inputs,
+                tokenize=True,
+                add_generation_prompt=True,
+                return_tensors="pt",
+            )
             # Generate response using the model
             outputs = self.model.generate(
                 input_ids.to(self.device),
@@ -361,7 +356,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
                     f"'{pretrained_model_name_or_path}'"
                     f" from '{local_model_path}'",
                 )
-            self.tokenizer.padding_side = 'right'
+            self.tokenizer.padding_side = "right"
 
         except Exception as e:
             # Handle exceptions during model loading,
@@ -374,7 +369,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
             logger.error(error_message)
 
             raise
-    
+
     def setup_chat_format(
         self,
         model: PreTrainedModel,
@@ -382,21 +377,34 @@ class HuggingFaceWrapper(ModelWrapperBase):
         resize_to_multiple_of: Optional[int] = None,
     ) -> Tuple[PreTrainedModel, PreTrainedTokenizer]:
         """
-        Setup chat format by adding special tokens to the tokenizer, setting the correct format, and extending the embedding layer of the model based on the new special tokens.
+        Setup chat format by adding special tokens to the tokenizer,
+        setting the correct format, and extending the embedding layer
+        of the model based on the new special tokens.
 
         Args:
         model (`~transformers.PreTrainedModel`): The model to be modified.
-        tokenizer (`~transformers.PreTrainedTokenizer`): The tokenizer to be modified.
-        format (`Optional[Literal["chatml"]]`): The format to be set. Defaults to "chatml".
-        resize_to_multiple_of (`Optional[int]`): Number to resize the embedding layer to. Defaults to None.
+        tokenizer (`~transformers.PreTrainedTokenizer`): The tokenizer
+                                                         to be modified.
+        format (`Optional[Literal["chatml"]]`): The format to be set.
+                                                Defaults to "chatml".
+        resize_to_multiple_of (`Optional[int]`): Number to resize
+                                                 the embedding layer to.
+                                                 Defaults to None.
         Returns:
-        model (`~transformers.PreTrainedModel`): The modified model.
-        tokenizer (`~transformers.PreTrainedTokenizer`): The modified tokenizer.
+        model (`~transformers.PreTrainedModel`): modified model.
+        tokenizer (`~transformers.PreTrainedTokenizer`): modified tokenizer.
         """
-        
 
         # set special tokens and them
-        tokenizer.add_special_tokens({"additional_special_tokens": ['<|system|>', '<|user|>', '<|assistant|>']})
+        tokenizer.add_special_tokens(
+            {
+                "additional_special_tokens": [
+                    "<|system|>",
+                    "<|user|>",
+                    "<|assistant|>",
+                ],
+            },
+        )
         # set chat format for tokenizer
         tokenizer.chat_template = """{% for message in messages %}
         {% if message['role'] == 'user' %}
@@ -411,9 +419,13 @@ class HuggingFaceWrapper(ModelWrapperBase):
         {% endif %}
         {% endfor %}"""
 
-        # resize embedding layer to a multiple of 64, https://x.com/karpathy/status/1621578354024677377
+        # resize embedding layer to a multiple of 64,
+        # https://x.com/karpathy/status/1621578354024677377
         model.resize_token_embeddings(
-            len(tokenizer), pad_to_multiple_of=resize_to_multiple_of if resize_to_multiple_of is not None else None
+            len(tokenizer),
+            pad_to_multiple_of=resize_to_multiple_of
+            if resize_to_multiple_of is not None
+            else None,
         )
         # Update the model config to use the new eos & bos tokens
         if getattr(model, "config", None) is not None:
@@ -428,6 +440,53 @@ class HuggingFaceWrapper(ModelWrapperBase):
 
         return model, tokenizer
 
+    def _setup_model_and_tokenizer(
+        self,
+        model: PreTrainedModel,
+        tokenizer: PreTrainedTokenizer,
+    ) -> Tuple[PreTrainedModel, PreTrainedTokenizer]:
+        """
+        Set up the model and tokenizer based on the
+        local model path and chat template.
+
+        This method checks if a local model path exists
+        and if the tokenizer has a chat template.
+        It then sets up the chat format if necessary
+        and loads pre-trained token embeddings.
+
+        Args:
+            model (PreTrainedModel): The pre-trained model to set up.
+            tokenizer (PreTrainedTokenizer): The tokenizer
+                                             associated with the model.
+
+        Returns:
+            Tuple[PreTrainedModel, PreTrainedTokenizer]:
+            The potentially modified model and tokenizer.
+
+        Note:
+            This method modifies the model and tokenizer
+            in-place but also returns them for convenience.
+        """
+        if self.local_model_path is not None:
+            if tokenizer.chat_template is not None:
+                if model.get_input_embeddings().weight.size()[0] != len(
+                    tokenizer,
+                ):
+                    model, tokenizer = self.setup_chat_format(model, tokenizer)
+                    loaded_embed_tokens_weights = torch.load(
+                        f"{self.local_model_path}/embed_tokens_weights.pt",
+                    )
+                    model.get_input_embeddings().weight.data.copy_(
+                        loaded_embed_tokens_weights,
+                    )
+                    del loaded_embed_tokens_weights
+                    torch.cuda.empty_cache()
+            elif tokenizer.chat_template is None:
+                model, tokenizer = self.setup_chat_format(model, tokenizer)
+        elif tokenizer.chat_template is None:
+            model, tokenizer = self.setup_chat_format(model, tokenizer)
+
+        return model, tokenizer
 
     def fine_tune(
         self,
@@ -470,6 +529,44 @@ class HuggingFaceWrapper(ModelWrapperBase):
                 f"Failed to fine-tune model with data from '{data_path}': {e}",
             )
             raise
+
+    # Function to reformat a single row
+    def _reformat_row(self, row: Dict[str, List[str]]) -> List[Dict[str, str]]:
+        """
+        Reformat a single row of conversation data
+        into a list of message dictionaries.
+
+        This method takes a row from the dataset,
+        which contains a list of conversation
+        turns, and reformats it into a list of dictionaries.
+        Each dictionary represents
+        a message in the conversation, with 'role' and 'content' keys.
+
+        Args:
+            row (Dict[str, List[str]]): A dictionary containing a
+                                        'conversations' key
+                                        with a list of two strings:
+                                        the user's input
+                                        and the assistant's response.
+
+        Returns:
+            List[Dict[str, str]]: A list of three dictionaries
+                                  representing the system message,
+                                  user message, and assistant message.
+
+        Example:
+            Input row: {"conversations": ["User input", "Assistant response"]}
+            Output: [
+                {"role": "system", "content": "You're a helpful assistant."},
+                {"role": "user", "content": "User input"},
+                {"role": "assistant", "content": "Assistant response"}
+            ]
+        """
+        return [
+            {"role": "system", "content": "You're a helpful assistant."},
+            {"role": "user", "content": row["conversations"][0]},
+            {"role": "assistant", "content": row["conversations"][1]},
+        ]
 
     def _formatting_prompts_func(
         self,
@@ -543,39 +640,20 @@ class HuggingFaceWrapper(ModelWrapperBase):
             as part of the log/model fodler name.
         """
 
-        if self.local_model_path is not None:
-            if tokenizer.chat_template is not None:
-                if model.get_input_embeddings().weight.size()[0] != len(tokenizer):
-                    model, tokenizer = self.setup_chat_format(model, tokenizer)
-                    loaded_embed_tokens_weights = torch.load(self.local_model_path+'/embed_tokens_weights.pt')
-                    model.get_input_embeddings().weight.data.copy_(loaded_embed_tokens_weights)
-                    del loaded_embed_tokens_weights
-                    torch.cuda.empty_cache()
-            else:
-                if tokenizer.chat_template is None:
-                    model, tokenizer = self.setup_chat_format(model, tokenizer)
-        else:
-            if tokenizer.chat_template is None:
-                model, tokenizer = self.setup_chat_format(model, tokenizer)
+        model, tokenizer = self._setup_model_and_tokenizer(model, tokenizer)
 
         dataset = load_dataset(data_path, split="train", token=token)
 
         # # filter out input sequences that are longer than certain threshold
         dataset_reduced = dataset.filter(
             lambda x: len(x["conversations"][0] + x["conversations"][1])
-            <=3000,
+            <= 3000,
         )
 
-        # Function to reformat a single row
-        def reformat_row(row):
-            return [
-                    {"role": "system", "content": "You're a helpful assistant."},
-                    {"role": "user", "content": row['conversations'][0]},
-                    {"role": "assistant", "content": row['conversations'][1]}
-            ]
-
         # Apply the reformatting function to each row in the dataset
-        formatted_dataset = [reformat_row(row) for row in dataset_reduced]
+        formatted_dataset = [
+            self._reformat_row(row) for row in dataset_reduced
+        ]
         formatted_dataset = Dataset.from_dict({"messages": formatted_dataset})
 
         training_defaults = {
@@ -600,12 +678,14 @@ class HuggingFaceWrapper(ModelWrapperBase):
                 )
 
         if fine_tune_config.get("continue_lora_finetuning") is True:
-                self.lora_config = PeftConfig.from_pretrained(self.local_model_path)
-                model = PeftModel.from_pretrained(model, self.local_model_path)
-                # unfreeze lora parameters. Assuming 'lora' is in the layer name.
-                for name, param in model.named_parameters(): 
-                    if "lora" in name:
-                        param.requires_grad = True
+            self.lora_config = PeftConfig.from_pretrained(
+                self.local_model_path,
+            )
+            model = PeftModel.from_pretrained(model, self.local_model_path)
+            # unfreeze lora parameters. Assuming 'lora' is in the layer name.
+            for name, param in model.named_parameters():
+                if "lora" in name:
+                    param.requires_grad = True
         else:
             if lora_config_default:
                 self.lora_config = LoraConfig(**lora_config_default)
@@ -614,14 +694,8 @@ class HuggingFaceWrapper(ModelWrapperBase):
         if output_dir is not None:
             training_defaults["output_dir"] = output_dir
 
-        collator = DataCollatorForCompletionOnlyLM(
-            response_template=" ### Answer:",
-            tokenizer=tokenizer,
-        )
-
         trainer_args = transformers.TrainingArguments(**training_defaults)
 
-        
         trainer = SFTTrainer(
             model=model,
             tokenizer=tokenizer,
@@ -646,13 +720,13 @@ class HuggingFaceWrapper(ModelWrapperBase):
             trainer.train()
         except Exception as e:
             import traceback
+
             logger.error(f"Error during training: {e}")
             traceback.print_exc()
             raise
 
         now = datetime.now()
         time_string = now.strftime("%Y-%m-%d_%H-%M-%S")
-
 
         # save model
         model_name = (
@@ -664,12 +738,21 @@ class HuggingFaceWrapper(ModelWrapperBase):
             model_path = os.path.join(os.path.dirname(__file__), model_name)
         trainer.save_model(model_path)
 
-        # save token embeddings because it is resized due to the addition of new special tokens
-        embed_tokens_weights = model.get_input_embeddings().weight.data.clone().detach()
-        torch.save(embed_tokens_weights, model_path+'/embed_tokens_weights.pt')
+        # save token embeddings because it is resized
+        # due to the addition of new special tokens
+        embed_tokens_weights = (
+            model.get_input_embeddings().weight.data.clone().detach()
+        )
+        torch.save(
+            embed_tokens_weights,
+            model_path + "/embed_tokens_weights.pt",
+        )
 
-        with open(os.path.join(model_path, "log_history.json"), "w", encoding="utf-8") as f:
+        with open(
+            os.path.join(model_path, "log_history.json"),
+            "w",
+            encoding="utf-8",
+        ) as f:
             json.dump(trainer.state.log_history, f)
 
         return model
-

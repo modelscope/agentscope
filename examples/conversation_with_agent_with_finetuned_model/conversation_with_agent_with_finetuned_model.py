@@ -46,13 +46,13 @@ def main() -> None:
                 # fine-tuning method. Defaults to None.
                 # `lora_config` and `training_args` follow
                 # the standard lora and sfttrainer fields.
-                # "lora_config" shouldn't be specified if 
+                # "lora_config" shouldn't be specified if
                 # loading a model saved as lora model
                 # '"continue_lora_finetuning": True' if
                 # loading a model saved as lora model
                 "fine_tune_config": {
-                    "continue_lora_finetuning": False,                                                        
-                    "lora_config": {               
+                    "continue_lora_finetuning": False,
+                    "lora_config": {
                         "r": 16,
                         "lora_alpha": 32,
                         "lora_dropout": 0.05,
@@ -67,9 +67,9 @@ def main() -> None:
                     },
                     # "bnb_config": {
                     #     "load_in_8bit": True,
-                        # "bnb_4bit_use_double_quant": True,
-                        # "bnb_4bit_quant_type": "nf4",
-                        # "bnb_4bit_compute_dtype": "bfloat16",
+                    # "bnb_4bit_use_double_quant": True,
+                    # "bnb_4bit_quant_type": "nf4",
+                    # "bnb_4bit_compute_dtype": "bfloat16",
                     # },
                 },
             },
@@ -84,9 +84,7 @@ def main() -> None:
     # Init agents with the custom model
     dialog_agent = FinetuneDialogAgent(
         name="Assistant",
-        sys_prompt=(
-            "You're a helpful assistant."
-        ),
+        sys_prompt=("You're a helpful assistant."),
         # Use your custom model config name here
         model_config_name="my_custom_model",
     )
@@ -118,7 +116,7 @@ def main() -> None:
     # `fine_tune_config` argument is optional
     # specify only `lora_config` and
     # `training_args` if used). Defaults to None.
-    # "lora_config" shouldn't be specified if 
+    # "lora_config" shouldn't be specified if
     # loading a model saved as lora model
     # '"continue_lora_finetuning": True' if
     # loading a model saved as lora model
@@ -126,7 +124,7 @@ def main() -> None:
         "GAIR/lima",
         fine_tune_config={
             "continue_lora_finetuning": True,
-            # "lora_config": {"r": 24, "lora_alpha": 48}, 
+            # "lora_config": {"r": 24, "lora_alpha": 48},
             "training_args": {"max_steps": 300, "logging_steps": 3},
         },
     )
