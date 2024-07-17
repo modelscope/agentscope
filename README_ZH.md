@@ -29,6 +29,10 @@
 
 访问我们的网站 [agentscope.io](https://agentscope.io/)，使用[![](https://img.shields.io/badge/AgentScope_WorkStation-blue?color=dark-green)](https://agentscope.io/)拖拽界面构建多智能体应用程序。
 
+<h5 align="center">
+<img src="https://img.alicdn.com/imgextra/i1/O1CN01RXAVVn1zUtjXVvuqS_!!6000000006718-1-tps-3116-1852.gif" width="600" alt="agentscope-logo">
+</h5>
+
 ----
 
 ## 新闻
@@ -41,10 +45,6 @@
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-06-11]** RAG功能现在已经整合进 **AgentScope** 中! 大家可以根据 [**简要介绍AgentScope中的RAG**](https://modelscope.github.io/agentscope/en/tutorial/210-rag.html) ，让自己的agent用上外部知识!
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-06-09]** AgentScope v0.0.5 已经更新！在这个新版本中，我们开源了 [**AgentScope Workstation**](https://modelscope.github.io/agentscope/en/tutorial/209-gui.html) (在线版本的网址是[agentscope.io](https://agentscope.io))！
-
-<h5 align="center">
-<img src="https://img.alicdn.com/imgextra/i1/O1CN01RXAVVn1zUtjXVvuqS_!!6000000006718-1-tps-3116-1852.gif" width="600" alt="agentscope-logo">
-</h5>
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-05-24]** 我们很高兴地宣布 **AgentScope Workstation** 相关功能即将开源。我们的网站服务暂时下线。在线服务会很快升级重新上线，敬请期待...
 
