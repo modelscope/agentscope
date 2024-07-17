@@ -7,6 +7,7 @@ Functions:
     require_auth - A decorator for protecting views by requiring
         authentication.
 """
+from typing import Any, Callable
 from functools import wraps
 from flask import request, session, redirect, url_for
 
@@ -15,8 +16,8 @@ def require_auth(
     redirect_url: str = "_home",
     fail_with_exception: bool = False,
     ip: str = "",
-    **decorator_kwargs,
-):
+    **decorator_kwargs: Any,
+) -> Callable:
     """
     Decorator for view functions that requires user authentication.
 
@@ -40,9 +41,9 @@ def require_auth(
         A view function wrapped with authentication check logic.
     """
 
-    def decorator(view_func):
+    def decorator(view_func: Callable) -> Callable:
         @wraps(view_func)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
             token_query = request.args.get("token", "")
             user_login = request.args.get("user_login", "")
             token_session = session.get("verification_token")
