@@ -14,7 +14,7 @@ fi
 participant_server_num=$1
 
 # create files for pid
-> .pid
+>> .pid
 # create log dir
 mkdir -p log
 

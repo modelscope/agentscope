@@ -81,7 +81,7 @@ def setup_server(parsed_args: argparse.Namespace) -> None:
     server_launcher = RpcAgentServerLauncher(
         host=host,
         port=port,
-        custom_agents=[UserProxyAgent, DialogAgent],
+        custom_agent_classes=[UserProxyAgent, DialogAgent],
     )
     server_launcher.launch(in_subprocess=False)
     server_launcher.wait_until_terminate()

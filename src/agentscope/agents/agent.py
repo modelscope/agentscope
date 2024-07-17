@@ -8,6 +8,7 @@ from typing import Sequence
 from typing import Union
 from typing import Any
 from typing import Type
+import json
 import uuid
 from loguru import logger
 
@@ -187,9 +188,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
         """
         self.name = name
         self.memory_config = memory_config
-
-        if sys_prompt is not None:
-            self.sys_prompt = sys_prompt
+        self.sys_prompt = sys_prompt
 
         # TODO: support to receive a ModelWrapper instance
         if model_config_name is not None:
@@ -217,7 +216,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
     def generate_agent_id(cls) -> str:
         """Generate the agent_id of this agent instance"""
         # TODO: change cls.__name__ into a global unique agent_type
-        return f"{cls.__name__}_{uuid.uuid4().hex}"
+        return uuid.uuid4().hex
 
     # todo: add a unique agent_type field to distinguish different agent class
     @classmethod
@@ -234,7 +233,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
             Type[AgentBase]: the AgentBase sub-class.
         """
         if agent_class_name not in cls._registry:
-            raise ValueError(f"Agent [{agent_class_name}] not found.")
+            raise ValueError(f"Agent class <{agent_class_name}> not found.")
         return cls._registry[agent_class_name]  # type: ignore[return-value]
 
     @classmethod
@@ -381,6 +380,20 @@ class AgentBase(Operator, metaclass=_AgentMeta):
         """Broadcast the input to all audiences."""
         for agent in self._audience:
             agent.observe(x)
+
+    def __str__(self) -> str:
+        serialized_fields = {
+            "name": self.name,
+            "type": self.__class__.__name__,
+            "sys_prompt": self.sys_prompt,
+            "agent_id": self.agent_id,
+        }
+        if hasattr(self, "model"):
+            serialized_fields["model"] = {
+                "model_type": self.model.model_type,
+                "config_name": self.model.config_name,
+            }
+        return json.dumps(serialized_fields, ensure_ascii=False)
 
     @property
     def agent_id(self) -> str:
