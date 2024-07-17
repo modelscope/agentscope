@@ -2,9 +2,11 @@
 
 # AgentScope
 
-<h1 align="left">
-<img src="https://img.alicdn.com/imgextra/i2/O1CN01cdjhVE1wwt5Auv7bY_!!6000000006373-0-tps-1792-1024.jpg" width="600" alt="agentscope-logo">
-</h1>
+<h5 align="center">
+  <a href="https://agentscope.io" target="_blank">
+    <img src="https://img.alicdn.com/imgextra/i1/O1CN01RXAVVn1zUtjXVvuqS_!!6000000006718-1-tps-3116-1852.gif" width="600" alt="agentscope-logo" style="box-shadow: 5px 10px 18px #888888;">
+  </a>
+</h5>
 
 更简单地构建基于LLM的多智能体应用。
 
