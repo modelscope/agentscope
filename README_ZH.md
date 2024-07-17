@@ -2,11 +2,9 @@
 
 # AgentScope
 
-<h5 align="center">
-  <a href="https://agentscope.io" target="_blank">
-    <img src="https://img.alicdn.com/imgextra/i1/O1CN01RXAVVn1zUtjXVvuqS_!!6000000006718-1-tps-3116-1852.gif" width="600" alt="agentscope-logo" style="box-shadow: 5px 10px 18px #888888;">
-  </a>
-</h5>
+<h1 align="left">
+<img src="https://img.alicdn.com/imgextra/i2/O1CN01cdjhVE1wwt5Auv7bY_!!6000000006373-0-tps-1792-1024.jpg" width="600" alt="agentscope-logo">
+</h1>
 
 更简单地构建基于LLM的多智能体应用。
 
@@ -31,8 +29,10 @@
 
 访问我们的网站 [agentscope.io](https://agentscope.io/)，使用[![](https://img.shields.io/badge/AgentScope_WorkStation-blue?color=dark-green)](https://agentscope.io/)拖拽界面构建多智能体应用程序。
 
-<h5 align="center">
-<img src="https://img.alicdn.com/imgextra/i1/O1CN01RXAVVn1zUtjXVvuqS_!!6000000006718-1-tps-3116-1852.gif" width="600" alt="agentscope-logo">
+<h5 align="left">
+  <a href="https://agentscope.io" target="_blank">
+    <img src="https://img.alicdn.com/imgextra/i1/O1CN01RXAVVn1zUtjXVvuqS_!!6000000006718-1-tps-3116-1852.gif" width="600" alt="agentscope-logo" style="box-shadow: 5px 10px 18px #888888;">
+  </a>
 </h5>
 
 ----
