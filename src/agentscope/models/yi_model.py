@@ -1,9 +1,13 @@
+"""Model wrapper for Yi models"""
 from abc import ABC
-from openai import OpenAI
-from .model import ModelWrapperBase, ModelResponse
-from typing import Union, Sequence, Any, Dict, List
 import logging
+from typing import Union, Sequence, Any, List
+
+from openai import OpenAI
+
+from .model import ModelWrapperBase, ModelResponse
 from ..message import Msg
+
 logger = logging.getLogger(__name__)
 
 _DEFAULT_API_BUDGET = float("inf")
@@ -27,26 +31,7 @@ class YiWrapperBase(ModelWrapperBase, ABC):
             budget: float = _DEFAULT_API_BUDGET,
             **kwargs: Any,
     ) -> None:
-        """Initialize the Yi client.
-
-        Args:
-            config_name (`str`):
-                The name of the model config.
-            model_name (`str`, default `None`):
-                The name of the model to use in Yi API.
-            api_key (`str`, default `None`):
-                The API key for Yi API.
-            region (`str`, default "domestic"):
-                The region for API base URL. Either "domestic" or "overseas".
-            client_args (`dict`, default `None`):
-                The extra keyword arguments to initialize the Yi client.
-            generate_args (`dict`, default `None`):
-                The extra keyword arguments used in Yi api generation,
-                e.g. `temperature`, `max_tokens`.
-            budget (`float`, default `None`):
-                The total budget using this model. Set to `None` means no
-                limit.
-        """
+        """Initialize the Yi client."""
         if model_name is None:
             model_name = config_name
             logger.warning("model_name is not set, use config_name instead.")
@@ -55,23 +40,22 @@ class YiWrapperBase(ModelWrapperBase, ABC):
 
         if openai is None:
             raise ImportError(
-                "Cannot find openai package in current python environment.",
+                "Cannot find openai package in current python environment."
             )
 
         self.model_name = model_name
         self.generate_args = generate_args or {}
 
-        base_url = "https://api.lingyiwanwu.com/v1" if region == "domestic" else "https://api.01.ai/v1"
-        if base_url:
-            self.base_url = base_url
-        elif region == "overseas":
-            self.base_url = "https://api.01.ai/v1"
-        else:
-            self.base_url = "https://api.lingyiwanwu.com/v1"
+        base_url = ("https://api.lingyiwanwu.com/v1" if region == "domestic"
+                    else "https://api.01.ai/v1")
+        self.base_url = base_url
 
         if region == "overseas" and model_name not in ["yi-large"]:
             logger.warning(
-                f"Model {model_name} may not be available for overseas region. Only yi-large is confirmed to work.More information can be found here https://platform.01.ai/docs#models-and-pricing")
+                f"Model {model_name} may not be available for overseas region. "
+                "Only yi-large is confirmed to work. More information can be "
+                "found here https://platform.01.ai/docs#models-and-pricing"
+            )
         self.client = OpenAI(
             api_key=api_key,
             base_url=self.base_url,
@@ -125,36 +109,20 @@ class YiChatWrapper(YiWrapperBase):
             messages: list,
             **kwargs: Any,
     ) -> ModelResponse:
-        """Processes a list of messages to construct a payload for the Yi
-        API call. It then makes a request to the Yi API and returns the
-        response. This method also updates monitoring metrics based on the
-        API response.
-
-        Args:
-            messages (`list`):
-                A list of messages to process.
-            **kwargs (`Any`):
-                The keyword arguments to Yi chat completions API,
-                e.g. `temperature`, `max_tokens`, etc.
-
-        Returns:
-            `ModelResponse`:
-                The response text in text field, and the raw response in
-                raw field.
-        """
+        """Processes a list of messages and makes a request to the Yi API."""
         # Prepare keyword arguments
         kwargs = {**self.generate_args, **kwargs}
 
         # Checking messages
         if not isinstance(messages, list):
             raise ValueError(
-                "Yi `messages` field expected type `list`, "
-                f"got `{type(messages)}` instead.",
+                f"Yi `messages` field expected type `list`, "
+                f"got `{type(messages)}` instead."
             )
         if not all("role" in msg and "content" in msg for msg in messages):
             raise ValueError(
                 "Each message in the 'messages' list must contain a 'role' "
-                "and 'content' key for Yi API.",
+                "and 'content' key for Yi API."
             )
 
         # Forward to generate response
@@ -187,19 +155,7 @@ class YiChatWrapper(YiWrapperBase):
             self,
             *args: Union[Msg, Sequence[Msg]],
     ) -> List[dict]:
-        """Format the input string and dictionary into the format that
-        Yi Chat API required.
-
-        Args:
-            args (`Union[Msg, Sequence[Msg]]`):
-                The input arguments to be formatted, where each argument
-                should be a `Msg` object, or a list of `Msg` objects.
-
-        Returns:
-            `List[dict]`:
-                The formatted messages in the format that Yi Chat API
-                required.
-        """
+        """Format the input messages for the Yi Chat API."""
         messages = []
         for arg in args:
             if arg is None:
@@ -216,7 +172,7 @@ class YiChatWrapper(YiWrapperBase):
             else:
                 raise TypeError(
                     f"The input should be a Msg object or a list "
-                    f"of Msg objects, got {type(arg)}.",
+                    f"of Msg objects, got {type(arg)}."
                 )
 
         return messages
