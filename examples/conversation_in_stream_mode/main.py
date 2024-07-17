@@ -5,6 +5,14 @@ from typing import Optional, Union, Sequence
 import agentscope
 from agentscope.agents import AgentBase, UserAgent
 from agentscope.message import Msg
+from agentscope.utils import MonitorFactory
+
+import os
+
+stream = True
+model_name = "gpt-4"
+
+os.environ["OPENAI_API_KEY"] = ""
 
 agentscope.init(
     model_configs=[
@@ -13,15 +21,22 @@ agentscope.init(
             "model_type": "dashscope_chat",
             "model_name": "qwen-max",
             "api_key": "",
-            "stream": True,
+            "stream": stream,
         },
         {
             "config_name": "stream_ollama",
             "model_type": "ollama_chat",
             "model_name": "llama2",
-            "stream": True,
+            "stream": stream,
+        },
+        {
+            "config_name": "stream_litellm",
+            "model_type": "litellm_chat",
+            "model_name": "gpt-4",
+            "stream": stream,
         },
     ],
+    save_api_invoke=True,
 )
 
 
@@ -51,8 +66,11 @@ class StreamingAgent(AgentBase):
 
         res = self.model(prompt)
 
-        for chunk in res.stream:
-            self.speak(Msg(self.name, chunk, "assistant"))
+        if stream:
+            for chunk in res.stream:
+                self.speak(Msg(self.name, chunk, "assistant"))
+        else:
+            self.speak(Msg(self.name, res.text, "assistant"))
 
         msg_returned = Msg(self.name, res.text, "assistant")
 
@@ -64,13 +82,18 @@ class StreamingAgent(AgentBase):
 agent = StreamingAgent(
     "assistant",
     "You're a helpful assistant",
-    "stream_ollama",
+    "stream_litellm",
 )
 user = UserAgent("user")
 
 msg = None
 while True:
-    msg = agent(msg)
     msg = user(msg)
     if msg.content == "exit":
         break
+    msg = agent(msg)
+
+print(MonitorFactory.get_monitor().get_value(f"{model_name}.prompt_tokens"))
+print(MonitorFactory.get_monitor().get_value(f"{model_name}.completion_tokens"))
+print(MonitorFactory.get_monitor().get_value(f"{model_name}.total_tokens"))
+print(MonitorFactory.get_monitor().get_value(f"{model_name}.call_counter"))
