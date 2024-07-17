@@ -28,7 +28,7 @@ Welcome to join our community on
 |----------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
 | <img src="https://gw.alicdn.com/imgextra/i1/O1CN01hhD1mu1Dd3BWVUvxN_!!6000000000238-2-tps-400-400.png" width="100" height="100"> | <img src="https://img.alicdn.com/imgextra/i2/O1CN01tuJ5971OmAqNg9cOw_!!6000000001747-0-tps-444-460.jpg" width="100" height="100"> |
 
-Visit our website at [agentscope.io](agentscope.io) to build multi-agent applications with drag-and-drop UI.
+Visit our website at [agentscope.io](https://agentscope.io/) to build multi-agent applications with drag-and-drop UI.
 
 ----
 
