@@ -209,5 +209,28 @@ class StudioClient:
         """Get the URL of the run detail page."""
         return f"{self.studio_url}/?run_id={self.runtime_id}"
 
+    def alloc_servers(self, num: int) -> list[tuple[str, int]]:
+        """Allocate a list of servers.
+
+        Args:
+            num (`int`):
+                The number of servers to allocate.
+
+        Returns:
+            `list[tuple[str, int]]`: A list of server's host and port.
+        """
+        send_url = f"{self.studio_url}/api/servers/alloc"
+        response = requests.post(
+            send_url,
+            json={
+                "num": num,
+            },
+            timeout=10,
+        )
+        if response.status_code != 200:
+            logger.error(f"Fail to allocate servers: {response.text}")
+            return []
+        return response.json()
+
 
 _studio_client = StudioClient()

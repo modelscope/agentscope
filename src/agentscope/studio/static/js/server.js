@@ -93,6 +93,7 @@ function getServerStatus(cell, formatterParams, onRendered) {
                     status: data.status,
                     cpu: data.cpu,
                     mem: data.mem,
+                    size: data.size,
                 });
             } else {
                 cell.getElement().innerHTML =
@@ -175,6 +176,11 @@ function initServerTable(data) {
                 title: "Status",
                 vertAlign: "middle",
                 formatter: getServerStatus,
+            },
+            {
+                title: "Agent Number",
+                field: "size",
+                vertAlign: "middle",
             },
             {
                 title: "CPU Usage",

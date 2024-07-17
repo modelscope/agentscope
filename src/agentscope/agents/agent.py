@@ -62,7 +62,7 @@ class _AgentMeta(ABCMeta):
                     ),
                     max_timeout_seconds=to_dist.pop(  # type: ignore[arg-type]
                         "max_timeout_seconds",
-                        1800,
+                        7200,
                     ),
                     local_mode=to_dist.pop(  # type: ignore[arg-type]
                         "local_mode",
@@ -98,9 +98,9 @@ class DistConf(dict):
         host: str = "localhost",
         port: int = None,
         max_pool_size: int = 8192,
-        max_timeout_seconds: int = 1800,
+        max_timeout_seconds: int = 7200,
         local_mode: bool = True,
-        lazy_launch: bool = True,
+        lazy_launch: bool = False,
     ):
         """Init the distributed configuration.
 
@@ -111,12 +111,12 @@ class DistConf(dict):
                 Port of the rpc agent server.
             max_pool_size (`int`, defaults to `8192`):
                 Max number of task results that the server can accommodate.
-            max_timeout_seconds (`int`, defaults to `1800`):
+            max_timeout_seconds (`int`, defaults to `7200`):
                 Timeout for task results.
             local_mode (`bool`, defaults to `True`):
                 Whether the started rpc server only listens to local
                 requests.
-            lazy_launch (`bool`, defaults to `True`):
+            lazy_launch (`bool`, defaults to `False`):
                 Only launch the server when the agent is called.
         """
         self["host"] = host
@@ -408,9 +408,9 @@ class AgentBase(Operator, metaclass=_AgentMeta):
         host: str = "localhost",
         port: int = None,
         max_pool_size: int = 8192,
-        max_timeout_seconds: int = 1800,
+        max_timeout_seconds: int = 7200,
         local_mode: bool = True,
-        lazy_launch: bool = True,
+        lazy_launch: bool = False,
         launch_server: bool = None,
     ) -> AgentBase:
         """Convert current agent instance into a distributed version.
@@ -425,7 +425,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
                 The max number of agent reply messages that the started agent
                 server can accommodate. Note that the oldest message will be
                 deleted after exceeding the pool size.
-            max_timeout_seconds (`int`, defaults to `1800`):
+            max_timeout_seconds (`int`, defaults to `7200`):
                 Only takes effect when `host` and `port` are not filled in.
                 Maximum time for reply messages to be cached in the launched
                 agent server. Note that expired messages will be deleted.
@@ -433,7 +433,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
                 Only takes effect when `host` and `port` are not filled in.
                 Whether the started agent server only listens to local
                 requests.
-            lazy_launch (`bool`, defaults to `True`):
+            lazy_launch (`bool`, defaults to `False`):
                 Only takes effect when `host` and `port` are not filled in.
                 If `True`, launch the agent server when the agent is called,
                 otherwise, launch the agent server immediately.
