@@ -27,7 +27,7 @@
 |---------|----------|
 | <img src="https://gw.alicdn.com/imgextra/i1/O1CN01hhD1mu1Dd3BWVUvxN_!!6000000000238-2-tps-400-400.png" width="100" height="100"> | <img src="https://img.alicdn.com/imgextra/i2/O1CN01tuJ5971OmAqNg9cOw_!!6000000001747-0-tps-444-460.jpg" width="100" height="100"> |
 
-访问我们的网站 [agentscope.io](https://agentscope.io/)，使用![Static Badge](https://img.shields.io/badge/AgentScope_WorkStation-blue?color=dark-green&link=https%3A%2F%2Fagentscope.io%2F)拖拽界面构建多智能体应用程序。
+访问我们的网站 [agentscope.io](https://agentscope.io/)，使用[![](https://img.shields.io/badge/AgentScope_WorkStation-blue?color=dark-green)](https://agentscope.io/)拖拽界面构建多智能体应用程序。
 
 ----
 
