@@ -31,7 +31,7 @@
 
 <h5 align="left">
   <a href="https://agentscope.io" target="_blank">
-    <img src="https://img.alicdn.com/imgextra/i3/O1CN01Xc0twH1xn6FdGvXgu_!!6000000006487-1-tps-1766-1080.gif" width="600" alt="agentscope-logo" style="box-shadow: 5px 10px 18px #888888;">
+    <img src="https://img.alicdn.com/imgextra/i1/O1CN01RXAVVn1zUtjXVvuqS_!!6000000006718-1-tps-3116-1852.gif" width="600" alt="agentscope-logo" style="box-shadow: 5px 10px 18px #888888;">
   </a>
 </h5>
 
