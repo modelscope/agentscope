@@ -160,6 +160,14 @@
 <span class="c1"># typing</span>
 <span class="n">Embedding</span> <span class="o">=</span> <span class="nb">list</span><span class="p">[</span><span class="n">Number</span><span class="p">]</span>
 
+<span class="c1"># rpc</span>
+
+<span class="c1"># set max message size to 32 MB</span>
+<span class="n">_DEFAULT_RPC_OPTIONS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">&quot;grpc.max_send_message_length&quot;</span><span class="p">,</span> <span class="mi">32</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;grpc.max_receive_message_length&quot;</span><span class="p">,</span> <span class="mi">32</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">),</span>
+<span class="p">]</span>
+
 
 <span class="c1"># enums</span>
 <div class="viewcode-block" id="ResponseFormat">

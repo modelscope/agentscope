@@ -98,6 +98,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#agentscope.utils.tools.find_available_port"><code class="docutils literal notranslate"><span class="pre">find_available_port()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#agentscope.utils.tools.check_port"><code class="docutils literal notranslate"><span class="pre">check_port()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#agentscope.utils.tools.generate_id_from_seed"><code class="docutils literal notranslate"><span class="pre">generate_id_from_seed()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.utils.tools.is_web_accessible"><code class="docutils literal notranslate"><span class="pre">is_web_accessible()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#agentscope.utils.tools.reform_dialogue"><code class="docutils literal notranslate"><span class="pre">reform_dialogue()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#agentscope.utils.tools.ImportErrorReporter"><code class="docutils literal notranslate"><span class="pre">ImportErrorReporter</span></code></a></li>
 </ul>
@@ -187,6 +188,22 @@ returned.</p>
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.utils.tools.is_web_accessible">
+<span class="sig-prename descclassname"><span class="pre">agentscope.utils.tools.</span></span><span class="sig-name descname"><span class="pre">is_web_accessible</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/agentscope/utils/tools.html#is_web_accessible"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.utils.tools.is_web_accessible" title="Link to this definition"></a></dt>
+<dd><p>Whether the url is accessible from the Web.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>url</strong> (<cite>str</cite>) – The url to check.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">备注</p>
+<p>This function is not perfect, it only checks if the URL starts with
+common web protocols, e.g., http, https, ftp, oss.</p>
+</div>
 </dd></dl>
 
 <dl class="py function">

@@ -383,6 +383,24 @@
 
 
 
+<div class="viewcode-block" id="is_web_accessible">
+<a class="viewcode-back" href="../../../agentscope.utils.tools.html#agentscope.utils.tools.is_web_accessible">[文档]</a>
+<span class="k">def</span> <span class="nf">is_web_accessible</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Whether the url is accessible from the Web.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        url (`str`):</span>
+<span class="sd">            The url to check.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        This function is not perfect, it only checks if the URL starts with</span>
+<span class="sd">        common web protocols, e.g., http, https, ftp, oss.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parsed_url</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">parsed_url</span><span class="o">.</span><span class="n">scheme</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;http&quot;</span><span class="p">,</span> <span class="s2">&quot;https&quot;</span><span class="p">,</span> <span class="s2">&quot;ftp&quot;</span><span class="p">,</span> <span class="s2">&quot;oss&quot;</span><span class="p">]</span></div>
+
+
+
 <span class="k">def</span> <span class="nf">_is_json_serializable</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the given object is json serializable.&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>

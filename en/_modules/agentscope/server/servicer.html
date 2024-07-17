@@ -115,45 +115,51 @@
   <h1>Source code for agentscope.server.servicer</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot; Server of distributed agent&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">threading</span>
-<span class="kn">import</span> <span class="nn">base64</span>
-<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">concurrent</span> <span class="kn">import</span> <span class="n">futures</span>
+<span class="kn">from</span> <span class="nn">multiprocessing.synchronize</span> <span class="kn">import</span> <span class="n">Event</span> <span class="k">as</span> <span class="n">EventClass</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">import</span> <span class="nn">requests</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">dill</span>
+    <span class="kn">import</span> <span class="nn">psutil</span>
     <span class="kn">import</span> <span class="nn">grpc</span>
     <span class="kn">from</span> <span class="nn">grpc</span> <span class="kn">import</span> <span class="n">ServicerContext</span>
+    <span class="kn">from</span> <span class="nn">google.protobuf.empty_pb2</span> <span class="kn">import</span> <span class="n">Empty</span>
     <span class="kn">from</span> <span class="nn">expiringdict</span> <span class="kn">import</span> <span class="n">ExpiringDict</span>
-    <span class="kn">from</span> <span class="nn">..rpc.rpc_agent_pb2</span> <span class="kn">import</span> <span class="n">RpcMsg</span>  <span class="c1"># pylint: disable=E0611</span>
 <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">import_error</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">agentscope.utils.tools</span> <span class="kn">import</span> <span class="n">ImportErrorReporter</span>
 
     <span class="n">dill</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;distribute&quot;</span><span class="p">)</span>
+    <span class="n">psutil</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;distribute&quot;</span><span class="p">)</span>
     <span class="n">grpc</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;distribute&quot;</span><span class="p">)</span>
     <span class="n">ServicerContext</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;distribute&quot;</span><span class="p">)</span>
-    <span class="n">ExpiringDict</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;distribute&quot;</span><span class="p">)</span>
-    <span class="n">RpcMsg</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span>  <span class="c1"># type: ignore[misc]</span>
+    <span class="n">Empty</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span>  <span class="c1"># type: ignore[misc]</span>
         <span class="n">import_error</span><span class="p">,</span>
         <span class="s2">&quot;distribute&quot;</span><span class="p">,</span>
     <span class="p">)</span>
+    <span class="n">ExpiringDict</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;distribute&quot;</span><span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">.._runtime</span> <span class="kn">import</span> <span class="n">_runtime</span>
-<span class="kn">from</span> <span class="nn">..studio._client</span> <span class="kn">import</span> <span class="n">_studio_client</span>
-<span class="kn">from</span> <span class="nn">..agents.agent</span> <span class="kn">import</span> <span class="n">AgentBase</span>
-<span class="kn">from</span> <span class="nn">..exception</span> <span class="kn">import</span> <span class="n">StudioRegisterError</span>
-<span class="kn">from</span> <span class="nn">..rpc.rpc_agent_pb2_grpc</span> <span class="kn">import</span> <span class="n">RpcAgentServicer</span>
-<span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">import</span> <span class="nn">agentscope.rpc.rpc_agent_pb2</span> <span class="k">as</span> <span class="nn">agent_pb2</span>
+<span class="kn">from</span> <span class="nn">agentscope.agents.agent</span> <span class="kn">import</span> <span class="n">AgentBase</span>
+<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">read_model_configs</span>
+<span class="kn">from</span> <span class="nn">agentscope.studio._client</span> <span class="kn">import</span> <span class="n">_studio_client</span>
+<span class="kn">from</span> <span class="nn">agentscope._runtime</span> <span class="kn">import</span> <span class="n">_runtime</span>
+<span class="kn">from</span> <span class="nn">agentscope.exception</span> <span class="kn">import</span> <span class="n">StudioRegisterError</span>
+<span class="kn">from</span> <span class="nn">agentscope.rpc.rpc_agent_pb2_grpc</span> <span class="kn">import</span> <span class="n">RpcAgentServicer</span>
+<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Msg</span><span class="p">,</span>
     <span class="n">PlaceholderMessage</span><span class="p">,</span>
     <span class="n">deserialize</span><span class="p">,</span>
 <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_register_to_studio</span><span class="p">(</span>
+<span class="k">def</span> <span class="nf">_register_server_to_studio</span><span class="p">(</span>
     <span class="n">studio_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">server_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -171,6 +177,17 @@
         <span class="k">raise</span> <span class="n">StudioRegisterError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to register server: </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 
+<span class="k">class</span> <span class="nc">_AgentError</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Use this class to represent an error when calling agent funcs.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">err_msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent_id</span> <span class="o">=</span> <span class="n">agent_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">err_msg</span> <span class="o">=</span> <span class="n">err_msg</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Agent[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_id</span><span class="si">}</span><span class="s2">] error: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">err_msg</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
 <div class="viewcode-block" id="AgentServerServicer">
 <a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer">[docs]</a>
 <span class="k">class</span> <span class="nc">AgentServerServicer</span><span class="p">(</span><span class="n">RpcAgentServicer</span><span class="p">):</span>
@@ -180,6 +197,7 @@
 <a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.__init__">[docs]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
+        <span class="n">stop_event</span><span class="p">:</span> <span class="n">EventClass</span><span class="p">,</span>
         <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
         <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">server_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -190,6 +208,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Init the AgentServerServicer.</span>
 
 <span class="sd">        Args:</span>
+<span class="sd">            stop_event (`Event`): Event to stop the server.</span>
 <span class="sd">            host (`str`, defaults to &quot;localhost&quot;):</span>
 <span class="sd">                Hostname of the rpc agent server.</span>
 <span class="sd">            port (`int`, defaults to `None`):</span>
@@ -211,7 +230,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">server_id</span> <span class="o">=</span> <span class="n">server_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">studio_url</span> <span class="o">=</span> <span class="n">studio_url</span>
         <span class="k">if</span> <span class="n">studio_url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">_register_to_studio</span><span class="p">(</span>
+            <span class="n">_register_server_to_studio</span><span class="p">(</span>
                 <span class="n">studio_url</span><span class="o">=</span><span class="n">studio_url</span><span class="p">,</span>
                 <span class="n">server_id</span><span class="o">=</span><span class="n">server_id</span><span class="p">,</span>
                 <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span>
@@ -227,7 +246,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">task_id_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">agent_id_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">task_id_counter</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AgentBase</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AgentBase</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span> <span class="o">=</span> <span class="n">stop_event</span></div>
 
 
 <div class="viewcode-block" id="AgentServerServicer.get_task_id">
@@ -254,74 +275,191 @@
         <span class="k">return</span> <span class="n">agent_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span></div>
 
 
-<div class="viewcode-block" id="AgentServerServicer.check_and_generate_agent">
-<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.check_and_generate_agent">[docs]</a>
-    <span class="k">def</span> <span class="nf">check_and_generate_agent</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">agent_configs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Check whether the agent exists, and create new agent instance</span>
-<span class="sd">        for new agent.</span>
+<div class="viewcode-block" id="AgentServerServicer.get_agent">
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.get_agent">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AgentBase</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the agent by agent id.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            agent_id (`str`): the agent id.</span>
-<span class="sd">            agent_configs (`dict`): configuration used to initialize the agent,</span>
-<span class="sd">                with three fields (generated in `_AgentMeta`):</span>
 
-<span class="sd">                .. code-block:: python</span>
-
-<span class="sd">                    {</span>
-<span class="sd">                        &quot;class_name&quot;: {name of the agent}</span>
-<span class="sd">                        &quot;args&quot;: {args in tuple type to init the agent}</span>
-<span class="sd">                        &quot;kwargs&quot;: {args in dict type to init the agent}</span>
-<span class="sd">                    }</span>
-
+<span class="sd">        Returns:</span>
+<span class="sd">            AgentBase: the agent.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_id_lock</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">agent_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">:</span>
-                <span class="n">agent_class_name</span> <span class="o">=</span> <span class="n">agent_configs</span><span class="p">[</span><span class="s2">&quot;class_name&quot;</span><span class="p">]</span>
-                <span class="n">agent_instance</span> <span class="o">=</span> <span class="n">AgentBase</span><span class="o">.</span><span class="n">get_agent_class</span><span class="p">(</span><span class="n">agent_class_name</span><span class="p">)(</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">agent_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentServerServicer.is_alive">
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.is_alive">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_alive</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">request</span><span class="p">:</span> <span class="n">Empty</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">ServicerContext</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check whether the server is alive.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span><span class="n">ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentServerServicer.stop">
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.stop">[docs]</a>
+    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">request</span><span class="p">:</span> <span class="n">Empty</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">ServicerContext</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stop the server.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span><span class="n">ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentServerServicer.create_agent">
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.create_agent">[docs]</a>
+    <span class="k">def</span> <span class="nf">create_agent</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">request</span><span class="p">:</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">CreateAgentRequest</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">ServicerContext</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new agent on the server.&quot;&quot;&quot;</span>
+        <span class="n">agent_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">agent_id</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_id_lock</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">agent_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span>
+                    <span class="n">ok</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Agent with agent_id [</span><span class="si">{</span><span class="n">agent_id</span><span class="si">}</span><span class="s2">] already exists&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="n">agent_configs</span> <span class="o">=</span> <span class="n">dill</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">agent_init_args</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">agent_source_code</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">cls</span> <span class="o">=</span> <span class="n">dill</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">agent_source_code</span><span class="p">)</span>
+                <span class="n">cls_name</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Load class [</span><span class="si">{</span><span class="n">cls_name</span><span class="si">}</span><span class="s2">] from uploaded source code.&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cls_name</span> <span class="o">=</span> <span class="n">agent_configs</span><span class="p">[</span><span class="s2">&quot;class_name&quot;</span><span class="p">]</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">cls</span> <span class="o">=</span> <span class="n">AgentBase</span><span class="o">.</span><span class="n">get_agent_class</span><span class="p">(</span><span class="n">cls_name</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">err_msg</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Agent class [</span><span class="si">{</span><span class="n">cls_name</span><span class="si">}</span><span class="s2">] not found: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err_msg</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span><span class="n">ok</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="n">err_msg</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">agent_instance</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span>
                     <span class="o">*</span><span class="n">agent_configs</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">],</span>
                     <span class="o">**</span><span class="n">agent_configs</span><span class="p">[</span><span class="s2">&quot;kwargs&quot;</span><span class="p">],</span>
                 <span class="p">)</span>
-                <span class="n">agent_instance</span><span class="o">.</span><span class="n">_agent_id</span> <span class="o">=</span> <span class="n">agent_id</span>  <span class="c1"># pylint: disable=W0212</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">[</span><span class="n">agent_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">agent_instance</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;create agent instance [</span><span class="si">{</span><span class="n">agent_id</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span></div>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">err_msg</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Failed to create agent instance &lt;</span><span class="si">{</span><span class="n">cls_name</span><span class="si">}</span><span class="s2">&gt;: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err_msg</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span><span class="n">ok</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="n">err_msg</span><span class="p">)</span>
+            <span class="n">agent_instance</span><span class="o">.</span><span class="n">_agent_id</span> <span class="o">=</span> <span class="n">agent_id</span>  <span class="c1"># pylint: disable=W0212</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">[</span><span class="n">agent_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">agent_instance</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;create agent instance &lt;</span><span class="si">{</span><span class="n">cls_name</span><span class="si">}</span><span class="s2">&gt;[</span><span class="si">{</span><span class="n">agent_id</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span><span class="n">ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="AgentServerServicer.check_and_delete_agent">
-<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.check_and_delete_agent">[docs]</a>
-    <span class="k">def</span> <span class="nf">check_and_delete_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Check whether the agent exists, and delete the agent instance</span>
-<span class="sd">        for the agent_id.</span>
+<div class="viewcode-block" id="AgentServerServicer.delete_agent">
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.delete_agent">[docs]</a>
+    <span class="k">def</span> <span class="nf">delete_agent</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">request</span><span class="p">:</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">ServicerContext</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete agents from the server.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            agent_id (`str`): the agent id.</span>
+<span class="sd">            request (`StringMsg`): The `value` field is the agent_id of the</span>
+<span class="sd">            agents to be deleted.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">aid</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">value</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_id_lock</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">agent_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">agent_id</span><span class="p">)</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;delete agent instance [</span><span class="si">{</span><span class="n">agent_id</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span></div>
+            <span class="k">if</span> <span class="n">aid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">:</span>
+                <span class="n">agent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">aid</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;delete agent instance &lt;</span><span class="si">{</span><span class="n">agent</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">aid</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span><span class="n">ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;try to delete a non-existent agent [</span><span class="si">{</span><span class="n">aid</span><span class="si">}</span><span class="s2">].&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span>
+                    <span class="n">ok</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;try to delete a non-existent agent [</span><span class="si">{</span><span class="n">aid</span><span class="si">}</span><span class="s2">].&quot;</span><span class="p">,</span>
+                <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="AgentServerServicer.call_func">
-<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.call_func">[docs]</a>
-    <span class="k">def</span> <span class="nf">call_func</span><span class="p">(</span>  <span class="c1"># pylint: disable=W0236</span>
+<div class="viewcode-block" id="AgentServerServicer.clone_agent">
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.clone_agent">[docs]</a>
+    <span class="k">def</span> <span class="nf">clone_agent</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">request</span><span class="p">:</span> <span class="n">RpcMsg</span><span class="p">,</span>
+        <span class="n">request</span><span class="p">:</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">ServicerContext</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RpcMsg</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clone a new agent instance from the origin instance.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            request (`StringMsg`): The `value` field is the agent_id of the</span>
+<span class="sd">            agent to be cloned.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `GeneralResponse`: The agent_id of generated agent.</span>
+<span class="sd">            Empty if clone failed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">agent_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_id_lock</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">agent_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Try to clone a non-existent agent [</span><span class="si">{</span><span class="n">agent_id</span><span class="si">}</span><span class="s2">].&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span>
+                    <span class="n">ok</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Try to clone a non-existent agent [</span><span class="si">{</span><span class="n">agent_id</span><span class="si">}</span><span class="s2">].&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="n">ori_agent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">[</span><span class="n">agent_id</span><span class="p">]</span>
+        <span class="n">new_agent</span> <span class="o">=</span> <span class="n">ori_agent</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span>
+            <span class="o">*</span><span class="n">ori_agent</span><span class="o">.</span><span class="n">_init_settings</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">],</span>  <span class="c1"># pylint: disable=W0212</span>
+            <span class="o">**</span><span class="n">ori_agent</span><span class="o">.</span><span class="n">_init_settings</span><span class="p">[</span><span class="s2">&quot;kwargs&quot;</span><span class="p">],</span>  <span class="c1"># pylint: disable=W0212</span>
+        <span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_id_lock</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">[</span><span class="n">new_agent</span><span class="o">.</span><span class="n">agent_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_agent</span>
+        <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span><span class="n">ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="n">new_agent</span><span class="o">.</span><span class="n">agent_id</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentServerServicer.delete_all_agents">
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.delete_all_agents">[docs]</a>
+    <span class="k">def</span> <span class="nf">delete_all_agents</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">request</span><span class="p">:</span> <span class="n">Empty</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">ServicerContext</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">:</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_id_lock</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Deleting all agent instances on the server&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span><span class="n">ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentServerServicer.call_agent_func">
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.call_agent_func">[docs]</a>
+    <span class="k">def</span> <span class="nf">call_agent_func</span><span class="p">(</span>  <span class="c1"># pylint: disable=W0236</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">request</span><span class="p">:</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">RpcMsg</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">ServicerContext</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Call the specific servicer function.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_exists</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">agent_id</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">context</span><span class="o">.</span><span class="n">abort</span><span class="p">(</span>
+                <span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">INVALID_ARGUMENT</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;Agent [</span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">agent_id</span><span class="si">}</span><span class="s2">] not exists.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">target_func</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">target_func</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;_create_agent&quot;</span><span class="p">,</span> <span class="s2">&quot;_get&quot;</span><span class="p">]:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_exists</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">agent_id</span><span class="p">):</span>
-                    <span class="k">return</span> <span class="n">context</span><span class="o">.</span><span class="n">abort</span><span class="p">(</span>
-                        <span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">INVALID_ARGUMENT</span><span class="p">,</span>
-                        <span class="sa">f</span><span class="s2">&quot;Agent [</span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">agent_id</span><span class="si">}</span><span class="s2">] not exists.&quot;</span><span class="p">,</span>
-                    <span class="p">)</span>
             <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">target_func</span><span class="p">)(</span><span class="n">request</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># TODO: support other user defined method</span>
@@ -332,7 +470,138 @@
             <span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">RpcMsg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RpcMsg</span><span class="p">:</span>
+<div class="viewcode-block" id="AgentServerServicer.update_placeholder">
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.update_placeholder">[docs]</a>
+    <span class="k">def</span> <span class="nf">update_placeholder</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">request</span><span class="p">:</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">UpdatePlaceholderRequest</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">ServicerContext</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the value of a placeholder.&quot;&quot;&quot;</span>
+        <span class="n">task_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">task_id</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_pool</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">task_id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">threading</span><span class="o">.</span><span class="n">Condition</span><span class="p">):</span>
+                <span class="k">with</span> <span class="n">result</span><span class="p">:</span>
+                    <span class="n">result</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">_AgentError</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span>
+                <span class="n">ok</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">err_msg</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span>
+                <span class="n">ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">serialize</span><span class="p">(),</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentServerServicer.get_agent_list">
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.get_agent_list">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_agent_list</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">request</span><span class="p">:</span> <span class="n">Empty</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">ServicerContext</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get id of all agents on the server as a list.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_id_lock</span><span class="p">:</span>
+            <span class="n">summaries</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">summaries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">agent</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span>
+                <span class="n">ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">summaries</span><span class="p">),</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentServerServicer.get_server_info">
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.get_server_info">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_server_info</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">request</span><span class="p">:</span> <span class="n">Empty</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">ServicerContext</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the agent server resource usage information.&quot;&quot;&quot;</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">status</span><span class="p">[</span><span class="s2">&quot;pid&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pid</span>
+        <span class="n">status</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">server_id</span>
+        <span class="n">process</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pid</span><span class="p">)</span>
+        <span class="n">status</span><span class="p">[</span><span class="s2">&quot;cpu&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">cpu_percent</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">status</span><span class="p">[</span><span class="s2">&quot;mem&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">memory_info</span><span class="p">()</span><span class="o">.</span><span class="n">rss</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span><span class="n">ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">status</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="AgentServerServicer.set_model_configs">
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.set_model_configs">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_model_configs</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">request</span><span class="p">:</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">ServicerContext</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the model configs of the agent server.&quot;&quot;&quot;</span>
+        <span class="n">model_configs</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">read_model_configs</span><span class="p">(</span><span class="n">model_configs</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span>
+                <span class="n">ok</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span><span class="n">ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentServerServicer.get_agent_memory">
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.get_agent_memory">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_agent_memory</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">request</span><span class="p">:</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">ServicerContext</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the memory of a specific agent.&quot;&quot;&quot;</span>
+        <span class="n">agent_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">agent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_agent</span><span class="p">(</span><span class="n">agent_id</span><span class="o">=</span><span class="n">agent_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">agent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span>
+                <span class="n">ok</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Agent [</span><span class="si">{agent_id}</span><span class="s2">] has not found&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">agent</span><span class="o">.</span><span class="n">memory</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span>
+                <span class="n">ok</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Agent [</span><span class="si">{agent_id}</span><span class="s2">] has no memory&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span>
+            <span class="n">ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">agent</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">get_memory</span><span class="p">()),</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentServerServicer.download_file">
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.download_file">[docs]</a>
+    <span class="k">def</span> <span class="nf">download_file</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">request</span><span class="p">:</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">ServicerContext</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Download file from local path.&quot;&quot;&quot;</span>
+        <span class="n">filepath</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+            <span class="n">context</span><span class="o">.</span><span class="n">abort</span><span class="p">(</span>
+                <span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">NOT_FOUND</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;File </span><span class="si">{</span><span class="n">filepath</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">piece</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">)</span>  <span class="c1"># send 1MB each time</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">piece</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="k">yield</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">ByteMsg</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">piece</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">RpcMsg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Call function of RpcAgentService</span>
 
 <span class="sd">        Args:</span>
@@ -351,44 +620,21 @@
         <span class="n">task_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_task_id</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">result_pool</span><span class="p">[</span><span class="n">task_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Condition</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">process_messages</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_process_messages</span><span class="p">,</span>
             <span class="n">task_id</span><span class="p">,</span>
             <span class="n">request</span><span class="o">.</span><span class="n">agent_id</span><span class="p">,</span>
             <span class="n">msg</span><span class="p">,</span>  <span class="c1"># type: ignore[arg-type]</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">RpcMsg</span><span class="p">(</span>
-            <span class="n">value</span><span class="o">=</span><span class="n">Msg</span><span class="p">(</span>  <span class="c1"># type: ignore[arg-type]</span>
-                <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">[</span><span class="n">request</span><span class="o">.</span><span class="n">agent_id</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span>
+            <span class="n">ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="n">Msg</span><span class="p">(</span>  <span class="c1"># type: ignore[arg-type]</span>
+                <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_agent</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">agent_id</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
                 <span class="n">content</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                 <span class="n">task_id</span><span class="o">=</span><span class="n">task_id</span><span class="p">,</span>
             <span class="p">)</span><span class="o">.</span><span class="n">serialize</span><span class="p">(),</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">RpcMsg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RpcMsg</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a reply message with specific task_id.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            request (`RpcMsg`):</span>
-<span class="sd">                The task id that generated this message, with json format::</span>
-
-<span class="sd">                {</span>
-<span class="sd">                    &#39;task_id&#39;: int</span>
-<span class="sd">                }</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            `RpcMsg`: Concrete values of the specific message (or part of it).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_pool</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="s2">&quot;task_id&quot;</span><span class="p">])</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">threading</span><span class="o">.</span><span class="n">Condition</span><span class="p">):</span>
-                <span class="k">with</span> <span class="n">result</span><span class="p">:</span>
-                    <span class="n">result</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">break</span>
-        <span class="k">return</span> <span class="n">RpcMsg</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>
-
-    <span class="k">def</span> <span class="nf">_observe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">RpcMsg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RpcMsg</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_observe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">RpcMsg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Observe function of the original agent.</span>
 
 <span class="sd">        Args:</span>
@@ -403,60 +649,9 @@
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">PlaceholderMessage</span><span class="p">):</span>
                 <span class="n">msg</span><span class="o">.</span><span class="n">update_value</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">[</span><span class="n">request</span><span class="o">.</span><span class="n">agent_id</span><span class="p">]</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">msgs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">RpcMsg</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span><span class="n">ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_create_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">RpcMsg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RpcMsg</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new agent instance with the given agent_id.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            request (RpcMsg): request message with a `agent_id` field.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">check_and_generate_agent</span><span class="p">(</span>
-            <span class="n">request</span><span class="o">.</span><span class="n">agent_id</span><span class="p">,</span>
-            <span class="n">agent_configs</span><span class="o">=</span><span class="p">(</span>
-                <span class="n">dill</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
-                <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">value</span>
-                <span class="k">else</span> <span class="kc">None</span>
-            <span class="p">),</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">RpcMsg</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">_clone_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">RpcMsg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RpcMsg</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clone a new agent instance from the origin instance.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            request (RpcMsg): The `agent_id` field is the agent_id of the</span>
-<span class="sd">            agent to be cloned.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            `RpcMsg`: The `value` field contains the agent_id of generated</span>
-<span class="sd">            agent.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">agent_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">agent_id</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_id_lock</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">agent_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Agent [</span><span class="si">{</span><span class="n">agent_id</span><span class="si">}</span><span class="s2">] not exists&quot;</span><span class="p">)</span>
-            <span class="n">ori_agent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">[</span><span class="n">agent_id</span><span class="p">]</span>
-        <span class="n">new_agent</span> <span class="o">=</span> <span class="n">ori_agent</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span>
-            <span class="o">*</span><span class="n">ori_agent</span><span class="o">.</span><span class="n">_init_settings</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">],</span>  <span class="c1"># pylint: disable=W0212</span>
-            <span class="o">**</span><span class="n">ori_agent</span><span class="o">.</span><span class="n">_init_settings</span><span class="p">[</span><span class="s2">&quot;kwargs&quot;</span><span class="p">],</span>  <span class="c1"># pylint: disable=W0212</span>
-        <span class="p">)</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_id_lock</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">[</span><span class="n">new_agent</span><span class="o">.</span><span class="n">agent_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_agent</span>
-        <span class="k">return</span> <span class="n">RpcMsg</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">new_agent</span><span class="o">.</span><span class="n">agent_id</span><span class="p">)</span>  <span class="c1"># type: ignore[arg-type]</span>
-
-    <span class="k">def</span> <span class="nf">_delete_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">RpcMsg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RpcMsg</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete the agent instance of the specific agent_id.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            request (RpcMsg): request message with a `agent_id` field.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">check_and_delete_agent</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">agent_id</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">RpcMsg</span><span class="p">()</span>
-
-<div class="viewcode-block" id="AgentServerServicer.process_messages">
-<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.process_messages">[docs]</a>
-    <span class="k">def</span> <span class="nf">process_messages</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">_process_messages</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">task_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -472,21 +667,16 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">task_msg</span><span class="p">,</span> <span class="n">PlaceholderMessage</span><span class="p">):</span>
             <span class="n">task_msg</span><span class="o">.</span><span class="n">update_value</span><span class="p">()</span>
         <span class="n">cond</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_pool</span><span class="p">[</span><span class="n">task_id</span><span class="p">]</span>
+        <span class="n">agent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_agent</span><span class="p">(</span><span class="n">agent_id</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">[</span><span class="n">agent_id</span><span class="p">]</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="n">task_msg</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="n">task_msg</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">result_pool</span><span class="p">[</span><span class="n">task_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="n">error_msg</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error in agent [</span><span class="si">{</span><span class="n">agent_id</span><span class="si">}</span><span class="s2">]:</span><span class="se">\n</span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">result_pool</span><span class="p">[</span><span class="n">task_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ERROR&quot;</span><span class="p">,</span>
-                <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
-                <span class="n">__status</span><span class="o">=</span><span class="s2">&quot;ERROR&quot;</span><span class="p">,</span>
-                <span class="n">content</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error in agent [</span><span class="si">{</span><span class="n">agent_id</span><span class="si">}</span><span class="s2">]:</span><span class="se">\n</span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">result_pool</span><span class="p">[</span><span class="n">task_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">_AgentError</span><span class="p">(</span><span class="n">agent_id</span><span class="p">,</span> <span class="n">error_msg</span><span class="p">)</span>
         <span class="k">with</span> <span class="n">cond</span><span class="p">:</span>
             <span class="n">cond</span><span class="o">.</span><span class="n">notify_all</span><span class="p">()</span></div>
-</div>
 
 </pre></div>
 

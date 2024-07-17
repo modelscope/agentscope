@@ -109,6 +109,16 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.exception.StudioRegisterError"><code class="docutils literal notranslate"><span class="pre">StudioRegisterError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.exception.AgentServerError"><code class="docutils literal notranslate"><span class="pre">AgentServerError</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.exception.AgentServerError.__init__"><code class="docutils literal notranslate"><span class="pre">AgentServerError.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.exception.AgentServerError.host"><code class="docutils literal notranslate"><span class="pre">AgentServerError.host</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.exception.AgentServerError.port"><code class="docutils literal notranslate"><span class="pre">AgentServerError.port</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.exception.AgentServerError.message"><code class="docutils literal notranslate"><span class="pre">AgentServerError.message</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.exception.AgentServerNotAliveError"><code class="docutils literal notranslate"><span class="pre">AgentServerNotAliveError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.exception.AgentCreationError"><code class="docutils literal notranslate"><span class="pre">AgentCreationError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.exception.AgentCallError"><code class="docutils literal notranslate"><span class="pre">AgentCallError</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines package</a></li>
@@ -289,6 +299,58 @@ studio.</p>
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.exception.</span></span><span class="sig-name descname"><span class="pre">StudioRegisterError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/exception.html#StudioRegisterError"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.exception.StudioRegisterError" title="Link to this definition"></a></dt>
 <dd><p>基类：<a class="reference internal" href="#agentscope.exception.StudioError" title="agentscope.exception.StudioError"><code class="xref py py-class docutils literal notranslate"><span class="pre">StudioError</span></code></a></p>
 <p>The exception class for error when registering to agentscope studio.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="agentscope.exception.AgentServerError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.exception.</span></span><span class="sig-name descname"><span class="pre">AgentServerError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/exception.html#AgentServerError"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.exception.AgentServerError" title="Link to this definition"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>The exception class for agent server related errors.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.exception.AgentServerError.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/exception.html#AgentServerError.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.exception.AgentServerError.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the exception with the message.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.exception.AgentServerError.host">
+<span class="sig-name descname"><span class="pre">host</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.exception.AgentServerError.host" title="Link to this definition"></a></dt>
+<dd><p>Hostname of the server.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.exception.AgentServerError.port">
+<span class="sig-name descname"><span class="pre">port</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#agentscope.exception.AgentServerError.port" title="Link to this definition"></a></dt>
+<dd><p>Port of the server.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.exception.AgentServerError.message">
+<span class="sig-name descname"><span class="pre">message</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.exception.AgentServerError.message" title="Link to this definition"></a></dt>
+<dd><p>Error message</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="agentscope.exception.AgentServerNotAliveError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.exception.</span></span><span class="sig-name descname"><span class="pre">AgentServerNotAliveError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/exception.html#AgentServerNotAliveError"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.exception.AgentServerNotAliveError" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#agentscope.exception.AgentServerError" title="agentscope.exception.AgentServerError"><code class="xref py py-class docutils literal notranslate"><span class="pre">AgentServerError</span></code></a></p>
+<p>The exception class for agent server not alive error.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="agentscope.exception.AgentCreationError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.exception.</span></span><span class="sig-name descname"><span class="pre">AgentCreationError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/exception.html#AgentCreationError"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.exception.AgentCreationError" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#agentscope.exception.AgentServerError" title="agentscope.exception.AgentServerError"><code class="xref py py-class docutils literal notranslate"><span class="pre">AgentServerError</span></code></a></p>
+<p>The exception class for failing to create agent.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="agentscope.exception.AgentCallError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.exception.</span></span><span class="sig-name descname"><span class="pre">AgentCallError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/exception.html#AgentCallError"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.exception.AgentCallError" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#agentscope.exception.AgentServerError" title="agentscope.exception.AgentServerError"><code class="xref py py-class docutils literal notranslate"><span class="pre">AgentServerError</span></code></a></p>
+<p>The exception class for failing to call agent.</p>
 </dd></dl>
 
 </section>
