@@ -223,7 +223,7 @@ class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
             def generator() -> Generator[str, None, None]:
                 """The generator of response text"""
                 text = ""
-                last_chunk = None
+                last_chunk = {}
                 for chunk in response:
                     chunk = chunk.model_dump()
                     if _verify_text_content_in_openai_delta_response(chunk):
@@ -231,15 +231,14 @@ class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
                         yield text
                     last_chunk = chunk
 
-                if last_chunk is not None:
-                    last_chunk["choices"] = [
-                        {
-                            "message": {
-                                "role": "assistant",
-                                "content": text,
-                            },
-                        },
-                    ]
+                # Update the last chunk to save locally
+                if last_chunk.get("choices", []) in [None, []]:
+                    last_chunk["choices"] = [{}]
+
+                last_chunk["choices"][0]["message"] = {
+                    "role": "assistant",
+                    "content": text,
+                }
 
                 self._save_model_invocation_and_update_monitor(
                     kwargs,

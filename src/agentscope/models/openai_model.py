@@ -265,7 +265,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
 
             def generator() -> Generator[str, None, None]:
                 text = ""
-                last_chunk = None
+                last_chunk = {}
                 for chunk in response:
                     chunk = chunk.model_dump()
                     if _verify_text_content_in_openai_delta_response(chunk):
@@ -274,7 +274,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
                     last_chunk = chunk
 
                 # Update the last chunk to save locally
-                if last_chunk["choices"] in [None, []]:
+                if last_chunk.get("choices", []) in [None, []]:
                     last_chunk["choices"] = [{}]
 
                 last_chunk["choices"][0]["message"] = {

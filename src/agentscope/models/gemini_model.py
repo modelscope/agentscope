@@ -238,7 +238,9 @@ class GeminiChatWrapper(GeminiWrapperBase):
             token_response = response.usage_metadata.candidates_token_count
         else:
             token_prompt = self.model.count_tokens(contents).total_tokens
-            token_response = self.model.count_tokens(response.text).total_tokens
+            token_response = self.model.count_tokens(
+                response.text,
+            ).total_tokens
 
         self.update_monitor(
             call_counter=1,

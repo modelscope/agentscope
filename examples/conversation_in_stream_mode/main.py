@@ -2,12 +2,13 @@
 """Main script for running the streaming agent."""
 from typing import Optional, Union, Sequence
 
+import os
+
 import agentscope
 from agentscope.agents import AgentBase, UserAgent
 from agentscope.message import Msg
 from agentscope.utils import MonitorFactory
 
-import os
 
 stream = True
 model_name = "glm-4"
@@ -101,6 +102,8 @@ while True:
     msg = agent(msg)
 
 print(MonitorFactory.get_monitor().get_value(f"{model_name}.prompt_tokens"))
-print(MonitorFactory.get_monitor().get_value(f"{model_name}.completion_tokens"))
+print(
+    MonitorFactory.get_monitor().get_value(f"{model_name}.completion_tokens"),
+)
 print(MonitorFactory.get_monitor().get_value(f"{model_name}.total_tokens"))
 print(MonitorFactory.get_monitor().get_value(f"{model_name}.call_counter"))
