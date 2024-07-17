@@ -17,6 +17,7 @@ Subpackages
    agentscope.rpc
    agentscope.server
    agentscope.service
+   agentscope.strategy
    agentscope.studio
    agentscope.utils
    agentscope.web
