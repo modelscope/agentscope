@@ -20,7 +20,7 @@ class ModelResponse:
         image_urls: Sequence[str] = None,
         raw: Any = None,
         parsed: Any = None,
-        stream: Optional[Generator[str]] = None,
+        stream: Optional[Generator[str, None, None]] = None,
     ) -> None:
         """Initialize the model response.
 
@@ -69,13 +69,13 @@ class ModelResponse:
         """Whether the stream has been processed already."""
         return self._is_stream_exhausted
 
-    def _stream_generator_wrapper(self) -> Generator[str]:
+    def _stream_generator_wrapper(self) -> Generator[str, None, None]:
         """During processing the stream generator, the text field is updated
         accordingly."""
         if self._is_stream_exhausted:
             raise RuntimeError(
                 "The stream has been processed already. Try to obtain the "
-                "result from the text field."
+                "result from the text field.",
             )
 
         for chunk in self._stream:
@@ -83,7 +83,10 @@ class ModelResponse:
             if not self._is_stream_exhausted:
                 self._is_stream_exhausted = True
 
-            self._text += chunk
+            if self._text is None:
+                self._text = chunk
+            else:
+                self._text = chunk
             yield chunk
 
     def __str__(self) -> str:

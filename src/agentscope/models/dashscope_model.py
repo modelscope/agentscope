@@ -3,7 +3,9 @@
 import os
 from abc import ABC
 from http import HTTPStatus
-from typing import Any, Union, List, Sequence, Optional
+from typing import Any, Union, List, Sequence, Optional, Generator
+
+from dashscope.api_entities.dashscope_response import GenerationResponse
 from loguru import logger
 
 from ..message import Msg
@@ -223,38 +225,96 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             },
         )
 
+        # Switch to the incremental_output mode
+        if stream:
+            kwargs["incremental_output"] = True
+
         response = dashscope.Generation.call(**kwargs)
 
-        if response.status_code != HTTPStatus.OK:
-            error_msg = (
-                f" Request id: {response.request_id},"
-                f" Status code: {response.status_code},"
-                f" error code: {response.code},"
-                f" error message: {response.message}."
+        # step3: invoke llm api, record the invocation and update the monitor
+        if stream:
+
+            def generator() -> Generator[str, None, None]:
+                last_chunk = None
+                text = ""
+                for chunk in response:
+                    if chunk.status_code != HTTPStatus.OK:
+                        error_msg = (
+                            f"Request id: {chunk.request_id}\n"
+                            f"Status code: {chunk.status_code}\n"
+                            f"Error code: {chunk.code}\n"
+                            f"Error message: {chunk.message}"
+                        )
+                        raise RuntimeError(error_msg)
+
+                    text += chunk.output["choices"][0]["message"]["content"]
+                    yield text
+                    last_chunk = chunk
+
+                # Replace the last chunk with the full text
+                last_chunk.output["choices"][0]["message"]["content"] = text
+
+                # Save the model invocation and update the monitor
+                self._save_model_invocation_and_update_monitor(
+                    kwargs,
+                    last_chunk,
+                )
+
+            return ModelResponse(
+                stream=generator(),
+                raw=response,
             )
 
-            raise RuntimeError(error_msg)
+        else:
+            if response.status_code != HTTPStatus.OK:
+                error_msg = (
+                    f"Request id: {response.request_id},\n"
+                    f"Status code: {response.status_code},\n"
+                    f"Error code: {response.code},\n"
+                    f"Error message: {response.message}."
+                )
 
-        # step4: record the api invocation if needed
+                raise RuntimeError(error_msg)
+
+            # Record the model invocation and update the monitor
+            self._save_model_invocation_and_update_monitor(
+                kwargs,
+                response,
+            )
+
+            return ModelResponse(
+                text=response.output["choices"][0]["message"]["content"],
+                raw=response,
+            )
+
+    def _save_model_invocation_and_update_monitor(
+        self,
+        kwargs: dict,
+        response: GenerationResponse,
+    ) -> None:
+        """Save the model invocation and update the monitor accordingly.
+
+        Args:
+            kwargs (`dict`):
+                The keyword arguments to the DashScope chat API.
+            response (`GenerationResponse`):
+                The response object returned by the DashScope chat API.
+        """
+        input_tokens = response.usage.get("input_tokens", 0)
+        output_tokens = response.usage.get("output_tokens", 0)
+
+        # Update the token record accordingly
+        self.update_monitor(
+            call_counter=1,
+            prompt_tokens=input_tokens,
+            completion_tokens=output_tokens,
+            total_tokens=input_tokens + output_tokens,
+        )
+
+        # Save the model invocation after the stream is exhausted
         self._save_model_invocation(
             arguments=kwargs,
             response=response,
-        )
-
-        # step5: update monitor accordingly
-        # The metric names are unified for comparison
-        self.update_monitor(
-            call_counter=1,
-            prompt_tokens=response.usage.get("input_tokens", 0),
-            completion_tokens=response.usage.get("output_tokens", 0),
-            total_tokens=response.usage.get("input_tokens", 0)
-            + response.usage.get("output_tokens", 0),
-        )
-
-        # step6: return response
-        return ModelResponse(
-            text=response.output["choices"][0]["message"]["content"],
-            raw=response,
         )
 
     def format(

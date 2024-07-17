@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for ZhipuAI models"""
 from abc import ABC
-from typing import Union, Any, List, Sequence, Optional
+from typing import Union, Any, List, Sequence, Optional, Generator
 
 from loguru import logger
 
+from ._model_utils import _verify_text_content_in_openai_delta_response
 from .model import ModelWrapperBase, ModelResponse
 from ..message import Msg
 from ..utils.tools import _convert_to_str
@@ -207,32 +208,80 @@ class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
         if stream is None:
             stream = self.stream
 
-        response = self.client.chat.completions.create(
-            model=self.model_name,
-            messages=messages,
-            stream=stream,
-            **kwargs,
-        )
-
-        # step4: record the api invocation if needed
-        self._save_model_invocation(
-            arguments={
+        kwargs.update(
+            {
                 "model": self.model_name,
                 "messages": messages,
                 "stream": stream,
-                **kwargs,
             },
-            response=response.model_dump(),
         )
 
-        # step5: update monitor accordingly
-        self.update_monitor(call_counter=1, **response.usage.model_dump())
+        response = self.client.chat.completions.create(**kwargs)
 
-        # step6: return response
-        return ModelResponse(
-            text=response.choices[0].message.content,
-            raw=response.model_dump(),
+        if stream:
+
+            def generator() -> Generator[str, None, None]:
+                """The generator of response text"""
+                text = ""
+                last_chunk = None
+                for chunk in response:
+                    chunk = chunk.model_dump()
+                    if _verify_text_content_in_openai_delta_response(chunk):
+                        text += chunk["choices"][0]["delta"]["content"]
+                        yield text
+                    last_chunk = chunk
+
+                if last_chunk is not None:
+                    last_chunk["choices"] = [
+                        {
+                            "message": {
+                                "role": "assistant",
+                                "content": text,
+                            },
+                        },
+                    ]
+
+                self._save_model_invocation_and_update_monitor(
+                    kwargs,
+                    last_chunk,
+                )
+
+            return ModelResponse(
+                stream=generator(),
+            )
+
+        else:
+            response = response.model_dump()
+
+            self._save_model_invocation_and_update_monitor(kwargs, response)
+
+            # Return response
+            return ModelResponse(
+                text=response["choices"][0]["message"]["content"],
+                raw=response,
+            )
+
+    def _save_model_invocation_and_update_monitor(
+        self,
+        kwargs: dict,
+        response: dict,
+    ) -> None:
+        """Save the model invocation and update the monitor accordingly.
+
+        Args:
+            kwargs (`dict`):
+                The keyword arguments used in model invocation
+            response (`dict`):
+                The response from model API
+        """
+
+        self._save_model_invocation(
+            arguments=kwargs,
+            response=response,
         )
+
+        if response.get("usage", None) is not None:
+            self.update_monitor(call_counter=1, **response["usage"])
 
     def format(
         self,
