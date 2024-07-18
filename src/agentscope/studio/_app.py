@@ -765,6 +765,7 @@ def _on_join(data: dict) -> None:
         )
 
 
+@_socketio.on("leave")
 def _on_leave(data: dict) -> None:
     """Leave a websocket room"""
     run_id = data["run_id"]
