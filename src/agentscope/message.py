@@ -8,7 +8,7 @@ import json
 from loguru import logger
 
 from .rpc import RpcAgentClient, ResponseStub, call_in_thread
-from .utils.tools import _get_timestamp
+from .utils.tools import _get_timestamp, _map_string_to_color_mark
 
 
 class MessageBase(dict):
@@ -75,10 +75,6 @@ class MessageBase(dict):
             del self[key]
         except KeyError as e:
             raise AttributeError(f"no attribute '{key}'") from e
-
-    def to_str(self) -> str:
-        """Return the string representation of the message"""
-        raise NotImplementedError
 
     def serialize(self) -> str:
         """Return the serialized message."""
@@ -165,9 +161,30 @@ class Msg(MessageBase):
         if echo:
             logger.chat(self)
 
-    def to_str(self) -> str:
-        """Return the string representation of the message"""
-        return f"{self.name}: {self.content}"
+        m1, m2 = _map_string_to_color_mark(self.name)
+        self._colored_name = f"{m1}{self.name}{m2}"
+
+    def formatted_str(self, colored: bool = False) -> str:
+        """Return the formatted string of the message. If the message has a
+        url, the url will be appended to the content.
+
+        Args:
+            colored (`bool`, defaults to `False`):
+                Whether to color the name of the message
+        """
+        if colored:
+            name = self._colored_name
+        else:
+            name = self.name
+
+        colored_strs = [f"{name}: {self.content}"]
+        if self.url is not None:
+            if isinstance(self.url, Sequence):
+                for url in self.url:
+                    colored_strs.append(f"{name}: {url}")
+            else:
+                colored_strs.append(f"{name}: {self.url}")
+        return "\n".join(colored_strs)
 
     def serialize(self) -> str:
         return json.dumps({"__type": "Msg", **self})
@@ -288,9 +305,6 @@ class PlaceholderMessage(Msg):
         if not self.__is_local(__key):
             self.update_value()
         return MessageBase.__getitem__(self, __key)
-
-    def to_str(self) -> str:
-        return f"{self.name}: {self.content}"
 
     def update_value(self) -> MessageBase:
         """Get attribute values from rpc agent server immediately"""

@@ -11,7 +11,7 @@ from agentscope.utils import MonitorFactory
 
 
 stream = True
-model_name = "glm-4"
+model_name = "qwen-max"
 
 os.environ["OPENAI_API_KEY"] = ""
 
@@ -78,7 +78,7 @@ class StreamingAgent(AgentBase):
 
         res = self.model(prompt)
 
-        self.speak(Msg(self.name, res.text, "assistant"))
+        self.speak(res.stream)
 
         msg_returned = Msg(self.name, res.text, "assistant")
 
@@ -90,7 +90,7 @@ class StreamingAgent(AgentBase):
 agent = StreamingAgent(
     "assistant",
     "You're a helpful assistant",
-    "glm-4",
+    "stream_ds",
 )
 user = UserAgent("user")
 

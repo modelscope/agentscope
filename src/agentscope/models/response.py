@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Parser for model response."""
 import json
-from typing import Optional, Sequence, Any, Generator, Union
+from typing import Optional, Sequence, Any, Generator, Union, Tuple
 
 from agentscope.utils.tools import _is_json_serializable
 
@@ -57,7 +57,7 @@ class ModelResponse:
         return self._text
 
     @property
-    def stream(self) -> Union[None, Generator]:
+    def stream(self) -> Union[None, Generator[Tuple[bool, str], None, None]]:
         """Return the stream generator if it exists."""
         if self._stream is None:
             return self._stream
@@ -69,7 +69,9 @@ class ModelResponse:
         """Whether the stream has been processed already."""
         return self._is_stream_exhausted
 
-    def _stream_generator_wrapper(self) -> Generator[str, None, None]:
+    def _stream_generator_wrapper(
+        self,
+    ) -> Generator[Tuple[bool, str], None, None]:
         """During processing the stream generator, the text field is updated
         accordingly."""
         if self._is_stream_exhausted:
@@ -78,16 +80,23 @@ class ModelResponse:
                 "result from the text field.",
             )
 
-        for chunk in self._stream:
-            # Update the processed flag
-            if not self._is_stream_exhausted:
-                self._is_stream_exhausted = True
+        # These two lines are used to avoid mypy checking error
+        if self._stream is None:
+            return
 
-            if self._text is None:
-                self._text = chunk
-            else:
-                self._text = chunk
-            yield chunk
+        try:
+            last_text = next(self._stream)
+
+            for text in self._stream:
+                self._text = last_text
+                yield False, last_text
+                last_text = text
+            self._text = last_text
+            yield True, last_text
+
+            return
+        except StopIteration:
+            return
 
     def __str__(self) -> str:
         if _is_json_serializable(self.raw):
