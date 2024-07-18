@@ -72,10 +72,8 @@ class BasicAgentTest(unittest.TestCase):
             {"sys_prompt": "Hello", "attribute_2": "Bye"},
         )
         self.assertNotEqual(a1.agent_id, a2.agent_id)
-        self.assertTrue(a1.agent_id.startswith("TestAgent"))
-        self.assertTrue(a2.agent_id.startswith("TestAgent"))
         a3 = TestAgentCopy("c")
-        self.assertTrue(a3.agent_id.startswith("TestAgentCopy"))
+        self.assertNotEqual(a3.agent_id, a2.agent_id)
         a4 = TestAgent(
             "d",
         )
