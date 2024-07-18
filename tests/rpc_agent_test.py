@@ -356,7 +356,8 @@ class BasicRpcAgentTest(unittest.TestCase):
         )
         # rpc agent c
         agent_c = DemoRpcAgentAdd(  # pylint: disable=E1123
-            name="c", to_dist=True
+            name="c",
+            to_dist=True,
         )
         msg = Msg(
             name="System",
