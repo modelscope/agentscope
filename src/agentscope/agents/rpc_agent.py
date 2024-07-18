@@ -69,9 +69,14 @@ class RpcAgent(AgentBase):
         if agent_id is not None:
             self._agent_id = agent_id
         # if host and port are not provided, launch server locally
-        launch_server = port is None
+        if self.port is None and _studio_client.active:
+            server = _studio_client.alloc_server()
+            if "host" in server:
+                self.host = server["host"]
+                self.port = server["port"]
+        launch_server = self.port is None
         if launch_server:
-            # check server first
+            # check studio first
             self.host = "localhost"
             studio_url = None
             if _studio_client.active:

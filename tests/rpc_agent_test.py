@@ -7,6 +7,7 @@ import os
 import time
 import shutil
 from typing import Optional, Union, Sequence
+from unittest.mock import MagicMock, PropertyMock, patch
 
 from loguru import logger
 
@@ -731,4 +732,37 @@ class BasicRpcAgentTest(unittest.TestCase):
         # client.stop()
         # time.sleep(1)
         # self.assertFalse(client.is_alive())
+        launcher.shutdown()
+
+    @patch("agentscope.studio._client.StudioClient.alloc_server")
+    @patch(
+        "agentscope.studio._client.StudioClient.active",
+        new_callable=PropertyMock,
+    )
+    def test_server_auto_alloc(
+        self,
+        mock_active: PropertyMock,
+        mock_alloc: MagicMock,
+    ) -> None:
+        """Test the auto allocation of server"""
+        mock_active.return_value = True
+        host = "localhost"
+        launcher = RpcAgentServerLauncher(
+            # choose port automatically
+            host=host,
+            local_mode=False,
+            custom_agent_classes=[DemoRpcAgentWithMemory],
+        )
+        launcher.launch()
+        port = launcher.port
+        mock_alloc.return_value = {"host": host, "port": port}
+        a1 = DemoRpcAgentWithMemory(name="Auto1", to_dist=True)
+        a2 = DemoRpcAgentWithMemory(name="Auto2").to_dist()
+        self.assertEqual(a1.host, host)
+        self.assertEqual(a1.port, port)
+        self.assertEqual(a2.host, host)
+        self.assertEqual(a2.port, port)
+        client = RpcAgentClient(host=host, port=port)
+        al = client.get_agent_list()
+        self.assertEqual(len(al), 2)
         launcher.shutdown()

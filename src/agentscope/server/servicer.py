@@ -58,7 +58,6 @@ def _register_server_to_studio(
             "server_id": server_id,
             "host": host,
             "port": port,
-            "capacity": os.cpu_count() * 2,  # TODO: optimze the setting
         },
         timeout=10,  # todo: configurable timeout
     )

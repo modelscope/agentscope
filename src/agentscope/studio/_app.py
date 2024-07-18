@@ -10,6 +10,7 @@ import traceback
 from datetime import datetime
 from typing import Tuple, Union, Any, Optional
 from pathlib import Path
+from random import choice
 
 from flask import (
     Flask,
@@ -28,7 +29,6 @@ from agentscope._runtime import _runtime
 from agentscope.constants import (
     _DEFAULT_SUBDIR_CODE,
     _DEFAULT_SUBDIR_INVOKE,
-    AllocHint,
 )
 from agentscope.utils.tools import _is_process_alive, _is_windows
 from agentscope.rpc.rpc_agent_client import RpcAgentClient
@@ -127,8 +127,6 @@ class _ServerTable(_db.Model):  # type: ignore[name-defined]
     host = _db.Column(_db.String)
     port = _db.Column(_db.Integer)
     create_time = _db.Column(_db.DateTime, default=datetime.now)
-    status = _db.Column(_db.String, default="running")
-    capacity = _db.Column(_db.Integer, default=16)
 
 
 class _MessageTable(_db.Model):  # type: ignore[name-defined]
@@ -256,14 +254,13 @@ def _register_server() -> Response:
     server_id = data.get("server_id")
     host = data.get("host")
     port = data.get("port")
-    capacity = data.get("capacity", 16)
 
     if _ServerTable.query.filter_by(id=server_id).first():
         _app.logger.error(f"Server id {server_id} already exists.")
         abort(400, f"run_id [{server_id}] already exists")
 
     _db.session.add(
-        _ServerTable(id=server_id, host=host, port=port, capacity=capacity),
+        _ServerTable(id=server_id, host=host, port=port),
     )
     _db.session.commit()
 
@@ -299,10 +296,6 @@ def _get_server_status(server_id: str) -> Response:
         port=server.port,
     ).get_server_info()
     if not status or status["id"] != server_id:
-        _ServerTable.query.filter_by(id=server_id).update(
-            {"status": "dead"},
-        )
-        _db.session.commit()
         return jsonify({"status": "dead"})
     else:
         return jsonify(
@@ -369,46 +362,21 @@ def _agent_memory() -> Response:
     return jsonify(mem)
 
 
-@_app.route("/api/servers/alloc", methods=["POST"])
-def _alloc_servers() -> Response:
-    num = request.json.get("num", 1)
-    hint = request.json.get("hint", AllocHint.AUTO)
-    servers = _ServerTable.query.filter_by(status="running").all()
-    # check servers are still running
-    allocated_servers = []
-    remain_num = num
-    if hint is AllocHint.AUTO:
-        for server in servers:
-            server_info = RpcAgentClient(
-                server.host, server.port
-            ).get_server_info()
-            if "size" not in server_info:
-                continue
-            # capacity may be smaller than current size
-            rest = max(server.capacity - server_info["size"], 0)
-            if rest > 0:
-                allocated_servers.extend(
-                    [
-                        {"host": server.host, "port": server.port}
-                        for _ in range(min(rest, remain_num))
-                    ]
-                )
-                remain_num -= rest
-    elif hint is AllocHint.CENTRALIZED:
-        for server in servers:
-            server_info = RpcAgentClient(
-                server.host, server.port
-            ).get_server_info()
-            if "size" not in server_info:
-                continue
-            rest = server.capacity - server_info["size"]
-            if rest >= num:
-                allocated_servers.extend(
-                    [
-                        {"host": server.host, "port": server.port}
-                        for _ in range(rest)
-                    ]
-                )
+@_app.route("/api/servers/alloc", methods=["GET"])
+def _alloc_server() -> Response:
+    # TODO: check the server is still running
+    # TODO: support to alloc multiple servers in one call
+    # TODO: use hints to decide which server to allocate
+    # TODO: allocate based on server's cpu and memory usage
+    # currently random select a server
+    servers = _ServerTable.query.all()
+    server = choice(servers)
+    return jsonify(
+        {
+            "host": server.host,
+            "port": server.port,
+        },
+    )
 
 
 @_app.route("/api/messages/push", methods=["POST"])

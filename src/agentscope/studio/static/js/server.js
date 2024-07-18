@@ -447,6 +447,7 @@ function initAgentMemoryTable(agentId, memoryData) {
                 minimap: {
                     enabled: false,
                 },
+                wordWrap: "on",
                 scrollBeyondLastLine: false,
                 readOnly: true,
             }

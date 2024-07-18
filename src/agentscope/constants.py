@@ -69,14 +69,6 @@ class ShrinkPolicy(IntEnum):
     SUMMARIZE = 1
 
 
-class AllocHint(IntEnum):
-    """Enum for agent allocation hints."""
-
-    AUTO = 0  # alloc automatically without hints
-    CENTRALIZED = 1  # alloc all agents in a single server
-    DISTRIBUTED = 2  # alloc agents in different servers
-
-
 # rag related
 DEFAULT_CHUNK_SIZE = 1024
 DEFAULT_CHUNK_OVERLAP = 20
