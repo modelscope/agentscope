@@ -11,6 +11,8 @@ from unittest.mock import MagicMock, PropertyMock, patch
 
 from loguru import logger
 
+# from custom.custom_agent import CustomAgent
+
 import agentscope
 from agentscope.agents import AgentBase, DistConf, DialogAgent
 from agentscope.server import RpcAgentServerLauncher
@@ -297,19 +299,13 @@ class BasicRpcAgentTest(unittest.TestCase):
         """test setup multi rpc agent"""
         agent_a = DemoRpcAgentAdd(
             name="a",
-        ).to_dist(
-            lazy_launch=False,
-        )
+        ).to_dist()
         agent_b = DemoRpcAgentAdd(
             name="b",
-        ).to_dist(
-            lazy_launch=False,
-        )
+        ).to_dist()
         agent_c = DemoRpcAgentAdd(
             name="c",
-        ).to_dist(
-            lazy_launch=False,
-        )
+        ).to_dist()
 
         # test sequential
         msg = Msg(
@@ -353,19 +349,14 @@ class BasicRpcAgentTest(unittest.TestCase):
         """test to use local and rpc agent simultaneously"""
         agent_a = DemoRpcAgentAdd(
             name="a",
-        ).to_dist(
-            lazy_launch=False,
-        )
+        ).to_dist()
         # local agent b
         agent_b = DemoLocalAgentAdd(
             name="b",
         )
         # rpc agent c
         agent_c = DemoRpcAgentAdd(  # pylint: disable=E1123
-            name="c",
-            to_dist=DistConf(
-                lazy_launch=False,
-            ),
+            name="c", to_dist=True
         )
         msg = Msg(
             name="System",
@@ -422,15 +413,11 @@ class BasicRpcAgentTest(unittest.TestCase):
         # rpc agent a
         agent_a = DemoRpcAgentWithMonitor(
             name="a",
-        ).to_dist(
-            lazy_launch=False,
-        )
+        ).to_dist()
         # local agent b
         agent_b = DemoRpcAgentWithMonitor(
             name="b",
-        ).to_dist(
-            lazy_launch=False,
-        )
+        ).to_dist()
         msg = Msg(name="System", content={"msg_num": 0}, role="system")
         j = 0
         for _ in range(5):
@@ -519,7 +506,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         """Test the clone_instances method of RpcAgent"""
         agent = DemoRpcAgentWithMemory(
             name="a",
-        ).to_dist()
+        ).to_dist(lazy_launch=True)
         # lazy launch will not init client
         self.assertIsNone(agent.client)
         # generate two agents (the first is it self)
