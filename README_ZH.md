@@ -41,6 +41,8 @@
 
 ## 新闻
 
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-07-18]** AgentScope 已支持模型流式输出。请参考我们的 [**教程**](https://modelscope.github.io/agentscope/zh_CN/tutorial/203-stream.html) 和 [**流式对话样例**](https://github.com/modelscope/agentscope/tree/main/examples/conversation_in_stream_mode)！
+
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-07-15]** AgentScope 中添加了 Mixture of Agents 算法。使用样例请参考 [MoA 示例](https://github.com/modelscope/agentscope/blob/main/examples/conversation_mixture_of_agents)。
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-06-14]** 新的提示调优（Prompt tuning）模块已经上线 AgentScope，用以帮助开发者生成和优化智能体的 system prompt。更多的细节和使用样例请参考 AgentScope [教程](https://modelscope.github.io/agentscope/en/tutorial/209-prompt_opt.html)！
@@ -135,7 +137,7 @@ AgentScope支持使用以下库快速部署本地模型服务。
 **样例应用**
 
 - 模型
-  - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[在AgentScope中使用Llama3](./examples/model_llama3)
+  - [在AgentScope中使用Llama3](./examples/model_llama3)
 
 - 对话
   - [基础对话](./examples/conversation_basic)
@@ -147,8 +149,9 @@ AgentScope支持使用以下库快速部署本地模型服务。
   - [与RAG智能体对话](./examples/conversation_with_RAG_agents)
   - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[与gpt-4o模型对话](./examples/conversation_with_gpt-4o)
   - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[与SoftWare Engineering智能体对话](./examples/conversation_with_swe-agent/)
-  - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[与自定义服务对话](./examples/conversation_with_customized_services/)
-  - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[与混合智能体(Mixture of Agents)对话](https://github.com/modelscope/agentscope/blob/main/examples/conversation_mixture_of_agents/)
+  - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[自定义工具函数](./examples/conversation_with_customized_services/)
+  - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Mixture of Agents算法](https://github.com/modelscope/agentscope/blob/main/examples/conversation_mixture_of_agents/)
+  - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[流式对话](https://github.com/modelscope/agentscope/blob/main/examples/conversation_in_stream_mode/)
 
 - 游戏
   - [五子棋](./examples/game_gomoku)

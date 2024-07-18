@@ -1,57 +1,61 @@
 # -*- coding: utf-8 -*-
 """Main script for running the streaming agent."""
 from typing import Optional, Union, Sequence
-
-import os
-
 import agentscope
 from agentscope.agents import AgentBase, UserAgent
 from agentscope.message import Msg
-from agentscope.utils import MonitorFactory
 
+###############################################################
+#            Set your own model configuration                 #
+###############################################################
 
-stream = True
-model_name = "qwen-max"
-
-os.environ["OPENAI_API_KEY"] = ""
+YOUR_SELECTED_MODEL_CONFIG_NAME = "stream_ds"
 
 agentscope.init(
     model_configs=[
         {
+            "config_name": "stream_openai",
+            "model_type": "openai_chat",
+            "model_name": "gpt-4",
+            "stream": True,
+        },
+        {
             "config_name": "stream_ds",
             "model_type": "dashscope_chat",
             "model_name": "qwen-max",
-            "api_key": "",
-            "stream": stream,
+            "api_key": "{YOUR_API_KEY}",
+            "stream": True,
         },
         {
             "config_name": "stream_ollama",
             "model_type": "ollama_chat",
             "model_name": "llama2",
-            "stream": stream,
+            "stream": True,
+        },
+        {
+            "config_name": "stream_zhipuai",
+            "model_type": "zhipuai_chat",
+            "model_name": "glm-4",
+            "stream": True,
+            "api_key": "{YOUR_API_KEY}",
         },
         {
             "config_name": "stream_litellm",
             "model_type": "litellm_chat",
             "model_name": "gpt-4",
-            "stream": stream,
-        },
-        {
-            "model_type": "zhipuai_chat",
-            "config_name": "glm-4",
-            "model_name": "glm-4",
-            "stream": stream,
-            "api_key": "",
-            # Load from env if not provided
-            "generate_args": {
-                "temperature": 0.5,
-            },
+            "stream": True,
         },
     ],
     save_api_invoke=True,
+    # If AgentScope Studio is running locally
+    # studio_url="http://127.0.0.1:5000",
 )
 
 
+###############################################################
+
+
+# Step1: Create a new agent that prints in streaming mode
 class StreamingAgent(AgentBase):
     """An agent that speaks streaming messages."""
 
@@ -74,12 +78,16 @@ class StreamingAgent(AgentBase):
 
         prompt = self.model.format(self.memory.get_memory())
 
-        print(prompt)
-
         res = self.model(prompt)
 
+        # Print the streaming message in the terminal and Studio
+        # (if registered)
+
+        # The stream filed is a generator that yields the streaming text
         self.speak(res.stream)
 
+        # The text field of the response will be filled with the full response
+        # text after the streaming is finished
         msg_returned = Msg(self.name, res.text, "assistant")
 
         self.memory.add(msg_returned)
@@ -87,10 +95,11 @@ class StreamingAgent(AgentBase):
         return msg_returned
 
 
+# Step2: Initialize the agents and start the conversation
 agent = StreamingAgent(
     "assistant",
-    "You're a helpful assistant",
-    "stream_ds",
+    sys_prompt="You're a helpful assistant",
+    model_config_name=YOUR_SELECTED_MODEL_CONFIG_NAME,
 )
 user = UserAgent("user")
 
@@ -100,10 +109,3 @@ while True:
     if msg.content == "exit":
         break
     msg = agent(msg)
-
-print(MonitorFactory.get_monitor().get_value(f"{model_name}.prompt_tokens"))
-print(
-    MonitorFactory.get_monitor().get_value(f"{model_name}.completion_tokens"),
-)
-print(MonitorFactory.get_monitor().get_value(f"{model_name}.total_tokens"))
-print(MonitorFactory.get_monitor().get_value(f"{model_name}.call_counter"))
