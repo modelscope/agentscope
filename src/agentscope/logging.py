@@ -76,6 +76,10 @@ def log_stream_msg(msg: Msg, last: bool = True) -> None:
     if last and hasattr(thread_local_data, "uid"):
         log_gradio(msg, thread_local_data.uid)
 
+    if last:
+        # Save msg into chat file
+        _save_msg(msg)
+
 
 def _save_msg(msg: Msg) -> None:
     """Save the message into `logging.chat` and `logging.log` files.
