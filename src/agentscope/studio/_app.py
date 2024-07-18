@@ -27,6 +27,7 @@ from flask_socketio import SocketIO, join_room, leave_room
 from agentscope._runtime import _runtime
 from agentscope.constants import _DEFAULT_SUBDIR_CODE, _DEFAULT_SUBDIR_INVOKE
 from agentscope.utils.tools import _is_process_alive, _is_windows
+from agentscope.rpc.rpc_agent_client import RpcAgentClient
 
 _app = Flask(__name__)
 
@@ -265,6 +266,99 @@ def _register_server() -> Response:
 
     _app.logger.info(f"Register server id {server_id}")
     return jsonify(status="ok")
+
+
+@_app.route("/api/servers/all", methods=["GET"])
+def _get_all_servers() -> Response:
+    """Get all servers."""
+    servers = _ServerTable.query.all()
+
+    return jsonify(
+        [
+            {
+                "id": server.id,
+                "host": server.host,
+                "port": server.port,
+                "create_time": server.create_time.strftime(
+                    "%Y-%m-%d %H:%M:%S",
+                ),
+            }
+            for server in servers
+        ],
+    )
+
+
+@_app.route("/api/servers/status/<server_id>", methods=["GET"])
+def _get_server_status(server_id: str) -> Response:
+    server = _ServerTable.query.filter_by(id=server_id).first()
+    status = RpcAgentClient(
+        host=server.host,
+        port=server.port,
+    ).get_server_info()
+    if not status or status["id"] != server_id:
+        return jsonify({"status": "dead"})
+    else:
+        return jsonify(
+            {
+                "status": "running",
+                "cpu": status["cpu"],
+                "mem": status["mem"],
+            },
+        )
+
+
+@_app.route("/api/servers/delete", methods=["POST"])
+def _delete_server() -> Response:
+    server_id = request.json.get("server_id")
+    stop_server = request.json.get("stop", False)
+    server = _ServerTable.query.filter_by(id=server_id).first()
+    if stop_server:
+        RpcAgentClient(host=server.host, port=server.port).stop()
+    _ServerTable.query.filter_by(id=server_id).delete()
+    _db.session.commit()
+    return jsonify({"status": "ok"})
+
+
+@_app.route("/api/servers/agent_info/<server_id>", methods=["GET"])
+def _get_server_agent_info(server_id: str) -> Response:
+    _app.logger.info(f"Get info of server [{server_id}]")
+    server = _ServerTable.query.filter_by(id=server_id).first()
+    agents = RpcAgentClient(
+        host=server.host,
+        port=server.port,
+    ).get_agent_list()
+    return jsonify(agents)
+
+
+@_app.route("/api/servers/agents/delete", methods=["POST"])
+def _delete_agent() -> Response:
+    server_id = request.json.get("server_id")
+    agent_id = request.json.get("agent_id", None)
+    server = _ServerTable.query.filter_by(id=server_id).first()
+    # delete all agents if agent_id is None
+    if agent_id is not None:
+        ok = RpcAgentClient(host=server.host, port=server.port).delete_agent(
+            agent_id,
+        )
+    else:
+        ok = RpcAgentClient(
+            host=server.host,
+            port=server.port,
+        ).delete_all_agent()
+    return jsonify(status="ok" if ok else "fail")
+
+
+@_app.route("/api/servers/agents/memory", methods=["POST"])
+def _agent_memory() -> Response:
+    server_id = request.json.get("server_id")
+    agent_id = request.json.get("agent_id")
+    server = _ServerTable.query.filter_by(id=server_id).first()
+    mem = RpcAgentClient(host=server.host, port=server.port).get_agent_memory(
+        agent_id,
+    )
+    if isinstance(mem, dict):
+        mem = [mem]
+    return jsonify(mem)
 
 
 @_app.route("/api/messages/push", methods=["POST"])

@@ -8,7 +8,9 @@ import json
 from loguru import logger
 
 from .rpc import RpcAgentClient, ResponseStub, call_in_thread
-from .utils.tools import _get_timestamp, _map_string_to_color_mark
+from .utils.tools import _get_timestamp
+from .utils.tools import _map_string_to_color_mark
+from .utils.tools import is_web_accessible
 
 
 class MessageBase(dict):
@@ -312,18 +314,31 @@ class PlaceholderMessage(Msg):
             # retrieve real message from rpc agent server
             self.__update_task_id()
             client = RpcAgentClient(self._host, self._port)
-            result = client.call_func(
-                func_name="_get",
-                value=json.dumps({"task_id": self._task_id}),
-            )
+            result = client.update_placeholder(task_id=self._task_id)
             msg = deserialize(result)
-            status = msg.pop("__status", "OK")
-            if status == "ERROR":
-                raise RuntimeError(msg.content)
+            self.__update_url(msg)  # type: ignore[arg-type]
             self.update(msg)
             # the actual value has been updated, not a placeholder anymore
             self._is_placeholder = False
         return self
+
+    def __update_url(self, msg: MessageBase) -> None:
+        """Update the url field of the message."""
+        if hasattr(msg, "url") and msg.url is None:
+            return
+        url = msg.url
+        if isinstance(url, str):
+            urls = [url]
+        else:
+            urls = url
+        checked_urls = []
+        for url in urls:
+            if not is_web_accessible(url):
+                client = RpcAgentClient(self._host, self._port)
+                checked_urls.append(client.download_file(path=url))
+            else:
+                checked_urls.append(url)
+        msg.url = checked_urls[0] if isinstance(url, str) else checked_urls
 
     def __update_task_id(self) -> None:
         if self._stub is not None:
