@@ -265,6 +265,8 @@ def load_agents_from_dir(agent_dir: str) -> list:
     Returns:
         list: a list of customized agent classes
     """
+    if agent_dir is None:
+        return []
     original_sys_path = sys.path.copy()
     abs_agent_dir = os.path.abspath(agent_dir)
     sys.path.insert(0, abs_agent_dir)
@@ -339,7 +341,9 @@ class RpcAgentServerLauncher:
         self.parent_con = None
         self.custom_agent_classes = custom_agent_classes
         self.stop_event = Event()
-        self.agent_dir = os.path.abspath(agent_dir)
+        self.agent_dir = (
+            os.path.abspath(agent_dir) if agent_dir is not None else None
+        )
         self.server_id = (
             RpcAgentServerLauncher.generate_server_id(self.host, self.port)
             if server_id is None
