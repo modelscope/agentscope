@@ -58,6 +58,7 @@ class MyAgent(AgentBase):
 ```python
     def reply(self, x: Optional[Msg, Sequence[Msg]] = None) -> Msg:
         # ...
+        # 如果想在调用时使用流式打印，在这里调用时使用 stream=True
         response = self.model(prompt)
 
         # 程序运行到这里时，response.text 为 None

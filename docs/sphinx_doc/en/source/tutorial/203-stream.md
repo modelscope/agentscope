@@ -61,6 +61,7 @@ After printing the streaming response, the full text of the response will be ava
 ```python
     def reply(self, x: Optional[Msg, Sequence[Msg]] = None) -> Msg:
         # ...
+        # Use stream=True if you want to set up streaming mode in model calling
         response = self.model(prompt)
 
         # For now, the response.text is None
