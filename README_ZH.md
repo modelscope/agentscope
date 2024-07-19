@@ -43,6 +43,11 @@
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-07-18]** AgentScope 已支持模型流式输出。请参考我们的 [**教程**](https://modelscope.github.io/agentscope/zh_CN/tutorial/203-stream.html) 和 [**流式对话样例**](https://github.com/modelscope/agentscope/tree/main/examples/conversation_in_stream_mode)！
 
+<h5 align="left">
+<img src="https://img.alicdn.com/imgextra/i2/O1CN01cdjhVE1wwt5Auv7bY_!!6000000006373-0-tps-1792-1024.jpg" width="20%" alt="agentscope-logo">
+<img src="https://img.alicdn.com/imgextra/i2/O1CN01cdjhVE1wwt5Auv7bY_!!6000000006373-0-tps-1792-1024.jpg" width="20%" alt="agentscope-logo">
+</h5>
+
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-07-15]** AgentScope 中添加了 Mixture of Agents 算法。使用样例请参考 [MoA 示例](https://github.com/modelscope/agentscope/blob/main/examples/conversation_mixture_of_agents)。
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-06-14]** 新的提示调优（Prompt tuning）模块已经上线 AgentScope，用以帮助开发者生成和优化智能体的 system prompt。更多的细节和使用样例请参考 AgentScope [教程](https://modelscope.github.io/agentscope/en/tutorial/209-prompt_opt.html)！

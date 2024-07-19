@@ -42,6 +42,11 @@ Start building LLM-empowered multi-agent applications in an easier way.
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-07-18]** AgentScope supports streaming mode now! Refer to our [tutorial](https://modelscope.github.io/agentscope/en/tutorial/203-stream.html) and example [conversation in stream mode](https://github.com/modelscope/agentscope/tree/main/examples/conversation_in_stream_mode) for more details.
 
+<h5 align="left">
+<img src="https://img.alicdn.com/imgextra/i2/O1CN01cdjhVE1wwt5Auv7bY_!!6000000006373-0-tps-1792-1024.jpg" width="20%" alt="agentscope-logo">
+<img src="https://img.alicdn.com/imgextra/i2/O1CN01cdjhVE1wwt5Auv7bY_!!6000000006373-0-tps-1792-1024.jpg" width="20%" alt="agentscope-logo">
+</h5>
+
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-07-15]** AgentScope has implemented the Mixture-of-Agents algorithm. Refer to our [MoA example](https://github.com/modelscope/agentscope/blob/main/examples/conversation_mixture_of_agents) for more details.
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-06-14]** A new prompt tuning module is available in AgentScope to help developers generate and optimize the agents' system prompts! Refer to our [tutorial](https://modelscope.github.io/agentscope/en/tutorial/209-prompt_opt.html) for more details!

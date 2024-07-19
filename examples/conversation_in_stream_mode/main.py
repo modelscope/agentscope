@@ -17,13 +17,14 @@ agentscope.init(
             "config_name": "stream_openai",
             "model_type": "openai_chat",
             "model_name": "gpt-4",
+            "api_key": "{YOUR_API_KEY}",
             "stream": True,
         },
         {
             "config_name": "stream_ds",
             "model_type": "dashscope_chat",
             "model_name": "qwen-max",
-            "api_key": "{YOUR_API_KEY}",
+            "api_key": "sk-94d038e92230451a87ac37ac34dd6a8a",
             "stream": True,
         },
         {
@@ -48,7 +49,8 @@ agentscope.init(
     ],
     save_api_invoke=True,
     # If AgentScope Studio is running locally
-    # studio_url="http://127.0.0.1:5000",
+    studio_url="http://127.0.0.1:5000",
+    project="Conversation in Stream Mode",
 )
 
 
