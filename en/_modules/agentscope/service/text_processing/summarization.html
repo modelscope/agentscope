@@ -195,7 +195,7 @@
             <span class="n">Msg</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="n">text</span><span class="p">),</span>
         <span class="p">]</span>
         <span class="n">msgs</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msgs</span><span class="p">)</span>
-        <span class="n">model_output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">messages</span><span class="o">=</span><span class="n">msgs</span><span class="p">)</span>
+        <span class="n">model_output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">msgs</span><span class="p">)</span>
         <span class="n">summary</span> <span class="o">=</span> <span class="n">model_output</span><span class="o">.</span><span class="n">text</span>
         <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
             <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
