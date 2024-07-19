@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """ Server of distributed agent"""
 import os
+import sys
 import asyncio
 import signal
 import argparse
@@ -44,6 +45,7 @@ def _setup_agent_server(
     max_timeout_seconds: int = 7200,
     studio_url: str = None,
     custom_agent_classes: list = None,
+    agent_dir: str = None,
 ) -> None:
     """Setup agent server.
 
@@ -75,6 +77,9 @@ def _setup_agent_server(
         custom_agent_classes (`list`, defaults to `None`):
             A list of customized agent classes that are not in
             `agentscope.agents`.
+        agent_dir (`str`, defaults to `None`):
+            The abs path to the directory containing customized agent python
+            files.
     """
     asyncio.run(
         _setup_agent_server_async(
@@ -90,11 +95,12 @@ def _setup_agent_server(
             max_timeout_seconds=max_timeout_seconds,
             studio_url=studio_url,
             custom_agent_classes=custom_agent_classes,
+            agent_dir=agent_dir,
         ),
     )
 
 
-async def _setup_agent_server_async(
+async def _setup_agent_server_async(  # pylint: disable=R0912
     host: str,
     port: int,
     server_id: str,
@@ -107,6 +113,7 @@ async def _setup_agent_server_async(
     max_timeout_seconds: int = 7200,
     studio_url: str = None,
     custom_agent_classes: list = None,
+    agent_dir: str = None,
 ) -> None:
     """Setup agent server in an async way.
 
@@ -139,6 +146,9 @@ async def _setup_agent_server_async(
         custom_agent_classes (`list`, defaults to `None`):
             A list of customized agent classes that are not in
             `agentscope.agents`.
+        agent_dir (`str`, defaults to `None`):
+            The abs path to the directory containing customized agent python
+            files.
     """
     from agentscope._init import init_process
 
@@ -153,6 +163,10 @@ async def _setup_agent_server_async(
         max_pool_size=max_pool_size,
         max_timeout_seconds=max_timeout_seconds,
     )
+    if custom_agent_classes is None:
+        custom_agent_classes = []
+    if agent_dir is not None:
+        custom_agent_classes.extend(load_agents_from_dir(agent_dir))
     # update agent registry
     if custom_agent_classes is not None:
         for agent_class in custom_agent_classes:
@@ -251,20 +265,26 @@ def load_agents_from_dir(agent_dir: str) -> list:
     Returns:
         list: a list of customized agent classes
     """
-    custom_agent_classes = []
-    for root, _, files in os.walk(agent_dir):
-        for file in files:
-            if file.endswith(".py"):
-                try:
-                    module_path = os.path.join(root, file)
-                    custom_agent_classes.extend(
-                        load_agents_from_file(module_path),
-                    )
-                except Exception as e:
-                    logger.error(
-                        f"Failed to load agent class from file [{file}]: {e}",
-                    )
-    return custom_agent_classes
+    original_sys_path = sys.path.copy()
+    abs_agent_dir = os.path.abspath(agent_dir)
+    sys.path.insert(0, abs_agent_dir)
+    try:
+        custom_agent_classes = []
+        for root, _, files in os.walk(agent_dir):
+            for file in files:
+                if file.endswith(".py"):
+                    try:
+                        module_path = os.path.join(root, file)
+                        custom_agent_classes.extend(
+                            load_agents_from_file(module_path),
+                        )
+                    except Exception as e:
+                        logger.error(
+                            f"Failed to load agent class from [{file}]: {e}",
+                        )
+        return custom_agent_classes
+    finally:
+        sys.path = original_sys_path
 
 
 class RpcAgentServerLauncher:
@@ -319,14 +339,13 @@ class RpcAgentServerLauncher:
         self.parent_con = None
         self.custom_agent_classes = custom_agent_classes
         self.stop_event = Event()
+        self.agent_dir = os.path.abspath(agent_dir)
         self.server_id = (
             RpcAgentServerLauncher.generate_server_id(self.host, self.port)
             if server_id is None
             else server_id
         )
         self.studio_url = studio_url
-        if agent_dir is not None:
-            custom_agent_classes.extend(load_agents_from_dir(agent_dir))
 
     @classmethod
     def generate_server_id(cls, host: str, port: int) -> str:
@@ -348,6 +367,7 @@ class RpcAgentServerLauncher:
                 max_timeout_seconds=self.max_timeout_seconds,
                 local_mode=self.local_mode,
                 custom_agent_classes=self.custom_agent_classes,
+                agent_dir=self.agent_dir,
                 studio_url=self.studio_url,
             ),
         )
@@ -373,6 +393,7 @@ class RpcAgentServerLauncher:
                 "local_mode": self.local_mode,
                 "studio_url": self.studio_url,
                 "custom_agent_classes": self.custom_agent_classes,
+                "agent_dir": self.agent_dir,
             },
         )
         server_process.start()

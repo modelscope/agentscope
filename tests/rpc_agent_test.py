@@ -23,6 +23,7 @@ from agentscope.msghub import msghub
 from agentscope.pipelines import sequentialpipeline
 from agentscope.utils import MonitorFactory, QuotaExceededError
 from agentscope.rpc.rpc_agent_client import RpcAgentClient
+from agentscope.agents import RpcAgent
 from agentscope.exception import AgentCallError
 
 
@@ -740,10 +741,18 @@ class BasicRpcAgentTest(unittest.TestCase):
             host=host,
             local_mode=False,
             custom_agent_classes=[DemoRpcAgentWithMemory],
+            agent_dir=os.path.abspath(
+                os.path.join(
+                    os.path.abspath(os.path.dirname(__file__)),
+                    "custom",
+                ),
+            ),
         )
         launcher.launch()
         port = launcher.port
         mock_alloc.return_value = {"host": host, "port": port}
+
+        # test auto allocation
         a1 = DemoRpcAgentWithMemory(name="Auto1", to_dist=True)
         a2 = DemoRpcAgentWithMemory(name="Auto2").to_dist()
         self.assertEqual(a1.host, host)
@@ -753,4 +762,30 @@ class BasicRpcAgentTest(unittest.TestCase):
         client = RpcAgentClient(host=host, port=port)
         al = client.get_agent_list()
         self.assertEqual(len(al), 2)
+
+        # test agent dir loading
+        custom_agent_id = "custom_test"
+        self.assertTrue(
+            client.create_agent(
+                agent_configs={
+                    "args": (),
+                    "kwargs": {"name": "custom"},
+                    "class_name": "CustomAgent",
+                },
+                agent_id=custom_agent_id,
+            ),
+        )
+        ra = RpcAgent(
+            name="custom",
+            host=launcher.host,
+            port=launcher.port,
+            agent_id=custom_agent_id,
+            connect_existing=True,
+        )
+        resp = ra(Msg(name="sys", role="user", content="Hello"))
+        self.assertEqual(resp.name, "custom")
+        self.assertEqual(resp.content, "Hello world")
+        al = client.get_agent_list()
+        self.assertEqual(len(al), 3)
+
         launcher.shutdown()
