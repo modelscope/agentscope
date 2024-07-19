@@ -29,6 +29,7 @@ def main() -> None:
             },
         ],
         project="Multi-Agent Conversation",
+        save_api_invoke=True,
     )
 
     # Init two agents
@@ -42,7 +43,7 @@ def main() -> None:
     # start the conversation between user and assistant
     x = None
     while x is None or x.content != "exit":
-        x = sequentialpipeline([dialog_agent, user_agent], x)
+        x = sequentialpipeline([user_agent, dialog_agent], x)
 
 
 if __name__ == "__main__":

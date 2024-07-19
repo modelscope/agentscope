@@ -75,7 +75,7 @@ class DialogAgent(AgentBase):
         # Support both streaming and non-streaming responses by "or"
         self.speak(response.stream or response.text)
 
-        msg = Msg(self.name, response, role="assistant")
+        msg = Msg(self.name, response.text, role="assistant")
 
         # Record the message in memory
         if self.memory:
