@@ -9,11 +9,6 @@ from .model import ModelWrapperBase, ModelResponse
 from ..message import Msg
 from ..utils.tools import _convert_to_str
 
-try:
-    import litellm
-except ImportError:
-    litellm = None
-
 
 class LiteLLMWrapperBase(ModelWrapperBase, ABC):
     """The model wrapper based on LiteLLM API."""
@@ -26,7 +21,7 @@ class LiteLLMWrapperBase(ModelWrapperBase, ABC):
         **kwargs: Any,
     ) -> None:
         """
-        To use the LiteLLM wrapper, environent variables must be set.
+        To use the LiteLLM wrapper, environment variables must be set.
         Different model_name could be using different environment variables.
         For example:
             - for model_name: "gpt-3.5-turbo", you need to set "OPENAI_API_KEY"
@@ -47,7 +42,7 @@ class LiteLLMWrapperBase(ModelWrapperBase, ABC):
                 e.g. `temperature`, `seed`.
                 For generate_args, please refer to
                 https://docs.litellm.ai/docs/completion/input
-                for more detailes.
+                for more details.
 
         """
 
@@ -56,16 +51,6 @@ class LiteLLMWrapperBase(ModelWrapperBase, ABC):
             logger.warning("model_name is not set, use config_name instead.")
 
         super().__init__(config_name=config_name)
-
-        if litellm is None:
-            raise ImportError(
-                "Cannot import litellm package in current python environment."
-                "You should try:"
-                "1. Install litellm by `pip install litellm`"
-                "2. If you still have import error, you should try to "
-                "update the openai to higher version, e.g. "
-                "by runing `pip install openai==1.25.1",
-            )
 
         self.model_name = model_name
         self.generate_args = generate_args or {}
@@ -84,7 +69,7 @@ class LiteLLMWrapperBase(ModelWrapperBase, ABC):
 
 class LiteLLMChatWrapper(LiteLLMWrapperBase):
     """The model wrapper based on litellm chat API.
-    To use the LiteLLM wrapper, environent variables must be set.
+    To use the LiteLLM wrapper, environment variables must be set.
     Different model_name could be using different environment variables.
     For example:
         - for model_name: "gpt-3.5-turbo", you need to set "OPENAI_API_KEY"
@@ -155,6 +140,15 @@ class LiteLLMChatWrapper(LiteLLMWrapperBase):
                 "and 'content' key for LiteLLM API.",
             )
 
+        # Import litellm only when it is used
+        try:
+            import litellm
+        except ImportError as e:
+            raise ImportError(
+                "Cannot find litellm in current environment, please "
+                "install it by `pip install litellm`.",
+            ) from e
+
         # step3: forward to generate response
         response = litellm.completion(
             model=self.model_name,
@@ -189,7 +183,7 @@ class LiteLLMChatWrapper(LiteLLMWrapperBase):
         Note that the format function might not be the optimal way to construct
         prompt for every model, but a common way to do so.
         Developers are encouraged to implement their own prompt
-        engineering strategies if have strong performance concerns.
+        engineering strategies if they have strong performance concerns.
 
         Args:
             args (`Union[Msg, Sequence[Msg]]`):
