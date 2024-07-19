@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """The base class for message unit"""
 
-from typing import Any, Optional, Union, Sequence, Literal
+from typing import Any, Optional, Union, Sequence, Literal, List
 from uuid import uuid4
 import json
 
@@ -23,7 +23,7 @@ class MessageBase(dict):
         name: str,
         content: Any,
         role: Literal["user", "system", "assistant"] = "assistant",
-        url: Optional[Union[Sequence[str], str]] = None,
+        url: Optional[Union[List[str], str]] = None,
         timestamp: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
@@ -39,7 +39,7 @@ class MessageBase(dict):
                 The role of who send the message. It can be one of the
                 `"system"`, `"user"`, or `"assistant"`. Default to
                 `"assistant"`.
-            url (`Optional[Union[list[str], str]]`, defaults to None):
+            url (`Optional[Union[List[str], str]]`, defaults to None):
                 A url to file, image, video, audio or website.
             timestamp (`Optional[str]`, defaults to None):
                 The timestamp of the message, if None, it will be set to
@@ -102,7 +102,7 @@ class Msg(MessageBase):
     """Save the information for application's control flow, or other
     purposes."""
 
-    url: Optional[Union[Sequence[str], str]]
+    url: Optional[Union[List[str], str]]
     """A url to file, image, video, audio or website."""
 
     timestamp: str
@@ -113,7 +113,7 @@ class Msg(MessageBase):
         name: str,
         content: Any,
         role: Literal["system", "user", "assistant"] = None,
-        url: Optional[Union[Sequence[str], str]] = None,
+        url: Optional[Union[List[str], str]] = None,
         timestamp: Optional[str] = None,
         echo: bool = False,
         metadata: Optional[Union[dict, str]] = None,
@@ -130,7 +130,7 @@ class Msg(MessageBase):
                 Used to identify the source of the message, e.g. the system
                 information, the user input, or the model response. This
                 argument is used to accommodate most Chat API formats.
-            url (`Optional[Union[list[str], str]]`, defaults to `None`):
+            url (`Optional[Union[List[str], str]]`, defaults to `None`):
                 A url to file, image, video, audio or website.
             timestamp (`Optional[str]`, defaults to `None`):
                 The timestamp of the message, if None, it will be set to
@@ -167,7 +167,7 @@ class Msg(MessageBase):
         self._colored_name = f"{m1}{self.name}{m2}"
 
     def formatted_str(self, colored: bool = False) -> str:
-        """Return the formatted string of the message. If the message has a
+        """Return the formatted string of the message. If the message has an
         url, the url will be appended to the content.
 
         Args:
@@ -181,7 +181,7 @@ class Msg(MessageBase):
 
         colored_strs = [f"{name}: {self.content}"]
         if self.url is not None:
-            if isinstance(self.url, Sequence):
+            if isinstance(self.url, list):
                 for url in self.url:
                     colored_strs.append(f"{name}: {url}")
             else:
@@ -214,7 +214,7 @@ class PlaceholderMessage(Msg):
         self,
         name: str,
         content: Any,
-        url: Optional[Union[Sequence[str], str]] = None,
+        url: Optional[Union[List[str], str]] = None,
         timestamp: Optional[str] = None,
         host: str = None,
         port: int = None,
@@ -237,7 +237,7 @@ class PlaceholderMessage(Msg):
             role (`Literal["system", "user", "assistant"]`, defaults to "assistant"):
                 The role of the message, which can be one of the `"system"`,
                 `"user"`, or `"assistant"`.
-            url (`Optional[Union[list[str], str]]`, defaults to None):
+            url (`Optional[Union[List[str], str]]`, defaults to None):
                 A url to file, image, video, audio or website.
             timestamp (`Optional[str]`, defaults to None):
                 The timestamp of the message, if None, it will be set to

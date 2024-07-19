@@ -43,7 +43,7 @@ def main() -> None:
     # start the conversation between user and assistant
     x = None
     while x is None or x.content != "exit":
-        x = sequentialpipeline([user_agent, dialog_agent], x)
+        x = sequentialpipeline([dialog_agent, user_agent], x)
 
 
 if __name__ == "__main__":
