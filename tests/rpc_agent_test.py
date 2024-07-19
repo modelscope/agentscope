@@ -11,8 +11,6 @@ from unittest.mock import MagicMock, PropertyMock, patch
 
 from loguru import logger
 
-# from custom.custom_agent import CustomAgent
-
 import agentscope
 from agentscope.agents import AgentBase, DistConf, DialogAgent
 from agentscope.server import RpcAgentServerLauncher

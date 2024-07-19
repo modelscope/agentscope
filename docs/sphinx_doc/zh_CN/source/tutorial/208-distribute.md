@@ -80,11 +80,15 @@ server.launch()
 server.wait_until_terminate()
 ```
 
-> 为了进一步简化使用，可以在命令行中输入如下指令来代替上述代码：
->
-> ```shell
-> as_server --host ip_a --port 12001  --model-config-path model_config_path_a
-> ```
+为了进一步简化使用，可以在命令行中输入如下指令来代替上述代码：
+
+```shell
+as_server --host ip_a --port 12001 --model-config-path model_config_path_a  --agent-dir parent_dir_of_agent_a_and_b
+```
+
+> Note:
+> `--agent-dir` 用来指定你的自定义 Agent 类所在的目录。
+> 请确保所有的自定义 Agent 类都位于 `--agent-dir` 指定的目录下，并且它们所依赖的自定义模块也都位于该目录下。
 
 在 `Machine2` 上运行如下代码，这里同样要确保已经将模型配置文件放置在 `model_config_path_b` 位置并设置环境变量，从而确保运行在该机器上的 Agent 能够正常访问到模型。
 
@@ -110,7 +114,7 @@ server.wait_until_terminate()
 > 这里也同样可以用如下指令来代替上面的代码。
 >
 > ```shell
-> as_server --host ip_b --port 12002 --model-config-path model_config_path_b
+> as_server --host ip_b --port 12002 --model-config-path model_config_path_b  --agent-dir parent_dir_of_agent_a_and_b
 > ```
 
 接下来，就可以使用如下代码从主进程中连接这两个智能体服务器进程。
@@ -311,6 +315,65 @@ b = AgentB(
     ```python
         ok = client.delete_all_agent()
     ```
+
+#### 连接 AgentScope Studio
+
+智能体服务器进程可以在启动时连接 [AgentScope Studio](#209-gui-zh) ，从而让后续搭建的分布式应用中的 `to_dist` 方法不再需要填写任何参数，而是由 Stduio 为其自动分配智能体服务器进程。
+
+对于使用 Python 代码启动智能体服务器进程的场景，只需要在 `RpcAgentServerLauncher` 的初始化参数中填入 `studio_url` 即可，这里需要确保填写正确且能够通过网络访问，例如默认情况下启动的 Studio 的 URL 为 `http://127.0.0.1:5000`。
+
+```python
+# import some packages
+
+# register models which can be used in the server
+agentscope.init(
+    model_configs=model_config_path_a,
+)
+# Create an agent service process
+server = RpcAgentServerLauncher(
+    host="ip_a",
+    port=12001,  # choose an available port
+    custom_agent_classes=[...] # register your customized agent classes
+    studio_url="http://studio_ip:studio_port",  # connect to AgentScope Studio
+)
+
+# Start the service
+server.launch()
+server.wait_until_terminate()
+```
+
+对于使用命令行 `as_server` 的场景，也只需要在命令行中填入 `--studio-url` 参数。
+
+```shell
+as_server --host ip_a --port 12001 --model-config-path model_config_path_a  --agent-dir parent_dir_of_agent_a_and_b --studio-url http://studio_ip:studio_port
+```
+
+执行上述代码或命令后可以进入 AgentScope Studio 的 Server Manager 页面查看是否连接成功。如果连接成功，该智能体服务器进程会显示在页面的表格中，并且可以在页面中观察到该进程的运行状态以及资源占用情况，之后就可以使用 AgentScope Studio 所带来的高级功能了。本节将聚焦于 AgentScope Studio 对 `to_dist` 方法带来的影响，而页面的具体用法请参考 [AgentScope Studio](#209-gui-zh)。
+
+在智能体服务器进程成功连接 Studio 后，只需要在 `agentscope.init` 方法中传入该 Studio 的 `studio_url`，后续的 `to_dist` 方法就不再需要填写 `host` 和 `port` 域，而是自动选择一个已经连接到 Studio 的智能体服务器进程。
+
+```python
+# import some packages
+
+agentscope.init(
+    model_configs=model_config_path_a,
+    studio_url="http://studio_ip:studio_port",
+)
+
+a = AgentA(
+    name="A"
+    # ...
+).to_dist() # automatically select an agent server
+
+# your application code
+```
+
+> Note:
+>
+> - 该方法中使用的 Agent 必须在智能体服务器进程启动时就已经通过 `custom_agent_classes` 或 `--agent-dir` 注册。
+> - 使用该方法时需要确定连接到 Studio 的智能体服务器进程还在正常运行。
+
+在应用开始运行后，可以在 Studio 的 Server Manager 页面中观察该 Agent 具体运行在哪个智能体服务器进程上，应用运行完成后也可以通过 Server Manager 页面删除该 Agent。
 
 ## 实现原理
 

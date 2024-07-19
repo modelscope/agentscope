@@ -168,9 +168,8 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
     if agent_dir is not None:
         custom_agent_classes.extend(load_agents_from_dir(agent_dir))
     # update agent registry
-    if custom_agent_classes is not None:
-        for agent_class in custom_agent_classes:
-            AgentBase.register_agent_class(agent_class=agent_class)
+    for agent_class in custom_agent_classes:
+        AgentBase.register_agent_class(agent_class=agent_class)
 
     async def shutdown_signal_handler() -> None:
         logger.info(
@@ -458,15 +457,20 @@ def as_server() -> None:
         * `--local-mode`: whether the started agent server only listens to
           local requests.
         * `--model-config-path`: the path to the model config json file
+        * `--agent-dir`: the directory containing your customized agent python
+          files
+        * `--studio-url`: the url of agentscope studio
 
         In most cases, you only need to specify the `--host`, `--port` and
-        `--model-config-path`.
+        `--model-config-path`, and `--agent-dir`.
 
         .. code-block:: shell
 
-            as_server --host localhost --port 12345 --model-config-path config.json
-
-    """  # noqa
+            as_server --host localhost \
+                --port 12345 \
+                --model-config-path config.json \
+                --agent-dir ./my_agents
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--host",
