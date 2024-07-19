@@ -69,11 +69,13 @@ class DialogAgent(AgentBase):
         )
 
         # call llm and generate response
-        response = self.model(prompt).text
-        msg = Msg(self.name, response, role="assistant")
+        response = self.model(prompt)
 
         # Print/speak the message in this agent's voice
-        self.speak(msg)
+        # Support both streaming and non-streaming responses by "or"
+        self.speak(response.stream or response.text)
+
+        msg = Msg(self.name, response.text, role="assistant")
 
         # Record the message in memory
         if self.memory:

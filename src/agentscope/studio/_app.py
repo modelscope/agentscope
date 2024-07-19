@@ -24,10 +24,11 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, join_room, leave_room
 
-from agentscope._runtime import _runtime
-from agentscope.constants import _DEFAULT_SUBDIR_CODE, _DEFAULT_SUBDIR_INVOKE
-from agentscope.utils.tools import _is_process_alive, _is_windows
-from agentscope.rpc.rpc_agent_client import RpcAgentClient
+from .._runtime import _runtime
+from ..constants import _DEFAULT_SUBDIR_CODE, _DEFAULT_SUBDIR_INVOKE
+from ._studio_utils import _check_and_convert_id_type
+from ..utils.tools import _is_process_alive, _is_windows
+from ..rpc.rpc_agent_client import RpcAgentClient
 
 _app = Flask(__name__)
 
@@ -128,7 +129,7 @@ class _ServerTable(_db.Model):  # type: ignore[name-defined]
 class _MessageTable(_db.Model):  # type: ignore[name-defined]
     """Message object."""
 
-    id = _db.Column(_db.Integer, primary_key=True)
+    id = _db.Column(_db.String, primary_key=True)
     run_id = _db.Column(
         _db.String,
         _db.ForeignKey("run_table.run_id"),
@@ -369,6 +370,7 @@ def _push_message() -> Response:
     data = request.json
 
     run_id = data["run_id"]
+    msg_id = data["id"]
     name = data["name"]
     role = data["role"]
     content = data["content"]
@@ -376,16 +378,21 @@ def _push_message() -> Response:
     timestamp = data["timestamp"]
     url = data["url"]
 
+    # First check if the message exists in the database, if exists, we update
+    # it, otherwise, we add it.
+    _MessageTable.query.filter_by(id=msg_id).delete()
+    _db.session.commit()
     try:
         new_message = _MessageTable(
+            id=msg_id,
             run_id=run_id,
             name=name,
             role=role,
             content=content,
             # Before storing into the database, we need to convert the url into
             # a string
-            meta=json.dumps(metadata),
-            url=json.dumps(url),
+            meta=json.dumps(metadata, ensure_ascii=False),
+            url=json.dumps(url, ensure_ascii=False),
             timestamp=timestamp,
         )
         _db.session.add(new_message)
@@ -394,6 +401,7 @@ def _push_message() -> Response:
         abort(400, "Fail to put message with error: " + str(e))
 
     data = {
+        "id": msg_id,
         "run_id": run_id,
         "name": name,
         "role": role,
@@ -788,6 +796,10 @@ def init(
         _app.logger.setLevel("DEBUG")
     else:
         _app.logger.setLevel("INFO")
+
+    # To be compatible with the old table schema, we need to check and convert
+    # the id column of the message_table from INTEGER to VARCHAR.
+    _check_and_convert_id_type(str(_cache_db), "message_table")
 
     _socketio.run(
         _app,

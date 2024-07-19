@@ -165,11 +165,13 @@ class ReActAgent(AgentBase):
 
             # Generate and parse the response
             try:
-                res = self.model(
-                    prompt,
-                    parse_func=self.parser.parse,
-                    max_retries=1,
-                )
+                raw_response = self.model(prompt)
+
+                if self.verbose:
+                    # To be compatible with streaming and non-streaming mode
+                    self.speak(raw_response.stream or raw_response.text)
+
+                res = self.parser.parse(raw_response)
 
                 # Record the response in memory
                 self.memory.add(
@@ -186,7 +188,9 @@ class ReActAgent(AgentBase):
                     self.parser.to_content(res.parsed),
                     "assistant",
                 )
-                self.speak(msg_returned)
+
+                if not self.verbose:
+                    self.speak(msg_returned)
 
                 # Skip the next steps if no need to call tools
                 # The parsed field is a dictionary
@@ -256,7 +260,7 @@ class ReActAgent(AgentBase):
         # Generate a reply by summarizing the current situation
         prompt = self.model.format(self.memory.get_memory(), hint_msg)
         res = self.model(prompt)
+        self.speak(res.stream or res.text)
         res_msg = Msg(self.name, res.text, "assistant")
-        self.speak(res_msg)
 
         return res_msg

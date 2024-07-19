@@ -200,7 +200,7 @@ function _addUserChatRow(index, pMsg) {
     template
         .querySelector(".chat-row")
         .setAttribute("data-msg", JSON.stringify(pMsg));
-    return template.firstElementChild.outerHTML;
+    return template.firstElementChild;
 }
 
 function _addAssistantChatRow(index, pMsg) {
@@ -230,7 +230,7 @@ function _addAssistantChatRow(index, pMsg) {
     template
         .querySelector(".chat-row")
         .setAttribute("data-msg", JSON.stringify(pMsg));
-    return template.firstElementChild.outerHTML;
+    return template.firstElementChild;
 }
 
 function _addSystemChatRow(index, pMsg) {
@@ -244,7 +244,7 @@ function _addSystemChatRow(index, pMsg) {
         .querySelector(".chat-row")
         .setAttribute("data-msg", JSON.stringify(pMsg));
 
-    return template.firstElementChild.outerHTML;
+    return template.firstElementChild;
 }
 
 function _addKeyValueInfoRow(pKey, pValue) {
@@ -362,6 +362,11 @@ function addFileListItem(url) {
         inputFileList.scrollWidth - inputFileList.clientWidth;
 }
 
+// Turn a list of dom elements to a list of html strings
+function _turnDom2HTML(domList) {
+    return Array.from(domList).map((dom) => dom.outerHTML);
+}
+
 function _showUrlPrompt() {
     const userInput = prompt("Please enter a local or web URL:", "");
 
@@ -456,11 +461,10 @@ function initializeDashboardDetailDialoguePage(pRuntimeInfo) {
                         addChatRow(index, msg)
                     );
                     var clusterize = new Clusterize({
-                        rows: chatRows,
+                        rows: _turnDom2HTML(chatRows),
                         scrollId: "chat-box",
                         contentId: "chat-box-content",
                     });
-
                     document.getElementById("chat-box-content");
                     addEventListener("click", function (event) {
                         let target = event.target;
@@ -530,12 +534,34 @@ function initializeDashboardDetailDialoguePage(pRuntimeInfo) {
                     socket.on("display_message", (data) => {
                         if (data.run_id === pRuntimeInfo.run_id) {
                             console.log("Studio: receive display_message");
-                            let row = addChatRow(
-                                clusterize.getRowsAmount(),
-                                data
-                            );
-                            clusterize.append([row]);
-                            clusterize.refresh();
+
+                            // Check the chatRows list in the reverse order to
+                            // save time
+                            let found = false;
+                            for (let index = chatRows.length - 1; index >= 0; index--) {
+                                const row = chatRows[index];
+                                let rowDataMsg = JSON.parse(row.getAttribute("data-msg"));
+                                if (rowDataMsg.id === data.id) {
+                                    // Update the row
+                                    chatRows[index] = addChatRow(index, data);
+                                    // Update the list
+                                    clusterize.update(_turnDom2HTML(chatRows));
+                                    found = true;
+                                    // Break the loop
+                                    break;
+                                }
+                            }
+
+                            if (!found) {
+                                // Create a new row
+                                let newRow = addChatRow(
+                                    clusterize.getRowsAmount(),
+                                    data
+                                );
+                                chatRows.push(newRow);
+                                clusterize.append(_turnDom2HTML([newRow]));
+                                clusterize.refresh();
+                            }
 
                             var scrollElem =
                                 document.getElementById("chat-box");
