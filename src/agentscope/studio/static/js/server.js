@@ -482,6 +482,8 @@ function initializeServerPage() {
     };
     let deleteAllAgentBtn = document.getElementById("delete-all-agent-btn");
     deleteAllAgentBtn.onclick = deleteAllAgent;
+    let memoryflushBtn = document.getElementById("flush-memory-btn");
+    memoryflushBtn.onclick = flushAgentMemoryTable;
     window.addEventListener("resize", () => {
         if (messageEditor) {
             messageEditor.layout();
