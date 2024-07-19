@@ -3,7 +3,7 @@
 import os
 from abc import ABC
 from collections.abc import Iterable
-from typing import Sequence, Union, Any, List
+from typing import Sequence, Union, Any, List, Optional, Generator
 
 from loguru import logger
 
@@ -110,8 +110,20 @@ class GeminiChatWrapper(GeminiWrapperBase):
         config_name: str,
         model_name: str,
         api_key: str = None,
+        stream: bool = False,
         **kwargs: Any,
     ) -> None:
+        """Initialize the wrapper for Google Gemini model.
+
+        Args:
+            model_name (`str`):
+                The name of the model.
+            api_key (`str`, defaults to `None`):
+                The api_key for the model. If it is not provided, it will be
+                loaded from environment variable.
+            stream (`bool`, defaults to `False`):
+                Whether to use stream mode.
+        """
         super().__init__(
             config_name=config_name,
             model_name=model_name,
@@ -119,13 +131,15 @@ class GeminiChatWrapper(GeminiWrapperBase):
             **kwargs,
         )
 
+        self.stream = stream
+
         # Create the generative model
         self.model = genai.GenerativeModel(model_name, **kwargs)
 
     def __call__(
         self,
         contents: Union[Sequence, str],
-        stream: bool = False,
+        stream: Optional[bool] = None,
         **kwargs: Any,
     ) -> ModelResponse:
         """Generate response for the given contents.
@@ -133,7 +147,7 @@ class GeminiChatWrapper(GeminiWrapperBase):
         Args:
             contents (`Union[Sequence, str]`):
                 The content to generate response.
-            stream (`bool`, defaults to `False`):
+            stream (`Optional[bool]`, defaults to `None`)
                 Whether to use stream mode.
             **kwargs:
                 The additional arguments for generating response.
@@ -152,15 +166,109 @@ class GeminiChatWrapper(GeminiWrapperBase):
                 "messages, which may cause unexpected behavior.",
             )
 
+        # Check if stream is provided
+        if stream is None:
+            stream = self.stream
+
         # step2: forward to generate response
-        # TODO: support response in stream mode
-        response = self.model.generate_content(
-            contents,
-            stream=stream,
-            **kwargs,
+        kwargs.update(
+            {
+                "contents": contents,
+                "stream": stream,
+            },
         )
 
-        # step3: Check for candidates and handle accordingly
+        response = self.model.generate_content(**kwargs)
+
+        if stream:
+
+            def generator() -> Generator[str, None, None]:
+                text = ""
+                last_chunk = None
+                for chunk in response:
+                    text += self._extract_text_content_from_response(
+                        contents,
+                        chunk,
+                    )
+                    yield text
+                    last_chunk = chunk
+
+                # Update the last chunk
+                last_chunk.candidates[0].content.parts[0].text = text
+
+                self._save_model_invocation_and_update_monitor(
+                    contents,
+                    kwargs,
+                    last_chunk,
+                )
+
+            return ModelResponse(
+                stream=generator(),
+            )
+
+        else:
+            self._save_model_invocation_and_update_monitor(
+                contents,
+                kwargs,
+                response,
+            )
+
+            # step6: return response
+            return ModelResponse(
+                text=response.text,
+                raw=response,
+            )
+
+    def _save_model_invocation_and_update_monitor(
+        self,
+        contents: Union[Sequence[Any], str],
+        kwargs: dict,
+        response: Any,
+    ) -> None:
+        """Save the model invocation and update the monitor accordingly."""
+        # Record the api invocation if needed
+        self._save_model_invocation(
+            arguments=kwargs,
+            response=str(response),
+        )
+
+        # Update monitor accordingly
+        if hasattr(response, "usage_metadata"):
+            token_prompt = response.usage_metadata.prompt_token_count
+            token_response = response.usage_metadata.candidates_token_count
+        else:
+            token_prompt = self.model.count_tokens(contents).total_tokens
+            token_response = self.model.count_tokens(
+                response.text,
+            ).total_tokens
+
+        self.update_monitor(
+            call_counter=1,
+            completion_tokens=token_response,
+            prompt_tokens=token_prompt,
+            total_tokens=token_prompt + token_response,
+        )
+
+    def _extract_text_content_from_response(
+        self,
+        contents: Union[Sequence[Any], str],
+        response: Any,
+    ) -> str:
+        """Extract the text content from the response of gemini API
+
+        Note: to avoid import error during type checking in python 3.11+, here
+        we use `typing.Any` to avoid raising error
+
+        Args:
+            contents (`Union[Sequence[Any], str]`):
+                The prompt contents
+            response (`Any`):
+                The response from gemini API
+
+        Returns:
+            `str`: The extracted string.
+        """
+        # Check for candidates and handle accordingly
         if (
             not response.candidates[0].content
             or not response.candidates[0].content.parts
@@ -203,31 +311,7 @@ class GeminiChatWrapper(GeminiWrapperBase):
                 f"RAW RESPONSE FROM GEMINI API: {response}\n",
             )
 
-        # step4: record the api invocation if needed
-        self._save_model_invocation(
-            arguments={
-                "contents": contents,
-                "stream": stream,
-                **kwargs,
-            },
-            response=str(response),
-        )
-
-        # step5: update monitor accordingly
-        token_prompt = self.model.count_tokens(contents).total_tokens
-        token_response = self.model.count_tokens(response.text).total_tokens
-        self.update_monitor(
-            call_counter=1,
-            completion_tokens=token_response,
-            prompt_tokens=token_prompt,
-            total_tokens=token_prompt + token_response,
-        )
-
-        # step6: return response
-        return ModelResponse(
-            text=response.text,
-            raw=response,
-        )
+        return response.text
 
     def _register_default_metrics(self) -> None:
         """Register the default metrics for the model."""

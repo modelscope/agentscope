@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for Ollama models."""
 from abc import ABC
-from typing import Sequence, Any, Optional, List, Union
+from typing import Sequence, Any, Optional, List, Union, Generator
 
 from agentscope.message import Msg
 from agentscope.models import ModelWrapperBase, ModelResponse
@@ -73,9 +73,44 @@ class OllamaChatWrapper(OllamaWrapperBase):
 
     model_type: str = "ollama_chat"
 
+    def __init__(
+        self,
+        config_name: str,
+        model_name: str,
+        stream: bool = False,
+        options: dict = None,
+        keep_alive: str = "5m",
+        **kwargs: Any,
+    ) -> None:
+        """Initialize the model wrapper for Ollama API.
+
+        Args:
+            model_name (`str`):
+                The model name used in ollama API.
+            stream (`bool`, default `False`):
+                Whether to enable stream mode.
+            options (`dict`, default `None`):
+                The extra keyword arguments used in Ollama api generation,
+                e.g. `{"temperature": 0., "seed": 123}`.
+            keep_alive (`str`, default `5m`):
+                Controls how long the model will stay loaded into memory
+                following the request.
+        """
+
+        super().__init__(
+            config_name=config_name,
+            model_name=model_name,
+            options=options,
+            keep_alive=keep_alive,
+            **kwargs,
+        )
+
+        self.stream = stream
+
     def __call__(
         self,
         messages: Sequence[dict],
+        stream: Optional[bool] = None,
         options: Optional[dict] = None,
         keep_alive: Optional[str] = None,
         **kwargs: Any,
@@ -86,6 +121,9 @@ class OllamaChatWrapper(OllamaWrapperBase):
             messages (`Sequence[dict]`):
                 A list of messages, each message is a dict contains the `role`
                 and `content` of the message.
+            stream (`bool`, default `None`):
+                Whether to enable stream mode, which will override the `stream`
+                input in the constructor.
             options (`dict`, default `None`):
                 The extra arguments used in ollama chat API, which takes
                 effect only on this call, and will be merged with the
@@ -110,39 +148,83 @@ class OllamaChatWrapper(OllamaWrapperBase):
         keep_alive = keep_alive or self.keep_alive
 
         # step2: forward to generate response
-        response = ollama.chat(
-            model=self.model_name,
-            messages=messages,
-            options=options,
-            keep_alive=keep_alive,
-            **kwargs,
-        )
+        if stream is None:
+            stream = self.stream
 
-        # step2: record the api invocation if needed
-        self._save_model_invocation(
-            arguments={
+        kwargs.update(
+            {
                 "model": self.model_name,
                 "messages": messages,
+                "stream": stream,
                 "options": options,
                 "keep_alive": keep_alive,
-                **kwargs,
             },
-            response=response,
         )
 
-        # step3: monitor the response
+        response = ollama.chat(**kwargs)
+
+        if stream:
+
+            def generator() -> Generator[str, None, None]:
+                last_chunk = {}
+                text = ""
+                for chunk in response:
+                    text += chunk["message"]["content"]
+                    yield text
+                    last_chunk = chunk
+
+                # Replace the last chunk with the full text
+                last_chunk["message"]["content"] = text
+
+                self._save_model_invocation_and_update_monitor(
+                    kwargs,
+                    last_chunk,
+                )
+
+            return ModelResponse(
+                stream=generator(),
+                raw=response,
+            )
+
+        else:
+            # step3: save model invocation and update monitor
+            self._save_model_invocation_and_update_monitor(
+                kwargs,
+                response,
+            )
+
+            # step4: return response
+            return ModelResponse(
+                text=response["message"]["content"],
+                raw=response,
+            )
+
+    def _save_model_invocation_and_update_monitor(
+        self,
+        kwargs: dict,
+        response: dict,
+    ) -> None:
+        """Save the model invocation and update the monitor accordingly.
+
+        Args:
+            kwargs (`dict`):
+                The keyword arguments to the DashScope chat API.
+            response (`dict`):
+                The response object returned by the DashScope chat API.
+        """
+        prompt_eval_count = response.get("prompt_eval_count", 0)
+        eval_count = response.get("eval_count", 0)
+
         self.update_monitor(
             call_counter=1,
-            prompt_tokens=response.get("prompt_eval_count", 0),
-            completion_tokens=response.get("eval_count", 0),
-            total_tokens=response.get("prompt_eval_count", 0)
-            + response.get("eval_count", 0),
+            prompt_tokens=prompt_eval_count,
+            completion_tokens=eval_count,
+            total_tokens=prompt_eval_count + eval_count,
         )
 
-        # step4: return response
-        return ModelResponse(
-            text=response["message"]["content"],
-            raw=response,
+        self._save_model_invocation(
+            arguments=kwargs,
+            response=response,
         )
 
     def _register_default_metrics(self) -> None:
