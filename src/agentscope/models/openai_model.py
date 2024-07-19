@@ -5,7 +5,10 @@ from typing import Union, Any, List, Sequence, Dict, Optional, Generator
 
 from loguru import logger
 
-from ._model_utils import _verify_text_content_in_openai_delta_response
+from ._model_utils import (
+    _verify_text_content_in_openai_delta_response,
+    _verify_text_content_in_openai_message_response,
+)
 from .model import ModelWrapperBase, ModelResponse
 from ..file_manager import file_manager
 from ..message import Msg
@@ -297,11 +300,16 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
                 response,
             )
 
-            # return response
-            return ModelResponse(
-                text=response["choices"][0]["message"]["content"],
-                raw=response,
-            )
+            if _verify_text_content_in_openai_message_response(response):
+                # return response
+                return ModelResponse(
+                    text=response["choices"][0]["message"]["content"],
+                    raw=response,
+                )
+            else:
+                raise RuntimeError(
+                    f"Invalid response from OpenAI API: {response}",
+                )
 
     def _save_model_invocation_and_update_monitor(
         self,
